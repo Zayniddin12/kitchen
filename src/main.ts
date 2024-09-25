@@ -6,6 +6,7 @@ import App from "./App.vue";
 import router from "./router";
 import "@/assets/styles/style.scss";
 import i18n from './localization/index.js'
+import "external-svg-loader";
 
 import * as ElementPlusIconsVue from "@element-plus/icons-vue";
 
