@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import Language from "@/components/language/index.vue";
 import { useI18n } from "vue-i18n";
+import Language from "@/components/language/index.vue";
 
 const { t } = useI18n();
 
@@ -11,8 +11,8 @@ interface UserData {
 }
 
 const userData = ref<UserData>({
-  login: "",
-  password: "",
+  login: "admin",
+  password: "1",
 });
 
 const onSubmit = () => {
@@ -42,8 +42,7 @@ const onSubmit = () => {
 
       <!-- Form Title -->
       <h1 class="text-[#000D24] text-xl font-bold">{{t('Войти в аккаунт')}}</h1>
-      <p class="text-[#A8AAAE] text-[14px] mt-[6px] w-[90%]">Введите свои учетные данные для доступа к вашей учетной
-        записи</p>
+      <p class="text-[#A8AAAE] text-[14px] mt-[6px] w-[90%]">Введите свои учетные данные для доступа к вашей учетной записи</p>
 
       <!-- Login Form -->
       <form @submit.prevent="onSubmit" class="mt-6">
@@ -87,19 +86,4 @@ const onSubmit = () => {
       ©{{ new Date().getFullYear() }} Anysoft
     </footer>
   </div>
-
 </template>
-
-<style scoped>
-.custom-input {
-  outline: none;
-  padding: 10px 12px;
-  border-radius: 8px;
-  border: 1.5px solid #EEEEEF;
-  font-size: 14px;
-  font-weight: 400;
-  line-height: 20px;
-  text-align: left;
-  color: #A8AAAE;
-}
-</style>
