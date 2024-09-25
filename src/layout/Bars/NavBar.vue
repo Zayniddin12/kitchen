@@ -1,3 +1,8 @@
+<script setup lang="ts">
+import { Bell, Message } from "@element-plus/icons-vue";
+import Language from "@/components/language/index.vue";
+</script>
+
 <template>
   <div class="flex justify-between items-start">
     <input class="bg-[#F8F9FC] w-[552px] rounded-2xl text-black px-[16px] py-[12px] outline-none" placeholder="Поиск">
@@ -18,20 +23,28 @@
       </button>
 
 
-      <el-badge value="20" class="item">
+      <el-badge value="18" class="item">
         <el-icon color="black" size="24">
           <Bell />
         </el-icon>
       </el-badge>
 
-      <el-badge value="20" class="item">
+      <el-badge value="18" class="item">
         <el-icon color="black" size="24">
           <Message />
         </el-icon>
       </el-badge>
+
+      <Language />
+
+      <div class="flex items-center gap-3 el-dropdown-link">
+        <el-avatar :size="40"
+                   src="https://s3-alpha-sig.figma.com/img/62bb/af5c/86dedb75e145655a70472a6f12327762?Expires=1728259200&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=MMrfktOFmOp6Sa9P6uBZhUp1cfMuJOyyfuOA2nmF06gho~IBpQt-xt3EPbkWBfUx8EQ3aVzxyN41Ob20wl8EWVUoTQL0ZK92KTheiWHp80PG~F7Vxcew5yFJzZusz0hlktZNhAlpS9NsiihRk3d5EJNmiGkoZch9f~g~CoZHrXc5cBdGebm217J~9ROTxf~q-6MGhb5G4h4dqfBpHrXT1I-xdKVFM-4LJWekpeJC-WHnUAQNi6jKZHiw2ZvRutwWmUcWZhaS7UAYUVhnctTe-nVZ4OUjHP-9yWYgomsU6eG8Bwx83Oynvz26qJp4J6MCnSGV7MhWUnjcoBNwxoM4YA__" />
+        <div class="">
+          <h2 class="m-0 mb-1  text-[14px] font-medium text-black">Мухаммадамин Нурматов</h2>
+          <span class="text-[#A8AAAE] text-sm">Директор</span>
+        </div>
+      </div>
     </div>
   </div>
 </template>
-<script setup lang="ts">
-import { Bell, Message } from "@element-plus/icons-vue";
-</script>

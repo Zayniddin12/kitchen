@@ -30,7 +30,7 @@ import Breadcrumb from "@/components/ui/Breadcrumb.vue";
   position: fixed;
   z-index: 99;
   transition: all .2s ease-in-out;
-
+  border-bottom: 1px solid #EEEEEF;
   transform: none;
   top: 16px;
   margin-left: 152px;
