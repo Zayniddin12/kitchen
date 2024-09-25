@@ -1,7 +1,9 @@
 <template>
   <div class="sidebar w-[128px]">
     <div class="sidebar-wrapper">
-
+      <div>
+        <img src="@/assets/images/logo.png" alt="">
+      </div>
     </div>
   </div>
 </template>
