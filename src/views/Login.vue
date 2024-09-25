@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import Language from '@/components/language/index.vue'
+import Language from "@/components/language/index.vue";
+import { useI18n } from "vue-i18n";
+
+const { t } = useI18n();
 
 interface UserData {
   login: string;
@@ -8,18 +11,18 @@ interface UserData {
 }
 
 const userData = ref<UserData>({
-  login: '',
-  password: '',
-})
+  login: "",
+  password: "",
+});
 
 const onSubmit = () => {
   console.log(userData.value);
-}
+};
 </script>
 
 <template>
   <div class="p-8 h-screen flex flex-col lg:flex-row items-center relative bg-[#ffffff]">
-    <Language class="fixed top-[32px] right-[32px]"/>
+    <Language class="fixed top-[32px] right-[32px]" />
 
     <!-- Background Image Section -->
     <img src="@/assets/images/loginBg.png"
@@ -38,21 +41,22 @@ const onSubmit = () => {
       </header>
 
       <!-- Form Title -->
-      <h1 class="text-[#000D24] text-xl font-bold">Войти в аккаунт</h1>
-      <p class="text-[#A8AAAE] text-[14px] mt-[6px] w-[90%]">Введите свои учетные данные для доступа к вашей учетной записи</p>
+      <h1 class="text-[#000D24] text-xl font-bold">{{t('Войти в аккаунт')}}</h1>
+      <p class="text-[#A8AAAE] text-[14px] mt-[6px] w-[90%]">Введите свои учетные данные для доступа к вашей учетной
+        записи</p>
 
       <!-- Login Form -->
       <form @submit.prevent="onSubmit" class="mt-6">
         <!-- Username Input -->
         <div class="flex flex-col mb-4">
           <label class="text-[#A8AAAE] text-sm">Логин</label>
-          <input placeholder="Введите" class="custom-input mt-1" v-model="userData.login" required/>
+          <input placeholder="Введите" class="custom-input mt-1" v-model="userData.login" required />
         </div>
 
         <!-- Password Input -->
         <div class="flex flex-col mb-2">
           <label class="text-[#A8AAAE] text-sm">Пароль</label>
-          <input type="password" placeholder="Введите" class="custom-input mt-1" v-model="userData.password" required/>
+          <input type="password" placeholder="Введите" class="custom-input mt-1" v-model="userData.password" required />
         </div>
 
         <!-- Forgot Password Link -->

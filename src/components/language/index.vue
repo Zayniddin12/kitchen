@@ -1,15 +1,16 @@
 <script lang="ts" setup>
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import { ArrowDown } from "@element-plus/icons-vue";
+import i18n from "@/localization";
 
 interface Language {
-  title: string,
-  value: string
+  title: string;
+  value: string;
 }
 
 interface LangItem {
-  title: string,
-  value: string
+  title: string;
+  value: string;
 }
 
 const langItems = ref<LangItem[]>([
@@ -23,20 +24,22 @@ const langItems = ref<LangItem[]>([
   },
 ]);
 
-const lang = ref<Language>({
-  title: "Русский",
-  value: "ru",
-});
+const storedLanguage = localStorage.getItem("language");
+const lang = ref<Language>(storedLanguage ? langItems.value.find((item) => item.value === storedLanguage)! : { title: "Русский", value: "ru" });
 
-const changeLanguage = (value: string) => {
-  lang.value = value;
+const changeLanguage = (item: LangItem) => {
+  lang.value = item;
+  i18n.global.locale.value = item.value;
+  localStorage.setItem("language", item.value);
 };
+
+const currentLanguageTitle = computed(() => lang.value.title);
 </script>
 
 <template>
   <el-dropdown>
     <span class="el-dropdown-link text-[#2E90FA] outline-0">
-      {{ lang.title }}
+      {{ currentLanguageTitle }}
       <el-icon class="el-icon--right">
         <arrow-down />
       </el-icon>
