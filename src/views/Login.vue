@@ -33,7 +33,7 @@ const onSubmit = () => {
     <div class="w-full lg:w-1/4 md:w-1/2 m-auto">
       <!-- Logo and Title -->
       <header class="flex items-center mb-6">
-        <img src="@/assets/images/logo.png" alt="logo">
+        <img src="@/assets/images/logo.svg" alt="logo">
         <div class="flex flex-col ml-3">
           <b class="text-[#000D24] text-lg">НГМК</b>
           <span class="text-[#CBCCCE]">Фонд</span>

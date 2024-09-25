@@ -1068,6 +1068,13 @@ execa@^8.0.1:
     signal-exit "^4.1.0"
     strip-final-newline "^3.0.0"
 
+external-svg-loader@^1.7.1:
+  version "1.7.1"
+  resolved "https://registry.npmjs.org/external-svg-loader/-/external-svg-loader-1.7.1.tgz"
+  integrity sha512-aoar7PRXhy+hNgp49Xh2rsI+9CS65IqlLc9z2CmRM5eTQdA3H/S4QkIYVT5dH5Nf0r81d/424rHYEyC3qjPvHw==
+  dependencies:
+    idb-keyval "^6.2.0"
+
 fast-glob@^3.3.0:
   version "3.3.2"
   resolved "https://registry.npmjs.org/fast-glob/-/fast-glob-3.3.2.tgz"
@@ -1204,6 +1211,11 @@ human-signals@^5.0.0:
   version "5.0.0"
   resolved "https://registry.npmjs.org/human-signals/-/human-signals-5.0.0.tgz"
   integrity sha512-AXcZb6vzzrFAUE61HnN4mpLqd/cSIwNQjtNWR0euPm6y0iqx3G4gOXaIDdtdDwZmhwe82LA6+zinmW4UBWVePQ==
+
+idb-keyval@^6.2.0:
+  version "6.2.1"
+  resolved "https://registry.npmjs.org/idb-keyval/-/idb-keyval-6.2.1.tgz"
+  integrity sha512-8Sb3veuYCyrZL+VBt9LJfZjLUPWVvqn8tG28VqYNFCo43KHcKuq+b4EiXGeuaLAQWL2YmyDgMp2aSpH9JHsEQg==
 
 immutable@^4.0.0:
   version "4.3.7"
