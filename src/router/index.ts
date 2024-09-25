@@ -32,14 +32,13 @@ const router = createRouter({
       path: "/login",
       name: "login",
       component: import("../views/Login.vue"),
-      meta: { authRequired: false, layout: "LoginLayout" },
+      meta: { layout: "LoginLayout" },
 
     },
     {
       path: "/:pathMatch(.*)*",
-      meta: { authRequired: false },
       component: import("../components/errors/404.vue"),
-
+      meta: { layout: "ErrorLayout" },
     },
 
   ],

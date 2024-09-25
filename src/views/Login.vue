@@ -7,12 +7,12 @@ const { t } = useI18n();
 
 interface UserData {
   login: string;
-  password: string;
+  password: number;
 }
 
 const userData = ref<UserData>({
   login: "admin",
-  password: "1",
+  password: 1,
 });
 
 const onSubmit = () => {
