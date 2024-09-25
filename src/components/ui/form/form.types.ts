@@ -11,4 +11,6 @@ export interface ElFormItemType extends FormItemType {
     clearable?: boolean,
     name?: string,
     suffixIcon?: string,
+    labelPosition?: "left" | "right" | "top",
+    prop?: string | string[]
 }
