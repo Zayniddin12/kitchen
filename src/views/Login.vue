@@ -2,8 +2,10 @@
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import Language from "@/components/language/index.vue";
+import { useRouter } from "vue-router";
 
 const { t } = useI18n();
+const router = useRouter()
 
 interface UserData {
   login: string;
@@ -12,11 +14,12 @@ interface UserData {
 
 const userData = ref<UserData>({
   login: "admin",
-  password: 1,
+  password: "1",
 });
 
 const onSubmit = () => {
   console.log(userData.value);
+  router.push("/home");
 };
 </script>
 
