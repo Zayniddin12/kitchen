@@ -1,13 +1,21 @@
+<script setup lang="ts">
+import NavBar from "@/layout/Bars/NavBar.vue";
+import SideBar from "@/layout/Bars/SideBar.vue";
+import Breadcrumb from "@/components/ui/Breadcrumb.vue";
+
+</script>
+
 <template>
   <div>
     <SideBar />
+
     <div
       class="main-layout min-h-screen p-6 pr-7 pt-28 dark:bg-darkLayoutMain bg-white ml-[128px]"
     >
       <Breadcrumb />
       <slot />
     </div>
-
+<!--    :class="getChildSidebar ? 'top-navbar-margin' : ''"-->
     <div
       class="top-navbar bg-lightLayoutStorm dark:bg-darkLayoutStorm text-white"
     >
@@ -17,13 +25,6 @@
     <!--    <ScrollToTop />-->
   </div>
 </template>
-
-<script setup lang="ts">
-
-import NavBar from "@/layout/Bars/NavBar.vue";
-import SideBar from "@/layout/Bars/SideBar.vue";
-import Breadcrumb from "@/components/ui/Breadcrumb.vue";
-</script>
 
 <style lang="scss">
 .top-navbar {
@@ -38,4 +39,8 @@ import Breadcrumb from "@/components/ui/Breadcrumb.vue";
   min-height: 65px !important;
   right: 1.75rem;
 }
+
+//.top-navbar-margin {
+//  width: calc(100% - 451px);
+//}
 </style>
