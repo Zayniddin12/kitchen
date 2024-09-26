@@ -17,17 +17,14 @@ onMounted(() => {
   currentItem.value = route?.path;
 });
 
-watch(() => route?.path, function() {
-    currentItem.value = route.path;
-  },
-);
+watch(() => route?.path, function() {currentItem.value = route.path;});
 
 const activeMenu = (index: number, item: any) => {
   currentIndex.value = index;
   childIsOpen.value = !!item.children;
   emit("update:childSidebar", !!item.children);
 
-  localStorage.setItem("child-sidebar", childIsOpen.value);
+  localStorage.setItem("child-sidebar", true);
 
   if (item.route) {
     router.push(item.route);
@@ -39,7 +36,8 @@ const logOut = () => {
 };
 
 const closeChildSidebar = () => {
-  emit('closeChildSidebar2')
+  currentIndex.value = 0;
+  emit('update:childSidebar', false)
 };
 </script>
 
@@ -52,7 +50,7 @@ const closeChildSidebar = () => {
         v-for="(item, index) in menuItems"
         :key="index"
         class="px-[11px]"
-        @click="activeMenu(index, item)"
+        @click.stop="activeMenu(index, item)"
       >
         <div
           :class="{ activeListItem: currentItem == item.route }"

@@ -7,7 +7,8 @@ const router = useRouter();
 const emit = defineEmits(["closeSidebar"]);
 defineProps({
   children: {
-    type: Array as () => string[],
+    type: Array as () => PropType<string>[],
+    required: true
   },
   header: {
     type: String,
@@ -39,7 +40,7 @@ const activeChildMenu = (item: any) => {
 
       <div class="flex items-center cursor-pointer">
         <img src="@/assets/images/pin.svg" alt="pin" />
-        <img src="@/assets/images/close.svg" class="ml-[15px]" alt="close" @click="emit('closeSidebar')" />
+        <img src="@/assets/images/close.svg" class="ml-[15px]" alt="close" @click.stop="emit('closeSidebar')" />
       </div>
     </header>
 
@@ -81,7 +82,7 @@ const activeChildMenu = (item: any) => {
           :key="index2"
           class="text-left py-[10px] px-[12px] text-[#000D24] text-[14px] font-medium cursor-pointer"
           :class="{activeMenu: currentItem == sub.route}"
-          @click="activeChildMenu(sub)"
+          @click.stop="activeChildMenu(sub)"
         >
           {{ sub.title }}
         </div>
@@ -91,7 +92,7 @@ const activeChildMenu = (item: any) => {
         v-else
         class="text-[#4F5662] text-[14px] text-left py-[10px] font-medium cursor-pointer"
         :class="{activeMenu: currentItem == item.route}"
-        @click="activeChildMenu(item)"
+        @click.stop="activeChildMenu(item)"
       >
         <div class="flex items-center">
           <svg

@@ -4,6 +4,7 @@ export default [
     name: "home",
     component: () => import("@/modules/Home/views/Home.vue"),
     meta: {
+      title: 'Главная',
       layout: "MainLayout",
       breadcrumb: [
         {

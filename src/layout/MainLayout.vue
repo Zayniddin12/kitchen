@@ -8,7 +8,7 @@ import { useRoute } from "vue-router";
 const route = useRoute();
 
 const storedSidebar = JSON.parse(localStorage.getItem("child-sidebar")) || false;
-const childSidebar = ref(storedSidebar);
+const childSidebar = ref<boolean>(storedSidebar);
 
 watch(() => route.path, (newPath) => {
   if (newPath === "/home") {
@@ -17,11 +17,11 @@ watch(() => route.path, (newPath) => {
 });
 
 onMounted(() => {
-  closeChildSidebar()
+  childSidebar.value = false;
 });
 
 const closeChildSidebar = () => {
-  childSidebar.value = false;
+  childSidebar.value = false
 }
 </script>
 
