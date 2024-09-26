@@ -1,46 +1,19 @@
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
+import { menuItems } from "@/navigation";
 
-const menuItems = ref([
-  {
-    title: "Главная",
-    route: "/home",
-    icon: 'smart-home.svg',
-  },
-  {
-    title: "Документы",
-    route: "/",
-    icon: "document.svg",
-  },
-  {
-    title: "Мониторинг",
-    route: "/",
-    icon: "monitoring.svg",
-  },
-  {
-    title: "Базы складов",
-    route: "/",
-    icon: "building-warehouse.svg",
-  },
-  {
-    title: "Склад кухни",
-    route: "/",
-    icon: "building-warehouse.svg",
-  },
-  {
-    title: "Настройки",
-    route: "/",
-    icon: "settings.svg",
-  },
-]);
 let currentItem = ref(0);
+// let childIsOpen = ref(false);
 
 onMounted(() => {
   currentItem.value = 0;
 });
 
-const activeMenu = (index) => {
+const activeMenu = (index, item) => {
   currentItem.value = index;
+  // childIsOpen.value = !!item.children;
+
+  // localStorage.setItem("child-sidebar", childIsOpen.value);
 };
 </script>
 
@@ -52,10 +25,13 @@ const activeMenu = (index) => {
       <div
         v-for="(item, index) in menuItems"
         :key="index"
-        @click="activeMenu(index)"
         class="px-[11px]"
+        @click="activeMenu(index, item)"
       >
-        <div :class="{ activeListItem: currentItem == index }" class="h-[88px] flex flex-col justify-center items-center cursor-pointer p-[12px]">
+        <div
+          :class="{ activeListItem: currentItem == index }"
+          class="h-[88px] flex flex-col justify-center items-center cursor-pointer p-[12px]"
+        >
           <svg
             :data-src="item.icon"
             class="svg-class shrink-1"
@@ -63,6 +39,12 @@ const activeMenu = (index) => {
             height="24px"
           />
           <h1 class="text-[14px] font-medium font-500 mt-[4px] text-[#4F5662]">{{ item.title }}</h1>
+        </div>
+        <div
+          v-if="currentItem === index && item.children"
+          class="w-[260px] bg-[#F8F9FC] rounded-[16px] h-[100%] absolute top-0 left-[120px]"
+        >
+          <pre>{{ item.children }}</pre>
         </div>
       </div>
     </div>
@@ -90,7 +72,7 @@ const activeMenu = (index) => {
 }
 
 .activeListItem {
-  @apply  bg-white shadow-menu rounded-lg font-medium
+  @apply bg-white shadow-menu rounded-lg font-medium
 }
 
 .activeListItem .svg-class path {
@@ -98,12 +80,13 @@ const activeMenu = (index) => {
 }
 
 .activeListItem h1 {
-  color: #000D24!important;
+  color: #000D24 !important;
 }
 
 .svg-class path {
   stroke: #8F9194;
 }
+
 .svg-class h1 {
   color: #4F5662;
 }
