@@ -6,6 +6,9 @@ export default {
   ],
   theme: {
     extend: {
+      boxShadow: {
+        'menu': '0px 1.5px 4px -1px #0A090B12',
+      },
       colors: {
         "blue-50": "var(--blue-50)",
         "blue-100": "var(--blue-100)",

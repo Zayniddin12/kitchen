@@ -3,3 +3,15 @@
 @import "@/assets/styles/settings";
 @import "@/assets/styles/tailwind";
 @import "@/assets/styles/components/ui/app-form";
+
+.custom-input {
+  outline: none;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1.5px solid #eeeeef;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 20px;
+  text-align: left;
+  color: #a8aaae;
+}
