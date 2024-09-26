@@ -16,7 +16,7 @@ const props = withDefaults(defineProps<AppSelectPropsType>(), {
 const slots = useSlots();
 
 const appSelectClasses = computed<string[]>(() => {
-  const classes = ["app-input app-form-item"];
+  const classes = ["app-select app-form-item"];
 
   if (props.size) {
     classes.push(`app-select--${props.size} app-form-item--${props.size}`);
@@ -67,6 +67,7 @@ const appSelectClasses = computed<string[]>(() => {
       :persistent
       :automatic-dropdown
       :placement
+      class="app-select__select"
     >
       <ElOption
         v-for="item in items"
@@ -77,3 +78,35 @@ const appSelectClasses = computed<string[]>(() => {
     </ElSelect>
   </ElFormItem>
 </template>
+
+<style lang="scss">
+.app-select {
+  --app-select-height: var(--el-component-size);
+
+  &--small {
+    --app-select-height: var(--el-component-size-small);
+  }
+
+  &--large {
+    --app-select-height: var(--el-component-size-large);
+  }
+
+  &__select {
+    .el-select {
+      &__wrapper {
+        min-height: var(--app-select-height);
+      }
+
+      &__caret {
+        color: #4f4d55;
+      }
+
+      &-dropdown__item {
+        height: var(--app-select-height);
+        display: flex;
+        align-items: center;
+      }
+    }
+  }
+}
+</style>

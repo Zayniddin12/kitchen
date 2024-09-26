@@ -80,15 +80,3 @@ const inputMask = computed(() => {
     />
   </ElFormItem>
 </template>
-
-<style lang="scss">
-.app-input {
-  .el-input {
-    &__wrapper {
-      &.is-focus {
-        box-shadow: var(--app-form-item-box-shadow);
-      }
-    }
-  }
-}
-</style>
