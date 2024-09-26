@@ -33,7 +33,7 @@ const closeChildSidebar = () => {
     />
 
     <div
-      class="main-layout min-h-screen p-6 pr-7 pt-28 dark:bg-darkLayoutMain bg-white ml-[128px]"
+      class="main-layout min-h-screen p-6 pr-7 pt-28 dark:bg-darkLayoutMain bg-white ml-[128px] transition-all"
       :class="childSidebar ? 'ml-[396px]' : ''"
     >
       <Breadcrumb />
@@ -42,7 +42,7 @@ const closeChildSidebar = () => {
 
     <div
       :class="childSidebar ? 'top-navbar-margin' : ''"
-      class="top-navbar bg-lightLayoutStorm dark:bg-darkLayoutStorm text-white"
+      class="top-navbar bg-lightLayoutStorm dark:bg-darkLayoutStorm text-white transition-all"
     >
       <NavBar />
     </div>
@@ -53,7 +53,6 @@ const closeChildSidebar = () => {
 .top-navbar {
   position: fixed;
   z-index: 99;
-  transition: all .2s ease-in-out;
   border-bottom: 1px solid #EEEEEF;
   transform: none;
   top: 16px;

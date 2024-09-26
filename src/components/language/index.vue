@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { ref, computed } from "vue";
 import { ArrowDown } from "@element-plus/icons-vue";
-import i18n from "@/localization";
+import i18n from "@/localization/index.js";
 
 interface Language {
   title: string;

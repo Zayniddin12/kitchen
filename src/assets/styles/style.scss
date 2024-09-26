@@ -13,3 +13,59 @@
   color: #4F5662;
   font-size: 18px;
 }
+
+.el-pagination {
+  button {
+    background-color: #F8F9FC !important;
+    border-radius: 8px;
+  }
+
+  ul {
+    .is-active {
+      background-color: #2E90FA !important;
+      border-radius: 8px;
+    }
+
+    li {
+      background-color: #F8F9FC !important;
+    }
+  }
+}
+
+.action-btn {
+  background-color: #F8F9FC;
+  border-radius: 8px;
+  padding: 8px;
+}
+
+.custom-element-table {
+  thead {
+    tr {
+      th {
+        color: #4F5662;
+        font-size: 14px;
+        font-weight: 600;
+        line-height: 20px;
+        text-align: left;
+        background-color: #F8F9FC !important;
+        padding: 14px 0!important;
+      }
+
+      :nth-child(1) {
+        border-top-left-radius: 8px;
+      }
+
+      :last-child{
+        border-top-right-radius: 8px;
+      }
+    }
+  }
+
+  tbody {
+    tr {
+      td {
+        padding: 14px 0!important;
+      }
+    }
+  }
+}
