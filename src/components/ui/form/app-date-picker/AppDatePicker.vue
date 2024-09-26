@@ -1,15 +1,19 @@
 <script setup lang="ts">
-import { computed, useSlots } from "vue";
+import { computed, h, shallowRef, useSlots } from "vue";
 import {
   AppDatePickerPropsType,
   AppDatePickerValueType,
 } from "@/components/ui/form/app-date-picker/app-date-picker.type";
+import CalendarIcon from "@/assets/images/icons/calendar.svg";
+import { getRules, setRules } from "@/components/ui/form/validate";
 
 const model = defineModel<AppDatePickerValueType>();
 
 const props = withDefaults(defineProps<AppDatePickerPropsType>(), {
   labelPosition: "top",
   placeholder: "Select",
+  format: "YYYY/MM/DD",
+  type: "date",
 });
 
 const slots = useSlots();
@@ -23,6 +27,15 @@ const appDatePickerClasses = computed<string[]>(() => {
 
   return classes;
 });
+
+const prefixIcon = shallowRef({
+  render() {
+    return h("svg", {
+      "data-src": CalendarIcon,
+      class: "app-date-picker__icon",
+    });
+  },
+});
 </script>
 <template>
   <ElFormItem
@@ -30,7 +43,9 @@ const appDatePickerClasses = computed<string[]>(() => {
     :label-position
     :required
     :size
+    :rules="setRules(getRules(props))"
     :prop
+    :error
     :class="appDatePickerClasses"
   >
     <template
@@ -60,14 +75,13 @@ const appDatePickerClasses = computed<string[]>(() => {
       :default-value
       :value-format
       :unlink-panels
-      :prefix-icon
+      :prefix-icon="prefixIcon"
       :disabled-date
       :cell-class-name
       :teleported
       :empty-values
-      :value-on-clear
       class="app-date-picker__date-picker"
-    ></ElDatePicker>
+    />
   </ElFormItem>
 </template>
 
@@ -75,6 +89,12 @@ const appDatePickerClasses = computed<string[]>(() => {
 .app-date-picker {
   &__date-picker {
     --el-date-editor-width: 100%;
+
+    .el-input {
+      &__wrapper {
+        flex-direction: row-reverse;
+      }
+    }
   }
 }
 </style>

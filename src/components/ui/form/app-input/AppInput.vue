@@ -5,6 +5,7 @@ import {
 } from "@/components/ui/form/app-input/app-input.type";
 import { computed, useSlots } from "vue";
 import { vMaska } from "maska";
+import { getRules, setRules } from "@/components/ui/form/validate";
 
 const [model, modifiers] = defineModel<AppInputValueType>();
 
@@ -44,6 +45,9 @@ const inputMask = computed(() => {
     :required
     :class="appInputClasses"
     :size
+    :prop
+    :error
+    :rules="setRules(getRules(props))"
   >
     <template
       v-if="slots.label"

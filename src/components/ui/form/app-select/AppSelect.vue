@@ -4,8 +4,11 @@ import {
   AppSelectValueType,
 } from "@/components/ui/form/app-select/app-select.type";
 import { computed, readonly, useSlots } from "vue";
+import { getRules, setRules } from "@/components/ui/form/validate";
 
-const model = defineModel<AppSelectValueType>();
+const model = defineModel<AppSelectValueType>({
+  default: "",
+});
 
 const props = withDefaults(defineProps<AppSelectPropsType>(), {
   labelPosition: "top",
@@ -34,6 +37,8 @@ const appSelectClasses = computed<string[]>(() => {
     :class="appSelectClasses"
     :size
     :prop
+    :error
+    :rules="setRules(getRules(props))"
   >
     <template
       v-if="slots.label"
@@ -74,7 +79,13 @@ const appSelectClasses = computed<string[]>(() => {
         :key="item[itemValue]"
         :label="item[itemLabel]"
         :value="item[itemValue]"
-      />
+      >
+        <slot
+          v-if="slots.option"
+          name="option"
+          v-bind="item"
+        />
+      </ElOption>
     </ElSelect>
   </ElFormItem>
 </template>

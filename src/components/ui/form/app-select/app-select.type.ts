@@ -1,5 +1,5 @@
 import { Placement } from "element-plus";
-import { ElFormItemType } from "@/components/ui/form/form.types";
+import { ElFormItemType } from "@/components/ui/form/form.type";
 
 export type AppSelectValueType = string | number | boolean | Record<string, any> | any[];
 

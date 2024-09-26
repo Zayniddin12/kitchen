@@ -1,4 +1,4 @@
-import { ElFormItemType } from "@/components/ui/form/form.types";
+import { ElFormItemType } from "@/components/ui/form/form.type";
 import { DatePickType } from "element-plus";
 
 export type AppDatePickerValueType = number | string | Date | [Date, Date] | [string, string];
@@ -22,5 +22,4 @@ export interface AppDatePickerPropsType extends ElFormItemType {
     cellClassName?: (date: Date) => string,
     teleported?: boolean,
     emptyValues?: any[],
-    valueOnClear?: string | number | boolean | Function
 }

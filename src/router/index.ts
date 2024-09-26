@@ -7,7 +7,6 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: "/",
     redirect: () => {
-
       return { name: "home" };
     },
   },
@@ -15,16 +14,20 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: "/login",
     name: "login",
-    component: import("../views/Login.vue"),
+    component: import("@/views/Login.vue"),
     meta: { layout: "LoginLayout" },
 
+  },
+  {
+    path: "/test",
+    component: () => import("@/views/Test.vue"),
+    meta: { layout: "MainLayout" }
   },
   {
     path: "/:pathMatch(.*)*",
     component: import("../components/errors/404.vue"),
     meta: { layout: "ErrorLayout" },
   },
-
 ];
 
 

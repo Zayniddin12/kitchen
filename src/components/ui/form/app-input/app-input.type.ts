@@ -1,4 +1,4 @@
-import { ElFormItemType } from "@/components/ui/form/form.types";
+import { ElFormItemType } from "@/components/ui/form/form.type";
 import { CSSProperties, InputTypeHTMLAttribute } from "vue";
 
 export type AppInputValueType = string | number | null;
