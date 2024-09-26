@@ -2,27 +2,50 @@
 import NavBar from "@/layout/Bars/NavBar.vue";
 import SideBar from "@/layout/Bars/SideBar.vue";
 import Breadcrumb from "@/components/ui/Breadcrumb.vue";
+import { onMounted, ref, watch } from "vue";
+import { useRoute } from "vue-router";
 
+const route = useRoute();
+
+const storedSidebar = JSON.parse(localStorage.getItem("child-sidebar")) || false;
+const childSidebar = ref(storedSidebar);
+
+watch(() => route.path, (newPath) => {
+  if (newPath === "/home") {
+    childSidebar.value = false;
+  }
+});
+
+onMounted(() => {
+  closeChildSidebar()
+});
+
+const closeChildSidebar = () => {
+  childSidebar.value = false;
+}
 </script>
 
 <template>
   <div>
-    <SideBar />
+    <SideBar
+      v-model:childSidebar="childSidebar"
+      @closeChildSidebar2="closeChildSidebar"
+    />
 
     <div
       class="main-layout min-h-screen p-6 pr-7 pt-28 dark:bg-darkLayoutMain bg-white ml-[128px]"
+      :class="childSidebar ? 'ml-[396px]' : ''"
     >
       <Breadcrumb />
       <slot />
     </div>
-<!--    :class="getChildSidebar ? 'top-navbar-margin' : ''"-->
+
     <div
+      :class="childSidebar ? 'top-navbar-margin' : ''"
       class="top-navbar bg-lightLayoutStorm dark:bg-darkLayoutStorm text-white"
     >
       <NavBar />
     </div>
-
-    <!--    <ScrollToTop />-->
   </div>
 </template>
 
@@ -40,7 +63,7 @@ import Breadcrumb from "@/components/ui/Breadcrumb.vue";
   right: 1.75rem;
 }
 
-//.top-navbar-margin {
-//  width: calc(100% - 451px);
-//}
+.top-navbar-margin {
+  width: calc(100% - 451px);
+}
 </style>
