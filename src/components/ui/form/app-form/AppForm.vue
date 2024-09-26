@@ -17,13 +17,14 @@ const appForm = useTemplateRef("app-form");
 
 const validation = reactive<ValidationType>({
   validate: (): Promise<boolean> => {
-    return new Promise(async (resolve, reject) => {
-      if (!appForm.value) return reject(false);
+    return new Promise(async resolve => {
+      if (!appForm.value) return resolve(false);
 
       return await appForm.value.validate(valid => {
-        if (valid) return resolve(true);
-
-        return reject(false);
+        if (valid) resolve(true);
+        else {
+          return resolve(false);
+        }
       });
     });
   },

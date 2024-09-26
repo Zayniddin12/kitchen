@@ -29,8 +29,10 @@ const setValidation = (value: ValidationType) => {
   v$.value = value;
 };
 
-const submitss = async () => {
-  if (!v$.value || (v$.value && !(await v$.value.validate()))) return;
+const submit = async () => {
+  if (!v$.value) return;
+
+  if (!(await v$.value.validate())) return;
 
   console.log("Succeess");
 };
@@ -56,6 +58,7 @@ const submitss = async () => {
       item-value="id"
       label="Select"
       required
+      multiple
       prop="jobId"
     />
     <AppDatePicker
@@ -65,5 +68,5 @@ const submitss = async () => {
       required
     />
   </AppForm>
-  <ElButton @click="submitss"> Summit </ElButton>
+  <ElButton @click="submit"> Summit </ElButton>
 </template>
