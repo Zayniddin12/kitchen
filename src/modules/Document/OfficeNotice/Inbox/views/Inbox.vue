@@ -157,7 +157,7 @@ const toggleCollapse = () => {
     </el-table>
 
     <div class="mt-[24px] flex items-center justify-between">
-      <div class="text-[#8F9194] text-[14px]">
+      <div class="text-cool-gray text-[14px]">
         Показано 1–12 из 100 результатов
       </div>
 
