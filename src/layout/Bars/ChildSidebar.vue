@@ -8,7 +8,7 @@ const emit = defineEmits(["closeSidebar"]);
 defineProps({
   children: {
     type: Array as () => PropType<string>[],
-    required: true
+    required: true,
   },
   header: {
     type: String,
@@ -30,7 +30,7 @@ watch(() => route?.path, function() {
 const activeChildMenu = (item: any) => {
   currentItem.value = item.route;
   router.push(item.route);
-  emit('closeSidebar')
+  emit("closeSidebar");
 };
 </script>
 

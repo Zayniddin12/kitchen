@@ -8,7 +8,7 @@ const breadcrumbList = ref([]);
 const router = useRouter();
 
 
-const changeRoute = (item) => {
+const changeRoute = (item: any) => {
   if (item.redirectWithParams) {
     router.push(item.redirectWithParams(route));
   } else if (item.to) {
@@ -17,9 +17,7 @@ const changeRoute = (item) => {
 };
 
 
-watch(
-  () => route.path,
-  () => {
+watch(() => route.path, () => {
     if (Array.isArray(route.meta.breadcrumb)) {
       breadcrumbList.value = route.meta.breadcrumb;
     }

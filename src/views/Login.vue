@@ -9,7 +9,7 @@ const router = useRouter()
 
 interface UserData {
   login: string;
-  password: number;
+  password: string;
 }
 
 const userData = ref<UserData>({
@@ -90,3 +90,16 @@ const onSubmit = () => {
     </footer>
   </div>
 </template>
+<style scoped>
+.custom-input {
+  outline: none;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1.5px solid #EEEEEF;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 20px;
+  text-align: left;
+  color: #A8AAAE;
+}
+</style>

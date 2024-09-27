@@ -7,7 +7,7 @@ import { useRoute } from "vue-router";
 
 const route = useRoute();
 
-const storedSidebar = JSON.parse(localStorage.getItem("child-sidebar")) || false;
+const storedSidebar: boolean = JSON.parse(localStorage.getItem("child-sidebar") as string) || false;
 const childSidebar = ref<boolean>(storedSidebar);
 
 watch(() => route.path, (newPath) => {
