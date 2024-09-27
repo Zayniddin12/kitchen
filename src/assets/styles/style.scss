@@ -14,10 +14,22 @@
   font-size: 18px;
 }
 
+.action-btn {
+  background-color: #f8f9fc;
+  border-radius: 8px;
+  padding: 8px;
+}
+
 .el-pagination {
   button {
     background-color: var(--white-blue) !important;
     border-radius: 8px;
+    height: 40px;
+    width: 40px;
+
+    .el-icon {
+      display: inherit !important;
+    }
   }
 
   ul {
@@ -28,43 +40,51 @@
 
     li {
       background-color: var(--white-blue) !important;
+      height: 40px;
+      width: 40px;
     }
   }
-}
-
-.action-btn {
-  background-color: var(--white-blue);
-  border-radius: 8px;
-  padding: 8px;
 }
 
 .custom-element-table {
-  thead {
-    tr {
-      th {
-        color: #4f5662;
-        font-size: 14px;
-        font-weight: 600;
-        line-height: 20px;
-        text-align: left;
-        background-color: var(--white-blue) !important;
-        padding: 14px 0 !important;
-      }
+  border-radius: 15px !important;
+  border: 1px solid #e2e6f3 !important;
 
-      :nth-child(1) {
-        border-top-left-radius: 8px;
-      }
+  thead th {
+    color: #4f5662;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 20px;
+    text-align: left;
+    background-color: var(--white-blue) !important;
+    padding: 14px 16px !important;
+  }
 
-      :last-child {
-        border-top-right-radius: 8px;
-      }
-    }
+  thead tr:first-child th:first-child {
+    border-top-left-radius: 10px;
+  }
+
+  thead tr:first-child th:last-child {
+    border-top-right-radius: 10px;
+  }
+
+  tbody td {
+    padding: 14px 16px !important;
+  }
+
+  tbody tr:last-child td:first-child {
+    border-bottom-left-radius: 10px !important;
+  }
+
+  tbody tr:last-child td:last-child {
+    border-bottom-right-radius: 10px;
   }
 
   tbody {
-    tr {
+    tr:hover {
       td {
         padding: 14px 0 !important;
+        font-weight: bolder;
       }
     }
   }

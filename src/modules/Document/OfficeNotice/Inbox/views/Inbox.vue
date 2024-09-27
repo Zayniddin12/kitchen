@@ -2,10 +2,22 @@
 import { ref } from "vue";
 import white from "@/assets/images/filter2.svg";
 import filter from "@/assets/images/filter.svg";
+import CollapseFilter from "@/components/collapseFilter/index.vue";
+
+interface TableData {
+  id: number;
+  num: string;
+  date: string;
+  doc: string;
+  theme: string;
+  send: string;
+  receive: string;
+}
 
 const isOpenFilter = ref<boolean>(false);
+const activeNames = ref<string[]>([]);
 
-const tableData = [
+const tableData = ref<TableData[]>([
   {
     id: 1,
     num: "1",
@@ -42,10 +54,15 @@ const tableData = [
     send: "Учкудук",
     receive: "Фонд",
   },
-];
+]);
 
-const actinButton = (value: any) => {
+const actionButton = (value: TableData): void => {
   console.log(value, "value");
+};
+
+const toggleCollapse = () => {
+  isOpenFilter.value = !isOpenFilter.value;
+  activeNames.value = isOpenFilter.value ? ["1"] : [];
 };
 </script>
 
@@ -57,7 +74,7 @@ const actinButton = (value: any) => {
       <button
         class="custom-filter-btn font-medium"
         :class="isOpenFilter ? '!bg-[#2E90FA] !text-white' : ''"
-        @click="isOpenFilter = !isOpenFilter"
+        @click="toggleCollapse"
       >
         <img
           :src="isOpenFilter ? white : filter"
@@ -68,9 +85,24 @@ const actinButton = (value: any) => {
       </button>
     </div>
 
+    <CollapseFilter v-model="activeNames">
+      <template #body>
+        <el-input
+          v-model="input"
+          style="width: 240px"
+          placeholder="Номер документа"
+        />
+        <el-input
+          v-model="input"
+          style="width: 240px"
+          placeholder="Доставка картофеля"
+        />
+      </template>
+    </CollapseFilter>
+
     <el-table
       :data="tableData"
-      class="mt-[24px] custom-element-table"
+      class="custom-element-table"
     >
       <el-table-column
         prop="num"
@@ -101,10 +133,9 @@ const actinButton = (value: any) => {
         label="Действие"
       >
         <template #default="scope">
-          <!--          {{scope.row.date}}-->
           <button
             class="action-btn"
-            @click="actinButton(scope.row)"
+            @click="actionButton(scope.row)"
           >
             <img
               src="@/assets/images/eye.svg"
@@ -114,7 +145,7 @@ const actinButton = (value: any) => {
 
           <button
             class="action-btn ml-[8px]"
-            @click="actinButton(scope.row)"
+            @click="actionButton(scope.row)"
           >
             <img
               src="@/assets/images/download.svg"
