@@ -71,9 +71,9 @@ const onSubmit = () => {
 
         <!-- Divider with text -->
         <div class="flex items-center justify-between text-[#7F7D83] text-sm mt-4">
-          <img src="@/assets/images/line.svg" alt="line">
+          <img src="@/assets/images/line.svg" class="ml-4" alt="line">
           <span class="px-2">или</span>
-          <img src="@/assets/images/line.svg" alt="line">
+          <img src="@/assets/images/line.svg" class="mr-4" alt="line">
         </div>
 
         <!-- OneID Button -->

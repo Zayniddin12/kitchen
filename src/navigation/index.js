@@ -2,58 +2,229 @@ export const menuItems = [
   {
     title: "Главная",
     route: "/home",
-    icon: 'smart-home.svg',
+    icon: "smart-home",
   },
   {
     title: "Документы",
-    route: "/",
-    icon: "document.svg",
+    icon: "document",
     children: [
       {
-        title: "Документы",
-        route: "/",
-        icon: "document.svg",
+        title: "Служебные записки",
+        icon: "record",
+        children: [
+          {
+            title: "Входящие",
+            route: "/inbox",
+          },
+          {
+            title: "Исходящие",
+            route: '/outgoing'
+          },
+          {
+            title: "Черновики",
+            route: '/drafts'
+          },
+        ],
       },
       {
         title: "Запросы",
-        route: "/",
-        icon: "document.svg",
+        icon: "record2",
+        children: [
+          {
+            title: "1",
+          },
+        ],
       },
       {
         title: "Накладные",
-        route: "/",
-        icon: "document.svg",
+        icon: "invoice",
+        children: [
+          {
+            title: "2",
+          },
+        ],
       },
       {
         title: "Акты",
-        route: "/",
-        icon: "document.svg",
+        icon: "document",
+        route: "/act",
       },
       {
         title: "Контракты",
-        route: "/",
-        icon: "document.svg",
+        icon: "contract",
+        route: "/contract",
       },
-    ]
+    ],
   },
   {
     title: "Мониторинг",
-    route: "/",
-    icon: "monitoring.svg",
+    icon: "monitoring",
+    children: [
+      {
+        title: "Остатка товаров",
+        icon: "box",
+        route: "/",
+      },
+      {
+        title: "Отчет о кухне",
+        icon: "kitchen",
+        route: "/",
+      },
+    ],
   },
   {
     title: "Базы складов",
-    route: "/",
-    icon: "building-warehouse.svg",
+    icon: "building-warehouse",
+    children: [
+      {
+        title: "Зарафшан",
+        icon: 'building-warehouse',
+        children: [
+          {
+            title: "Мясной склад",
+          },
+          {
+            title: "Овощной склад",
+          },
+          {
+            title: "Рисовый склад",
+          },
+        ],
+      },
+      {
+        title: "Навои",
+        icon: 'building-warehouse',
+        children: [
+          {
+            title: "1",
+          },
+        ],
+      },
+      {
+        title: "Учкудук",
+        icon: 'building-warehouse',
+        children: [
+          {
+            title: "1",
+          },
+        ],
+      },
+      {
+        title: "Нуробод",
+        icon: 'building-warehouse',
+        children: [
+          {
+            title: "1",
+          },
+        ],
+      },
+      {
+        title: "Зафаробод",
+        icon: 'building-warehouse',
+        children: [
+          {
+            title: "1",
+          },
+        ],
+      },
+
+    ],
   },
   {
     title: "Склад кухни",
-    route: "/",
-    icon: "building-warehouse.svg",
+    icon: "building-warehouse",
+    children: [
+      {
+        title: "Зарафшан",
+        icon: "building-warehouse",
+        route: 'zarafshon'
+      },
+      {
+        title: "Навои",
+        icon: "building-warehouse",
+        route: 'navoi'
+      },
+      {
+        title: "Учкудук",
+        icon: "building-warehouse",
+        route: 'uchquduq'
+      },
+      {
+        title: "Нуробод",
+        icon: "building-warehouse",
+        route: 'nurobod'
+      },
+      {
+        title: "Зафаробод",
+        icon: "building-warehouse",
+        route: 'zafarobod'
+      },
+    ],
+  },
+  {
+    title: "Кухня",
+    icon: "kitchen",
+    children: [
+      {
+        title: "Меню",
+        icon: "building-warehouse",
+        children: [
+          {
+            title: "Зарафшан",
+          },
+          {
+            title: "Навои",
+          },
+          {
+            title: "Учкудук",
+          },
+          {
+            title: "Нуробод",
+          },
+          {
+            title: "Зафаробод",
+          },
+        ],
+      },
+      {
+        title: "Продажи",
+        icon: "building-warehouse",
+        children: [
+          {
+            title: "Зарафшан",
+          },
+          {
+            title: "Навои",
+          },
+          {
+            title: "Учкудук",
+          },
+          {
+            title: "Нуробод",
+          },
+          {
+            title: "Зафаробод",
+          },
+        ],
+      },
+    ],
   },
   {
     title: "Настройки",
-    route: "/",
-    icon: "settings.svg",
+    icon: "settings",
+    children: [
+      {
+        title: 'Справочники',
+        icon: "record",
+      },
+      {
+        title: 'Связь справочников',
+        icon: "derictory",
+      },
+      {
+        title: 'Кадры',
+        icon: "users",
+      }
+    ]
   },
-]
+];

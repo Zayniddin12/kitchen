@@ -1,8 +1,10 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
 import home from "@/modules/Home/router";
+import Inbox from '@/modules/Document/OfficeNotice/Inbox/router'
 
 const routes: Array<RouteRecordRaw> = [
   ...home,
+  ...Inbox,
 
   {
     path: "/",
@@ -33,10 +35,12 @@ const routes: Array<RouteRecordRaw> = [
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
-  scrollBehavior() {
-    return { x: 0, y: 0 };
-  },
   routes,
 });
+
+router.afterEach((to: any) => {
+  const DEFAULT_TITLE = 'KITCHEN'
+  document.title = to.meta.title || DEFAULT_TITLE;
+})
 
 export default router;

@@ -35,7 +35,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="mb-5 md:mt-0 -mt-5">
+  <div class="mb-[24px] md:mt-0 -mt-5">
     <div class="flex flex-wrap">
 
       <button @click="$router.push('/')" class="cursor-pointer">

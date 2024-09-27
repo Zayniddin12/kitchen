@@ -4,14 +4,68 @@
 @import "@/assets/styles/tailwind";
 @import "@/assets/styles/components/ui/app-form";
 
-.custom-input {
-  outline: none;
-  padding: 10px 12px;
+.custom-filter-btn {
+  background-color: #f8f9fc;
+  display: flex;
+  align-items: center;
+  padding: 10px 20px;
+  border-radius: 10px;
+  color: #4f5662;
+  font-size: 18px;
+}
+
+.el-pagination {
+  button {
+    background-color: #f8f9fc !important;
+    border-radius: 8px;
+  }
+
+  ul {
+    .is-active {
+      background-color: #2e90fa !important;
+      border-radius: 8px;
+    }
+
+    li {
+      background-color: #f8f9fc !important;
+    }
+  }
+}
+
+.action-btn {
+  background-color: #f8f9fc;
   border-radius: 8px;
-  border: 1.5px solid #eeeeef;
-  font-size: 14px;
-  font-weight: 400;
-  line-height: 20px;
-  text-align: left;
-  color: #a8aaae;
+  padding: 8px;
+}
+
+.custom-element-table {
+  thead {
+    tr {
+      th {
+        color: #4f5662;
+        font-size: 14px;
+        font-weight: 600;
+        line-height: 20px;
+        text-align: left;
+        background-color: #f8f9fc !important;
+        padding: 14px 0 !important;
+      }
+
+      :nth-child(1) {
+        border-top-left-radius: 8px;
+      }
+
+      :last-child {
+        border-top-right-radius: 8px;
+      }
+    }
+  }
+
+  tbody {
+    tr {
+      td {
+        padding: 14px 0 !important;
+      }
+    }
+  }
 }
