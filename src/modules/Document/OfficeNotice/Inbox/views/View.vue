@@ -59,7 +59,6 @@
           <h1 class="text-[#A8AAAE] text-[14px] mr-[100px]">Эргашева Л.</h1>
         </div>
       </div>
-
     </div>
 
     <button class="custom-white-btn ml-[24px] w-[260px]">
@@ -68,7 +67,3 @@
     </button>
   </div>
 </template>
-
-<style scoped lang="scss">
-
-</style>
