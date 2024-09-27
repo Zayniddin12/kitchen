@@ -65,7 +65,7 @@ const closeChildSidebar = () => {
               width="24px"
               height="24px"
             />
-            <h1 class="text-[14px] font-medium font-500 mt-[4px] text-[#4F5662]">{{ item.title }}</h1>
+            <h1 class="text-[13px] font-medium font-500 mt-[4px] text-[#4F5662]">{{ item.title }}</h1>
           </div>
 
           <!-----------------------------------child sidebar----------------------------------->

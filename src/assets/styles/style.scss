@@ -28,6 +28,18 @@
   background-color: #2E90FA;
 }
 
+.custom-white-btn {
+  padding: 10px 20px;
+  color: #4F5662;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 500;
+  background-color: #F8F9FC;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .action-btn {
   background-color: #F8F9FC;
   border-radius: 8px;
@@ -92,13 +104,5 @@
 
   tbody tr:last-child td:last-child {
     border-bottom-right-radius: 10px;
-  }
-
-  tbody {
-    tr:hover {
-      td {
-        font-weight: bolder;
-      }
-    }
   }
 }
