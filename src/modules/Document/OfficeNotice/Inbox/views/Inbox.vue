@@ -7,6 +7,7 @@ const isOpenFilter = ref<boolean>(false);
 
 const tableData = [
   {
+    id: 1,
     num: "1",
     date: "23.08.2024",
     doc: "852369",
@@ -15,6 +16,7 @@ const tableData = [
     receive: "Фонд",
   },
   {
+    id: 2,
     num: "2",
     date: "22.08.2024",
     doc: "556261",
@@ -23,6 +25,7 @@ const tableData = [
     receive: "Фонд",
   },
   {
+    id: 3,
     num: "3",
     date: "21.08.2024",
     doc: "584534",
@@ -31,6 +34,7 @@ const tableData = [
     receive: "Фонд",
   },
   {
+    id: 4,
     num: "4",
     date: "22.08.2024",
     doc: "556261",
@@ -39,6 +43,10 @@ const tableData = [
     receive: "Фонд",
   },
 ];
+
+const actinButton = (value: any) => {
+  console.log(value, 'value');
+}
 </script>
 
 <template>
@@ -66,11 +74,11 @@ const tableData = [
       <el-table-column prop="action" label="Действие">
         <template #default="scope">
           <!--          {{scope.row.date}}-->
-          <button class="action-btn">
+          <button class="action-btn" @click="actinButton(scope.row)">
             <img src="@/assets/images/eye.svg" alt="eye">
           </button>
 
-          <button class="action-btn ml-[8px]">
+          <button class="action-btn ml-[8px]" @click="actinButton(scope.row)">
             <img src="@/assets/images/download.svg" alt="download">
           </button>
         </template>
