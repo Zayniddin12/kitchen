@@ -1,8 +1,12 @@
 <script setup lang="ts">
 import { ref } from "vue";
+import CollapseFilter from "@/components/collapseFilter/index.vue";
+import appInput from "@/components/ui/form/app-input/AppInput.vue";
+import appSelect from "@/components/ui/form/app-select/AppSelect.vue";
 import white from "@/assets/images/filter2.svg";
 import filter from "@/assets/images/filter.svg";
-import CollapseFilter from "@/components/collapseFilter/index.vue";
+import AppDatePicker from "@/components/ui/form/app-date-picker/AppDatePicker.vue";
+import { useRouter } from "vue-router";
 
 interface TableData {
   id: number;
@@ -14,6 +18,7 @@ interface TableData {
   receive: string;
 }
 
+const router = useRouter()
 const isOpenFilter = ref<boolean>(false);
 const activeNames = ref<string[]>([]);
 
@@ -71,88 +76,53 @@ const toggleCollapse = () => {
     <div class="flex items-center justify-between">
       <h1 class="m-0 font-semibold text-[32px]">Входящие</h1>
 
-      <button
-        class="custom-filter-btn font-medium"
-        :class="isOpenFilter ? '!bg-[#2E90FA] !text-white' : ''"
-        @click="toggleCollapse"
-      >
-        <img
-          :src="isOpenFilter ? white : filter"
-          alt="filter"
-          class="mr-[12px]"
-        />
+
+      <button class="custom-filter-btn font-medium" :class="isOpenFilter ? '!bg-blue !text-white' : ''"
+              @click="toggleCollapse">
+        <img :src="isOpenFilter ? white : filter" alt="filter" class="mr-[12px]" />
         Фильтр
       </button>
+
     </div>
 
     <CollapseFilter v-model="activeNames">
       <template #body>
-        <el-input
-          v-model="input"
-          style="width: 240px"
-          placeholder="Номер документа"
-        />
-        <el-input
-          v-model="input"
-          style="width: 240px"
-          placeholder="Доставка картофеля"
-        />
+        <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          <app-date-picker placeholder="с этой даты" />
+          <app-date-picker placeholder="по эту дату" />
+
+          <appInput placeholder="Номер документа" />
+          <appInput placeholder="Доставка картофеля" />
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-2 gap-4">
+          <appSelect placeholder="Кому" />
+          <appSelect placeholder="Отправитель" />
+        </div>
+
+        <div class="flex items-center mt-[10px] justify-between">
+          <div class="text-[#8F9194] text-[14px]">Найдено: 56</div>
+          <div class="flex items-center">
+            <button class="custom-reset-btn">Сбросить</button>
+            <button class="custom-apply-btn ml-[16px]">Применить</button>
+          </div>
+        </div>
       </template>
     </CollapseFilter>
 
-    <el-table
-      :data="tableData"
-      class="custom-element-table"
-    >
-      <el-table-column
-        prop="num"
-        label="№"
-      />
-      <el-table-column
-        prop="date"
-        label="Дата"
-      />
-      <el-table-column
-        prop="doc"
-        label="№ документа"
-      />
-      <el-table-column
-        prop="theme"
-        label="Тема"
-      />
-      <el-table-column
-        prop="send"
-        label="Отправитель"
-      />
-      <el-table-column
-        prop="receive"
-        label="Получатель"
-      />
-      <el-table-column
-        prop="action"
-        label="Действие"
-      >
+    <el-table :data="tableData" class="custom-element-table">
+      <el-table-column prop="num" label="№" />
+      <el-table-column prop="date" label="Дата" />
+      <el-table-column prop="doc" label="№ документа" />
+      <el-table-column prop="theme" label="Тема" />
+      <el-table-column prop="send" label="Отправитель" />
+      <el-table-column prop="receive" label="Получатель" />
+      <el-table-column label="Действие">
         <template #default="scope">
-          <button
-            class="action-btn"
-            @click="actionButton(scope.row)"
-          >
-            <img
-              src="@/assets/images/eye.svg"
-              alt="eye"
-            />
+          <button class="action-btn" @click="router.push(`/inbox/${scope.row.id}`)">
+            <img src="@/assets/images/eye.svg" alt="eye" />
           </button>
-
-          <button
-            class="action-btn ml-[8px]"
-            @click="actionButton(scope.row)"
-          >
-            <img
-              src="@/assets/images/download.svg"
-              alt="download"
-            />
-          </button>
-        </template>
+      </template>
       </el-table-column>
     </el-table>
 

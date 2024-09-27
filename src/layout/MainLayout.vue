@@ -21,8 +21,8 @@ onMounted(() => {
 });
 
 const closeChildSidebar = () => {
-  childSidebar.value = false
-}
+  childSidebar.value = false;
+};
 </script>
 
 <template>
@@ -42,7 +42,7 @@ const closeChildSidebar = () => {
 
     <div
       :class="childSidebar ? 'top-navbar-margin' : ''"
-      class="top-navbar bg-lightLayoutStorm dark:bg-darkLayoutStorm text-white transition-all"
+      class="top-navbar bg-lightLayoutStorm dark:bg-darkLayoutStorm text-white transition-all bg-[#fff]"
     >
       <NavBar />
     </div>
