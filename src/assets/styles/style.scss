@@ -14,10 +14,48 @@
   font-size: 18px;
 }
 
+.custom-reset-btn {
+  padding: 10px 20px;
+  color: #EA5455;
+  border-radius: 10px;
+}
+
+.custom-apply-btn {
+  padding: 10px 20px;
+  color: white;
+  border-radius: 10px;
+  font-size: 14px;
+  background-color: #2E90FA;
+}
+
+.custom-white-btn {
+  padding: 10px 20px;
+  color: #4F5662;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 500;
+  background-color: #F8F9FC;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.action-btn {
+  background-color: #F8F9FC;
+  border-radius: 8px;
+  padding: 8px;
+}
+
 .el-pagination {
   button {
     background-color: #F8F9FC !important;
     border-radius: 8px;
+    height: 40px;
+    width: 40px;
+
+    .el-icon {
+      display: inherit !important;
+    }
   }
 
   ul {
@@ -28,44 +66,43 @@
 
     li {
       background-color: #F8F9FC !important;
+      height: 40px;
+      width: 40px;
     }
   }
-}
-
-.action-btn {
-  background-color: #F8F9FC;
-  border-radius: 8px;
-  padding: 8px;
 }
 
 .custom-element-table {
-  thead {
-    tr {
-      th {
-        color: #4F5662;
-        font-size: 14px;
-        font-weight: 600;
-        line-height: 20px;
-        text-align: left;
-        background-color: #F8F9FC !important;
-        padding: 14px 0!important;
-      }
+  border-radius: 15px !important;
+  border: 1px solid #e2e6f3 !important;
 
-      :nth-child(1) {
-        border-top-left-radius: 8px;
-      }
-
-      :last-child{
-        border-top-right-radius: 8px;
-      }
-    }
+  thead th {
+    color: #4F5662;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 20px;
+    text-align: left;
+    background-color: #F8F9FC !important;
+    padding: 14px 16px !important;
   }
 
-  tbody {
-    tr {
-      td {
-        padding: 14px 0!important;
-      }
-    }
+  thead tr:first-child th:first-child {
+    border-top-left-radius: 10px;
+  }
+
+  thead tr:first-child th:last-child {
+    border-top-right-radius: 10px;
+  }
+
+  tbody td {
+    padding: 14px 16px !important;
+  }
+
+  tbody tr:last-child td:first-child {
+    border-bottom-left-radius: 10px !important;
+  }
+
+  tbody tr:last-child td:last-child {
+    border-bottom-right-radius: 10px;
   }
 }

@@ -45,10 +45,7 @@ onMounted(() => {
         </span>
         <p
           class="dark:text-gray-300 text-dark"
-          :class="{
-            'text-[#4F5662] dark:text-primary cursor-pointer':
-              breadcrumb.isActionable,
-          }"
+          :class="{'text-[#4F5662] dark:text-primary cursor-pointer':breadcrumb.isActionable, 'cursor-pointer': breadcrumb.to}"
           @click="changeRoute(breadcrumb)"
         >
           {{ $t(breadcrumb.label) }}
