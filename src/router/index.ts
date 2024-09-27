@@ -23,7 +23,6 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: "/test",
     component: () => import("@/views/Test.vue"),
-    meta: { layout: "MainLayout" }
   },
   {
     path: "/:pathMatch(.*)*",

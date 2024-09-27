@@ -4,13 +4,14 @@ import LoginLayout from "@/layout/LoginLayout.vue";
 import ErrorLayout from "@/layout/ErrorLayout.vue";
 
 const layouts = {
-  MainLayout: MainLayout,
-  LoginLayout: LoginLayout,
-  ErrorLayout: ErrorLayout,
+  MainLayout,
+  LoginLayout,
+  ErrorLayout,
 };
 </script>
+
 <template>
-  <component :is="layouts[<string>$route.meta.layout]">
+  <component :is="layouts[$route.meta.layout || 'MainLayout']">
     <RouterView />
   </component>
 </template>
