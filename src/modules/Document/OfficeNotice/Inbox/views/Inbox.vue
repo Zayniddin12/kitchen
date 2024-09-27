@@ -72,7 +72,7 @@ const toggleCollapse = () => {
     <div class="flex items-center justify-between">
       <h1 class="m-0 font-semibold text-[32px]">Входящие</h1>
 
-      <button class="custom-filter-btn font-medium" :class="isOpenFilter ? '!bg-[#2E90FA] !text-white' : ''" @click="toggleCollapse">
+      <button class="custom-filter-btn font-medium" :class="isOpenFilter ? '!bg-blue !text-white' : ''" @click="toggleCollapse">
         <img :src="isOpenFilter ? white : filter" alt="filter" class="mr-[12px]" />
         Фильтр
       </button>
@@ -82,6 +82,11 @@ const toggleCollapse = () => {
       <template #body>
         <el-input v-model="input" style="width: 240px" placeholder="Номер документа" />
         <el-input v-model="input" style="width: 240px" placeholder="Доставка картофеля" />
+
+        <div class="flex items-center mt-[24px] justify-end">
+          <button class="custom-reset-btn">Сбросить</button>
+          <button class="custom-apply-btn ml-[16px]">Применить</button>
+        </div>
       </template>
     </CollapseFilter>
 
