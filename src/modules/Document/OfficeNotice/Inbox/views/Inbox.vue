@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { ref } from "vue";
+import CollapseFilter from "@/components/collapseFilter/index.vue";
+import appInput from "@/components/ui/form/app-input/AppInput.vue"
 import white from "@/assets/images/filter2.svg";
 import filter from "@/assets/images/filter.svg";
-import CollapseFilter from "@/components/collapseFilter/index.vue";
 
 interface TableData {
   id: number;
@@ -16,7 +17,6 @@ interface TableData {
 
 const isOpenFilter = ref<boolean>(false);
 const activeNames = ref<string[]>([]);
-
 
 const tableData = ref<TableData[]>([
   {
@@ -80,8 +80,8 @@ const toggleCollapse = () => {
 
     <CollapseFilter v-model="activeNames">
       <template #body>
-        <el-input v-model="input" style="width: 240px" placeholder="Номер документа" />
-        <el-input v-model="input" style="width: 240px" placeholder="Доставка картофеля" />
+        <appInput placeholder="Номер документа" />
+        <appInput placeholder="Доставка картофеля" />
 
         <div class="flex items-center mt-[24px] justify-end">
           <button class="custom-reset-btn">Сбросить</button>
@@ -91,7 +91,7 @@ const toggleCollapse = () => {
     </CollapseFilter>
 
     <el-table :data="tableData" class="custom-element-table">
-      <el-table-column prop="num" label="№" />
+      <el-table-column prop="num" label="№"/>
       <el-table-column prop="date" label="Дата" />
       <el-table-column prop="doc" label="№ документа" />
       <el-table-column prop="theme" label="Тема" />

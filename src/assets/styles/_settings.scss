@@ -7,4 +7,20 @@
 body {
   font-family: "Inter", sans-serif;
   font-weight: 400;
+  --el-component-size: 40px;
+  --el-component-size-large: 48px;
+  --el-component-size-small: 32px;
+  --el-border-radius-base: 8px;
+  --el-border-color: #eeeeef;
+  --el-color-danger: #e12121;
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
 }
