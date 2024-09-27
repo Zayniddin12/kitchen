@@ -237,7 +237,7 @@ const handleClass = (item) => {
 
     <div class="flex items-start gap-4">
       <div class="w-[55%]">
-        <div class="flex items-center gap-4">
+        <div class="flex items-center gap-4 mb-[40px]">
           <div class="w-[50%] bg-[#F8F9FC] rounded-[24px] p-[16px]">
 
             <div class="flex items-center mb-[38px]">
@@ -273,6 +273,19 @@ const handleClass = (item) => {
           </div>
 
         </div>
+
+        <div>
+          <div class="bg-[#F8F9FC] rounded-[24px] p-[16px]">
+            <div class="flex items-center justify-between">
+              <h2 class="text-[#000D24] !text-[24px] font-semibold">Приготовление</h2>
+
+              <div class="flex items-center">
+
+              </div>
+            </div>
+          </div>
+        </div>
+
       </div>
       <div class="w-[45%]">
         <div class="p-[24px] bg-[#F8F9FC] rounded-t-[24px]">
@@ -322,11 +335,16 @@ const handleClass = (item) => {
       </div>
     </div>
 
+
   </div>
 </template>
 
 <style scoped lang="scss">
 .chart {
+  height: 314px;
+}
+
+.chart-horizon {
   height: 314px;
 }
 </style>
