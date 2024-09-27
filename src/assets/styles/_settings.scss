@@ -13,6 +13,9 @@ body {
   --el-border-radius-base: 8px;
   --el-border-color: #eeeeef;
   --el-color-danger: #e12121;
+  --el-popover-border-radius: 8px;
+  --el-border-color-light: #e2e6f3;
+  --el-bg-color-overlay: var(--white-blue);
 }
 
 input[type="number"]::-webkit-inner-spin-button,

@@ -1,3 +1,4 @@
+import { component } from "vue";
 
 export default [
     {
@@ -8,18 +9,33 @@ export default [
             {
                 path: "remaining-goods",
                 name: "monitoring.remainingGoods",
-                component: () => import("@/modules/Monitoring/views/RemainingGoods.vue"),
-                meta: {
-                    breadcrumb: [
-                        {
-                            label: "Мониторинг",
+                redirect: { name: 'monitoring.remainingGoods.index' },
+                children: [
+                    {
+                        path: "",
+                        name: "monitoring.remainingGoods.index",
+                        component: () => import("@/modules/Monitoring/views/remaining-goods/RemainingGoods.vue"),
+                        meta: {
+                            breadcrumb: [
+                                {
+                                    label: "Мониторинг",
+                                },
+                                {
+                                    label: "Остатка товаров",
+                                    isActionable: true
+                                }
+                            ]
                         },
-                        {
-                            label: "Остатка товаров",
-                            isActionable: true
+                    },
+                    {
+                        path: "district/:id(\\d+)",
+                        name: "monitoring.remainingGoods.district",
+                        component: () => import("@/modules/Monitoring/views/remaining-goods/District.vue"),
+                        meta: {
+                            breadcrumb: []
                         }
-                    ]
-                }
+                    }
+                ]
             },
             {
                 path: "kitchen-report",

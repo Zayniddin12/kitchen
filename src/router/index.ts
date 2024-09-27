@@ -27,6 +27,7 @@ const routes: Array<RouteRecordRaw> = [
   },
   {
     path: "/:pathMatch(.*)*",
+    name: "notFound",
     component: import("@/components/errors/404.vue"),
     meta: { layout: "ErrorLayout" },
   },

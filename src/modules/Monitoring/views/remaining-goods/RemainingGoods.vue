@@ -20,22 +20,27 @@ const tableColumns = computed<TableColumnType[]>(() => {
     {
       label: "КП РУ Зарафшон",
       prop: "kp_zarafshon",
+      link: { name: "monitoring.remainingGoods.district", params: { id: 1 } },
     },
     {
       label: "КП РУ Навои",
       prop: "kp_navoi",
+      link: { name: "monitoring.remainingGoods.district", params: { id: 2 } },
     },
     {
       label: "КП РУ Нуробод",
       prop: "kp_nurobod",
+      link: { name: "monitoring.remainingGoods.district", params: { id: 3 } },
     },
     {
       label: "КП РУ Учкудук",
       prop: "kp_uchkuduk",
+      link: { name: "monitoring.remainingGoods.district", params: { id: 4 } },
     },
     {
       label: "КП РУ Зафаробод",
       prop: "kp_zafarobod",
+      link: { name: "monitoring.remainingGoods.district", params: { id: 5 } },
     },
     {
       label: "по Фонду НГМК",
@@ -160,10 +165,13 @@ const tableData = computed(() => {
             format="DD.MM.YYYY"
             size="large"
           />
-          <ElDropdown placement="bottom">
+          <ElDropdown
+            placement="bottom"
+            class="block w-full"
+          >
             <ElButton
               size="large"
-              class="h-12 !bg-white-blue !border-white-blue"
+              class="h-12 !bg-white-blue w-full !border-white-blue"
             >
               <div class="flex items-center gap-x-2">
                 <img
@@ -174,23 +182,49 @@ const tableData = computed(() => {
               </div>
             </ElButton>
             <template #dropdown>
-              <ElDropdownMenu class="p-3">
+              <ElDropdownMenu class="p-3 rounded-lg">
                 <ElDropdownItem
-                  class="flex items-center gap-x-4 rounded-lg px-3 py-2.5 bg-white sha"
+                  class="flex items-center gap-x-4 rounded-lg px-3 py-2.5"
                 >
                   <img
                     src="@/assets/images/icons/pdf.svg"
                     alt="pdf"
                     class="w-[13px] h-[17px]"
                   />
-                  PDF файл
+                  <span class="text-sm text-dark-gray font-medium">
+                    PDF файл
+                  </span>
+                </ElDropdownItem>
+                <ElDropdownItem
+                  class="flex items-center gap-x-4 rounded-lg px-3 py-2.5"
+                >
+                  <img
+                    src="@/assets/images/icons/excel.svg"
+                    alt="pdf"
+                    class="w-[13px] h-[17px]"
+                  />
+                  <span class="text-sm text-dark-gray font-medium">
+                    Excel файл
+                  </span>
+                </ElDropdownItem>
+                <ElDropdownItem
+                  class="flex items-center gap-x-4 rounded-lg px-3 py-2.5"
+                >
+                  <img
+                    src="@/assets/images/icons/1c.svg"
+                    alt="pdf"
+                    class="w-[13px] h-[17px]"
+                  />
+                  <span class="text-sm text-dark-gray font-medium">
+                    1C файл
+                  </span>
                 </ElDropdownItem>
               </ElDropdownMenu>
             </template>
           </ElDropdown>
           <ElButton
             size="large"
-            class="h-12 !bg-white-blue !border-white-blue !ml-0"
+            class="h-12 !bg-white-blue !border-white-blue"
           >
             <div class="flex items-center gap-x-2">
               <img
@@ -208,10 +242,22 @@ const tableData = computed(() => {
       >
         <ElTableColumn
           v-for="column in tableColumns"
+          type="button"
           :key="column.prop"
           :prop="column.prop"
-          :label="column.label"
-        />
+        >
+          <template #header>
+            <RouterLink
+              v-if="!!column.link"
+              :to="column.link"
+            >
+              {{ column.label }}
+            </RouterLink>
+            <template v-else>
+              {{ column.label }}
+            </template>
+          </template>
+        </ElTableColumn>
       </ElTable>
       <div class="mt-6 flex items-center justify-between">
         <div class="text-sm text-cool-gray">
