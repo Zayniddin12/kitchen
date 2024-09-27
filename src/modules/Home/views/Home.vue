@@ -6,9 +6,11 @@ import {
   TitleComponent,
   TooltipComponent,
   LegendComponent,
+  GraphicComponent,
 } from "echarts/components";
 import VChart, { THEME_KEY } from "vue-echarts";
 import { ref, provide } from "vue";
+import { tableData } from "@/modules/Home/constants";
 
 use([
   CanvasRenderer,
@@ -16,9 +18,24 @@ use([
   TitleComponent,
   TooltipComponent,
   LegendComponent,
+  GraphicComponent,
 ]);
 
 // provide(THEME_KEY, "dark");
+
+const data = [
+  { value: 1200, name: "Общая вместимость" },
+  { value: 4600, name: "Занятое место" },
+];
+
+const total = data.reduce((sum, item) => sum + item.value, 0);
+
+const data2 = [
+  { value: 2200, name: "за свой счет" },
+  { value: 3660, name: "с рационом" },
+];
+
+const total2 = data2.reduce((sum, item) => sum + item.value, 0);
 
 const option = ref({
   tooltip: {
@@ -27,7 +44,7 @@ const option = ref({
   legend: {
     bottom: "0%",
     left: "center",
-    itemGap: 160,
+    itemGap: 50,
     icon: "circle",
   },
   series: [
@@ -62,25 +79,34 @@ const option = ref({
       labelLine: {
         show: false,
       },
-      data: [
-        { value: 1200, name: "Общая вместимость" },
-        { value: 4600, name: "Занятое место" },
-      ],
+      data: data,
 
     },
   ],
-  graphic: {
-    type: "text",
-    left: "center",
-    top: "center",
-    style: {
-      text: "Total\n3147", // Displayed text in the center, '\n' for line break
-      textAlign: "center",
-      fill: "#0000", // Text color
-      fontSize: 20,
-      fontWeight: "bold",
+  graphic: [
+    {
+      type: "text",
+      left: "center",
+      top: "35%",
+      style: {
+        text: `${total}`, // Display total value in the center
+        textAlign: "center",
+        font: "bold 32px Arial",
+        fill: "#333",
+      },
     },
-  },
+    {
+      type: "text",
+      left: "center",
+      top: "45%",
+      style: {
+        text: "total", // Subtitle (you can change this as needed)
+        textAlign: "center",
+        font: "normal 16px Arial",
+        fill: "#999",
+      },
+    },
+  ],
 
 });
 
@@ -91,7 +117,7 @@ const option2 = ref({
   legend: {
     bottom: "0%",
     left: "center",
-    itemGap: 160,
+    itemGap: 50,
     icon: "circle",
   },
   series: [
@@ -126,25 +152,34 @@ const option2 = ref({
       labelLine: {
         show: false,
       },
-      data: [
-        { value: 2200, name: "за свой счет" },
-        { value: 3660, name: "с рационом" },
-      ],
+      data: data2,
 
     },
   ],
-  graphic: {
-    type: "text",
-    left: "center",
-    top: "center",
-    style: {
-      text: "Total\n3147", // Displayed text in the center, '\n' for line break
-      textAlign: "center",
-      fill: "#0000", // Text color
-      fontSize: 20,
-      fontWeight: "bold",
+  graphic: [
+    {
+      type: "text",
+      left: "center",
+      top: "35%",
+      style: {
+        text: `${total2}`, // Display total value in the center
+        textAlign: "center",
+        font: "bold 32px Arial",
+        fill: "#333",
+      },
     },
-  },
+    {
+      type: "text",
+      left: "center",
+      top: "45%",
+      style: {
+        text: "total", // Subtitle (you can change this as needed)
+        textAlign: "center",
+        font: "normal 16px Arial",
+        fill: "#999",
+      },
+    },
+  ],
 
 });
 
@@ -155,28 +190,11 @@ const changeBranch = (code: number) => {
   branches.value = code;
 };
 
-const tableData = [
-  {
-    date: "2016-05-03",
-    name: "Tom",
-    address: "No. 189, Grove St, Los Angeles",
-  },
-  {
-    date: "2016-05-02",
-    name: "Tom",
-    address: "No. 189, Grove St, Los Angeles",
-  },
-  {
-    date: "2016-05-04",
-    name: "Tom",
-    address: "No. 189, Grove St, Los Angeles",
-  },
-  {
-    date: "2016-05-01",
-    name: "Tom",
-    address: "No. 189, Grove St, Los Angeles",
-  },
-];
+const handleClass = (item) => {
+
+  return "!bg-[#FBDDDD]";
+};
+
 </script>
 
 <template>
@@ -257,12 +275,48 @@ const tableData = [
         </div>
       </div>
       <div class="w-[45%]">
-        <el-table :data="tableData" style="width: 100%">
-          <el-table-column prop="date" label="№" width="180" />
-          <el-table-column prop="name" label="Тип продукта" width="180" />
-          <el-table-column prop="address" label="Вид продукта" />
-          <el-table-column prop="address" label="Количество" />
-          <el-table-column prop="address" label="База" />
+        <div class="p-[24px] bg-[#F8F9FC] rounded-t-[24px]">
+          <span class="text-[#000D24] text-[18px] font-semibold ">Продукты с низким запасом</span>
+        </div>
+        <el-table :data="tableData" style="width: 100%" :row-class-name="handleClass">
+          <!--          <el-table-column prop="id" label="№" width="180" />-->
+          <!--          <el-table-column prop="product" label="Тип продукта" width="180" />-->
+          <!--          <el-table-column prop="product-two" label="Вид продукта" />-->
+          <!--          <el-table-column prop="total-count" label="Количество" />-->
+          <!--          <el-table-column prop="branch" label="База" />-->
+
+          <el-table-column type="index" label="№" />
+
+          <el-table-column label="Тип продукта">
+            <template #default="{row}">
+              <div class="flex items-center gap-3">
+                <el-avatar :size="32" :src="row.product_type.photo" />
+                <span>{{ row.product_type.title }}</span>
+              </div>
+            </template>
+          </el-table-column>
+
+          <el-table-column label="Вид продукта">
+            <template #default="{row}">
+              <div class="flex items-center gap-3">
+                <el-avatar :size="32" :src="row.product_view.photo" />
+                <span>{{ row.product_view.title }}</span>
+              </div>
+            </template>
+          </el-table-column>
+
+          <el-table-column label="Количество">
+            <template #default="{row}">
+              <span class="">{{ row.total_count }} кг</span>
+            </template>
+          </el-table-column>
+
+          <el-table-column label="База">
+            <template #default="{row}">
+              <span class="">{{ row.branch }}</span>
+            </template>
+          </el-table-column>
+
         </el-table>
 
       </div>
