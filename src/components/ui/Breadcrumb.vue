@@ -8,7 +8,7 @@ const breadcrumbList = ref([]);
 const router = useRouter();
 
 
-const changeRoute = (item) => {
+const changeRoute = (item: any) => {
   if (item.redirectWithParams) {
     router.push(item.redirectWithParams(route));
   } else if (item.to) {
@@ -17,9 +17,7 @@ const changeRoute = (item) => {
 };
 
 
-watch(
-  () => route.path,
-  () => {
+watch(() => route.path, () => {
     if (Array.isArray(route.meta.breadcrumb)) {
       breadcrumbList.value = route.meta.breadcrumb;
     }
@@ -35,7 +33,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="mb-5 md:mt-0 -mt-5">
+  <div class="mb-[24px] md:mt-0 -mt-5">
     <div class="flex flex-wrap">
 
       <button @click="$router.push('/')" class="cursor-pointer">

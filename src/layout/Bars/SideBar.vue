@@ -1,69 +1,91 @@
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
+import { ref, onMounted, watch } from "vue";
+import { menuItems } from "@/navigation";
+import { useRoute, useRouter } from "vue-router";
+import ChildSidebar from "@/layout/Bars/ChildSidebar.vue";
 
-const menuItems = ref([
-  {
-    title: "Главная",
-    route: "/home",
-    icon: 'smart-home.svg',
-  },
-  {
-    title: "Документы",
-    route: "/",
-    icon: "document.svg",
-  },
-  {
-    title: "Мониторинг",
-    route: "/",
-    icon: "monitoring.svg",
-  },
-  {
-    title: "Базы складов",
-    route: "/",
-    icon: "building-warehouse.svg",
-  },
-  {
-    title: "Склад кухни",
-    route: "/",
-    icon: "building-warehouse.svg",
-  },
-  {
-    title: "Настройки",
-    route: "/",
-    icon: "settings.svg",
-  },
-]);
-let currentItem = ref(0);
+const emit = defineEmits(["update:childSidebar", "closeChildSidebar2"]);
+
+const router = useRouter();
+let route = useRoute();
+
+let currentItem = ref<string>("");
+let currentIndex = ref<number>(0);
+let childIsOpen = ref<boolean>(localStorage.getItem("child-sidebar") === "true");
 
 onMounted(() => {
-  currentItem.value = 0;
+  currentItem.value = route?.path;
 });
 
-const activeMenu = (index) => {
-  currentItem.value = index;
+watch(() => route?.path, function() {
+  currentItem.value = route.path;
+});
+
+const activeMenu = (index: number, item: any) => {
+  currentIndex.value = index;
+  childIsOpen.value = !!item.children;
+  emit("update:childSidebar", !!item.children);
+
+  localStorage.setItem("child-sidebar", "true");
+
+  if (item.route) {
+    router.push(item.route);
+  }
+};
+
+const logOut = () => {
+  router.push("/login");
+};
+
+const closeChildSidebar = () => {
+  currentIndex.value = 0;
+  emit("update:childSidebar", false);
 };
 </script>
 
 <template>
   <div class="sidebar w-[128px]">
-    <div class="sidebar-wrapper text-center relative">
-      <img src="@/assets/images/logo.svg" class="m-auto pt-[16px] pb-[40px]" alt="logo">
+    <div class="sidebar-wrapper text-center relative flex flex-col justify-between">
+      <div>
+        <img src="@/assets/images/logo.svg" class="m-auto pt-[16px] pb-[40px]" alt="logo">
 
-      <div
-        v-for="(item, index) in menuItems"
-        :key="index"
-        @click="activeMenu(index)"
-        class="px-[11px]"
-      >
-        <div :class="{ activeListItem: currentItem == index }" class="h-[88px] flex flex-col justify-center items-center cursor-pointer p-[12px]">
-          <svg
-            :data-src="item.icon"
-            class="svg-class shrink-1"
-            width="24px"
-            height="24px"
-          />
-          <h1 class="text-[14px] font-medium font-500 mt-[4px] text-[#4F5662]">{{ item.title }}</h1>
+        <div
+          v-for="(item, index) in menuItems"
+          :key="index"
+          class="px-[11px]"
+          @click.stop="activeMenu(index, item)"
+        >
+          <div
+            :class="{ activeListItem: currentItem == item.route }"
+            class="h-[88px] flex flex-col justify-center items-center cursor-pointer p-[12px]"
+          >
+            <svg
+              :data-src="'/sidebar/' + item.icon + '.svg'"
+              class="svg-class shrink-1"
+              width="24px"
+              height="24px"
+            />
+            <h1 class="text-[14px] font-medium font-500 mt-[4px] text-[#4F5662]">{{ item.title }}</h1>
+          </div>
+
+          <!-----------------------------------child sidebar----------------------------------->
+          <div
+            v-if="currentIndex === index && item.children && childIsOpen"
+            class="w-[260px] bg-[#F8F9FC] rounded-[16px] h-[100%] absolute top-0 left-[120px] transition"
+          >
+            <ChildSidebar
+              :children="item.children"
+              :header="item.title"
+              @closeSidebar="closeChildSidebar"
+            />
+          </div>
         </div>
+      </div>
+
+      <!------------------------log out---------------------------->
+      <div class="flex flex-col items-center cursor-pointer mb-[44px]" @click="logOut">
+        <img src="@/assets/images/logout.svg" alt="logout">
+        <div class="text-[#EA5455] text-[14px] font-medium">Выход</div>
       </div>
     </div>
   </div>
@@ -90,7 +112,7 @@ const activeMenu = (index) => {
 }
 
 .activeListItem {
-  @apply  bg-white shadow-menu rounded-lg font-medium
+  @apply bg-white shadow-menu rounded-lg font-medium
 }
 
 .activeListItem .svg-class path {
@@ -98,12 +120,13 @@ const activeMenu = (index) => {
 }
 
 .activeListItem h1 {
-  color: #000D24!important;
+  color: #000D24 !important;
 }
 
 .svg-class path {
   stroke: #8F9194;
 }
+
 .svg-class h1 {
   color: #4F5662;
 }

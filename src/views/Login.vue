@@ -2,21 +2,24 @@
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import Language from "@/components/language/index.vue";
+import { useRouter } from "vue-router";
 
 const { t } = useI18n();
+const router = useRouter()
 
 interface UserData {
   login: string;
-  password: number;
+  password: string;
 }
 
 const userData = ref<UserData>({
   login: "admin",
-  password: 1,
+  password: "1",
 });
 
 const onSubmit = () => {
   console.log(userData.value);
+  router.push("/home");
 };
 </script>
 
@@ -68,9 +71,9 @@ const onSubmit = () => {
 
         <!-- Divider with text -->
         <div class="flex items-center justify-between text-[#7F7D83] text-sm mt-4">
-          <img src="@/assets/images/line.svg" alt="line">
+          <img src="@/assets/images/line.svg" class="ml-4" alt="line">
           <span class="px-2">или</span>
-          <img src="@/assets/images/line.svg" alt="line">
+          <img src="@/assets/images/line.svg" class="mr-4" alt="line">
         </div>
 
         <!-- OneID Button -->
@@ -87,3 +90,16 @@ const onSubmit = () => {
     </footer>
   </div>
 </template>
+<style scoped>
+.custom-input {
+  outline: none;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1.5px solid #EEEEEF;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 20px;
+  text-align: left;
+  color: #A8AAAE;
+}
+</style>

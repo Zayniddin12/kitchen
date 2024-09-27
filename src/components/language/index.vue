@@ -25,9 +25,12 @@ const langItems = ref<LangItem[]>([
 ]);
 
 const storedLanguage = localStorage.getItem("language");
-const lang = ref<Language>(storedLanguage ? langItems.value.find((item) => item.value === storedLanguage)! : { title: "Русский", value: "ru" });
+const lang = ref<Language>(storedLanguage ? langItems.value.find((item) => item.value === storedLanguage)! : {
+  title: "Русский",
+  value: "ru",
+});
 
-const changeLanguage = (item: LangItem) => {
+const changeLanguage = (item: LangItem): void => {
   lang.value = item;
   i18n.global.locale.value = item.value;
   localStorage.setItem("language", item.value);

@@ -13,5 +13,4 @@ const layouts = {
   <component :is="layouts[<string>$route.meta.layout]">
     <RouterView />
   </component>
-
 </template>

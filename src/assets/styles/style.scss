@@ -3,14 +3,69 @@
 @import '@/assets/styles/settings';
 @import '@/assets/styles/tailwind';
 
-.custom-input {
-  outline: none;
-  padding: 10px 12px;
+
+.custom-filter-btn {
+  background-color: #f8f9fc;
+  display: flex;
+  align-items: center;
+  padding: 10px 20px;
+  border-radius: 10px;
+  color: #4F5662;
+  font-size: 18px;
+}
+
+.el-pagination {
+  button {
+    background-color: #F8F9FC !important;
+    border-radius: 8px;
+  }
+
+  ul {
+    .is-active {
+      background-color: #2E90FA !important;
+      border-radius: 8px;
+    }
+
+    li {
+      background-color: #F8F9FC !important;
+    }
+  }
+}
+
+.action-btn {
+  background-color: #F8F9FC;
   border-radius: 8px;
-  border: 1.5px solid #EEEEEF;
-  font-size: 14px;
-  font-weight: 400;
-  line-height: 20px;
-  text-align: left;
-  color: #A8AAAE;
+  padding: 8px;
+}
+
+.custom-element-table {
+  thead {
+    tr {
+      th {
+        color: #4F5662;
+        font-size: 14px;
+        font-weight: 600;
+        line-height: 20px;
+        text-align: left;
+        background-color: #F8F9FC !important;
+        padding: 14px 0!important;
+      }
+
+      :nth-child(1) {
+        border-top-left-radius: 8px;
+      }
+
+      :last-child{
+        border-top-right-radius: 8px;
+      }
+    }
+  }
+
+  tbody {
+    tr {
+      td {
+        padding: 14px 0!important;
+      }
+    }
+  }
 }
