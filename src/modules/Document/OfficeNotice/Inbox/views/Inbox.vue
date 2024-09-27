@@ -122,6 +122,10 @@ const toggleCollapse = () => {
           <button class="action-btn" @click="router.push(`/inbox/${scope.row.id}`)">
             <img src="@/assets/images/eye.svg" alt="eye" />
           </button>
+
+          <button class="action-btn ml-[8px]" @click="actionButton(scope.row)">
+            <img src="@/assets/images/download.svg" alt="download" />
+          </button>
       </template>
       </el-table-column>
     </el-table>
