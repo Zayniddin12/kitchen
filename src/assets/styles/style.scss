@@ -39,6 +39,11 @@
 }
 
 .custom-element-table {
+  .el-table__inner-wrapper {
+    border: 2px solid #F8F9FC!important;
+    border-radius: 15px;
+  }
+
   thead {
     tr {
       th {
@@ -48,15 +53,15 @@
         line-height: 20px;
         text-align: left;
         background-color: #F8F9FC !important;
-        padding: 14px 0!important;
+        padding: 14px 0 !important;
       }
 
       :nth-child(1) {
-        border-top-left-radius: 8px;
+        border-top-left-radius: 12px;
       }
 
-      :last-child{
-        border-top-right-radius: 8px;
+      :last-child {
+        border-top-right-radius: 15px;
       }
     }
   }
@@ -64,7 +69,7 @@
   tbody {
     tr {
       td {
-        padding: 14px 0!important;
+        padding: 14px 0 !important;
       }
     }
   }

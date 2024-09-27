@@ -51,7 +51,6 @@ const actinButton = (value: any) => {
 
 <template>
   <div>
-
     <div class="flex items-center justify-between">
       <h1 class="m-0 font-semibold text-[32px]">
         Входящие
