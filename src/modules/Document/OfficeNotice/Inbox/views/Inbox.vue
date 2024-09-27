@@ -2,10 +2,23 @@
 import { ref } from "vue";
 import white from "@/assets/images/filter2.svg";
 import filter from "@/assets/images/filter.svg";
+import CollapseFilter from "@/components/collapseFilter/index.vue";
+
+interface TableData {
+  id: number;
+  num: string;
+  date: string;
+  doc: string;
+  theme: string;
+  send: string;
+  receive: string;
+}
 
 const isOpenFilter = ref<boolean>(false);
+const activeNames = ref<string[]>([]);
 
-const tableData = [
+
+const tableData = ref<TableData[]>([
   {
     id: 1,
     num: "1",
@@ -42,28 +55,37 @@ const tableData = [
     send: "Учкудук",
     receive: "Фонд",
   },
-];
+]);
 
-const actinButton = (value: any) => {
-  console.log(value, 'value');
-}
+const actionButton = (value: TableData): void => {
+  console.log(value, "value");
+};
+
+const toggleCollapse = () => {
+  isOpenFilter.value = !isOpenFilter.value;
+  activeNames.value = isOpenFilter.value ? ["1"] : [];
+};
 </script>
 
 <template>
   <div>
     <div class="flex items-center justify-between">
-      <h1 class="m-0 font-semibold text-[32px]">
-        Входящие
-      </h1>
+      <h1 class="m-0 font-semibold text-[32px]">Входящие</h1>
 
-      <button class="custom-filter-btn font-medium" :class="isOpenFilter ? '!bg-[#2E90FA] !text-white' : ''"
-              @click="isOpenFilter =! isOpenFilter">
+      <button class="custom-filter-btn font-medium" :class="isOpenFilter ? '!bg-[#2E90FA] !text-white' : ''" @click="toggleCollapse">
         <img :src="isOpenFilter ? white : filter" alt="filter" class="mr-[12px]" />
         Фильтр
       </button>
     </div>
 
-    <el-table :data="tableData" class="mt-[24px] custom-element-table">
+    <CollapseFilter v-model="activeNames">
+      <template #body>
+        <el-input v-model="input" style="width: 240px" placeholder="Номер документа" />
+        <el-input v-model="input" style="width: 240px" placeholder="Доставка картофеля" />
+      </template>
+    </CollapseFilter>
+
+    <el-table :data="tableData" class="custom-element-table">
       <el-table-column prop="num" label="№" />
       <el-table-column prop="date" label="Дата" />
       <el-table-column prop="doc" label="№ документа" />
@@ -72,31 +94,23 @@ const actinButton = (value: any) => {
       <el-table-column prop="receive" label="Получатель" />
       <el-table-column prop="action" label="Действие">
         <template #default="scope">
-          <!--          {{scope.row.date}}-->
-          <button class="action-btn" @click="actinButton(scope.row)">
-            <img src="@/assets/images/eye.svg" alt="eye">
+          <button class="action-btn" @click="actionButton(scope.row)">
+            <img src="@/assets/images/eye.svg" alt="eye" />
           </button>
 
-          <button class="action-btn ml-[8px]" @click="actinButton(scope.row)">
-            <img src="@/assets/images/download.svg" alt="download">
+          <button class="action-btn ml-[8px]" @click="actionButton(scope.row)">
+            <img src="@/assets/images/download.svg" alt="download" />
           </button>
         </template>
       </el-table-column>
     </el-table>
-
 
     <div class="mt-[24px] flex items-center justify-between">
       <div class="text-[#8F9194] text-[14px]">
         Показано 1–12 из 100 результатов
       </div>
 
-      <el-pagination
-        class="float-right"
-        background
-        layout="prev, pager, next"
-        :total="1000"
-      />
+      <el-pagination class="float-right" background layout="prev, pager, next" :total="1000" />
     </div>
-
   </div>
 </template>

@@ -9,11 +9,11 @@ export default [
       breadcrumb: [
         {
           label: "Документы",
-          isActionable: true,
+          isActionable: false,
         },
         {
           label: "Служебные записки",
-          isActionable: true,
+          isActionable: false,
         },
         {
           label: "Входящие",
