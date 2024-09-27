@@ -18,11 +18,11 @@ export const menuItems = [
           },
           {
             title: "Исходящие",
-            route: '/outgoing'
+            route: "/outgoing",
           },
           {
             title: "Черновики",
-            route: '/drafts'
+            route: "/drafts",
           },
         ],
       },
@@ -59,16 +59,17 @@ export const menuItems = [
   {
     title: "Мониторинг",
     icon: "monitoring",
+    route: "/monitoring",
     children: [
       {
         title: "Остатка товаров",
         icon: "box",
-        route: "/",
+        route: "/monitoring/remaining-goods",
       },
       {
         title: "Отчет о кухне",
         icon: "kitchen",
-        route: "/",
+        route: "/monitoring/kitchen-report",
       },
     ],
   },
@@ -78,7 +79,7 @@ export const menuItems = [
     children: [
       {
         title: "Зарафшан",
-        icon: 'building-warehouse',
+        icon: "building-warehouse",
         children: [
           {
             title: "Мясной склад",
@@ -93,7 +94,7 @@ export const menuItems = [
       },
       {
         title: "Навои",
-        icon: 'building-warehouse',
+        icon: "building-warehouse",
         children: [
           {
             title: "1",
@@ -102,7 +103,7 @@ export const menuItems = [
       },
       {
         title: "Учкудук",
-        icon: 'building-warehouse',
+        icon: "building-warehouse",
         children: [
           {
             title: "1",
@@ -111,7 +112,7 @@ export const menuItems = [
       },
       {
         title: "Нуробод",
-        icon: 'building-warehouse',
+        icon: "building-warehouse",
         children: [
           {
             title: "1",
@@ -120,14 +121,13 @@ export const menuItems = [
       },
       {
         title: "Зафаробод",
-        icon: 'building-warehouse',
+        icon: "building-warehouse",
         children: [
           {
             title: "1",
           },
         ],
       },
-
     ],
   },
   {
@@ -137,27 +137,27 @@ export const menuItems = [
       {
         title: "Зарафшан",
         icon: "building-warehouse",
-        route: 'zarafshon'
+        route: "zarafshon",
       },
       {
         title: "Навои",
         icon: "building-warehouse",
-        route: 'navoi'
+        route: "navoi",
       },
       {
         title: "Учкудук",
         icon: "building-warehouse",
-        route: 'uchquduq'
+        route: "uchquduq",
       },
       {
         title: "Нуробод",
         icon: "building-warehouse",
-        route: 'nurobod'
+        route: "nurobod",
       },
       {
         title: "Зафаробод",
         icon: "building-warehouse",
-        route: 'zafarobod'
+        route: "zafarobod",
       },
     ],
   },
@@ -214,17 +214,17 @@ export const menuItems = [
     icon: "settings",
     children: [
       {
-        title: 'Справочники',
+        title: "Справочники",
         icon: "record",
       },
       {
-        title: 'Связь справочников',
+        title: "Связь справочников",
         icon: "derictory",
       },
       {
-        title: 'Кадры',
+        title: "Кадры",
         icon: "users",
-      }
-    ]
+      },
+    ],
   },
 ];

@@ -22,6 +22,10 @@ export default {
         "blue-900": "var(--blue-900)",
         "blue": "#2E90FA",
 
+        "dark": "#000D24",
+        "dark-gray": "#4F5662",
+        "white-blue": "var(--white-blue)",
+
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",

@@ -5,7 +5,7 @@
 
 
 .custom-filter-btn {
-  background-color: #f8f9fc;
+  background-color: var(--white-blue);
   display: flex;
   align-items: center;
   padding: 10px 20px;
@@ -41,14 +41,14 @@
 }
 
 .action-btn {
-  background-color: #F8F9FC;
+  background-color: #f8f9fc;
   border-radius: 8px;
   padding: 8px;
 }
 
 .el-pagination {
   button {
-    background-color: #F8F9FC !important;
+    background-color: var(--white-blue) !important;
     border-radius: 8px;
     height: 40px;
     width: 40px;
@@ -65,7 +65,7 @@
     }
 
     li {
-      background-color: #F8F9FC !important;
+      background-color: var(--white-blue) !important;
       height: 40px;
       width: 40px;
     }
@@ -77,12 +77,12 @@
   border: 1px solid #e2e6f3 !important;
 
   thead th {
-    color: #4F5662;
+    color: #4f5662;
     font-size: 14px;
     font-weight: 600;
     line-height: 20px;
     text-align: left;
-    background-color: #F8F9FC !important;
+    background-color: var(--white-blue) !important;
     padding: 14px 16px !important;
   }
 
@@ -105,4 +105,5 @@
   tbody tr:last-child td:last-child {
     border-bottom-right-radius: 10px;
   }
+
 }

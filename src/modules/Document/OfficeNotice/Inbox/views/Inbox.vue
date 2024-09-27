@@ -76,11 +76,13 @@ const toggleCollapse = () => {
     <div class="flex items-center justify-between">
       <h1 class="m-0 font-semibold text-[32px]">Входящие</h1>
 
+
       <button class="custom-filter-btn font-medium" :class="isOpenFilter ? '!bg-blue !text-white' : ''"
               @click="toggleCollapse">
         <img :src="isOpenFilter ? white : filter" alt="filter" class="mr-[12px]" />
         Фильтр
       </button>
+
     </div>
 
     <CollapseFilter v-model="activeNames">
@@ -120,11 +122,7 @@ const toggleCollapse = () => {
           <button class="action-btn" @click="router.push(`/inbox/${scope.row.id}`)">
             <img src="@/assets/images/eye.svg" alt="eye" />
           </button>
-
-          <button class="action-btn ml-[8px]" @click="actionButton(scope.row)">
-            <img src="@/assets/images/download.svg" alt="download" />
-          </button>
-        </template>
+      </template>
       </el-table-column>
     </el-table>
 
@@ -133,7 +131,12 @@ const toggleCollapse = () => {
         Показано 1–12 из 100 результатов
       </div>
 
-      <el-pagination class="float-right" background layout="prev, pager, next" :total="1000" />
+      <el-pagination
+        class="float-right"
+        background
+        layout="prev, pager, next"
+        :total="1000"
+      />
     </div>
   </div>
 </template>
