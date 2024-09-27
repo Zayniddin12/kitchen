@@ -1,11 +1,12 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
 import home from "@/modules/Home/router";
-import Inbox from '@/modules/Document/OfficeNotice/Inbox/router'
+import Inbox from '@/modules/Document/OfficeNotice/Inbox/router';
+import Monitoring from "@/modules/Monitoring/router";
 
 const routes: Array<RouteRecordRaw> = [
   ...home,
   ...Inbox,
-
+  ...Monitoring,
   {
     path: "/",
     redirect: () => {
@@ -26,7 +27,7 @@ const routes: Array<RouteRecordRaw> = [
   },
   {
     path: "/:pathMatch(.*)*",
-    component: import("../components/errors/404.vue"),
+    component: import("@/components/errors/404.vue"),
     meta: { layout: "ErrorLayout" },
   },
 ];

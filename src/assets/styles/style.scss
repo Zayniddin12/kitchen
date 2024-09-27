@@ -5,7 +5,7 @@
 @import "@/assets/styles/components/ui/app-form";
 
 .custom-filter-btn {
-  background-color: #f8f9fc;
+  background-color: var(--white-blue);
   display: flex;
   align-items: center;
   padding: 10px 20px;
@@ -16,7 +16,7 @@
 
 .el-pagination {
   button {
-    background-color: #f8f9fc !important;
+    background-color: var(--white-blue) !important;
     border-radius: 8px;
   }
 
@@ -27,13 +27,13 @@
     }
 
     li {
-      background-color: #f8f9fc !important;
+      background-color: var(--white-blue) !important;
     }
   }
 }
 
 .action-btn {
-  background-color: #f8f9fc;
+  background-color: var(--white-blue);
   border-radius: 8px;
   padding: 8px;
 }
@@ -47,7 +47,7 @@
         font-weight: 600;
         line-height: 20px;
         text-align: left;
-        background-color: #f8f9fc !important;
+        background-color: var(--white-blue) !important;
         padding: 14px 0 !important;
       }
 

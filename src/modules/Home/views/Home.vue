@@ -66,7 +66,6 @@ const option = ref({
         { value: 1200, name: "Общая вместимость" },
         { value: 4600, name: "Занятое место" },
       ],
-
     },
   ],
   graphic: {
@@ -81,7 +80,6 @@ const option = ref({
       fontWeight: "bold",
     },
   },
-
 });
 
 const option2 = ref({
@@ -130,7 +128,6 @@ const option2 = ref({
         { value: 2200, name: "за свой счет" },
         { value: 3660, name: "с рационом" },
       ],
-
     },
   ],
   graphic: {
@@ -145,9 +142,7 @@ const option2 = ref({
       fontWeight: "bold",
     },
   },
-
 });
-
 
 const branches = ref<number>(0);
 
@@ -181,38 +176,56 @@ const tableData = [
 
 <template>
   <div>
-    <h1 class="m-0 font-semibold text-[32px] mb-[24px]">
-      Главная
-    </h1>
+    <h1 class="m-0 font-semibold text-[32px] mb-[24px]">Главная</h1>
 
-    <div class="flex items-center rounded bg-[#F8F9FC] p-[4px] w-[586px] mb-[24px]">
-      <button @click="changeBranch(0)" :class="{'bg-[#FFFFFF] rounded-[8px] text-[#000D24]': branches == 0}"
-              class="px-[20px] py-[10px] text-[14px] text-[#4F5662] font-medium">
+    <div
+      class="flex items-center rounded bg-white-blue p-[4px] w-[586px] mb-[24px]"
+    >
+      <button
+        @click="changeBranch(0)"
+        :class="{ 'bg-[#FFFFFF] rounded-[8px] text-dark': branches == 0 }"
+        class="px-[20px] py-[10px] text-[14px] text-dark-gray font-medium"
+      >
         Все
       </button>
 
-      <button @click="changeBranch(1)" :class="{'bg-[#FFFFFF] rounded-[8px] text-[#000D24]': branches == 1}"
-              class="px-[20px] py-[10px] text-[14px] text-[#4F5662] font-medium">
+      <button
+        @click="changeBranch(1)"
+        :class="{ 'bg-[#FFFFFF] rounded-[8px] text-dark': branches == 1 }"
+        class="px-[20px] py-[10px] text-[14px] text-dark-gray font-medium"
+      >
         Зарафшан
       </button>
 
-      <button @click="changeBranch(2)" :class="{'bg-[#FFFFFF] rounded-[8px] text-[#000D24]': branches == 2}"
-              class="px-[20px] py-[10px] text-[14px] text-[#4F5662] font-medium">
+      <button
+        @click="changeBranch(2)"
+        :class="{ 'bg-[#FFFFFF] rounded-[8px] text-dark': branches == 2 }"
+        class="px-[20px] py-[10px] text-[14px] text-dark-gray font-medium"
+      >
         Навои
       </button>
 
-      <button @click="changeBranch(3)" :class="{'bg-[#FFFFFF] rounded-[8px] text-[#000D24]': branches == 3}"
-              class="px-[20px] py-[10px] text-[14px] text-[#4F5662] font-medium">
+      <button
+        @click="changeBranch(3)"
+        :class="{ 'bg-[#FFFFFF] rounded-[8px] text-dark': branches == 3 }"
+        class="px-[20px] py-[10px] text-[14px] text-dark-gray font-medium"
+      >
         Нуробод
       </button>
 
-      <button @click="changeBranch(4)" :class="{'bg-[#FFFFFF] rounded-[8px] text-[#000D24]': branches == 4}"
-              class="px-[20px] py-[10px] text-[14px] text-[#4F5662] font-medium">
+      <button
+        @click="changeBranch(4)"
+        :class="{ 'bg-[#FFFFFF] rounded-[8px] text-dark': branches == 4 }"
+        class="px-[20px] py-[10px] text-[14px] text-dark-gray font-medium"
+      >
         Учкудук
       </button>
 
-      <button @click="changeBranch(5)" :class="{'bg-[#FFFFFF] rounded-[8px] text-[#000D24]': branches == 5}"
-              class="px-[20px] py-[10px] text-[14px] text-[#4F5662] font-medium">
+      <button
+        @click="changeBranch(5)"
+        :class="{ 'bg-[#FFFFFF] rounded-[8px] text-dark': branches == 5 }"
+        class="px-[20px] py-[10px] text-[14px] text-dark-gray font-medium"
+      >
         Зафаробод
       </button>
     </div>
@@ -220,54 +233,97 @@ const tableData = [
     <div class="flex items-start gap-4">
       <div class="w-[55%]">
         <div class="flex items-center gap-4">
-          <div class="w-[50%] bg-[#F8F9FC] rounded-[24px] p-[16px]">
-
+          <div class="w-[50%] bg-white-blue rounded-[24px] p-[16px]">
             <div class="flex items-center mb-[38px]">
               <div class="flex items-center gap-2">
-                <div class="bg-[#FFFFFF] p-[8px] rounded-[8px] flex items-center justify-center">
-                  <img src="@/assets/warehouse.svg" alt="warehouse" width="32">
+                <div
+                  class="bg-[#FFFFFF] p-[8px] rounded-[8px] flex items-center justify-center"
+                >
+                  <img
+                    src="@/assets/warehouse.svg"
+                    alt="warehouse"
+                    width="32"
+                  />
                 </div>
                 <div>
-                  <h2 class="text-[#000D24] font-semibold text-[14px]">Занятость складов</h2>
-                  <span class="text-[#A8AAAE] text-[12px]">Здесь будет текст</span>
+                  <h2 class="text-dark font-semibold text-[14px]">
+                    Занятость складов
+                  </h2>
+                  <span class="text-[#A8AAAE] text-[12px]"
+                    >Здесь будет текст</span
+                  >
                 </div>
               </div>
             </div>
 
-            <v-chart class="chart" :option="option" autoresize />
+            <v-chart
+              class="chart"
+              :option="option"
+              autoresize
+            />
           </div>
 
-          <div class="w-[50%] bg-[#F8F9FC] rounded-[24px] p-[16px]">
-
+          <div class="w-[50%] bg-white-blue rounded-[24px] p-[16px]">
             <div class="flex items-center mb-[38px]">
               <div class="flex items-center gap-2">
-                <div class="bg-[#FFFFFF] p-[8px] rounded-[8px] flex items-center justify-center">
-                  <img src="@/assets/users.svg" alt="warehouse" width="32">
+                <div
+                  class="bg-[#FFFFFF] p-[8px] rounded-[8px] flex items-center justify-center"
+                >
+                  <img
+                    src="@/assets/users.svg"
+                    alt="warehouse"
+                    width="32"
+                  />
                 </div>
                 <div>
-                  <h2 class="text-[#000D24] font-semibold text-[14px]">Количество посетителей</h2>
-                  <span class="text-[#A8AAAE] text-[12px]">Здесь будет текст</span>
+                  <h2 class="text-dark font-semibold text-[14px]">
+                    Количество посетителей
+                  </h2>
+                  <span class="text-[#A8AAAE] text-[12px]"
+                    >Здесь будет текст</span
+                  >
                 </div>
               </div>
             </div>
 
-            <v-chart class="chart" :option="option2" autoresize />
+            <v-chart
+              class="chart"
+              :option="option2"
+              autoresize
+            />
           </div>
-
         </div>
       </div>
       <div class="w-[45%]">
-        <el-table :data="tableData" style="width: 100%">
-          <el-table-column prop="date" label="№" width="180" />
-          <el-table-column prop="name" label="Тип продукта" width="180" />
-          <el-table-column prop="address" label="Вид продукта" />
-          <el-table-column prop="address" label="Количество" />
-          <el-table-column prop="address" label="База" />
+        <el-table
+          :data="tableData"
+          style="width: 100%"
+        >
+          <el-table-column
+            prop="date"
+            label="№"
+            width="180"
+          />
+          <el-table-column
+            prop="name"
+            label="Тип продукта"
+            width="180"
+          />
+          <el-table-column
+            prop="address"
+            label="Вид продукта"
+          />
+          <el-table-column
+            prop="address"
+            label="Количество"
+          />
+          <el-table-column
+            prop="address"
+            label="База"
+          />
         </el-table>
-
       </div>
     </div>
-
   </div>
 </template>
 

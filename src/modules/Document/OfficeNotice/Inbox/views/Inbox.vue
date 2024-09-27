@@ -45,46 +45,85 @@ const tableData = [
 ];
 
 const actinButton = (value: any) => {
-  console.log(value, 'value');
-}
+  console.log(value, "value");
+};
 </script>
 
 <template>
   <div>
-
     <div class="flex items-center justify-between">
-      <h1 class="m-0 font-semibold text-[32px]">
-        Входящие
-      </h1>
+      <h1 class="m-0 font-semibold text-[32px]">Входящие</h1>
 
-      <button class="custom-filter-btn font-medium" :class="isOpenFilter ? '!bg-[#2E90FA] !text-white' : ''"
-              @click="isOpenFilter =! isOpenFilter">
-        <img :src="isOpenFilter ? white : filter" alt="filter" class="mr-[12px]" />
+      <button
+        class="custom-filter-btn font-medium"
+        :class="isOpenFilter ? '!bg-[#2E90FA] !text-white' : ''"
+        @click="isOpenFilter = !isOpenFilter"
+      >
+        <img
+          :src="isOpenFilter ? white : filter"
+          alt="filter"
+          class="mr-[12px]"
+        />
         Фильтр
       </button>
     </div>
 
-    <el-table :data="tableData" class="mt-[24px] custom-element-table">
-      <el-table-column prop="num" label="№" />
-      <el-table-column prop="date" label="Дата" />
-      <el-table-column prop="doc" label="№ документа" />
-      <el-table-column prop="theme" label="Тема" />
-      <el-table-column prop="send" label="Отправитель" />
-      <el-table-column prop="receive" label="Получатель" />
-      <el-table-column prop="action" label="Действие">
+    <el-table
+      :data="tableData"
+      class="mt-[24px] custom-element-table"
+    >
+      <el-table-column
+        prop="num"
+        label="№"
+      />
+      <el-table-column
+        prop="date"
+        label="Дата"
+      />
+      <el-table-column
+        prop="doc"
+        label="№ документа"
+      />
+      <el-table-column
+        prop="theme"
+        label="Тема"
+      />
+      <el-table-column
+        prop="send"
+        label="Отправитель"
+      />
+      <el-table-column
+        prop="receive"
+        label="Получатель"
+      />
+      <el-table-column
+        prop="action"
+        label="Действие"
+      >
         <template #default="scope">
           <!--          {{scope.row.date}}-->
-          <button class="action-btn" @click="actinButton(scope.row)">
-            <img src="@/assets/images/eye.svg" alt="eye">
+          <button
+            class="action-btn"
+            @click="actinButton(scope.row)"
+          >
+            <img
+              src="@/assets/images/eye.svg"
+              alt="eye"
+            />
           </button>
 
-          <button class="action-btn ml-[8px]" @click="actinButton(scope.row)">
-            <img src="@/assets/images/download.svg" alt="download">
+          <button
+            class="action-btn ml-[8px]"
+            @click="actinButton(scope.row)"
+          >
+            <img
+              src="@/assets/images/download.svg"
+              alt="download"
+            />
           </button>
         </template>
       </el-table-column>
     </el-table>
-
 
     <div class="mt-[24px] flex items-center justify-between">
       <div class="text-[#8F9194] text-[14px]">
@@ -98,6 +137,5 @@ const actinButton = (value: any) => {
         :total="1000"
       />
     </div>
-
   </div>
 </template>

@@ -20,6 +20,9 @@ export default {
         "blue-700": "var(--blue-700)",
         "blue-800": "var(--blue-800)",
         "blue-900": "var(--blue-900)",
+        "dark": "#000D24",
+        "dark-gray": "#4F5662",
+        "white-blue": "var(--white-blue)",
 
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",

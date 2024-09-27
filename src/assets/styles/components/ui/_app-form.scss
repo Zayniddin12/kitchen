@@ -32,10 +32,17 @@
 
     .el-input__wrapper,
     .el-select__wrapper {
+      padding: 12px;
+      background-color: white;
+
       &.is-focus,
       &.is-focused {
         box-shadow: var(--app-form-item-box-shadow) !important;
       }
+    }
+
+    .el-input__prefix-inner > :last-child {
+      margin-right: 0;
     }
   }
 }
