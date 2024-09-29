@@ -17,10 +17,10 @@
     "echarts": "^5.5.1",
     "element-plus": "^2.8.3",
     "external-svg-loader": "^1.7.1",
+    "maska": "^3.0.2",
     "pinia": "^2.2.2",
     "sass": "^1.77.8",
     "vue": "^3.5.9",
-    "maska": "^3.0.2",
     "vue-echarts": "^7.0.3",
     "vue-i18n": "^10.0.3",
     "vue-router": "^4.3.3"
@@ -34,7 +34,7 @@
     "npm-run-all2": "^6.2.3",
     "postcss": "^8.4.47",
     "tailwindcss": "^3.4.13",
-    "typescript": "~5.6.2",
+    "typescript": "^5.6.2",
     "vite": "^5.4.8",
     "vite-plugin-vue-devtools": "^7.4.6",
     "vue-tsc": "^2.1.6"

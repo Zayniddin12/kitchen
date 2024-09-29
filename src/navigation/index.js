@@ -59,7 +59,6 @@ export const menuItems = [
   {
     title: "Мониторинг",
     icon: "monitoring",
-    route: "/monitoring",
     children: [
       {
         title: "Остатка товаров",

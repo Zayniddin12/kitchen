@@ -2,68 +2,103 @@
 import AppDatePicker from "@/components/ui/form/app-date-picker/AppDatePicker.vue";
 import { TableColumnType } from "@/types/common.type";
 import { computed } from "vue";
-import { useRoute } from "vue-router";
 import NotFoundPage from "@/components/errors/404.vue";
+import { useDistrictStore } from "@/modules/Monitoring/store/district.store";
 
-const route = useRoute();
-
-interface DistrictType {
-  id: number;
-  name: string;
-}
-
-const districts = computed<DistrictType[]>(() => {
-  return [
-    {
-      id: 1,
-      name: "КП РУ Зарафшон",
-    },
-    {
-      id: 2,
-      name: "КП РУ Навои",
-    },
-    {
-      id: 3,
-      name: "КП РУ Нуробод",
-    },
-    {
-      id: 4,
-      name: "КП РУ Учкудук",
-    },
-    {
-      id: 5,
-      name: "КП РУ Зафаробод",
-    },
-  ];
-});
-
-const activeDistrict = computed<DistrictType | undefined>(() => {
-  return districts.value.find((el: DistrictType) => el.id === +route.params.id);
-});
+const districtStore = useDistrictStore();
 
 const tableColumns = computed<TableColumnType[]>(() => {
   return [
     {
       label: "№",
       prop: "num",
+      width: 80,
+      sortable: false,
+    },
+    {
+      label: "Название продукта",
+      prop: "product_name",
+      width: 220,
+      sortable: true,
+    },
+    {
+      label: "Ед. изм",
+      width: 170,
+      prop: "unit_measurement",
+      sortable: true,
+    },
+    {
+      label: "Ёшлар",
+      prop: "department_1",
+      width: 170,
+      sortable: true,
+    },
+    {
+      label: "Високоволтнй",
+      prop: "department_2",
+      width: 180,
+      sortable: true,
+    },
+    {
+      label: "Табассум",
+      prop: "department_3",
+      width: 165,
+      sortable: true,
+    },
+    {
+      label: "Мойбулоқ",
+      prop: "department_4",
+      width: 165,
+      sortable: true,
+    },
+    {
+      label: "Ёғду",
+      prop: "department_5",
+      sortable: true,
+    },
+    {
+      label: "Паҳлавон",
+      prop: "department_6",
+      sortable: true,
+    },
+    {
+      label: "по КП РУ Навои",
+      prop: "all",
+      sortable: true,
     },
   ];
 });
 
 const tableData = computed(() => {
-  return [];
+  const dataList = [];
+
+  for (let i = 0; i < 10; i++) {
+    const data = {
+      num: i + 1,
+      product_name: "Масло подсол...",
+      unit_measurement: Math.round(1 + Math.random()) === 1 ? "шт" : "тн",
+      department_1: Math.floor(Math.random() * 51) + 50,
+      department_2: Math.floor(Math.random() * 51) + 50,
+      department_3: Math.floor(Math.random() * 51) + 50,
+      department_4: Math.floor(Math.random() * 51) + 50,
+      department_5: Math.floor(Math.random() * 51) + 50,
+      department_6: Math.floor(Math.random() * 51) + 50,
+      all: Math.floor(Math.random() * 501) + 50,
+    };
+
+    dataList.push(data);
+  }
+
+  return dataList;
 }) as Record<string, any>[];
 </script>
 
 <template>
-  <section
-    class="remaining-goods"
-    v-if="activeDistrict"
-  >
+  <section v-if="districtStore.district">
     <div>
       <div class="flex justify-between items-start gap-5">
         <h1 class="font-semibold text-[32px] text-dark">
-          {{ activeDistrict.name }}
+          {{ districtStore.district.name }}
         </h1>
         <div class="grid grid-cols-4 gap-2 max-w-[645px]">
           <AppDatePicker
@@ -151,20 +186,15 @@ const tableData = computed(() => {
       >
         <ElTableColumn
           v-for="column in tableColumns"
-          type="button"
           :key="column.prop"
+          :width="column.width"
+          :sortable="column.sortable"
           :prop="column.prop"
         >
           <template #header>
-            <RouterLink
-              v-if="!!column.link"
-              :to="column.link"
-            >
+            <strong class="font-medium">
               {{ column.label }}
-            </RouterLink>
-            <template v-else>
-              {{ column.label }}
-            </template>
+            </strong>
           </template>
         </ElTableColumn>
       </ElTable>
