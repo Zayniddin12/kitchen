@@ -1,24 +1,29 @@
 <script setup lang="ts">
 import { use } from "echarts/core";
 import { CanvasRenderer } from "echarts/renderers";
-import { PieChart } from "echarts/charts";
+import { PieChart, BarChart } from "echarts/charts";
 import {
   TitleComponent,
   TooltipComponent,
   LegendComponent,
   GraphicComponent,
+  GridComponent,
 } from "echarts/components";
 import VChart, { THEME_KEY } from "vue-echarts";
 import { ref, provide } from "vue";
 import { tableData } from "@/modules/Home/constants";
+import AppDatePicker from "@/components/ui/form/app-date-picker/AppDatePicker.vue";
+import AppSelect from "@/components/ui/form/app-select/AppSelect.vue";
 
 use([
   CanvasRenderer,
   PieChart,
+  BarChart,
   TitleComponent,
   TooltipComponent,
   LegendComponent,
   GraphicComponent,
+  GridComponent,
 ]);
 
 // provide(THEME_KEY, "dark");
@@ -183,6 +188,47 @@ const option2 = ref({
 
 });
 
+const option3 = {
+  tooltip: {
+    trigger: "axis",
+    axisPointer: {
+      type: "shadow",
+    },
+  },
+  grid: {
+    left: "3%",
+    right: "4%",
+    bottom: "3%",
+    containLabel: true,
+  },
+  xAxis: {
+    type: "value",
+    boundaryGap: [0, 0.01],
+  },
+  yAxis: {
+    type: "category",
+    data: ["Кухни ЛПП", "Кухня", "Буфет", "Больница", "Профилакторий", "Лагерь"],
+
+  },
+  series: [
+    {
+      name: "Expenses",
+      type: "bar",
+      data: [356800000, 86480500, 286800000, 500000000, 125800000, 865800000],
+      itemStyle: {
+        color: function(params) {
+          // Define colors for each bar
+          const colors = ["#36BFFA", "#53D28C", "#EE7677", "#FFB269", "#F670C7", "#9B8AFB"];
+
+          return colors[params.dataIndex];
+        },
+        borderRadius: [0, 20, 20, 0],
+      },
+
+    },
+  ],
+};
+
 
 const branches = ref<number>(0);
 
@@ -235,9 +281,9 @@ const handleClass = (item) => {
       </button>
     </div>
 
-    <div class="flex items-start gap-4">
+    <div class="flex items-start gap-4 mb-[40px]">
       <div class="w-[55%]">
-        <div class="flex items-center gap-4">
+        <div class="flex items-center gap-4 mb-[40px]">
           <div class="w-[50%] bg-[#F8F9FC] rounded-[24px] p-[16px]">
 
             <div class="flex items-center mb-[38px]">
@@ -273,6 +319,49 @@ const handleClass = (item) => {
           </div>
 
         </div>
+
+        <div>
+          <div class="bg-[#F8F9FC] rounded-[24px] p-[16px]">
+            <div class="flex items-center justify-between">
+              <h2 class="text-[#000D24] !text-[24px] font-semibold">Приготовление</h2>
+
+              <div class="flex items-center gap-2">
+                <AppDatePicker
+                  format="DD.MM.YYYY"
+                  size="large"
+                  class="w-[142px]"
+                />
+                <AppDatePicker
+                  class="w-[142px]"
+                  format="DD.MM.YYYY"
+                  size="large"
+                />
+              </div>
+            </div>
+
+            <div>
+              <span class="text-[#A8AAAE] text-[14px] mb-[4px]">Общая сумма</span>
+              <div class="flex items-center">
+                <span class="text-[32px] font-semibold">2 221 680 500 UZS</span>
+                <span class="flex items-center text-[#28C76F] text-[18px] font-medium">
+                  <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M16.0002 6.66699V25.3337" stroke="#28C76F" stroke-width="2" stroke-linecap="round"
+                          stroke-linejoin="round" />
+                    <path d="M24 14.667L16 6.66699" stroke="#28C76F" stroke-width="2" stroke-linecap="round"
+                          stroke-linejoin="round" />
+                    <path d="M8 14.667L16 6.66699" stroke="#28C76F" stroke-width="2" stroke-linecap="round"
+                          stroke-linejoin="round" />
+                    </svg>
+                    5%
+                </span>
+              </div>
+            </div>
+
+            <v-chart class="chart-horizon" :option="option3" autoresize />
+
+          </div>
+        </div>
+
       </div>
       <div class="w-[45%]">
         <div class="p-[24px] bg-[#F8F9FC] rounded-t-[24px]">
@@ -322,6 +411,36 @@ const handleClass = (item) => {
       </div>
     </div>
 
+
+    <div class="p-[24px] bg-[#F8F9FC] rounded-t-[24px]">
+      <div class="flex items-center justify-between">
+        <div>
+          <span class="block text-[24px] text-[#000D24] font-semibold">Приход продуктов</span>
+          <span class="text-black-sub block text-[14px]">Здесь будет текст</span>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <AppSelect
+            size="large"
+            class="w-[142px]"
+          />
+          <AppDatePicker
+            format="DD.MM.YYYY"
+            size="large"
+            class="w-[142px]"
+          />
+          <AppDatePicker
+            class="w-[142px]"
+            format="DD.MM.YYYY"
+            size="large"
+          />
+        </div>
+      </div>
+
+      <div>
+
+      </div>
+    </div>
   </div>
 </template>
 
@@ -329,4 +448,9 @@ const handleClass = (item) => {
 .chart {
   height: 314px;
 }
+
+.chart-horizon {
+  height: 340px;
+}
 </style>
+
