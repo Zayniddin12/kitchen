@@ -1,4 +1,4 @@
-/** @type {import('tailwindcss').Config} */
+/** @type {import("tailwindcss").Config} */
 export default {
   content: [
     "./index.html",
@@ -7,9 +7,11 @@ export default {
   theme: {
     extend: {
       boxShadow: {
-        'menu': '0px 1.5px 4px -1px #0A090B12',
+        "menu": "0px 1.5px 4px -1px #0A090B12",
       },
       colors: {
+        "black-text": "#000D24",
+        "black-sub": "#A8AAAE",
         "blue-50": "var(--blue-50)",
         "blue-100": "var(--blue-100)",
         "blue-200": "var(--blue-200)",
