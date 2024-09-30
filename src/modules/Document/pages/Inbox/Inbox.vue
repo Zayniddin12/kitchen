@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import CollapseFilter from "@/components/collapseFilter/index.vue";
-import appInput from "@/components/ui/form/app-input/AppInput.vue";
-import appSelect from "@/components/ui/form/app-select/AppSelect.vue";
+import AppInput from "@/components/ui/form/app-input/AppInput.vue";
+import AppSelect from "@/components/ui/form/app-select/AppSelect.vue";
 import white from "@/assets/images/filter2.svg";
 import filter from "@/assets/images/filter.svg";
 import AppDatePicker from "@/components/ui/form/app-date-picker/AppDatePicker.vue";
@@ -65,10 +65,10 @@ const actionButton = (value: TableData): void => {
   console.log(value, "value");
 };
 
-const toggleCollapse = () => {
-  isOpenFilter.value = !isOpenFilter.value;
-  activeNames.value = isOpenFilter.value ? ["1"] : [];
-};
+// const toggleCollapse = () => {
+//   isOpenFilter.value = !isOpenFilter.value;
+//   activeNames.value = isOpenFilter.value ? ["1"] : [];
+// };
 </script>
 
 <template>
@@ -77,26 +77,26 @@ const toggleCollapse = () => {
       <h1 class="m-0 font-semibold text-[32px]">Входящие</h1>
 
       <button class="custom-filter-btn font-medium" :class="isOpenFilter ? '!bg-blue !text-white' : ''"
-              @click="toggleCollapse">
+              @click="isOpenFilter = !isOpenFilter">
         <img :src="isOpenFilter ? white : filter" alt="filter" class="mr-[12px]" />
         Фильтр
       </button>
 
     </div>
 
-    <CollapseFilter v-model="activeNames">
+    <CollapseFilter v-model="isOpenFilter">
       <template #body>
         <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
           <app-date-picker placeholder="с этой даты" />
           <app-date-picker placeholder="по эту дату" />
 
-          <appInput placeholder="Номер документа" />
-          <appInput placeholder="Доставка картофеля" />
+          <AppInput placeholder="Номер документа" />
+          <AppInput placeholder="Доставка картофеля" />
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-2 gap-4">
-          <appSelect placeholder="Кому" />
-          <appSelect placeholder="Отправитель" />
+          <AppSelect placeholder="Кому" />
+          <AppSelect placeholder="Отправитель" />
         </div>
 
         <div class="flex items-center mt-[10px] justify-between">

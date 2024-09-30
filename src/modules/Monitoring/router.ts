@@ -5,6 +5,9 @@ export default [
     path: "/monitoring",
     name: "monitoring",
     redirect: { name: "monitoring.remainingGoods" },
+    meta: {
+      title: "Мониторинг",
+    },
     children: [
       {
         path: "remaining-goods",
@@ -16,7 +19,7 @@ export default [
             name: "monitoring.remainingGoods.index",
             component: () =>
               import(
-                "@/modules/Monitoring/views/remaining-goods/RemainingGoods.vue"
+                "@/modules/Monitoring/pages/remaining-goods/RemainingGoods.vue"
               ),
             meta: {
               breadcrumb: [
@@ -34,7 +37,7 @@ export default [
             path: "district/:id(\\d+)",
             name: "monitoring.remainingGoods.district",
             component: () =>
-              import("@/modules/Monitoring/views/remaining-goods/District.vue"),
+              import("@/modules/Monitoring/pages/remaining-goods/District.vue"),
             meta: {
               breadcrumb: [],
             },
@@ -66,7 +69,7 @@ export default [
       {
         path: "kitchen-report",
         name: "monitoring.kitchenReport",
-        component: () => import("@/modules/Monitoring/views/KitchenReport.vue"),
+        component: () => import("@/modules/Monitoring/pages/KitchenReport.vue"),
         meta: {
           breadcrumb: [
             {

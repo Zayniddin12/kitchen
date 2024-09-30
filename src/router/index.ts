@@ -3,12 +3,14 @@ import home from "@/modules/Home/router";
 import Inbox from '@/modules/Document/router';
 import Monitoring from "@/modules/Monitoring/router";
 import Settings from "@/modules/Settings/router";
+import Warehouse from "@/modules/WarehouseBases/router";
 
 const routes: Array<RouteRecordRaw> = [
   ...home,
   ...Inbox,
   ...Monitoring,
   ...Settings,
+  ...Warehouse,
   {
     path: "/",
     redirect: () => {
