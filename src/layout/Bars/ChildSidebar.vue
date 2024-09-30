@@ -32,7 +32,7 @@ watch(
 const activeChildMenu = (item: any) => {
   currentItem.value = item.route;
   router.push(item.route);
-  emit("closeSidebar");
+  // emit("closeSidebar"); vohtinchali yopildi
 };
 </script>
 
