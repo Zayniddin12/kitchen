@@ -232,7 +232,7 @@ const invoiceTableData = computed(() => {
                 name="nested"
                 :duration="{ enter: 500, leave: 1500 }"
                 tag="div"
-                class="mt-4 overflow-x-hidden relative"
+                class="mt-4 relative"
             >
               <div
                   v-if="activeTab === TABS.PRODUCTS"
