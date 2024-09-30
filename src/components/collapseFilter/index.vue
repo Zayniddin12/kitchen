@@ -1,23 +1,13 @@
 <script setup lang="ts">
-import { defineProps, ref, watch } from "vue";
 
-const props = defineProps<{
-  modelValue: string[];
-}>();
+import { computed, watch } from "vue";
 
-const emit = defineEmits<{
-  (e: "update:modelValue", value: string[]): void;
-}>();
+const model = defineModel<boolean>();
 
-const activeNames = ref<string[]>(props.modelValue);
+const activeNames = computed<string[]>(() => {
+  return model.value ? ["1"] : [];
+})
 
-watch(activeNames, (newVal) => {
-  emit("update:modelValue", newVal);
-});
-
-watch(() => props.modelValue, (newVal) => {
-  activeNames.value = newVal;
-});
 </script>
 
 <template>

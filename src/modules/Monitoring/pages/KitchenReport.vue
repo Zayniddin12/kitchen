@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import AppDatePicker from "@/components/ui/form/app-date-picker/AppDatePicker.vue";
 import { TableColumnType } from "@/types/common.type";
-import { computed, onMounted, ref } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 
 const route = useRoute();
@@ -28,11 +28,6 @@ const tabItems = computed(() => {
     }
   ]
 });
-
-const changeTab = (value:number) => {
-  activeTab.value = value;
-  router.replace({name: router.name, query: {...route.query, ...{tab: value}}});
-}
 
 const getActiveTab = () => {
   const tab = Number(route.query?.tab);
@@ -189,10 +184,9 @@ const dishesTableData = computed(() => {
   return dataList;
 });
 
-
-onMounted(() => {
+watch(() => route.query, () => {
   getActiveTab();
-});
+}, {immediate: true});
 
 </script>
 <template>
@@ -202,15 +196,15 @@ onMounted(() => {
           Отчет о кухне
         </h1>
       <div class="flex justify-between items-start gap-5 mt-6">
-        <div class="bg-white-blue p-1 flex items-center rounded-lg font-medium text-xs leading-5">
-          <button
+        <div class="app-tabs">
+          <RouterLink
             v-for="item in tabItems"
             :key="item.value"
-            :class="['rounded-lg py-2.5 px-5 transition duration-100 ease', `${item.value === activeTab ? 'bg-white shadow-[0px_1.5px_4px_-1px_#0A090B12] text-dark' : 'text-dark-gray'}`]"
-            @click="changeTab(item.value)"
+            :class="['app-tab', {'app-tab--active': activeTab === item.value}]"
+            :to="{query: {...route.query, ...{tab: item.value}}}"
           >
             {{item.label}}
-          </button>
+          </RouterLink>
         </div>
         <div class="grid grid-cols-4 gap-2 max-w-[645px]">
           <AppDatePicker

@@ -16,6 +16,8 @@ body {
   --el-popover-border-radius: 8px;
   --el-border-color-light: #e2e6f3;
   --el-bg-color-overlay: var(--white-blue);
+  --el-color-success: #28C76F;
+  --el-border-color-lighter: #E2E6F3;
 }
 
 input[type="number"]::-webkit-inner-spin-button,
@@ -66,4 +68,26 @@ input[type="number"] {
   transform: translateX(30px);
   overflow: hidden;
   opacity: 0.0001;
+}
+
+.el-progress {
+  $progress-radius: 4px;
+
+  &-bar{
+
+    &__outer, &__inner {
+      border-radius: $progress-radius;
+    }
+  }
+}
+
+.app-filter-btn{
+
+  &__icon{
+    @apply size-6;
+  }
+
+  &--active &__icon *{
+    fill: #ffffff;
+  }
 }
