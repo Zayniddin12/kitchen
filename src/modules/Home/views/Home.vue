@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { use } from "echarts/core";
 import { CanvasRenderer } from "echarts/renderers";
-import { PieChart, BarChart } from "echarts/charts";
+import { PieChart, BarChart, LineChart } from "echarts/charts";
 import {
   TitleComponent,
   TooltipComponent,
@@ -19,6 +19,7 @@ use([
   CanvasRenderer,
   PieChart,
   BarChart,
+  LineChart,
   TitleComponent,
   TooltipComponent,
   LegendComponent,
@@ -229,6 +230,61 @@ const option3 = {
   ],
 };
 
+const optionLine = {
+  xAxis: {
+    type: "category",
+    boundaryGap: false,
+    data: ["12", "15", "17", "19", "21", "23", "25", "27", "29", "31", "2", "4", "6", "8", "10", "12"],
+  },
+  legend: {
+    data: ["Мясной склад", "Овощной склад", "Рисовый склад"],
+  },
+  yAxis: {
+    type: "value",
+  },
+  series: [
+    {
+      name: "Мясной склад",
+      data: [120, 132, 101, 134, 90, 230, 210, 180, 200, 250, 300, 280],
+      type: "line",
+      smooth: true,
+      lineStyle: {
+        color: "#4682B4",
+        width: 3,
+      },
+    },
+    {
+      name: "Овощной склад",
+      data: [220, 182, 191, 234, 290, 330, 310, 210, 150, 220, 270, 310],
+      type: "line",
+      smooth: true,
+      lineStyle: {
+        color: "#FF6347",
+        width: 3,
+      },
+    },
+    {
+      name: "Рисовый склад",
+      data: [150, 232, 201, 154, 190, 330, 410, 140, 120, 130, 140, 160],
+      type: "line",
+      smooth: true,
+      lineStyle: {
+        color: "#FFD700",
+        width: 3,
+      },
+    },
+  ],
+  tooltip: {
+    trigger: "axis",
+  },
+  grid: {
+    left: "3%",
+    right: "4%",
+    bottom: "3%",
+    containLabel: true,
+  },
+};
+
 
 const branches = ref<number>(0);
 
@@ -412,7 +468,7 @@ const handleClass = (item) => {
     </div>
 
 
-    <div class="p-[24px] bg-[#F8F9FC] rounded-t-[24px]">
+    <div class="p-[24px] bg-[#F8F9FC] rounded-[24px] mb-[40px]" v-for="item in 2">
       <div class="flex items-center justify-between">
         <div>
           <span class="block text-[24px] text-[#000D24] font-semibold">Приход продуктов</span>
@@ -439,8 +495,47 @@ const handleClass = (item) => {
 
       <div>
 
+        <v-chart class="line-chart" :option="optionLine" autoresize />
       </div>
     </div>
+
+    <div class="flex items-center gap-4 mb-[40px]">
+      <div class="w-[50%] bg-[#F8F9FC] rounded-[24px] p-[16px]">
+
+        <div class="flex items-center mb-[38px]">
+          <div class="flex items-center gap-2">
+            <div class="bg-[#FFFFFF] p-[8px] rounded-[8px] flex items-center justify-center">
+              <img src="@/assets/images/icons/kitchen.svg" alt="warehouse" width="32">
+            </div>
+            <div>
+              <h2 class="text-[#000D24] font-semibold text-[14px]">Количество кухонь</h2>
+              <span class="text-[#A8AAAE] text-[12px]">Здесь будет текст</span>
+            </div>
+          </div>
+        </div>
+
+        <v-chart class="chart" :option="option" autoresize />
+      </div>
+
+      <div class="w-[50%] bg-[#F8F9FC] rounded-[24px] p-[16px]">
+
+        <div class="flex items-center mb-[38px]">
+          <div class="flex items-center gap-2">
+            <div class="bg-[#FFFFFF] p-[8px] rounded-[8px] flex items-center justify-center">
+              <img src="@/assets/images/icons/branch.svg" alt="warehouse" width="32">
+            </div>
+            <div>
+              <h2 class="text-[#000D24] font-semibold text-[14px]">Количество складов</h2>
+              <span class="text-[#A8AAAE] text-[12px]">Здесь будет текст</span>
+            </div>
+          </div>
+        </div>
+
+        <v-chart class="chart" :option="option2" autoresize />
+      </div>
+
+    </div>
+
   </div>
 </template>
 
@@ -451,6 +546,10 @@ const handleClass = (item) => {
 
 .chart-horizon {
   height: 340px;
+}
+
+.line-chart {
+  height: 381px;
 }
 </style>
 
