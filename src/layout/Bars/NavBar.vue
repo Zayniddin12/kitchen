@@ -1,21 +1,40 @@
 <script setup lang="ts">
 import { Bell, Message, Search } from "@element-plus/icons-vue";
 import Language from "@/components/language/index.vue";
+import MemoModal from "@/layout/Create/components/MemoModal.vue";
+import ComingModal from "@/layout/Create/components/ComingModal.vue";
+import { ref } from "vue";
+
+const editModal = ref<boolean>(false);
+const editModal2 = ref<boolean>(false);
 
 const navbarMenuList = [
   {
+    id: 1,
     title: "Служебная записка",
   },
   {
+    id: 2,
     title: "Приход",
   },
   {
+    id: 3,
     title: "Расход",
   },
   {
+    id: 4,
     title: "Запрос",
   },
 ];
+
+const openModals = (data) => {
+  console.log(data);
+  if (data.id == 1) {
+    editModal.value = true;
+  } else if (data.id == 2) {
+    editModal2.value = true;
+  }
+};
 
 </script>
 
@@ -77,7 +96,7 @@ const navbarMenuList = [
         </button>
         <template #dropdown>
           <el-dropdown-menu class="navbar-dropdown">
-            <el-dropdown-item class="item-drop" v-for="item in navbarMenuList">
+            <el-dropdown-item @click="openModals(item)" class="item-drop" v-for="item in navbarMenuList">
               <button class="flex items-center justify-between p-[10px] w-full">
                 <span class="text-[#4F5662] text-[14px] font-medium mr-[4px]">{{ item.title }}</span>
                 <img
@@ -130,6 +149,8 @@ const navbarMenuList = [
         </div>
       </div>
     </div>
+    <MemoModal v-model:editModal="editModal" />
+    <ComingModal v-model:editModal="editModal2" />
   </div>
 </template>
 
