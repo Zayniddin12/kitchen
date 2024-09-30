@@ -37,5 +37,6 @@ const activeNames = computed<string[]>(() => {
 
 .el-collapse-item2 .el-collapse-item__wrap {
   border: none;
+  overflow: unset;
 }
 </style>
