@@ -68,11 +68,6 @@ export const menuItems = [
         icon: "contract",
         route: "/contracts",
       },
-      {
-        title: "Накладные",
-        icon: "invoice",
-        route: "/invoices",
-      },
     ],
   },
   {

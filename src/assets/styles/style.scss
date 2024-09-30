@@ -3,7 +3,6 @@
 @import '@/assets/styles/settings';
 @import '@/assets/styles/tailwind';
 
-
 .custom-filter-btn {
   background-color: var(--white-blue);
   display: flex;
@@ -26,6 +25,10 @@
   border-radius: 10px;
   font-size: 14px;
   background-color: #2E90FA;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
 }
 
 .custom-white-btn {
@@ -46,6 +49,14 @@
   border-radius: 10px;
   font-size: 14px;
   background-color: #E2E6F3;
+}
+
+.custom-danger-btn {
+  padding: 10px 20px;
+  color: #FFFFFF;
+  border-radius: 10px;
+  font-size: 14px;
+  background-color: #EA5455;
 }
 
 .custom-send-btn {

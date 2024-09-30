@@ -7,63 +7,61 @@ import appSelect from "@/components/ui/form/app-select/AppSelect.vue";
 import white from "@/assets/images/filter2.svg";
 import filter from "@/assets/images/filter.svg";
 import AppDatePicker from "@/components/ui/form/app-date-picker/AppDatePicker.vue";
+import EditModal from './EditModal.vue'
 
 interface TableData {
-  id: number,
-  date: string,
-  numDoc: string,
-  vidDoc: string,
-  type: string,
-  vidPro: string,
-  warehouse: string,
+  id: number;
+  num: string;
+  date: string;
+  doc: string;
+  theme: string;
+  send: string;
+  receive: string;
 }
 
 const router = useRouter();
 const isOpenFilter = ref<boolean>(false);
 const activeNames = ref<string[]>([]);
+const editModal = ref<boolean>(false);
 
 const tableData = ref<TableData[]>([
   {
     id: 1,
-    date: '23.08.2024',
-    numDoc: "852369",
-    vidDoc: "Акт",
-    type: "Мясные",
-    vidPro: "Куриное мясо",
-    warehouse: "Зарафшан",
+    num: "1",
+    date: "23.08.2024",
+    doc: "852369",
+    theme: "Доставка мяса",
+    send: "Зарафшан",
+    receive: "Фонд",
   },
   {
     id: 2,
-    date: '23.08.2024',
-    numDoc: "852369",
-    vidDoc: "Акт",
-    type: "Мясные",
-    vidPro: "Куриное мясо",
-    warehouse: "Зарафшан",
+    num: "2",
+    date: "22.08.2024",
+    doc: "556261",
+    theme: "Доставка картофеля",
+    send: "Учкудук",
+    receive: "Фонд",
   },
   {
     id: 3,
-    date: '23.08.2024',
-    numDoc: "852369",
-    vidDoc: "Акт",
-    type: "Мясные",
-    vidPro: "Куриное мясо",
-    warehouse: "Зарафшан",
+    num: "3",
+    date: "21.08.2024",
+    doc: "584534",
+    theme: "Доставка лука",
+    send: "Навои",
+    receive: "Фонд",
   },
   {
     id: 4,
-    date: '23.08.2024',
-    numDoc: "852369",
-    vidDoc: "Акт",
-    type: "Мясные",
-    vidPro: "Куриное мясо",
-    warehouse: "Зарафшан",
+    num: "4",
+    date: "22.08.2024",
+    doc: "556261",
+    theme: "Доставка картофеля",
+    send: "Учкудук",
+    receive: "Фонд",
   },
 ]);
-
-const actionButton = (value: TableData): void => {
-  console.log(value, "value");
-};
 
 const toggleCollapse = () => {
   isOpenFilter.value = !isOpenFilter.value;
@@ -74,7 +72,7 @@ const toggleCollapse = () => {
 <template>
   <div>
     <div class="flex items-center justify-between">
-      <h1 class="m-0 font-semibold text-[32px]">Акты</h1>
+      <h1 class="m-0 font-semibold text-[32px]">Черновики</h1>
 
       <button class="custom-filter-btn font-medium" :class="isOpenFilter ? '!bg-blue !text-white' : ''"
               @click="toggleCollapse">
@@ -110,21 +108,20 @@ const toggleCollapse = () => {
     </CollapseFilter>
 
     <el-table :data="tableData" class="custom-element-table">
-      <el-table-column prop="id" label="№" />
+      <el-table-column prop="num" label="№" />
       <el-table-column prop="date" label="Дата" />
-      <el-table-column prop="numDoc" label="№ док..." />
-      <el-table-column prop="vidDoc" label="Вид док..." />
-      <el-table-column prop="type" label="Тип продукта" />
-      <el-table-column prop="vidPro" label="Вид продукта" />
-      <el-table-column prop="warehouse" label="Склад" />
+      <el-table-column prop="doc" label="№ документа" />
+      <el-table-column prop="theme" label="Тема" />
+      <el-table-column prop="send" label="Отправитель" />
+      <el-table-column prop="receive" label="Получатель" />
       <el-table-column label="Действие">
         <template #default="scope">
-          <button class="action-btn" @click="router.push(`/acts/${scope.row.id}`)">
-            <img src="../../../../assets/images/eye.svg" alt="eye" />
+          <button class="action-btn">
+            <img src="../../../../../assets/images/eye.svg" alt="eye" />
           </button>
 
-          <button class="action-btn ml-[8px]" @click="actionButton(scope.row)">
-            <img src="../../../../assets/images/download.svg" alt="download" />
+          <button class="action-btn ml-[8px]" @click="editModal = true">
+            <img src="../../../../../assets/images/icons/edit.svg" alt="edit" />
           </button>
         </template>
       </el-table-column>
@@ -142,5 +139,7 @@ const toggleCollapse = () => {
         :total="1000"
       />
     </div>
+
+    <EditModal v-model:editModal="editModal"/>
   </div>
 </template>
