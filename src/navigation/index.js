@@ -31,7 +31,16 @@ export const menuItems = [
         icon: "record2",
         children: [
           {
-            title: "1",
+            title: "Полученные",
+            route: '/received'
+          },
+          {
+            title: "Отправленные",
+            route: "/sent"
+          },
+          {
+            title: "Черновики",
+            route: '/draft'
           },
         ],
       },
@@ -40,26 +49,35 @@ export const menuItems = [
         icon: "invoice",
         children: [
           {
-            title: "2",
+            title: "Входящие",
+            route: '/invoice-inbox'
+          },
+          {
+            title: "Исходящие",
+            route: '/invoice-outgoing'
           },
         ],
       },
       {
         title: "Акты",
         icon: "document",
-        route: "/act",
+        route: "/acts",
       },
       {
         title: "Контракты",
         icon: "contract",
-        route: "/contract",
+        route: "/contracts",
+      },
+      {
+        title: "Накладные",
+        icon: "invoice",
+        route: "/invoices",
       },
     ],
   },
   {
     title: "Мониторинг",
     icon: "monitoring",
-    route: "/monitoring",
     children: [
       {
         title: "Остатка товаров",
@@ -216,14 +234,17 @@ export const menuItems = [
       {
         title: "Справочники",
         icon: "record",
+        route: '/reference'
       },
       {
         title: "Связь справочников",
         icon: "derictory",
+        route: '/directory'
       },
       {
         title: "Кадры",
         icon: "users",
+        route: '/personnel'
       },
     ],
   },

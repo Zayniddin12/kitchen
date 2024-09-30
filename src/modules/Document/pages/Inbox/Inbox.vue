@@ -18,7 +18,7 @@ interface TableData {
   receive: string;
 }
 
-const router = useRouter()
+const router = useRouter();
 const isOpenFilter = ref<boolean>(false);
 const activeNames = ref<string[]>([]);
 
@@ -76,7 +76,6 @@ const toggleCollapse = () => {
     <div class="flex items-center justify-between">
       <h1 class="m-0 font-semibold text-[32px]">Входящие</h1>
 
-
       <button class="custom-filter-btn font-medium" :class="isOpenFilter ? '!bg-blue !text-white' : ''"
               @click="toggleCollapse">
         <img :src="isOpenFilter ? white : filter" alt="filter" class="mr-[12px]" />
@@ -126,12 +125,12 @@ const toggleCollapse = () => {
           <button class="action-btn ml-[8px]" @click="actionButton(scope.row)">
             <img src="@/assets/images/download.svg" alt="download" />
           </button>
-      </template>
+        </template>
       </el-table-column>
     </el-table>
 
     <div class="mt-[24px] flex items-center justify-between">
-      <div class="text-[#8F9194] text-[14px]">
+      <div class="text-cool-gray text-[14px]">
         Показано 1–12 из 100 результатов
       </div>
 

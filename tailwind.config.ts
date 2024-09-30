@@ -27,6 +27,7 @@ export default {
         "dark": "#000D24",
         "dark-gray": "#4F5662",
         "white-blue": "var(--white-blue)",
+        "cool-gray": "#8F9194",
 
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
