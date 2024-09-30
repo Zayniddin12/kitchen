@@ -1,10 +1,13 @@
 <script lang="ts" setup>
-import { onMounted, ref, watch } from "vue";
+import { computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
 
 const route = useRoute();
-const breadcrumbList = ref([]);
 const router = useRouter();
+
+const breadcrumbList = computed(() => {
+  return route.meta.breadcrumb ?? [];
+});
 
 const changeRoute = (item: any) => {
   if (item.redirectWithParams) {
@@ -13,21 +16,6 @@ const changeRoute = (item: any) => {
     router.push({ name: item.to, query: item.query });
   }
 };
-
-watch(
-  () => route.path,
-  () => {
-    if (Array.isArray(route.meta.breadcrumb)) {
-      breadcrumbList.value = route.meta.breadcrumb;
-    }
-  }
-);
-
-onMounted(() => {
-  if (Array.isArray(route.meta.breadcrumb)) {
-    breadcrumbList.value = route.meta.breadcrumb;
-  }
-});
 </script>
 
 <template>
@@ -45,6 +33,7 @@ onMounted(() => {
       <div
         class="flex items-center"
         v-for="breadcrumb in breadcrumbList"
+        :key="breadcrumb.label"
       >
         <span class="mx-3">
           <img
