@@ -5,7 +5,6 @@
 <template>
   <div class="flex items-start justify-center">
     <div class="border-[#E2E6F3] border rounded-[15px] w-[50%] mr-0">
-
       <div class="px-[72px] pb-[150px]">
         <header class="flex items-center justify-center my-[24px] mb-6">
           <img src="@/assets/images/logo.svg" alt="logo">
