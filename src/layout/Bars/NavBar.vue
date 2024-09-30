@@ -1,6 +1,22 @@
 <script setup lang="ts">
 import { Bell, Message, Search } from "@element-plus/icons-vue";
 import Language from "@/components/language/index.vue";
+
+const navbarMenuList = [
+  {
+    title: "Служебная записка",
+  },
+  {
+    title: "Приход",
+  },
+  {
+    title: "Расход",
+  },
+  {
+    title: "Запрос",
+  },
+];
+
 </script>
 
 <template>
@@ -18,46 +34,62 @@ import Language from "@/components/language/index.vue";
       />
     </div>
     <div class="flex items-center gap-6">
-      <button
-        class="flex items-center bg-[#2E90FA] rounded-[8px] py-[10px] px-[20px]"
-      >
-        <svg
-          class="mr-[8px]"
-          width="20"
-          height="20"
-          viewBox="0 0 20 20"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
+      <el-dropdown trigger="click">
+        <button
+          class="flex items-center bg-[#2E90FA] rounded-[8px] border-[1.5px] py-[10px] px-[20px] active:bg-[#175CD3] active:border-[#1849A9] active:border-[1.5px]"
         >
-          <rect
-            x="3.3335"
-            y="3.33301"
-            width="13.3333"
-            height="13.3333"
-            rx="2"
-            stroke="white"
-            stroke-width="1.2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          />
-          <path
-            d="M7.5 9.99967H12.5"
-            stroke="white"
-            stroke-width="1.2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          />
-          <path
-            d="M10.0002 7.5V12.5"
-            stroke="white"
-            stroke-width="1.2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          />
-        </svg>
+          <svg
+            class="mr-[8px]"
+            width="20"
+            height="20"
+            viewBox="0 0 20 20"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <rect
+              x="3.3335"
+              y="3.33301"
+              width="13.3333"
+              height="13.3333"
+              rx="2"
+              stroke="white"
+              stroke-width="1.2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+            <path
+              d="M7.5 9.99967H12.5"
+              stroke="white"
+              stroke-width="1.2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+            <path
+              d="M10.0002 7.5V12.5"
+              stroke="white"
+              stroke-width="1.2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
 
-        <span style="vertical-align: middle"> Создать </span>
-      </button>
+          <span style="vertical-align: middle" class="text-white"> Создать </span>
+        </button>
+        <template #dropdown>
+          <el-dropdown-menu class="navbar-dropdown">
+            <el-dropdown-item class="item-drop" v-for="item in navbarMenuList">
+              <button class="flex items-center justify-between p-[10px] w-full">
+                <span class="text-[#4F5662] text-[14px] font-medium mr-[4px]">{{ item.title }}</span>
+                <img
+                  src="@/assets/arrow-right.svg"
+                  alt="arrow icon"
+                />
+              </button>
+            </el-dropdown-item>
+
+          </el-dropdown-menu>
+        </template>
+      </el-dropdown>
 
       <el-badge
         value="18"
@@ -100,3 +132,38 @@ import Language from "@/components/language/index.vue";
     </div>
   </div>
 </template>
+
+<style lang="scss">
+.navbar-dropdown .el-dropdown-menu__item {
+  padding: 0;
+}
+
+.navbar-dropdown {
+  padding: 12px !important;
+  background-color: #F8F9FC !important;
+  border-radius: 16px !important;
+  border: 1px solid #E2E6F3;
+}
+
+.el-scrollbar {
+  //border-radius: 16px !important;
+  background-color: transparent !important;
+}
+
+.el-popper.is-pure {
+  border-radius: 16px;
+}
+
+.item-drop:focus {
+  background-color: initial !important;
+
+}
+
+.item-drop:hover {
+  background-color: #FFFFFF !important;
+  border-radius: 8px;
+  color: #000D24 !important;
+
+}
+
+</style>
