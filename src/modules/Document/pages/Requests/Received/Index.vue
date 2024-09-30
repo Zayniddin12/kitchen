@@ -141,11 +141,11 @@ const changeTab = (value: number) => activeTab.value = value;
       <el-table-column label="Действие">
         <template #default="scope">
           <button class="action-btn" @click="router.push(`/received/${scope.row.id}`)">
-            <img src="../../../../../assets/images/eye.svg" alt="eye" />
+            <img src="@/assets/images/eye.svg" alt="eye" />
           </button>
 
           <button class="action-btn ml-[8px]" @click="actionButton(scope.row)">
-            <img src="../../../../../assets/images/download.svg" alt="download" />
+            <img src="@/assets/images/download.svg" alt="download" />
           </button>
         </template>
       </el-table-column>

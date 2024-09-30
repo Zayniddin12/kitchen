@@ -26,7 +26,7 @@ const isOpenFilter = ref<boolean>(false);
 const tableData = ref<TableData[]>([
   {
     id: 1,
-    date: '23.08.2024',
+    date: "23.08.2024",
     numContact: "852369",
     supplier: "Фонд",
     sum: "22 654 000 сум",
@@ -37,7 +37,7 @@ const tableData = ref<TableData[]>([
   },
   {
     id: 2,
-    date: '23.08.2024',
+    date: "23.08.2024",
     numContact: "852369",
     supplier: "Фонд",
     sum: "22 654 000 сум",
@@ -48,7 +48,7 @@ const tableData = ref<TableData[]>([
   },
   {
     id: 3,
-    date: '23.08.2024',
+    date: "23.08.2024",
     numContact: "852369",
     supplier: "Фонд",
     sum: "22 654 000 сум",
@@ -59,7 +59,7 @@ const tableData = ref<TableData[]>([
   },
   {
     id: 4,
-    date: '23.08.2024',
+    date: "23.08.2024",
     numContact: "852369",
     supplier: "Фонд",
     sum: "22 654 000 сум",
@@ -82,10 +82,10 @@ const actionButton = (value: TableData): void => {
 
       <div class="flex items-center">
         <button class="custom-apply-btn">
-          <img src="../../../../assets/images/icons/plus.svg" alt="add">
+          <img src="@/assets/images/icons/plus.svg" alt="add">
           Добавить
         </button>
-        
+
         <button class="custom-filter-btn font-medium ml-[16px]" :class="isOpenFilter ? '!bg-blue !text-white' : ''"
                 @click="isOpenFilter =! isOpenFilter">
           <img :src="isOpenFilter ? white : filter" alt="filter" class="mr-[12px]" />
@@ -133,12 +133,12 @@ const actionButton = (value: TableData): void => {
       <el-table-column prop="editing" label="Измерения" />
       <el-table-column label="Действие">
         <template #default="scope">
-          <button class="action-btn" @click="router.push(`/acts/${scope.row.id}`)">
-            <img src="../../../../assets/images/eye.svg" alt="eye" />
+          <button class="action-btn" @click="router.push(`/contracts/${scope.row.id}`)">
+            <img src="@/assets/images/eye.svg" alt="eye" />
           </button>
 
           <button class="action-btn ml-[8px]" @click="actionButton(scope.row)">
-            <img src="../../../../assets/images/download.svg" alt="download" />
+            <img src="@/assets/images/download.svg" alt="download" />
           </button>
         </template>
       </el-table-column>

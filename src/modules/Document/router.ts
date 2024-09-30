@@ -357,6 +357,35 @@ export default [
 
     },
   },
+  {
+    path: "/invoice-outgoing/:id",
+    name: "invoice-outgoing-id",
+    component: () => import("@/modules/Document/pages/Invoices/InvoiceOutgoing/View.vue"),
+    meta: {
+      title: "Исходящие",
+      layout: "MainLayout",
+      breadcrumb: [
+        {
+          label: "Документы",
+          isActionable: false,
+        },
+        {
+          label: "Накладные",
+          isActionable: false,
+        },
+        {
+          label: "Исходящие",
+          isActionable: false,
+          to: 'invoice-outgoing'
+        },
+        {
+          label: "Просмотр",
+          isActionable: true,
+        },
+      ],
+
+    },
+  },
   // -------------------------Запросы-------------------------------
 
   //acts

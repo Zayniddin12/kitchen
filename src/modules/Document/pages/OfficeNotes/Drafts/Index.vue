@@ -112,11 +112,11 @@ const tableData = ref<TableData[]>([
       <el-table-column label="Действие">
         <template #default="scope">
           <button class="action-btn">
-            <img src="../../../../../assets/images/eye.svg" alt="eye" />
+            <img src="@/assets/images/eye.svg" alt="eye" />
           </button>
 
           <button class="action-btn ml-[8px]" @click="editModal = true">
-            <img src="../../../../../assets/images/icons/edit.svg" alt="edit" />
+            <img src="@/assets/images/icons/edit.svg" alt="edit" />
           </button>
         </template>
       </el-table-column>

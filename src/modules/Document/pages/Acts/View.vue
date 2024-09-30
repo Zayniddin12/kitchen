@@ -7,7 +7,7 @@
     <div class="border-[#E2E6F3] border rounded-[15px] w-[50%] mr-0">
       <div class="px-[72px] pb-[50px]">
         <header class="flex items-center justify-center my-[24px] mb-6">
-          <img src="../../../../assets/images/logo.svg" alt="logo">
+          <img src="@/assets/images/logo.svg" alt="logo">
           <div class="flex flex-col ml-3">
             <b class="text-[#000D24] text-lg">NKMK</b>
             <span class="text-[#CBCCCE]">Jamg‘armasi</span>
@@ -98,7 +98,7 @@
             </h1>
           </div>
 
-          <img src="../../../../assets/images/icons/qr.svg" alt="qr" />
+          <img src="@/assets/images/icons/qr.svg" alt="qr" />
 
           <h1 class="text-[#A8AAAE] text-[14px] mr-[100px]">Эргашева Л.</h1>
         </div>
@@ -107,15 +107,15 @@
 
     <div>
       <button class="custom-white-btn ml-[24px] w-[260px]">
-        <img src="../../../../assets/images/icons/plane.svg" alt="plane" class="mr-[12px]" />
+        <img src="@/assets/images/icons/plane.svg" alt="plane" class="mr-[12px]" />
         Отправить
       </button>
       <button class="custom-white-btn ml-[24px] w-[260px] my-[8px]">
-        <img src="../../../../assets/images/icons/print.svg" alt="plane" class="mr-[12px]" />
+        <img src="@/assets/images/icons/print.svg" alt="plane" class="mr-[12px]" />
         Печать
       </button>
       <button class="custom-white-btn ml-[24px] w-[260px]">
-        <img src="../../../../assets/images/icons/download.svg" alt="plane" class="mr-[12px]" />
+        <img src="@/assets/images/icons/download.svg" alt="plane" class="mr-[12px]" />
         Скачать
       </button>
     </div>

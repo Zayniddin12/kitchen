@@ -52,24 +52,11 @@ const tableData = ref<TableData[]>([
             <span class="text-[#CBCCCE]">Jamg‘armasi</span>
           </div>
         </header>
-        <h1 class="text-[#000D24] font-bold text-[20px] text-center mb-[24px]">НАКЛАДНОЙ</h1>
+        <h1 class="text-[#000D24] font-bold text-[20px] text-center mb-[24px]">НАЗВАНИЕ ДОКУМЕНТА</h1>
 
-        <div class="flex justify-between items-center">
-          <div class="flex items-center mb-[8px]">
-            <h1 class="text-[#4F5662] text-[14px] font-medium">Дата создания в системе:</h1>
-            <span class="ml-2 text-[#A8AAAE] text-[14px] font-medium block">24.08.2024</span>
-          </div>
-
-          <!--pdf-->
-          <div class="border rounded-lg py-[8px] px-[12px] flex items-start cursor-pointer">
-            <img src="@/assets/images/icons/pdf2.svg" class="mr-[8px] mt-1" alt="pdf">
-
-            <div>
-              <h3 class="mb-[4px] text-[#000D24] text-[14px] font-medium">Накладной документ</h3>
-              <h4 class="text-[#A8AAAE] text-[12px]">PDF | 9.83 MB</h4>
-            </div>
-          </div>
-          <!--pdf-->
+        <div class="flex items-center mb-[8px]">
+          <h1 class="text-[#4F5662] text-[14px] font-medium">Дата создания в системе:</h1>
+          <span class="ml-2 text-[#A8AAAE] text-[14px] font-medium block">24.08.2024</span>
         </div>
 
         <div class="flex items-center mb-[24px]">
@@ -124,7 +111,19 @@ const tableData = ref<TableData[]>([
 
         <div class="flex items-center justify-end mt-[10px]">
           <h1 class="text-[#000D24] text-[14px] font-bold mr-[70px]">Общая сумма: </h1>
-          <h1 class="text-[#000D24] text-[14px] font-bold mr-2">7 040 000 сум</h1>
+          <h1 class="text-[#000D24] text-[14px] font-bold mr-4">7 040 000 сум</h1>
+        </div>
+
+        <div class="mt-[40px] flex items-center justify-between" v-for="(item, index) in 5" :key="index">
+          <div class="flex items-baseline mb-[24px] w-[200px]">
+            <h1 class=" text-[14px] text-[#4F5662] font-medium">
+              Кладовщик:
+            </h1>
+          </div>
+
+          <img src="@/assets/images/icons/qr.svg" alt="qr" />
+
+          <h1 class="text-[#A8AAAE] text-[14px] mr-[100px]">Эргашева Л.</h1>
         </div>
       </div>
     </div>

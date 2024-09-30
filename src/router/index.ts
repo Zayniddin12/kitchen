@@ -1,9 +1,11 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
 import home from "@/modules/Home/router";
-import Inbox from '@/modules/Document/router';
+import Inbox from "@/modules/Document/router";
 import Monitoring from "@/modules/Monitoring/router";
 import Settings from "@/modules/Settings/router";
 import Warehouse from "@/modules/WarehouseBases/router";
+import KitchenWarehouse from "@/modules/KitchenWarehouse/router";
+import { watch } from "vue";
 
 const routes: Array<RouteRecordRaw> = [
   ...home,
@@ -11,6 +13,7 @@ const routes: Array<RouteRecordRaw> = [
   ...Monitoring,
   ...Settings,
   ...Warehouse,
+  ...KitchenWarehouse,
   {
     path: "/",
     redirect: () => {
@@ -44,8 +47,8 @@ const router = createRouter({
 });
 
 router.afterEach((to: any) => {
-  const DEFAULT_TITLE = 'KITCHEN'
+  const DEFAULT_TITLE = "KITCHEN";
   document.title = to.meta.title || DEFAULT_TITLE;
-})
+});
 
 export default router;
