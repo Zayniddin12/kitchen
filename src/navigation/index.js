@@ -96,12 +96,15 @@ export const menuItems = [
         children: [
           {
             title: "Мясной склад",
+            route: "/warehouse/1/1"
           },
           {
             title: "Овощной склад",
+            route: "/warehouse/1/2"
           },
           {
             title: "Рисовый склад",
+            route: "/warehouse/1/3"
           },
         ],
       },
@@ -110,7 +113,16 @@ export const menuItems = [
         icon: "building-warehouse",
         children: [
           {
-            title: "1",
+            title: "Мясной склад",
+            route: "/warehouse/2/1"
+          },
+          {
+            title: "Овощной склад",
+            route: "/warehouse/2/2"
+          },
+          {
+            title: "Рисовый склад",
+            route: "/warehouse/2/3"
           },
         ],
       },
@@ -119,7 +131,16 @@ export const menuItems = [
         icon: "building-warehouse",
         children: [
           {
-            title: "1",
+            title: "Мясной склад",
+            route: "/warehouse/3/1"
+          },
+          {
+            title: "Овощной склад",
+            route: "/warehouse/3/2"
+          },
+          {
+            title: "Рисовый склад",
+            route: "/warehouse/3/3"
           },
         ],
       },
@@ -128,7 +149,16 @@ export const menuItems = [
         icon: "building-warehouse",
         children: [
           {
-            title: "1",
+            title: "Мясной склад",
+            route: "/warehouse/4/1"
+          },
+          {
+            title: "Овощной склад",
+            route: "/warehouse/4/2"
+          },
+          {
+            title: "Рисовый склад",
+            route: "/warehouse/4/3"
           },
         ],
       },
@@ -137,7 +167,16 @@ export const menuItems = [
         icon: "building-warehouse",
         children: [
           {
-            title: "1",
+            title: "Мясной склад",
+            route: "/warehouse/5/1"
+          },
+          {
+            title: "Овощной склад",
+            route: "/warehouse/5/2"
+          },
+          {
+            title: "Рисовый склад",
+            route: "/warehouse/5/3"
           },
         ],
       },

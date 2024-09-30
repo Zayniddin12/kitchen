@@ -3,6 +3,10 @@
 @import '@/assets/styles/settings';
 @import '@/assets/styles/tailwind';
 
+@import "@/assets/styles/components/ui/app-form";
+@import "@/assets/styles/components/ui/app-tab";
+
+
 .custom-filter-btn {
   background-color: var(--white-blue);
   display: flex;

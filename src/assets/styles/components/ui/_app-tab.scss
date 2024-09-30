@@ -1,0 +1,11 @@
+.app-tabs{
+  @apply bg-white-blue p-1 flex items-center rounded-lg font-medium text-xs leading-5;
+}
+
+.app-tab{
+  @apply rounded-lg py-2.5 px-5 transition duration-100 text-dark-gray;
+
+  &--active{
+    @apply bg-white shadow-[0px_1.5px_4px_-1px_#0A090B12] text-dark;
+  }
+}

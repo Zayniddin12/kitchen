@@ -20,7 +20,6 @@ interface TableData {
 
 const router = useRouter();
 const isOpenFilter = ref<boolean>(false);
-const activeNames = ref<string[]>([]);
 
 const tableData = ref<TableData[]>([
   {
@@ -64,11 +63,6 @@ const tableData = ref<TableData[]>([
 const actionButton = (value: TableData): void => {
   console.log(value, "value");
 };
-
-const toggleCollapse = () => {
-  isOpenFilter.value = !isOpenFilter.value;
-  activeNames.value = isOpenFilter.value ? ["1"] : [];
-};
 </script>
 
 <template>
@@ -77,17 +71,17 @@ const toggleCollapse = () => {
       <h1 class="m-0 font-semibold text-[32px]">Входящие</h1>
 
       <button class="custom-filter-btn font-medium" :class="isOpenFilter ? '!bg-blue !text-white' : ''"
-              @click="toggleCollapse">
+              @click="isOpenFilter = !isOpenFilter">
         <img :src="isOpenFilter ? white : filter" alt="filter" class="mr-[12px]" />
         Фильтр
       </button>
 
     </div>
 
-    <CollapseFilter v-model="activeNames">
+    <CollapseFilter v-model="isOpenFilter">
       <template #body>
         <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          <app-date-picker placeholder="с этой даты" />
+          <app-date-picker size="large" placeholder="с этой даты" />
           <app-date-picker placeholder="по эту дату" />
 
           <appInput placeholder="Номер документа" />

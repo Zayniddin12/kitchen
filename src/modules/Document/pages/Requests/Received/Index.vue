@@ -25,7 +25,6 @@ interface TabItems {
 
 const router = useRouter();
 const isOpenFilter = ref<boolean>(false);
-const activeNames = ref<string[]>([]);
 const activeTab = ref<number>(0);
 
 const tabItems = ref<TabItems[]>([
@@ -82,11 +81,6 @@ const actionButton = (value: TableData): void => {
   console.log(value, "value");
 };
 
-const toggleCollapse = () => {
-  isOpenFilter.value = !isOpenFilter.value;
-  activeNames.value = isOpenFilter.value ? ["1"] : [];
-};
-
 const changeTab = (value: number) => activeTab.value = value;
 </script>
 
@@ -107,13 +101,13 @@ const changeTab = (value: number) => activeTab.value = value;
       </div>
 
       <button class="custom-filter-btn font-medium" :class="isOpenFilter ? '!bg-blue !text-white' : ''"
-              @click="toggleCollapse">
+              @click="isOpenFilter =! isOpenFilter">
         <img :src="isOpenFilter ? white : filter" alt="filter" class="mr-[12px]" />
         Фильтр
       </button>
     </div>
 
-    <CollapseFilter v-model="activeNames">
+    <CollapseFilter v-model="isOpenFilter">
       <template #body>
         <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
           <app-date-picker placeholder="с этой даты" />

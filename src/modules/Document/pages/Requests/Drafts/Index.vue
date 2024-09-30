@@ -18,7 +18,6 @@ interface TableData {
 }
 
 const isOpenFilter = ref<boolean>(false);
-const activeNames = ref<string[]>([]);
 const isOpenModal = ref<boolean>(false);
 
 const tableData = ref<TableData[]>([
@@ -59,11 +58,6 @@ const tableData = ref<TableData[]>([
 const actionButton = (value: TableData): void => {
   console.log(value, "value");
 };
-
-const toggleCollapse = () => {
-  isOpenFilter.value = !isOpenFilter.value;
-  activeNames.value = isOpenFilter.value ? ["1"] : [];
-};
 </script>
 
 <template>
@@ -72,13 +66,13 @@ const toggleCollapse = () => {
       <h1 class="mb-0 font-semibold text-[32px]">Черновики</h1>
 
       <button class="custom-filter-btn font-medium" :class="isOpenFilter ? '!bg-blue !text-white' : ''"
-              @click="toggleCollapse">
+              @click="isOpenFilter =! isOpenFilter">
         <img :src="isOpenFilter ? white : filter" alt="filter" class="mr-[12px]" />
         Фильтр
       </button>
     </div>
 
-    <CollapseFilter v-model="activeNames">
+    <CollapseFilter v-model="isOpenFilter">
       <template #body>
         <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
           <app-date-picker placeholder="с этой даты" />
