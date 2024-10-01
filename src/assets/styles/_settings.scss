@@ -73,7 +73,7 @@ input[type="number"] {
 .el-progress {
   $progress-radius: 4px;
 
-  &-bar{
+  &-bar {
 
     &__outer, &__inner {
       border-radius: $progress-radius;
@@ -81,13 +81,33 @@ input[type="number"] {
   }
 }
 
-.app-filter-btn{
+.app-filter-btn {
 
-  &__icon{
+  &__icon {
     @apply size-6;
   }
 
-  &--active &__icon *{
+  &--active &__icon * {
     fill: #ffffff;
+  }
+}
+
+.boxes {
+  @apply flex flex-wrap gap-6;
+
+  .box {
+    @apply rounded-2xl w-[160px] py-4 px-[26px] bg-white-blue shadow-[0_1.5px_4px_-1px_#0A090B12] text-center flex flex-col justify-center items-center;
+
+    &__img {
+      @apply size-6 mx-auto;
+    }
+
+    &__title {
+      @apply text-xs font-medium text-dark-gray mt-1.5;
+    }
+
+    &__description {
+      @apply text-[#A8AAAE] text-[12px] mt-1.5;
+    }
   }
 }

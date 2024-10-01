@@ -29,6 +29,8 @@ watch(
     console.log(`Route params changed from ${oldParams.title} to ${newParams.title}`);
   }
 );
+
+
 </script>
 
 <template>
