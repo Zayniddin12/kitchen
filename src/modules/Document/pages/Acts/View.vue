@@ -43,36 +43,36 @@
             <td class="border p-4">265</td>
           </tr>
           <tr>
-            <th class="border  bg-[#E2E6F3]-100 p-4 text-left font-semibold">Единица измерения</th>
-            <td class="border  p-4">кг</td>
+            <th class="border bg-[#E2E6F3]-100 p-4 text-left font-semibold">Единица измерения</th>
+            <td class="border p-4">кг</td>
           </tr>
           <tr>
-            <th class="border  bg-[#E2E6F3]-100 p-4 text-left font-semibold">Номер и дата договора о поставке</th>
-            <td class="border  p-4">K1029745 от 25.07.2024</td>
+            <th class="border bg-[#E2E6F3]-100 p-4 text-left font-semibold">Номер и дата договора о поставке</th>
+            <td class="border p-4">K1029745 от 25.07.2024</td>
           </tr>
           <tr>
-            <th class="border  bg-[#E2E6F3]-100 p-4 text-left font-semibold">Номер и дата накладной</th>
-            <td class="border  p-4">№ 365 26.08.2024</td>
+            <th class="border bg-[#E2E6F3]-100 p-4 text-left font-semibold">Номер и дата накладной</th>
+            <td class="border p-4">№ 365 26.08.2024</td>
           </tr>
           <tr>
-            <th class="border  bg-[#E2E6F3]-100 p-4 text-left font-semibold">Производитель продукта</th>
-            <td class="border  p-4">OOO “Brend”</td>
+            <th class="border bg-[#E2E6F3]-100 p-4 text-left font-semibold">Производитель продукта</th>
+            <td class="border p-4">OOO “Brend”</td>
           </tr>
           <tr>
-            <th class="border  bg-[#E2E6F3]-100 p-4 text-left font-semibold">Поставщик</th>
-            <td class="border  p-4">OOO “Yuksalish”</td>
+            <th class="border bg-[#E2E6F3]-100 p-4 text-left font-semibold">Поставщик</th>
+            <td class="border p-4">OOO “Yuksalish”</td>
           </tr>
           <tr>
-            <th class="border  bg-[#E2E6F3]-100 p-4 text-left font-semibold">Получатель</th>
-            <td class="border  p-4">РУ "Зарафшан"</td>
+            <th class="border bg-[#E2E6F3]-100 p-4 text-left font-semibold">Получатель</th>
+            <td class="border p-4">РУ "Зарафшан"</td>
           </tr>
           <tr>
-            <th class="border  bg-[#E2E6F3]-100 p-4 text-left font-semibold">Транспорт</th>
-            <td class="border  p-4">85 085 RRR</td>
+            <th class="border bg-[#E2E6F3]-100 p-4 text-left font-semibold">Транспорт</th>
+            <td class="border p-4">85 085 RRR</td>
           </tr>
           <tr>
-            <th class="border  bg-[#E2E6F3]-100 p-4 text-left font-semibold">Номер и дата лицензии</th>
-            <td class="border  p-4">№ L-86978576 от 05.02.2022</td>
+            <th class="border bg-[#E2E6F3]-100 p-4 text-left font-semibold">Номер и дата лицензии</th>
+            <td class="border p-4">№ L-86978576 от 05.02.2022</td>
           </tr>
           <tr>
             <th class="border  bg-[#E2E6F3]-100 p-4 text-left font-semibold">Номер и дата заключение
@@ -81,12 +81,12 @@
             <td class="border  p-4">№ SM-069788 от 05.01.2024</td>
           </tr>
           <tr>
-            <th class="border  bg-[#E2E6F3]-100 p-4 text-left font-semibold">Номер и дата удостоверения ветеринарии</th>
-            <td class="border  p-4">№ BT-0365 от 10.01.2024</td>
+            <th class="border bg-[#E2E6F3]-100 p-4 text-left font-semibold">Номер и дата удостоверения ветеринарии</th>
+            <td class="border p-4">№ BT-0365 от 10.01.2024</td>
           </tr>
           <tr>
-            <th class="border  bg-[#E2E6F3]-100 p-4 text-left font-semibold">Номер и дата удостоверения качества</th>
-            <td class="border  p-4">№ YK-0614 от 07.02.2024</td>
+            <th class="border bg-[#E2E6F3]-100 p-4 text-left font-semibold">Номер и дата удостоверения качества</th>
+            <td class="border p-4">№ YK-0614 от 07.02.2024</td>
           </tr>
           </tbody>
         </table>

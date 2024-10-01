@@ -9,73 +9,102 @@ import filter from "@/assets/images/filter.svg";
 import AppDatePicker from "@/components/ui/form/app-date-picker/AppDatePicker.vue";
 
 interface TableData {
-  id: number,
-  date: string,
-  numDoc: string,
-  vidDoc: string,
-  type: string,
-  vidPro: string,
-  warehouse: string,
+  id: number;
+  num: string;
+  date: string;
+  doc: string;
+  theme: string;
+  send: string;
+  receive: string;
+}
+
+interface TabItems {
+  label: string;
+  value: number;
 }
 
 const router = useRouter();
 const isOpenFilter = ref<boolean>(false);
+const activeTab = ref<number>(0);
+
+const tabItems = ref<TabItems[]>([
+  {
+    label: 'Единоразовый',
+    value: 0
+  },
+  {
+    label: 'Месячный',
+    value: 1
+  },
+  {
+    label: 'Годовой',
+    value: 2
+  },
+])
 
 const tableData = ref<TableData[]>([
   {
     id: 1,
-    date: '23.08.2024',
-    numDoc: "852369",
-    vidDoc: "Акт",
-    type: "Мясные",
-    vidPro: "Куриное мясо",
-    warehouse: "Зарафшан",
+    num: "1",
+    date: "23.08.2024",
+    request: "Z-45896",
+    sent: "РУ “Зарафшан”",
+    theme: "Доставка мяса",
   },
   {
     id: 2,
-    date: '23.08.2024',
-    numDoc: "852369",
-    vidDoc: "Акт",
-    type: "Мясные",
-    vidPro: "Куриное мясо",
-    warehouse: "Зарафшан",
+    num: "1",
+    date: "23.08.2024",
+    request: "Z-32478",
+    sent: "РУ “Нуробод”",
+    theme: "Доставка мяса",
   },
   {
     id: 3,
-    date: '23.08.2024',
-    numDoc: "852369",
-    vidDoc: "Акт",
-    type: "Мясные",
-    vidPro: "Куриное мясо",
-    warehouse: "Зарафшан",
+    num: "1",
+    date: "23.08.2024",
+    request: "Z-89614",
+    sent: "РУ “Навои”",
+    theme: "Доставка мяса",
   },
   {
     id: 4,
-    date: '23.08.2024',
-    numDoc: "852369",
-    vidDoc: "Акт",
-    type: "Мясные",
-    vidPro: "Куриное мясо",
-    warehouse: "Зарафшан",
+    num: "1",
+    date: "23.08.2024",
+    request: "Z-85269",
+    sent: "РУ “Зарафшан”",
+    theme: "Доставка мяса",
   },
 ]);
 
 const actionButton = (value: TableData): void => {
   console.log(value, "value");
 };
+
+const changeTab = (value: number) => activeTab.value = value;
 </script>
 
 <template>
   <div>
+    <h1 class="mb-[24px] font-semibold text-[32px]">Полученные</h1>
+
     <div class="flex items-center justify-between">
-      <h1 class="m-0 font-semibold text-[32px]">Акты</h1>
+      <div class="bg-white-blue p-1 flex items-center rounded-lg font-medium text-xs leading-5">
+        <button
+          v-for="item in tabItems"
+          :key="item.value"
+          :class="['rounded-lg py-2.5 px-5 transition duration-100 ease', `${item.value === activeTab ? 'bg-white shadow-[0px_1.5px_4px_-1px_#0A090B12] text-dark' : 'text-dark-gray'}`]"
+          @click="changeTab(item.value)"
+        >
+          {{item.label}}
+        </button>
+      </div>
 
       <button class="custom-filter-btn font-medium" :class="isOpenFilter ? '!bg-blue !text-white' : ''"
               @click="isOpenFilter =! isOpenFilter">
         <img :src="isOpenFilter ? white : filter" alt="filter" class="mr-[12px]" />
         Фильтр
       </button>
-
     </div>
 
     <CollapseFilter v-model="isOpenFilter">
@@ -104,16 +133,14 @@ const actionButton = (value: TableData): void => {
     </CollapseFilter>
 
     <el-table :data="tableData" class="custom-element-table">
-      <el-table-column prop="id" label="№" />
+      <el-table-column prop="num" label="№" />
       <el-table-column prop="date" label="Дата" />
-      <el-table-column prop="numDoc" label="№ док..." />
-      <el-table-column prop="vidDoc" label="Вид док..." />
-      <el-table-column prop="type" label="Тип продукта" />
-      <el-table-column prop="vidPro" label="Вид продукта" />
-      <el-table-column prop="warehouse" label="Склад" />
+      <el-table-column prop="request" label="№ запроса" />
+      <el-table-column prop="sent" label="Отправитель" />
+      <el-table-column prop="theme" label="Тема" />
       <el-table-column label="Действие">
         <template #default="scope">
-          <button class="action-btn" @click="router.push(`/acts/${scope.row.id}`)">
+          <button class="action-btn" @click="router.push(`/received/${scope.row.id}`)">
             <img src="@/assets/images/eye.svg" alt="eye" />
           </button>
 

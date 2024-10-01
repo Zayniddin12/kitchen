@@ -1,12 +1,18 @@
 <script lang="ts" setup>
-import { computed } from "vue";
+import { computed, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 
 const route = useRoute();
 const router = useRouter();
 
 const breadcrumbList = computed(() => {
-  return route.meta.breadcrumb ?? [];
+  const breadcrumbs = route.meta.breadcrumb ? [...route.meta.breadcrumb] : [];
+
+  if (breadcrumbs.length > 1 && route.params.title) {
+    breadcrumbs[1].label = route.params.title;
+  }
+
+  return breadcrumbs;
 });
 
 const changeRoute = (item: any) => {
@@ -16,6 +22,13 @@ const changeRoute = (item: any) => {
     router.push({ name: item.to, query: item.query });
   }
 };
+
+watch(
+  () => route.params,
+  (newParams, oldParams) => {
+    console.log(`Route params changed from ${oldParams.title} to ${newParams.title}`);
+  }
+);
 </script>
 
 <template>
@@ -49,7 +62,7 @@ const changeRoute = (item: any) => {
           }"
           @click="changeRoute(breadcrumb)"
         >
-          {{ $t(breadcrumb.label) }}
+          {{ breadcrumb.label }}
         </p>
       </div>
     </div>

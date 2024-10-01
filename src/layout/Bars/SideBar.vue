@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import { ref, onMounted, watch } from "vue";
-import { menuItems } from "@/navigation";
 import { useRoute, useRouter } from "vue-router";
+import {useLayoutStore} from "@/navigation"
 import ChildSidebar from "@/layout/Bars/ChildSidebar.vue";
 
 const emit = defineEmits(["update:childSidebar", "closeChildSidebar2"]);
 
+const store = useLayoutStore()
 const router = useRouter();
 let route = useRoute();
 
@@ -53,7 +54,7 @@ const closeChildSidebar = () => {
     <div
       class="sidebar-wrapper text-center relative flex flex-col justify-between"
     >
-      <div>
+      <div class="overflow-auto">
         <img
           src="@/assets/images/logo.svg"
           class="m-auto pt-[16px] pb-[40px]"
@@ -61,13 +62,13 @@ const closeChildSidebar = () => {
         />
 
         <div
-          v-for="(item, index) in menuItems"
+          v-for="(item, index) in store.menuItems"
           :key="index"
           class="px-[11px]"
           @click.stop="activeMenu(index, item)"
         >
           <div
-            :class="{ activeListItem: currentItem == item.route }"
+            :class="{ activeListItem: currentItem == item.route}"
             class="h-[88px] flex flex-col justify-center items-center cursor-pointer p-[12px]"
           >
             <svg
@@ -84,7 +85,7 @@ const closeChildSidebar = () => {
           <!-----------------------------------child sidebar----------------------------------->
           <div
             v-if="currentIndex === index && item.children && childIsOpen"
-            class="w-[260px] bg-white-blue rounded-[16px] h-[100%] absolute top-0 left-[120px] transition"
+            class="w-[260px] bg-white-blue rounded-[16px] h-[100%] absolute top-0 left-[120px] transition overflow-auto"
           >
             <ChildSidebar
               :children="item.children"

@@ -1,21 +1,21 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import { useRouter } from "vue-router";
 import CollapseFilter from "@/components/collapseFilter/index.vue";
-import appInput from "@/components/ui/form/app-input/AppInput.vue";
-import appSelect from "@/components/ui/form/app-select/AppSelect.vue";
+import AppInput from "@/components/ui/form/app-input/AppInput.vue";
+import AppSelect from "@/components/ui/form/app-select/AppSelect.vue";
 import white from "@/assets/images/filter2.svg";
 import filter from "@/assets/images/filter.svg";
 import AppDatePicker from "@/components/ui/form/app-date-picker/AppDatePicker.vue";
+import { useRouter } from "vue-router";
 
 interface TableData {
-  id: number,
-  date: string,
-  numDoc: string,
-  vidDoc: string,
-  type: string,
-  vidPro: string,
-  warehouse: string,
+  id: number;
+  num: string;
+  date: string;
+  doc: string;
+  theme: string;
+  send: string;
+  receive: string;
 }
 
 const router = useRouter();
@@ -24,39 +24,39 @@ const isOpenFilter = ref<boolean>(false);
 const tableData = ref<TableData[]>([
   {
     id: 1,
-    date: '23.08.2024',
-    numDoc: "852369",
-    vidDoc: "Акт",
-    type: "Мясные",
-    vidPro: "Куриное мясо",
-    warehouse: "Зарафшан",
+    num: "1",
+    date: "23.08.2024",
+    doc: "852369",
+    theme: "Доставка мяса",
+    send: "Зарафшан",
+    receive: "Фонд",
   },
   {
     id: 2,
-    date: '23.08.2024',
-    numDoc: "852369",
-    vidDoc: "Акт",
-    type: "Мясные",
-    vidPro: "Куриное мясо",
-    warehouse: "Зарафшан",
+    num: "2",
+    date: "22.08.2024",
+    doc: "556261",
+    theme: "Доставка картофеля",
+    send: "Учкудук",
+    receive: "Фонд",
   },
   {
     id: 3,
-    date: '23.08.2024',
-    numDoc: "852369",
-    vidDoc: "Акт",
-    type: "Мясные",
-    vidPro: "Куриное мясо",
-    warehouse: "Зарафшан",
+    num: "3",
+    date: "21.08.2024",
+    doc: "584534",
+    theme: "Доставка лука",
+    send: "Навои",
+    receive: "Фонд",
   },
   {
     id: 4,
-    date: '23.08.2024',
-    numDoc: "852369",
-    vidDoc: "Акт",
-    type: "Мясные",
-    vidPro: "Куриное мясо",
-    warehouse: "Зарафшан",
+    num: "4",
+    date: "22.08.2024",
+    doc: "556261",
+    theme: "Доставка картофеля",
+    send: "Учкудук",
+    receive: "Фонд",
   },
 ]);
 
@@ -68,10 +68,10 @@ const actionButton = (value: TableData): void => {
 <template>
   <div>
     <div class="flex items-center justify-between">
-      <h1 class="m-0 font-semibold text-[32px]">Акты</h1>
+      <h1 class="m-0 font-semibold text-[32px]">Входящие</h1>
 
       <button class="custom-filter-btn font-medium" :class="isOpenFilter ? '!bg-blue !text-white' : ''"
-              @click="isOpenFilter =! isOpenFilter">
+              @click="isOpenFilter = !isOpenFilter">
         <img :src="isOpenFilter ? white : filter" alt="filter" class="mr-[12px]" />
         Фильтр
       </button>
@@ -84,13 +84,13 @@ const actionButton = (value: TableData): void => {
           <app-date-picker placeholder="с этой даты" />
           <app-date-picker placeholder="по эту дату" />
 
-          <appInput placeholder="Номер документа" />
-          <appInput placeholder="Доставка картофеля" />
+          <AppInput placeholder="Номер документа" />
+          <AppInput placeholder="Доставка картофеля" />
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-2 gap-4">
-          <appSelect placeholder="Кому" />
-          <appSelect placeholder="Отправитель" />
+          <AppSelect placeholder="Кому" />
+          <AppSelect placeholder="Отправитель" />
         </div>
 
         <div class="flex items-center mt-[10px] justify-between">
@@ -104,16 +104,15 @@ const actionButton = (value: TableData): void => {
     </CollapseFilter>
 
     <el-table :data="tableData" class="custom-element-table">
-      <el-table-column prop="id" label="№" />
+      <el-table-column prop="num" label="№" />
       <el-table-column prop="date" label="Дата" />
-      <el-table-column prop="numDoc" label="№ док..." />
-      <el-table-column prop="vidDoc" label="Вид док..." />
-      <el-table-column prop="type" label="Тип продукта" />
-      <el-table-column prop="vidPro" label="Вид продукта" />
-      <el-table-column prop="warehouse" label="Склад" />
+      <el-table-column prop="doc" label="№ документа" />
+      <el-table-column prop="theme" label="Тема" />
+      <el-table-column prop="send" label="Отправитель" />
+      <el-table-column prop="receive" label="Получатель" />
       <el-table-column label="Действие">
         <template #default="scope">
-          <button class="action-btn" @click="router.push(`/acts/${scope.row.id}`)">
+          <button class="action-btn" @click="router.push(`/inbox/${scope.row.id}`)">
             <img src="@/assets/images/eye.svg" alt="eye" />
           </button>
 
