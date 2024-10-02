@@ -3,10 +3,16 @@ import { Bell, Message, Search } from "@element-plus/icons-vue";
 import Language from "@/components/language/index.vue";
 import MemoModal from "@/layout/Create/components/MemoModal.vue";
 import ComingModal from "@/layout/Create/components/ComingModal.vue";
+import ConsumptionModal from "@/layout/Create/components/ConsumptionModal.vue";
+import FreeModal from "@/layout/Create/components/FreeModal.vue";
 import { ref } from "vue";
 
 const editModal = ref<boolean>(false);
 const editModal2 = ref<boolean>(false);
+const editConsumptionModal = ref<boolean>(false);
+const freeModal = ref<boolean>(false);
+const dropdown = ref<any>(null);
+
 
 const navbarMenuList = [
   {
@@ -24,6 +30,20 @@ const navbarMenuList = [
   {
     id: 4,
     title: "Запрос",
+    children: [
+      {
+        id: 5,
+        title: "Свободный",
+      },
+      {
+        id: 6,
+        title: "Месячный",
+      },
+      {
+        id: 7,
+        title: "Годовой",
+      },
+    ],
   },
 ];
 
@@ -33,8 +53,15 @@ const openModals = (data) => {
     editModal.value = true;
   } else if (data.id == 2) {
     editModal2.value = true;
+  } else if (data.id == 3) {
+    editConsumptionModal.value = true;
+  } else if (data.id == 5) {
+    freeModal.value = true;
   }
+
+  dropdown.value.handleClose();
 };
+
 
 </script>
 
@@ -53,7 +80,7 @@ const openModals = (data) => {
       />
     </div>
     <div class="flex items-center gap-6">
-      <el-dropdown trigger="click">
+      <el-dropdown trigger="click" :hide-on-click="false" ref="dropdown">
         <button
           class="flex items-center bg-[#2E90FA] rounded-[8px] border-[1.5px] py-[10px] px-[20px] active:bg-[#175CD3] active:border-[#1849A9] active:border-[1.5px]"
         >
@@ -96,14 +123,39 @@ const openModals = (data) => {
         </button>
         <template #dropdown>
           <el-dropdown-menu class="navbar-dropdown">
-            <el-dropdown-item @click="openModals(item)" class="item-drop" v-for="item in navbarMenuList">
-              <button class="flex items-center justify-between p-[10px] w-full">
+            <el-dropdown-item class="item-drop" v-for="item in navbarMenuList">
+              <button @click="openModals(item)" v-if="!item.children"
+                      class="flex items-center justify-between p-[10px] w-full">
                 <span class="text-[#4F5662] text-[14px] font-medium mr-[4px]">{{ item.title }}</span>
                 <img
                   src="@/assets/arrow-right.svg"
                   alt="arrow icon"
                 />
               </button>
+              <el-dropdown trigger="click" class="w-full" placement="right-start" popper-class="custom-dropdown" v-else>
+                <button class="flex items-center justify-between p-[10px] w-full">
+                  <span class="text-[#4F5662] text-[14px] font-medium mr-[4px]">{{ item.title }}</span>
+                  <img
+                    src="@/assets/arrow-right.svg"
+                    alt="arrow icon"
+                  />
+                </button>
+
+                <template #dropdown>
+                  <el-dropdown-menu class="navbar-dropdown right-[20px]">
+                    <el-dropdown-item class="item-drop" v-for="child in item.children">
+                      <button @click="openModals(child)" class="flex items-center justify-between p-[10px] w-full">
+                        <span class="text-[#4F5662] text-[14px] font-medium mr-12">{{ child.title }}</span>
+                        <img
+                          src="@/assets/arrow-right.svg"
+                          alt="arrow icon"
+                        />
+                      </button>
+                    </el-dropdown-item>
+
+                  </el-dropdown-menu>
+                </template>
+              </el-dropdown>
             </el-dropdown-item>
 
           </el-dropdown-menu>
@@ -151,6 +203,8 @@ const openModals = (data) => {
     </div>
     <MemoModal v-model:editModal="editModal" />
     <ComingModal v-model:editModal="editModal2" />
+    <ConsumptionModal v-model:editModal="editConsumptionModal" />
+    <FreeModal v-model:editModal="freeModal" />
   </div>
 </template>
 
@@ -185,6 +239,15 @@ const openModals = (data) => {
   border-radius: 8px;
   color: #000D24 !important;
 
+}
+
+.custom-dropdown {
+  /* Move dropdown 10px to the right */
+  transform: translateX(10px);
+
+  /* Or use margin or padding adjustments */
+  margin-left: 10px; /* Move to the right */
+  margin-top: 5px; /* Move downward */
 }
 
 </style>

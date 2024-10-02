@@ -40,7 +40,7 @@ const currentLanguageTitle = computed(() => lang.value.title);
 </script>
 
 <template>
-  <el-dropdown>
+  <el-dropdown trigger="click">
     <span class="el-dropdown-link text-[#2E90FA] outline-0">
       {{ currentLanguageTitle }}
       <el-icon class="el-icon--right">
