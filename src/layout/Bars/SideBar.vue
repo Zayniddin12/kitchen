@@ -69,7 +69,7 @@ const closeChildSidebar = () => {
         >
           <div
             :class="{ activeListItem: currentItem == item.route}"
-            class="h-[88px] flex flex-col justify-center items-center cursor-pointer p-[12px]"
+            class="h-[88px] flex flex-col justify-center items-center cursor-pointer p-[12px] hover:bg-white hover:shadow-menu hover:font-medium rounded-lg"
           >
             <svg
               :data-src="'/sidebar/' + item.icon + '.svg'"
@@ -79,7 +79,6 @@ const closeChildSidebar = () => {
             />
 
             <h1 class="text-[13px] font-medium font-500 mt-[4px] text-[#4F5662]">{{ item.title }}</h1>
-
           </div>
 
           <!-----------------------------------child sidebar----------------------------------->
@@ -98,7 +97,7 @@ const closeChildSidebar = () => {
 
       <!------------------------log out---------------------------->
       <div
-        class="flex flex-col items-center cursor-pointer mb-[44px]"
+        class="flex flex-col items-center cursor-pointer mb-[10px]"
         @click="logOut"
       >
         <img
@@ -132,7 +131,7 @@ const closeChildSidebar = () => {
 }
 
 .activeListItem {
-  @apply bg-white shadow-menu rounded-lg font-medium;
+  @apply bg-white shadow-menu font-medium;
 }
 
 .activeListItem .svg-class path {

@@ -11,31 +11,32 @@ interface Kitchen {
   image: string;
 }
 
+document.title = route.params.id3;
 
 const kitchen = ref<Kitchen[]>([
   {
-    title: 'Кухни ЛПП',
-    subTitle: '4 кухни',
+    title: 'Ёшлар',
+    subTitle: '80 мест',
   },
   {
-    title: 'Кухня',
-    subTitle: '6 кухни',
+    title: 'Високоволтнй',
+    subTitle: '100 мест',
   },
   {
-    title: 'Буфет',
-    subTitle: '2 Буфета',
+    title: 'Табассум',
+    subTitle: '120 мест',
   },
   {
-    title: 'Больница',
-    subTitle: '3 Больници',
+    title: 'Мойбулоқ',
+    subTitle: '150 мест',
   },
   {
-    title: 'Профилакторий',
-    subTitle: '3 Профилактории',
+    title: 'Ёғду',
+    subTitle: '80 мест',
   },
   {
-    title: 'Лагерь',
-    subTitle: '6 лагерей',
+    title: 'Паҳлавон',
+    subTitle: '100 мест',
   },
 ])
 </script>
@@ -46,7 +47,7 @@ const kitchen = ref<Kitchen[]>([
       class="bg-[#F8F9FC] w-[155px] h-[105px] rounded-[16px] flex flex-col justify-center items-center cursor-pointer"
       v-for="(item, index) in kitchen"
       :key="index"
-      @click="router.push(`/kitchen-warehouse/${route.params.title}/${route.params.id}/${item.title}`)"
+      @click="router.push(`/kitchen-warehouse/${route.params.title}/${route.params.id}/${route.params.id3}/${item.title}/`)"
     >
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
         <mask id="path-1-outside-1_326_39917" maskUnits="userSpaceOnUse" x="1.99951" y="1" width="20" height="22"

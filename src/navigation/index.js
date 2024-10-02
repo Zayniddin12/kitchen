@@ -25,15 +25,15 @@ export const useLayoutStore = defineStore("layoutStore", () => {
             children: [
               {
                 title: "Входящие",
-                route: "/inbox"
+                route: "/inbox",
               },
               {
                 title: "Исходящие",
-                route: "/outgoing"
+                route: "/outgoing",
               },
               {
                 title: "Черновики",
-                route: "/drafts"
+                route: "/drafts",
               }
             ]
           },
@@ -196,12 +196,28 @@ export const useLayoutStore = defineStore("layoutStore", () => {
       {
         title: "Склад кухни",
         icon: "building-warehouse",
-        children: kitchenWarehouse.dynamicState
+        children: kitchenWarehouse.dynamicState,
       },
       {
         title: "Кухня",
         icon: "kitchen",
         children: kitchenStore.kitchenMenu
+      },
+      {
+        title: "Кадры",
+        icon: "users",
+        children: [
+          {
+            title: "База кадров",
+            icon: "record",
+            route: "/personal-database"
+          },
+          {
+            title: "Посетители",
+            icon: "derictory",
+            route: "/visitors"
+          },
+        ]
       },
       {
         title: "Настройки",

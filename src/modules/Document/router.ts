@@ -454,4 +454,52 @@ export default [
       ],
     },
   },
+  {
+    path: "/contracts-create",
+    name: "contracts-create",
+    component: () => import("@/modules/Document/pages/Contracts/Create.vue"),
+    meta: {
+      title: "Добавить",
+      layout: "MainLayout",
+      breadcrumb: [
+        {
+          label: "Документы",
+          isActionable: false,
+        },
+        {
+          label: "Контракты",
+          isActionable: false,
+          to: 'contracts'
+        },
+        {
+          label: "Добавить",
+          isActionable: true,
+        },
+      ],
+    },
+  },
+  {
+    path: "/contracts-view/:id",
+    name: "contracts-view-view",
+    component: () => import("@/modules/Document/pages/Contracts/View.vue"),
+    meta: {
+      title: "Просмотр",
+      layout: "MainLayout",
+      breadcrumb: [
+        {
+          label: "Документы",
+          isActionable: false,
+        },
+        {
+          label: "Контракты",
+          isActionable: false,
+          to: 'contracts'
+        },
+        {
+          label: "Просмотр",
+          isActionable: true,
+        },
+      ],
+    },
+  },
 ];

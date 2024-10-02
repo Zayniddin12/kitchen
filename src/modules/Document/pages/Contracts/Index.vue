@@ -81,7 +81,7 @@ const actionButton = (value: TableData): void => {
       <h1 class="m-0 font-semibold text-[32px]">Контракты</h1>
 
       <div class="flex items-center">
-        <button class="custom-apply-btn">
+        <button class="custom-apply-btn" @click="router.push('/contracts-create')">
           <img src="@/assets/images/icons/plus.svg" alt="add">
           Добавить
         </button>
@@ -133,7 +133,7 @@ const actionButton = (value: TableData): void => {
       <el-table-column prop="editing" label="Измерения" />
       <el-table-column label="Действие">
         <template #default="scope">
-          <button class="action-btn" @click="router.push(`/contracts/${scope.row.id}`)">
+          <button class="action-btn" @click="router.push(`/contracts-view/${scope.row.id}`)">
             <img src="@/assets/images/eye.svg" alt="eye" />
           </button>
 

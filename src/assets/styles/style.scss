@@ -7,6 +7,21 @@
 @import "@/assets/styles/components/ui/app-tab";
 
 
+html {
+  scroll-behavior: smooth;
+}
+
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #F8F9FC #f1f1f1;
+}
+
+
 .custom-filter-btn {
   background-color: var(--white-blue);
   display: flex;
@@ -103,6 +118,10 @@
   }
 }
 
+.el-table .cell {
+  padding: 0!important;
+}
+
 .custom-element-table {
   border-radius: 15px !important;
   border: 1px solid #e2e6f3 !important;
@@ -136,8 +155,11 @@
   tbody tr:last-child td:last-child {
     border-bottom-right-radius: 10px;
   }
-
 }
+
+//.el-table--border .el-table__inner-wrapper:after, .el-table--border:after, .el-table--border:before, .el-table__inner-wrapper:before {
+//  content: none!important;
+//}
 
 .el-dialog {
   background-color: #f8f9fc;

@@ -3,7 +3,7 @@
 </script>
 
 <template>
-<div>{{$route.params.id3}}</div>
+  view
 </template>
 
 <style scoped lang="scss">
