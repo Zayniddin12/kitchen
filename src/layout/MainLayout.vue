@@ -1,22 +1,17 @@
 <script setup lang="ts">
-import NavBar from "@/layout/Bars/NavBar.vue";
-import SideBar from "@/layout/Bars/SideBar.vue";
-import Breadcrumb from "@/components/ui/Breadcrumb.vue";
 import { onMounted, ref, watch } from "vue";
 import { useRoute } from "vue-router";
 import {useKitchenStore} from "@/modules/Kitchen/store/kitchen.store";
+
+import NavBar from "@/layout/Bars/NavBar.vue";
+import SideBar from "@/layout/Bars/SideBar.vue";
+import Breadcrumb from "@/components/ui/Breadcrumb.vue";
 
 const route = useRoute();
 const kitchenStore = useKitchenStore();
 
 const storedSidebar: boolean = JSON.parse(localStorage.getItem("child-sidebar") as string) || false;
 const childSidebar = ref<boolean>(storedSidebar);
-
-watch(() => route.path, (newPath) => {
-  if (newPath === "/home") {
-    childSidebar.value = false;
-  }
-});
 
 onMounted(() => {
   childSidebar.value = false;
