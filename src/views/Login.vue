@@ -20,6 +20,7 @@ const userData = ref<UserData>({
 const onSubmit = () => {
   console.log(userData.value);
   router.push("/home");
+  localStorage.setItem('current-menu', 0)
 };
 </script>
 

@@ -10,29 +10,32 @@ const store = useLayoutStore()
 const router = useRouter();
 let route = useRoute();
 
-let currentItem = ref<string>("");
+// let currentItem = ref<string>("");
 let currentIndex = ref<number>(0);
+let currentMenu = ref<number>(localStorage.getItem('current-menu') || 0);
 let childIsOpen = ref<boolean>(
   localStorage.getItem("child-sidebar") === "true"
 );
 
 onMounted(() => {
-  currentItem.value = route?.path;
+  // currentItem.value = route?.path;
+  currentMenu.value = localStorage.getItem('current-menu')
 });
 
-watch(
-  () => route?.path,
-  function () {
-    currentItem.value = route.path;
+watch(() => route?.path, function () {
+    // currentItem.value = route.path;
+    currentMenu.value = localStorage.getItem('current-menu');
   }
 );
 
 const activeMenu = (index: number, item: any) => {
   currentIndex.value = index;
+  currentMenu.value = index;
   childIsOpen.value = !!item.children;
   emit("update:childSidebar", !!item.children);
 
   localStorage.setItem("child-sidebar", "true");
+  localStorage.setItem("current-menu", currentMenu.value);
 
   if (item.route) {
     router.push(item.route);
@@ -50,7 +53,6 @@ const closeChildSidebar = () => {
 </script>
 
 <template>
-<!--  {{currentIndex}}-->
   <div class="sidebar w-[128px]">
     <div
       class="sidebar-wrapper text-center relative flex flex-col justify-between"
@@ -69,7 +71,7 @@ const closeChildSidebar = () => {
           @click.stop="activeMenu(index, item)"
         >
           <div
-            :class="{ activeListItem: currentItem == item.route}"
+            :class="{ activeListItem: currentMenu == index }"
             class="h-[88px] flex flex-col justify-center items-center cursor-pointer p-[12px] hover:bg-white hover:shadow-menu hover:font-medium rounded-lg"
           >
             <svg
