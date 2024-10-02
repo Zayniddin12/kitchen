@@ -5,12 +5,16 @@ import MemoModal from "@/layout/Create/components/MemoModal.vue";
 import ComingModal from "@/layout/Create/components/ComingModal.vue";
 import ConsumptionModal from "@/layout/Create/components/ConsumptionModal.vue";
 import FreeModal from "@/layout/Create/components/FreeModal.vue";
+import MonthlyModal from "@/layout/Create/components/MonthlyModal.vue";
+import YearlyModal from "@/layout/Create/components/YearlyModal.vue";
 import { ref } from "vue";
 
 const editModal = ref<boolean>(false);
 const editModal2 = ref<boolean>(false);
 const editConsumptionModal = ref<boolean>(false);
 const freeModal = ref<boolean>(false);
+const monthlyModal = ref<boolean>(false);
+const yearlyModal = ref<boolean>(false);
 const dropdown = ref<any>(null);
 
 
@@ -57,6 +61,10 @@ const openModals = (data) => {
     editConsumptionModal.value = true;
   } else if (data.id == 5) {
     freeModal.value = true;
+  } else if (data.id == 6) {
+    monthlyModal.value = true;
+  } else if (data.id == 7) {
+    yearlyModal.value = true;
   }
 
   dropdown.value.handleClose();
@@ -205,6 +213,8 @@ const openModals = (data) => {
     <ComingModal v-model:editModal="editModal2" />
     <ConsumptionModal v-model:editModal="editConsumptionModal" />
     <FreeModal v-model:editModal="freeModal" />
+    <MonthlyModal v-model:editModal="monthlyModal" />
+    <YearlyModal v-model:editModal="yearlyModal" />
   </div>
 </template>
 
