@@ -38,8 +38,8 @@ const activeChildMenu = (item: any) => {
 </script>
 
 <template>
-  <div class="px-[24px]">
-    <header class="flex items-center justify-between pt-[16px] pb-[32px]">
+  <div>
+    <header class="flex items-center justify-between pt-[16px] pb-[32px] px-[24px]">
       <h1 class="text-[#000000] font-medium text-[20px]">{{ header }}</h1>
 
       <div class="flex items-center cursor-pointer">
@@ -60,7 +60,7 @@ const activeChildMenu = (item: any) => {
       v-for="(item, index) in children"
       :key="index"
       accordion
-      class="border-0"
+      class="border-0 px-3"
     >
       <el-collapse-item
         v-if="item.children"
@@ -69,7 +69,7 @@ const activeChildMenu = (item: any) => {
         class="element-collapse"
       >
         <template #title>
-          <div class="flex items-center">
+          <div class="flex items-center px-3">
             <svg
               :data-src="'/sidebar/' + item.icon + '.svg'"
               class="svg-class shrink-1 mr-[12px]"
@@ -103,7 +103,7 @@ const activeChildMenu = (item: any) => {
 
       <div
         v-else
-        class="text-dark-gray text-[14px] text-left py-[10px] font-medium cursor-pointer"
+        class="text-dark-gray text-[14px] text-left py-[10px] font-medium cursor-pointer px-[12px]"
         :class="{ activeMenu: currentItem == item.route ? true : currentItem == item.id }"
         @click.stop="activeChildMenu(item)"
       >
