@@ -4,8 +4,10 @@ import SideBar from "@/layout/Bars/SideBar.vue";
 import Breadcrumb from "@/components/ui/Breadcrumb.vue";
 import { onMounted, ref, watch } from "vue";
 import { useRoute } from "vue-router";
+import {useKitchenStore} from "@/modules/Kitchen/store/kitchen.store";
 
 const route = useRoute();
+const kitchenStore = useKitchenStore();
 
 const storedSidebar: boolean = JSON.parse(localStorage.getItem("child-sidebar") as string) || false;
 const childSidebar = ref<boolean>(storedSidebar);
@@ -18,11 +20,13 @@ watch(() => route.path, (newPath) => {
 
 onMounted(() => {
   childSidebar.value = false;
+  kitchenStore.fetchDepartments();
 });
 
 const closeChildSidebar = () => {
   childSidebar.value = false;
 };
+
 </script>
 
 <template>

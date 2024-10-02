@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import { ref, onMounted, watch } from "vue";
-import { menuItems } from "@/navigation";
 import { useRoute, useRouter } from "vue-router";
+import {useLayoutStore} from "@/navigation"
 import ChildSidebar from "@/layout/Bars/ChildSidebar.vue";
 
 const emit = defineEmits(["update:childSidebar", "closeChildSidebar2"]);
 
+const store = useLayoutStore()
 const router = useRouter();
 let route = useRoute();
 
@@ -49,11 +50,12 @@ const closeChildSidebar = () => {
 </script>
 
 <template>
+<!--  {{currentIndex}}-->
   <div class="sidebar w-[128px]">
     <div
       class="sidebar-wrapper text-center relative flex flex-col justify-between"
     >
-      <div>
+      <div class="overflow-auto">
         <img
           src="@/assets/images/logo.svg"
           class="m-auto pt-[16px] pb-[40px]"
@@ -61,14 +63,14 @@ const closeChildSidebar = () => {
         />
 
         <div
-          v-for="(item, index) in menuItems"
+          v-for="(item, index) in store.menuItems"
           :key="index"
           class="px-[11px]"
           @click.stop="activeMenu(index, item)"
         >
           <div
-            :class="{ activeListItem: currentItem == item.route }"
-            class="h-[88px] flex flex-col justify-center items-center cursor-pointer p-[12px]"
+            :class="{ activeListItem: currentItem == item.route}"
+            class="h-[88px] flex flex-col justify-center items-center cursor-pointer p-[12px] hover:bg-white hover:shadow-menu hover:font-medium rounded-lg"
           >
             <svg
               :data-src="'/sidebar/' + item.icon + '.svg'"
@@ -78,13 +80,12 @@ const closeChildSidebar = () => {
             />
 
             <h1 class="text-[13px] font-medium font-500 mt-[4px] text-[#4F5662]">{{ item.title }}</h1>
-
           </div>
 
           <!-----------------------------------child sidebar----------------------------------->
           <div
             v-if="currentIndex === index && item.children && childIsOpen"
-            class="w-[260px] bg-white-blue rounded-[16px] h-[100%] absolute top-0 left-[120px] transition"
+            class="w-[260px] bg-white-blue rounded-[16px] h-[100%] absolute top-0 left-[120px] transition overflow-auto"
           >
             <ChildSidebar
               :children="item.children"
@@ -97,7 +98,7 @@ const closeChildSidebar = () => {
 
       <!------------------------log out---------------------------->
       <div
-        class="flex flex-col items-center cursor-pointer mb-[44px]"
+        class="flex flex-col items-center cursor-pointer mb-[10px]"
         @click="logOut"
       >
         <img
@@ -131,7 +132,7 @@ const closeChildSidebar = () => {
 }
 
 .activeListItem {
-  @apply bg-white shadow-menu rounded-lg font-medium;
+  @apply bg-white shadow-menu font-medium;
 }
 
 .activeListItem .svg-class path {
