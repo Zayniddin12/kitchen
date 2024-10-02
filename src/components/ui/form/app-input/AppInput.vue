@@ -31,7 +31,7 @@ const appInputClasses = computed<string[]>(() => {
 const slots = useSlots();
 
 const computedMask = computed(() =>
-  props.type === "tel" && !props.mask ? "+998 ## ###-##-##" : props.mask
+  props.type === "tel" && !props.mask ? "+998 ## ###-##-##" : props.mask,
 );
 
 const inputMask = computed(() => {
@@ -53,7 +53,7 @@ const inputMask = computed(() => {
       v-if="slots.label"
       #label
     >
-      {{ slots.label }}
+      <slot name="label" />
     </template>
     <ElInput
       v-bind="{

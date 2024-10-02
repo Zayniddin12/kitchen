@@ -85,7 +85,13 @@ const appSelectClasses = computed<string[]>(() => {
           name="option"
           v-bind="item"
         />
+
       </ElOption>
+      <template #footer v-if="slots.footer">
+        <slot
+          name="footer"
+        />
+      </template>
     </ElSelect>
   </ElFormItem>
 </template>
