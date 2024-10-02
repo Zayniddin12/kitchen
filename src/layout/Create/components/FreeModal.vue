@@ -24,7 +24,7 @@ const closeModal = () => {
     :before-close="closeModal"
   >
     <template #header>
-      <div class="text-center text-[#000000] font-bold text-[18px]">Создать служебную записку</div>
+      <div class="text-center text-[#000000] font-bold text-[18px]">Создать свободный запрос</div>
     </template>
 
     <div class="flex">
@@ -37,7 +37,7 @@ const closeModal = () => {
               <span class="text-[#CBCCCE]">Jamg‘armasi</span>
             </div>
           </header>
-          <h1 class="text-[#000D24] font-bold text-[20px] text-center mb-[24px]">СЛУЖЕБНАЯ ЗАПИСКА</h1>
+          <h1 class="text-[#000D24] font-bold text-[20px] text-center mb-[24px]">ЗАПРОС</h1>
 
           <div class="flex items-center mb-[8px]">
             <h1 class="text-[#4F5662] text-[14px] font-medium">Дата:</h1>
@@ -51,8 +51,8 @@ const closeModal = () => {
 
           <div class="flex items-baseline mb-[24px]">
             <h1 class=" text-[14px] font-medium">
-              <span class="text-[#4F5662]">Кому:</span>
-              <span class="text-[#A8AAAE] ml-2">«Фонд НКМК» ДМ «Навоийской» областной администрации, руководитель комплекса общественного питания Баракаеву Д.</span>
+              <span class="text-[#4F5662]">Тип запроса:</span>
+              <span class="text-[#A8AAAE] ml-2">Полученные</span>
             </h1>
           </div>
 
@@ -87,9 +87,9 @@ const closeModal = () => {
 
       <div class="w-[40%] ml-[24px] flex flex-col justify-between">
         <div>
-          <app-input placeholder="Служебная записка" />
+          <app-input placeholder="Накладние" />
 
-          <app-input placeholder="Дата создания документа" />
+          <app-input placeholder="Z 04-04-01/463" />
 
           <app-input placeholder="№ документа" />
 
