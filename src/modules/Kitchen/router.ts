@@ -154,7 +154,41 @@ export default [
                                     {
                                         path: "create",
                                         name: "KitchenMealPlanCreate",
-                                        component: () => import("@/modules/Kitchen/pages/meal-plan/Create.vue")
+                                        component: () => import("@/modules/Kitchen/pages/meal-plan/Create.vue"),
+                                        beforeEnter: (to, from, next) => {
+                                            const kitchenStore = useKitchenStore();
+
+                                            kitchenStore.fetchPart(+to.params.department_id, +to.params.part_id);
+
+                                            if (!kitchenStore.part) return next({ name: "notFound" });
+
+                                            to.meta.breadcrumb = [
+                                                {
+                                                    label: "Кухня"
+                                                },
+                                                {
+                                                    label: kitchenStore.part.name
+                                                },
+                                                {
+                                                    label: kitchenStore.part.department_name
+                                                },
+                                                {
+                                                    label: "Лагерь"
+                                                },
+                                                {
+                                                    label: "Паҳлавон"
+                                                },
+                                                {
+                                                    label: "Меню",
+                                                },
+                                                {
+                                                    label: "Добавить",
+                                                    isActionable: true
+                                                }
+                                            ];
+
+                                            next();
+                                        }
                                     }
                                 ]
                             }

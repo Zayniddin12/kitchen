@@ -22,7 +22,7 @@ const appDatePickerClasses = computed<string[]>(() => {
   const classes = ["app-date-picker app-form-item"];
 
   if (props.size) {
-    classes.push(`app-select--${props.size} app-form-item--${props.size}`);
+    classes.push(`app-date-picker--${props.size} app-form-item--${props.size}`);
   }
 
   return classes;
@@ -77,7 +77,6 @@ const prefixIcon = shallowRef({
       :unlink-panels
       :prefix-icon="prefixIcon"
       :disabled-date
-      :cell-class-name
       :teleported
       :empty-values
       class="app-date-picker__date-picker"

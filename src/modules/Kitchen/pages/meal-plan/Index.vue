@@ -3,9 +3,11 @@
     lang="ts"
 >
 
-import { computed, ref, watch } from "vue";
-import { onBeforeRouteUpdate, useRoute } from "vue-router";
-import { useKitchenStore } from "@/modules/Kitchen/store/kitchen.store";
+import {computed, ref, watch} from "vue";
+import {onBeforeRouteUpdate, useRoute} from "vue-router";
+import {useKitchenStore} from "@/modules/Kitchen/store/kitchen.store";
+import mailPlanImg from "@/assets/images/mail-plan.png";
+import PlusIcon from "@/assets/images/icons/plus.svg";
 
 const kitchenStore = useKitchenStore();
 
@@ -43,12 +45,12 @@ const getActiveTab = () => {
 
 watch(() => route.query.tab, () => {
   getActiveTab();
-}, { immediate: true });
+}, {immediate: true});
 
 onBeforeRouteUpdate((to, from, next) => {
   kitchenStore.fetchPart(+to.params.department_id, +to.params.part_id);
 
-  if (!kitchenStore.part) return next({ name: "notFound" });
+  if (!kitchenStore.part) return next({name: "notFound"});
 
   to.meta.breadcrumb = [
     {
@@ -98,12 +100,33 @@ const hasData = ref(false);
       <div class="mt-6">
         <div
             v-if="!hasData"
-            class="mx-auto mt-[100] text-center"
+            class="mx-auto mt-[100px] w-[342px] text-center"
         >
           <img
-              src=""
-              alt=""
+              :src="mailPlanImg"
+              alt="mail plan create img"
+              class="w-full h-[264px]"
+          />
+          <p class="text-black font-medium text-sm mt-6">
+            План питания еще не составлен
+          </p>
+          <ElButton
+              class="!bg-blue-500 mt-6"
+              type="primary"
+              size="large"
+              tag="router-link"
+              :to="{name: 'KitchenMealPlanCreate'}"
           >
+            <div class="flex items-center gap-x-2">
+              <svg
+                  :data-src="PlusIcon"
+                  class="size-6"
+              />
+              <span class="text-lg font-medium">
+                Добавить
+              </span>
+            </div>
+          </ElButton>
         </div>
         <TransitionGroup
             name="nested"
