@@ -11,7 +11,6 @@ import CollapseFilter from "@/components/collapseFilter/index.vue";
 import AppSelect from "@/components/ui/form/app-select/AppSelect.vue";
 import AppInput from "@/components/ui/form/app-input/AppInput.vue";
 import AppDatePicker from "@/components/ui/form/app-date-picker/AppDatePicker.vue";
-import { TableColumnType } from "@/types/common.type";
 
 const districtStore = useDistrictStore();
 const route = useRoute();
@@ -20,7 +19,7 @@ onBeforeRouteUpdate((to, from, next) => {
 
   districtStore.getProduct(+to.params.district_id, +to.params.product_id);
 
-  if(!districtStore.district || !districtStore.product) return next({name: 'notFound'});
+  if (!districtStore.district || !districtStore.product) return next({ name: "notFound" });
 
 
   to.meta.breadcrumb = [
@@ -32,9 +31,9 @@ onBeforeRouteUpdate((to, from, next) => {
     },
     {
       label: districtStore.product.name,
-      isActionable: true,
+      isActionable: true
     }
-  ]
+  ];
 
   next();
 });
@@ -54,7 +53,7 @@ const tabItems = computed(() => {
       value: TABS.INVOICES,
       name: "По накладным"
     }
-  ]
+  ];
 });
 
 const filterFormOpened = ref(false);
@@ -69,24 +68,24 @@ const getActiveTab = () => {
   const isValidTab = !isNaN(tab) && [TABS.PRODUCTS, TABS.INVOICES].includes(tab);
 
   activeTab.value = isValidTab ? tab : defaultTab;
-}
+};
 
 watch(() => route.query.tab, () => {
   getActiveTab();
-}, {immediate: true});
+}, { immediate: true });
 
 const productTableData = computed(() => {
   const data = [];
 
-  for (let i = 1; i<=10; i++){
+  for (let i = 1; i <= 10; i++) {
     data.push({
       idx: i,
       product_name: "Говядина",
-      quantity: Math.floor(Math.random() *11) + 90,
+      quantity: Math.floor(Math.random() * 11) + 90,
       unit_measurement: "кг",
       sum: "6 400 000 сум",
       action: true
-    })
+    });
   }
 
   return data;
@@ -95,21 +94,21 @@ const productTableData = computed(() => {
 const invoiceTableData = computed(() => {
   const data = [];
 
-  for (let i=1; i<=10; i++){
+  for (let i = 1; i <= 10; i++) {
     data.push({
       idx: i,
       product_name: "Говядина",
       invoice: "NK-00000",
       invoice_date: "23.08.2024",
-      quantity: Math.floor(Math.random() *11) + 90,
+      quantity: Math.floor(Math.random() * 11) + 90,
       unit_measurement: "кг",
       price: "80 000 сум",
       sum: "6 400 000 сум"
-    })
+    });
   }
 
   return data;
-})
+});
 
 </script>
 
@@ -117,7 +116,7 @@ const invoiceTableData = computed(() => {
   <section class="warehouse">
     <div v-if="districtStore.product">
       <h1 class="font-semibold text-[32px] text-dark">
-        {{districtStore.product.name}}
+        {{ districtStore.product.name }}
       </h1>
       <div class="rounded-2xl py-3 px-4 border mt-6">
         <h3 class="text-dark font-medium text-lg">
@@ -134,7 +133,8 @@ const invoiceTableData = computed(() => {
             class="mt-2"
         />
         <p class="mt-4 text-xs text-[#A8AAAE]">
-          Этот элемент показывает процент заполненности склада, помогая вам следить за остатками и эффективно управлять запасами.
+          Этот элемент показывает процент заполненности склада, помогая вам следить за остатками и эффективно управлять
+          запасами.
         </p>
       </div>
       <div class="mt-6">
@@ -146,7 +146,7 @@ const invoiceTableData = computed(() => {
                 :class="['app-tab', {'app-tab--active': activeTab === item.value}]"
                 :to="{query: {...route.query, ...{tab: item.value}}}"
             >
-            {{item.name}}
+              {{ item.name }}
             </RouterLink>
           </div>
           <div class="flex items-center gap-4 max-w-[309px]">
@@ -228,42 +228,42 @@ const invoiceTableData = computed(() => {
       </div>
       <CollapseFilter v-model="filterFormOpened">
         <template #body>
-            <TransitionGroup
-                name="nested"
-                :duration="{ enter: 500, leave: 1500 }"
-                tag="div"
-                class="mt-4 relative"
+          <TransitionGroup
+              name="nested"
+              :duration="{ enter: 500, leave: 1500 }"
+              tag="div"
+              class="mt-4 relative"
+          >
+            <div
+                v-if="activeTab === TABS.PRODUCTS"
+                class="grid gap-x-4 grid-cols-4"
             >
-              <div
-                  v-if="activeTab === TABS.PRODUCTS"
-                  class="grid gap-x-4 grid-cols-4"
-              >
-                <AppSelect placeholder="Название продукта" />
-                <AppInput placeholder="Количество" />
-                <AppSelect placeholder="Ед. измерения" />
-                <AppInput placeholder="Сумма" />
+              <AppSelect placeholder="Название продукта"/>
+              <AppInput placeholder="Количество"/>
+              <AppSelect placeholder="Ед. измерения"/>
+              <AppInput placeholder="Сумма"/>
+            </div>
+            <template v-else>
+              <div class="grid gap-4 grid-cols-6">
+                <AppDatePicker placeholder="с этой даты"/>
+                <AppDatePicker placeholder="по эту дату"/>
+                <AppSelect
+                    class="col-span-2"
+                    placeholder="№ накладной"
+                />
+                <AppInput
+                    class="col-span-2"
+                    placeholder="Сумма"
+                />
               </div>
-              <template v-else>
-                <div class="grid gap-4 grid-cols-6">
-                  <AppDatePicker placeholder="с этой даты" />
-                  <AppDatePicker  placeholder="по эту дату" />
-                  <AppSelect
-                      class="col-span-2"
-                      placeholder="№ накладной"
-                  />
-                  <AppInput
-                      class="col-span-2"
-                      placeholder="Сумма"
-                  />
-                </div>
-                <div class="grid grid-cols-4 gap-4 mt-1">
-                  <AppSelect placeholder="Название продукта" />
-                  <AppInput placeholder="Количество" />
-                  <AppSelect placeholder="Ед. измерения" />
-                  <AppInput placeholder="Цена" />
-                </div>
-              </template>
-            </TransitionGroup>
+              <div class="grid grid-cols-4 gap-4 mt-1">
+                <AppSelect placeholder="Название продукта"/>
+                <AppInput placeholder="Количество"/>
+                <AppSelect placeholder="Ед. измерения"/>
+                <AppInput placeholder="Цена"/>
+              </div>
+            </template>
+          </TransitionGroup>
           <div class="flex items-center mt-[10px] justify-between">
             <div class="text-[#8F9194] text-[14px]">Найдено: 56</div>
             <div class="flex items-center">
@@ -293,8 +293,8 @@ const invoiceTableData = computed(() => {
                 :width="150"
             />
             <ElTableColumn
-              prop="product_name"
-              label="Название продукта"
+                prop="product_name"
+                label="Название продукта"
             />
             <ElTableColumn
                 prop="quantity"
@@ -314,13 +314,22 @@ const invoiceTableData = computed(() => {
                 label="Действие"
             >
               <template #default="{row}">
-                <div v-if="row.action" class="flex items-center justify-end">
+                <div
+                    v-if="row.action"
+                    class="flex items-center justify-end"
+                >
                   <button class="action-btn">
-                    <img src="@/assets/images/eye.svg" alt="eye" />
+                    <img
+                        src="@/assets/images/eye.svg"
+                        alt="eye"
+                    />
                   </button>
 
                   <button class="action-btn">
-                    <img src="@/assets/images/download.svg" alt="download" />
+                    <img
+                        src="@/assets/images/download.svg"
+                        alt="download"
+                    />
                   </button>
                 </div>
               </template>

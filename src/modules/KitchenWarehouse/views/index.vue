@@ -1,16 +1,44 @@
 <script setup lang="ts">
 import { useRoute, useRouter } from "vue-router";
+import { ref } from "vue";
 
 const router = useRouter();
 const route = useRoute();
+
+interface Kitchen {
+  title: string;
+  subTitle: string;
+  image: string;
+}
+
+const kitchen = ref<Kitchen[]>([
+  {
+    title: 'Кухни ЛПП',
+    subTitle: '4 кухни',
+  },
+  {
+    title: '',
+  },
+  {
+    title: '',
+  },
+  {
+    title: '',
+  },
+  {
+    title: '',
+  },
+  {
+    title: '',
+  },
+])
 </script>
 
 <template>
-  <!--  kitchen-warehouse {{route.params.id}}-->
   <div class="flex flex-wrap gap-6">
     <div
       class="bg-[#F8F9FC] shadow w-[128px] h-[100px] rounded-lg flex flex-col justify-center items-center cursor-pointer"
-      v-for="(item, index) in 20"
+      v-for="(item, index) in 6"
       :key="index"
       @click="router.push(`/kitchen-warehouse/${route.params.title}/${route.params.id}/${'Ёшлар'}`)"
     >
