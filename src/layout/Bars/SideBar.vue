@@ -114,7 +114,7 @@ const closeChildSidebar = () => {
 <style lang="scss">
 .sidebar {
   position: fixed;
-  z-index: 999;
+  z-index: 99;
   left: 0;
   top: 0;
   height: 100%;

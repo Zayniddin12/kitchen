@@ -287,9 +287,13 @@ watch(() => route.query, () => {
           </ElButton>
         </div>
       </div>
-      <TransitionGroup name="nested" :duration="{ enter: 500, leave: 1500 }" tag="div" class="relative overflow-x-hidden">
-        <template v-if="activeTab === TABS.ATTENDANCE">
-          <div class="inner">
+      <TransitionGroup
+          name="nested"
+          :duration="{ enter: 500, leave: 1500 }"
+          tag="div"
+          class="relative overflow-x-hidden"
+      >
+        <div class="inner" v-if="activeTab === TABS.ATTENDANCE">
             <ElTable
               :data="attendanceTableData"
               class="custom-element-table"
@@ -308,10 +312,11 @@ watch(() => route.query, () => {
           </template>
         </ElTableColumn>
             </ElTable>
-          </div>
-        </template>
-        <template v-else-if="activeTab === TABS.DISHES">
-          <div class="inner">
+        </div>
+        <div
+            class="inner"
+            v-else-if="activeTab === TABS.DISHES"
+        >
             <div>
               <h2 class="font-semibold text-black text-2xl">
                 Приготовленных
@@ -358,9 +363,7 @@ watch(() => route.query, () => {
                     </ElTableColumn>
               </ElTable>
             </div>
-
-          </div>
-        </template>
+        </div>
       </TransitionGroup>
     </div>
   </section>

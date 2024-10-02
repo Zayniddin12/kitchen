@@ -3,10 +3,15 @@
     lang="ts"
 >
 
-import { onBeforeRouteUpdate, useRoute, useRouter } from "vue-router";
+import { onBeforeRouteUpdate, useRoute } from "vue-router";
 import { useDistrictStore } from "@/modules/WarehouseBases/store/district.store";
 import { computed, ref, watch } from "vue";
 import filterIcon from "@/assets/images/filter.svg";
+import CollapseFilter from "@/components/collapseFilter/index.vue";
+import AppSelect from "@/components/ui/form/app-select/AppSelect.vue";
+import AppInput from "@/components/ui/form/app-input/AppInput.vue";
+import AppDatePicker from "@/components/ui/form/app-date-picker/AppDatePicker.vue";
+import { TableColumnType } from "@/types/common.type";
 
 const districtStore = useDistrictStore();
 const route = useRoute();
@@ -52,6 +57,8 @@ const tabItems = computed(() => {
   ]
 });
 
+const filterFormOpened = ref(false);
+
 const defaultTab = TABS.PRODUCTS;
 
 const activeTab = ref<number | null>(null);
@@ -68,7 +75,41 @@ watch(() => route.query.tab, () => {
   getActiveTab();
 }, {immediate: true});
 
-const filterFormOpened = ref(false);
+const productTableData = computed(() => {
+  const data = [];
+
+  for (let i = 1; i<=10; i++){
+    data.push({
+      idx: i,
+      product_name: "Говядина",
+      quantity: Math.floor(Math.random() *11) + 90,
+      unit_measurement: "кг",
+      sum: "6 400 000 сум",
+      action: true
+    })
+  }
+
+  return data;
+});
+
+const invoiceTableData = computed(() => {
+  const data = [];
+
+  for (let i=1; i<=10; i++){
+    data.push({
+      idx: i,
+      product_name: "Говядина",
+      invoice: "NK-00000",
+      invoice_date: "23.08.2024",
+      quantity: Math.floor(Math.random() *11) + 90,
+      unit_measurement: "кг",
+      price: "80 000 сум",
+      sum: "6 400 000 сум"
+    })
+  }
+
+  return data;
+})
 
 </script>
 
@@ -185,6 +226,175 @@ const filterFormOpened = ref(false);
           </div>
         </div>
       </div>
+      <CollapseFilter v-model="filterFormOpened">
+        <template #body>
+            <TransitionGroup
+                name="nested"
+                :duration="{ enter: 500, leave: 1500 }"
+                tag="div"
+                class="mt-4 relative"
+            >
+              <div
+                  v-if="activeTab === TABS.PRODUCTS"
+                  class="grid gap-x-4 grid-cols-4"
+              >
+                <AppSelect placeholder="Название продукта" />
+                <AppInput placeholder="Количество" />
+                <AppSelect placeholder="Ед. измерения" />
+                <AppInput placeholder="Сумма" />
+              </div>
+              <template v-else>
+                <div class="grid gap-4 grid-cols-6">
+                  <AppDatePicker placeholder="с этой даты" />
+                  <AppDatePicker  placeholder="по эту дату" />
+                  <AppSelect
+                      class="col-span-2"
+                      placeholder="№ накладной"
+                  />
+                  <AppInput
+                      class="col-span-2"
+                      placeholder="Сумма"
+                  />
+                </div>
+                <div class="grid grid-cols-4 gap-4 mt-1">
+                  <AppSelect placeholder="Название продукта" />
+                  <AppInput placeholder="Количество" />
+                  <AppSelect placeholder="Ед. измерения" />
+                  <AppInput placeholder="Цена" />
+                </div>
+              </template>
+            </TransitionGroup>
+          <div class="flex items-center mt-[10px] justify-between">
+            <div class="text-[#8F9194] text-[14px]">Найдено: 56</div>
+            <div class="flex items-center">
+              <button class="custom-reset-btn">Сбросить</button>
+              <button class="custom-apply-btn ml-[16px]">Применить</button>
+            </div>
+          </div>
+        </template>
+      </CollapseFilter>
+      <TransitionGroup
+          name="nested"
+          :duration="{ enter: 500, leave: 1500 }"
+          tag="div"
+          class="relative overflow-x-hidden"
+      >
+        <div
+            v-if="activeTab === TABS.PRODUCTS"
+            class="inner"
+        >
+          <ElTable
+              :data="productTableData"
+              class="custom-element-table"
+          >
+            <ElTableColumn
+                prop="idx"
+                label="№"
+                :width="150"
+            />
+            <ElTableColumn
+              prop="product_name"
+              label="Название продукта"
+            />
+            <ElTableColumn
+                prop="quantity"
+                label="Количество"
+            />
+            <ElTableColumn
+                prop="unit_measurement"
+                label="Ед. измерения"
+            />
+            <ElTableColumn
+                prop="sum"
+                label="Сумма"
+            />
+            <ElTableColumn
+                prop="action"
+                align="right"
+                label="Действие"
+            >
+              <template #default="{row}">
+                <div v-if="row.action" class="flex items-center justify-end">
+                  <button class="action-btn">
+                    <img src="@/assets/images/eye.svg" alt="eye" />
+                  </button>
+
+                  <button class="action-btn">
+                    <img src="@/assets/images/download.svg" alt="download" />
+                  </button>
+                </div>
+              </template>
+            </ElTableColumn>
+          </ElTable>
+          <div class="mt-6 flex items-center justify-between">
+            <div class="text-cool-gray text-xs">
+              Показано 1–12 из 100 результатов
+            </div>
+
+            <el-pagination
+                class="float-right"
+                background
+                layout="prev, pager, next"
+                :total="1000"
+            />
+          </div>
+        </div>
+        <div
+            v-else-if="activeTab === TABS.INVOICES"
+            class="inner"
+        >
+          <ElTable
+              :data="invoiceTableData"
+              class="custom-element-table"
+          >
+            <ElTableColumn
+                prop="idx"
+                label="№"
+                :width="150"
+            />
+            <ElTableColumn
+                prop="product_name"
+                label="Название продукта"
+            />
+            <ElTableColumn
+                prop="invoice"
+                label="№ накладной"
+            />
+            <ElTableColumn
+                prop="invoice_date"
+                label="Дата накладной"
+            />
+            <ElTableColumn
+                prop="quantity"
+                label="Количество"
+            />
+            <ElTableColumn
+                prop="unit_measurement"
+                label="Ед. измерения"
+            />
+            <ElTableColumn
+                prop="price"
+                label="Цена"
+            />
+            <ElTableColumn
+                prop="sum"
+                label="Сумма"
+            />
+          </ElTable>
+          <div class="mt-6 flex items-center justify-between">
+            <div class="text-cool-gray text-xs">
+              Показано 1–12 из 100 результатов
+            </div>
+
+            <el-pagination
+                class="float-right"
+                background
+                layout="prev, pager, next"
+                :total="1000"
+            />
+          </div>
+        </div>
+      </TransitionGroup>
     </div>
   </section>
 </template>
