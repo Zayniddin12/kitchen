@@ -50,6 +50,7 @@ const closeChildSidebar = () => {
 </script>
 
 <template>
+<!--  {{currentIndex}}-->
   <div class="sidebar w-[128px]">
     <div
       class="sidebar-wrapper text-center relative flex flex-col justify-between"
