@@ -1,0 +1,17 @@
+.app-checkbox{
+  --el-checkbox-input-height: 18px;
+  --el-checkbox-input-width: 18px;
+  --el-border-radius-small: 4px;
+  --el-checkbox-input-border: 1.5px solid #8F9194;
+  --el-checkbox-text-color: #8F9194;
+
+  .el-checkbox{
+  @apply font-medium;
+
+    &__inner::after{
+      width: 5px;
+      height: 9px;
+      left: 5px;
+    }
+  }
+}
