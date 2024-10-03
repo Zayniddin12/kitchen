@@ -1,11 +1,12 @@
 <script
-  setup
-  lang="ts"
+    setup
+    lang="ts"
 >
 import AppDatePicker from "@/components/ui/form/app-date-picker/AppDatePicker.vue";
 import { computed, ref, watch } from "vue";
 import { formatDate } from "@/utils/helper";
 import AppTimePicker from "@/components/ui/form/app-time-picker/AppTimePicker.vue";
+import AppSelect from "@/components/ui/form/app-select/AppSelect.vue";
 
 const startDate = ref<Date | null>(null);
 
@@ -32,7 +33,7 @@ const scheduledDates = computed<ScheduledDateType[]>(() => {
 
     data.push({
       date: formatedDate,
-      title: formatedDate,
+      title: formatedDate
     });
   }
 
@@ -51,26 +52,35 @@ const mealTimes = ref([
   {
     id: 1,
     title: "Завтрак",
-    isChecked: false,
+    isChecked: false
   },
   {
     id: 2,
     title: "Обед",
-    isChecked: false,
+    isChecked: false
   },
   {
     id: 3,
     title: "Ужин",
-    isChecked: false,
+    isChecked: false
   },
   {
     id: 4,
     title: "Сухой питания",
-    isChecked: false,
-  },
+    isChecked: false
+  }
 ]);
 
-const time = ref("")
+const diets = computed(() => {
+  return [
+    {
+      id: 1,
+      name: "Рацион1 R-0000"
+    }
+  ];
+});
+
+const activeDiet = ref("");
 
 </script>
 
@@ -87,34 +97,34 @@ const time = ref("")
               Введите дату!
             </h3>
             <AppDatePicker
-              v-model="startDate"
-              placeholder="дд.мм.гггг"
-              format="DD.MM.YYYY"
-              class="w-[141px] mt-3"
+                v-model="startDate"
+                placeholder="дд.мм.гггг"
+                format="DD.MM.YYYY"
+                class="w-[141px] mt-3"
             />
             <ElSwitch
-              v-model="intermediateDate1"
-              active-text="7 дней"
-              class="app-switch"
-              @change="intermediateDate2 = false"
+                v-model="intermediateDate1"
+                active-text="7 дней"
+                class="app-switch"
+                @change="intermediateDate2 = false"
             />
             <br class="mt-3">
             <ElSwitch
-              v-model="intermediateDate2"
-              active-text="10 дней"
-              class="app-switch"
-              @change="intermediateDate1 = false"
+                v-model="intermediateDate2"
+                active-text="10 дней"
+                class="app-switch"
+                @change="intermediateDate1 = false"
             />
           </div>
           <div
-            v-if="scheduledDates.length>0"
-            class="flex flex-wrap items-center gap-6 text-sm mt-8 font-medium text-[#A8AAAE]"
+              v-if="scheduledDates.length>0"
+              class="flex flex-wrap items-center gap-6 text-sm mt-8 font-medium text-[#A8AAAE]"
           >
             <button
-              v-for="item in scheduledDates"
-              :key="item.date"
-              :class="[{'text-blue-500': item.date === activeScheduledDate}]"
-              @click="activeScheduledDate = item.date"
+                v-for="item in scheduledDates"
+                :key="item.date"
+                :class="[{'text-blue-500': item.date === activeScheduledDate}]"
+                @click="activeScheduledDate = item.date"
             >
               {{ item.title }}
             </button>
@@ -125,22 +135,48 @@ const time = ref("")
             </h3>
             <div class="mt-3 flex flex-col gap-y-3">
               <div
-                v-for="item in mealTimes"
-                :key="item.id"
+                  v-for="item in mealTimes"
+                  :key="item.id"
               >
                 <ElCheckbox
-                  v-model="item.isChecked"
-                  class="app-checkbox"
-                  :label="item.title"
+                    v-model="item.isChecked"
+                    class="app-checkbox"
+                    :label="item.title"
                 />
                 <div
-                  v-if="item.isChecked"
-                  class="mt-6"
+                    v-if="item.isChecked"
+                    class="mt-6"
                 >
                   <div class="flex items-center gap-x-6">
-                    <AppTimePicker v-model="time" label="Время начало" />
-                    <AppTimePicker label="Время окончания" />
+                    <AppTimePicker class="max-w-[141px]">
+                      <template #label>
+                        <span class="text-[#A8AAAE]">
+                          Время начало
+                        </span>
+                      </template>
+                    </AppTimePicker>
+                    <AppTimePicker class="max-w-[141px]">
+                      <template #label>
+                        <span class="text-[#A8AAAE]">
+                          Время окончания
+                        </span>
+                      </template>
+                    </AppTimePicker>
                   </div>
+                  <AppSelect
+                      v-model="activeDiet"
+                      :items="diets"
+                      item-value="id"
+                      item-label="name"
+                      placeholder="Выберите"
+                      class="w-[222px]"
+                  >
+                    <template #label>
+                      <span class="text-[#A8AAAE]">
+                        Рацион
+                      </span>
+                    </template>
+                  </AppSelect>
                 </div>
               </div>
             </div>
@@ -148,15 +184,15 @@ const time = ref("")
         </div>
         <div class="flex justify-end mt-6 items-center">
           <ElButton
-            size="large"
-            class="!bg-[#E2E6F3] !border-none !text-dark-gray"
+              size="large"
+              class="!bg-[#E2E6F3] !border-none !text-dark-gray"
           >
             Отменить
           </ElButton>
           <ElButton
-            size="large"
-            type="primary"
-            class="!bg-blue-500"
+              size="large"
+              type="primary"
+              class="!bg-blue-500"
           >
             Далее
           </ElButton>

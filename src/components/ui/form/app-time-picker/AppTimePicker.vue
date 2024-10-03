@@ -1,8 +1,11 @@
-<script setup lang="ts">
+<script
+    setup
+    lang="ts"
+>
 
 import type {
   AppTimePickerPropsType,
-  AppTimePickerValueType,
+  AppTimePickerValueType
 } from "@/components/ui/form/app-time-picker/app-time-picker.type";
 import { computed, useSlots } from "vue";
 import { getRules, setRules } from "@/components/ui/form/validate";
@@ -40,45 +43,45 @@ const makeRange = (start: number, end: number) => {
 
 <template>
   <ElFormItem
-    :label
-    :label-position
-    :required
-    :size
-    :rules="setRules(getRules(props))"
-    :prop
-    :error
-    :class="appTimePickerClasses"
+      :label
+      :label-position
+      :required
+      :size
+      :rules="setRules(getRules(props))"
+      :prop
+      :error
+      :class="appTimePickerClasses"
   >
     <template
-      v-if="slots.label"
-      #label
+        v-if="slots.label"
+        #label
     >
-      {{ slots.label }}
+      <slot name="label"/>
     </template>
     <ElTimePicker
-      v-model="model"
-      :id
-      :placeholder
-      :disabled
-      :readonly
-      :size
-      :name
-      :clearable
-      :editable
-      :start-placeholder
-      :end-placeholder
-      :is-range
-      :arrow-control
-      :range-separator
-      :format
-      :default-value
-      :value-format
-      :prefix-icon
-      :disabledHours
-      :disabled-second
-      :teleported
-      :empty-values
-      class="app-time-picker__time-picker"
+        v-model="model"
+        :id
+        :placeholder
+        :disabled
+        :readonly
+        :size
+        :name
+        :clearable
+        :editable
+        :start-placeholder
+        :end-placeholder
+        :is-range
+        :arrow-control
+        :range-separator
+        :format
+        :default-value
+        :value-format
+        :prefix-icon
+        :disabledHours
+        :disabled-second
+        :teleported
+        :empty-values
+        class="app-time-picker__time-picker"
     />
   </ElFormItem>
 </template>
