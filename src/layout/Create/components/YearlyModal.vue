@@ -2,6 +2,7 @@
 import AppInput from "@/components/ui/form/app-input/AppInput.vue";
 import AppSelect from "@/components/ui/form/app-select/AppSelect.vue";
 import AppDatePicker from "@/components/ui/form/app-date-picker/AppDatePicker.vue";
+import { ref } from "vue";
 
 const emit = defineEmits(["update:editModal"]);
 const props = defineProps({
@@ -10,6 +11,41 @@ const props = defineProps({
     default: false,
   },
 });
+
+const tableData = ref<TableData[]>([
+  {
+    id: 1,
+    title: "Картофель",
+    total_count: 80,
+    measurement: "кг",
+    price: "22 000 сум",
+    sum: "1 760 000 сум",
+  },
+  {
+    id: 1,
+    title: "Картофель",
+    total_count: 80,
+    measurement: "кг",
+    price: "22 000 сум",
+    sum: "1 760 000 сум",
+  },
+  {
+    id: 1,
+    title: "Картофель",
+    total_count: 80,
+    measurement: "кг",
+    price: "22 000 сум",
+    sum: "1 760 000 сум",
+  },
+  {
+    id: 1,
+    title: "Картофель",
+    total_count: 80,
+    measurement: "кг",
+    price: "22 000 сум",
+    sum: "1 760 000 сум",
+  },
+]);
 
 const closeModal = () => {
   emit("update:editModal", false);
@@ -25,7 +61,7 @@ const closeModal = () => {
     :before-close="closeModal"
   >
     <template #header>
-      <div class="text-center text-[#000000] font-bold text-[18px]">Создать свободный запрос</div>
+      <div class="text-center text-[#000000] font-bold text-[18px]">Создать запрос годовой запрос</div>
     </template>
 
     <div class="flex">
@@ -62,7 +98,7 @@ const closeModal = () => {
             <span class="ml-2 text-[#A8AAAE] text-[14px] font-medium block">О получении товара</span>
           </div>
 
-          <div class="text-[#4F5662] text-[14px]">
+          <div class="text-[#4F5662] text-[14px] mb-[24px]">
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 1000 кг перца сладкого свеженарезанного, выделенного у Вас в
             соответствии
             с договором № 3259031.1.1 от 31 июля
@@ -70,6 +106,16 @@ const closeModal = () => {
             непрерывного питания продуктами лечебно-профилактического назначения. кормления и медико-санитарных больных
             просим получить до 23 августа доверенность от отдела ДМ «Фонд НКМК» на продукцию.
           </div>
+
+          <el-table :data="tableData" class="custom-element-table" header-cell-class-name="custom-cell-header"
+                    cell-class-name="custom-cell-header">
+            <el-table-column prop="title" label="Название" class="!p-0" />
+            <el-table-column prop="total_count" label="Количество" />
+            <el-table-column prop="measurement" label="Ед. измерения" />
+            <el-table-column prop="price" label="Цена" />
+            <el-table-column prop="sum" label="Сумма" />
+
+          </el-table>
 
           <div class="mt-[40px] flex items-center justify-between">
             <div class="flex items-baseline mb-[24px] w-[200px]">
@@ -102,6 +148,47 @@ const closeModal = () => {
 
           <app-input placeholder="Содержание запроса" type="textarea" :rows="5" />
 
+        </div>
+
+        <div class="bg-[#FFFFFF] rounded-[8px] p-[12px] mb-[24px]">
+            <span class="block text-[#4F5662] text-[14px] font-medium mb-[16px]">
+                Таблица получаемых продуктов
+            </span>
+
+          <app-select placeholder="Тип продукта" />
+
+          <app-select placeholder="Вид продукта" />
+
+          <app-input placeholder="Количество" />
+
+          <app-input placeholder="Ед. измерения" />
+
+          <app-input placeholder="Цена" />
+
+          <app-input placeholder="Сумма" />
+          <app-input placeholder="Отображение итого суммы полученных продуктов" />
+
+          <button
+            class="flex items-center justify-center gap-3 border-[1px] border-[#2E90FA] rounded-[8px] w-full text-[#2E90FA] text-[14px] font-medium py-[10px]">
+            <li
+              :style="{
+                  maskImage: 'url(/icons/plusIcon.svg)',
+                  backgroundColor: '#2E90FA',
+                  color: '#2E90FA',
+                  width: '20px',
+                  height: '20px',
+                  maskSize: '20px',
+                  maskPosition: 'center',
+                  maskRepeat: 'no-repeat'
+                   }"
+            ></li>
+            Добавить
+          </button>
+
+
+        </div>
+
+        <div>
           <app-input placeholder="Отправитель" />
         </div>
 

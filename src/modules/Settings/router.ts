@@ -4,11 +4,15 @@ export default [
     name: "reference",
     component: () => import("@/modules/Settings/pages/Reference/index.vue"),
     meta: {
-      title: 'Главная',
+      title: "Справочники",
       layout: "MainLayout",
       breadcrumb: [
         {
           label: "Главная",
+          isActionable: true,
+        },
+        {
+          label: "Справочники",
           isActionable: true,
         },
       ],
@@ -21,7 +25,7 @@ export default [
     name: "directory",
     component: () => import("@/modules/Settings/pages/Derictory/index.vue"),
     meta: {
-      title: 'Главная',
+      title: "Главная",
       layout: "MainLayout",
       breadcrumb: [
         {
@@ -38,7 +42,7 @@ export default [
     name: "personnel",
     component: () => import("@/modules/Settings/pages/Personnel/index.vue"),
     meta: {
-      title: 'Главная',
+      title: "Главная",
       layout: "MainLayout",
       breadcrumb: [
         {

@@ -28,7 +28,7 @@ const closeModal = () => {
     </template>
 
     <div class="flex">
-      <div class="border-[#E2E6F3] bg-[#fff] border rounded-[15px] w-[60%] mr-0">
+      <div class="border-[#E2E6F3] bg-[#fff] border rounded-[15px] w-[65%] mr-0">
         <div class="px-[72px] pb-[150px]">
           <header class="flex items-center justify-center my-[24px] mb-6">
             <img src="@/assets/images/logo.svg" alt="logo">
@@ -85,7 +85,7 @@ const closeModal = () => {
         </div>
       </div>
 
-      <div class="w-[40%] ml-[24px] flex flex-col justify-between">
+      <div class="w-[35%] ml-[24px] flex flex-col justify-between">
         <div>
           <app-input placeholder="Служебная записка" />
 
