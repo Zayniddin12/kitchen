@@ -430,7 +430,7 @@ const handleClass = (item) => {
           <!--          <el-table-column prop="total-count" label="Количество" />-->
           <!--          <el-table-column prop="branch" label="База" />-->
 
-          <el-table-column type="index" label="№" />
+          <el-table-column type="index" label="№" width="80" />
 
           <el-table-column label="Тип продукта">
             <template #default="{row}">

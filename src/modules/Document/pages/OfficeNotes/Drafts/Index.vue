@@ -113,7 +113,7 @@ const handleEdit = () => {
     </CollapseFilter>
 
     <el-table :data="tableData" class="custom-element-table">
-      <el-table-column prop="num" label="№" />
+      <el-table-column prop="num" label="№" width="80" />
       <el-table-column prop="date" label="Дата" />
       <el-table-column prop="doc" label="№ документа" />
       <el-table-column prop="theme" label="Тема" />

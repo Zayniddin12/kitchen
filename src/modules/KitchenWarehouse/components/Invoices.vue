@@ -68,7 +68,7 @@ const tableData = ref<TableData[]>([
 
 <template>
   <el-table :data="tableData" class="custom-element-table">
-    <el-table-column prop="num" label="№" />
+    <el-table-column prop="num" label="№" width="80" />
     <el-table-column prop="name" label="Название продукта" />
     <el-table-column prop="count" label="Количество" />
     <el-table-column prop="ed" label="Ед. изм" />

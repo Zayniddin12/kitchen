@@ -122,7 +122,7 @@ const actionButton = (value: TableData): void => {
     </CollapseFilter>
 
     <el-table :data="tableData" class="custom-element-table">
-      <el-table-column prop="id" label="№" />
+      <el-table-column prop="id" label="№" width="80" />
       <el-table-column prop="date" label="Дата" />
       <el-table-column prop="numContact" label="№ контракта" />
       <el-table-column prop="supplier" label="Поставщик" />
