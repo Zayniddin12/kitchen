@@ -11,6 +11,12 @@ const breadcrumbList = computed(() => {
   if (breadcrumbs.length > 1 && route.params.title) {
     breadcrumbs[1].label = route.params.title;
   }
+  if (breadcrumbs.length > 2 && route.params.title) {
+    breadcrumbs[2].label = route.params.id3;
+  }
+  if (breadcrumbs.length > 3 && route.params.title) {
+    breadcrumbs[3].label = route.params.kithchen;
+  }
 
   return breadcrumbs;
 });

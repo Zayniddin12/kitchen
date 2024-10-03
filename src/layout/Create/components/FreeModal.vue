@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import AppInput from "@/components/ui/form/app-input/AppInput.vue";
 import AppSelect from "@/components/ui/form/app-select/AppSelect.vue";
+import AppDatePicker from "@/components/ui/form/app-date-picker/AppDatePicker.vue";
 
 const emit = defineEmits(["update:editModal"]);
 const props = defineProps({
@@ -24,7 +25,7 @@ const closeModal = () => {
     :before-close="closeModal"
   >
     <template #header>
-      <div class="text-center text-[#000000] font-bold text-[18px]">Создать служебную записку</div>
+      <div class="text-center text-[#000000] font-bold text-[18px]">Создать свободный запрос</div>
     </template>
 
     <div class="flex">
@@ -37,27 +38,27 @@ const closeModal = () => {
               <span class="text-[#CBCCCE]">Jamg‘armasi</span>
             </div>
           </header>
-          <h1 class="text-[#000D24] font-bold text-[20px] text-center mb-[24px]">СЛУЖЕБНАЯ ЗАПИСКА</h1>
+          <h1 class="text-[#000D24] font-bold text-[20px] text-center mb-[24px]">ЗАПРОС</h1>
 
           <div class="flex items-center mb-[8px]">
-            <h1 class="text-[#4F5662] text-[14px] font-medium">Дата:</h1>
+            <h1 class="text-[#4F5662] text-[14px] font-semibold">Дата:</h1>
             <span class="ml-2 text-[#A8AAAE] text-[14px] font-medium block">24.08.2024</span>
           </div>
 
           <div class="flex items-center mb-[24px]">
-            <h1 class="text-[#4F5662] text-[14px] font-medium">№:</h1>
+            <h1 class="text-[#4F5662] text-[14px] font-semibold">№:</h1>
             <span class="ml-2 text-[#A8AAAE] text-[14px] font-medium block">04-04-01/463</span>
           </div>
 
           <div class="flex items-baseline mb-[24px]">
             <h1 class=" text-[14px] font-medium">
-              <span class="text-[#4F5662]">Кому:</span>
-              <span class="text-[#A8AAAE] ml-2">«Фонд НКМК» ДМ «Навоийской» областной администрации, руководитель комплекса общественного питания Баракаеву Д.</span>
+              <span class="text-[#4F5662] font-semibold">Тип запроса:</span>
+              <span class="text-[#A8AAAE] ml-2">Полученные</span>
             </h1>
           </div>
 
           <div class="flex items-center mb-[24px]">
-            <h1 class="text-[#4F5662] text-[14px] font-medium">Тема:</h1>
+            <h1 class="text-[#4F5662] text-[14px] font-semibold">Тема:</h1>
             <span class="ml-2 text-[#A8AAAE] text-[14px] font-medium block">О получении товара</span>
           </div>
 
@@ -73,7 +74,7 @@ const closeModal = () => {
           <div class="mt-[40px] flex items-center justify-between">
             <div class="flex items-baseline mb-[24px] w-[200px]">
               <h1 class=" text-[14px] font-medium">
-                <span class="text-[#4F5662]">Отправитель:</span>
+                <span class="text-[#4F5662] font-semibold">Отправитель:</span>
                 <span class="text-[#A8AAAE] ml-2">Руководитель группы отдела координации общественного питания</span>
               </h1>
             </div>
@@ -87,19 +88,21 @@ const closeModal = () => {
 
       <div class="w-[35%] ml-[24px] flex flex-col justify-between">
         <div>
-          <app-input placeholder="Служебная записка" />
+          <app-input placeholder="Накладние" />
 
-          <app-input placeholder="Дата создания документа" />
+          <app-input placeholder="Z 04-04-01/463" />
 
-          <app-input placeholder="№ документа" />
+          <app-date-picker placeholder="24.08.2024" />
 
-          <app-input placeholder="Кому" />
+          <app-select placeholder="Получатель" />
+
+          <app-input placeholder="Полученные" />
 
           <app-input placeholder="Тема" />
 
-          <app-input placeholder="Отображение сообщения служебки" type="textarea" :rows="5" />
+          <app-input placeholder="Содержание запроса" type="textarea" :rows="5" />
 
-          <app-select placeholder="Отправитель" />
+          <app-input placeholder="Отправитель" />
         </div>
 
         <div class="flex items-start justify-between">

@@ -10,29 +10,32 @@ const store = useLayoutStore()
 const router = useRouter();
 let route = useRoute();
 
-let currentItem = ref<string>("");
+// let currentItem = ref<string>("");
 let currentIndex = ref<number>(0);
+let currentMenu = ref<number>(localStorage.getItem('current-menu') || 0);
 let childIsOpen = ref<boolean>(
   localStorage.getItem("child-sidebar") === "true"
 );
 
 onMounted(() => {
-  currentItem.value = route?.path;
+  // currentItem.value = route?.path;
+  currentMenu.value = localStorage.getItem('current-menu')
 });
 
-watch(
-  () => route?.path,
-  function () {
-    currentItem.value = route.path;
+watch(() => route?.path, function () {
+    // currentItem.value = route.path;
+    currentMenu.value = localStorage.getItem('current-menu');
   }
 );
 
 const activeMenu = (index: number, item: any) => {
   currentIndex.value = index;
+  currentMenu.value = index;
   childIsOpen.value = !!item.children;
   emit("update:childSidebar", !!item.children);
 
   localStorage.setItem("child-sidebar", "true");
+  localStorage.setItem("current-menu", currentMenu.value);
 
   if (item.route) {
     router.push(item.route);
@@ -68,8 +71,8 @@ const closeChildSidebar = () => {
           @click.stop="activeMenu(index, item)"
         >
           <div
-            :class="{ activeListItem: currentItem == item.route}"
-            class="h-[88px] flex flex-col justify-center items-center cursor-pointer p-[12px]"
+            :class="{ activeListItem: currentMenu == index }"
+            class="h-[88px] flex flex-col justify-center items-center cursor-pointer p-[12px] hover:bg-white hover:shadow-menu hover:font-medium rounded-lg"
           >
             <svg
               :data-src="'/sidebar/' + item.icon + '.svg'"
@@ -79,7 +82,6 @@ const closeChildSidebar = () => {
             />
 
             <h1 class="text-[13px] font-medium font-500 mt-[4px] text-[#4F5662]">{{ item.title }}</h1>
-
           </div>
 
           <!-----------------------------------child sidebar----------------------------------->
@@ -98,7 +100,7 @@ const closeChildSidebar = () => {
 
       <!------------------------log out---------------------------->
       <div
-        class="flex flex-col items-center cursor-pointer mb-[44px]"
+        class="flex flex-col items-center cursor-pointer mb-[10px]"
         @click="logOut"
       >
         <img
@@ -132,7 +134,7 @@ const closeChildSidebar = () => {
 }
 
 .activeListItem {
-  @apply bg-white shadow-menu rounded-lg font-medium;
+  @apply bg-white shadow-menu font-medium;
 }
 
 .activeListItem .svg-class path {
