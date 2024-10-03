@@ -197,10 +197,7 @@ const openModals = (data) => {
       <Language />
 
       <div class="flex items-center gap-3 el-dropdown-link">
-        <el-avatar
-          :size="40"
-          src="https://s3-alpha-sig.figma.com/img/62bb/af5c/86dedb75e145655a70472a6f12327762?Expires=1728259200&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=MMrfktOFmOp6Sa9P6uBZhUp1cfMuJOyyfuOA2nmF06gho~IBpQt-xt3EPbkWBfUx8EQ3aVzxyN41Ob20wl8EWVUoTQL0ZK92KTheiWHp80PG~F7Vxcew5yFJzZusz0hlktZNhAlpS9NsiihRk3d5EJNmiGkoZch9f~g~CoZHrXc5cBdGebm217J~9ROTxf~q-6MGhb5G4h4dqfBpHrXT1I-xdKVFM-4LJWekpeJC-WHnUAQNi6jKZHiw2ZvRutwWmUcWZhaS7UAYUVhnctTe-nVZ4OUjHP-9yWYgomsU6eG8Bwx83Oynvz26qJp4J6MCnSGV7MhWUnjcoBNwxoM4YA__"
-        />
+        <img src="@/assets/images/avatar.png" class="h-[40px] w-[40px] object-contain rounded-full" alt="avatar"/>
         <div class="">
           <h2 class="m-0 text-[14px] font-medium text-black">
             Мухаммадамин Нурматов
