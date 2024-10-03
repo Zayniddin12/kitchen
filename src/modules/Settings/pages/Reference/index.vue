@@ -6,7 +6,7 @@ const route = useRoute();
 
 <template>
   <div>
-    
+
   </div>
 </template>
 

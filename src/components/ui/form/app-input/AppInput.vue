@@ -16,6 +16,7 @@ const updateModelValue = (value: AppInputValueType) => {
 const props = withDefaults(defineProps<AppInputPropsType>(), {
   type: "text",
   labelPosition: "top",
+  labelClass: "",
 });
 
 const appInputClasses = computed<string[]>(() => {
@@ -40,7 +41,6 @@ const inputMask = computed(() => {
 </script>
 <template>
   <ElFormItem
-    :label
     :label-position
     :required
     :class="appInputClasses"
@@ -50,10 +50,15 @@ const inputMask = computed(() => {
     :rules="setRules(getRules(props))"
   >
     <template
-      v-if="slots.label"
+      v-if="slots.label || label"
       #label
     >
-      <slot name="label" />
+      <span :class="labelClass">
+      <slot v-if="slots.label" name="label" />
+        <template v-else>
+          {{ label }}
+        </template>
+      </span>
     </template>
     <ElInput
       v-bind="{
