@@ -10,7 +10,6 @@ const store = useLayoutStore()
 const router = useRouter();
 let route = useRoute();
 
-// let currentItem = ref<string>("");
 let currentIndex = ref<number>(0);
 let currentMenu = ref<number>(localStorage.getItem('current-menu') || 0);
 let childIsOpen = ref<boolean>(
@@ -18,12 +17,10 @@ let childIsOpen = ref<boolean>(
 );
 
 onMounted(() => {
-  // currentItem.value = route?.path;
   currentMenu.value = localStorage.getItem('current-menu')
 });
 
 watch(() => route?.path, function () {
-    // currentItem.value = route.path;
     currentMenu.value = localStorage.getItem('current-menu');
   }
 );
@@ -50,6 +47,10 @@ const closeChildSidebar = () => {
   currentIndex.value = 0;
   emit("update:childSidebar", false);
 };
+
+const pinSidebar = () => {
+  currentIndex.value = currentMenu.value
+}
 </script>
 
 <template>
@@ -93,6 +94,7 @@ const closeChildSidebar = () => {
               :children="item.children"
               :header="item.title"
               @closeSidebar="closeChildSidebar"
+              @pinSidebar="pinSidebar"
             />
           </div>
         </div>
