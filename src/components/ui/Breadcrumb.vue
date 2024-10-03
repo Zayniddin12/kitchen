@@ -36,14 +36,17 @@ watch(
   }
 );
 
-
+const handleClickHome = () => {
+  router.push('/')
+  localStorage.setItem('current-menu', 0)
+}
 </script>
 
 <template>
   <div class="mb-[24px] md:mt-0 -mt-5">
     <div class="flex flex-wrap">
       <button
-        @click="$router.push('/')"
+        @click="handleClickHome"
         class="cursor-pointer"
       >
         <img

@@ -81,7 +81,7 @@ const actionButton = (value: TableData): void => {
     <CollapseFilter v-model="isOpenFilter">
       <template #body>
         <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          <app-date-picker placeholder="с этой даты" />
+          <app-date-picker placeholder="с этой даты" label="с этой даты"/>
           <app-date-picker placeholder="по эту дату" />
 
           <AppInput placeholder="Номер документа" />
