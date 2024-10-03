@@ -11,6 +11,7 @@ export default [
         {
           label: "Склад кухни",
           isActionable: false,
+          to: 'kitchen-warehouse-title-id'
         },
         {
           label: '',

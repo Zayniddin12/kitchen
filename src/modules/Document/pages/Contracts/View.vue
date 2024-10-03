@@ -47,7 +47,7 @@ const tableData = ref<TableData[]>([
 </script>
 
 <template>
-  <h1 class="m-0 font-semibold text-[32px]">Просмотр</h1>
+  <h1 class="m-0 font-semibold text-[32px]">Просмотор</h1>
 
   <div class="border rounded-[24px] p-[24px] my-[24px]">
     <div class="grid grid-cols-2 gap-6">
