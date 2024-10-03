@@ -124,6 +124,41 @@ const currentTabTableData = computed(() => {
   return dataList;
 });
 
+const dateList = computed(() => {
+  return [
+    {
+      value: "06.09.20024",
+      title: "Понедельник - 06.09.2024"
+    },
+    {
+      value: "07.09.2024",
+      title: "Вторник - 07.09.2024"
+    },
+    {
+      value: "08.09.2024",
+      title: "Среда - 08.09.2024"
+    },
+    {
+      value: "09.09.2024",
+      title: "Четверг - 09.09.2024"
+    },
+    {
+      value: "10.09.2024",
+      title: "Пятница - 10.09.2024"
+    },
+    {
+      value: "11.09.2024",
+      title: "Суббота - 11.09.2024"
+    },
+    {
+      value: "12.09.2024",
+      title: "Воскресенье - 12.09.2024"
+    }
+  ];
+});
+
+const activeDate = ref(dateList.value[0].value);
+
 </script>
 
 <template>
@@ -331,11 +366,18 @@ const currentTabTableData = computed(() => {
               v-else-if="activeTab === TABS.ALL"
               class="inner"
           >
-           <ElScrollbar>
-             <div class="flex">
-               <div class="py-2 px-4 rounded-lg"></div>
-             </div>
-           </ElScrollbar>
+            <el-scrollbar>
+              <div class="flex">
+                <button
+                    v-for="item in dateList"
+                    :key="item.value"
+                    :class="['py-2 px-4 text-center rounded-lg text-xs font-medium text-dark-gray transition duration-200 ease-in', {'bg-[#E2E6F3]': activeDate === item.value}]"
+                    @click="activeDate = item.value"
+                >
+                  {{ item.title }}
+                </button>
+              </div>
+            </el-scrollbar>
           </div>
         </TransitionGroup>
         <div
