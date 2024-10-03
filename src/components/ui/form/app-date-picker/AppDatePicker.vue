@@ -16,7 +16,8 @@ const props = withDefaults(defineProps<AppDatePickerPropsType>(), {
   labelPosition: "top",
   placeholder: "Select",
   format: "YYYY/MM/DD",
-  type: "date"
+  type: "date",
+  labelClass: ""
 });
 
 const slots = useSlots();
@@ -54,14 +55,15 @@ const prefixIcon = shallowRef({
         v-if="slots.label || label"
         #label
     >
-      <span :class="labelCla"></span>
-      <slot
-          v-if="slots.label"
-          name="label"
-      />
-      <template v-else>
-        {{ label }}
-      </template>
+      <span :class="labelClass">
+        <slot
+            v-if="slots.label"
+            name="label"
+        />
+        <template v-else>
+          {{ label }}
+        </template>
+      </span>
     </template>
     <ElDatePicker
         v-model="model"
