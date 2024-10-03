@@ -6,6 +6,7 @@ import Settings from "@/modules/Settings/router";
 import Warehouse from "@/modules/WarehouseBases/router";
 import KitchenWarehouse from "@/modules/KitchenWarehouse/router";
 import Kitchen from "@/modules/Kitchen/router";
+import Users from "@/modules/Users/router"
 
 const routes: Array<RouteRecordRaw> = [
     ...home,
@@ -15,6 +16,7 @@ const routes: Array<RouteRecordRaw> = [
     ...Warehouse,
     ...KitchenWarehouse,
     ...Kitchen,
+    ...Users,
     {
         path: "/",
         redirect: () => {

@@ -22,6 +22,7 @@ interface TableData {
 const router = useRouter();
 const isOpenFilter = ref<boolean>(false);
 const editModal = ref<boolean>(false);
+const isView = ref<boolean>(false)
 
 const tableData = ref<TableData[]>([
   {
@@ -62,6 +63,15 @@ const tableData = ref<TableData[]>([
   },
 ]);
 
+const viewDraft = () => {
+  editModal.value = true;
+  isView.value = true
+}
+
+const handleEdit = () => {
+  editModal.value = true
+  isView.value = false
+}
 </script>
 
 <template>
@@ -103,7 +113,7 @@ const tableData = ref<TableData[]>([
     </CollapseFilter>
 
     <el-table :data="tableData" class="custom-element-table">
-      <el-table-column prop="num" label="№" />
+      <el-table-column prop="num" label="№" width="80" />
       <el-table-column prop="date" label="Дата" />
       <el-table-column prop="doc" label="№ документа" />
       <el-table-column prop="theme" label="Тема" />
@@ -111,11 +121,11 @@ const tableData = ref<TableData[]>([
       <el-table-column prop="receive" label="Получатель" />
       <el-table-column label="Действие">
         <template #default="scope">
-          <button class="action-btn">
+          <button class="action-btn" @click="viewDraft">
             <img src="@/assets/images/eye.svg" alt="eye" />
           </button>
 
-          <button class="action-btn ml-[8px]" @click="editModal = true">
+          <button class="action-btn ml-[8px]" @click="handleEdit">
             <img src="@/assets/images/icons/edit.svg" alt="edit" />
           </button>
         </template>
@@ -135,6 +145,9 @@ const tableData = ref<TableData[]>([
       />
     </div>
 
-    <EditModal v-model:editModal="editModal"/>
+    <EditModal
+      v-model:editModal="editModal"
+      :isView="isView"
+    />
   </div>
 </template>

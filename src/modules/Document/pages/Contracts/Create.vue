@@ -1,8 +1,8 @@
 <script setup lang="ts">
+import { ref } from "vue";
 import { useRouter } from "vue-router";
 import AppInput from "@/components/ui/form/app-input/AppInput.vue";
 import AppSelect from "@/components/ui/form/app-select/AppSelect.vue";
-import { ref } from "vue";
 
 const router = useRouter();
 
@@ -13,7 +13,9 @@ const repeaterAgain = () => {
 };
 
 const deleteForm = (index: number) => {
-  formRepeater.value.splice(index, 1);
+  if (formRepeater.value.length > 1) {
+    formRepeater.value.splice(index, 1);
+  }
 };
 </script>
 
@@ -68,10 +70,9 @@ const deleteForm = (index: number) => {
 
           <button
             class="bg-[#E2E6F3] rounded-[8px] p-[10px] ml-4"
-            :disabled="index === 0"
             @click="deleteForm(index)"
           >
-            <img src="@/assets/images/icons/delete.svg" alt="del">
+            <img src="@/assets/images/icons/delete.svg" alt="delete" />
           </button>
         </div>
       </div>
@@ -81,7 +82,7 @@ const deleteForm = (index: number) => {
       class="text-[#2E90FA] flex items-center border px-[16px] py-[8px] border-[#2E90FA] rounded-lg text-[12px] font-medium mt-[12px]"
       @click="repeaterAgain"
     >
-      <img src="@/assets/images/icons/plus2.svg" class="mr-[4px]" alt="">
+      <img src="@/assets/images/icons/plus2.svg" class="mr-[4px]" alt="plus"/>
       Добавить еще
     </button>
   </div>

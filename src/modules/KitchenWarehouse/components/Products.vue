@@ -120,27 +120,28 @@ const tableData2 = ref<TableData[]>([
 <template>
   <!------------------------Мясные---------------------->
   <h2 class="text-[#000D24] font-medium text-[18px] mb-[12px] ml-1">Мясные</h2>
+
   <el-table :data="tableData" class="custom-element-table">
-    <el-table-column prop="num" label="№" />
+    <el-table-column prop="num" label="№" width="80" />
     <el-table-column prop="name" label="Название продукта" />
-    <el-table-column prop="count" label="Количество" />
-    <el-table-column prop="ed" label="Ед. изм" />
-    <el-table-column prop="tzr" label="ТЗР">
+    <el-table-column prop="count" label="Количество" width="160"/>
+    <el-table-column prop="ed" label="Ед. изм" width="120"/>
+    <el-table-column prop="tzr" label="ТЗР" width="100" >
       <template #default="scope">
         <el-input style="width: 50px" v-model="scope.row.tzr" v-if="scope.row.isEdit"/>
       </template>
     </el-table-column>
-    <el-table-column prop="nas" label="Наценка">
+    <el-table-column prop="nas" label="Наценка" width="130">
       <template #default="scope">
         <el-input style="width: 50px" v-model="scope.row.nas" v-if="scope.row.isEdit" />
       </template>
     </el-table-column>
-    <el-table-column prop="rent" label="Рентаб...">
+    <el-table-column prop="rent" label="Рентаб..." width="120">
       <template #default="scope">
         <el-input style="width: 50px" v-model="scope.row.rent" v-if="scope.row.isEdit"/>
       </template>
     </el-table-column>
-    <el-table-column prop="ndc" label="НДС">
+    <el-table-column prop="ndc" label="НДС" width="100">
       <template #default="scope">
         <el-input style="width: 50px" v-model="scope.row.ndc" v-if="scope.row.isEdit"/>
       </template>
@@ -170,26 +171,26 @@ const tableData2 = ref<TableData[]>([
   <!--------------------Зерновые------------------------->
   <h2 class="text-[#000D24] font-medium text-[18px] mb-[12px] ml-1 mt-[16px]">Зерновые</h2>
   <el-table :data="tableData2" class="custom-element-table">
-    <el-table-column prop="num" label="№" />
+    <el-table-column prop="num" label="№" width="80" />
     <el-table-column prop="name" label="Рыбное мясо" />
-    <el-table-column prop="count" label="Количество" />
-    <el-table-column prop="ed" label="Ед. изм" />
-    <el-table-column prop="tzr" label="ТЗР">
+    <el-table-column prop="count" width="160" label="Количество" />
+    <el-table-column prop="ed" width="120" label="Ед. изм" />
+    <el-table-column prop="tzr" width="100" label="ТЗР">
       <template #default="scope">
         <el-input style="width: 50px" v-model="scope.row.tzr" v-if="scope.row.isEdit"/>
       </template>
     </el-table-column>
-    <el-table-column prop="nas" label="Наценка">
+    <el-table-column prop="nas" width="130" label="Наценка">
       <template #default="scope">
         <el-input style="width: 50px" v-model="scope.row.nas" v-if="scope.row.isEdit" />
       </template>
     </el-table-column>
-    <el-table-column prop="rent" label="Рентаб...">
+    <el-table-column prop="rent" width="120" label="Рентаб...">
       <template #default="scope">
         <el-input style="width: 50px" v-model="scope.row.rent" v-if="scope.row.isEdit"/>
       </template>
     </el-table-column>
-    <el-table-column prop="ndc" label="НДС">
+    <el-table-column prop="ndc" width="100" label="НДС">
       <template #default="scope">
         <el-input style="width: 50px" v-model="scope.row.ndc" v-if="scope.row.isEdit"/>
       </template>
