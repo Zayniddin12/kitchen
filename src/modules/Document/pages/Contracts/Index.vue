@@ -97,18 +97,18 @@ const actionButton = (value: TableData): void => {
     <CollapseFilter v-model="isOpenFilter">
       <template #body>
         <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
-          <app-date-picker placeholder="с этой даты" />
-          <app-date-picker placeholder="по эту дату" />
+          <app-date-picker placeholder="С этой даты" label="С этой даты" label-class="text-[#7F7D83]"/>
+          <app-date-picker placeholder="По эту дату" label="По эту дату" label-class="text-[#7F7D83]"/>
 
-          <appInput placeholder="Номер документа" />
-          <appInput placeholder="Поставщик" />
-          <appInput placeholder="Общая сумма контракта" />
+          <appInput placeholder="Номер документа" label="Номер документа" label-class="text-[#7F7D83]"/>
+          <appInput placeholder="Поставщик" label="Поставщик" label-class="text-[#7F7D83]"/>
+          <appInput placeholder="Общая сумма контракта" label="Общая сумма контракта" label-class="text-[#7F7D83]"/>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-4">
-          <appSelect placeholder="Название продукта" />
-          <appSelect placeholder="Количество" />
-          <app-input placeholder="Ед. измерения" />
+          <appSelect placeholder="Название продукта" label="Название продукта" label-class="text-[#7F7D83]"/>
+          <appSelect placeholder="Количество" label="Количество" label-class="text-[#7F7D83]"/>
+          <app-input placeholder="Ед. измерения" label="Ед. измерения" label-class="text-[#7F7D83]"/>
         </div>
 
         <div class="flex items-center mt-[10px] justify-between">

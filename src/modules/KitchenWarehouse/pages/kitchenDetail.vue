@@ -156,27 +156,27 @@ const setActiveTab = (item: any) => {
       <CollapseFilter v-model="filterFormOpened">
         <template #body>
           <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4" v-if="activeTab === 0">
-            <AppSelect placeholder="Название продукта" />
-            <AppInput placeholder="Количество" />
+            <AppSelect placeholder="Название продукта" label="Название продукта" label-class="text-[#7F7D83]"/>
+            <AppInput placeholder="Количество" label="Количество" label-class="text-[#7F7D83]"/>
 
-            <AppSelect placeholder="Ед. измерения" />
-            <AppInput placeholder="Сумма" />
+            <AppSelect placeholder="Ед. измерения" label="Ед. измерения" label-class="text-[#7F7D83]"/>
+            <AppInput placeholder="Сумма" label="Сумма" label-class="text-[#7F7D83]"/>
           </div>
 
           <template v-else>
             <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
-              <app-date-picker placeholder="с этой даты" />
-              <app-date-picker placeholder="по эту дату" />
+              <app-date-picker placeholder="С этой даты" label="С этой даты" label-class="text-[#7F7D83]"/>
+              <app-date-picker placeholder="По эту дату" label="По эту дату" label-class="text-[#7F7D83]"/>
 
-              <AppInput placeholder="Номер накладной" />
-              <AppInput placeholder="Сумма" />
+              <AppInput placeholder="Номер накладной" label="Номер накладной" label-class="text-[#7F7D83]"/>
+              <AppInput placeholder="Сумма" label="Сумма" label-class="text-[#7F7D83]"/>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-4 gap-4">
-              <AppSelect placeholder="Название продукта" />
-              <AppInput placeholder="Количество" />
-              <AppSelect placeholder="Ед. измерения" />
-              <AppInput placeholder="Цена" />
+              <AppSelect placeholder="Название продукта" label="Название продукта" label-class="text-[#7F7D83]"/>
+              <AppInput placeholder="Количество" label="Количество" label-class="text-[#7F7D83]"/>
+              <AppSelect placeholder="Ед. измерения" label="Ед. измерения" label-class="text-[#7F7D83]"/>
+              <AppInput placeholder="Цена" label="Цена" label-class="text-[#7F7D83]"/>
             </div>
           </template>
 

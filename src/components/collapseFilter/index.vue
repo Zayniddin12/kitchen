@@ -21,7 +21,7 @@ const activeNames = computed<string[]>(() => {
           <div />
         </template>
         <div class="border-[#e2e6f3] border bg-[#F8F9FC] rounded-[10px] py-[12px] px-[16px]">
-          <h1 class="text-[#4F5662] font-medium text-[18px]">Фильтр</h1>
+          <h1 class="text-[#4F5662] font-medium text-[18px] mb-3">Фильтр</h1>
           <slot name="body" />
         </div>
       </el-collapse-item>

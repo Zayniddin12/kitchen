@@ -94,19 +94,19 @@ const actionButton = (value: TableData): void => {
     <CollapseFilter v-model="isOpenFilter">
       <template #body>
         <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          <appInput placeholder="№ накладной в системе" />
-          <appInput placeholder="Дата создания в системе" />
+          <appInput placeholder="№ накладной в системе" label="№ накладной в системе" label-class="text-[#7F7D83]"/>
+          <appInput placeholder="Дата создания в системе" label="Дата создания в системе" label-class="text-[#7F7D83]"/>
 
-          <appInput placeholder="№ накладной" />
-          <appInput placeholder="Дата накладной" />
+          <appInput placeholder="№ накладной" label="№ накладной" label-class="text-[#7F7D83]"/>
+          <appInput placeholder="Дата накладной" label="Дата накладной" label-class="text-[#7F7D83]"/>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          <appSelect placeholder="От кого" />
-          <appSelect placeholder="Кому" />
+          <appSelect placeholder="От кого" label="От кого" label-class="text-[#7F7D83]"/>
+          <appSelect placeholder="Кому" label="Кому" label-class="text-[#7F7D83]"/>
 
-          <appInput placeholder="Основание" />
-          <appInput placeholder="Способ отправления" />
+          <appInput placeholder="Основание" label="Основание" label-class="text-[#7F7D83]"/>
+          <appInput placeholder="Способ отправления" label="Способ отправления" label-class="text-[#7F7D83]"/>
         </div>
 
         <div class="flex items-center mt-[10px] justify-between">

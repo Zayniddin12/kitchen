@@ -90,16 +90,16 @@ const handleEdit = () => {
     <CollapseFilter v-model="isOpenFilter">
       <template #body>
         <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          <app-date-picker placeholder="с этой даты" />
-          <app-date-picker placeholder="по эту дату" />
+          <app-date-picker placeholder="С этой даты" label="С этой даты" label-class="text-[#7F7D83]"/>
+          <app-date-picker placeholder="по эту дату" label="по эту дату" label-class="text-[#7F7D83]"/>
 
-          <appInput placeholder="Номер документа" />
-          <appInput placeholder="Доставка картофеля" />
+          <appInput placeholder="Номер документа" label="Номер документа" label-class="text-[#7F7D83]"/>
+          <appInput placeholder="Доставка картофеля" label="Доставка картофеля" label-class="text-[#7F7D83]"/>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-2 gap-4">
-          <appSelect placeholder="Кому" />
-          <appSelect placeholder="Отправитель" />
+          <appSelect placeholder="Кому" label="Кому" label-class="text-[#7F7D83]"/>
+          <appSelect placeholder="Отправитель" label="Отправитель" label-class="text-[#7F7D83]"/>
         </div>
 
         <div class="flex items-center mt-[10px] justify-between">

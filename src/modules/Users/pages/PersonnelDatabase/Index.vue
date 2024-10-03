@@ -80,6 +80,7 @@ const tableData = ref<TableData[]>([
     },
   },
 ]);
+const input1 = ref<string>('')
 
 const setActiveTab = (item: any) => {
   activeTab.value = item.value;

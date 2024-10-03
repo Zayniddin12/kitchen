@@ -44,6 +44,7 @@ const onSubmit = () => {
         <img
           src="@/assets/images/logo.svg"
           alt="logo"
+          class="h-[50px]"
         />
         <div class="flex flex-col ml-3">
           <b class="text-dark text-lg">НГМК</b>

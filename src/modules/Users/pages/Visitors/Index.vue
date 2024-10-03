@@ -94,6 +94,7 @@ const tableData = ref<TableData[]>([
     },
   },
 ]);
+const input1 = ref<string>('')
 
 const setActiveTab = (item: any) => {
   activeTab.value = item.value;
@@ -127,7 +128,6 @@ const setActiveTab = (item: any) => {
 
         <button
           class="custom-apply-btn ml-[16px] !px-[30px]"
-          @click="router.push('/personal-database-create')"
         >
           <img src="@/assets/images/icons/plus.svg" alt="add">
           Добавить
@@ -159,11 +159,11 @@ const setActiveTab = (item: any) => {
       </el-table-column>
       <el-table-column label="Действие">
         <template #default="scope">
-          <button class="action-btn" @click="router.push(`/personal-database-view/${scope.row.id}`)">
+          <button class="action-btn">
             <img src="@/assets/images/eye.svg" alt="eye" />
           </button>
 
-          <button class="action-btn ml-[8px]" @click="router.push(`/personal-database-edit-form/${scope.row.id}`)">
+          <button class="action-btn ml-[8px]">
             <img src="@/assets/images/icons/edit.svg" alt="edit" />
           </button>
         </template>

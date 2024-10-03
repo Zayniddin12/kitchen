@@ -32,11 +32,15 @@ const closeChildSidebar = () => {
     />
 
     <div
-      class="main-layout min-h-screen p-6 pr-7 pt-28 dark:bg-darkLayoutMain bg-white ml-[128px] transition-all"
+      class="main-layout min-h-screen p-6 pr-7 pt-28 dark:bg-darkLayoutMain bg-white ml-[128px] transition-all flex flex-col justify-between"
       :class="childSidebar ? 'ml-[396px]' : ''"
     >
-      <Breadcrumb />
-      <slot />
+     <div class="flex flex-col">
+       <Breadcrumb />
+       <slot />
+     </div>
+
+      <span class="z-50 bg-[#fff] w-full text-[#8F9194] text-[12px]">Made by “Anysoft” software & solutions company</span>
     </div>
 
     <div
