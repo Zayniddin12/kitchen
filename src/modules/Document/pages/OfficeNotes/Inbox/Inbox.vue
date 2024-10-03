@@ -80,17 +80,17 @@ const actionButton = (value: TableData): void => {
 
     <CollapseFilter v-model="isOpenFilter">
       <template #body>
-        <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          <app-date-picker placeholder="с этой даты" label="с этой даты"/>
-          <app-date-picker placeholder="по эту дату" />
+        <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-3">
+          <app-date-picker placeholder="с этой даты" label="с этой даты" label-class="text-[#7F7D83]" />
+          <app-date-picker placeholder="по эту дату" label="по эту дату" label-class="text-[#7F7D83]"/>
 
-          <AppInput placeholder="Номер документа" />
-          <AppInput placeholder="Доставка картофеля" />
+          <AppInput placeholder="Номер документа" label="Номер документа" label-class="text-[#7F7D83]"/>
+          <AppInput placeholder="Доставка картофеля" label="Доставка картофеля" label-class="text-[#7F7D83]"/>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-2 gap-4">
-          <AppSelect placeholder="Кому" />
-          <AppSelect placeholder="Отправитель" />
+          <AppSelect placeholder="Кому" label="Кому" label-class="text-[#7F7D83]"/>
+          <AppSelect placeholder="Отправитель" label="Отправитель" label-class="text-[#7F7D83]"/>
         </div>
 
         <div class="flex items-center mt-[10px] justify-between">
