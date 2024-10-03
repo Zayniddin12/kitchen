@@ -7,6 +7,8 @@ import { computed, ref, watch } from "vue";
 import { formatDate } from "@/utils/helper";
 import AppTimePicker from "@/components/ui/form/app-time-picker/AppTimePicker.vue";
 import AppSelect from "@/components/ui/form/app-select/AppSelect.vue";
+import { TableColumnType } from "@/types/common.type";
+import PlusIcon from "@/assets/images/icons/plus.svg";
 
 const startDate = ref<Date | null>(null);
 
@@ -82,10 +84,54 @@ const diets = computed(() => {
 
 const activeDiet = ref("");
 
+const tableColumns = computed<TableColumnType[]>(() => {
+  return [
+    {
+      label: "Название",
+      prop: "name",
+      width: 130
+    },
+    {
+      label: "Количество",
+      prop: "quantity",
+      width: 150
+    },
+    {
+      label: "Ед. измерения",
+      prop: "unit_measurement",
+      width: 170
+    },
+    {
+      label: "Цена",
+      prop: "price"
+    },
+    {
+      label: "Сумма",
+      prop: "sum"
+    }
+  ];
+});
+
+const tableData = computed(() => {
+  const dataList = [];
+
+  for (let i = 0; i < 4; i++) {
+    dataList.push({
+      name: "Кабачки",
+      quantity: 0.8,
+      unit_measurement: "кг",
+      price: "1 800 сум",
+      sum: "15 000 сум"
+    });
+  }
+
+  return dataList;
+});
+
 </script>
 
 <template>
-  <section>
+  <section class="meal-plan-create">
     <div>
       <h1 class="font-semibold text-[32px] text-dark">
         Добавить меню
@@ -177,6 +223,66 @@ const activeDiet = ref("");
                       </span>
                     </template>
                   </AppSelect>
+                  <div
+                      v-if="activeDiet"
+                      class="mt-6"
+                  >
+                    <ElTable
+                        :data="tableData"
+                        class="custom-element-table meal-plan-create__table"
+                    >
+                      <ElTableColumn
+                          v-for="item in tableColumns"
+                          :key="item.prop"
+                          :prop="item.prop"
+                          :label="item.label"
+                          :width="item.width"
+                      />
+                      <template #append>
+                        <div class="px-4 py-3.5 flex justify-end items-center gap-x-8">
+                          <div class="flex items-center gap-x-1 text-sm">
+                          <span class="text-cool-gray">
+                            Цена:
+                          </span>
+                            <strong class="font-semibold text-dark">
+                              25 000 сум
+                            </strong>
+                          </div>
+                          <div class="flex items-center gap-x-1 text-sm">
+                          <span class="text-cool-gray">
+                            НДС:
+                          </span>
+                            <strong class="font-semibold text-dark">
+                              3 000 сум
+                            </strong>
+                          </div>
+                          <div class="flex items-center gap-x-1 text-sm">
+                          <span class="text-cool-gray">
+                            Общая сумма:
+                          </span>
+                            <strong class="font-semibold text-dark">
+                              28 000 сум
+                            </strong>
+                          </div>
+                        </div>
+                      </template>
+                    </ElTable>
+                    <ElButton
+                      type="primary"
+                      plain
+                      class="mt-6 !bg-white !border-blue-500"
+                    >
+                      <div class="flex items-center gap-x-2">
+                        <svg
+                            :data-src="PlusIcon"
+                            class="size-4 meal-plan-create__plus-icon"
+                        />
+                        <span class="text-xs font-medium text-blue-500">
+                          Добавить еще
+                        </span>
+                      </div>
+                    </ElButton>
+                  </div>
                 </div>
               </div>
             </div>
@@ -203,5 +309,20 @@ const activeDiet = ref("");
 </template>
 
 <style lang="scss">
+.meal-plan-create {
 
+  &__table {
+    thead th {
+      @apply font-medium text-dark-gray;
+    }
+
+    tbody tr:last-child td:first-child, td:last-child {
+      border-radius: unset !important;
+    }
+  }
+
+  &__plus-icon *{
+    stroke: var(--blue-500);
+  }
+}
 </style>

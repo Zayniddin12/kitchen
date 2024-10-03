@@ -16,7 +16,8 @@ const props = withDefaults(defineProps<AppTimePickerPropsType>(), {
   labelPosition: "top",
   placeholder: "— : —",
   prefixIcon: "ss",
-  format: "HH:MM"
+  format: "HH:MM",
+  labelClass: ""
 });
 
 const slots = useSlots();
@@ -53,10 +54,18 @@ const makeRange = (start: number, end: number) => {
       :class="appTimePickerClasses"
   >
     <template
-        v-if="slots.label"
+        v-if="slots.label || label"
         #label
     >
-      <slot name="label"/>
+      <span :class="labelClass">
+      <slot
+          v-if="slots.label"
+          name="label"
+      />
+        <template v-else>
+          {{ label }}
+        </template>
+      </span>
     </template>
     <ElTimePicker
         v-model="model"

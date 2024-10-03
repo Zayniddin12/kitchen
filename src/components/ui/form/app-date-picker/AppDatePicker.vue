@@ -1,8 +1,11 @@
-<script setup lang="ts">
+<script
+    setup
+    lang="ts"
+>
 import { computed, h, shallowRef, useSlots } from "vue";
 import {
   AppDatePickerPropsType,
-  AppDatePickerValueType,
+  AppDatePickerValueType
 } from "@/components/ui/form/app-date-picker/app-date-picker.type";
 import CalendarIcon from "@/assets/images/icons/calendar.svg";
 import { getRules, setRules } from "@/components/ui/form/validate";
@@ -14,6 +17,7 @@ const props = withDefaults(defineProps<AppDatePickerPropsType>(), {
   placeholder: "Select",
   format: "YYYY/MM/DD",
   type: "date",
+  labelClass: ""
 });
 
 const slots = useSlots();
@@ -32,54 +36,61 @@ const prefixIcon = shallowRef({
   render() {
     return h("svg", {
       "data-src": CalendarIcon,
-      class: "app-date-picker__icon",
+      class: "app-date-picker__icon"
     });
-  },
+  }
 });
 </script>
 <template>
   <ElFormItem
-    :label
-    :label-position
-    :required
-    :size
-    :rules="setRules(getRules(props))"
-    :prop
-    :error
-    :class="appDatePickerClasses"
+      :label-position
+      :required
+      :size
+      :rules="setRules(getRules(props))"
+      :prop
+      :error
+      :class="appDatePickerClasses"
   >
     <template
-      v-if="slots.label"
-      #label
+        v-if="slots.label || label"
+        #label
     >
-      {{ slots.label }}
+      <span :class="labelClass">
+        <slot
+            v-if="slots.label"
+            name="label"
+        />
+        <template v-else>
+          {{ label }}
+        </template>
+      </span>
     </template>
     <ElDatePicker
-      v-model="model"
-      :id
-      :placeholder
-      :disabled
-      :readonly
-      :size
-      :name
-      :clearable
-      :editable
-      :start-placeholder
-      :end-placeholder
-      :type
-      :format
-      :popper-class
-      :popper-options
-      :range-separator
-      :default-time
-      :default-value
-      :value-format
-      :unlink-panels
-      :prefix-icon="prefixIcon"
-      :disabled-date
-      :teleported
-      :empty-values
-      class="app-date-picker__date-picker"
+        v-model="model"
+        :id
+        :placeholder
+        :disabled
+        :readonly
+        :size
+        :name
+        :clearable
+        :editable
+        :start-placeholder
+        :end-placeholder
+        :type
+        :format
+        :popper-class
+        :popper-options
+        :range-separator
+        :default-time
+        :default-value
+        :value-format
+        :unlink-panels
+        :prefix-icon="prefixIcon"
+        :disabled-date
+        :teleported
+        :empty-values
+        class="app-date-picker__date-picker"
     />
   </ElFormItem>
 </template>
