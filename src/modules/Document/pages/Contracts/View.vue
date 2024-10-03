@@ -1,47 +1,52 @@
 <script setup lang="ts">
+import { ref } from "vue";
 import { useRouter } from "vue-router";
 import AppInput from "@/components/ui/form/app-input/AppInput.vue";
 import AppSelect from "@/components/ui/form/app-select/AppSelect.vue";
-import { ref } from "vue";
-
-const router = useRouter();
 
 interface TableData {
-  name: string;
+  typePro: string;
+  vidPro: string;
   count: string;
-  count2: string;
+  unit: string;
   cost: string;
   sum: string;
 }
 
+const router = useRouter();
+
 const tableData = ref<TableData[]>([
   {
-    name: "Картофель",
-    count: "80",
-    count2: "кг",
-    cost: "22 000 сум",
-    sum: "1 760 000 сум",
+    typePro: "Овощи",
+    vidPro: "Картофель",
+    count: "200",
+    unit: "кг",
+    cost: "1 000 сум",
+    sum: "200 000 сум",
   },
   {
-    name: "Говядина",
-    count: "30",
-    count2: "кг",
-    cost: "86 000 сум",
-    sum: "1 700 000 сум",
+    typePro: "Мясные",
+    vidPro: "Говядина",
+    count: "200",
+    unit: "кг",
+    cost: "1 000 сум",
+    sum: "200 000 сум",
   },
   {
-    name: "Горох",
-    count: "50",
-    count2: "кг",
-    cost: "34 000 сум",
-    sum: "1 000 000 сум",
+    typePro: "Зерновые",
+    vidPro: "Горох",
+    count: "200",
+    unit: "кг",
+    cost: "1 000 сум",
+    sum: "200 000 сум",
   },
   {
-    name: "Морковь",
-    count: "50",
-    count2: "кг",
-    cost: "20 000 сум",
-    sum: "1 760 000 сум",
+    typePro: "Овощи",
+    vidPro: "Морковь",
+    count: "200",
+    unit: "кг",
+    cost: "1 000 сум",
+    sum: "200 000 сум",
   },
 ]);
 </script>
@@ -64,11 +69,11 @@ const tableData = ref<TableData[]>([
 
     <div class="p-[16px] rounded-[16px]">
       <el-table :data="tableData" class="custom-element-table">
-        <el-table-column prop="name" label="Тип продукта" />
-        <el-table-column prop="count" label="Вид продукта" />
-        <el-table-column prop="count2" label="Количество" />
-        <el-table-column prop="cost" label="Ед. измерения" />
-        <el-table-column prop="sum" label="Цена" />
+        <el-table-column prop="typePro" label="Тип продукта" />
+        <el-table-column prop="vidPro" label="Вид продукта" />
+        <el-table-column prop="count" label="Количество" />
+        <el-table-column prop="unit" label="Ед. измерения" />
+        <el-table-column prop="cost" label="Цена" />
         <el-table-column prop="sum" label="Сумма" />
       </el-table>
 
