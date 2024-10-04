@@ -26,9 +26,7 @@ const onSubmit = () => {
 </script>
 
 <template>
-  <div
-    class="p-8 h-screen flex flex-col lg:flex-row items-center relative bg-[#ffffff]"
-  >
+  <div class="p-8 h-screen flex flex-col lg:flex-row items-center relative bg-[#ffffff]">
     <Language class="fixed top-[32px] right-[32px]" />
 
     <!-- Background Image Section -->

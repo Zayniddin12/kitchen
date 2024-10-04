@@ -52,7 +52,7 @@ const setActiveTab = (item: any) => {
       <template v-if="activeTab === 0">
         <div class="py-8 px-4 flex items-center gap-4">
           <div class="rounded-full overflow-hidden border-4 border-gray-100">
-            <img src="../../../../assets/images/avatar.png" alt="Profile Picture" class="object-cover h-[160px] w-[160px] rounded-full">
+            <img src="@/assets/images/avatar.png" alt="Profile Picture" class="object-cover h-[160px] w-[160px] rounded-full">
           </div>
 
           <div class="text-xl font-semibold text-gray-900">
@@ -98,7 +98,7 @@ const setActiveTab = (item: any) => {
       <template v-else>
         <input type="file" id="inputFile" class="hidden">
         <label for="inputFile" class="cursor-pointer bg-[#F8F9FC] rounded-[16px] border-dashed border border-gray-300 flex flex-col items-center justify-center p-10 h-[60vh]">
-          <img src="../../../../assets/images/icons/upload.svg" alt="upload" />
+          <img src="@/assets/images/icons/upload.svg" alt="upload" />
 
           <p class="text-gray-700 text-sm mt-[24px]">Перетащите фотографию для загрузки</p>
           <p class="text-gray-400 text-xs mb-[24px]">Максимальный размер фотографии 10 МБ</p>
