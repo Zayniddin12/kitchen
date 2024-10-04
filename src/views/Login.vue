@@ -107,13 +107,13 @@ const onSubmit = () => {
         >
           <img
             src="@/assets/images/line.svg"
-            class="ml-4"
+            class="ml-4 md:w-[40%] lg:w-[40%] w-[20%]"
             alt="line"
           />
           <span class="px-2">или</span>
           <img
             src="@/assets/images/line.svg"
-            class="mr-4"
+            class="mr-4 md:w-[40%] lg:w-[40%] w-[20%]"
             alt="line"
           />
         </div>

@@ -11,7 +11,7 @@ interface Tabs {
 }
 
 const router = useRouter();
-const route = useRoute()
+const route = useRoute();
 
 const tabs = ref<Tabs[]>([
   {
@@ -33,7 +33,7 @@ const setActiveTab = (item: any) => {
 <template>
   <div>
     <h1 class="m-0 font-semibold text-[32px]">
-      {{route.name === 'personal-database-create-form' ? 'Добавить' : 'Редактировать'}}
+      {{ route.name === "personal-database-create-form" ? "Добавить" : "Редактировать" }}
     </h1>
 
     <div class="app-tabs w-[345px] my-[24px]">
@@ -52,8 +52,7 @@ const setActiveTab = (item: any) => {
       <template v-if="activeTab === 0">
         <div class="py-8 px-4 flex items-center gap-4">
           <div class="rounded-full overflow-hidden border-4 border-gray-100">
-            <img src="../../../../assets/images/avatar.png" alt="Profile Picture"
-                 class="object-cover h-[160px] w-[160px] rounded-full">
+            <img src="../../../../assets/images/avatar.png" alt="Profile Picture" class="object-cover h-[160px] w-[160px] rounded-full">
           </div>
 
           <div class="text-xl font-semibold text-gray-900">
@@ -62,85 +61,44 @@ const setActiveTab = (item: any) => {
         </div>
 
         <div class="grid grid-cols-3 gap-4">
-          <div>
-            <label class="text-[#A8AAAE] text-[12px] font-medium mb-[4px] block">Фамилия</label>
-            <app-input />
-          </div>
+          <app-input label="Фамилия" label-class="text-[#A8AAAE] text-[12px] font-medium" />
 
-          <div>
-            <label class="text-[#A8AAAE] text-[12px] font-medium mb-[4px] block">Имя</label>
-            <app-input />
-          </div>
+          <app-input label="Имя" label-class="text-[#A8AAAE] text-[12px] font-medium" />
 
-          <div>
-            <label class="text-[#A8AAAE] text-[12px] font-medium mb-[4px] block">Отчество</label>
-            <app-input />
-          </div>
+          <app-input label="Отчество" label-class="text-[#A8AAAE] text-[12px] font-medium" />
 
-          <div>
-            <label class="text-[#A8AAAE] text-[12px] font-medium mb-[4px] block">Дата рождения</label>
-            <app-date-picker placeholder="" />
-          </div>
+          <app-date-picker placeholder="" label="Дата рождения" label-class="text-[#A8AAAE] text-[12px] font-medium" />
 
-          <div>
-            <label class="text-[#A8AAAE] text-[12px] font-medium mb-[4px] block">Национальность</label>
-            <app-input />
-          </div>
+          <app-input label="Национальность" label-class="text-[#A8AAAE] text-[12px] font-medium" />
 
-          <div>
-            <label class="text-[#A8AAAE] text-[12px] font-medium mb-[4px] block">Пол</label>
-            <app-input />
-          </div>
+          <app-input label="Пол" label-class="text-[#A8AAAE] text-[12px] font-medium" />
 
-          <div>
-            <label class="text-[#A8AAAE] text-[12px] font-medium mb-[4px] block">Серия и номер паспорта</label>
-            <app-input />
-          </div>
+          <app-input label="Серия и номер паспорта" label-class="text-[#A8AAAE] text-[12px] font-medium" />
 
-          <div>
-            <label class="text-[#A8AAAE] text-[12px] font-medium mb-[4px] block">Кем выдан</label>
-            <app-input />
-          </div>
+          <app-input label="Кем выдан" label-class="text-[#A8AAAE] text-[12px] font-medium" />
 
-          <div>
-            <label class="text-[#A8AAAE] text-[12px] font-medium mb-[4px] block">Дата выпуска</label>
-            <app-date-picker placeholder="" />
-          </div>
+          <app-date-picker label="Дата выпуска" placeholder="" label-class="text-[#A8AAAE] text-[12px] font-medium" />
 
-          <div>
-            <label class="text-[#A8AAAE] text-[12px] font-medium mb-[4px] block">Срок действия</label>
-            <app-date-picker placeholder="" />
-          </div>
+          <app-date-picker label="Срок действия" placeholder="" label-class="text-[#A8AAAE] text-[12px] font-medium" />
 
-          <div>
-            <label class="text-[#A8AAAE] text-[12px] font-medium mb-[4px] block">ПИНФЛ</label>
-            <app-input />
-          </div>
+          <app-input label="ПИНФЛ" label-class="text-[#A8AAAE] text-[12px] font-medium" />
 
           <div />
+        </div>
 
-          <div class="mt-[40px]">
-            <label class="text-[#A8AAAE] text-[12px] font-medium mb-[4px] block">OneID (необязательно)</label>
-            <app-input />
-          </div>
+        <div class="mt-[40px] grid grid-cols-3 gap-4">
+          <app-input label="OneID (необязательно)" label-class="text-[#A8AAAE] text-[12px] font-medium" />
 
-          <div class="mt-[40px]">
-            <label class="text-[#A8AAAE] text-[12px] font-medium mb-[4px] block">Должность в системе
-              (необязательно)</label>
-            <app-select placeholder="" />
-          </div>
+          <app-select label="Должность в системе(необязательно)" placeholder="" label-class="text-[#A8AAAE] text-[12px] font-medium" />
 
-          <div class="mt-[40px]">
-            <label class="text-[#A8AAAE] text-[12px] font-medium mb-[4px] block">Роли (необязательно)</label>
-            <app-select placeholder="" />
-          </div>
+          <app-select label="Роли (необязательно)" placeholder="" label-class="text-[#A8AAAE] text-[12px] font-medium" />
         </div>
       </template>
 
       <template v-else>
         <input type="file" id="inputFile" class="hidden">
         <label for="inputFile" class="cursor-pointer bg-[#F8F9FC] rounded-[16px] border-dashed border border-gray-300 flex flex-col items-center justify-center p-10 h-[60vh]">
-          <img src="../../../../assets/images/icons/upload.svg" alt="upload"/>
+          <img src="../../../../assets/images/icons/upload.svg" alt="upload" />
 
           <p class="text-gray-700 text-sm mt-[24px]">Перетащите фотографию для загрузки</p>
           <p class="text-gray-400 text-xs mb-[24px]">Максимальный размер фотографии 10 МБ</p>
@@ -158,7 +116,3 @@ const setActiveTab = (item: any) => {
     </div>
   </div>
 </template>
-
-<style scoped lang="scss">
-
-</style>

@@ -40,7 +40,7 @@ const closeChildSidebar = () => {
        <slot />
      </div>
 
-      <span class="z-50 bg-[#fff] w-full text-[#8F9194] text-[12px]">Made by “Anysoft” software & solutions company</span>
+      <span class="mt-[28px] z-50 bg-[#fff] w-full text-[#8F9194] text-[12px]">Made by “Anysoft” software & solutions company</span>
     </div>
 
     <div
@@ -58,7 +58,9 @@ const closeChildSidebar = () => {
   z-index: 99;
   border-bottom: 1px solid #EEEEEF;
   transform: none;
-  top: 16px;
+  top: 0;
+  padding-top: 16px;
+  padding-bottom: 17px;
   margin-left: 152px;
   width: calc(100% - 180px);
   min-height: 65px !important;
