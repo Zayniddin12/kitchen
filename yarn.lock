@@ -2133,7 +2133,7 @@ vue-tsc@^2.1.6:
     "@vue/language-core" "2.1.6"
     semver "^7.5.4"
 
-"vue@^2.6.14 || ^3.3.0", "vue@^2.7.0 || ^3.1.1", vue@^3.0.0, "vue@^3.0.0-0 || ^2.6.0", vue@^3.2.0, vue@^3.2.25, vue@^3.5.9, vue@3.5.9:
+"vue@^2.6.14 || ^3.3.0", "vue@^2.7.0 || ^3.1.1", vue@^3.0.0, "vue@^3.0.0-0 || ^2.6.0", vue@^3.2.0, vue@^3.2.25, vue@^3.5.9, vue@>=3.2.0, vue@3.5.9:
   version "3.5.9"
   resolved "https://registry.npmjs.org/vue/-/vue-3.5.9.tgz"
   integrity sha512-nHzQhZ5cjFKynAY2beAm7XtJ5C13VKAFTLTgRYXy+Id1KEKBeiK6hO2RcW1hUjdbHMadz1YzxyHgQigOC54wug==
@@ -2143,6 +2143,11 @@ vue-tsc@^2.1.6:
     "@vue/runtime-dom" "3.5.9"
     "@vue/server-renderer" "3.5.9"
     "@vue/shared" "3.5.9"
+
+vue3-toastify@^0.2.3:
+  version "0.2.3"
+  resolved "https://registry.npmjs.org/vue3-toastify/-/vue3-toastify-0.2.3.tgz"
+  integrity sha512-Gsv/wWFYsAzhXFE+JCoL7KAUYvzl9AaGPykkDtT073RWiz1vqtdDFcHENU26ga0tbY42Q51yJr4en/ymQD0OGg==
 
 which@^2.0.1:
   version "2.0.2"

@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { Bell, Message, Search } from "@element-plus/icons-vue";
-import Language from "@/components/language/index.vue";
+import {  Search } from "@element-plus/icons-vue";
+// import Language from "@/components/language/index.vue";
 import MemoModal from "@/layout/Create/components/MemoModal.vue";
 import ComingModal from "@/layout/Create/components/ComingModal.vue";
 import ConsumptionModal from "@/layout/Create/components/ConsumptionModal.vue";
@@ -52,7 +52,6 @@ const navbarMenuList = [
 ];
 
 const openModals = (data) => {
-  console.log(data);
   if (data.id == 1) {
     editModal.value = true;
   } else if (data.id == 2) {
@@ -174,27 +173,17 @@ const openModals = (data) => {
         value="18"
         class="item"
       >
-        <el-icon
-          color="#8F9194"
-          size="24"
-        >
-          <Bell />
-        </el-icon>
+        <img src="@/assets/images/icons/bell.svg" alt="">
       </el-badge>
 
       <el-badge
         value="18"
         class="item"
       >
-        <el-icon
-          color="#8F9194"
-          size="24"
-        >
-          <Message />
-        </el-icon>
+        <img src="@/assets/images/icons/mail.svg" alt="">
       </el-badge>
 
-      <Language />
+<!--      <Language />-->
 
       <div class="flex items-center gap-3 el-dropdown-link">
         <img src="@/assets/images/avatar.png" class="h-[40px] w-[40px] object-contain rounded-full" alt="avatar"/>
@@ -257,4 +246,11 @@ const openModals = (data) => {
   margin-top: 5px; /* Move downward */
 }
 
+.el-badge__content.is-fixed {
+  position: absolute;
+  right: calc(3px + var(--el-badge-size) / 2);
+  top: 1px;
+  transform: translateY(-50%) translateX(100%);
+  z-index: var(--el-index-normal);
+}
 </style>

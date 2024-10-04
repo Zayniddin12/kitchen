@@ -126,7 +126,7 @@ const tableData2 = ref<TableData[]>([
     <el-table-column prop="name" label="Название продукта" />
     <el-table-column prop="count" label="Количество" width="160"/>
     <el-table-column prop="ed" label="Ед. изм" width="120"/>
-    <el-table-column prop="tzr" label="ТЗР" width="100" >
+    <el-table-column prop="tzr" label="ТЗР" width="130" >
       <template #default="scope">
         <el-input style="width: 50px" v-model="scope.row.tzr" v-if="scope.row.isEdit"/>
       </template>
@@ -141,7 +141,7 @@ const tableData2 = ref<TableData[]>([
         <el-input style="width: 50px" v-model="scope.row.rent" v-if="scope.row.isEdit"/>
       </template>
     </el-table-column>
-    <el-table-column prop="ndc" label="НДС" width="100">
+    <el-table-column prop="ndc" label="НДС">
       <template #default="scope">
         <el-input style="width: 50px" v-model="scope.row.ndc" v-if="scope.row.isEdit"/>
       </template>
@@ -157,9 +157,9 @@ const tableData2 = ref<TableData[]>([
           <img src="@/assets/images/icons/edit.svg" alt="edit" />
         </button>
 
-        <button class="action-btn ml-[8px]" v-show="!scope.row.isEdit">
-          <img src="@/assets/images/icons/delete.svg" alt="delete" />
-        </button>
+<!--        <button class="action-btn ml-[8px]" v-show="!scope.row.isEdit">-->
+<!--          <img src="@/assets/images/icons/delete.svg" alt="delete" />-->
+<!--        </button>-->
 
         <button class="action-btn ml-[8px]" v-show="scope.row.isEdit" @click="scope.row.isEdit = false">
           <img src="@/assets/images/icons/x.svg" alt="x" />
@@ -175,7 +175,7 @@ const tableData2 = ref<TableData[]>([
     <el-table-column prop="name" label="Рыбное мясо" />
     <el-table-column prop="count" width="160" label="Количество" />
     <el-table-column prop="ed" width="120" label="Ед. изм" />
-    <el-table-column prop="tzr" width="100" label="ТЗР">
+    <el-table-column prop="tzr" width="130" label="ТЗР">
       <template #default="scope">
         <el-input style="width: 50px" v-model="scope.row.tzr" v-if="scope.row.isEdit"/>
       </template>
@@ -190,7 +190,7 @@ const tableData2 = ref<TableData[]>([
         <el-input style="width: 50px" v-model="scope.row.rent" v-if="scope.row.isEdit"/>
       </template>
     </el-table-column>
-    <el-table-column prop="ndc" width="100" label="НДС">
+    <el-table-column prop="ndc"  label="НДС">
       <template #default="scope">
         <el-input style="width: 50px" v-model="scope.row.ndc" v-if="scope.row.isEdit"/>
       </template>
@@ -206,9 +206,9 @@ const tableData2 = ref<TableData[]>([
           <img src="@/assets/images/icons/edit.svg" alt="edit" />
         </button>
 
-        <button class="action-btn ml-[8px]" v-show="!scope.row.isEdit">
-          <img src="@/assets/images/icons/delete.svg" alt="delete" />
-        </button>
+<!--        <button class="action-btn ml-[8px]" v-show="!scope.row.isEdit">-->
+<!--          <img src="@/assets/images/icons/delete.svg" alt="delete" />-->
+<!--        </button>-->
 
         <button class="action-btn ml-[8px]" v-show="scope.row.isEdit" @click="scope.row.isEdit = false">
           <img src="@/assets/images/icons/x.svg" alt="x" />

@@ -40,6 +40,8 @@ const activeMenu = (index: number, item: any) => {
 };
 
 const logOut = () => {
+  localStorage.removeItem('current-menu')
+  localStorage.removeItem('child-sidebar')
   router.push("/login");
 };
 

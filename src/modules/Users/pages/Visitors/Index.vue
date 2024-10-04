@@ -36,58 +36,48 @@ const tableData = ref<TableData[]>([
   {
     id: 1,
     sureName: "Хамидов Иброхим Илхомович",
-    position: "Електромеханик",
-    phone: "99 987 65 43",
+    position: "АО \"Наваи уран\"",
+    phone: "8 часов",
     status: {
       title: "Активный",
       status: true,
     },
   },
   {
-    id: 2,
-    sureName: "Собиров Аваз Рахмонович",
-    position: "Електромонтёр",
-    phone: "99 596 47 56",
+    id: 1,
+    sureName: "Хамидов Иброхим Илхомович",
+    position: "АО \"Наваи уран\"",
+    phone: "8 часов",
     status: {
       title: "Завершено",
       status: false,
     },
   },
   {
-    id: 3,
+    id: 1,
     sureName: "Хамидов Иброхим Илхомович",
-    position: "Електромеханик",
-    phone: "99 987 65 43",
+    position: "АО \"Наваи уран\"",
+    phone: "8 часов",
     status: {
       title: "Активный",
       status: true,
     },
   },
   {
-    id: 4,
-    sureName: "Собиров Аваз Рахмонович",
-    position: "Електромонтёр",
-    phone: "99 596 47 56",
+    id: 1,
+    sureName: "Хамидов Иброхим Илхомович",
+    position: "АО \"Наваи уран\"",
+    phone: "8 часов",
     status: {
       title: "Завершено",
       status: false,
     },
   },
   {
-    id: 5,
+    id: 1,
     sureName: "Хамидов Иброхим Илхомович",
-    position: "Електромеханик",
-    phone: "99 987 65 43",
-    status: {
-      title: "Активный",
-      status: true,
-    },
-  },
-  {
-    id: 6,
-    sureName: "Хамидов Иброхим Илхомович",
-    position: "Електромеханик",
-    phone: "99 987 65 43",
+    position: "АО \"Наваи уран\"",
+    phone: "8 часов",
     status: {
       title: "Активный",
       status: true,
@@ -105,8 +95,8 @@ const setActiveTab = (item: any) => {
   <div>
     <h1 class="m-0 font-semibold text-[32px]">Посетители</h1>
 
-    <div class="flex items-center justify-between my-[24px]">
-      <div class="app-tabs">
+    <div class="flex items-center justify-end my-[24px]">
+      <div class="app-tabs" v-show="false">
         <div
           v-for="item in tabs"
           :key="item.value"
@@ -164,7 +154,7 @@ const setActiveTab = (item: any) => {
             <img src="@/assets/images/eye.svg" alt="eye" />
           </button>
 
-          <button class="action-btn ml-[8px]">
+          <button class="action-btn ml-[8px]" @click="router.push(`/visitors-edit-form/${scope.row.id}`)">
             <img src="@/assets/images/icons/edit.svg" alt="edit" />
           </button>
         </template>

@@ -50,97 +50,97 @@ const setActiveTab = (item: any) => {
       </button>
     </div>
 
-    <div class="border rounded-[24px] py-[32px] px-[24px]" v-if="activeTab === 0">
-      <div class="py-8 px-4 flex items-center gap-4">
-        <div class="rounded-full overflow-hidden border-4 border-gray-100">
-          <img src="../../../../assets/images/avatar.png" alt="Profile Picture"
-               class="object-cover h-[160px] w-[160px] rounded-full">
-        </div>
+    <div class="border rounded-[24px] pb-[32px] overflow-hidden" v-if="activeTab === 0">
+      <div class="py-[70px] bg-[#F8F9FC] px-[24px] relative">
+        <div class="top-[32px] absolute flex items-center">
+          <div class="rounded-full overflow-hidden border-4 border-gray-100">
+            <img src="../../../../assets/images/avatar.png" alt="Profile Picture" class="object-cover h-[160px] w-[160px] rounded-full">
+          </div>
 
-        <div>
-          <div class="text-xl font-semibold text-gray-900">
+          <div class="text-xl font-semibold text-gray-900 ml-[24px]">
             Хамидов Иброхим Илхомович
           </div>
-          <div class="text-[#A8AAAE] text-[20px] font-medium mt-[12px]">Должность ещё не выбрана</div>
         </div>
       </div>
 
-      <div class="bg-gray-50 p-6 rounded-[16px]">
-        <h3 class="text-gray-500 mb-4">Основная информация</h3>
-        <div class="grid grid-cols-2 gap-8">
-          <!-- Left Column -->
-          <div>
-            <div class="mb-4">
-              <span class="text-blue-500">Дата рождения:</span>
-              <p>22.08.1987</p>
-            </div>
-            <div class="mb-4">
-              <span class="text-blue-500">Пол:</span>
-              <p>Мужской</p>
-            </div>
-            <div class="mb-4">
-              <span class="text-blue-500">Кем выдан:</span>
-              <p>Бостонликский район Ташкентской области ИИБ</p>
-            </div>
-            <div class="mb-4">
-              <span class="text-blue-500">Срок действия:</span>
-              <p>25.04.2013</p>
-            </div>
-            <div class="mb-4">
-              <span class="text-blue-500">OneID:</span>
-              <p>—</p>
-            </div>
-            <div class="mb-4">
-              <span class="text-blue-500">Роли:</span>
-              <p>—</p>
-            </div>
-          </div>
+     <div class="px-[24px] mt-[90px]">
+       <div class="bg-gray-50 p-6 rounded-[16px] ">
+         <h3 class="text-gray-500 mb-4">Основная информация</h3>
+         <div class="grid grid-cols-2 gap-8">
+           <!-- Left Column -->
+           <div>
+             <div class="mb-4">
+               <span class="text-blue-500">Дата рождения:</span>
+               <p>22.08.1987</p>
+             </div>
+             <div class="mb-4">
+               <span class="text-blue-500">Пол:</span>
+               <p>Мужской</p>
+             </div>
+             <div class="mb-4">
+               <span class="text-blue-500">Кем выдан:</span>
+               <p>Бостонликский район Ташкентской области ИИБ</p>
+             </div>
+             <div class="mb-4">
+               <span class="text-blue-500">Срок действия:</span>
+               <p>25.04.2013</p>
+             </div>
+             <div class="mb-4">
+               <span class="text-blue-500">OneID:</span>
+               <p>—</p>
+             </div>
+             <div class="mb-4">
+               <span class="text-blue-500">Роли:</span>
+               <p>—</p>
+             </div>
+           </div>
 
-          <!-- Right Column -->
-          <div>
-            <div class="mb-4">
-              <span class="text-blue-500">Национальность:</span>
-              <p>22.08.1987</p>
-            </div>
-            <div class="mb-4">
-              <span class="text-blue-500">Серия и номер паспорта:</span>
-              <p>AB 0000000</p>
-            </div>
-            <div class="mb-4">
-              <span class="text-blue-500">Дата выпуска:</span>
-              <p>25.04.2003</p>
-            </div>
-            <div class="mb-4">
-              <span class="text-blue-500">ПИНФЛ:</span>
-              <p>54236987424856</p>
-            </div>
-            <div class="mb-4">
-              <span class="text-blue-500">Должность в системе:</span>
-              <p>—</p>
-            </div>
-          </div>
-        </div>
-      </div>
+           <!-- Right Column -->
+           <div>
+             <div class="mb-4">
+               <span class="text-blue-500">Национальность:</span>
+               <p>22.08.1987</p>
+             </div>
+             <div class="mb-4">
+               <span class="text-blue-500">Серия и номер паспорта:</span>
+               <p>AB 0000000</p>
+             </div>
+             <div class="mb-4">
+               <span class="text-blue-500">Дата выпуска:</span>
+               <p>25.04.2003</p>
+             </div>
+             <div class="mb-4">
+               <span class="text-blue-500">ПИНФЛ:</span>
+               <p>54236987424856</p>
+             </div>
+             <div class="mb-4">
+               <span class="text-blue-500">Должность в системе:</span>
+               <p>—</p>
+             </div>
+           </div>
+         </div>
+       </div>
 
-      <div class="bg-gray-50 p-6 mt-[24px] rounded-[16px]">
-        <h3 class="text-gray-500 mb-4">История сотрудника</h3>
+       <div class="bg-gray-50 p-6 mt-[24px] rounded-[16px]">
+         <h3 class="text-gray-500 mb-4">История сотрудника</h3>
 
-        <div class="p-[16px] rounded-[8px] border mb-[16px]">
-          Здесь будет текст
-        </div>
+         <div class="p-[16px] rounded-[8px] border mb-[16px]">
+           Здесь будет текст
+         </div>
 
-        <div class="grid grid-cols-2 gap-8">
-          <div>
-            <span class="text-blue-500 mb-[4px] block">Дата и время изменения:</span>
-            <p>28.09.2024</p>
-          </div>
+         <div class="grid grid-cols-2 gap-8">
+           <div>
+             <span class="text-blue-500 mb-[4px] block">Дата и время изменения:</span>
+             <p>28.09.2024</p>
+           </div>
 
-          <div>
-            <span class="text-blue-500 mb-[4px] block">Кто внес изменение:</span>
-            <p>Админ: Олимов М.</p>
-          </div>
-        </div>
-      </div>
+           <div>
+             <span class="text-blue-500 mb-[4px] block">Кто внес изменение:</span>
+             <p>Админ: Олимов М.</p>
+           </div>
+         </div>
+       </div>
+     </div>
     </div>
 
     <div class="border rounded-[24px] py-[32px] px-[24px] w-[50%] m-auto relative group" v-else>

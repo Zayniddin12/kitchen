@@ -50,19 +50,20 @@ const setActiveTab = (item: any) => {
       </button>
     </div>
 
-    <div class="border rounded-[24px] py-[32px] px-[24px]" v-if="activeTab === 0">
-      <div class="py-8 px-4 flex items-center gap-4">
-        <div class="rounded-full overflow-hidden border-4 border-gray-100">
-          <img src="../../../../assets/images/avatar.png" alt="Profile Picture"
-               class="object-cover h-[160px] w-[160px] rounded-full">
-        </div>
+    <div class="border rounded-[24px] pb-[32px] overflow-hidden" v-if="activeTab === 0">
+      <div class="py-[70px] bg-[#F8F9FC] px-[24px] relative">
+       <div class="top-[32px] absolute flex items-center">
+         <div class="rounded-full overflow-hidden border-4 border-gray-100">
+           <img src="../../../../assets/images/avatar.png" alt="Profile Picture" class="object-cover h-[160px] w-[160px] rounded-full">
+         </div>
 
-        <div class="text-xl font-semibold text-gray-900">
-          Хамидов Иброхим Илхомович
-        </div>
+         <div class="text-xl font-semibold text-gray-900 ml-[24px]">
+           Хамидов Иброхим Илхомович
+         </div>
+       </div>
       </div>
 
-      <div>
+      <div class="px-[24px] mt-[90px]">
         <div class="bg-gray-50 p-6 rounded-[16px]">
           <h3 class="text-gray-500 mb-4">Основная информация</h3>
           <div class="grid grid-cols-2 gap-8">

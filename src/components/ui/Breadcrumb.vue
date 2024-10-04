@@ -37,7 +37,7 @@ watch(
 );
 
 const handleClickHome = () => {
-  router.push('/')
+  router.push('/home')
   localStorage.setItem('current-menu', 0)
 }
 </script>
