@@ -125,7 +125,7 @@ const openModals = () => {
           </div>
 
           <div class="flex items-center mb-[24px]">
-            <h1 class="text-[#4F5662] text-[14px] font-medium">Через кого:</h1>
+            <h1 class="text-[#4F5662] text-[14px] font-medium whitespace-nowrap">Через кого:</h1>
             <span class="ml-2 text-[#A8AAAE] text-[14px] font-medium block">«Фонд НКМК» ДМ «Навоийской» областной администрации, руководитель комплекса общественного питания Баракаеву Д.</span>
           </div>
 
@@ -171,15 +171,20 @@ const openModals = () => {
           <app-input placeholder="04-04-01/463" label="№ документа"
                      label-class="text-[#A8AAAE] text-[12px] font-medium" />
 
-          <app-input placeholder="NK-00000" />
+          <app-input placeholder="NK-00000" label="NK-00000"
+                     label-class="text-[#A8AAAE] text-[12px] font-medium" />
 
-          <app-input placeholder="№ накладной" />
+          <app-input placeholder="№ накладной" label="№ накладной"
+                     label-class="text-[#A8AAAE] text-[12px] font-medium" />
 
-          <app-date-picker placeholder="Дата накладной" />
+          <app-date-picker placeholder="Дата накладной" label="Дата накладной"
+                           label-class="text-[#A8AAAE] text-[12px] font-medium" />
 
-          <app-input placeholder="Входящий накладной" />
+          <app-input placeholder="Входящий накладной" label="Входящий накладной"
+                     label-class="text-[#A8AAAE] text-[12px] font-medium" />
 
-          <app-select placeholder="От кого">
+          <app-select placeholder="От кого" label="От кого"
+                      label-class="text-[#A8AAAE] text-[12px] font-medium">
             <template #footer>
               <button
                 @click="openModals"
@@ -201,13 +206,18 @@ const openModals = () => {
             </template>
           </app-select>
 
-          <app-input placeholder="Руководитель группы отдела координации..." />
+          <app-input placeholder="Руководитель группы отдела координации..."
+                     label="Руководитель группы отдела координации..."
+                     label-class="text-[#A8AAAE] text-[12px] font-medium" />
 
-          <app-input placeholder="Через кого" />
+          <app-input placeholder="Через кого" label="Через кого"
+                     label-class="text-[#A8AAAE] text-[12px] font-medium" />
 
-          <app-input placeholder="Основание" />
+          <app-input placeholder="Основание" label="Основание"
+                     label-class="text-[#A8AAAE] text-[12px] font-medium" />
 
-          <app-input class="mb-[32px]" placeholder="Способ отправления" />
+          <app-input class="mb-[32px]" placeholder="Способ отправления" label="Способ отправления"
+                     label-class="text-[#A8AAAE] text-[12px] font-medium" />
 
 
           <div class="bg-[#FFFFFF] rounded-[8px] p-[12px]">
@@ -215,17 +225,23 @@ const openModals = () => {
                 Таблица получаемых продуктов
             </span>
 
-            <app-select placeholder="Тип продукта" />
+            <app-select placeholder="Тип продукта" label="Тип продукта"
+                        label-class="text-[#A8AAAE] text-[12px] font-medium" />
 
-            <app-select placeholder="Вид продукта" />
+            <app-select placeholder="Вид продукта" label="Вид продукта"
+                        label-class="text-[#A8AAAE] text-[12px] font-medium" />
 
-            <app-input placeholder="Количество" />
+            <app-input placeholder="Количество" label="Количество"
+                       label-class="text-[#A8AAAE] text-[12px] font-medium" />
 
-            <app-input placeholder="Ед. измерения" />
+            <app-input placeholder="Ед. измерения" label="Ед. измерения"
+                       label-class="text-[#A8AAAE] text-[12px] font-medium" />
 
-            <app-input placeholder="Цена" />
+            <app-input placeholder="Цена" label="Цена"
+                       label-class="text-[#A8AAAE] text-[12px] font-medium" />
 
-            <app-input placeholder="Сумма" />
+            <app-input placeholder="Сумма" label="Способ отправления"
+                       label-class="text-[#A8AAAE] text-[12px] font-medium" />
 
             <button
               class="flex items-center justify-center gap-3 border-[1px] border-[#2E90FA] rounded-[8px] w-full text-[#2E90FA] text-[14px] font-medium py-[10px]">
@@ -389,11 +405,14 @@ const openModals = () => {
 
       <div class="w-[40%] ml-[24px] flex flex-col justify-between">
         <div>
-          <app-input placeholder="АКТ" />
+          <app-input placeholder="АКТ" label="АКТ"
+                     label-class="text-[#A8AAAE] text-[12px] font-medium" />
 
-          <app-input placeholder="NK-00000" />
+          <app-input placeholder="NK-00000" label="NK-00000"
+                     label-class="text-[#A8AAAE] text-[12px] font-medium" />
 
-          <app-input placeholder="АКТ-00000" />
+          <app-input placeholder="АКТ-00000" label="АКТ-00000"
+                     label-class="text-[#A8AAAE] text-[12px] font-medium" />
 
 
           <div class="bg-[#FFFFFF] rounded-[8px] p-[12px] mb-[24px]">
@@ -404,18 +423,27 @@ const openModals = () => {
             <app-input placeholder="Поле ввода текст содержания акта с выводом шаблонного заданного текста"
                        type="textarea" rows="5" />
 
-            <app-input placeholder="Картофель" />
+            <app-input placeholder="Картофель" label="Картофель"
+                       label-class="text-[#A8AAAE] text-[12px] font-medium" />
             <app-input placeholder="50" />
             <app-input placeholder="кг" />
-            <app-input placeholder="Номер и дата договора о поставке" />
-            <app-input placeholder="Номер и дата накладной" />
-            <app-input placeholder="Производитель продукта" />
+            <app-input placeholder="Номер и дата договора о поставке" label="Номер и дата договора о поставке"
+                       label-class="text-[#A8AAAE] text-[12px] font-medium" />
+            <app-input placeholder="Номер и дата накладной" label="Номер и дата накладной"
+                       label-class="text-[#A8AAAE] text-[12px] font-medium" />
+            <app-input placeholder="Производитель продукта" label="Производитель продукта"
+                       label-class="text-[#A8AAAE] text-[12px] font-medium" />
             <app-input placeholder="OOO “Yuksalish”" />
-            <app-input placeholder="Транспорт" />
-            <app-date-picker placeholder="Номер и дата лицензии" />
-            <app-date-picker placeholder="Номер и дата заключения Санитарно..." />
-            <app-date-picker placeholder="Номер и дата удостоверения ветеринарии" />
-            <app-date-picker placeholder="Номер и дата удостоверения качества" />
+            <app-input placeholder="Транспорт" label="Транспорт"
+                       label-class="text-[#A8AAAE] text-[12px] font-medium" />
+            <app-date-picker placeholder="Номер и дата лицензии" label="Номер и дата лицензии"
+                             label-class="text-[#A8AAAE] text-[12px] font-medium" />
+            <app-date-picker placeholder="Номер и дата заключения Санитарно..."  label="Номер и дата заключения Санитарно..."
+                             label-class="text-[#A8AAAE] text-[12px] font-medium"/>
+            <app-date-picker placeholder="Номер и дата удостоверения ветеринарии" label="Номер и дата удостоверения ветеринарии"
+                             label-class="text-[#A8AAAE] text-[12px] font-medium"/>
+            <app-date-picker placeholder="Номер и дата удостоверения качества" label="Номер и дата удостоверения качества"
+                             label-class="text-[#A8AAAE] text-[12px] font-medium"/>
 
           </div>
 
@@ -424,11 +452,16 @@ const openModals = () => {
                 Состав комиссии приема продуктов
             </span>
 
-            <app-select placeholder="Кладовщик  Эргашева Л." />
-            <app-select placeholder="Товаровед  Жалилов М." />
-            <app-select placeholder="Экспедитор  Акромов О." />
-            <app-select placeholder="Зав. склад  Каххоров А." />
-            <app-select placeholder="Начальник базы  Маликов Б." />
+            <app-select placeholder="Кладовщик  Эргашева Л." label="Кладовщик"
+                        label-class="text-[#A8AAAE] text-[12px] font-medium"/>
+            <app-select placeholder="Товаровед  Жалилов М." label="Товаровед"
+                        label-class="text-[#A8AAAE] text-[12px] font-medium"/>
+            <app-select placeholder="Экспедитор  Акромов О." label="Экспедитор"
+                        label-class="text-[#A8AAAE] text-[12px] font-medium"/>
+            <app-select placeholder="Зав. склад  Каххоров А." label="Зав. склад"
+                        label-class="text-[#A8AAAE] text-[12px] font-medium"/>
+            <app-select placeholder="Начальник базы  Маликов Б." label="Начальник базы"
+                        label-class="text-[#A8AAAE] text-[12px] font-medium"/>
 
           </div>
 
