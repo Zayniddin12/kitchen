@@ -56,6 +56,21 @@ const tableData = ref<TableData[]>([
     receive: "Фонд",
   },
 ]);
+
+const addMeal = () => {
+  mealData.value.push({
+    typeProduct: "",
+    viewProduct: "",
+    total: 0,
+    unit: "",
+  });
+};
+
+
+const deleteMeal = (mealIndex) => {
+  mealData.value = mealData.value.filter((meal, index) => index !== mealIndex);
+};
+
 </script>
 
 <template>
@@ -76,30 +91,79 @@ const tableData = ref<TableData[]>([
         <span class="text-[#000D24] text-[18px] font-medium block mb-[12px]">Состав блюды</span>
 
         <div class="bg-[#F8F9FC] rounded-[16px] px-[12px] py-[16px]">
-          <div class="flex items-center gap-4">
+          <div v-for="(item,index) in mealData"
+               class="flex items-center gap-4 border-b border-[#E2E6F3] pt-[16px] pb-4 last:border-0">
             <div class="w-[60%] flex items-center gap-4">
               <app-select class="w-full" label="Тип продукта" label-class="text-[#A8AAAE] text-[12px] font-medium" />
               <app-select class="w-full" label="Вид продукта" label-class="text-[#A8AAAE] text-[12px] font-medium" />
 
             </div>
 
-            <div class="w-[30%] flex items-center gap-4">
-              <app-input label="Количество" label-class="text-[#A8AAAE] text-[12px] font-medium" />
-              <app-input label="Ед. измерения" label-class="text-[#A8AAAE] text-[12px] font-medium" />
+            <div class="w-[35%] flex items-center gap-4">
+              <app-input class="w-full" label="Количество" label-class="text-[#A8AAAE] text-[12px] font-medium" />
+              <app-input class="w-full" label="Ед. измерения" label-class="text-[#A8AAAE] text-[12px] font-medium" />
             </div>
 
-            <div class="w-[10%] flex justify-center">
+            <div class="w-[5%] flex justify-end">
               <button
+                @click="deleteMeal(index)"
                 class="bg-[#E2E6F3] rounded-[8px] p-[10px] ml-4"
               >
-                <img src="../../../../../../assets/images/icons/delete.svg" alt="del">
+                <img src="@/assets/images/icons/delete.svg" alt="del">
               </button>
             </div>
           </div>
         </div>
       </div>
 
-      <div class="flex justify-end">
+      <div class="mt-[12px] flex items-center justify-between">
+        <button
+          @click="addMeal"
+          class="flex items-center justify-center gap-3 border-[1px] border-[#2E90FA] rounded-[8px] text-[#2E90FA] text-[14px] font-medium py-[8px] px-[16px]">
+          <li
+            :style="{
+                  maskImage: 'url(/icons/plusIcon.svg)',
+                  backgroundColor: '#2E90FA',
+                  color: '#2E90FA',
+                  width: '20px',
+                  height: '20px',
+                  maskSize: '20px',
+                  maskPosition: 'center',
+                  maskRepeat: 'no-repeat'
+                   }"
+          ></li>
+          Добавить еще
+        </button>
+
+        <div class="flex items-center gap-x-8">
+          <div class="flex items-center gap-x-1 text-sm">
+                          <span class="text-cool-gray">
+                            Цена:
+                          </span>
+            <strong class="font-semibold text-dark">
+              25 000 сум
+            </strong>
+          </div>
+          <div class="flex items-center gap-x-1 text-sm">
+                          <span class="text-cool-gray">
+                            НДС:
+                          </span>
+            <strong class="font-semibold text-dark">
+              3 000 сум
+            </strong>
+          </div>
+          <div class="flex items-center gap-x-1 text-sm">
+                          <span class="text-cool-gray">
+                            Общая сумма:
+                          </span>
+            <strong class="font-semibold text-dark">
+              28 000 сум
+            </strong>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex justify-end mt-[24px]">
         <button class="custom-apply-btn">Продать</button>
       </div>
 
