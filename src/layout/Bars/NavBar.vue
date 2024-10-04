@@ -88,7 +88,9 @@ const openModals = (data) => {
     </div>
     <div class="flex items-center gap-6">
       <el-dropdown trigger="click" :hide-on-click="false" ref="dropdown">
-        <button class="flex items-center bg-[#2E90FA] rounded-[8px] border-[1.5px] py-[10px] px-[20px] active:bg-[#175CD3] active:border-[#1849A9] active:border-[1.5px]">
+        <button
+          class="flex items-center bg-[#2E90FA] rounded-[8px] border-[1.5px] py-[10px] px-[20px] active:bg-[#175CD3] active:border-[#1849A9] active:border-[1.5px]"
+        >
           <img src="@/assets/images/icons/plus.svg" class="mr-[8px]" alt="plus"/>
 
           <span style="vertical-align: middle" class="text-white"> Создать </span>
@@ -148,7 +150,7 @@ const openModals = (data) => {
         <img src="@/assets/images/icons/mail.svg" alt="">
       </el-badge>
 
-<!--      <Language />-->
+      <!--      <Language />-->
 
       <div class="flex items-center gap-3 el-dropdown-link">
         <img src="@/assets/images/avatar.png" class="h-[40px] w-[40px] object-contain rounded-full" alt="avatar"/>

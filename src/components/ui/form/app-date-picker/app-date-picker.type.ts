@@ -17,9 +17,10 @@ export interface AppDatePickerPropsType extends ElFormItemType {
     valueFormat?: string,
     id?: string | [string, string],
     unlinkPanels?: boolean,
-    prefixIcon?: string,
+    icon?: string,
     disabledDate?: (date: Date) => boolean,
     cellClassName?: (date: Date) => string,
     teleported?: boolean,
     emptyValues?: any[],
+    iconPosition?: "start" | "end",
 }

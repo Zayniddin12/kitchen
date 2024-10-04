@@ -17,7 +17,8 @@ const props = withDefaults(defineProps<AppDatePickerPropsType>(), {
   placeholder: "Select",
   format: "YYYY/MM/DD",
   type: "date",
-  labelClass: ""
+  labelClass: "",
+  iconPosition: "end"
 });
 
 const slots = useSlots();
@@ -32,7 +33,7 @@ const appDatePickerClasses = computed<string[]>(() => {
   return classes;
 });
 
-const prefixIcon = shallowRef({
+const icon = shallowRef({
   render() {
     return h("svg", {
       "data-src": CalendarIcon,
@@ -86,11 +87,11 @@ const prefixIcon = shallowRef({
         :default-value
         :value-format
         :unlink-panels
-        :prefix-icon="prefixIcon"
+        :prefix-icon="icon"
         :disabled-date
         :teleported
         :empty-values
-        class="app-date-picker__date-picker"
+        :class="['app-date-picker__date-picker', `app-date-picker__date-picker-icon--${iconPosition}`]"
     />
   </ElFormItem>
 </template>
@@ -100,9 +101,13 @@ const prefixIcon = shallowRef({
   &__date-picker {
     --el-date-editor-width: 100%;
 
-    .el-input {
-      &__wrapper {
+    &-icon{
+      &--end .el-input__wrapper{
         flex-direction: row-reverse;
+      }
+
+      &--start .el-input__inner{
+        padding-left: 7px;
       }
     }
   }
