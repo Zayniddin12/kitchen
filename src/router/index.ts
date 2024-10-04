@@ -23,15 +23,12 @@ const routes: Array<RouteRecordRaw> = [
     redirect: () => {
       return { name: "login" };
     }
-
   },
-
   {
     path: "/login",
     name: "login",
     component: import("@/views/Login.vue"),
     meta: { layout: "LoginLayout" },
-
   },
   {
     path: "/test",
