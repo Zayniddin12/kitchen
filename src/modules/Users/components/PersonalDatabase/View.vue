@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import { useRouter } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 
 interface Tabs {
   title: string;
@@ -8,6 +8,7 @@ interface Tabs {
 }
 
 const router = useRouter();
+const route = useRoute()
 
 const tabs = ref<Tabs[]>([
   {
@@ -43,8 +44,8 @@ const setActiveTab = (item: any) => {
         </div>
       </div>
 
-      <button class="custom-cancel-btn flex items-center" @click="router.push(`/personal-database-edit-form/${1}`)">
-        <img src="../../../../assets/images/icons/edit.svg" alt="edit" class="mr-[8px]" />
+      <button class="custom-cancel-btn flex items-center" @click="router.push(`/personal-database-edit-form/${route.params.id}`)">
+        <img src="@/assets/images/icons/edit.svg" alt="edit" class="mr-[8px]" />
         Редактировать
       </button>
     </div>
@@ -145,7 +146,7 @@ const setActiveTab = (item: any) => {
       <button class="absolute top-2 left-2 opacity-0 group-hover:opacity-100 edit__btn transition-opacity duration-300 bg-blue-500 text-white px-4 py-2 rounded-lg">
         Изменить фото
       </button>
-      <img src="../../../../assets/images/bigMan.png" class="w-full group-hover:filter group-hover:brightness-50 transition duration-300" alt="bigMan" />
+      <img src="@/assets/images/bigMan.png" class="w-full group-hover:filter group-hover:brightness-50 transition duration-300" alt="bigMan" />
     </div>
   </div>
 </template>

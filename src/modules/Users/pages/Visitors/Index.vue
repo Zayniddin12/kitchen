@@ -127,6 +127,7 @@ const setActiveTab = (item: any) => {
         />
 
         <button
+          @click="router.push('/visitors-create')"
           class="custom-apply-btn ml-[16px] !px-[30px]"
         >
           <img src="@/assets/images/icons/plus.svg" alt="add">
@@ -159,7 +160,7 @@ const setActiveTab = (item: any) => {
       </el-table-column>
       <el-table-column label="Действие">
         <template #default="scope">
-          <button class="action-btn">
+          <button class="action-btn" @click="router.push(`/visitors-view/${scope.row.id}`)">
             <img src="@/assets/images/eye.svg" alt="eye" />
           </button>
 

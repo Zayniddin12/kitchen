@@ -1,5 +1,5 @@
 export default [
-  // База кадров
+  //------------------------------База кадров------------------------------
   {
     path: "/personal-database",
     name: "personal-database",
@@ -122,7 +122,7 @@ export default [
   },
 
 
-  // Посетители
+  //------------------------------Посетители----------------------------
   {
     path: "/visitors",
     name: "visitors",
@@ -137,6 +137,106 @@ export default [
         },
         {
           label: "Посетители",
+          isActionable: true,
+        },
+      ],
+
+    },
+  },
+  {
+    path: "/visitors-create",
+    name: "visitors-create",
+    component: () => import("@/modules/Users/components/Visitors/Create.vue"),
+    meta: {
+      title: 'Добавить',
+      layout: "MainLayout",
+      breadcrumb: [
+        {
+          label: "Кадры",
+          isActionable: false,
+        },
+        {
+          label: "Посетители",
+          isActionable: false,
+          to: 'visitors'
+        },
+        {
+          label: "Добавить",
+          isActionable: true,
+        },
+      ],
+
+    },
+  },
+  {
+    path: "/visitors-create-form",
+    name: "visitors-create-form",
+    component: () => import("@/modules/Users/components/Visitors/AddEdit.vue"),
+    meta: {
+      title: 'Добавить',
+      layout: "MainLayout",
+      breadcrumb: [
+        {
+          label: "Кадры",
+          isActionable: false,
+        },
+        {
+          label: "Посетители",
+          isActionable: false,
+          to: 'visitors'
+        },
+        {
+          label: "Добавить",
+          isActionable: true,
+        },
+      ],
+
+    },
+  },
+  {
+    path: "/visitors-edit-form/:id",
+    name: "visitors-edit-form-id",
+    component: () => import("@/modules/Users/components/Visitors/AddEdit.vue"),
+    meta: {
+      title: 'Редактировать',
+      layout: "MainLayout",
+      breadcrumb: [
+        {
+          label: "Кадры",
+          isActionable: false,
+        },
+        {
+          label: "Посетители",
+          isActionable: false,
+          to: 'visitors'
+        },
+        {
+          label: "Редактировать",
+          isActionable: true,
+        },
+      ],
+
+    },
+  },
+  {
+    path: "/visitors-view/:id",
+    name: "visitors-view-id",
+    component: () => import("@/modules/Users/components/Visitors/View.vue"),
+    meta: {
+      title: 'Просмотр',
+      layout: "MainLayout",
+      breadcrumb: [
+        {
+          label: "Кадры",
+          isActionable: false,
+        },
+        {
+          label: "Посетители",
+          isActionable: false,
+          to: 'visitors'
+        },
+        {
+          label: "Просмотр",
           isActionable: true,
         },
       ],
