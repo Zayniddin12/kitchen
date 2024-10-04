@@ -147,6 +147,13 @@ const openModals = () => {
             <el-table-column prop="price" label="Цена" />
             <el-table-column prop="sum" label="Сумма" />
 
+            <template #append>
+              <div class="flex items-center justify-end p-4">
+                <h1 class="text-[#8F9194] text-[14px] font-bold mr-[5px]">Общая сумма: </h1>
+                <h1 class="text-[#000D24] text-[14px] font-bold mr-5">7 040 000 сум</h1>
+              </div>
+            </template>
+
           </el-table>
 
 
@@ -155,10 +162,16 @@ const openModals = () => {
 
       <div class="w-[40%] ml-[24px] flex flex-col justify-between">
         <div>
-          <app-input placeholder="Накладние" />
+          <app-input placeholder="Накладние" label="Название документа"
+                     label-class="text-[#A8AAAE] text-[12px] font-medium" />
+
+          <app-date-picker placeholder="24.08.2024" label="Дата создания документа"
+                           label-class="text-[#A8AAAE] text-[12px] font-medium" />
+
+          <app-input placeholder="04-04-01/463" label="№ документа"
+                     label-class="text-[#A8AAAE] text-[12px] font-medium" />
 
           <app-input placeholder="NK-00000" />
-          <app-date-picker placeholder="дату" />
 
           <app-input placeholder="№ накладной" />
 
@@ -414,6 +427,7 @@ const openModals = () => {
             <app-select placeholder="Кладовщик  Эргашева Л." />
             <app-select placeholder="Товаровед  Жалилов М." />
             <app-select placeholder="Экспедитор  Акромов О." />
+            <app-select placeholder="Зав. склад  Каххоров А." />
             <app-select placeholder="Начальник базы  Маликов Б." />
 
           </div>

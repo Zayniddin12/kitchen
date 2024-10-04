@@ -5,18 +5,17 @@
 .app-form {
   &-item {
     --font-size: 14px;
-    --label-margin-bottom: 7px;
+    --label-margin-bottom: 4px;
     --label-line-height: 20px;
 
     &--large {
       --font-size: 16px;
-      --label-margin-bottom: 8px;
+      --label-margin-bottom: 6px;
       --label-line-height: 22px;
     }
 
     &--small {
       --font-size: 12px;
-      --label-margin-bottom: 4px;
       --label-line-height: 16px;
     }
 
