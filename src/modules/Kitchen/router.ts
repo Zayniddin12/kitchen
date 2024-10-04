@@ -80,7 +80,7 @@ export default [
               {
                 path: "",
                 name: "KitchenShowChildIndex",
-                component: () => import("@/modules/Kitchen/pages/KitchenChild.vue"),
+                component: () => import("@/modules/Kitchen/pages/kitchen-child/Index.vue"),
                 beforeEnter: (to, from, next) => {
                   const kitchenStore = useKitchenStore();
 
@@ -111,14 +111,14 @@ export default [
                 },
               },
               {
-                path: "meal-plan/:meal_plan_id(\\d+)",
+                path: "menu",
                 name: "KitchenMealPlan",
                 redirect: { name: "KitchenMealPlanIndex" },
                 children: [
                   {
                     path: "",
                     name: "KitchenMealPlanIndex",
-                    component: () => import("@/modules/Kitchen/pages/meal-plan/Index.vue"),
+                    component: () => import("@/modules/Kitchen/pages/kitchen-child/menu/Index.vue"),
                     beforeEnter: (to, from, next) => {
                       const kitchenStore = useKitchenStore();
 
@@ -154,7 +154,7 @@ export default [
                   {
                     path: "create",
                     name: "KitchenMealPlanCreate",
-                    component: () => import("@/modules/Kitchen/pages/meal-plan/Create.vue"),
+                    component: () => import("@/modules/Kitchen/pages/kitchen-child/menu/Create.vue"),
                     beforeEnter: (to, from, next) => {
                       const kitchenStore = useKitchenStore();
 
@@ -191,9 +191,48 @@ export default [
                     },
                   },
                   {
+                    path: "edit",
+                    name: "KitchenMealPlanEdit",
+                    component: () => import("@/modules/Kitchen/pages/kitchen-child/menu/Edit.vue"),
+                    beforeEnter: (to, from, next) => {
+                      const kitchenStore = useKitchenStore();
+
+                      kitchenStore.fetchPart(+to.params.department_id, +to.params.part_id);
+
+                      if (!kitchenStore.part) return next({ name: "notFound" });
+
+                      to.meta.breadcrumb = [
+                        {
+                          label: "Кухня",
+                        },
+                        {
+                          label: kitchenStore.part.name,
+                        },
+                        {
+                          label: kitchenStore.part.department_name,
+                        },
+                        {
+                          label: "Лагерь",
+                        },
+                        {
+                          label: "Паҳлавон",
+                        },
+                        {
+                          label: "Меню",
+                        },
+                        {
+                          label: "Редактировать",
+                          isActionable: true,
+                        },
+                      ];
+
+                      next();
+                    },
+                  },
+                  {
                     path: "sell-create",
                     name: "KitchenMealPlanSellCreate",
-                    component: () => import("@/modules/Kitchen/pages/meal-plan/pages/SellCreate.vue"),
+                    component: () => import("@/modules/Kitchen/pages/kitchen-child/menu/pages/SellCreate.vue"),
                     beforeEnter: (to, from, next) => {
                       const kitchenStore = useKitchenStore();
 
@@ -234,7 +273,7 @@ export default [
                   {
                     path: "cooking-dish-create",
                     name: "KitchenMealPlanCookingDishCreate",
-                    component: () => import("@/modules/Kitchen/pages/meal-plan/pages/CookingDishCreate.vue"),
+                    component: () => import("@/modules/Kitchen/pages/kitchen-child/menu/pages/CookingDishCreate.vue"),
                     beforeEnter: (to, from, next) => {
                       const kitchenStore = useKitchenStore();
 
@@ -273,6 +312,78 @@ export default [
                   },
 
                 ],
+              },
+              {
+                path: "ration",
+                name: "KitchenRation",
+                component: () => import("@/modules/Kitchen/pages/kitchen-child/KitchenRation.vue"),
+                beforeEnter: (to, from, next) => {
+                  const kitchenStore = useKitchenStore();
+
+                  kitchenStore.fetchPart(+to.params.department_id, +to.params.part_id);
+
+                  if (!kitchenStore.part) return next({ name: "notFound" });
+
+                  to.meta.breadcrumb = [
+                    {
+                      label: "Кухня",
+                    },
+                    {
+                      label: kitchenStore.part.name,
+                    },
+                    {
+                      label: kitchenStore.part.department_name,
+                    },
+                    {
+                      label: "Лагерь",
+                    },
+                    {
+                      label: "Паҳлавон",
+                    },
+                    {
+                      label: "Рационы",
+                      isActionable: true,
+                    },
+                  ];
+
+                  next();
+                },
+              },
+              {
+                path: "calculator",
+                name: "KitchenCalculator",
+                component: () => import("@/modules/Kitchen/pages/kitchen-child/KitchenCalculator.vue"),
+                beforeEnter: (to, from, next) => {
+                  const kitchenStore = useKitchenStore();
+
+                  kitchenStore.fetchPart(+to.params.department_id, +to.params.part_id);
+
+                  if (!kitchenStore.part) return next({ name: "notFound" });
+                  to.meta.title = "Калькулятор";
+                  to.meta.breadcrumb = [
+                    {
+                      label: "Кухня",
+                    },
+                    {
+                      label: kitchenStore.part.name,
+                    },
+                    {
+                      label: kitchenStore.part.department_name,
+                    },
+                    {
+                      label: "Лагерь",
+                    },
+                    {
+                      label: "Паҳлавон",
+                    },
+                    {
+                      label: "Калькулятор",
+                      isActionable: true,
+                    },
+                  ];
+
+                  next();
+                },
               },
             ],
           },

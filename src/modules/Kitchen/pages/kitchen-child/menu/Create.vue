@@ -194,35 +194,27 @@ const tableData = computed(() => {
                     class="mt-6"
                 >
                   <div class="flex items-center gap-x-6">
-                    <AppTimePicker class="max-w-[141px]">
-                      <template #label>
-                        <span class="text-[#A8AAAE]">
-                          Время начало
-                        </span>
-                      </template>
-                    </AppTimePicker>
-                    <AppTimePicker class="max-w-[141px]">
-                      <template #label>
-                        <span class="text-[#A8AAAE]">
-                          Время окончания
-                        </span>
-                      </template>
-                    </AppTimePicker>
+                    <AppTimePicker
+                        class="max-w-[141px]"
+                        label="Время начало"
+                        label-class="text-[#A8AAAE]"
+                    />
+                    <AppTimePicker
+                        class="max-w-[141px]"
+                        label="Время окончания"
+                        label-class="text-[#A8AAAE]"
+                    />
                   </div>
                   <AppSelect
                       v-model="activeDiet"
                       :items="diets"
                       item-value="id"
                       item-label="name"
+                      label="Рацион"
+                      label-class="text-[#A8AAAE]"
                       placeholder="Выберите"
                       class="w-[222px]"
-                  >
-                    <template #label>
-                      <span class="text-[#A8AAAE]">
-                        Рацион
-                      </span>
-                    </template>
-                  </AppSelect>
+                  />
                   <div
                       v-if="activeDiet"
                       class="mt-6"
@@ -268,9 +260,9 @@ const tableData = computed(() => {
                       </template>
                     </ElTable>
                     <ElButton
-                      type="primary"
-                      plain
-                      class="mt-6 !bg-white !border-blue-500"
+                        type="primary"
+                        plain
+                        class="mt-6 !bg-white !border-blue-500"
                     >
                       <div class="flex items-center gap-x-2">
                         <svg
@@ -321,7 +313,7 @@ const tableData = computed(() => {
     }
   }
 
-  &__plus-icon *{
+  &__plus-icon * {
     stroke: var(--blue-500);
   }
 }

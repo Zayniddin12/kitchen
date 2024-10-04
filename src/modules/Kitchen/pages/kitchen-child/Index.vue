@@ -13,19 +13,22 @@ const boxes = computed(() => {
       id: 1,
       icon: menuIcon,
       title: "Меню",
-      description: "Есть 4 плана"
+      description: "Есть 4 плана",
+      link: {name: "KitchenMealPlanIndex"}
     },
     {
       id: 2,
       icon: kitchenIcon,
       title: "Рационы",
-      description: "80 рационов"
+      description: "80 рационов",
+      link: {name: "KitchenRation"}
     },
     {
       id: 3,
       icon: calculatorIcon,
       title: "Калькулятор",
-      description: "Расчет"
+      description: "Расчет",
+      link: {name: "KitchenCalculator"}
     }
   ];
 });
@@ -40,7 +43,7 @@ const boxes = computed(() => {
             v-for="box in boxes"
             :key="box.id"
             class="box"
-            :to="{name: 'KitchenMealPlanIndex', params: {meal_plan_id: box.id}}"
+            :to="box.link"
         >
           <img
               :src="box.icon"
