@@ -88,43 +88,8 @@ const openModals = (data) => {
     </div>
     <div class="flex items-center gap-6">
       <el-dropdown trigger="click" :hide-on-click="false" ref="dropdown">
-        <button
-          class="flex items-center bg-[#2E90FA] rounded-[8px] border-[1.5px] py-[10px] px-[20px] active:bg-[#175CD3] active:border-[#1849A9] active:border-[1.5px]"
-        >
-          <svg
-            class="mr-[8px]"
-            width="20"
-            height="20"
-            viewBox="0 0 20 20"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <rect
-              x="3.3335"
-              y="3.33301"
-              width="13.3333"
-              height="13.3333"
-              rx="2"
-              stroke="white"
-              stroke-width="1.2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-            <path
-              d="M7.5 9.99967H12.5"
-              stroke="white"
-              stroke-width="1.2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-            <path
-              d="M10.0002 7.5V12.5"
-              stroke="white"
-              stroke-width="1.2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-          </svg>
+        <button class="flex items-center bg-[#2E90FA] rounded-[8px] border-[1.5px] py-[10px] px-[20px] active:bg-[#175CD3] active:border-[#1849A9] active:border-[1.5px]">
+          <img src="@/assets/images/icons/plus.svg" class="mr-[8px]" alt="plus"/>
 
           <span style="vertical-align: middle" class="text-white"> Создать </span>
         </button>
@@ -247,6 +212,8 @@ const openModals = (data) => {
 }
 
 .el-badge__content.is-fixed {
+  background-color: #EA5455;
+  font-size: 9px;
   position: absolute;
   right: calc(3px + var(--el-badge-size) / 2);
   top: 1px;

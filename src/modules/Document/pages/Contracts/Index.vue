@@ -86,8 +86,7 @@ const actionButton = (value: TableData): void => {
           Добавить
         </button>
 
-        <button class="custom-filter-btn font-medium ml-[16px]" :class="isOpenFilter ? '!bg-blue !text-white' : ''"
-                @click="isOpenFilter =! isOpenFilter">
+        <button class="custom-filter-btn font-medium ml-[16px]" :class="isOpenFilter ? '!bg-blue !text-white' : ''" @click="isOpenFilter =! isOpenFilter">
           <img :src="isOpenFilter ? white : filter" alt="filter" class="mr-[12px]" />
           Фильтр
         </button>
@@ -126,11 +125,11 @@ const actionButton = (value: TableData): void => {
       <el-table-column prop="date" label="Дата" />
       <el-table-column prop="numContact" label="№ контракта" />
       <el-table-column prop="supplier" label="Поставщик" />
-      <el-table-column prop="sum" label="Cумма" />
       <el-table-column prop="typePro" label="Тип продукта" />
       <el-table-column prop="vidPro" label="Вид продукта" />
       <el-table-column prop="count" label="Количество" />
-      <el-table-column prop="editing" label="Измерения" />
+      <el-table-column prop="editing" label="Ед. измерения" />
+      <el-table-column prop="sum" label="Общая сумма" />
       <el-table-column label="Действие">
         <template #default="scope">
           <button class="action-btn" @click="router.push(`/contracts-view/${scope.row.id}`)">

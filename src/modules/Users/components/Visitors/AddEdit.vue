@@ -24,10 +24,22 @@ const tabs = ref<Tabs[]>([
     value: 1,
   },
 ]);
+let user_photo_new = ref<string>('')
 
 const setActiveTab = (item: any) => {
   activeTab.value = item.value;
 };
+
+const previewImage = (event) => {
+  const input = event.target;
+  if (input.files && input.files[0]) {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      user_photo_new.value = e.target.result;
+    }
+    reader.readAsDataURL(input.files[0]);
+  }
+}
 </script>
 
 <template>
@@ -46,20 +58,22 @@ const setActiveTab = (item: any) => {
       </div>
     </div>
 
-    <div class="border rounded-[24px] py-[32px] px-[24px]">
+    <div class="border rounded-[24px] pb-[32px] overflow-hidden">
       <template v-if="activeTab === 0">
-        <div class="py-8 px-4 flex items-center gap-4">
-          <div class="rounded-full overflow-hidden border-4 border-gray-100">
-            <img src="@/assets/images/avatar.png" alt="Profile Picture"
-                 class="object-cover h-[160px] w-[160px] rounded-full]" />
-          </div>
+        <div class="py-[70px] bg-[#F8F9FC] px-[24px] relative">
+          <div class="top-[32px] absolute flex items-center">
+            <div class="rounded-full overflow-hidden border-4 border-gray-100">
+              <img src="../../../../assets/images/avatar.png" alt="Profile Picture" class="object-cover h-[160px] w-[160px] rounded-full">
+            </div>
 
-          <div class="text-xl font-semibold text-gray-900">
-            Хамидов Иброхим Илхомович
+            <div class="text-xl font-semibold text-gray-900 ml-[24px]">
+              Хамидов Иброхим Илхомович
+            </div>
           </div>
         </div>
 
-        <div class="grid grid-cols-3 gap-4">
+        <div class="px-[24px] mt-[90px]">
+          <div class="grid grid-cols-3 gap-4">
           <app-input label="Фамилия" label-class="text-[#A8AAAE] text-[12px] font-medium" />
 
           <app-input label="Имя" label-class="text-[#A8AAAE] text-[12px] font-medium" />
@@ -85,27 +99,34 @@ const setActiveTab = (item: any) => {
           <div />
         </div>
 
-        <div class="grid grid-cols-2 gap-4 mt-[40px]">
+          <div class="grid grid-cols-2 gap-4 mt-[40px]">
           <app-select label="Место работы (необязательно)" label-class="text-[#A8AAAE] text-[12px] font-medium"
                       placeholder="Выберите" />
 
           <app-select label="График работы (необязательно)" label-class="text-[#A8AAAE] text-[12px] font-medium"
                       placeholder="Выберите" />
         </div>
+        </div>
       </template>
 
       <template v-else>
-        <input type="file" class="hidden" id="fileInput"/>
-        <label for="fileInput" class="cursor-pointer bg-[#F8F9FC] rounded-[16px] border-dashed border border-gray-300 flex flex-col items-center justify-center p-10 h-[60vh]">
-          <img src="@/assets/images/icons/upload.svg" alt="upload" />
+        <div class="rounded-[24px] py-[32px] px-[24px] w-[50%] flex justify-center m-auto relative group" v-if="user_photo_new">
+          <img :src="user_photo_new" alt="#" />
+        </div>
 
-          <p class="text-gray-700 text-sm mt-[24px]">Перетащите фотографию для загрузки</p>
-          <p class="text-gray-400 text-xs mb-[24px]">Максимальный размер фотографии 10 МБ</p>
+        <template v-else>
+          <input type="file" class="hidden" id="fileInput"  @change="previewImage"/>
+          <label for="fileInput" class="cursor-pointer bg-[#F8F9FC] rounded-[16px] border-dashed border border-gray-300 flex flex-col items-center justify-center p-10 h-[60vh]">
+            <img src="@/assets/images/icons/upload.svg" alt="upload" />
 
-          <div class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600">
-            Выбрать фото
-          </div>
-        </label>
+            <p class="text-gray-700 text-sm mt-[24px]">Перетащите фотографию для загрузки</p>
+            <p class="text-gray-400 text-xs mb-[24px]">Максимальный размер фотографии 10 МБ</p>
+
+            <div class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600">
+              Выбрать фото
+            </div>
+          </label>
+        </template>
       </template>
     </div>
 

@@ -229,12 +229,7 @@ export const useLayoutStore = defineStore("layoutStore", () => {
             route: "/reference"
           },
           {
-            title: "Связь справочников",
-            icon: "derictory",
-            route: "/directory"
-          },
-          {
-            title: "Кадры",
+            title: "Логи",
             icon: "users",
             route: "/personnel"
           }
