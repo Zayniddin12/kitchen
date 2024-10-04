@@ -21,7 +21,6 @@ onMounted(() => {
 const closeChildSidebar = () => {
   childSidebar.value = false;
 };
-
 </script>
 
 <template>

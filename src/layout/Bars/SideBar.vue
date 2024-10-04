@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, watch } from "vue";
+import { ref, onMounted, watch, onUnmounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import {useLayoutStore} from "@/navigation"
 import ChildSidebar from "@/layout/Bars/ChildSidebar.vue";
@@ -53,6 +53,14 @@ const closeChildSidebar = () => {
 const pinSidebar = () => {
   currentIndex.value = currentMenu.value
 }
+
+onMounted(() => {
+  document.body.addEventListener('click', closeChildSidebar);
+});
+
+onUnmounted(() => {
+  document.body.removeEventListener('click', closeChildSidebar);
+});
 </script>
 
 <template>
