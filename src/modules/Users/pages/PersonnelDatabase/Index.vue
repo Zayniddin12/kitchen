@@ -14,7 +14,12 @@ interface TableData {
   position: string,
   phone: string,
   oneId: string,
-  status: string,
+  status: StatusInterface,
+}
+
+interface StatusInterface {
+  title: string;
+  state: boolean;
 }
 
 const router = useRouter()
@@ -116,7 +121,7 @@ const setActiveTab = (item: any) => {
           class="custom-apply-btn ml-[16px] !px-[30px]"
           @click="router.push('/personal-database-create')"
         >
-          <img src="@/assets/images/icons/plus.svg" alt="add">
+          <img src="@/assets/images/icons/plus.svg" alt="add"/>
           Добавить
         </button>
       </div>

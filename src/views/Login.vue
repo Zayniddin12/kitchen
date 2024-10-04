@@ -1,8 +1,11 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { reactive, ref } from "vue";
 import { useI18n } from "vue-i18n";
-import Language from "@/components/language/index.vue";
 import { useRouter } from "vue-router";
+import Language from "@/components/language/index.vue";
+import AppInput from "@/components/ui/form/app-input/AppInput.vue";
+import AppForm from "@/components/ui/form/app-form/AppForm.vue";
+import { ValidationType } from "@/components/ui/form/app-form/app-form.type";
 
 const { t } = useI18n();
 const router = useRouter();
@@ -12,22 +15,29 @@ interface UserData {
   password: string;
 }
 
-const userData = ref<UserData>({
-  login: "admin",
-  password: "1",
+const userData = reactive<UserData>({
+  login: "",
+  password: "",
 });
 
-const onSubmit = () => {
-  console.log(userData.value);
-  router.push("/home");
-  localStorage.setItem('current-menu', 0)
+const v$ = ref<ValidationType | null>(null);
+
+const setValidation = (value: ValidationType) => {
+  v$.value = value;
+};
+
+const onSubmit = async () => {
+  if (!v$.value) return;
+
+  if (!(await v$.value.validate())) return;
+
+  await router.push("/home");
+  localStorage.setItem("current-menu", 0);
 };
 </script>
 
 <template>
-  <div
-    class="p-8 h-screen flex flex-col lg:flex-row items-center relative bg-[#ffffff]"
-  >
+  <div class="p-8 h-screen flex flex-col lg:flex-row items-center relative bg-[#ffffff]">
     <Language class="fixed top-[32px] right-[32px]" />
 
     <!-- Background Image Section -->
@@ -59,42 +69,43 @@ const onSubmit = () => {
       </p>
 
       <!-- Login Form -->
-      <form
-        @submit.prevent="onSubmit"
+      <AppForm
+        :value="userData"
+        @validation="setValidation"
         class="mt-6"
       >
         <!-- Username Input -->
-        <div class="flex flex-col mb-4">
-          <label class="text-[#A8AAAE] text-sm">Логин</label>
-          <input
-            placeholder="Введите"
-            class="custom-input mt-1"
-            v-model="userData.login"
-            required
-          />
-        </div>
+        <app-input
+          v-model="userData.login"
+          placeholder="Введите"
+          label="Логин"
+          label-class="text-[#A8AAAE] text-sm"
+          required
+          prop="login"
+          trigger="change"
+        />
 
         <!-- Password Input -->
-        <div class="flex flex-col mb-2">
-          <label class="text-[#A8AAAE] text-sm">Пароль</label>
-          <input
-            type="password"
-            placeholder="Введите"
-            class="custom-input mt-1"
-            v-model="userData.password"
-            required
-          />
-        </div>
+        <app-input
+          v-model="userData.password"
+          placeholder="Введите"
+          label="Пароль"
+          label-class="text-[#A8AAAE] text-sm"
+          required
+          prop="password"
+          trigger="change"
+        />
 
         <!-- Forgot Password Link -->
         <div class="text-right text-[#2E90FA] text-xs mt-1 cursor-pointer">
           Забыли пароль?
         </div>
+      </AppForm>
 
         <!-- Login Button -->
         <div class="mt-6">
           <button
-            type="submit"
+            @click="onSubmit"
             class="w-full bg-[#2E90FA] py-2.5 text-white rounded-lg"
           >
             Войти
@@ -107,13 +118,13 @@ const onSubmit = () => {
         >
           <img
             src="@/assets/images/line.svg"
-            class="ml-4"
+            class="ml-4 md:w-[40%] lg:w-[40%] w-[20%]"
             alt="line"
           />
           <span class="px-2">или</span>
           <img
             src="@/assets/images/line.svg"
-            class="mr-4"
+            class="mr-4 md:w-[40%] lg:w-[40%] w-[20%]"
             alt="line"
           />
         </div>
@@ -129,7 +140,7 @@ const onSubmit = () => {
             alt="oneId"
           />
         </button>
-      </form>
+
     </div>
 
     <!-- Footer Section -->
@@ -138,16 +149,4 @@ const onSubmit = () => {
     </footer>
   </div>
 </template>
-<style scoped>
-.custom-input {
-  outline: none;
-  padding: 10px 12px;
-  border-radius: 8px;
-  border: 1.5px solid #eeeeef;
-  font-size: 14px;
-  font-weight: 400;
-  line-height: 20px;
-  text-align: left;
-  color: #a8aaae;
-}
-</style>
+
