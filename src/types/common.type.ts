@@ -3,4 +3,5 @@ export interface TableColumnType {
   label: string;
   sortable?: boolean;
   width?: number | string;
+  align?: 'left' | 'center' | 'right';
 }

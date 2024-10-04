@@ -13,7 +13,8 @@ const boxes = computed(() => {
       id: 1,
       icon: menuIcon,
       title: "Меню",
-      description: "Есть 4 плана"
+      description: "Есть 4 плана",
+      link: {name: "KitchenMealPlanIndex"}
     },
     {
       id: 2,
@@ -40,7 +41,7 @@ const boxes = computed(() => {
             v-for="box in boxes"
             :key="box.id"
             class="box"
-            :to="{name: 'KitchenMealPlanIndex', params: {meal_plan_id: box.id}}"
+            :to="box.link"
         >
           <img
               :src="box.icon"

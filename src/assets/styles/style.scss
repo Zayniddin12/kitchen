@@ -156,7 +156,14 @@ html {
   tbody tr:last-child td:last-child {
     border-bottom-right-radius: 10px;
   }
+
+  &-normal {
+    thead th {
+      font-weight: 500;
+    }
+  }
 }
+
 .el-dialog {
   background-color: #f8f9fc;
   border-radius: 15px;

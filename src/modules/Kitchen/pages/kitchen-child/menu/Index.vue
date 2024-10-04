@@ -124,6 +124,35 @@ const currentTabTableData = computed(() => {
   return dataList;
 });
 
+const allTabTableData = computed(() => {
+  return [
+    {
+      id: 1,
+      idx: 1,
+      type: "Рацион 1",
+      time: "08:00-10:00",
+      date: "23.08.2024",
+      action: true
+    },
+    {
+      id: 2,
+      idx: 2,
+      type: "Рацион 2",
+      time: "12:00-13:00",
+      date: "23.08.2024",
+      action: true
+    },
+    {
+      id: 3,
+      idx: 3,
+      type: "Рацион 3",
+      time: "18:00-20:00",
+      date: "23.08.2024",
+      action: true
+    }
+  ];
+});
+
 const dateList = computed(() => {
   return [
     {
@@ -187,6 +216,8 @@ const activeDate = ref(dateList.value[0].value);
                 class="!bg-blue-500 min-h-12 w-[253px]"
                 type="primary"
                 size="large"
+                tag="RouterLink"
+                :to="{name: 'KitchenMealPlanCookingDishCreate'}"
             >
               <div class="flex items-center gap-x-2">
                 <svg
@@ -202,6 +233,8 @@ const activeDate = ref(dateList.value[0].value);
                 class="!bg-[#28C76F] min-h-12 w-[149px]"
                 size="large"
                 type="success"
+                tag="RouterLink"
+                :to="{name: 'KitchenMealPlanSellCreate'}"
             >
               <div class="flex items-center gap-x-2">
                 <svg
@@ -218,6 +251,8 @@ const activeDate = ref(dateList.value[0].value);
             <ElButton
                 class="min-h-12 w-[253px] !bg-[#E2E6F3] border-none"
                 size="large"
+                tag="RouterLink"
+                :to="{name: 'KitchenMealPlanEdit'}"
             >
               <div class="flex items-center gap-x-2">
                 <svg
@@ -276,7 +311,7 @@ const activeDate = ref(dateList.value[0].value);
                 </div>
                 <ElTable
                     :data="currentTabTableData"
-                    class="custom-element-table mt-6"
+                    class="custom-element-table custom-element-table-normal mt-6"
                 >
                   <ElTableColumn
                       v-for="column in currentTabTableColumns"
@@ -366,7 +401,7 @@ const activeDate = ref(dateList.value[0].value);
               v-else-if="activeTab === TABS.ALL"
               class="inner"
           >
-            <el-scrollbar>
+            <ElScrollbar>
               <div class="flex">
                 <button
                     v-for="item in dateList"
@@ -377,7 +412,229 @@ const activeDate = ref(dateList.value[0].value);
                   {{ item.title }}
                 </button>
               </div>
-            </el-scrollbar>
+            </ElScrollbar>
+            <div class="flex flex-col gap-y-6 mt-6">
+              <div>
+                <h2 class="font-semibold text-2xl text-black">
+                  Завтрак
+                </h2>
+                <ElTable
+                    :data="allTabTableData"
+                    class="custom-element-table custom-element-table-normal mt-4"
+                >
+                  <ElTableColumn
+                      prop="idx"
+                      label="№"
+                  />
+                  <ElTableColumn
+                      prop="type"
+                      label="Тип рациона"
+                      sortable
+                  />
+                  <ElTableColumn
+                      prop="time"
+                      label="Время"
+                      sortable
+                  />
+                  <ElTableColumn
+                      prop="date"
+                      label="Дата"
+                      sortable
+                  />
+                  <ElTableColumn
+                      prop="action"
+                      label="Действие"
+                      align="right"
+                  >
+                    <template #default="{row}">
+                      <div
+                          v-if="row.action"
+                          class="flex items-center justify-end gap-x-2"
+                      >
+                        <button class="action-btn">
+                          <img
+                              src="../../../../../assets/images/eye.svg"
+                              alt="eye"
+                          />
+                        </button>
+
+                        <button class="action-btn">
+                          <img
+                              src="../../../../../assets/images/icons/edit.svg"
+                              alt="edit"
+                          />
+                        </button>
+                      </div>
+                    </template>
+                  </ElTableColumn>
+                </ElTable>
+              </div>
+              <div>
+                <h2 class="font-semibold text-2xl text-black">
+                  Обед
+                </h2>
+                <ElTable
+                    :data="allTabTableData"
+                    class="custom-element-table custom-element-table-normal mt-4"
+                >
+                  <ElTableColumn
+                      prop="idx"
+                      label="№"
+                  />
+                  <ElTableColumn
+                      prop="type"
+                      label="Тип рациона"
+                      sortable
+                  />
+                  <ElTableColumn
+                      prop="time"
+                      label="Время"
+                      sortable
+                  />
+                  <ElTableColumn
+                      prop="date"
+                      label="Дата"
+                      sortable
+                  />
+                  <ElTableColumn
+                      prop="action"
+                      label="Действие"
+                      align="right"
+                  >
+                    <template #default="{row}">
+                      <div
+                          v-if="row.action"
+                          class="flex items-center justify-end gap-x-2"
+                      >
+                        <button class="action-btn">
+                          <img
+                              src="../../../../../assets/images/eye.svg"
+                              alt="eye"
+                          />
+                        </button>
+
+                        <button class="action-btn">
+                          <img
+                              src="../../../../../assets/images/icons/edit.svg"
+                              alt="edit"
+                          />
+                        </button>
+                      </div>
+                    </template>
+                  </ElTableColumn>
+                </ElTable>
+              </div>
+              <div>
+                <h2 class="font-semibold text-2xl text-black">
+                  Ужин
+                </h2>
+                <ElTable
+                    :data="allTabTableData"
+                    class="custom-element-table custom-element-table-normal mt-4"
+                >
+                  <ElTableColumn
+                      prop="idx"
+                      label="№"
+                  />
+                  <ElTableColumn
+                      prop="type"
+                      label="Тип рациона"
+                      sortable
+                  />
+                  <ElTableColumn
+                      prop="time"
+                      label="Время"
+                      sortable
+                  />
+                  <ElTableColumn
+                      prop="date"
+                      label="Дата"
+                      sortable
+                  />
+                  <ElTableColumn
+                      prop="action"
+                      label="Действие"
+                      align="right"
+                  >
+                    <template #default="{row}">
+                      <div
+                          v-if="row.action"
+                          class="flex items-center justify-end gap-x-2"
+                      >
+                        <button class="action-btn">
+                          <img
+                              src="../../../../../assets/images/eye.svg"
+                              alt="eye"
+                          />
+                        </button>
+
+                        <button class="action-btn">
+                          <img
+                              src="../../../../../assets/images/icons/edit.svg"
+                              alt="edit"
+                          />
+                        </button>
+                      </div>
+                    </template>
+                  </ElTableColumn>
+                </ElTable>
+              </div>
+              <div>
+                <h2 class="font-semibold text-2xl text-black">
+                  Сухой питания
+                </h2>
+                <ElTable
+                    :data="allTabTableData"
+                    class="custom-element-table custom-element-table-normal mt-4"
+                >
+                  <ElTableColumn
+                      prop="idx"
+                      label="№"
+                  />
+                  <ElTableColumn
+                      prop="type"
+                      label="Тип рациона"
+                      sortable
+                  />
+                  <ElTableColumn
+                      prop="time"
+                      label="Время"
+                      sortable
+                  />
+                  <ElTableColumn
+                      prop="date"
+                      label="Дата"
+                      sortable
+                  />
+                  <ElTableColumn
+                      prop="action"
+                      label="Действие"
+                      align="right"
+                  >
+                    <template #default="{row}">
+                      <div
+                          v-if="row.action"
+                          class="flex items-center justify-end gap-x-2"
+                      >
+                        <button class="action-btn">
+                          <img
+                              src="../../../../../assets/images/eye.svg"
+                              alt="eye"
+                          />
+                        </button>
+
+                        <button class="action-btn">
+                          <img
+                              src="../../../../../assets/images/icons/edit.svg"
+                              alt="edit"
+                          />
+                        </button>
+                      </div>
+                    </template>
+                  </ElTableColumn>
+                </ElTable>
+              </div>
+            </div>
           </div>
         </TransitionGroup>
         <div
@@ -414,7 +671,3 @@ const activeDate = ref(dateList.value[0].value);
     </div>
   </section>
 </template>
-
-<style lang="scss">
-
-</style>

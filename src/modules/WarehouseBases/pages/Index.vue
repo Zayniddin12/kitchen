@@ -319,7 +319,7 @@ const invoiceTableData = computed(() => {
               <template #default="{row}">
                 <div
                     v-if="row.action"
-                    class="flex items-center justify-end"
+                    class="flex items-center justify-end gap-x-2"
                 >
                   <button class="action-btn">
                     <img

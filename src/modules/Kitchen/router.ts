@@ -1,283 +1,322 @@
 import { useKitchenStore } from "@/modules/Kitchen/store/kitchen.store";
 
 export default [
-  {
-    path: "/kitchen/:department_id(\\d+)/:part_id(\\d+)",
-    name: "Kitchen",
-    meta: {
-      title: "Кухня",
-      breadcrumb: [],
-    },
-    children: [
-      {
-        path: "",
-        name: "KitchenIndex",
-        component: () => import("@/modules/Kitchen/pages/Index.vue"),
-        beforeEnter: (to, from, next) => {
-          const kitchenStore = useKitchenStore();
-
-          kitchenStore.fetchPart(+to.params.department_id, +to.params.part_id);
-
-
-          if (!kitchenStore.part) return next({ name: "notFound" });
-
-          to.meta.breadcrumb = [
-            {
-              label: "Кухня",
-            },
-            {
-              label: kitchenStore.part.name,
-            },
-            {
-              label: kitchenStore.part.department_name,
-              isActionable: true,
-            },
-          ];
-
-          next();
+    {
+        path: "/kitchen/:department_id(\\d+)/:part_id(\\d+)",
+        name: "Kitchen",
+        meta: {
+            title: "Кухня",
+            breadcrumb: []
         },
-      },
-      {
-        path: ":kitchen_id(\\d+)",
-        name: "KitchenShow",
-        redirect: { name: "KitchenShowIndex" },
         children: [
-          {
-            path: "",
-            name: "KitchenShowIndex",
-            component: () => import("@/modules/Kitchen/pages/KitchenShow.vue"),
-            beforeEnter: (to, from, next) => {
-              const kitchenStore = useKitchenStore();
-
-              kitchenStore.fetchPart(+to.params.department_id, +to.params.part_id);
-
-              if (!kitchenStore.part) return next({ name: "notFound" });
-
-              to.meta.breadcrumb = [
-                {
-                  label: "Кухня",
-                },
-                {
-                  label: kitchenStore.part.name,
-                },
-                {
-                  label: kitchenStore.part.department_name,
-                },
-                {
-                  label: "Лагерь",
-                  isActionable: true,
-                },
-              ];
-
-              next();
-            },
-          },
-          {
-            path: ":child_id(\\d+)",
-            name: "KitchenShowChild",
-            redirect: { name: "KitchenShowChildIndex" },
-            children: [
-              {
+            {
                 path: "",
-                name: "KitchenShowChildIndex",
-                component: () => import("@/modules/Kitchen/pages/KitchenChild.vue"),
+                name: "KitchenIndex",
+                component: () => import("@/modules/Kitchen/pages/Index.vue"),
                 beforeEnter: (to, from, next) => {
-                  const kitchenStore = useKitchenStore();
+                    const kitchenStore = useKitchenStore();
 
-                  kitchenStore.fetchPart(+to.params.department_id, +to.params.part_id);
+                    kitchenStore.fetchPart(+to.params.department_id, +to.params.part_id);
 
-                  if (!kitchenStore.part) return next({ name: "notFound" });
 
-                  to.meta.breadcrumb = [
-                    {
-                      label: "Кухня",
-                    },
-                    {
-                      label: kitchenStore.part.name,
-                    },
-                    {
-                      label: kitchenStore.part.department_name,
-                    },
-                    {
-                      label: "Лагерь",
-                    },
-                    {
-                      label: "Паҳлавон",
-                      isActionable: true,
-                    },
-                  ];
+                    if (!kitchenStore.part) return next({ name: "notFound" });
 
-                  next();
-                },
-              },
-              {
-                path: "meal-plan/:meal_plan_id(\\d+)",
-                name: "KitchenMealPlan",
-                redirect: { name: "KitchenMealPlanIndex" },
+                    to.meta.breadcrumb = [
+                        {
+                            label: "Кухня"
+                        },
+                        {
+                            label: kitchenStore.part.name
+                        },
+                        {
+                            label: kitchenStore.part.department_name,
+                            isActionable: true
+                        }
+                    ];
+
+                    next();
+                }
+            },
+            {
+                path: ":kitchen_id(\\d+)",
+                name: "KitchenShow",
+                redirect: { name: "KitchenShowIndex" },
                 children: [
-                  {
-                    path: "",
-                    name: "KitchenMealPlanIndex",
-                    component: () => import("@/modules/Kitchen/pages/meal-plan/Index.vue"),
-                    beforeEnter: (to, from, next) => {
-                      const kitchenStore = useKitchenStore();
+                    {
+                        path: "",
+                        name: "KitchenShowIndex",
+                        component: () => import("@/modules/Kitchen/pages/KitchenShow.vue"),
+                        beforeEnter: (to, from, next) => {
+                            const kitchenStore = useKitchenStore();
 
-                      kitchenStore.fetchPart(+to.params.department_id, +to.params.part_id);
+                            kitchenStore.fetchPart(+to.params.department_id, +to.params.part_id);
 
-                      if (!kitchenStore.part) return next({ name: "notFound" });
+                            if (!kitchenStore.part) return next({ name: "notFound" });
 
-                      to.meta.breadcrumb = [
-                        {
-                          label: "Кухня",
-                        },
-                        {
-                          label: kitchenStore.part.name,
-                        },
-                        {
-                          label: kitchenStore.part.department_name,
-                        },
-                        {
-                          label: "Лагерь",
-                        },
-                        {
-                          label: "Паҳлавон",
-                        },
-                        {
-                          label: "Меню",
-                          isActionable: true,
-                        },
-                      ];
+                            to.meta.breadcrumb = [
+                                {
+                                    label: "Кухня"
+                                },
+                                {
+                                    label: kitchenStore.part.name
+                                },
+                                {
+                                    label: kitchenStore.part.department_name
+                                },
+                                {
+                                    label: "Лагерь",
+                                    isActionable: true
+                                }
+                            ];
 
-                      next();
+                            next();
+                        }
                     },
-                  },
-                  {
-                    path: "create",
-                    name: "KitchenMealPlanCreate",
-                    component: () => import("@/modules/Kitchen/pages/meal-plan/Create.vue"),
-                    beforeEnter: (to, from, next) => {
-                      const kitchenStore = useKitchenStore();
+                    {
+                        path: ":child_id(\\d+)",
+                        name: "KitchenShowChild",
+                        redirect: { name: "KitchenShowChildIndex" },
+                        children: [
+                            {
+                                path: "",
+                                name: "KitchenShowChildIndex",
+                                component: () => import("@/modules/Kitchen/pages/kitchen-child/Index.vue"),
+                                beforeEnter: (to, from, next) => {
+                                    const kitchenStore = useKitchenStore();
 
-                      kitchenStore.fetchPart(+to.params.department_id, +to.params.part_id);
+                                    kitchenStore.fetchPart(+to.params.department_id, +to.params.part_id);
 
-                      if (!kitchenStore.part) return next({ name: "notFound" });
+                                    if (!kitchenStore.part) return next({ name: "notFound" });
 
-                      to.meta.breadcrumb = [
-                        {
-                          label: "Кухня",
-                        },
-                        {
-                          label: kitchenStore.part.name,
-                        },
-                        {
-                          label: kitchenStore.part.department_name,
-                        },
-                        {
-                          label: "Лагерь",
-                        },
-                        {
-                          label: "Паҳлавон",
-                        },
-                        {
-                          label: "Меню",
-                        },
-                        {
-                          label: "Добавить",
-                          isActionable: true,
-                        },
-                      ];
+                                    to.meta.breadcrumb = [
+                                        {
+                                            label: "Кухня"
+                                        },
+                                        {
+                                            label: kitchenStore.part.name
+                                        },
+                                        {
+                                            label: kitchenStore.part.department_name
+                                        },
+                                        {
+                                            label: "Лагерь"
+                                        },
+                                        {
+                                            label: "Паҳлавон",
+                                            isActionable: true
+                                        }
+                                    ];
 
-                      next();
-                    },
-                  },
-                  {
-                    path: "sell-create",
-                    name: "KitchenMealPlanSellCreate",
-                    component: () => import("@/modules/Kitchen/pages/meal-plan/pages/SellCreate.vue"),
-                    beforeEnter: (to, from, next) => {
-                      const kitchenStore = useKitchenStore();
+                                    next();
+                                }
+                            },
+                            {
+                                path: "menu",
+                                name: "KitchenMealPlan",
+                                redirect: { name: "KitchenMealPlanIndex" },
+                                children: [
+                                    {
+                                        path: "",
+                                        name: "KitchenMealPlanIndex",
+                                        component: () => import("@/modules/Kitchen/pages/kitchen-child/menu/Index.vue"),
+                                        beforeEnter: (to, from, next) => {
+                                            const kitchenStore = useKitchenStore();
 
-                      kitchenStore.fetchPart(+to.params.department_id, +to.params.part_id);
+                                            kitchenStore.fetchPart(+to.params.department_id, +to.params.part_id);
 
-                      if (!kitchenStore.part) return next({ name: "notFound" });
-                      to.meta.title = "Продать";
+                                            if (!kitchenStore.part) return next({ name: "notFound" });
 
-                      to.meta.breadcrumb = [
-                        {
-                          label: "Кухня",
-                        },
-                        {
-                          label: kitchenStore.part.name,
-                        },
-                        {
-                          label: kitchenStore.part.department_name,
-                        },
-                        {
-                          label: "Лагерь",
-                        },
-                        {
-                          label: "Паҳлавон",
-                        },
-                        {
-                          label: "Меню",
-                        },
-                        {
-                          label: "Продать",
-                          isActionable: true,
-                        },
-                      ];
+                                            to.meta.breadcrumb = [
+                                                {
+                                                    label: "Кухня"
+                                                },
+                                                {
+                                                    label: kitchenStore.part.name
+                                                },
+                                                {
+                                                    label: kitchenStore.part.department_name
+                                                },
+                                                {
+                                                    label: "Лагерь"
+                                                },
+                                                {
+                                                    label: "Паҳлавон"
+                                                },
+                                                {
+                                                    label: "Меню",
+                                                    isActionable: true
+                                                }
+                                            ];
 
-                      next();
-                    },
-                  },
+                                            next();
+                                        }
+                                    },
+                                    {
+                                        path: "create",
+                                        name: "KitchenMealPlanCreate",
+                                        component: () => import("@/modules/Kitchen/pages/kitchen-child/menu/Create.vue"),
+                                        beforeEnter: (to, from, next) => {
+                                            const kitchenStore = useKitchenStore();
 
-                  {
-                    path: "cooking-dish-create",
-                    name: "KitchenMealPlanCookingDishCreate",
-                    component: () => import("@/modules/Kitchen/pages/meal-plan/pages/CookingDishCreate.vue"),
-                    beforeEnter: (to, from, next) => {
-                      const kitchenStore = useKitchenStore();
+                                            kitchenStore.fetchPart(+to.params.department_id, +to.params.part_id);
 
-                      kitchenStore.fetchPart(+to.params.department_id, +to.params.part_id);
+                                            if (!kitchenStore.part) return next({ name: "notFound" });
 
-                      if (!kitchenStore.part) return next({ name: "notFound" });
-                      to.meta.title = "Приготовление блюда";
+                                            to.meta.breadcrumb = [
+                                                {
+                                                    label: "Кухня"
+                                                },
+                                                {
+                                                    label: kitchenStore.part.name
+                                                },
+                                                {
+                                                    label: kitchenStore.part.department_name
+                                                },
+                                                {
+                                                    label: "Лагерь"
+                                                },
+                                                {
+                                                    label: "Паҳлавон"
+                                                },
+                                                {
+                                                    label: "Меню"
+                                                },
+                                                {
+                                                    label: "Добавить",
+                                                    isActionable: true
+                                                }
+                                            ];
 
-                      to.meta.breadcrumb = [
-                        {
-                          label: "Кухня",
-                        },
-                        {
-                          label: kitchenStore.part.name,
-                        },
-                        {
-                          label: kitchenStore.part.department_name,
-                        },
-                        {
-                          label: "Лагерь",
-                        },
-                        {
-                          label: "Паҳлавон",
-                        },
-                        {
-                          label: "Меню",
-                        },
-                        {
-                          label: "Приготовление блюда",
-                          isActionable: true,
-                        },
-                      ];
+                                            next();
+                                        }
+                                    },
+                                    {
+                                        path: "edit",
+                                        name: "KitchenMealPlanEdit",
+                                        component: () => import("@/modules/Kitchen/pages/kitchen-child/menu/Edit.vue"),
+                                        beforeEnter: (to, from, next) => {
+                                            const kitchenStore = useKitchenStore();
 
-                      next();
-                    },
-                  },
+                                            kitchenStore.fetchPart(+to.params.department_id, +to.params.part_id);
 
-                ],
-              },
-            ],
-          },
-        ],
-      },
-    ],
-  },
+                                            if (!kitchenStore.part) return next({ name: "notFound" });
+
+                                            to.meta.breadcrumb = [
+                                                {
+                                                    label: "Кухня"
+                                                },
+                                                {
+                                                    label: kitchenStore.part.name
+                                                },
+                                                {
+                                                    label: kitchenStore.part.department_name
+                                                },
+                                                {
+                                                    label: "Лагерь"
+                                                },
+                                                {
+                                                    label: "Паҳлавон"
+                                                },
+                                                {
+                                                    label: "Меню"
+                                                },
+                                                {
+                                                    label: "Редактировать",
+                                                    isActionable: true
+                                                }
+                                            ];
+
+                                            next();
+                                        }
+                                    },
+                                    {
+                                        path: "sell-create",
+                                        name: "KitchenMealPlanSellCreate",
+                                        component: () => import("@/modules/Kitchen/pages/kitchen-child/menu/pages/SellCreate.vue"),
+                                        beforeEnter: (to, from, next) => {
+                                            const kitchenStore = useKitchenStore();
+
+                                            kitchenStore.fetchPart(+to.params.department_id, +to.params.part_id);
+
+                                            if (!kitchenStore.part) return next({ name: "notFound" });
+                                            to.meta.title = "Продать";
+
+                                            to.meta.breadcrumb = [
+                                                {
+                                                    label: "Кухня"
+                                                },
+                                                {
+                                                    label: kitchenStore.part.name
+                                                },
+                                                {
+                                                    label: kitchenStore.part.department_name
+                                                },
+                                                {
+                                                    label: "Лагерь"
+                                                },
+                                                {
+                                                    label: "Паҳлавон"
+                                                },
+                                                {
+                                                    label: "Меню"
+                                                },
+                                                {
+                                                    label: "Продать",
+                                                    isActionable: true
+                                                }
+                                            ];
+
+                                            next();
+                                        }
+                                    },
+
+                                    {
+                                        path: "cooking-dish-create",
+                                        name: "KitchenMealPlanCookingDishCreate",
+                                        component: () => import("@/modules/Kitchen/pages/kitchen-child/menu/pages/CookingDishCreate.vue"),
+                                        beforeEnter: (to, from, next) => {
+                                            const kitchenStore = useKitchenStore();
+
+                                            kitchenStore.fetchPart(+to.params.department_id, +to.params.part_id);
+
+                                            if (!kitchenStore.part) return next({ name: "notFound" });
+                                            to.meta.title = "Приготовление блюда";
+
+                                            to.meta.breadcrumb = [
+                                                {
+                                                    label: "Кухня"
+                                                },
+                                                {
+                                                    label: kitchenStore.part.name
+                                                },
+                                                {
+                                                    label: kitchenStore.part.department_name
+                                                },
+                                                {
+                                                    label: "Лагерь"
+                                                },
+                                                {
+                                                    label: "Паҳлавон"
+                                                },
+                                                {
+                                                    label: "Меню"
+                                                },
+                                                {
+                                                    label: "Приготовление блюда",
+                                                    isActionable: true
+                                                }
+                                            ];
+
+                                            next();
+                                        }
+                                    }
+
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    }
 ];

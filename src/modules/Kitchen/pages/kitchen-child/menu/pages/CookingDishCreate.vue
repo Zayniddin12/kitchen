@@ -92,7 +92,7 @@ const tableData = ref<TableData[]>([
               <button
                 class="bg-[#E2E6F3] rounded-[8px] p-[10px] ml-4"
               >
-                <img src="@/assets/images/icons/delete.svg" alt="del">
+                <img src="../../../../../../assets/images/icons/delete.svg" alt="del">
               </button>
             </div>
           </div>
