@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
-import Language from "@/components/language/index.vue";
 import { useRouter } from "vue-router";
+import Language from "@/components/language/index.vue";
+import AppInput from "@/components/ui/form/app-input/AppInput.vue";
 
 const { t } = useI18n();
 const router = useRouter();
@@ -64,27 +65,10 @@ const onSubmit = () => {
         class="mt-6"
       >
         <!-- Username Input -->
-        <div class="flex flex-col mb-4">
-          <label class="text-[#A8AAAE] text-sm">Логин</label>
-          <input
-            placeholder="Введите"
-            class="custom-input mt-1"
-            v-model="userData.login"
-            required
-          />
-        </div>
+        <app-input v-model="userData.login" placeholder="Введите" label="Логин" label-class="text-[#A8AAAE] text-sm"/>
 
         <!-- Password Input -->
-        <div class="flex flex-col mb-2">
-          <label class="text-[#A8AAAE] text-sm">Пароль</label>
-          <input
-            type="password"
-            placeholder="Введите"
-            class="custom-input mt-1"
-            v-model="userData.password"
-            required
-          />
-        </div>
+        <app-input v-model="userData.password" placeholder="Введите" label="Пароль" label-class="text-[#A8AAAE] text-sm"/>
 
         <!-- Forgot Password Link -->
         <div class="text-right text-[#2E90FA] text-xs mt-1 cursor-pointer">
@@ -138,16 +122,4 @@ const onSubmit = () => {
     </footer>
   </div>
 </template>
-<style scoped>
-.custom-input {
-  outline: none;
-  padding: 10px 12px;
-  border-radius: 8px;
-  border: 1.5px solid #eeeeef;
-  font-size: 14px;
-  font-weight: 400;
-  line-height: 20px;
-  text-align: left;
-  color: #a8aaae;
-}
-</style>
+
