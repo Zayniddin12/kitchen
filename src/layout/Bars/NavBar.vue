@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { Bell, Message, Search } from "@element-plus/icons-vue";
-import Language from "@/components/language/index.vue";
+import {  Search } from "@element-plus/icons-vue";
+// import Language from "@/components/language/index.vue";
 import MemoModal from "@/layout/Create/components/MemoModal.vue";
 import ComingModal from "@/layout/Create/components/ComingModal.vue";
 import ConsumptionModal from "@/layout/Create/components/ConsumptionModal.vue";
@@ -52,7 +52,6 @@ const navbarMenuList = [
 ];
 
 const openModals = (data) => {
-  console.log(data);
   if (data.id == 1) {
     editModal.value = true;
   } else if (data.id == 2) {
@@ -92,40 +91,7 @@ const openModals = (data) => {
         <button
           class="flex items-center bg-[#2E90FA] rounded-[8px] border-[1.5px] py-[10px] px-[20px] active:bg-[#175CD3] active:border-[#1849A9] active:border-[1.5px]"
         >
-          <svg
-            class="mr-[8px]"
-            width="20"
-            height="20"
-            viewBox="0 0 20 20"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <rect
-              x="3.3335"
-              y="3.33301"
-              width="13.3333"
-              height="13.3333"
-              rx="2"
-              stroke="white"
-              stroke-width="1.2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-            <path
-              d="M7.5 9.99967H12.5"
-              stroke="white"
-              stroke-width="1.2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-            <path
-              d="M10.0002 7.5V12.5"
-              stroke="white"
-              stroke-width="1.2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-          </svg>
+          <img src="@/assets/images/icons/plus.svg" class="mr-[8px]" alt="plus"/>
 
           <span style="vertical-align: middle" class="text-white"> Создать </span>
         </button>
@@ -174,27 +140,17 @@ const openModals = (data) => {
         value="18"
         class="item"
       >
-        <el-icon
-          color="#8F9194"
-          size="24"
-        >
-          <Bell />
-        </el-icon>
+        <img src="@/assets/images/icons/bell.svg" alt="">
       </el-badge>
 
       <el-badge
         value="18"
         class="item"
       >
-        <el-icon
-          color="#8F9194"
-          size="24"
-        >
-          <Message />
-        </el-icon>
+        <img src="@/assets/images/icons/mail.svg" alt="">
       </el-badge>
 
-      <Language />
+      <!--      <Language />-->
 
       <div class="flex items-center gap-3 el-dropdown-link">
         <img src="@/assets/images/avatar.png" class="h-[40px] w-[40px] object-contain rounded-full" alt="avatar"/>
@@ -257,4 +213,13 @@ const openModals = (data) => {
   margin-top: 5px; /* Move downward */
 }
 
+.el-badge__content.is-fixed {
+  background-color: #EA5455;
+  font-size: 9px;
+  position: absolute;
+  right: calc(3px + var(--el-badge-size) / 2);
+  top: 1px;
+  transform: translateY(-50%) translateX(100%);
+  z-index: var(--el-index-normal);
+}
 </style>

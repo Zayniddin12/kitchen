@@ -132,8 +132,6 @@ const invoiceTableData = computed(() => {
             status="success"
             class="mt-2"
             striped
-            striped-flow
-            :duration="70"
         />
         <p class="mt-4 text-xs text-[#A8AAAE]">
           Этот элемент показывает процент заполненности склада, помогая вам следить за остатками и эффективно управлять

@@ -3,15 +3,144 @@
     lang="ts"
 >
 
+import { computed } from "vue";
+
+const tableData = computed(() => {
+  const data = [];
+
+  for (let i = 1; i <= 12; i++) {
+    data.push({
+      id: i,
+      idx: i,
+      type: `Рацион ${i}`,
+      unique_number: "R-00000",
+      price: "25 000 сум",
+      nd_price: "3 000 сум",
+      sum: "28 000 сум"
+    });
+  }
+
+  return data;
+});
+
 </script>
 
 <template>
-  <h1>Ration</h1>
+  <section class="kitchen-ration">
+    <div>
+      <h1 class="font-semibold text-[32px] text-dark">
+        Рационы
+      </h1>
+      <ElTable
+          :data="tableData"
+          class="mt-6 custom-element-table custom-element-table-normal kitchen-ration__table"
+      >
+        <ElTableColumn
+            prop="idx"
+            label="№"
+            :width="150"
+        />
+        <ElTableColumn
+            prop="type"
+            label="Тип рациона"
+            sortable
+            align="center"
+        >
+          <template #default="{row}">
+            <ElDropdown
+                placement="bottom"
+                class="kitchen-ration__table__dropdown"
+            >
+              {{ row.type }}
+              <template #dropdown>
+                <ElDropdownMenu class="min-w-[140px] p-4 rounded-lg bg-white flex flex-col gap-y-3">
+                  <div class="text-sm flex gap-x-2 w-full">
+                    <span class="text-dark-gray w-[55%] inline-block">
+                      Кабачки
+                    </span>
+                    <span class="text-[#A8AAAE]">
+                      0.8 кг
+                    </span>
+                  </div>
+                  <div class="text-sm flex gap-x-2 w-full">
+                    <span class="text-dark-gray w-[55%] inline-block">
+                      Хлеб
+                    </span>
+                    <span class="text-[#A8AAAE]">
+                      0.8 кг
+                    </span>
+                  </div>
+                  <div class="text-sm flex gap-x-2 w-full">
+                    <span class="text-dark-gray w-[55%] inline-block">
+                      Компот
+                    </span>
+                    <span class="text-[#A8AAAE]">
+                      0.8 кг
+                    </span>
+                  </div>
+                  <div class="text-sm flex gap-x-2 w-full">
+                    <span class="text-dark-gray w-[55%] inline-block">
+                      Яйцо
+                    </span>
+                    <span class="text-[#A8AAAE]">
+                      0.8 кг
+                    </span>
+                  </div>
+                </ElDropdownMenu>
+              </template>
+            </ElDropdown>
+          </template>
+        </ElTableColumn>
+        <ElTableColumn
+            prop="unique_number"
+            label="Уникальный номер"
+            sortable
+            align="center"
+        />
+        <ElTableColumn
+            prop="price"
+            label="Цена"
+            sortable
+            align="center"
+        />
+        <ElTableColumn
+            prop="nd_price"
+            label="НДС"
+            sortable
+            align="center"
+        />
+        <ElTableColumn
+            prop="sum"
+            label="Сумма"
+            sortable
+            align="center"
+        />
+      </ElTable>
+      <div class="mt-6 flex items-center justify-between">
+        <div class="text-sm text-cool-gray">
+          Показано 1–12 из 100 результатов
+        </div>
+        <el-pagination
+            class="float-right"
+            background
+            layout="prev, pager, next"
+            :total="1000"
+        />
+      </div>
+    </div>
+  </section>
 </template>
 
-<style
-    scoped
-    lang="scss"
->
+<style lang="scss">
+  .kitchen-ration{
 
+    &__table{
+
+      &__dropdown{
+        .el-tooltip__trigger:hover{
+          outline: unset !important;
+        }
+      }
+    }
+  }
 </style>

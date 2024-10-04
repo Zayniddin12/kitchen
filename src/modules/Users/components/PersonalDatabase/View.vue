@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import { useRouter } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 
 interface Tabs {
   title: string;
@@ -8,6 +8,7 @@ interface Tabs {
 }
 
 const router = useRouter();
+const route = useRoute()
 
 const tabs = ref<Tabs[]>([
   {
@@ -43,25 +44,26 @@ const setActiveTab = (item: any) => {
         </div>
       </div>
 
-      <button class="custom-cancel-btn flex items-center" @click="router.push(`/personal-database-edit-form/${1}`)">
-        <img src="../../../../assets/images/icons/edit.svg" alt="edit" class="mr-[8px]" />
+      <button class="custom-cancel-btn flex items-center" @click="router.push(`/personal-database-edit-form/${route.params.id}`)">
+        <img src="@/assets/images/icons/edit.svg" alt="edit" class="mr-[8px]" />
         Редактировать
       </button>
     </div>
 
-    <div class="border rounded-[24px] py-[32px] px-[24px]" v-if="activeTab === 0">
-      <div class="py-8 px-4 flex items-center gap-4">
-        <div class="rounded-full overflow-hidden border-4 border-gray-100">
-          <img src="../../../../assets/images/avatar.png" alt="Profile Picture"
-               class="object-cover h-[160px] w-[160px] rounded-full">
-        </div>
+    <div class="border rounded-[24px] pb-[32px] overflow-hidden" v-if="activeTab === 0">
+      <div class="py-[70px] bg-[#F8F9FC] px-[24px] relative">
+       <div class="top-[32px] absolute flex items-center">
+         <div class="rounded-full overflow-hidden border-4 border-gray-100">
+           <img src="../../../../assets/images/avatar.png" alt="Profile Picture" class="object-cover h-[160px] w-[160px] rounded-full">
+         </div>
 
-        <div class="text-xl font-semibold text-gray-900">
-          Хамидов Иброхим Илхомович
-        </div>
+         <div class="text-xl font-semibold text-gray-900 ml-[24px]">
+           Хамидов Иброхим Илхомович
+         </div>
+       </div>
       </div>
 
-      <div>
+      <div class="px-[24px] mt-[90px]">
         <div class="bg-gray-50 p-6 rounded-[16px]">
           <h3 class="text-gray-500 mb-4">Основная информация</h3>
           <div class="grid grid-cols-2 gap-8">
@@ -145,7 +147,7 @@ const setActiveTab = (item: any) => {
       <button class="absolute top-2 left-2 opacity-0 group-hover:opacity-100 edit__btn transition-opacity duration-300 bg-blue-500 text-white px-4 py-2 rounded-lg">
         Изменить фото
       </button>
-      <img src="../../../../assets/images/bigMan.png" class="w-full group-hover:filter group-hover:brightness-50 transition duration-300" alt="bigMan" />
+      <img src="@/assets/images/bigMan.png" class="w-full group-hover:filter group-hover:brightness-50 transition duration-300" alt="bigMan" />
     </div>
   </div>
 </template>

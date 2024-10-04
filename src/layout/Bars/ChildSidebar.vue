@@ -33,8 +33,8 @@ const activeChildMenu = (item: any) => {
   const routePath = item.id ? `${item.route}/${item.title}/${item.id}` : item.route;
   currentItem.value = item.id || item.route;
   router.push(routePath);
+  emit("closeSidebar");
 };
-// emit("closeSidebar"); vohtinchali yopildi
 </script>
 
 <template>
@@ -83,7 +83,7 @@ const activeChildMenu = (item: any) => {
           <img
             v-if="item.children && item.children.length"
             src="@/assets/images/arrowUp.svg"
-            :class="isActive ? 'rotate-180' : ''"
+            :class="!isActive ? 'rotate-180' : ''"
             class="transition-all"
             alt="arrow"
           />

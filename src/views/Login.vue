@@ -6,6 +6,7 @@ import Language from "@/components/language/index.vue";
 import AppInput from "@/components/ui/form/app-input/AppInput.vue";
 import AppForm from "@/components/ui/form/app-form/AppForm.vue";
 import { ValidationType } from "@/components/ui/form/app-form/app-form.type";
+import { toast } from "vue3-toastify";
 
 const { t } = useI18n();
 const router = useRouter();
@@ -29,10 +30,13 @@ const setValidation = (value: ValidationType) => {
 const onSubmit = async () => {
   if (!v$.value) return;
 
-  if (!(await v$.value.validate())) return;
-
-  await router.push("/home");
-  localStorage.setItem("current-menu", 0);
+  if (!(await v$.value.validate())){
+    toast.error('Ошибка')
+  } else {
+    await router.push("/home");
+    toast.success('Успешно')
+    localStorage.setItem("current-menu", "0");
+  }
 };
 </script>
 

@@ -48,51 +48,55 @@ const setActiveTab = (item: any) => {
       </div>
     </div>
 
-    <div class="border rounded-[24px] py-[32px] px-[24px]">
+    <div class="border rounded-[24px] pb-[32px] overflow-hidden">
       <template v-if="activeTab === 0">
-        <div class="py-8 px-4 flex items-center gap-4">
-          <div class="rounded-full overflow-hidden border-4 border-gray-100">
-            <img src="@/assets/images/avatar.png" alt="Profile Picture" class="object-cover h-[160px] w-[160px] rounded-full">
+        <div class="py-[70px] bg-[#F8F9FC] px-[24px] relative">
+          <div class="top-[32px] absolute flex items-center">
+            <div class="rounded-full overflow-hidden border-4 border-gray-100">
+              <img src="../../../../assets/images/avatar.png" alt="Profile Picture" class="object-cover h-[160px] w-[160px] rounded-full">
+            </div>
+
+            <div class="text-xl font-semibold text-gray-900 ml-[24px]">
+              Хамидов Иброхим Илхомович
+            </div>
           </div>
-
-          <div class="text-xl font-semibold text-gray-900">
-            Хамидов Иброхим Илхомович
-          </div>
         </div>
 
-        <div class="grid grid-cols-3 gap-4">
-          <app-input label="Фамилия" label-class="text-[#A8AAAE] text-[12px] font-medium" />
+       <div class="px-[24px] mt-[90px]">
+         <div class="grid grid-cols-3 gap-4">
+           <app-input label="Фамилия" label-class="text-[#A8AAAE] text-[12px] font-medium" />
 
-          <app-input label="Имя" label-class="text-[#A8AAAE] text-[12px] font-medium" />
+           <app-input label="Имя" label-class="text-[#A8AAAE] text-[12px] font-medium" />
 
-          <app-input label="Отчество" label-class="text-[#A8AAAE] text-[12px] font-medium" />
+           <app-input label="Отчество" label-class="text-[#A8AAAE] text-[12px] font-medium" />
 
-          <app-date-picker placeholder="" label="Дата рождения" label-class="text-[#A8AAAE] text-[12px] font-medium" />
+           <app-date-picker placeholder="" label="Дата рождения" label-class="text-[#A8AAAE] text-[12px] font-medium" />
 
-          <app-input label="Национальность" label-class="text-[#A8AAAE] text-[12px] font-medium" />
+           <app-input label="Национальность" label-class="text-[#A8AAAE] text-[12px] font-medium" />
 
-          <app-input label="Пол" label-class="text-[#A8AAAE] text-[12px] font-medium" />
+           <app-input label="Пол" label-class="text-[#A8AAAE] text-[12px] font-medium" />
 
-          <app-input label="Серия и номер паспорта" label-class="text-[#A8AAAE] text-[12px] font-medium" />
+           <app-input label="Серия и номер паспорта" label-class="text-[#A8AAAE] text-[12px] font-medium" />
 
-          <app-input label="Кем выдан" label-class="text-[#A8AAAE] text-[12px] font-medium" />
+           <app-input label="Кем выдан" label-class="text-[#A8AAAE] text-[12px] font-medium" />
 
-          <app-date-picker label="Дата выпуска" placeholder="" label-class="text-[#A8AAAE] text-[12px] font-medium" />
+           <app-date-picker label="Дата выпуска" placeholder="" label-class="text-[#A8AAAE] text-[12px] font-medium" />
 
-          <app-date-picker label="Срок действия" placeholder="" label-class="text-[#A8AAAE] text-[12px] font-medium" />
+           <app-date-picker label="Срок действия" placeholder="" label-class="text-[#A8AAAE] text-[12px] font-medium" />
 
-          <app-input label="ПИНФЛ" label-class="text-[#A8AAAE] text-[12px] font-medium" />
+           <app-input label="ПИНФЛ" label-class="text-[#A8AAAE] text-[12px] font-medium" />
 
-          <div />
-        </div>
+           <div />
+         </div>
 
-        <div class="mt-[40px] grid grid-cols-3 gap-4">
-          <app-input label="OneID (необязательно)" label-class="text-[#A8AAAE] text-[12px] font-medium" />
+         <div class="mt-[40px] grid grid-cols-3 gap-4">
+           <app-input label="OneID (необязательно)" label-class="text-[#A8AAAE] text-[12px] font-medium" />
 
-          <app-select label="Должность в системе(необязательно)" placeholder="" label-class="text-[#A8AAAE] text-[12px] font-medium" />
+           <app-select label="Должность в системе(необязательно)" placeholder="" label-class="text-[#A8AAAE] text-[12px] font-medium" />
 
-          <app-select label="Роли (необязательно)" placeholder="" label-class="text-[#A8AAAE] text-[12px] font-medium" />
-        </div>
+           <app-select label="Роли (необязательно)" placeholder="" label-class="text-[#A8AAAE] text-[12px] font-medium" />
+         </div>
+       </div>
       </template>
 
       <template v-else>

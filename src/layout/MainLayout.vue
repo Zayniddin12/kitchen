@@ -21,7 +21,6 @@ onMounted(() => {
 const closeChildSidebar = () => {
   childSidebar.value = false;
 };
-
 </script>
 
 <template>
@@ -64,7 +63,7 @@ const closeChildSidebar = () => {
   margin-left: 152px;
   width: calc(100% - 180px);
   min-height: 65px !important;
-  right: 1.75rem;
+  right: 2rem;
 }
 
 .top-navbar-margin {

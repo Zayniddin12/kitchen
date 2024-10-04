@@ -8,32 +8,10 @@ export default [
       layout: "MainLayout",
       breadcrumb: [
         {
-          label: "Главная",
-          isActionable: true,
-        },
-        {
           label: "Справочники",
           isActionable: true,
         },
       ],
-
-    },
-  },
-
-  {
-    path: "/directory",
-    name: "directory",
-    component: () => import("@/modules/Settings/pages/Derictory/index.vue"),
-    meta: {
-      title: "Главная",
-      layout: "MainLayout",
-      breadcrumb: [
-        {
-          label: "Главная",
-          isActionable: true,
-        },
-      ],
-
     },
   },
 
@@ -42,7 +20,7 @@ export default [
     name: "personnel",
     component: () => import("@/modules/Settings/pages/Personnel/index.vue"),
     meta: {
-      title: "Главная",
+      title: "Логи",
       layout: "MainLayout",
       breadcrumb: [
         {

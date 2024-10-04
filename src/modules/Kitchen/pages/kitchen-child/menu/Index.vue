@@ -453,14 +453,14 @@ const activeDate = ref(dateList.value[0].value);
                       >
                         <button class="action-btn">
                           <img
-                              src="../../../../../assets/images/eye.svg"
+                              src="@/assets/images/eye.svg"
                               alt="eye"
                           />
                         </button>
 
                         <button class="action-btn">
                           <img
-                              src="../../../../../assets/images/icons/edit.svg"
+                              src="@/assets/images/icons/edit.svg"
                               alt="edit"
                           />
                         </button>

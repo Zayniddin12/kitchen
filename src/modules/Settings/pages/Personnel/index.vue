@@ -3,7 +3,7 @@
 </script>
 
 <template>
-<div>Personnel</div>
+<div>логи</div>
 </template>
 
 <style scoped lang="scss">

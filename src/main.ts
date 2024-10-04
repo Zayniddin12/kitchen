@@ -6,6 +6,8 @@ import App from "@/App.vue";
 import router from "@/router";
 import "@/assets/styles/style.scss";
 import i18n from '@/localization'
+import Vue3Toasity, { type ToastContainerOptions } from 'vue3-toastify';
+import 'vue3-toastify/dist/index.css';
 
 
 import "external-svg-loader";
@@ -23,4 +25,5 @@ app
   .use(createPinia())
   .use(router)
   .use(i18n)
+  .use(Vue3Toasity as ToastContainerOptions)
   .mount("#app");

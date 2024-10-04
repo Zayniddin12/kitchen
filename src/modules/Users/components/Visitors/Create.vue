@@ -8,7 +8,7 @@ interface CreateBtn {
   icon: string;
 }
 
-const router = useRouter();
+const router = useRouter()
 
 const createBtn = ref<CreateBtn[]>([
   {
@@ -20,8 +20,8 @@ const createBtn = ref<CreateBtn[]>([
     icon: "seria",
   },
 ]);
+const search = ref<string>('')
 const isSearch = ref<boolean>(false);
-const search = ref<string>("");
 </script>
 
 <template>
@@ -39,22 +39,22 @@ const search = ref<string>("");
           <el-button :icon="Search" />
         </template>
         <template #append>
-          <el-button type="primary" @click="router.push('/personal-database-create-form')">
+          <el-button type="primary" @click="router.push('/visitors-create-form')">
             Найти
           </el-button>
         </template>
       </el-input>
     </div>
 
-    <div v-else class="flex items-center gap-6 justify-center h-[60vh]">
+    <div class="flex items-center gap-6 justify-center h-[60vh]" v-else>
       <div
         class="bg-[#F8F9FC] rounded-[24px] w-[300px] h-[200px] flex items-center justify-center flex-col cursor-pointer"
-        v-for="(item, index) in createBtn"
-        :key="index"
+        v-for="item in createBtn"
+        :key="item.title"
         @click="isSearch =! isSearch"
       >
         <svg :data-src="'/sidebar/' + item.icon + '.svg'" width="40px" height="40px" />
-        <h1 class="text-[#4F5662] text-[14px] font-medium mt-[16px]">{{ item.title }}</h1>
+        <h1 class="text-[#4F5662] text-[14px] font-medium mt-[16px]">{{item.title}}</h1>
       </div>
     </div>
   </div>
