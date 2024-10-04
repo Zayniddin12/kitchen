@@ -137,7 +137,7 @@ const tableData = computed(() => {
     &__table{
 
       &__dropdown{
-        .el-tooltip__trigger{
+        .el-tooltip__trigger:hover{
           outline: unset !important;
         }
       }

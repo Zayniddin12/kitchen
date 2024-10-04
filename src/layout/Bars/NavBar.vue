@@ -1,4 +1,7 @@
-<script setup lang="ts">
+<script
+    setup
+    lang="ts"
+>
 import { Bell, Message, Search } from "@element-plus/icons-vue";
 import Language from "@/components/language/index.vue";
 import MemoModal from "@/layout/Create/components/MemoModal.vue";
@@ -21,15 +24,15 @@ const dropdown = ref<any>(null);
 const navbarMenuList = [
   {
     id: 1,
-    title: "Служебная записка",
+    title: "Служебная записка"
   },
   {
     id: 2,
-    title: "Приход",
+    title: "Приход"
   },
   {
     id: 3,
-    title: "Расход",
+    title: "Расход"
   },
   {
     id: 4,
@@ -37,18 +40,18 @@ const navbarMenuList = [
     children: [
       {
         id: 5,
-        title: "Свободный",
+        title: "Свободный"
       },
       {
         id: 6,
-        title: "Месячный",
+        title: "Месячный"
       },
       {
         id: 7,
-        title: "Годовой",
-      },
-    ],
-  },
+        title: "Годовой"
+      }
+    ]
+  }
 ];
 
 const openModals = (data) => {
@@ -77,86 +80,111 @@ const openModals = (data) => {
   <div class="flex justify-between items-start">
     <div class="relative">
       <el-icon
-        class="absolute top-[50%] translate-y-[-50%] left-[19px] z-9999"
-        color="#8F9194"
+          class="absolute top-[50%] translate-y-[-50%] left-[19px] z-9999"
+          color="#8F9194"
       >
-        <Search />
+        <Search/>
       </el-icon>
       <input
-        class="bg-white-blue w-[552px] rounded-2xl text-black px-[16px] py-[12px] pl-[50px] outline-none"
-        placeholder="Поиск"
+          class="bg-white-blue w-[552px] rounded-2xl text-black px-[16px] py-[12px] pl-[50px] outline-none"
+          placeholder="Поиск"
       />
     </div>
     <div class="flex items-center gap-6">
-      <el-dropdown trigger="click" :hide-on-click="false" ref="dropdown">
+      <el-dropdown
+          trigger="click"
+          :hide-on-click="false"
+          ref="dropdown"
+      >
         <button
-          class="flex items-center bg-[#2E90FA] rounded-[8px] border-[1.5px] py-[10px] px-[20px] active:bg-[#175CD3] active:border-[#1849A9] active:border-[1.5px]"
+            class="flex items-center bg-[#2E90FA] rounded-[8px] border-[1.5px] py-[10px] px-[20px] active:bg-[#175CD3] active:border-[#1849A9] active:border-[1.5px]"
         >
           <svg
-            class="mr-[8px]"
-            width="20"
-            height="20"
-            viewBox="0 0 20 20"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
+              class="mr-[8px]"
+              width="20"
+              height="20"
+              viewBox="0 0 20 20"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
           >
             <rect
-              x="3.3335"
-              y="3.33301"
-              width="13.3333"
-              height="13.3333"
-              rx="2"
-              stroke="white"
-              stroke-width="1.2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
+                x="3.3335"
+                y="3.33301"
+                width="13.3333"
+                height="13.3333"
+                rx="2"
+                stroke="white"
+                stroke-width="1.2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
             />
             <path
-              d="M7.5 9.99967H12.5"
-              stroke="white"
-              stroke-width="1.2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
+                d="M7.5 9.99967H12.5"
+                stroke="white"
+                stroke-width="1.2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
             />
             <path
-              d="M10.0002 7.5V12.5"
-              stroke="white"
-              stroke-width="1.2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
+                d="M10.0002 7.5V12.5"
+                stroke="white"
+                stroke-width="1.2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
             />
           </svg>
 
-          <span style="vertical-align: middle" class="text-white"> Создать </span>
+          <span
+              style="vertical-align: middle"
+              class="text-white"
+          > Создать </span>
         </button>
         <template #dropdown>
           <el-dropdown-menu class="navbar-dropdown">
-            <el-dropdown-item class="item-drop" v-for="item in navbarMenuList">
-              <button @click="openModals(item)" v-if="!item.children"
-                      class="flex items-center justify-between p-[10px] w-full">
+            <el-dropdown-item
+                class="item-drop"
+                v-for="item in navbarMenuList"
+            >
+              <button
+                  @click="openModals(item)"
+                  v-if="!item.children"
+                  class="flex items-center justify-between p-[10px] w-full"
+              >
                 <span class="text-[#4F5662] text-[14px] font-medium mr-[4px]">{{ item.title }}</span>
                 <img
-                  src="@/assets/arrow-right.svg"
-                  alt="arrow icon"
+                    src="@/assets/arrow-right.svg"
+                    alt="arrow icon"
                 />
               </button>
-              <el-dropdown trigger="click" class="w-full" placement="right-start" popper-class="custom-dropdown" v-else>
+              <el-dropdown
+                  trigger="click"
+                  class="w-full"
+                  placement="right-start"
+                  popper-class="custom-dropdown"
+                  v-else
+              >
                 <button class="flex items-center justify-between p-[10px] w-full">
                   <span class="text-[#4F5662] text-[14px] font-medium mr-[4px]">{{ item.title }}</span>
                   <img
-                    src="@/assets/arrow-right.svg"
-                    alt="arrow icon"
+                      src="@/assets/arrow-right.svg"
+                      alt="arrow icon"
                   />
                 </button>
 
                 <template #dropdown>
                   <el-dropdown-menu class="navbar-dropdown right-[20px]">
-                    <el-dropdown-item class="item-drop" v-for="child in item.children">
-                      <button @click="openModals(child)" class="flex items-center justify-between p-[10px] w-full">
+                    <el-dropdown-item
+                        class="item-drop"
+                        v-for="child in item.children"
+                    >
+                      <button
+                          @click="openModals(child)"
+                          class="flex items-center justify-between p-[10px] w-full"
+                      >
                         <span class="text-[#4F5662] text-[14px] font-medium mr-12">{{ child.title }}</span>
                         <img
-                          src="@/assets/arrow-right.svg"
-                          alt="arrow icon"
+                            src="@/assets/arrow-right.svg"
+                            alt="arrow icon"
                         />
                       </button>
                     </el-dropdown-item>
@@ -171,33 +199,37 @@ const openModals = (data) => {
       </el-dropdown>
 
       <el-badge
-        value="18"
-        class="item"
+          value="18"
+          class="item"
       >
         <el-icon
-          color="#8F9194"
-          size="24"
+            color="#8F9194"
+            size="24"
         >
-          <Bell />
+          <Bell/>
         </el-icon>
       </el-badge>
 
       <el-badge
-        value="18"
-        class="item"
+          value="18"
+          class="item"
       >
         <el-icon
-          color="#8F9194"
-          size="24"
+            color="#8F9194"
+            size="24"
         >
-          <Message />
+          <Message/>
         </el-icon>
       </el-badge>
 
-      <Language />
+      <Language/>
 
       <div class="flex items-center gap-3 el-dropdown-link">
-        <img src="@/assets/images/avatar.png" class="h-[40px] w-[40px] object-contain rounded-full" alt="avatar"/>
+        <img
+            src="@/assets/images/avatar.png"
+            class="h-[40px] w-[40px] object-contain rounded-full"
+            alt="avatar"
+        />
         <div class="">
           <h2 class="m-0 text-[14px] font-medium text-black">
             Мухаммадамин Нурматов
@@ -206,12 +238,12 @@ const openModals = (data) => {
         </div>
       </div>
     </div>
-    <MemoModal v-model:editModal="editModal" />
-    <ComingModal v-model:editModal="editModal2" />
-    <ConsumptionModal v-model:editModal="editConsumptionModal" />
-    <FreeModal v-model:editModal="freeModal" />
-    <MonthlyModal v-model:editModal="monthlyModal" />
-    <YearlyModal v-model:editModal="yearlyModal" />
+    <MemoModal v-model:editModal="editModal"/>
+    <ComingModal v-model:editModal="editModal2"/>
+    <ConsumptionModal v-model:editModal="editConsumptionModal"/>
+    <FreeModal v-model:editModal="freeModal"/>
+    <MonthlyModal v-model:editModal="monthlyModal"/>
+    <YearlyModal v-model:editModal="yearlyModal"/>
   </div>
 </template>
 

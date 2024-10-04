@@ -147,6 +147,7 @@ const tableData = computed(() => {
                 placeholder="дд.мм.гггг"
                 format="DD.MM.YYYY"
                 class="w-[141px] mt-3"
+                icon-position="start"
             />
             <ElSwitch
                 v-model="intermediateDate1"
