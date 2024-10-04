@@ -20,13 +20,15 @@ const boxes = computed(() => {
       id: 2,
       icon: kitchenIcon,
       title: "Рационы",
-      description: "80 рационов"
+      description: "80 рационов",
+      link: {name: "KitchenRation"}
     },
     {
       id: 3,
       icon: calculatorIcon,
       title: "Калькулятор",
-      description: "Расчет"
+      description: "Расчет",
+      link: {name: "KitchenCalculator"}
     }
   ];
 });

@@ -312,6 +312,78 @@ export default [
                                     }
 
                                 ]
+                            },
+                            {
+                                path: "ration",
+                                name: "KitchenRation",
+                                component: () => import("@/modules/Kitchen/pages/kitchen-child/KitchenRation.vue"),
+                                beforeEnter: (to, from, next) => {
+                                    const kitchenStore = useKitchenStore();
+
+                                    kitchenStore.fetchPart(+to.params.department_id, +to.params.part_id);
+
+                                    if (!kitchenStore.part) return next({ name: "notFound" });
+
+                                    to.meta.breadcrumb = [
+                                        {
+                                            label: "Кухня"
+                                        },
+                                        {
+                                            label: kitchenStore.part.name
+                                        },
+                                        {
+                                            label: kitchenStore.part.department_name
+                                        },
+                                        {
+                                            label: "Лагерь"
+                                        },
+                                        {
+                                            label: "Паҳлавон"
+                                        },
+                                        {
+                                            label: "Рационы",
+                                            isActionable: true
+                                        }
+                                    ];
+
+                                    next();
+                                }
+                            },
+                            {
+                                path: "calculator",
+                                name: "KitchenCalculator",
+                                component: () => import("@/modules/Kitchen/pages/kitchen-child/KitchenCalculator.vue"),
+                                beforeEnter: (to, from, next) => {
+                                    const kitchenStore = useKitchenStore();
+
+                                    kitchenStore.fetchPart(+to.params.department_id, +to.params.part_id);
+
+                                    if (!kitchenStore.part) return next({ name: "notFound" });
+
+                                    to.meta.breadcrumb = [
+                                        {
+                                            label: "Кухня"
+                                        },
+                                        {
+                                            label: kitchenStore.part.name
+                                        },
+                                        {
+                                            label: kitchenStore.part.department_name
+                                        },
+                                        {
+                                            label: "Лагерь"
+                                        },
+                                        {
+                                            label: "Паҳлавон"
+                                        },
+                                        {
+                                            label: "Калькулятор",
+                                            isActionable: true
+                                        }
+                                    ];
+
+                                    next();
+                                }
                             }
                         ]
                     }
