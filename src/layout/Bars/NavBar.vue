@@ -138,16 +138,16 @@ const openModals = (data) => {
 
       <el-badge
         value="18"
-        class="item"
+        class="item cursor-pointer"
       >
-        <img src="@/assets/images/icons/bell.svg" alt="">
+        <img src="@/assets/images/icons/bell.svg" alt="bell" />
       </el-badge>
 
       <el-badge
         value="18"
-        class="item"
+        class="item cursor-pointer"
       >
-        <img src="@/assets/images/icons/mail.svg" alt="">
+        <img src="@/assets/images/icons/mail.svg" alt="mail" />
       </el-badge>
 
       <!--      <Language />-->
