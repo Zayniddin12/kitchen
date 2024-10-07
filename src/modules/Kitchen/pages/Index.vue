@@ -20,7 +20,7 @@ const kitchenStore = useKitchenStore();
 
 
 onBeforeRouteUpdate((to, from, next) => {
-  kitchenStore.fetchPart(+to.params.department_id, +to.params.part_id);
+  kitchenStore.fetchPart(+to.params.department_id, to.params.part_name);
 
   if (!kitchenStore.part) return next({ name: "notFound" });
 

@@ -2,7 +2,7 @@ import { useKitchenStore } from "@/modules/Kitchen/store/kitchen.store";
 
 export default [
   {
-    path: "/kitchen/:department_id(\\d+)/:part_id(\\d+)",
+    path: "/kitchen/:department_id(\\d+)/:part_name",
     name: "Kitchen",
     meta: {
       title: "Кухня",
@@ -16,8 +16,7 @@ export default [
         beforeEnter: (to, from, next) => {
           const kitchenStore = useKitchenStore();
 
-          kitchenStore.fetchPart(+to.params.department_id, +to.params.part_id);
-
+          kitchenStore.fetchPart(+to.params.department_id, to.params.part_name);
 
           if (!kitchenStore.part) return next({ name: "notFound" });
 
@@ -49,7 +48,7 @@ export default [
             beforeEnter: (to, from, next) => {
               const kitchenStore = useKitchenStore();
 
-              kitchenStore.fetchPart(+to.params.department_id, +to.params.part_id);
+              kitchenStore.fetchPart(+to.params.department_id, to.params.part_name);
 
               if (!kitchenStore.part) return next({ name: "notFound" });
 
@@ -84,7 +83,7 @@ export default [
                 beforeEnter: (to, from, next) => {
                   const kitchenStore = useKitchenStore();
 
-                  kitchenStore.fetchPart(+to.params.department_id, +to.params.part_id);
+                  kitchenStore.fetchPart(+to.params.department_id, to.params.part_name);
 
                   if (!kitchenStore.part) return next({ name: "notFound" });
 
@@ -122,7 +121,7 @@ export default [
                     beforeEnter: (to, from, next) => {
                       const kitchenStore = useKitchenStore();
 
-                      kitchenStore.fetchPart(+to.params.department_id, +to.params.part_id);
+                      kitchenStore.fetchPart(+to.params.department_id, to.params.part_name);
 
                       if (!kitchenStore.part) return next({ name: "notFound" });
 
@@ -158,7 +157,7 @@ export default [
                     beforeEnter: (to, from, next) => {
                       const kitchenStore = useKitchenStore();
 
-                      kitchenStore.fetchPart(+to.params.department_id, +to.params.part_id);
+                      kitchenStore.fetchPart(+to.params.department_id, to.params.part_name);
 
                       if (!kitchenStore.part) return next({ name: "notFound" });
 
@@ -197,7 +196,7 @@ export default [
                     beforeEnter: (to, from, next) => {
                       const kitchenStore = useKitchenStore();
 
-                      kitchenStore.fetchPart(+to.params.department_id, +to.params.part_id);
+                      kitchenStore.fetchPart(+to.params.department_id, to.params.part_name);
 
                       if (!kitchenStore.part) return next({ name: "notFound" });
 
@@ -236,7 +235,7 @@ export default [
                     beforeEnter: (to, from, next) => {
                       const kitchenStore = useKitchenStore();
 
-                      kitchenStore.fetchPart(+to.params.department_id, +to.params.part_id);
+                      kitchenStore.fetchPart(+to.params.department_id, to.params.part_name);
 
                       if (!kitchenStore.part) return next({ name: "notFound" });
                       to.meta.title = "Продать";
@@ -277,7 +276,7 @@ export default [
                     beforeEnter: (to, from, next) => {
                       const kitchenStore = useKitchenStore();
 
-                      kitchenStore.fetchPart(+to.params.department_id, +to.params.part_id);
+                      kitchenStore.fetchPart(+to.params.department_id, to.params.part_name);
 
                       if (!kitchenStore.part) return next({ name: "notFound" });
                       to.meta.title = "Приготовление блюда";
@@ -320,7 +319,7 @@ export default [
                 beforeEnter: (to, from, next) => {
                   const kitchenStore = useKitchenStore();
 
-                  kitchenStore.fetchPart(+to.params.department_id, +to.params.part_id);
+                  kitchenStore.fetchPart(+to.params.department_id, to.params.part_name);
 
                   if (!kitchenStore.part) return next({ name: "notFound" });
 
@@ -356,7 +355,7 @@ export default [
                 beforeEnter: (to, from, next) => {
                   const kitchenStore = useKitchenStore();
 
-                  kitchenStore.fetchPart(+to.params.department_id, +to.params.part_id);
+                  kitchenStore.fetchPart(+to.params.department_id, to.params.part_name);
 
                   if (!kitchenStore.part) return next({ name: "notFound" });
                   to.meta.title = "Калькулятор";
