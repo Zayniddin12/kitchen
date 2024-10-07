@@ -880,16 +880,12 @@ onBeforeUnmount(() => {
       </div>
     </div>
     <Teleport to="body">
-      <Transition
-          name="nested"
-          :duration="{ enter: 500, leave: 1500 }"
-      >
         <div
             v-show="activeTab === TABS.CURRENT && ordersModal"
             ref="ordersWrapper"
-            class="fixed bottom-0 py-6 right-0 w-full z-[100] bg-white shadow-[0_0_3px_-1px_#0A090B0A]"
+            class="fixed bottom-0 pt-6 right-0 w-full z-[100] bg-white shadow-[0_0_3px_-1px_#0A090B0A]"
         >
-          <div class="flex items-center justify-between px-6">
+          <div class="flex items-center justify-between px-6 pb-4">
             <h4 class="text-2xl text-black font-semibold">Заказы</h4>
             <div class="flex items-center">
               <h6 class="text-lg text-dark font-semibold mr-6">
@@ -913,7 +909,7 @@ onBeforeUnmount(() => {
           </div>
           <div
               v-if="orders.length>0"
-              class="grid grid-cols-5 gap-x-12 gap-y-10 mt-8 max-h-[220px] overflow-y-auto px-6"
+              class="grid grid-cols-5 gap-x-12 gap-y-10 max-h-[220px] overflow-y-auto px-6 pb-6 pt-4"
           >
             <div
                 v-for="item in orders"
@@ -970,7 +966,6 @@ onBeforeUnmount(() => {
             </div>
           </div>
         </div>
-      </Transition>
     </Teleport>
   </section>
 </template>
