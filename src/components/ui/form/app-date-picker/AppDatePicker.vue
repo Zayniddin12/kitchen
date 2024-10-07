@@ -101,12 +101,12 @@ const icon = shallowRef({
   &__date-picker {
     --el-date-editor-width: 100%;
 
-    &-icon{
-      &--end .el-input__wrapper{
+    &-icon {
+      &--end .el-input__wrapper {
         flex-direction: row-reverse;
       }
 
-      &--start .el-input__inner{
+      &--start .el-input__inner {
         padding-left: 7px;
       }
     }
