@@ -1,98 +1,154 @@
 <script setup lang="ts">
-import { useRoute } from "vue-router";
+import { ref } from "vue";
+import { useRouter } from "vue-router";
 
-const route = useRoute();
+interface MenuInterface {
+  title: string;
+  subTitle: string;
+}
+
+interface UlItems {
+  title: string;
+  menu: MenuInterface;
+}
+
+const router = useRouter()
+
+const ulItems = ref<UlItems[]>([
+  {
+    title: "Документы",
+    menu: [
+      {
+        title: "Типы документов",
+        subTitle: "Типы документов",
+        router: 'reference-type-document',
+      },
+      {
+        title: "Виды документов",
+        subTitle: "Виды документов",
+        router: 'reference-vid-document',
+      },
+    ],
+  },
+  {
+    title: "Продукты",
+    menu: [
+      {
+        title: "Типы документов",
+        subTitle: "Типы документов",
+      },
+      {
+        title: "Виды документов",
+        subTitle: "Виды документов",
+      },
+    ],
+  },
+  {
+    title: "Рационы и блюда",
+    menu: [
+      {
+        title: "Рационы",
+        subTitle: "Рационы",
+      },
+      {
+        title: "Блюда",
+        subTitle: "Блюда",
+      },
+    ],
+  },
+  {
+    title: "Базы и Склады",
+    menu: [
+      {
+        title: "Региональные управления",
+        subTitle: "Региональные управления",
+      },
+      {
+        title: "Комбинаты питания",
+        subTitle: "Комбинаты питания",
+      },
+      {
+        title: "Базы складов",
+        subTitle: "Базы складов",
+      },
+      {
+        title: "Склады базы",
+        subTitle: "Склады",
+      },
+      {
+        title: "Склады кухни",
+        subTitle: "Склады кухни",
+      },
+      {
+        title: "Типы кухни",
+        subTitle: "Типы кухни",
+      },
+    ],
+  },
+  {
+    title: "Должности и роли",
+    menu: [
+      {
+        title: "Типы документов",
+        subTitle: "Типы документов",
+      },
+      {
+        title: "Виды документов",
+        subTitle: "Виды документов",
+      },
+    ],
+  },
+  {
+    title: "Поставщики и организации",
+    menu: [
+      {
+        title: "Поставщики",
+        subTitle: "Поставщики",
+      },
+      {
+        title: "Организации",
+        subTitle: "Организации",
+      },
+    ],
+  },
+]);
+
+const detailPage = (value: any) => {
+  router.push(value.router)
+}
 </script>
 
 <template>
-  <div class="grid grid-cols-3 gap-8 p-10">
-    <!-- Section 1 -->
-    <div class="space-y-2">
-      <h3 class="text-blue-600 font-semibold flex items-center">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M12 4.8V12m0 0v7.2M12 12H4.8M12 12h7.2M20 12A8 8 0 1 1 12 4a8 8 0 0 1 8 8z"></path>
-        </svg>
-        Документы
-      </h3>
-      <ul class="text-gray-600">
-        <li>Типы документов</li>
-        <li>Виды документов</li>
-      </ul>
-    </div>
+  <div>
+    <h1 class="m-0 font-semibold text-[32px] leading-[48px]">Справочники</h1>
 
-    <!-- Section 2 -->
-    <div class="space-y-2">
-      <h3 class="text-blue-600 font-semibold flex items-center">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M12 4.8V12m0 0v7.2M12 12H4.8M12 12h7.2M20 12A8 8 0 1 1 12 4a8 8 0 0 1 8 8z"></path>
-        </svg>
-        Продукты
-      </h3>
-      <ul class="text-gray-600">
-        <li>Типы документов</li>
-        <li>Виды документов</li>
-      </ul>
-    </div>
+    <div class="grid grid-cols-3 gap-8 mt-[24px]">
+      <div
+        class="space-y-2 mb-[84px]"
+        v-for="(item, index) in ulItems"
+        :key="index"
+      >
+        <h3 class="text-[#2E90FA] font-medium text-[18px] flex items-center leading-[28px]">
+          <svg data-src="/sidebar/document.svg" class="svg__class mr-[12px]" width="24px" height="24px" />
+          {{ item.title }}
+        </h3>
 
-    <!-- Section 3 -->
-    <div class="space-y-2">
-      <h3 class="text-blue-600 font-semibold flex items-center">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M12 4.8V12m0 0v7.2M12 12H4.8M12 12h7.2M20 12A8 8 0 1 1 12 4a8 8 0 0 1 8 8z"></path>
-        </svg>
-        Рационы и блюда
-      </h3>
-      <ul class="text-gray-600">
-        <li>Рационы</li>
-        <li>Блюда</li>
-      </ul>
-    </div>
-
-    <!-- Section 4 -->
-    <div class="space-y-2">
-      <h3 class="text-blue-600 font-semibold flex items-center">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M12 4.8V12m0 0v7.2M12 12H4.8M12 12h7.2M20 12A8 8 0 1 1 12 4a8 8 0 0 1 8 8z"></path>
-        </svg>
-        Базы и Склады
-      </h3>
-      <ul class="text-gray-600">
-        <li>Региональные управления</li>
-        <li>Комбинаты питания</li>
-        <li>Базы складов</li>
-        <li>Склады базы</li>
-        <li>Склады кухни</li>
-        <li>Типы кухни</li>
-      </ul>
-    </div>
-
-    <!-- Section 5 -->
-    <div class="space-y-2">
-      <h3 class="text-blue-600 font-semibold flex items-center">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M12 4.8V12m0 0v7.2M12 12H4.8M12 12h7.2M20 12A8 8 0 1 1 12 4a8 8 0 0 1 8 8z"></path>
-        </svg>
-        Должности и роли
-      </h3>
-      <ul class="text-gray-600">
-        <li>Типы документов</li>
-        <li>Виды документов</li>
-      </ul>
-    </div>
-
-    <!-- Section 6 -->
-    <div class="space-y-2">
-      <h3 class="text-blue-600 font-semibold flex items-center">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M12 4.8V12m0 0v7.2M12 12H4.8M12 12h7.2M20 12A8 8 0 1 1 12 4a8 8 0 0 1 8 8z"></path>
-        </svg>
-        Поставщики и организации
-      </h3>
-      <ul class="text-gray-600">
-        <li>Поставщики</li>
-        <li>Организации</li>
-      </ul>
+        <ul
+          class="ml-[36px] mt-[15px]"
+          v-for="(menu, index2) in item.menu"
+          :key="index2"
+          @click="detailPage(menu)"
+        >
+          <li class="text-[#4F5662] text-[14px] font-medium leading-[20px] cursor-pointer hover:underline hover:decoration-[#2E90FA] hover:text-[#2E90FA]">{{ menu.title }}</li>
+          <li class="text-[12px] text-[#A8AAAE] font-normal mt-[4px] leading-[16px] cursor-pointer">{{ menu.subTitle }}</li>
+        </ul>
+      </div>
     </div>
   </div>
 </template>
 
+<style>
+.svg__class path {
+  stroke: #2E90FA;
+}
+</style>

@@ -35,7 +35,7 @@ const onSubmit = async () => {
   } else {
     await router.push("/home");
     toast.success('Успешно')
-    localStorage.setItem("current-menu", "0");
+    localStorage.setItem("current-menu", 0);
   }
 };
 </script>
@@ -144,7 +144,6 @@ const onSubmit = async () => {
             alt="oneId"
           />
         </button>
-
     </div>
 
     <!-- Footer Section -->

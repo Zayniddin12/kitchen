@@ -8,12 +8,76 @@ export default [
       layout: "MainLayout",
       breadcrumb: [
         {
+          label: "Настройки",
+          isActionable: false,
+        },
+        {
           label: "Справочники",
           isActionable: true,
         },
       ],
     },
   },
+  {
+    path: "/reference-type-document",
+    name: "reference-type-document",
+    component: () => import("@/modules/Settings/components/Reference/TypeDocument.vue"),
+    meta: {
+      title: "Типы документов",
+      layout: "MainLayout",
+      breadcrumb: [
+        {
+          label: "Настройки",
+          isActionable: false,
+        },
+        {
+          label: "Справочники",
+          isActionable: false,
+          to: 'reference'
+        },
+        {
+          label: "Документы",
+          isActionable: false,
+          to: 'reference'
+        },
+        {
+          label: "Типы документов",
+          isActionable: true,
+        },
+      ],
+    },
+  },
+  {
+    path: "/reference-vid-document",
+    name: "reference-vid-document",
+    component: () => import("@/modules/Settings/components/Reference/VidDocument.vue"),
+    meta: {
+      title: "Виды документов",
+      layout: "MainLayout",
+      breadcrumb: [
+        {
+          label: "Настройки",
+          isActionable: false,
+        },
+        {
+          label: "Справочники",
+          isActionable: false,
+          to: 'reference'
+        },
+        {
+          label: "Виды документов",
+          isActionable: false,
+          to: 'reference'
+        },
+        {
+          label: "Типы документов",
+          isActionable: true,
+        },
+      ],
+    },
+  },
+
+
 
   {
     path: "/personnel",

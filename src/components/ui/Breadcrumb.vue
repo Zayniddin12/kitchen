@@ -43,7 +43,7 @@ const handleClickHome = () => {
 </script>
 
 <template>
-  <div class="mb-[24px] md:mt-0 -mt-5">
+  <div class="mb-[26px] md:mt-0 -mt-5">
     <div class="flex flex-wrap">
       <button
         @click="handleClickHome"
@@ -51,6 +51,7 @@ const handleClickHome = () => {
       >
         <img
           src="@/assets/home-breadcrumb.svg"
+          class="h-[20px] w-[20px]"
           alt="home icon"
         />
       </button>
@@ -66,9 +67,9 @@ const handleClickHome = () => {
           />
         </span>
         <p
-          class="dark:text-gray-300 text-dark"
+          class="text-[#A8AAAE] font-medium text-[12px] leading-[16px]"
           :class="{
-            'text-dark-gray dark:text-primary': breadcrumb.isActionable,
+            'text-[#4F5662] dark:text-primary': breadcrumb.isActionable,
             'cursor-pointer': breadcrumb.to,
           }"
           @click="changeRoute(breadcrumb)"
