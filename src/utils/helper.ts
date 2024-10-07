@@ -5,3 +5,8 @@ export const formatDate = (date: Date) => {
   const day = String(date.getDate()).padStart(2, '0');
   return `${day}.${month}.${year}`;
 }
+
+export const formatNumber = (value: number, format = ' ') => {
+  if(!value) return 0;
+  return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, `${format}`);
+}

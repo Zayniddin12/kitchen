@@ -92,6 +92,8 @@ const onSubmit = async () => {
         <!-- Password Input -->
         <app-input
           v-model="userData.password"
+          type="password"
+          show-password
           placeholder="Введите"
           label="Пароль"
           label-class="text-[#A8AAAE] text-sm"
