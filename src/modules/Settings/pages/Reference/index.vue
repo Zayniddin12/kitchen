@@ -12,7 +12,7 @@ interface UlItems {
   menu: MenuInterface;
 }
 
-const router = useRouter()
+const router = useRouter();
 
 const ulItems = ref<UlItems[]>([
   {
@@ -21,12 +21,12 @@ const ulItems = ref<UlItems[]>([
       {
         title: "Типы документов",
         subTitle: "Типы документов",
-        router: 'reference-type-document',
+        router: "reference-type-document",
       },
       {
         title: "Виды документов",
         subTitle: "Виды документов",
-        router: 'reference-vid-document',
+        router: "reference-vid-document",
       },
     ],
   },
@@ -62,18 +62,22 @@ const ulItems = ref<UlItems[]>([
       {
         title: "Региональные управления",
         subTitle: "Региональные управления",
+        router: "reference-regional-directorates",
       },
       {
         title: "Комбинаты питания",
         subTitle: "Комбинаты питания",
+        router: "reference-combine-nutrition",
       },
       {
         title: "Базы складов",
         subTitle: "Базы складов",
+        router: "reference-warehouse-bases",
       },
       {
         title: "Склады базы",
         subTitle: "Склады",
+        router: "reference-main-bases",
       },
       {
         title: "Склады кухни",
@@ -114,8 +118,8 @@ const ulItems = ref<UlItems[]>([
 ]);
 
 const detailPage = (value: any) => {
-  router.push(value.router)
-}
+  router.push(value.router);
+};
 </script>
 
 <template>
@@ -139,8 +143,13 @@ const detailPage = (value: any) => {
           :key="index2"
           @click="detailPage(menu)"
         >
-          <li class="text-[#4F5662] text-[14px] font-medium leading-[20px] cursor-pointer hover:underline hover:decoration-[#2E90FA] hover:text-[#2E90FA]">{{ menu.title }}</li>
-          <li class="text-[12px] text-[#A8AAAE] font-normal mt-[4px] leading-[16px] cursor-pointer">{{ menu.subTitle }}</li>
+          <li
+            class="text-[#4F5662] text-[14px] font-medium leading-[20px] cursor-pointer hover:underline hover:decoration-[#2E90FA] hover:text-[#2E90FA]">
+            {{ menu.title }}
+          </li>
+          <li class="text-[12px] text-[#A8AAAE] font-normal mt-[4px] leading-[16px] cursor-pointer">{{ menu.subTitle
+            }}
+          </li>
         </ul>
       </div>
     </div>
