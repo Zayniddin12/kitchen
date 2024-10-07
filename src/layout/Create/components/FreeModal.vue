@@ -52,6 +52,13 @@ const closeModal = () => {
 
           <div class="flex items-baseline mb-[24px]">
             <h1 class=" text-[14px] font-medium">
+              <span class="text-[#4F5662] font-semibold">Получатель: </span>
+              <span class="text-[#A8AAAE] ml-2">«Фонд НКМК» ДМ «Навоийской» областной администрации, руководитель комплекса общественного питания Баракаеву Д.</span>
+            </h1>
+          </div>
+
+          <div class="flex items-baseline mb-[24px]">
+            <h1 class=" text-[14px] font-medium">
               <span class="text-[#4F5662] font-semibold">Тип запроса:</span>
               <span class="text-[#A8AAAE] ml-2">Полученные</span>
             </h1>
@@ -88,21 +95,27 @@ const closeModal = () => {
 
       <div class="w-[35%] ml-[24px] flex flex-col justify-between">
         <div>
-          <app-input placeholder="Накладние" />
+          <app-input placeholder="Накладние" label="Накладние"
+                     label-class="text-[#A8AAAE] text-[12px] font-medium"/>
 
           <app-input placeholder="Z 04-04-01/463" />
 
           <app-date-picker placeholder="24.08.2024" />
 
-          <app-select placeholder="Получатель" />
+          <app-select placeholder="Получатель" label="Получатель"
+                      label-class="text-[#A8AAAE] text-[12px] font-medium"/>
 
-          <app-input placeholder="Полученные" />
+          <app-input placeholder="Полученные" label="Полученные"
+                     label-class="text-[#A8AAAE] text-[12px] font-medium"/>
 
-          <app-input placeholder="Тема" />
+          <app-input placeholder="Тема" label="Тема"
+                     label-class="text-[#A8AAAE] text-[12px] font-medium"/>
 
-          <app-input placeholder="Содержание запроса" type="textarea" :rows="5" />
+          <app-input placeholder="Содержание запроса" type="textarea" :rows="5" label="Содержание запроса"
+                     label-class="text-[#A8AAAE] text-[12px] font-medium"/>
 
-          <app-input placeholder="Отправитель" />
+          <app-input placeholder="Отправитель" label="Отправитель"
+                     label-class="text-[#A8AAAE] text-[12px] font-medium"/>
         </div>
 
         <div class="flex items-start justify-between">
