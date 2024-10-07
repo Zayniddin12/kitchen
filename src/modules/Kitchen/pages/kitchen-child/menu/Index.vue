@@ -329,7 +329,7 @@ onBeforeUnmount(() => {
               </ElButton>
             </template>
           </template>
-          <template v-if="kitchenStore.activeSalesPart">
+          <template v-if="kitchenStore.activeSalesPart && activeTab === TABS.ALL">
             <ElButton
                 class="min-h-12 w-[253px] !bg-[#E2E6F3] border-none"
                 size="large"
