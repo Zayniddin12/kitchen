@@ -21,28 +21,6 @@ const route = useRoute();
 const router = useRouter();
 const kitchenStore = useKitchenStore();
 
-
-onBeforeRouteUpdate((to, from, next) => {
-  kitchenStore.fetchPart(+to.params.department_id, to.params.part_name as string);
-
-  if (!kitchenStore.part) return next({ name: "notFound" });
-
-  to.meta.breadcrumb = [
-    {
-      label: "Кухня",
-    },
-    {
-      label: kitchenStore.part.name,
-    },
-    {
-      label: kitchenStore.part.department_name,
-      isActionable: true,
-    },
-  ];
-
-  next();
-});
-
 const boxes = computed(() => {
   return [
     {
@@ -84,28 +62,28 @@ const boxes = computed(() => {
   ];
 });
 
-onMounted(() => {
+const setBreadcrumbFn = () => {
   kitchenStore.fetchPart(+route.params.department_id, route.params.part_name as string);
 
-  if (kitchenStore.part) {
-    setBreadCrumb([
-      {
-        label: "Кухня",
-      },
-      {
-        label: kitchenStore.part.name,
-        click: () => {
-          console.log("Hello");
-        }
-      },
-      {
-        label: kitchenStore.part.department_name,
-        isActionable: true,
-        to: {name: "home"}
-      },
-    ]);
-  }
-});
+  if (!kitchenStore.part) return;
+
+  setBreadCrumb([
+    {
+      label: "Кухня",
+    },
+    {
+      label: kitchenStore.part.name,
+    },
+    {
+      label: kitchenStore.part.department_name,
+      isActionable: true,
+    },
+  ]);
+};
+
+watch(() => route.params, () => {
+  setBreadcrumbFn();
+}, { immediate: true });
 
 </script>
 

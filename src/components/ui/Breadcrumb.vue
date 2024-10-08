@@ -1,4 +1,7 @@
-<script lang="ts" setup>
+<script
+  lang="ts"
+  setup
+>
 import { computed, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 
@@ -33,17 +36,20 @@ watch(
   () => route.params,
   (newParams, oldParams) => {
     console.log(`Route params changed from ${oldParams.title} to ${newParams.title}`);
-  }
+  },
 );
 
 const handleClickHome = () => {
-  router.push('/home')
-  localStorage.setItem('current-menu', "0")
-}
+  router.push("/home");
+  localStorage.setItem("current-menu", "0");
+};
 </script>
 
 <template>
-  <div class="mb-[26px] md:mt-0 -mt-5">
+  <div
+    v-if="breadcrumbList.length>0"
+    class="mb-[26px] md:mt-0 -mt-5"
+  >
     <div class="flex flex-wrap">
       <button
         @click="handleClickHome"

@@ -17,6 +17,9 @@ import EditIcon from "@/assets/images/icons/edit.svg";
 import MinusIcon from "@/assets/images/icons/minus.svg";
 import Plus3Icon from "@/assets/images/icons/plus3.svg";
 import RefreshIcon from "@/assets/images/icons/refresh.svg";
+import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
+
+const {setBreadCrumb} = useBreadcrumb();
 
 const kitchenStore = useKitchenStore();
 const route = useRoute();
@@ -56,6 +59,37 @@ onBeforeRouteUpdate((to, from, next) => {
   ];
   next();
 });
+
+const setBreadCrumbFn = () => {
+  kitchenStore.fetchPart(+route.params.department_id, route.params.part_name as string);
+
+  if(!kitchenStore.part) return
+
+  setBreadCrumb([
+    {
+      label: "Кухня",
+    },
+    {
+      label: kitchenStore.part.name,
+    },
+    {
+      label: kitchenStore.part.department_name,
+      to: { name: "KitchenIndex" },
+    },
+    {
+      label: "Лагерь",
+      to: {name: "KitchenShowIndex"}
+    },
+    {
+      label: "Паҳлавон",
+      to: {name: "KitchenShowChildIndex"}
+    },
+    {
+      label: "Меню",
+      isActionable: true,
+    }
+  ])
+}
 
 const currentTabTableColumns = computed<TableColumnType[]>(() => [
   { label: "Название", prop: "name" },
@@ -247,6 +281,11 @@ onBeforeUnmount(() => {
     resizeObserver.disconnect();
   }
 });
+
+onMounted(() => {
+  setBreadCrumbFn();
+})
+
 </script>
 
 <template>
@@ -280,7 +319,7 @@ onBeforeUnmount(() => {
                   type="primary"
                   size="large"
                   tag="RouterLink"
-                  :to="{name: 'KitchenMealPlanCookingDishCreate'}"
+                  :to="{name: 'KitchenMenuCookingDishCreate'}"
               >
                 <div class="flex items-center gap-x-2">
                   <svg
@@ -297,7 +336,7 @@ onBeforeUnmount(() => {
                   size="large"
                   type="success"
                   tag="RouterLink"
-                  :to="{name: 'KitchenMealPlanSellCreate'}"
+                  :to="{name: 'KitchenMenuSellCreate'}"
               >
                 <div class="flex items-center gap-x-2">
                   <svg
@@ -315,7 +354,7 @@ onBeforeUnmount(() => {
                   class="min-h-12 w-[253px] !bg-[#E2E6F3] border-none"
                   size="large"
                   tag="RouterLink"
-                  :to="{name: 'KitchenMealPlanEdit'}"
+                  :to="{name: 'KitchenMenuEdit'}"
               >
                 <div class="flex items-center gap-x-2">
                   <svg
@@ -877,7 +916,7 @@ onBeforeUnmount(() => {
               type="primary"
               size="large"
               tag="router-link"
-              :to="{name: 'KitchenMealPlanCreate'}"
+              :to="{name: 'KitchenMenuCreate'}"
           >
             <div class="flex items-center gap-x-2">
               <svg
