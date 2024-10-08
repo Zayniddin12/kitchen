@@ -6,31 +6,67 @@ import { computed } from "vue";
 import kitchenIcon from "@/assets/images/icons/kitchen/kitchen.svg";
 import menuIcon from "@/assets/images/icons/kitchen/menu-icon.svg";
 import calculatorIcon from "@/assets/images/icons/kitchen/calculator-icon.svg";
+import { useKitchenStore } from "@/modules/Kitchen/store/kitchen.store";
 
-const boxes = computed(() => {
+const kitchenStore = useKitchenStore();
+
+const menuBoxes = computed(() => {
   return [
     {
       id: 1,
       icon: menuIcon,
       title: "Меню",
       description: "Есть 4 плана",
-      link: {name: "KitchenMealPlanIndex"}
+      link: { name: "KitchenMealPlanIndex" }
     },
     {
       id: 2,
       icon: kitchenIcon,
       title: "Рационы",
       description: "80 рационов",
-      link: {name: "KitchenRation"}
+      link: { name: "KitchenRation" }
     },
     {
       id: 3,
       icon: calculatorIcon,
       title: "Калькулятор",
       description: "Расчет",
-      link: {name: "KitchenCalculator"}
+      link: { name: "KitchenCalculator" }
     }
   ];
+});
+
+const salesBoxes = computed(() => {
+  return [
+    {
+      id: 1,
+      icon: menuIcon,
+      title: "Меню",
+      description: "Есть 4 плана",
+      link: { name: "KitchenMealPlanIndex" }
+    },
+    {
+      id: 2,
+      icon: kitchenIcon,
+      title: "Блюди",
+      description: "80 рационов",
+      link: { name: "KitchenDishes" }
+    },
+    {
+      id: 3,
+      icon: calculatorIcon,
+      title: "Калькулятор",
+      description: "Расчет",
+      link: { name: "KitchenCalculator" }
+    }
+  ];
+});
+
+const boxes = computed(() => {
+  if (kitchenStore.activeMenuPart) return menuBoxes.value;
+  else if (kitchenStore.activeSalesPart) return salesBoxes.value;
+
+  return [];
 });
 
 </script>

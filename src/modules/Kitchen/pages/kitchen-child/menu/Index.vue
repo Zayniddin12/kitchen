@@ -808,7 +808,7 @@ onBeforeUnmount(() => {
                 </h4>
                 <ElTable
                     :data="salesAllTabTableData"
-                    class="custom-element-table custom-element-table-normal menu__sales-all-tab-table"
+                    class="custom-element-table custom-element-table-normal menu__sales-all-tab-table mt-4"
                 >
                   <ElTableColumn
                       v-for="column in salesAllTabTableColumns"
@@ -818,6 +818,19 @@ onBeforeUnmount(() => {
                       :sortable="column.sortable"
                       :align="column.align"
                   >
+                    <template
+                        v-if="column.prop === 'type'"
+                        #default="{row}"
+                    >
+                      <div class="flex items-center gap-x-3">
+                        <img
+                            :src="DishesImg"
+                            :alt="row.type"
+                            class="size-8 rounded-full object-contain"
+                        />
+                        <span>{{row.type}}</span>
+                      </div>
+                    </template>
                     <template
                         v-if="column.prop === 'action'"
                         #default="{row}"
@@ -880,92 +893,92 @@ onBeforeUnmount(() => {
       </div>
     </div>
     <Teleport to="body">
-        <div
-            v-show="activeTab === TABS.CURRENT && ordersModal"
-            ref="ordersWrapper"
-            class="fixed bottom-0 pt-6 right-0 w-full z-[100] bg-white shadow-[0_0_3px_-1px_#0A090B0A]"
-        >
-          <div class="flex items-center justify-between px-6 pb-4">
-            <h4 class="text-2xl text-black font-semibold">Заказы</h4>
-            <div class="flex items-center">
-              <h6 class="text-lg text-dark font-semibold mr-6">
-                Общая сумма: {{ formatNumber(ordersSum) }} сум
-              </h6>
-              <ElButton
-                  @click="clearOrders"
-                  class="!bg-[#E2E6F3] border-none text-sm !text-dark-gray"
-                  size="large"
-              >
-                Отменить
-              </ElButton>
-              <ElButton
-                  type="primary"
-                  size="large"
-                  class="!bg-blue"
-              >
-                Продать
-              </ElButton>
-            </div>
-          </div>
-          <div
-              v-if="orders.length>0"
-              class="grid grid-cols-5 gap-x-12 gap-y-10 max-h-[220px] overflow-y-auto px-6 pb-6 pt-4"
-          >
-            <div
-                v-for="item in orders"
-                :key="item.id"
+      <div
+          v-show="activeTab === TABS.CURRENT && ordersModal"
+          ref="ordersWrapper"
+          class="fixed bottom-0 pt-6 right-0 w-full z-[100] bg-white shadow-[0_0_3px_-1px_#0A090B0A]"
+      >
+        <div class="flex items-center justify-between px-6 pb-4">
+          <h4 class="text-2xl text-black font-semibold">Заказы</h4>
+          <div class="flex items-center">
+            <h6 class="text-lg text-dark font-semibold mr-6">
+              Общая сумма: {{ formatNumber(ordersSum) }} сум
+            </h6>
+            <ElButton
+                @click="clearOrders"
+                class="!bg-[#E2E6F3] border-none text-sm !text-dark-gray"
+                size="large"
             >
-              <div class="flex gap-x-4 items-start">
-                <img
-                    :src="item.photo"
-                    :alt="item.name"
-                    class="size-9 rounded-full"
-                />
-                <div>
-                  <div class="flex items-center gap-x-3">
-                    <strong class="text-black font-medium text-xl">
-                      {{ item.name }}
-                    </strong>
-                    <div class="bg-[#F8F9FC] p-1 rounded-lg flex items-center gap-x-2">
-                      <button
-                          @click="updateQuantity(item, false)"
-                          :disabled="item.quantity===0"
-                          class="size-7 text-[#292D324D] rounded-lg shadow-[0_2px_8.4px_0_#292D3214] bg-white flex items-center justify-center"
-                      >
-                        <img
-                            :src="MinusIcon"
-                            alt="minus icon"
-                            class="size-5"
-                        />
-                      </button>
-                      <span class="text-base font-medium text-dark-gray">
+              Отменить
+            </ElButton>
+            <ElButton
+                type="primary"
+                size="large"
+                class="!bg-blue"
+            >
+              Продать
+            </ElButton>
+          </div>
+        </div>
+        <div
+            v-if="orders.length>0"
+            class="grid grid-cols-5 gap-x-12 gap-y-10 max-h-[220px] overflow-y-auto px-6 pb-6 pt-4"
+        >
+          <div
+              v-for="item in orders"
+              :key="item.id"
+          >
+            <div class="flex gap-x-4 items-start">
+              <img
+                  :src="item.photo"
+                  :alt="item.name"
+                  class="size-9 rounded-full"
+              />
+              <div>
+                <div class="flex items-center gap-x-3">
+                  <strong class="text-black font-medium text-xl">
+                    {{ item.name }}
+                  </strong>
+                  <div class="bg-[#F8F9FC] p-1 rounded-lg flex items-center gap-x-2">
+                    <button
+                        @click="updateQuantity(item, false)"
+                        :disabled="item.quantity===0"
+                        class="size-7 text-[#292D324D] rounded-lg shadow-[0_2px_8.4px_0_#292D3214] bg-white flex items-center justify-center"
+                    >
+                      <img
+                          :src="MinusIcon"
+                          alt="minus icon"
+                          class="size-5"
+                      />
+                    </button>
+                    <span class="text-base font-medium text-dark-gray">
                   {{ item.quantity }}
                 </span>
-                      <button
-                          @click="updateQuantity(item)"
-                          class="size-7 text-[#292D324D] rounded-lg shadow-[0_2px_8.4px_0_#292D3214] bg-white flex items-center justify-center"
-                      >
-                        <img
-                            :src="Plus3Icon"
-                            alt="minus icon"
-                            class="size-4"
-                        />
-                      </button>
-                    </div>
+                    <button
+                        @click="updateQuantity(item)"
+                        class="size-7 text-[#292D324D] rounded-lg shadow-[0_2px_8.4px_0_#292D3214] bg-white flex items-center justify-center"
+                    >
+                      <img
+                          :src="Plus3Icon"
+                          alt="minus icon"
+                          class="size-4"
+                      />
+                    </button>
                   </div>
-                  <div class="flex flex-col mt-1.5 gap-x-1.5 font-medium text-base text-cool-gray">
+                </div>
+                <div class="flex flex-col mt-1.5 gap-x-1.5 font-medium text-base text-cool-gray">
               <span>
                 {{ item.weight }} литр
               </span>
-                    <span>
+                  <span>
                 {{ formatNumber(item.price) }} сум
               </span>
-                  </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
+      </div>
     </Teleport>
   </section>
 </template>

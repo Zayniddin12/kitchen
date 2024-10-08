@@ -1,0 +1,234 @@
+<script
+    setup
+    lang="ts"
+>
+
+import { computed } from "vue";
+import ColaImg from "@/assets/images/kitchen/test/cola.png";
+import DishesImg from "@/assets/images/kitchen/test/dishes.png";
+
+const categories = computed(() => [
+  {
+    id: 1,
+    name: "Блюди",
+    products: [
+      {
+        id: 1,
+        name: "Плов",
+        price: 25000,
+        cost_price: 3000,
+        sum: 28000,
+        photo: DishesImg,
+        action: true
+      },
+      {
+        id: 2,
+        name: "Плов",
+        price: 25000,
+        cost_price: 3000,
+        sum: 28000,
+        photo: DishesImg,
+        action: true
+      },
+      {
+        id: 3,
+        name: "Плов",
+        price: 25000,
+        cost_price: 3000,
+        sum: 28000,
+        photo: DishesImg,
+        action: true
+      },
+      {
+        id: 4,
+        name: "Плов",
+        price: 25000,
+        cost_price: 3000,
+        sum: 28000,
+        photo: DishesImg,
+        action: true
+      },
+      {
+        id: 5,
+        name: "Плов",
+        price: 25000,
+        cost_price: 3000,
+        sum: 28000,
+        photo: DishesImg,
+        action: true
+      },
+      {
+        id: 6,
+        name: "Плов",
+        price: 25000,
+        cost_price: 3000,
+        sum: 28000,
+        photo: DishesImg,
+        action: true
+      },
+      {
+        id: 7,
+        name: "Плов",
+        price: 25000,
+        cost_price: 3000,
+        sum: 28000,
+        photo: DishesImg,
+        action: true
+      },
+      {
+        id: 8,
+        name: "Плов",
+        price: 25000,
+        cost_price: 3000,
+        sum: 28000,
+        photo: DishesImg,
+        action: true
+      }
+    ]
+  },
+  {
+    id: 2,
+    name: "Напитки",
+    products: [
+      {
+        id: 9,
+        name: "Coca cola",
+        price: 25000,
+        cost_price: 3000,
+        sum: 28000,
+        photo: ColaImg,
+        action: true
+      },
+      {
+        id: 10,
+        name: "Coca cola",
+        price: 25000,
+        cost_price: 3000,
+        sum: 28000,
+        photo: ColaImg,
+        action: true
+      },
+      {
+        id: 11,
+        name: "Coca cola",
+        price: 25000,
+        cost_price: 3000,
+        sum: 28000,
+        photo: ColaImg,
+        action: true
+      },
+      {
+        id: 12,
+        name: "Coca cola",
+        price: 25000,
+        cost_price: 3000,
+        sum: 28000,
+        photo: ColaImg,
+        action: true
+      },
+      {
+        id: 13,
+        name: "Coca cola",
+        price: 25000,
+        cost_price: 3000,
+        sum: 28000,
+        photo: ColaImg,
+        action: true
+      },
+      {
+        id: 14,
+        name: "Coca cola",
+        price: 25000,
+        cost_price: 3000,
+        sum: 28000,
+        photo: ColaImg,
+        action: true
+      }
+    ]
+  }
+]);
+
+</script>
+
+<template>
+  <section>
+    <div>
+      <div class="flex flex-col gap-y-6">
+        <div
+            v-for="category in categories"
+            :key="category.id"
+        >
+          <h2 class="text-[32px] font-semibold text-dark">
+            {{ category.name }}
+          </h2>
+          <ElTable
+              :data="category.products"
+              class="custom-element-table custom-element-table-normal mt-6"
+          >
+            <ElTableColumn
+                prop="idx"
+                label="№"
+                align="left"
+            >
+              <template #default="{$index}">
+                {{ $index + 1 }}
+              </template>
+            </ElTableColumn>
+            <ElTableColumn
+                prop="name"
+                label="Название"
+                align="center"
+                sortable
+            >
+              <template #default="{row}">
+                <div class="flex items-center justify-center gap-x-3">
+                  <img
+                      :src="DishesImg"
+                      :alt="row.name"
+                      class="size-8 rounded-full object-contain"
+                  />
+                  <span>{{ row.name }}</span>
+                </div>
+              </template>
+            </ElTableColumn>
+            <ElTableColumn
+                prop="price"
+                label="Цена"
+                align="center"
+                sortable
+            />
+            <ElTableColumn
+                prop="cost_price"
+                label="НДС"
+                align="center"
+                sortable
+            />
+            <ElTableColumn
+                prop="sum"
+                label="Сумма"
+                align="center"
+                sortable
+            />
+            <ElTableColumn
+                prop="action"
+                align="right"
+                label="Действие"
+            >
+              <template #default="{row}">
+                <button
+                    v-if="row.action"
+                    class="action-btn"
+                >
+                  <img
+                      src="@/assets/images/eye.svg"
+                      alt="eye"
+                  />
+                </button>
+              </template>
+            </ElTableColumn>
+          </ElTable>
+        </div>
+      </div>
+    </div>
+  </section>
+</template>
