@@ -5,8 +5,11 @@
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 import { setItem } from "@/utils/localStorage";
 import { BreadcrumbItemType } from "@/components/ui/app-breadcrumb/app-breadcrumb.type";
+import { watch } from "vue";
+import { useRoute } from "vue-router";
 
-const { breadcrumb } = useBreadcrumb();
+const { breadcrumb, setBreadCrumb } = useBreadcrumb();
+const route = useRoute();
 
 const clickHome = () => {
   setItem("current-menu", "0");
@@ -20,6 +23,10 @@ const itemComponentTag = (breadcrumbItem: BreadcrumbItemType): itemComponentTagT
 
   return "span";
 };
+
+watch(route, () => {
+  setBreadCrumb([]);
+});
 
 </script>
 
