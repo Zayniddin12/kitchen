@@ -6,6 +6,7 @@ import {useKitchenStore} from "@/modules/Kitchen/store/kitchen.store";
 import NavBar from "@/layout/Bars/NavBar.vue";
 import SideBar from "@/layout/Bars/SideBar.vue";
 import Breadcrumb from "@/components/ui/Breadcrumb.vue";
+import AppBreadcrumb from "@/components/ui/app-breadcrumb/AppBreadcrumb.vue";
 
 const route = useRoute();
 const kitchenStore = useKitchenStore();
@@ -36,6 +37,7 @@ const closeChildSidebar = () => {
     >
      <div class="flex flex-col">
        <Breadcrumb />
+       <AppBreadcrumb/>
        <slot />
      </div>
 
