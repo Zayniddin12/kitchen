@@ -2,11 +2,12 @@
 import { reactive, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
+import { toast } from "vue3-toastify";
+import { ValidationType } from "@/components/ui/form/app-form/app-form.type";
 import Language from "@/components/language/index.vue";
 import AppInput from "@/components/ui/form/app-input/AppInput.vue";
 import AppForm from "@/components/ui/form/app-form/AppForm.vue";
-import { ValidationType } from "@/components/ui/form/app-form/app-form.type";
-import { toast } from "vue3-toastify";
+import Footer from '@/components/ui/Footer.vue'
 
 const { t } = useI18n();
 const router = useRouter();
@@ -38,7 +39,7 @@ const onSubmit = async () => {
   }
 };
 
-watch(() => userData.phone, function(val){
+watch(() => userData.phone, function(val) {
   if (val && val.length === 13) {
     let count1 = 60;
     const timer = setInterval(() => {
@@ -48,7 +49,6 @@ watch(() => userData.phone, function(val){
       count1--;
       if (count1 < 0) {
         clearInterval(timer);
-        refresh.value = true
       }
     }, 1000);
   }
@@ -68,7 +68,6 @@ watch(() => userData.phone, function(val){
 
     <!-- Login Form Section -->
     <div class="w-full lg:w-1/4 md:w-1/2 m-auto">
-      <!-- Logo and Title -->
       <header class="flex items-center mb-6">
         <img
           src="@/assets/images/logo.svg"
@@ -131,9 +130,7 @@ watch(() => userData.phone, function(val){
     </div>
 
     <!-- Footer Section -->
-    <footer class="text-[#A8AAAE] text-sm absolute right-8 bottom-10">
-      ©{{ new Date().getFullYear() }} Anysoft
-    </footer>
+   <Footer/>
   </div>
 </template>
 

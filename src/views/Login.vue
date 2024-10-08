@@ -2,11 +2,12 @@
 import { reactive, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
+import { ValidationType } from "@/components/ui/form/app-form/app-form.type";
+import { toast } from "vue3-toastify";
 import Language from "@/components/language/index.vue";
 import AppInput from "@/components/ui/form/app-input/AppInput.vue";
 import AppForm from "@/components/ui/form/app-form/AppForm.vue";
-import { ValidationType } from "@/components/ui/form/app-form/app-form.type";
-import { toast } from "vue3-toastify";
+import Footer from "@/components/ui/Footer.vue"
 
 const { t } = useI18n();
 const router = useRouter();
@@ -149,9 +150,7 @@ const onSubmit = async () => {
     </div>
 
     <!-- Footer Section -->
-    <footer class="text-[#A8AAAE] text-sm absolute right-8 bottom-10">
-      ©{{ new Date().getFullYear() }} Anysoft
-    </footer>
+    <Footer/>
   </div>
 </template>
 
