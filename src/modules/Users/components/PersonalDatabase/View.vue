@@ -1,6 +1,9 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
+import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
+
+const { setBreadCrumb } = useBreadcrumb();
 
 interface Tabs {
   title: string;
@@ -25,11 +28,36 @@ const activeTab = ref<number>(0);
 const setActiveTab = (item: any) => {
   activeTab.value = item.value;
 };
+
+const title = computed(() => {
+  return  "Просмотр"
+})
+
+const setBreadCrumbFn = () => {
+  setBreadCrumb([
+    {
+      label: "Кадры",
+    },
+    {
+      label: "База кадров",
+      to: { name: "personal-database" },
+    },
+    {
+      label:  title,
+      isActionable: true,
+    },
+  ]);
+};
+
+onMounted(() => {
+  setBreadCrumbFn();
+});
+
 </script>
 
 <template>
   <div>
-    <h1 class="m-0 font-semibold text-[32px]">Просмотр</h1>
+    <h1 class="m-0 font-semibold text-[32px]">{{title}}</h1>
 
     <div class="flex items-center justify-between">
       <div class="app-tabs w-[345px] my-[24px]">

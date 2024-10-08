@@ -56,6 +56,7 @@ const navbarMenuList = [
 ];
 
 const openModals = (data) => {
+
   if (data.id == 1) {
     editModal.value = true;
   } else if (data.id == 2) {
@@ -88,11 +89,6 @@ const openModals = (data) => {
         placeholder="Поиск"
       />
     </div>
-<!--    <AppInput-->
-<!--      :prefix-icon="Search"-->
-<!--      size="large"-->
-<!--      placeholder="Поиск"-->
-<!--    />-->
     <div class="flex items-center gap-6">
       <el-dropdown
         trigger="click"
@@ -133,7 +129,7 @@ const openModals = (data) => {
               <el-dropdown
                 trigger="click"
                 class="w-full"
-                placement="right-start"
+                placement="bottom-start"
                 popper-class="custom-dropdown"
                 v-else
               >

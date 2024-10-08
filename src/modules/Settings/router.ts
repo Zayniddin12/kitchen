@@ -41,9 +41,7 @@ export default [
     path: "/reference-type-document",
     name: "reference-type-document",
     component: () =>
-      import(
-        "@/modules/Settings/components/Reference/Document/TypeProduct/TypeDocument.vue"
-        ),
+      import("@/modules/Settings/components/Reference/Document/TypeProduct/TypeDocument.vue"),
     meta: {
       title: "Типы документов",
       layout: "MainLayout",
