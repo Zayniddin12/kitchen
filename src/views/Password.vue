@@ -13,11 +13,13 @@ const { t } = useI18n();
 const router = useRouter();
 
 interface UserData {
-  phone: string;
+  password: string;
+  confirm_code: string;
 }
 
 const userData = reactive<UserData>({
-  phone: "+998",
+  password: "",
+  confirm_code: "",
 });
 
 const v$ = ref<ValidationType | null>(null);
@@ -32,7 +34,7 @@ const onSubmit = async () => {
   if (!(await v$.value.validate())) {
     toast.error("Ошибка");
   } else {
-    await router.push("/income-password");
+    await router.push("/login");
     toast.success("Успешно");
   }
 };
@@ -42,6 +44,8 @@ const onSubmit = async () => {
   <div class="p-8 h-screen flex flex-col lg:flex-row items-center relative bg-[#ffffff]">
     <Language class="fixed top-[32px] right-[32px]" />
 
+
+    <!-- Login Form Section -->
     <div class="w-full lg:w-1/4 md:w-1/2 m-auto">
       <header class="flex items-center justify-center mb-6">
         <img
@@ -55,11 +59,13 @@ const onSubmit = async () => {
         </div>
       </header>
 
-      <h1 class="text-dark text-xl font-bold text-center">Сброс пароля</h1>
-      <p class="text-[#A8AAAE] text-[14px] mt-[6px] w-[90%] text-center">
-        На данной странице Вы можете восстановить доступ к своему аккаунту. Введите Ваш номер телефона и система
-        автоматически отправит Вам временный
-        код для сброса пароля.
+      <h1 class="text-dark text-[24px] font-bold text-center md:w-[60%] lg:w-[60%] w-full m-auto">
+        Установления нового
+        постоянного пароля
+      </h1>
+      <p class="text-[#A8AAAE] text-[14px] mt-[6px] md:w-[90%] lg:w-[90%] w-full text-center">
+        Введите свои учетные данные для доступа к вашей
+        учетной записи
       </p>
 
       <AppForm
@@ -68,13 +74,24 @@ const onSubmit = async () => {
         class="mt-[24px]"
       >
         <app-input
-          v-model="userData.phone"
-          placeholder="Введите номер телефона"
-          label="Номер телефона"
+          v-model="userData.password"
+          placeholder="Введите"
+          label="Новый пароль"
           label-class="text-[#A8AAAE] text-sm"
           required
-          prop="phone"
+          show-password
+          prop="password"
           maxlength="13"
+        />
+
+        <app-input
+          v-model="userData.confirm_code"
+          placeholder="Введите"
+          label="Подтвердите пароль"
+          label-class="text-[#A8AAAE] text-sm"
+          required
+          show-password
+          prop="confirm_code"
         />
       </AppForm>
 
@@ -91,6 +108,7 @@ const onSubmit = async () => {
       </div>
     </div>
 
+    <!-- Footer Section -->
     <Footer />
   </div>
 </template>

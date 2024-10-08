@@ -37,6 +37,18 @@ const routes: Array<RouteRecordRaw> = [
     meta: { layout: "ResetPasswordLayout" },
   },
   {
+    path: "/income-password",
+    name: "income-password",
+    component: import("@/views/IncomePassword.vue"),
+    meta: { layout: "IncomePasswordLayout" },
+  },
+  {
+    path: "/new-password",
+    name: "new-password",
+    component: import("@/views/Password.vue"),
+    meta: { layout: "PasswordLayout" },
+  },
+  {
     path: "/:pathMatch(.*)*",
     name: "notFound",
     component: import("@/components/errors/404.vue"),

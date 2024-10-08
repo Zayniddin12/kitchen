@@ -14,11 +14,14 @@ const router = useRouter();
 
 interface UserData {
   phone: string;
+  code: string;
 }
 
 const userData = reactive<UserData>({
-  phone: "+998",
+  phone: "+998990893954",
+  code: "",
 });
+const count = ref<number>();
 
 const v$ = ref<ValidationType | null>(null);
 
@@ -32,16 +35,29 @@ const onSubmit = async () => {
   if (!(await v$.value.validate())) {
     toast.error("Ошибка");
   } else {
-    await router.push("/income-password");
+    await router.push("/new-password");
     toast.success("Успешно");
   }
 };
+
+let count1 = 60;
+const timer = setInterval(() => {
+  const minutes = Math.floor(count1 / 60);
+  const seconds = count1 % 60;
+  count.value = `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+  count1--;
+  if (count1 < 0) {
+    clearInterval(timer);
+  }
+}, 1000);
 </script>
 
 <template>
   <div class="p-8 h-screen flex flex-col lg:flex-row items-center relative bg-[#ffffff]">
     <Language class="fixed top-[32px] right-[32px]" />
 
+
+    <!-- Login Form Section -->
     <div class="w-full lg:w-1/4 md:w-1/2 m-auto">
       <header class="flex items-center justify-center mb-6">
         <img
@@ -76,7 +92,20 @@ const onSubmit = async () => {
           prop="phone"
           maxlength="13"
         />
+
+        <app-input
+          v-model="userData.code"
+          placeholder="Введите отправленный код"
+          label="Код"
+          label-class="text-[#A8AAAE] text-sm"
+          required
+          prop="code"
+        />
       </AppForm>
+
+      <div class="text-[#8F9194] text-[14px] text-center">
+        {{ count }}
+      </div>
 
       <button
         @click="onSubmit"
@@ -91,6 +120,7 @@ const onSubmit = async () => {
       </div>
     </div>
 
+    <!-- Footer Section -->
     <Footer />
   </div>
 </template>
