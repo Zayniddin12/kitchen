@@ -162,6 +162,12 @@ html {
       font-weight: 500;
     }
   }
+
+  &--has-append tbody tr:last-child {
+    td:last-child, td:first-child{
+      border-radius: 0 !important;
+    }
+  }
 }
 
 .el-dialog {
