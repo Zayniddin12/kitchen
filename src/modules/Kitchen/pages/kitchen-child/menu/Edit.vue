@@ -3,12 +3,20 @@
     lang="ts"
 >
 
-import { computed, ref } from "vue";
+import { computed, onMounted, ref } from "vue";
 import PlusIcon from "@/assets/images/icons/plus.svg";
 import AppTimePicker from "@/components/ui/form/app-time-picker/AppTimePicker.vue";
 import AppSelect from "@/components/ui/form/app-select/AppSelect.vue";
 import AppInput from "@/components/ui/form/app-input/AppInput.vue";
 import { TableColumnType } from "@/types/common.type";
+import { useKitchenStore } from "@/modules/Kitchen/store/kitchen.store";
+import { useRoute } from "vue-router";
+import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
+
+const kitchenStore= useKitchenStore();
+const route = useRoute();
+
+const {setBreadCrumb} = useBreadcrumb();
 
 const dateList = computed(() => {
   return [
@@ -116,6 +124,45 @@ const tableData = computed(() => {
       unit_measurement: "кг"
     }
   ];
+});
+
+const setBreadCrumbFn = () => {
+  kitchenStore.fetchPart(+route.params.department_id, route.params.part_name as string);
+
+  if(!kitchenStore.part) return
+
+  setBreadCrumb([
+    {
+      label: "Кухня",
+    },
+    {
+      label: kitchenStore.part.name,
+    },
+    {
+      label: kitchenStore.part.department_name,
+      to: { name: "KitchenIndex" },
+    },
+    {
+      label: "Лагерь",
+      to: {name: "KitchenShowIndex"}
+    },
+    {
+      label: "Паҳлавон",
+      to: {name: "KitchenShowChildIndex"}
+    },
+    {
+      label: "Меню",
+      to: {name: "KitchenMenuIndex"}
+    },
+    {
+      label: "Редактировать",
+      isActionable: true,
+    },
+  ])
+}
+
+onMounted(() => {
+  setBreadCrumbFn();
 });
 
 </script>

@@ -3,11 +3,16 @@ import AppDatePicker from "@/components/ui/form/app-date-picker/AppDatePicker.vu
 import AppTimePicker from "@/components/ui/form/app-time-picker/AppTimePicker.vue";
 import AppSelect from "@/components/ui/form/app-select/AppSelect.vue";
 import AppInput from "@/components/ui/form/app-input/AppInput.vue";
-import { computed, ref, watch } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
 import { formatDate } from "@/utils/helper";
 import { useKitchenStore } from "@/modules/Kitchen/store/kitchen.store";
 import PlusIcon from "@/assets/images/icons/plus.svg";
 import { TableColumnType } from "@/types/common.type";
+import { useRoute } from "vue-router";
+import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
+
+const route = useRoute();
+const {setBreadCrumb} = useBreadcrumb();
 
 // Store
 const kitchenStore = useKitchenStore();
@@ -31,7 +36,7 @@ const activeDiet = ref("");
 const diets = computed(() => [{ id: 1, name: "Рацион1 R-0000" }]);
 
 // Table Columns
-const tableColumns = [
+const tableColumns:TableColumnType[] = [
   { label: "Название", prop: "name" },
   { label: "Количество", prop: "quantity", align: "center" },
   { label: "Ед. измерения", prop: "unit_measurement", align: "center" },
@@ -39,7 +44,7 @@ const tableColumns = [
   { label: "Сумма", prop: "sum", align: "right" }
 ];
 
-const tableColumns2 = [
+const tableColumns2:TableColumnType[] = [
   { prop: "ingredients", label: "Ингредиенты" },
   { prop: "quantity", label: "Количество", align: "center" },
   { prop: "unit_measurement", label: "Ед. измерения", align: "center" },
@@ -80,6 +85,46 @@ const scheduledDates = computed(() => {
 watch(scheduledDates, (newValue) => {
   if (newValue.length > 0) activeScheduledDate.value = newValue[0].date;
 });
+
+const setBreadCrumbFn = () => {
+  kitchenStore.fetchPart(+route.params.department_id, route.params.part_name as string);
+
+  if(!kitchenStore.part) return
+
+  setBreadCrumb([
+    {
+      label: "Кухня",
+    },
+    {
+      label: kitchenStore.part.name,
+    },
+    {
+      label: kitchenStore.part.department_name,
+      to: { name: "KitchenIndex" },
+    },
+    {
+      label: "Лагерь",
+      to: {name: "KitchenShowIndex"}
+    },
+    {
+      label: "Паҳлавон",
+      to: {name: "KitchenShowChildIndex"}
+    },
+    {
+      label: "Меню",
+      to: {name: "KitchenMenuIndex"}
+    },
+    {
+      label: "Добавить",
+      isActionable: true,
+    },
+  ])
+}
+
+onMounted(() => {
+  setBreadCrumbFn();
+})
+
 </script>
 
 
