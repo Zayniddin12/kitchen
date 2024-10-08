@@ -11,7 +11,7 @@ interface UlItems {
   menu: MenuInterface;
 }
 
-const router = useRouter()
+const router = useRouter();
 
 const ulItems = ref<UlItems[]>([
   {
@@ -20,12 +20,12 @@ const ulItems = ref<UlItems[]>([
       {
         title: "Типы документов",
         subTitle: "Типы документов",
-        router: 'reference-type-document',
+        router: "reference-type-document",
       },
       {
         title: "Виды документов",
         subTitle: "Виды документов",
-        router: 'reference-vid-document',
+        router: "reference-vid-document",
       },
     ],
   },
@@ -35,12 +35,12 @@ const ulItems = ref<UlItems[]>([
       {
         title: "Типы документов",
         subTitle: "Типы документов",
-        router: 'reference-type-product'
+        router: "reference-type-product",
       },
       {
         title: "Виды документов",
         subTitle: "Виды документов",
-        router: 'reference-vid-product'
+        router: "reference-vid-product",
       },
     ],
   },
@@ -50,7 +50,7 @@ const ulItems = ref<UlItems[]>([
       {
         title: "Рационы",
         subTitle: "Рационы",
-        router: 'reference-ration',
+        router: "reference-ration",
       },
       {
         title: "Блюда",
@@ -64,18 +64,22 @@ const ulItems = ref<UlItems[]>([
       {
         title: "Региональные управления",
         subTitle: "Региональные управления",
+        router: "reference-regional-directorates",
       },
       {
         title: "Комбинаты питания",
         subTitle: "Комбинаты питания",
+        router: "reference-combine-nutrition",
       },
       {
         title: "Базы складов",
         subTitle: "Базы складов",
+        router: "reference-warehouse-bases",
       },
       {
         title: "Склады базы",
         subTitle: "Склады",
+        router: "reference-main-bases",
       },
       {
         title: "Склады кухни",
@@ -114,6 +118,10 @@ const ulItems = ref<UlItems[]>([
     ],
   },
 ]);
+
+const detailPage = (value: any) => {
+  router.push(value.router);
+};
 </script>
 
 <template>
@@ -126,8 +134,15 @@ const ulItems = ref<UlItems[]>([
         v-for="(item, index) in ulItems"
         :key="index"
       >
-        <h3 class="text-[#2E90FA] font-medium text-[18px] flex items-center leading-[28px]">
-          <svg data-src="/sidebar/document.svg" class="svg__class mr-[12px]" width="24px" height="24px" />
+        <h3
+          class="text-[#2E90FA] font-medium text-[18px] flex items-center leading-[28px]"
+        >
+          <svg
+            data-src="/sidebar/document.svg"
+            class="svg__class mr-[12px]"
+            width="24px"
+            height="24px"
+          />
           {{ item.title }}
         </h3>
 
@@ -137,10 +152,14 @@ const ulItems = ref<UlItems[]>([
           :key="index2"
           @click="router.push(menu.router)"
         >
-          <li class="text-[#4F5662] text-[14px] font-medium leading-[20px] cursor-pointer hover:underline hover:decoration-[#2E90FA] hover:text-[#2E90FA]">
+          <li
+            class="text-[#4F5662] text-[14px] font-medium leading-[20px] cursor-pointer hover:underline hover:decoration-[#2E90FA] hover:text-[#2E90FA]"
+          >
             {{ menu.title }}
           </li>
-          <li class="text-[12px] text-[#A8AAAE] font-normal mt-[4px] leading-[16px] cursor-pointer">
+          <li
+            class="text-[12px] text-[#A8AAAE] font-normal mt-[4px] leading-[16px] cursor-pointer"
+          >
             {{ menu.subTitle }}
           </li>
         </ul>
@@ -151,6 +170,6 @@ const ulItems = ref<UlItems[]>([
 
 <style>
 .svg__class path {
-  stroke: #2E90FA;
+  stroke: #2e90fa;
 }
 </style>
