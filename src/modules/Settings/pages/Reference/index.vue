@@ -82,10 +82,12 @@ const ulItems = ref<UlItems[]>([
       {
         title: "Склады кухни",
         subTitle: "Склады кухни",
+        router: "reference-kitchen-warehouse",
       },
       {
         title: "Типы кухни",
         subTitle: "Типы кухни",
+        router: "reference-kitchen-type",
       },
     ],
   },
@@ -108,10 +110,12 @@ const ulItems = ref<UlItems[]>([
       {
         title: "Поставщики",
         subTitle: "Поставщики",
+        router: "reference-suppliers",
       },
       {
         title: "Организации",
         subTitle: "Организации",
+        router: "reference-organization",
       },
     ],
   },
