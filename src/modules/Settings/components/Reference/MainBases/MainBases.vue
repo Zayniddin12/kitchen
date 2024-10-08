@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 import { Search } from "@element-plus/icons-vue";
 import { useRoute } from "vue-router";
+import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 
 const route = useRoute();
 
@@ -51,8 +52,36 @@ const tableData = ref<TableData[]>([
     warehouse_capacity: "10 тонна",
     storage_products: "Помидоры, морковь, картофель",
   },
-
 ]);
+
+const { setBreadCrumb } = useBreadcrumb();
+
+const setBreadCrumbFn = () => {
+  setBreadCrumb([
+    {
+      label: "Настройки",
+    },
+    {
+      label: "Справочники",
+      to: { name: "reference" },
+    },
+
+    {
+      label: "Управ, комбинаты и склады",
+      to: { name: "reference" },
+    },
+
+    {
+      label: "Склады базы",
+      isActionable: true,
+    },
+  ]);
+};
+
+onMounted(() => {
+  setBreadCrumbFn();
+});
+
 </script>
 
 <template>

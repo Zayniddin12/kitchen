@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 import { Search } from "@element-plus/icons-vue";
 import { useRouter } from "vue-router";
+import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 
 interface TableData {
   id: number;
@@ -11,7 +12,7 @@ interface TableData {
   count: string;
 }
 
-const router = useRouter()
+const router = useRouter();
 
 const input1 = ref<string>("");
 const tableData = ref<TableData>([
@@ -51,6 +52,33 @@ const tableData = ref<TableData>([
     count: "кг",
   },
 ]);
+
+const { setBreadCrumb } = useBreadcrumb();
+
+const setBreadCrumbFn = () => {
+  setBreadCrumb([
+    {
+      label: "Настройки",
+    },
+    {
+      label: "Справочники",
+      to: { name: "reference" },
+    },
+    {
+      label: "Рационы и блюда",
+      to: { name: "reference" },
+    },
+    {
+      label: "Блюда",
+      isActionable: true,
+    },
+  ]);
+};
+
+onMounted(() => {
+  setBreadCrumbFn();
+});
+
 </script>
 
 <template>

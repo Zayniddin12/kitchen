@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { ref } from "vue";
-import { Search } from "@element-plus/icons-vue";
+import { onMounted, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import AppInput from "@/components/ui/form/app-input/AppInput.vue";
 import AppSelect from "@/components/ui/form/app-select/AppSelect.vue";
+import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 
 const route = useRoute();
 const router = useRouter();
@@ -43,6 +43,39 @@ const tableData = ref<TableData[]>([
     type: "Начальник управления",
   },
 ]);
+
+const { setBreadCrumb } = useBreadcrumb();
+
+const setBreadCrumbFn = () => {
+  setBreadCrumb([
+    {
+      label: "Настройки",
+    },
+    {
+      label: "Справочники",
+      to: { name: "reference" },
+    },
+
+    {
+      label: "Управ, комбинаты и склады",
+      to: { name: "reference" },
+    },
+
+    {
+      label: "Комбинаты питания",
+      to: { name: "reference-regional-directorates" },
+    },
+    {
+      label: route?.meta?.breadcrumbItemTitle as string ?? "",
+      isActionable: true,
+    },
+  ]);
+};
+
+watch(route.name, () => {
+  setBreadCrumbFn();
+}, {immediate: true});
+
 </script>
 
 <template>

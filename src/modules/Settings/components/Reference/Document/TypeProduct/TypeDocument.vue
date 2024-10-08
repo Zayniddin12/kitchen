@@ -1,13 +1,14 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 import { Search } from "@element-plus/icons-vue";
+import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 
 interface TableData {
   id: number;
   name: string;
 }
 
-const input1 = ref<string>('')
+const input1 = ref<string>("");
 const tableData = ref<TableData[]>([
   {
     id: 1,
@@ -28,8 +29,35 @@ const tableData = ref<TableData[]>([
   {
     id: 5,
     name: "Контракты",
-  }
-])
+  },
+]);
+
+const { setBreadCrumb } = useBreadcrumb();
+
+const setBreadCrumbFn = () => {
+  setBreadCrumb([
+    {
+      label: "Настройки",
+    },
+    {
+      label: "Справочники",
+      to: { name: "reference" },
+    },
+    {
+      label: "Документы",
+      to: { name: "reference" },
+    },
+    {
+      label: "Типы документов",
+      isActionable: true,
+    },
+  ]);
+};
+
+onMounted(() => {
+  setBreadCrumbFn();
+});
+
 </script>
 
 <template>
@@ -48,8 +76,8 @@ const tableData = ref<TableData[]>([
 
     <div class="mt-[24px]">
       <el-table :data="tableData" class="custom-element-table">
-        <el-table-column prop="id" label="№" width="80"/>
-        <el-table-column prop="name" label="Наименование типа" sortable/>
+        <el-table-column prop="id" label="№" width="80" />
+        <el-table-column prop="name" label="Наименование типа" sortable />
       </el-table>
     </div>
   </div>

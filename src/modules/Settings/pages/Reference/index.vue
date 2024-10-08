@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
+import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 
 interface MenuInterface {
   title: string;
@@ -127,6 +128,25 @@ const ulItems = ref<UlItems[]>([
 const detailPage = (value: any) => {
   router.push(value.router);
 };
+
+const {setBreadCrumb} = useBreadcrumb();
+
+const setBreadCrumbFn = () => {
+  setBreadCrumb([
+    {
+      label: "Настройки",
+    },
+    {
+      label: "Справочники",
+      isActionable: true,
+    }
+  ]);
+}
+
+onMounted(() => {
+  setBreadCrumbFn();
+})
+
 </script>
 
 <template>
