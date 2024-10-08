@@ -14,7 +14,7 @@ const model = defineModel<AppDatePickerValueType>();
 
 const props = withDefaults(defineProps<AppDatePickerPropsType>(), {
   labelPosition: "top",
-  placeholder: "Select",
+  placeholder: "Выбирать",
   format: "YYYY/MM/DD",
   type: "date",
   labelClass: "",
@@ -101,12 +101,12 @@ const icon = shallowRef({
   &__date-picker {
     --el-date-editor-width: 100%;
 
-    &-icon{
-      &--end .el-input__wrapper{
+    &-icon {
+      &--end .el-input__wrapper {
         flex-direction: row-reverse;
       }
 
-      &--start .el-input__inner{
+      &--start .el-input__inner {
         padding-left: 7px;
       }
     }

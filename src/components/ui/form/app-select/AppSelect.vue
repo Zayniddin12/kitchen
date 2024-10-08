@@ -17,7 +17,8 @@ const props = withDefaults(defineProps<AppSelectPropsType>(), {
   labelPosition: "top",
   itemValue: "",
   itemLabel: "",
-  labelClass: ""
+  labelClass: "",
+  placeholder: "Выбирать"
 });
 
 const slots = useSlots();

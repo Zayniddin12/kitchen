@@ -19,6 +19,11 @@ interface DepartmentType {
     parts: PartType[];
 }
 
+enum PARTS {
+    MENU = "menu",
+    SALES = "sales",
+}
+
 export const useKitchenStore = defineStore("kitchenStore", () => {
     const departments = ref<DepartmentType[]>([]);
 
@@ -29,11 +34,11 @@ export const useKitchenStore = defineStore("kitchenStore", () => {
                 name: "Зарафшан",
                 parts: [
                     {
-                        id: 1,
+                        id: PARTS.MENU,
                         name: "Меню"
                     },
                     {
-                        id: 2,
+                        id: PARTS.SALES,
                         name: "Продажи"
                     }
                 ]
@@ -43,11 +48,11 @@ export const useKitchenStore = defineStore("kitchenStore", () => {
                 name: "Навои",
                 parts: [
                     {
-                        id: 1,
+                        id: PARTS.MENU,
                         name: "Меню"
                     },
                     {
-                        id: 2,
+                        id: PARTS.SALES,
                         name: "Продажи"
                     }
                 ]
@@ -57,11 +62,11 @@ export const useKitchenStore = defineStore("kitchenStore", () => {
                 name: "Учкудук",
                 parts: [
                     {
-                        id: 1,
+                        id: PARTS.MENU,
                         name: "Меню"
                     },
                     {
-                        id: 2,
+                        id: PARTS.SALES,
                         name: "Продажи"
                     }
                 ]
@@ -71,11 +76,11 @@ export const useKitchenStore = defineStore("kitchenStore", () => {
                 name: "Нуробод",
                 parts: [
                     {
-                        id: 1,
+                        id: PARTS.MENU,
                         name: "Меню"
                     },
                     {
-                        id: 2,
+                        id: PARTS.SALES,
                         name: "Продажи"
                     }
                 ]
@@ -85,11 +90,11 @@ export const useKitchenStore = defineStore("kitchenStore", () => {
                 name: "Зафаробод",
                 parts: [
                     {
-                        id: 1,
+                        id: PARTS.MENU,
                         name: "Меню"
                     },
                     {
-                        id: 2,
+                        id: PARTS.SALES,
                         name: "Продажи"
                     }
                 ]
@@ -119,14 +124,22 @@ export const useKitchenStore = defineStore("kitchenStore", () => {
 
     const part = ref<Part2Type | null>(null);
 
-    const fetchPart = (department_id: number, part_id: number) => {
+    const activeMenuPart = computed(() => {
+        return part.value?.id === PARTS.MENU;
+    });
+
+    const activeSalesPart = computed(() => {
+        return part.value?.id === PARTS.SALES;
+    })
+
+    const fetchPart = (department_id: number, part_name: string) => {
         if (!departments.value.length) return;
 
         const department = departments.value.find(el => el.id === department_id) ?? null;
 
         if (!department) return;
 
-        const activePart = department.parts.find(el => el.id === part_id) ?? null;
+        const activePart = department.parts.find(el => el.id === part_name) ?? null;
 
         if (!activePart) return;
 
@@ -139,11 +152,15 @@ export const useKitchenStore = defineStore("kitchenStore", () => {
         };
     };
 
+
+
     return {
         departments,
         fetchDepartments,
         kitchenMenu,
         fetchPart,
-        part
+        part,
+        activeMenuPart,
+        activeSalesPart
     };
 });

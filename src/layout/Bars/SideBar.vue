@@ -11,7 +11,7 @@ const router = useRouter();
 let route = useRoute();
 
 let currentIndex = ref<number>(0);
-let currentMenu = ref<number>(JSON.parse(localStorage.getItem('current-menu')) || 0);
+let currentMenu = ref<number>(0);
 
 let childIsOpen = ref<boolean>(localStorage.getItem("child-sidebar") === "true");
 

@@ -6,7 +6,6 @@ interface MenuInterface {
   title: string;
   subTitle: string;
 }
-
 interface UlItems {
   title: string;
   menu: MenuInterface;
@@ -36,10 +35,12 @@ const ulItems = ref<UlItems[]>([
       {
         title: "Типы документов",
         subTitle: "Типы документов",
+        router: "reference-type-product",
       },
       {
         title: "Виды документов",
         subTitle: "Виды документов",
+        router: "reference-vid-product",
       },
     ],
   },
@@ -49,15 +50,17 @@ const ulItems = ref<UlItems[]>([
       {
         title: "Рационы",
         subTitle: "Рационы",
+        router: "reference-ration",
       },
       {
         title: "Блюда",
         subTitle: "Блюда",
+        router: "reference-dish",
       },
     ],
   },
   {
-    title: "Базы и Склады",
+    title: "Управ, комбинаты и склады",
     menu: [
       {
         title: "Региональные управления",
@@ -132,27 +135,37 @@ const detailPage = (value: any) => {
 
     <div class="grid grid-cols-3 gap-8 mt-[24px]">
       <div
-        class="space-y-2 mb-[84px]"
+        class="space-y-2 mb-[50px]"
         v-for="(item, index) in ulItems"
         :key="index"
       >
-        <h3 class="text-[#2E90FA] font-medium text-[18px] flex items-center leading-[28px]">
-          <svg data-src="/sidebar/document.svg" class="svg__class mr-[12px]" width="24px" height="24px" />
+        <h3
+          class="text-[#2E90FA] font-medium text-[18px] flex items-center leading-[28px]"
+        >
+          <svg
+            data-src="/sidebar/document.svg"
+            class="svg__class mr-[12px]"
+            width="24px"
+            height="24px"
+          />
           {{ item.title }}
         </h3>
 
         <ul
-          class="ml-[36px] mt-[15px]"
+          class="ml-[36px] !my-[15px]"
           v-for="(menu, index2) in item.menu"
           :key="index2"
-          @click="detailPage(menu)"
+          @click="router.push(menu.router)"
         >
           <li
-            class="text-[#4F5662] text-[14px] font-medium leading-[20px] cursor-pointer hover:underline hover:decoration-[#2E90FA] hover:text-[#2E90FA]">
+            class="text-[#4F5662] text-[14px] font-medium leading-[20px] cursor-pointer hover:underline hover:decoration-[#2E90FA] hover:text-[#2E90FA]"
+          >
             {{ menu.title }}
           </li>
-          <li class="text-[12px] text-[#A8AAAE] font-normal mt-[4px] leading-[16px] cursor-pointer">{{ menu.subTitle
-            }}
+          <li
+            class="text-[12px] text-[#A8AAAE] font-normal mt-[4px] leading-[16px] cursor-pointer"
+          >
+            {{ menu.subTitle }}
           </li>
         </ul>
       </div>
@@ -162,6 +175,6 @@ const detailPage = (value: any) => {
 
 <style>
 .svg__class path {
-  stroke: #2E90FA;
+  stroke: #2e90fa;
 }
 </style>

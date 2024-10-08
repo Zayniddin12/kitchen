@@ -67,7 +67,7 @@ const handleClickHome = () => {
           />
         </span>
         <p
-          class="text-[#A8AAAE] font-medium text-[12px] leading-[16px]"
+          class="text-[#A8AAAE] font-medium text-[14px] leading-[16px]"
           :class="{
             'text-[#4F5662] dark:text-primary': breadcrumb.isActionable,
             'cursor-pointer': breadcrumb.to,

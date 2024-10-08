@@ -31,8 +31,10 @@ const routes: Array<RouteRecordRaw> = [
     meta: { layout: "LoginLayout" },
   },
   {
-    path: "/test",
-    component: () => import("@/views/Test.vue"),
+    path: "/reset-password",
+    name: "reset-password",
+    component: import("@/views/ResetPassword.vue"),
+    meta: { layout: "ResetPasswordLayout" },
   },
   {
     path: "/:pathMatch(.*)*",

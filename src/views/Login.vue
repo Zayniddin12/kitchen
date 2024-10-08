@@ -92,6 +92,8 @@ const onSubmit = async () => {
         <!-- Password Input -->
         <app-input
           v-model="userData.password"
+          type="password"
+          show-password
           placeholder="Введите"
           label="Пароль"
           label-class="text-[#A8AAAE] text-sm"
@@ -101,7 +103,7 @@ const onSubmit = async () => {
         />
 
         <!-- Forgot Password Link -->
-        <div class="text-right text-[#2E90FA] text-xs mt-1 cursor-pointer">
+        <div class="text-right text-[#2E90FA] text-xs mt-1 cursor-pointer" @click="router.push('/reset-password')">
           Забыли пароль?
         </div>
       </AppForm>
