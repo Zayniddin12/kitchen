@@ -55,26 +55,35 @@ const tableData = ref<TableData[]>([
     <div class="flex gap-6">
       <div class="w-[70%]">
         <div class="border border-[#E2E6F3] rounded-[24px] p-[24px] h-[65vh] flex flex-col">
-          <div class="flex items-center gap-4">
+          <div class="grid grid-cols-3 gap-4">
             <app-input label="Наименование (RU)" placeholder="Введите"
                        label-class="text-[#A8AAAE] font-medium text-[12px]" class="w-full" />
 
             <app-input label="Наименование (UZ)" placeholder="Введите"
                        label-class="text-[#A8AAAE] font-medium text-[12px]" class="w-full" />
+
+            <app-select label="База складов" placeholder="Введите"
+                        label-class="text-[#A8AAAE] font-medium text-[12px]" class="w-full" />
+
+            <app-input label="Вместимость склада" placeholder="Введите"
+                       label-class="text-[#A8AAAE] font-medium text-[12px]" class="w-full" />
+
+            <app-input label="Единица измерения" placeholder="тонна"
+                       label-class="text-[#A8AAAE] font-medium text-[12px]" class="w-full" />
+
+            <app-select label="Тип кухни" placeholder="Мясные"
+                        label-class="text-[#A8AAAE] font-medium text-[12px]" class="w-full" />
+
+            <app-input label="Вместимость кухни" placeholder="Введите"
+                       label-class="text-[#A8AAAE] font-medium text-[12px]" class="w-full" />
           </div>
 
-          <div class="flex items-center gap-4">
-            <app-select label="Региональное управление" placeholder="Выберите"
-                        label-class="text-[#A8AAAE] font-medium text-[12px]" class="w-[50%]" />
-            <span class="blo"></span>
-          </div>
 
-
-          <!--          <ElSwitch-->
-          <!--            v-if="route.params.id && !route.query.type"-->
-          <!--            active-text="Деактивация"-->
-          <!--            class="app-switch mt-auto"-->
-          <!--          />-->
+          <ElSwitch
+            v-if="route.params.id && !route.query.type"
+            active-text="Деактивация"
+            class="app-switch mt-auto"
+          />
         </div>
 
         <div v-if="!route.query.type" class="flex items-center mt-[24px] "
@@ -97,7 +106,7 @@ const tableData = ref<TableData[]>([
       </div>
 
       <div class="w-[30%]">
-        <button @click="router.push({name: 'reference-combine-nutrition-edit', params: {id: 1}})"
+        <button @click="router.push({name: 'reference-kitchen-warehouse-edit', params: {id: 1}})"
                 v-if="route.query.type == 'view'"
                 class="flex items-center gap-4 bg-[#F8F9FC] py-[10px] px-[20px] rounded-[8px]">
           <li

@@ -88,12 +88,12 @@ const tableData = ref<TableData[]>([
           <template #default="scope">
             <button class="action-btn mr-[8px]"
                     @click="$router.push({name: 'reference-combine-nutrition-view', query: {type: 'view'}, params: {id: 1}})">
-              <img src="@/assets/images/eye.svg" alt="download" />
+              <img src="../../../../../assets/images/eye.svg" alt="download" />
             </button>
 
             <button class="action-btn"
                     @click="$router.push({name: 'reference-combine-nutrition-edit', params: {id: 1}})">
-              <img src="@/assets/images/icons/edit.svg" alt="eye" />
+              <img src="../../../../../assets/images/icons/edit.svg" alt="eye" />
             </button>
           </template>
         </el-table-column>
