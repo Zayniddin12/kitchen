@@ -1,13 +1,61 @@
 <script
-    setup
-    lang="ts"
+  setup
+  lang="ts"
 >
+
+import { onMounted } from "vue";
+import { useKitchenStore } from "@/modules/Kitchen/store/kitchen.store";
+import { useRoute } from "vue-router";
+import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
+
+const kitchenStore = useKitchenStore();
+const route = useRoute();
+const { setBreadCrumb } = useBreadcrumb();
 
 const tableData = Array(4).fill({
   compound: "Рис",
   quantity: 50,
   unit_measurement: "грамм",
-  price: 25000
+  price: 25000,
+});
+
+const setBreadCrumbFn = () => {
+  kitchenStore.fetchPart(+route.params.department_id, route.params.part_name as string);
+
+  if (!kitchenStore.part) return;
+
+  setBreadCrumb([
+    {
+      label: "Кухня",
+    },
+    {
+      label: kitchenStore.part.name,
+    },
+    {
+      label: kitchenStore.part.department_name,
+      to: { name: "KitchenIndex" },
+    },
+    {
+      label: "Лагерь",
+      to: { name: "KitchenShowIndex" },
+    },
+    {
+      label: "Паҳлавон",
+      to: { name: "KitchenShowChildIndex" },
+    },
+    {
+      label: "Блюди",
+      to: { name: "KitchenDishesIndex" },
+    },
+    {
+      label: "Просмотр",
+      isActionable: true,
+    }
+  ]);
+};
+
+onMounted(() => {
+  setBreadCrumbFn();
 });
 
 </script>
@@ -23,25 +71,25 @@ const tableData = Array(4).fill({
           Состав рациона
         </h6>
         <ElTable
-            :data="tableData"
-            class="custom-element-table-normal custom-element-table mt-4 custom-element-table--has-append"
+          :data="tableData"
+          class="custom-element-table-normal custom-element-table mt-4 custom-element-table--has-append"
         >
           <ElTableColumn
-              label="Состав"
-              prop="compound"
+            label="Состав"
+            prop="compound"
           ></ElTableColumn>
           <ElTableColumn
-              label="Количество"
-              prop="quantity"
+            label="Количество"
+            prop="quantity"
           ></ElTableColumn>
           <ElTableColumn
-              label="Ед. измерения"
-              prop="unit_measurement"
+            label="Ед. измерения"
+            prop="unit_measurement"
           ></ElTableColumn>
           <ElTableColumn
-              label="Цена"
-              prop="price"
-              sortable
+            label="Цена"
+            prop="price"
+            sortable
           ></ElTableColumn>
           <template #append>
             <div class="px-4 py-3.5 flex justify-end items-center gap-x-8">

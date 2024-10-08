@@ -1,11 +1,18 @@
 <script
-    setup
-    lang="ts"
+  setup
+  lang="ts"
 >
 
-import { computed } from "vue";
+import { computed, onMounted } from "vue";
 import ColaImg from "@/assets/images/kitchen/test/cola.png";
 import DishesImg from "@/assets/images/kitchen/test/dishes.png";
+import { useRoute } from "vue-router";
+import { useKitchenStore } from "@/modules/Kitchen/store/kitchen.store";
+import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
+
+const route = useRoute();
+const kitchenStore = useKitchenStore();
+const { setBreadCrumb } = useBreadcrumb();
 
 const categories = computed(() => [
   {
@@ -18,7 +25,7 @@ const categories = computed(() => [
         price: 25000,
         cost_price: 3000,
         sum: 28000,
-        photo: DishesImg
+        photo: DishesImg,
       },
       {
         id: 2,
@@ -26,7 +33,7 @@ const categories = computed(() => [
         price: 25000,
         cost_price: 3000,
         sum: 28000,
-        photo: DishesImg
+        photo: DishesImg,
       },
       {
         id: 3,
@@ -34,7 +41,7 @@ const categories = computed(() => [
         price: 25000,
         cost_price: 3000,
         sum: 28000,
-        photo: DishesImg
+        photo: DishesImg,
       },
       {
         id: 4,
@@ -42,7 +49,7 @@ const categories = computed(() => [
         price: 25000,
         cost_price: 3000,
         sum: 28000,
-        photo: DishesImg
+        photo: DishesImg,
       },
       {
         id: 5,
@@ -50,7 +57,7 @@ const categories = computed(() => [
         price: 25000,
         cost_price: 3000,
         sum: 28000,
-        photo: DishesImg
+        photo: DishesImg,
       },
       {
         id: 6,
@@ -58,7 +65,7 @@ const categories = computed(() => [
         price: 25000,
         cost_price: 3000,
         sum: 28000,
-        photo: DishesImg
+        photo: DishesImg,
       },
       {
         id: 7,
@@ -66,7 +73,7 @@ const categories = computed(() => [
         price: 25000,
         cost_price: 3000,
         sum: 28000,
-        photo: DishesImg
+        photo: DishesImg,
       },
       {
         id: 8,
@@ -74,9 +81,9 @@ const categories = computed(() => [
         price: 25000,
         cost_price: 3000,
         sum: 28000,
-        photo: DishesImg
-      }
-    ]
+        photo: DishesImg,
+      },
+    ],
   },
   {
     id: 2,
@@ -88,7 +95,7 @@ const categories = computed(() => [
         price: 25000,
         cost_price: 3000,
         sum: 28000,
-        photo: ColaImg
+        photo: ColaImg,
       },
       {
         id: 10,
@@ -96,7 +103,7 @@ const categories = computed(() => [
         price: 25000,
         cost_price: 3000,
         sum: 28000,
-        photo: ColaImg
+        photo: ColaImg,
       },
       {
         id: 11,
@@ -104,7 +111,7 @@ const categories = computed(() => [
         price: 25000,
         cost_price: 3000,
         sum: 28000,
-        photo: ColaImg
+        photo: ColaImg,
       },
       {
         id: 12,
@@ -112,7 +119,7 @@ const categories = computed(() => [
         price: 25000,
         cost_price: 3000,
         sum: 28000,
-        photo: ColaImg
+        photo: ColaImg,
       },
       {
         id: 13,
@@ -120,7 +127,7 @@ const categories = computed(() => [
         price: 25000,
         cost_price: 3000,
         sum: 28000,
-        photo: ColaImg
+        photo: ColaImg,
       },
       {
         id: 14,
@@ -128,11 +135,46 @@ const categories = computed(() => [
         price: 25000,
         cost_price: 3000,
         sum: 28000,
-        photo: ColaImg
-      }
-    ]
-  }
+        photo: ColaImg,
+      },
+    ],
+  },
 ]);
+
+const setBreadCrumbFn = () => {
+  kitchenStore.fetchPart(+route.params.department_id, route.params.part_name as string);
+
+  if (!kitchenStore.part) return;
+
+  setBreadCrumb([
+    {
+      label: "Кухня",
+    },
+    {
+      label: kitchenStore.part.name,
+    },
+    {
+      label: kitchenStore.part.department_name,
+      to: { name: "KitchenIndex" },
+    },
+    {
+      label: "Лагерь",
+      to: { name: "KitchenShowIndex" },
+    },
+    {
+      label: "Паҳлавон",
+      to: { name: "KitchenShowChildIndex" },
+    },
+    {
+      label: "Блюди",
+      isActionable: true,
+    },
+  ]);
+};
+
+onMounted(() => {
+  setBreadCrumbFn();
+});
 
 </script>
 
@@ -141,73 +183,73 @@ const categories = computed(() => [
     <div>
       <div class="flex flex-col gap-y-6">
         <div
-            v-for="category in categories"
-            :key="category.id"
+          v-for="category in categories"
+          :key="category.id"
         >
           <h2 class="text-[32px] font-semibold text-dark">
             {{ category.name }}
           </h2>
           <ElTable
-              :data="category.products"
-              class="custom-element-table custom-element-table-normal mt-6"
+            :data="category.products"
+            class="custom-element-table custom-element-table-normal mt-6"
           >
             <ElTableColumn
-                prop="idx"
-                label="№"
-                align="left"
+              prop="idx"
+              label="№"
+              align="left"
             >
               <template #default="{$index}">
                 {{ $index + 1 }}
               </template>
             </ElTableColumn>
             <ElTableColumn
-                prop="name"
-                label="Название"
-                align="center"
-                sortable
+              prop="name"
+              label="Название"
+              align="center"
+              sortable
             >
               <template #default="{row}">
                 <div class="flex items-center justify-center gap-x-3">
                   <img
-                      :src="DishesImg"
-                      :alt="row.name"
-                      class="size-8 rounded-full object-contain"
+                    :src="DishesImg"
+                    :alt="row.name"
+                    class="size-8 rounded-full object-contain"
                   />
                   <span>{{ row.name }}</span>
                 </div>
               </template>
             </ElTableColumn>
             <ElTableColumn
-                prop="price"
-                label="Цена"
-                align="center"
-                sortable
+              prop="price"
+              label="Цена"
+              align="center"
+              sortable
             />
             <ElTableColumn
-                prop="cost_price"
-                label="НДС"
-                align="center"
-                sortable
+              prop="cost_price"
+              label="НДС"
+              align="center"
+              sortable
             />
             <ElTableColumn
-                prop="sum"
-                label="Сумма"
-                align="center"
-                sortable
+              prop="sum"
+              label="Сумма"
+              align="center"
+              sortable
             />
             <ElTableColumn
-                prop="action"
-                align="right"
-                label="Действие"
+              prop="action"
+              align="right"
+              label="Действие"
             >
               <template #default="{row}">
                 <RouterLink
-                    class="action-btn inline-flex "
-                    :to="{name: 'KitchenDishesProductShow', params: {product_id: row.id}}"
+                  class="action-btn inline-flex "
+                  :to="{name: 'KitchenDishesProductShow', params: {product_id: row.id}}"
                 >
                   <img
-                      src="@/assets/images/eye.svg"
-                      alt="eye"
+                    src="@/assets/images/eye.svg"
+                    alt="eye"
                   />
                 </RouterLink>
               </template>

@@ -95,8 +95,8 @@ onMounted(() => {
 
 <template>
   <div>
-    <h1 class="mb-[24px] text-[32px] text-[#000D24] font-semibold	block">
-      {{ route.meta.title ? route.meta.title : "" }}
+    <h1 class="mb-6 text-[32px] text-[#000D24] font-semibold">
+      Продать
     </h1>
 
     <div class="bg-[#FFFFFF] border border-[#E2E6F3] rounded-[24px] p-[24px]">

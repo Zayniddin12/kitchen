@@ -55,7 +55,7 @@ const salesBoxes = computed(() => {
       icon: kitchenIcon,
       title: "Блюди",
       description: "80 рационов",
-      link: { name: "KitchenDishes" },
+      link: { name: "KitchenDishesIndex" },
     },
     {
       id: 3,

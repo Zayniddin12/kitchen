@@ -6,7 +6,6 @@ export default [
     name: "Kitchen",
     meta: {
       title: "Кухня",
-      breadcrumb: [],
     },
     children: [
       {
@@ -58,82 +57,12 @@ export default [
                     path: "sell-create",
                     name: "KitchenMenuSellCreate",
                     component: () => import("@/modules/Kitchen/pages/kitchen-child/menu/pages/SellCreate.vue"),
-                    beforeEnter: (to, from, next) => {
-                      const kitchenStore = useKitchenStore();
-
-                      kitchenStore.fetchPart(+to.params.department_id, to.params.part_name);
-
-                      if (!kitchenStore.part) return next({ name: "notFound" });
-                      to.meta.title = "Продать";
-
-                      to.meta.breadcrumb = [
-                        {
-                          label: "Кухня",
-                        },
-                        {
-                          label: kitchenStore.part.name,
-                        },
-                        {
-                          label: kitchenStore.part.department_name,
-                        },
-                        {
-                          label: "Лагерь",
-                        },
-                        {
-                          label: "Паҳлавон",
-                        },
-                        {
-                          label: "Меню",
-                        },
-                        {
-                          label: "Продать",
-                          isActionable: true,
-                        },
-                      ];
-
-                      next();
-                    },
                   },
 
                   {
                     path: "cooking-dish-create",
                     name: "KitchenMenuCookingDishCreate",
                     component: () => import("@/modules/Kitchen/pages/kitchen-child/menu/pages/CookingDishCreate.vue"),
-                    beforeEnter: (to, from, next) => {
-                      const kitchenStore = useKitchenStore();
-
-                      kitchenStore.fetchPart(+to.params.department_id, to.params.part_name);
-
-                      if (!kitchenStore.part) return next({ name: "notFound" });
-                      to.meta.title = "Приготовление блюда";
-
-                      to.meta.breadcrumb = [
-                        {
-                          label: "Кухня",
-                        },
-                        {
-                          label: kitchenStore.part.name,
-                        },
-                        {
-                          label: kitchenStore.part.department_name,
-                        },
-                        {
-                          label: "Лагерь",
-                        },
-                        {
-                          label: "Паҳлавон",
-                        },
-                        {
-                          label: "Меню",
-                        },
-                        {
-                          label: "Приготовление блюда",
-                          isActionable: true,
-                        },
-                      ];
-
-                      next();
-                    },
                   },
 
                 ],
@@ -141,82 +70,17 @@ export default [
               {
                 path: "dishes",
                 name: "KitchenDishes",
-                redirect: { name: "KitchenDishes" },
+                redirect: { name: "KitchenDishesIndex" },
                 children: [
                   {
                     path: "",
                     name: "KitchenDishesIndex",
                     component: () => import("@/modules/Kitchen/pages/kitchen-child/dishes/Index.vue"),
-                    beforeEnter: (to, from, next) => {
-                      const kitchenStore = useKitchenStore();
-
-                      kitchenStore.fetchPart(+to.params.department_id, to.params.part_name);
-
-                      if (!kitchenStore.activeSalesPart) return next({ name: "notFound" });
-
-                      to.meta.breadcrumb = [
-                        {
-                          label: "Кухня",
-                        },
-                        {
-                          label: kitchenStore.part.name,
-                        },
-                        {
-                          label: kitchenStore.part.department_name,
-                        },
-                        {
-                          label: "Лагерь",
-                        },
-                        {
-                          label: "Паҳлавон",
-                        },
-                        {
-                          label: "Блюди",
-                          isActionable: true,
-                        },
-                      ];
-
-                      next();
-                    },
                   },
                   {
                     path: ":product_id(\\d+)",
                     name: "KitchenDishesProductShow",
                     component: () => import("@/modules/Kitchen/pages/kitchen-child/dishes/ProductShow.vue"),
-                    beforeEnter: (to, from, next) => {
-                      const kitchenStore = useKitchenStore();
-
-                      kitchenStore.fetchPart(+to.params.department_id, to.params.part_name);
-
-                      if (!kitchenStore.activeSalesPart) return next({ name: "notFound" });
-
-                      to.meta.breadcrumb = [
-                        {
-                          label: "Кухня",
-                        },
-                        {
-                          label: kitchenStore.part.name,
-                        },
-                        {
-                          label: kitchenStore.part.department_name,
-                        },
-                        {
-                          label: "Лагерь",
-                        },
-                        {
-                          label: "Паҳлавон",
-                        },
-                        {
-                          label: "Блюди",
-                        },
-                        {
-                          label: "Просмотр",
-                          isActionable: true,
-                        },
-                      ];
-
-                      next();
-                    },
                   },
                 ],
               },
@@ -224,73 +88,11 @@ export default [
                 path: "ration",
                 name: "KitchenRation",
                 component: () => import("@/modules/Kitchen/pages/kitchen-child/KitchenRation.vue"),
-                beforeEnter: (to, from, next) => {
-                  const kitchenStore = useKitchenStore();
-
-                  kitchenStore.fetchPart(+to.params.department_id, to.params.part_name);
-
-                  if (!kitchenStore.part) return next({ name: "notFound" });
-
-                  to.meta.breadcrumb = [
-                    {
-                      label: "Кухня",
-                    },
-                    {
-                      label: kitchenStore.part.name,
-                    },
-                    {
-                      label: kitchenStore.part.department_name,
-                    },
-                    {
-                      label: "Лагерь",
-                    },
-                    {
-                      label: "Паҳлавон",
-                    },
-                    {
-                      label: "Рационы",
-                      isActionable: true,
-                    },
-                  ];
-
-                  next();
-                },
               },
               {
                 path: "calculator",
                 name: "KitchenCalculator",
                 component: () => import("@/modules/Kitchen/pages/kitchen-child/KitchenCalculator.vue"),
-                beforeEnter: (to, from, next) => {
-                  const kitchenStore = useKitchenStore();
-
-                  kitchenStore.fetchPart(+to.params.department_id, to.params.part_name);
-
-                  if (!kitchenStore.part) return next({ name: "notFound" });
-                  to.meta.title = "Калькулятор";
-                  to.meta.breadcrumb = [
-                    {
-                      label: "Кухня",
-                    },
-                    {
-                      label: kitchenStore.part.name,
-                    },
-                    {
-                      label: kitchenStore.part.department_name,
-                    },
-                    {
-                      label: "Лагерь",
-                    },
-                    {
-                      label: "Паҳлавон",
-                    },
-                    {
-                      label: "Калькулятор",
-                      isActionable: true,
-                    },
-                  ];
-
-                  next();
-                },
               },
             ],
           },

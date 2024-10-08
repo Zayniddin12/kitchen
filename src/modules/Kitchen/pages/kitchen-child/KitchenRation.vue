@@ -1,9 +1,16 @@
 <script
-    setup
-    lang="ts"
+  setup
+  lang="ts"
 >
 
-import { computed } from "vue";
+import { computed, onMounted } from "vue";
+import { useKitchenStore } from "@/modules/Kitchen/store/kitchen.store";
+import { useRoute } from "vue-router";
+import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
+
+const kitchenStore = useKitchenStore();
+const route = useRoute();
+const { setBreadCrumb } = useBreadcrumb();
 
 const tableData = computed(() => {
   const data = [];
@@ -16,11 +23,46 @@ const tableData = computed(() => {
       unique_number: "R-00000",
       price: "25 000 сум",
       nd_price: "3 000 сум",
-      sum: "28 000 сум"
+      sum: "28 000 сум",
     });
   }
 
   return data;
+});
+
+const setBreadCrumbFn = () => {
+  kitchenStore.fetchPart(+route.params.department_id, route.params.part_name as string);
+
+  if (!kitchenStore.part) return;
+
+  setBreadCrumb([
+    {
+      label: "Кухня",
+    },
+    {
+      label: kitchenStore.part.name,
+    },
+    {
+      label: kitchenStore.part.department_name,
+      to: { name: "KitchenIndex" },
+    },
+    {
+      label: "Лагерь",
+      to: { name: "KitchenShowIndex" },
+    },
+    {
+      label: "Паҳлавон",
+      to: { name: "KitchenShowChildIndex" },
+    },
+    {
+      label: "Рационы",
+      isActionable: true,
+    },
+  ]);
+};
+
+onMounted(() => {
+  setBreadCrumbFn();
 });
 
 </script>
@@ -32,24 +74,24 @@ const tableData = computed(() => {
         Рационы
       </h1>
       <ElTable
-          :data="tableData"
-          class="mt-6 custom-element-table custom-element-table-normal kitchen-ration__table"
+        :data="tableData"
+        class="mt-6 custom-element-table custom-element-table-normal kitchen-ration__table"
       >
         <ElTableColumn
-            prop="idx"
-            label="№"
-            :width="150"
+          prop="idx"
+          label="№"
+          :width="150"
         />
         <ElTableColumn
-            prop="type"
-            label="Тип рациона"
-            sortable
-            align="center"
+          prop="type"
+          label="Тип рациона"
+          sortable
+          align="center"
         >
           <template #default="{row}">
             <ElDropdown
-                placement="bottom"
-                class="kitchen-ration__table__dropdown"
+              placement="bottom"
+              class="kitchen-ration__table__dropdown"
             >
               {{ row.type }}
               <template #dropdown>
@@ -92,28 +134,28 @@ const tableData = computed(() => {
           </template>
         </ElTableColumn>
         <ElTableColumn
-            prop="unique_number"
-            label="Уникальный номер"
-            sortable
-            align="center"
+          prop="unique_number"
+          label="Уникальный номер"
+          sortable
+          align="center"
         />
         <ElTableColumn
-            prop="price"
-            label="Цена"
-            sortable
-            align="center"
+          prop="price"
+          label="Цена"
+          sortable
+          align="center"
         />
         <ElTableColumn
-            prop="nd_price"
-            label="НДС"
-            sortable
-            align="center"
+          prop="nd_price"
+          label="НДС"
+          sortable
+          align="center"
         />
         <ElTableColumn
-            prop="sum"
-            label="Сумма"
-            sortable
-            align="center"
+          prop="sum"
+          label="Сумма"
+          sortable
+          align="center"
         />
       </ElTable>
       <div class="mt-6 flex items-center justify-between">
@@ -121,10 +163,10 @@ const tableData = computed(() => {
           Показано 1–12 из 100 результатов
         </div>
         <el-pagination
-            class="float-right"
-            background
-            layout="prev, pager, next"
-            :total="1000"
+          class="float-right"
+          background
+          layout="prev, pager, next"
+          :total="1000"
         />
       </div>
     </div>
@@ -132,15 +174,15 @@ const tableData = computed(() => {
 </template>
 
 <style lang="scss">
-  .kitchen-ration{
+.kitchen-ration {
 
-    &__table{
+  &__table {
 
-      &__dropdown{
-        .el-tooltip__trigger:hover{
-          outline: unset !important;
-        }
+    &__dropdown {
+      .el-tooltip__trigger:hover {
+        outline: unset !important;
       }
     }
   }
+}
 </style>

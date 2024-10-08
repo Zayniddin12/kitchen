@@ -1,11 +1,17 @@
-<script setup lang="ts">
+<script
+  setup
+  lang="ts"
+>
 import AppInput from "@/components/ui/form/app-input/AppInput.vue";
 import AppSelect from "@/components/ui/form/app-select/AppSelect.vue";
-
 import { useRoute } from "vue-router";
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
+import { useKitchenStore } from "@/modules/Kitchen/store/kitchen.store";
+import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 
+const kitchenStore = useKitchenStore();
 const route = useRoute();
+const { setBreadCrumb } = useBreadcrumb();
 
 const num = ref(1);
 
@@ -18,7 +24,7 @@ const mealData = ref<any>([
   },
 ]);
 
-const tableData = ref<TableData[]>([
+const tableData = ref([
   {
     id: 1,
     num: "1",
@@ -71,37 +77,101 @@ const deleteMeal = (mealIndex) => {
   mealData.value = mealData.value.filter((meal, index) => index !== mealIndex);
 };
 
+const setBreadCrumbFn = () => {
+  kitchenStore.fetchPart(+route.params.department_id, route.params.part_name as string);
+
+  if (!kitchenStore.part) return;
+
+  setBreadCrumb([
+    {
+      label: "Кухня",
+    },
+    {
+      label: kitchenStore.part.name,
+    },
+    {
+      label: kitchenStore.part.department_name,
+      to: { name: "KitchenIndex" },
+    },
+    {
+      label: "Лагерь",
+      to: { name: "KitchenShowIndex" },
+    },
+    {
+      label: "Паҳлавон",
+      to: { name: "KitchenShowChildIndex" },
+    },
+    {
+      label: "Меню",
+      to: { name: "KitchenMenuIndex" },
+    },
+    {
+      label: "Приготовление блюда",
+      isActionable: true,
+    },
+  ]);
+};
+
+onMounted(() => {
+  setBreadCrumbFn();
+});
+
 </script>
 
 <template>
   <div>
-    <span class="mb-[24px] text-[32px] text-[#000D24] font-semibold	block"> {{ route.meta.title ? route.meta.title : ""
-      }}</span>
+    <h1 class="mb-6 text-[32px] text-[#000D24] font-semibold">Приготовление блюда</h1>
 
     <div class="bg-[#FFFFFF] border border-[#E2E6F3] rounded-[24px] p-[24px]">
 
       <div class="flex items-center gap-8 w-[70%] mb-[24px]">
-        <app-select class="w-full" label="Название блюда" label-class="text-[#A8AAAE] text-[12px] font-medium"
-                    placeholder="Плов" />
-        <app-input class="w-full" placeholder="8" label="Название блюда"
-                   label-class="text-[#A8AAAE] text-[12px] font-medium" />
+        <app-select
+          class="w-full"
+          label="Название блюда"
+          label-class="text-[#A8AAAE] text-[12px] font-medium"
+          placeholder="Плов"
+        />
+        <app-input
+          class="w-full"
+          placeholder="8"
+          label="Название блюда"
+          label-class="text-[#A8AAAE] text-[12px] font-medium"
+        />
       </div>
 
       <div>
         <span class="text-[#000D24] text-[18px] font-medium block mb-[12px]">Состав блюды</span>
 
         <div class="bg-[#F8F9FC] rounded-[16px] px-[12px] py-[16px]">
-          <div v-for="(item,index) in mealData"
-               class="flex items-center gap-4 border-b border-[#E2E6F3] pt-[16px] pb-4 last:border-0">
+          <div
+            v-for="(item,index) in mealData"
+            class="flex items-center gap-4 border-b border-[#E2E6F3] pt-[16px] pb-4 last:border-0"
+          >
             <div class="w-[60%] flex items-center gap-4">
-              <app-select class="w-full" label="Тип продукта" label-class="text-[#A8AAAE] text-[12px] font-medium" />
-              <app-select class="w-full" label="Вид продукта" label-class="text-[#A8AAAE] text-[12px] font-medium" />
+              <app-select
+                class="w-full"
+                label="Тип продукта"
+                label-class="text-[#A8AAAE] text-[12px] font-medium"
+              />
+              <app-select
+                class="w-full"
+                label="Вид продукта"
+                label-class="text-[#A8AAAE] text-[12px] font-medium"
+              />
 
             </div>
 
             <div class="w-[35%] flex items-center gap-4">
-              <app-input class="w-full" label="Количество" label-class="text-[#A8AAAE] text-[12px] font-medium" />
-              <app-input class="w-full" label="Ед. измерения" label-class="text-[#A8AAAE] text-[12px] font-medium" />
+              <app-input
+                class="w-full"
+                label="Количество"
+                label-class="text-[#A8AAAE] text-[12px] font-medium"
+              />
+              <app-input
+                class="w-full"
+                label="Ед. измерения"
+                label-class="text-[#A8AAAE] text-[12px] font-medium"
+              />
             </div>
 
             <div class="w-[5%] flex justify-end">
@@ -109,7 +179,10 @@ const deleteMeal = (mealIndex) => {
                 @click="deleteMeal(index)"
                 class="bg-[#E2E6F3] rounded-[8px] p-[10px] ml-4"
               >
-                <img src="@/assets/images/icons/delete.svg" alt="del">
+                <img
+                  src="@/assets/images/icons/delete.svg"
+                  alt="del"
+                >
               </button>
             </div>
           </div>
@@ -119,7 +192,8 @@ const deleteMeal = (mealIndex) => {
       <div class="mt-[12px] flex items-center justify-between">
         <button
           @click="addMeal"
-          class="flex items-center justify-center gap-3 border-[1px] border-[#2E90FA] rounded-[8px] text-[#2E90FA] text-[14px] font-medium py-[8px] px-[16px]">
+          class="flex items-center justify-center gap-3 border-[1px] border-[#2E90FA] rounded-[8px] text-[#2E90FA] text-[14px] font-medium py-[8px] px-[16px]"
+        >
           <li
             :style="{
                   maskImage: 'url(/icons/plusIcon.svg)',
@@ -171,6 +245,9 @@ const deleteMeal = (mealIndex) => {
   </div>
 </template>
 
-<style scoped lang="scss">
+<style
+  scoped
+  lang="scss"
+>
 
 </style>
