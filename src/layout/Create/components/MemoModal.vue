@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import AppInput from "@/components/ui/form/app-input/AppInput.vue";
 import AppSelect from "@/components/ui/form/app-select/AppSelect.vue";
+import AppDatePicker from "@/components/ui/form/app-date-picker/AppDatePicker.vue";
 
 const emit = defineEmits(["update:editModal"]);
 const props = defineProps({
@@ -87,19 +88,26 @@ const closeModal = () => {
 
       <div class="w-[35%] ml-[24px] flex flex-col justify-between">
         <div>
-          <app-input placeholder="Служебная записка" />
+          <app-input placeholder="Служебная записка" label="Название документа"
+                     label-class="text-[#A8AAAE] text-[12px] font-medium" />
 
-          <app-input placeholder="Дата создания документа" />
+          <app-date-picker placeholder="24.08.2024" label="Дата создания документа"
+                           label-class="text-[#A8AAAE] text-[12px] font-medium" />
 
           <app-input placeholder="№ документа" />
 
-          <app-input placeholder="Кому" />
+          <app-select placeholder="Выберите" label="Кому"
+                      label-class="text-[#A8AAAE] text-[12px] font-medium" />
 
-          <app-input placeholder="Тема" />
+          <app-input placeholder="Введите" label="Тема"
+                     label-class="text-[#A8AAAE] text-[12px] font-medium" />
 
-          <app-input placeholder="Отображение сообщения служебки" type="textarea" :rows="5" />
+          <app-input label="Сообщения"
+                     label-class="text-[#A8AAAE] text-[12px] font-medium" placeholder="Отображение сообщения служебки"
+                     type="textarea" :rows="5" />
 
-          <app-select placeholder="Отправитель" />
+          <app-select placeholder="Выберите" label="Отправитель"
+                      label-class="text-[#A8AAAE] text-[12px] font-medium" />
         </div>
 
         <div class="flex items-start justify-between">

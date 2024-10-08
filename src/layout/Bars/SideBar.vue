@@ -11,19 +11,18 @@ const router = useRouter();
 let route = useRoute();
 
 let currentIndex = ref<number>(0);
-let currentMenu = ref<number>(localStorage.getItem('current-menu') || 0);
-let childIsOpen = ref<boolean>(
-  localStorage.getItem("child-sidebar") === "true"
-);
+let currentMenu = ref<number>(JSON.parse(localStorage.getItem('current-menu')) || 0);
+
+let childIsOpen = ref<boolean>(localStorage.getItem("child-sidebar") === "true");
 
 onMounted(() => {
-  currentMenu.value = localStorage.getItem('current-menu')
+  currentMenu.value = JSON.parse(localStorage.getItem('current-menu'))
 });
 
-watch(() => route?.path, function () {
-    currentMenu.value = localStorage.getItem('current-menu');
-  }
-);
+watch(() => route.path, () => {
+  const storedMenu = localStorage.getItem('current-menu');
+  currentMenu.value = storedMenu ? JSON.parse(storedMenu) : 0;
+});
 
 const activeMenu = (index: number, item: any) => {
   currentIndex.value = index;
@@ -55,6 +54,11 @@ const pinSidebar = () => {
 }
 
 onMounted(() => {
+  const storedMenu = localStorage.getItem('current-menu');
+  const storedSidebar = localStorage.getItem('child-sidebar');
+
+  currentMenu.value = storedMenu ? JSON.parse(storedMenu) : 0;
+  childIsOpen.value = storedSidebar === "true";
   document.body.addEventListener('click', closeChildSidebar);
 });
 
