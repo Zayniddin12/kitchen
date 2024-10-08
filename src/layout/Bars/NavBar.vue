@@ -68,8 +68,6 @@ const openModals = (data) => {
 
   dropdown.value.handleClose();
 };
-
-
 </script>
 
 <template>
@@ -162,6 +160,7 @@ const openModals = (data) => {
         </div>
       </div>
     </div>
+
     <MemoModal v-model:editModal="editModal" />
     <ComingModal v-model:editModal="editModal2" />
     <ConsumptionModal v-model:editModal="editConsumptionModal" />

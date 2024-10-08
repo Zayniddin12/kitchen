@@ -55,6 +55,7 @@ const ulItems = ref<UlItems[]>([
       {
         title: "Блюда",
         subTitle: "Блюда",
+        router: "reference-dish",
       },
     ],
   },

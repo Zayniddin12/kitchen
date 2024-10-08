@@ -103,7 +103,7 @@ const onSubmit = async () => {
         />
 
         <!-- Forgot Password Link -->
-        <div class="text-right text-[#2E90FA] text-xs mt-1 cursor-pointer">
+        <div class="text-right text-[#2E90FA] text-xs mt-1 cursor-pointer" @click="router.push('/reset-password')">
           Забыли пароль?
         </div>
       </AppForm>
