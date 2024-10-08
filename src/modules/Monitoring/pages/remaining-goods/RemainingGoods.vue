@@ -1,7 +1,11 @@
 <script setup lang="ts">
 import AppDatePicker from "@/components/ui/form/app-date-picker/AppDatePicker.vue";
 import { TableColumnType } from "@/types/common.type";
-import { computed } from "vue";
+import { computed, onMounted } from "vue";
+
+import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
+
+const {setBreadCrumb} = useBreadcrumb();
 
 const tableColumns = computed<TableColumnType[]>(() => {
   return [
@@ -149,6 +153,23 @@ const tableData = computed(() => {
     },
   ];
 }) as Record<string, any>[];
+
+const setBreadCrumbFn = () => {
+  setBreadCrumb([
+    {
+      label: "Мониторинг",
+    },
+    {
+      label: "Остатка товаров",
+      isActionable: true,
+    },
+  ])
+}
+
+onMounted(() => {
+  setBreadCrumbFn();
+})
+
 </script>
 
 <template>

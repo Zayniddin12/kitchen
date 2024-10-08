@@ -1,5 +1,8 @@
-<script setup lang="ts">
-import {  Search } from "@element-plus/icons-vue";
+<script
+  setup
+  lang="ts"
+>
+import { Search } from "@element-plus/icons-vue";
 // import Language from "@/components/language/index.vue";
 import MemoModal from "@/layout/Create/components/MemoModal.vue";
 import ComingModal from "@/layout/Create/components/ComingModal.vue";
@@ -8,6 +11,7 @@ import FreeModal from "@/layout/Create/components/FreeModal.vue";
 import MonthlyModal from "@/layout/Create/components/MonthlyModal.vue";
 import YearlyModal from "@/layout/Create/components/YearlyModal.vue";
 import { ref } from "vue";
+import AppInput from "@/components/ui/form/app-input/AppInput.vue";
 
 const editModal = ref<boolean>(false);
 const editModal2 = ref<boolean>(false);
@@ -86,27 +90,55 @@ const openModals = (data) => {
         placeholder="Поиск"
       />
     </div>
+<!--    <AppInput-->
+<!--      :prefix-icon="Search"-->
+<!--      size="large"-->
+<!--      placeholder="Поиск"-->
+<!--    />-->
     <div class="flex items-center gap-6">
-      <el-dropdown trigger="click" :hide-on-click="false" ref="dropdown">
+      <el-dropdown
+        trigger="click"
+        :hide-on-click="false"
+        ref="dropdown"
+      >
         <button
           class="flex items-center bg-[#2E90FA] rounded-[8px] border-[1.5px] py-[10px] px-[20px] active:bg-[#175CD3] active:border-[#1849A9] active:border-[1.5px]"
         >
-          <img src="@/assets/images/icons/plus.svg" class="mr-[8px]" alt="plus"/>
+          <img
+            src="@/assets/images/icons/plus.svg"
+            class="mr-[8px]"
+            alt="plus"
+          />
 
-          <span style="vertical-align: middle" class="text-white"> Создать </span>
+          <span
+            style="vertical-align: middle"
+            class="text-white"
+          > Создать </span>
         </button>
         <template #dropdown>
           <el-dropdown-menu class="navbar-dropdown">
-            <el-dropdown-item class="item-drop" v-for="item in navbarMenuList">
-              <button @click="openModals(item)" v-if="!item.children"
-                      class="flex items-center justify-between p-[10px] w-full">
+            <el-dropdown-item
+              class="item-drop"
+              v-for="item in navbarMenuList"
+            >
+              <button
+                @click="openModals(item)"
+                v-if="!item.children"
+                class="flex items-center justify-between p-[10px] w-full"
+              >
                 <span class="text-[#4F5662] text-[14px] font-medium mr-[4px]">{{ item.title }}</span>
                 <img
                   src="@/assets/arrow-right.svg"
                   alt="arrow icon"
                 />
               </button>
-              <el-dropdown trigger="click" class="w-full" placement="right-start" popper-class="custom-dropdown" v-else>
+              <el-dropdown
+                trigger="click"
+                class="w-full"
+                placement="right-start"
+                popper-class="custom-dropdown"
+                v-else
+              >
                 <button class="flex items-center justify-between p-[10px] w-full">
                   <span class="text-[#4F5662] text-[14px] font-medium mr-[4px]">{{ item.title }}</span>
                   <img
@@ -117,8 +149,14 @@ const openModals = (data) => {
 
                 <template #dropdown>
                   <el-dropdown-menu class="navbar-dropdown right-[20px]">
-                    <el-dropdown-item class="item-drop" v-for="child in item.children">
-                      <button @click="openModals(child)" class="flex items-center justify-between p-[10px] w-full">
+                    <el-dropdown-item
+                      class="item-drop"
+                      v-for="child in item.children"
+                    >
+                      <button
+                        @click="openModals(child)"
+                        class="flex items-center justify-between p-[10px] w-full"
+                      >
                         <span class="text-[#4F5662] text-[14px] font-medium mr-12">{{ child.title }}</span>
                         <img
                           src="@/assets/arrow-right.svg"
@@ -140,20 +178,30 @@ const openModals = (data) => {
         value="18"
         class="item cursor-pointer"
       >
-        <img src="@/assets/images/icons/bell.svg" alt="bell" />
+        <img
+          src="@/assets/images/icons/bell.svg"
+          alt="bell"
+        />
       </el-badge>
 
       <el-badge
         value="18"
         class="item cursor-pointer"
       >
-        <img src="@/assets/images/icons/mail.svg" alt="mail" />
+        <img
+          src="@/assets/images/icons/mail.svg"
+          alt="mail"
+        />
       </el-badge>
 
       <!--      <Language />-->
 
       <div class="flex items-center gap-3 el-dropdown-link">
-        <img src="@/assets/images/avatar.png" class="h-[40px] w-[40px] object-contain rounded-full" alt="avatar"/>
+        <img
+          src="@/assets/images/avatar.png"
+          class="h-[40px] w-[40px] object-contain rounded-full"
+          alt="avatar"
+        />
         <div class="">
           <h2 class="m-0 text-[14px] font-medium text-black">
             Мухаммадамин Нурматов

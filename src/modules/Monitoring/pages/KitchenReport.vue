@@ -1,13 +1,15 @@
 <script
-    lang="ts"
-    setup
+  lang="ts"
+  setup
 >
 import AppDatePicker from "@/components/ui/form/app-date-picker/AppDatePicker.vue";
 import { TableColumnType } from "@/types/common.type";
 import { computed, onMounted, ref, watch } from "vue";
 import { useRoute } from "vue-router";
+import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 
 const route = useRoute();
+const { setBreadCrumb } = useBreadcrumb();
 
 enum TABS {
   ATTENDANCE = 1,
@@ -22,12 +24,12 @@ const tabItems = computed(() => {
   return [
     {
       value: TABS.ATTENDANCE,
-      label: "Посещаемость"
+      label: "Посещаемость",
     },
     {
       value: TABS.DISHES,
-      label: "Блюда"
-    }
+      label: "Блюда",
+    },
   ];
 });
 
@@ -46,48 +48,48 @@ const attendanceTableColumns = computed<TableColumnType>(() => {
       label: "№",
       prop: "num",
       width: 150,
-      sortable: false
+      sortable: false,
     },
     {
       label: "Регионы",
       prop: "region",
-      sortable: true
+      sortable: true,
     },
     {
       label: "Посетители",
       prop: "visitors",
-      sortable: true
+      sortable: true,
     },
     {
       label: "Кухни ЛПП",
       prop: "kitchens",
-      sortable: true
+      sortable: true,
     },
     {
       label: "Св. продажа",
       prop: "holy_sale",
-      sortable: true
+      sortable: true,
     },
     {
       label: "Буфет",
       prop: "buffet",
-      sortable: true
+      sortable: true,
     },
     {
       label: "Поликлиника",
       prop: "polyclinic",
-      sortable: true
+      sortable: true,
     },
     {
       label: "Профилакторий",
       prop: "health_resort",
-      sortable: true
+      sortable: true,
     },
     {
       label: "Лагерь",
       prop: "camp",
-      sortable: true
-    }
+      sortable: true,
+    },
   ];
 });
 
@@ -104,7 +106,7 @@ const attendanceTableData = computed(() => {
       buffet: Math.floor(Math.random() * 51) + 1000,
       polyclinic: Math.floor(Math.random() * 51) + 1000,
       health_resort: Math.floor(Math.random() * 51) + 1000,
-      camp: 0
+      camp: 0,
     };
 
     dataList.push(data);
@@ -119,48 +121,48 @@ const dishesTableColumns = computed<TableColumnType>(() => {
       label: "№",
       prop: "num",
       width: 150,
-      sortable: false
+      sortable: false,
     },
     {
       label: "Регионы",
       prop: "region",
-      sortable: true
+      sortable: true,
     },
     {
       label: "Всего порций",
       prop: "total_servings",
-      sortable: true
+      sortable: true,
     },
     {
       label: "Кухни ЛПП",
       prop: "lpp_kitchens",
-      sortable: true
+      sortable: true,
     },
     {
       label: "Св. продажа",
       prop: "holy_sale",
-      sortable: true
+      sortable: true,
     },
     {
       label: "Буфет",
       prop: "buffet",
-      sortable: true
+      sortable: true,
     },
     {
       label: "Поликлиника",
       prop: "polyclinic",
-      sortable: true
+      sortable: true,
     },
     {
       label: "Профилакторий",
       prop: "health_resort",
-      sortable: true
+      sortable: true,
     },
     {
       label: "Лагерь",
       prop: "camp",
-      sortable: true
-    }
+      sortable: true,
+    },
   ];
 });
 
@@ -177,7 +179,7 @@ const dishesTableData = computed(() => {
       buffet: Math.floor(Math.random() * 51) + 1000,
       polyclinic: Math.floor(Math.random() * 51) + 1000,
       health_resort: Math.floor(Math.random() * 51) + 1000,
-      camp: 0
+      camp: 0,
     };
 
     dataList.push(data);
@@ -186,9 +188,25 @@ const dishesTableData = computed(() => {
   return dataList;
 });
 
+const setBreadCrumbFn = () => {
+  setBreadCrumb([
+    {
+      label: "Мониторинг",
+    },
+    {
+      label: "Отчет о кухне",
+      isActionable: true,
+    },
+  ]);
+};
+
 watch(() => route.query, () => {
   getActiveTab();
 }, { immediate: true });
+
+onMounted(() => {
+  setBreadCrumbFn();
+});
 
 </script>
 <template>
@@ -200,36 +218,36 @@ watch(() => route.query, () => {
       <div class="flex justify-between items-start gap-5 mt-6">
         <div class="app-tabs">
           <RouterLink
-              v-for="item in tabItems"
-              :key="item.value"
-              :class="['app-tab', {'app-tab--active': activeTab === item.value}]"
-              :to="{query: {...route.query, ...{tab: item.value}}}"
+            v-for="item in tabItems"
+            :key="item.value"
+            :class="['app-tab', {'app-tab--active': activeTab === item.value}]"
+            :to="{query: {...route.query, ...{tab: item.value}}}"
           >
             {{ item.label }}
           </RouterLink>
         </div>
         <div class="grid grid-cols-4 gap-2 max-w-[645px]">
           <AppDatePicker
-              format="DD.MM.YYYY"
-              size="large"
+            format="DD.MM.YYYY"
+            size="large"
           />
           <AppDatePicker
-              format="DD.MM.YYYY"
-              size="large"
+            format="DD.MM.YYYY"
+            size="large"
           />
           <ElDropdown
-              placement="bottom"
-              class="block w-full"
+            placement="bottom"
+            class="block w-full"
           >
             <ElButton
-                size="large"
-                class="h-12 !bg-white-blue w-full !border-white-blue"
+              size="large"
+              class="h-12 !bg-white-blue w-full !border-white-blue"
             >
               <div class="flex items-center gap-x-2">
                 <img
-                    src="@/assets/images/download.svg"
-                    class="size-5"
-                    alt="download img"
+                  src="@/assets/images/download.svg"
+                  class="size-5"
+                  alt="download img"
                 />
                 <span class="font-medium text-dark-gray">Скачать</span>
               </div>
@@ -237,36 +255,36 @@ watch(() => route.query, () => {
             <template #dropdown>
               <ElDropdownMenu class="p-3 rounded-lg">
                 <ElDropdownItem
-                    class="flex items-center gap-x-4 rounded-lg px-3 py-2.5"
+                  class="flex items-center gap-x-4 rounded-lg px-3 py-2.5"
                 >
                   <img
-                      src="@/assets/images/icons/pdf.svg"
-                      alt="pdf"
-                      class="w-[13px] h-[17px]"
+                    src="@/assets/images/icons/pdf.svg"
+                    alt="pdf"
+                    class="w-[13px] h-[17px]"
                   />
                   <span class="text-sm text-dark-gray font-medium">
                     PDF файл
                   </span>
                 </ElDropdownItem>
                 <ElDropdownItem
-                    class="flex items-center gap-x-4 rounded-lg px-3 py-2.5"
+                  class="flex items-center gap-x-4 rounded-lg px-3 py-2.5"
                 >
                   <img
-                      src="@/assets/images/icons/excel.svg"
-                      alt="pdf"
-                      class="w-[13px] h-[17px]"
+                    src="@/assets/images/icons/excel.svg"
+                    alt="pdf"
+                    class="w-[13px] h-[17px]"
                   />
                   <span class="text-sm text-dark-gray font-medium">
                     Excel файл
                   </span>
                 </ElDropdownItem>
                 <ElDropdownItem
-                    class="flex items-center gap-x-4 rounded-lg px-3 py-2.5"
+                  class="flex items-center gap-x-4 rounded-lg px-3 py-2.5"
                 >
                   <img
-                      src="@/assets/images/icons/1c.svg"
-                      alt="pdf"
-                      class="w-[13px] h-[17px]"
+                    src="@/assets/images/icons/1c.svg"
+                    alt="pdf"
+                    class="w-[13px] h-[17px]"
                   />
                   <span class="text-sm text-dark-gray font-medium">
                     1C файл
@@ -276,13 +294,13 @@ watch(() => route.query, () => {
             </template>
           </ElDropdown>
           <ElButton
-              size="large"
-              class="h-12 !bg-white-blue !border-white-blue"
+            size="large"
+            class="h-12 !bg-white-blue !border-white-blue"
           >
             <div class="flex items-center gap-x-2">
               <img
-                  src="@/assets/images/icons/share.svg"
-                  class="size-5"
+                src="@/assets/images/icons/share.svg"
+                class="size-5"
               />
               <span class="font-medium text-dark-gray">Поделиться</span>
             </div>
@@ -290,25 +308,25 @@ watch(() => route.query, () => {
         </div>
       </div>
       <TransitionGroup
-          name="nested"
-          :duration="{ enter: 500, leave: 1500 }"
-          tag="div"
-          class="relative overflow-x-hidden"
+        name="nested"
+        :duration="{ enter: 500, leave: 1500 }"
+        tag="div"
+        class="relative overflow-x-hidden"
       >
         <div
-            class="inner"
-            v-if="activeTab === TABS.ATTENDANCE"
+          class="inner"
+          v-if="activeTab === TABS.ATTENDANCE"
         >
           <ElTable
-              :data="attendanceTableData"
-              class="custom-element-table"
+            :data="attendanceTableData"
+            class="custom-element-table"
           >
             <ElTableColumn
-                v-for="column in attendanceTableColumns"
-                :key="column.prop"
-                :width="column.width"
-                :sortable="column.sortable"
-                :prop="column.prop"
+              v-for="column in attendanceTableColumns"
+              :key="column.prop"
+              :width="column.width"
+              :sortable="column.sortable"
+              :prop="column.prop"
             >
               <template #header>
                 <strong class="font-medium">
@@ -319,23 +337,23 @@ watch(() => route.query, () => {
           </ElTable>
         </div>
         <div
-            class="inner"
-            v-else-if="activeTab === TABS.DISHES"
+          class="inner"
+          v-else-if="activeTab === TABS.DISHES"
         >
           <div>
             <h2 class="font-semibold text-black text-2xl">
               Приготовленных
             </h2>
             <ElTable
-                :data="dishesTableData"
-                class="custom-element-table mt-4"
+              :data="dishesTableData"
+              class="custom-element-table mt-4"
             >
               <ElTableColumn
-                  v-for="column in dishesTableColumns"
-                  :key="column.prop"
-                  :width="column.width"
-                  :sortable="column.sortable"
-                  :prop="column.prop"
+                v-for="column in dishesTableColumns"
+                :key="column.prop"
+                :width="column.width"
+                :sortable="column.sortable"
+                :prop="column.prop"
               >
                 <template #header>
                   <strong class="font-medium">
@@ -350,15 +368,15 @@ watch(() => route.query, () => {
               Раздаваемых
             </h2>
             <ElTable
-                :data="dishesTableData"
-                class="custom-element-table mt-4"
+              :data="dishesTableData"
+              class="custom-element-table mt-4"
             >
               <ElTableColumn
-                  v-for="column in dishesTableColumns"
-                  :key="column.prop"
-                  :width="column.width"
-                  :sortable="column.sortable"
-                  :prop="column.prop"
+                v-for="column in dishesTableColumns"
+                :key="column.prop"
+                :width="column.width"
+                :sortable="column.sortable"
+                :prop="column.prop"
               >
                 <template #header>
                   <strong class="font-medium">

@@ -17,52 +17,15 @@ export default [
           {
             path: "",
             name: "monitoring.remainingGoods.index",
-            component: () =>
-              import(
-                "@/modules/Monitoring/pages/remaining-goods/RemainingGoods.vue"
-              ),
+            component: () => import("@/modules/Monitoring/pages/remaining-goods/RemainingGoods.vue"),
             meta: {
-              breadcrumb: [
-                {
-                  label: "Мониторинг",
-                },
-                {
-                  label: "Остатка товаров",
-                  isActionable: true,
-                },
-              ],
+              title: "Остатка товаров",
             },
           },
           {
             path: "district/:id(\\d+)",
             name: "monitoring.remainingGoods.district",
-            component: () =>
-              import("@/modules/Monitoring/pages/remaining-goods/District.vue"),
-            meta: {
-              breadcrumb: [],
-            },
-            beforeEnter: (to, from, next) => {
-              const districtStore = useDistrictStore();
-
-              districtStore.getDistrict(+to.params.id);
-
-              if (districtStore.district) {
-                to.meta.breadcrumb = [
-                  {
-                    label: "Мониторинг",
-                    to: { name: "monitoring.remainingGoods.index" },
-                  },
-                  {
-                    label: "КП РУ Навои",
-                  },
-                  {
-                    label: districtStore.district.name,
-                    isActionable: true,
-                  },
-                ];
-              }
-              next();
-            },
+            component: () => import("@/modules/Monitoring/pages/remaining-goods/District.vue"),
           },
         ],
       },
@@ -71,16 +34,8 @@ export default [
         name: "monitoring.kitchenReport",
         component: () => import("@/modules/Monitoring/pages/KitchenReport.vue"),
         meta: {
-          breadcrumb: [
-            {
-              label: "Мониторинг"
-            },
-            {
-              label: "Отчет о кухне",
-              isActionable: true
-            }
-          ]
-        }
+          title: "Отчет о кухне",
+        },
       },
     ],
   },

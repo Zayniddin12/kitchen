@@ -1,19 +1,21 @@
 <script
-    setup
-    lang="ts"
+  setup
+  lang="ts"
 >
 
 import { onBeforeRouteUpdate, useRoute } from "vue-router";
 import { useDistrictStore } from "@/modules/WarehouseBases/store/district.store";
-import { computed, ref, watch } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
 import filterIcon from "@/assets/images/filter.svg";
 import CollapseFilter from "@/components/collapseFilter/index.vue";
 import AppSelect from "@/components/ui/form/app-select/AppSelect.vue";
 import AppInput from "@/components/ui/form/app-input/AppInput.vue";
 import AppDatePicker from "@/components/ui/form/app-date-picker/AppDatePicker.vue";
+import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 
 const districtStore = useDistrictStore();
 const route = useRoute();
+const { setBreadCrumb } = useBreadcrumb();
 
 onBeforeRouteUpdate((to, from, next) => {
 
@@ -24,15 +26,15 @@ onBeforeRouteUpdate((to, from, next) => {
 
   to.meta.breadcrumb = [
     {
-      label: "Базы складов"
+      label: "Базы складов",
     },
     {
-      label: districtStore.district.name
+      label: districtStore.district.name,
     },
     {
       label: districtStore.product.name,
-      isActionable: true
-    }
+      isActionable: true,
+    },
   ];
 
   next();
@@ -47,12 +49,12 @@ const tabItems = computed(() => {
   return [
     {
       value: TABS.PRODUCTS,
-      name: "По продуктам"
+      name: "По продуктам",
     },
     {
       value: TABS.INVOICES,
-      name: "По накладным"
-    }
+      name: "По накладным",
+    },
   ];
 });
 
@@ -84,7 +86,7 @@ const productTableData = computed(() => {
       quantity: Math.floor(Math.random() * 11) + 90,
       unit_measurement: "кг",
       sum: "6 400 000 сум",
-      action: true
+      action: true,
     });
   }
 
@@ -103,11 +105,34 @@ const invoiceTableData = computed(() => {
       quantity: Math.floor(Math.random() * 11) + 90,
       unit_measurement: "кг",
       price: "80 000 сум",
-      sum: "6 400 000 сум"
+      sum: "6 400 000 сум",
     });
   }
 
   return data;
+});
+
+const setBreadCrumbFn = () => {
+  districtStore.getProduct(+route.params.district_id, +route.params.product_id);
+
+  if (!districtStore.district || !districtStore.product) return;
+
+  setBreadCrumb([
+    {
+      label: "Базы складов",
+    },
+    {
+      label: districtStore.district.name,
+    },
+    {
+      label: districtStore.product.name,
+      isActionable: true,
+    },
+  ]);
+};
+
+onMounted(() => {
+  setBreadCrumbFn();
 });
 
 </script>
@@ -126,12 +151,12 @@ const invoiceTableData = computed(() => {
           86.5%
         </h2>
         <ElProgress
-            :stroke-width="16"
-            :percentage="86.5"
-            :show-text="false"
-            status="success"
-            class="mt-2"
-            striped
+          :stroke-width="16"
+          :percentage="86.5"
+          :show-text="false"
+          status="success"
+          class="mt-2"
+          striped
         />
         <p class="mt-4 text-xs text-[#A8AAAE]">
           Этот элемент показывает процент заполненности склада, помогая вам следить за остатками и эффективно управлять
@@ -142,28 +167,28 @@ const invoiceTableData = computed(() => {
         <div class="flex items-center gap-4 justify-between">
           <div class="app-tabs">
             <RouterLink
-                v-for="item in tabItems"
-                :key="item.value"
-                :class="['app-tab', {'app-tab--active': activeTab === item.value}]"
-                :to="{query: {...route.query, ...{tab: item.value}}}"
+              v-for="item in tabItems"
+              :key="item.value"
+              :class="['app-tab', {'app-tab--active': activeTab === item.value}]"
+              :to="{query: {...route.query, ...{tab: item.value}}}"
             >
               {{ item.name }}
             </RouterLink>
           </div>
           <div class="flex items-center gap-4 max-w-[309px]">
             <ElDropdown
-                placement="bottom"
-                class="block w-full"
+              placement="bottom"
+              class="block w-full"
             >
               <ElButton
-                  size="large"
-                  class="h-12 !bg-white-blue w-full !border-white-blue"
+                size="large"
+                class="h-12 !bg-white-blue w-full !border-white-blue"
               >
                 <div class="flex items-center gap-x-2">
                   <img
-                      src="@/assets/images/download.svg"
-                      class="size-5"
-                      alt="download img"
+                    src="@/assets/images/download.svg"
+                    class="size-5"
+                    alt="download img"
                   />
                   <span class="font-medium text-dark-gray">Скачать</span>
                 </div>
@@ -171,36 +196,36 @@ const invoiceTableData = computed(() => {
               <template #dropdown>
                 <ElDropdownMenu class="p-3 rounded-lg">
                   <ElDropdownItem
-                      class="flex items-center gap-x-4 rounded-lg px-3 py-2.5"
+                    class="flex items-center gap-x-4 rounded-lg px-3 py-2.5"
                   >
                     <img
-                        src="@/assets/images/icons/pdf.svg"
-                        alt="pdf"
-                        class="w-[13px] h-[17px]"
+                      src="@/assets/images/icons/pdf.svg"
+                      alt="pdf"
+                      class="w-[13px] h-[17px]"
                     />
                     <span class="text-sm text-dark-gray font-medium">
                     PDF файл
                   </span>
                   </ElDropdownItem>
                   <ElDropdownItem
-                      class="flex items-center gap-x-4 rounded-lg px-3 py-2.5"
+                    class="flex items-center gap-x-4 rounded-lg px-3 py-2.5"
                   >
                     <img
-                        src="@/assets/images/icons/excel.svg"
-                        alt="pdf"
-                        class="w-[13px] h-[17px]"
+                      src="@/assets/images/icons/excel.svg"
+                      alt="pdf"
+                      class="w-[13px] h-[17px]"
                     />
                     <span class="text-sm text-dark-gray font-medium">
                     Excel файл
                   </span>
                   </ElDropdownItem>
                   <ElDropdownItem
-                      class="flex items-center gap-x-4 rounded-lg px-3 py-2.5"
+                    class="flex items-center gap-x-4 rounded-lg px-3 py-2.5"
                   >
                     <img
-                        src="@/assets/images/icons/1c.svg"
-                        alt="pdf"
-                        class="w-[13px] h-[17px]"
+                      src="@/assets/images/icons/1c.svg"
+                      alt="pdf"
+                      class="w-[13px] h-[17px]"
                     />
                     <span class="text-sm text-dark-gray font-medium">
                     1C файл
@@ -210,14 +235,14 @@ const invoiceTableData = computed(() => {
               </template>
             </ElDropdown>
             <ElButton
-                @click="filterFormOpened = !filterFormOpened"
-                size="large"
-                :class="['app-filter-btn h-12 w-full', `${filterFormOpened ? '!bg-blue !text-white app-filter-btn--active' : '!bg-white-blue !border-white-blue !text-dark-gray'}`]"
+              @click="filterFormOpened = !filterFormOpened"
+              size="large"
+              :class="['app-filter-btn h-12 w-full', `${filterFormOpened ? '!bg-blue !text-white app-filter-btn--active' : '!bg-white-blue !border-white-blue !text-dark-gray'}`]"
             >
               <div class="flex items-center gap-x-3">
                 <svg
-                    :data-src="filterIcon"
-                    class="app-filter-btn__icon"
+                  :data-src="filterIcon"
+                  class="app-filter-btn__icon"
                 />
                 <span class="text-sm font-medium">
                   Фильтр
@@ -230,38 +255,38 @@ const invoiceTableData = computed(() => {
       <CollapseFilter v-model="filterFormOpened">
         <template #body>
           <TransitionGroup
-              name="nested"
-              :duration="{ enter: 500, leave: 1500 }"
-              tag="div"
-              class="mt-4 relative"
+            name="nested"
+            :duration="{ enter: 500, leave: 1500 }"
+            tag="div"
+            class="mt-4 relative"
           >
             <div
-                v-if="activeTab === TABS.PRODUCTS"
-                class="grid gap-x-4 grid-cols-4"
+              v-if="activeTab === TABS.PRODUCTS"
+              class="grid gap-x-4 grid-cols-4"
             >
-              <AppSelect placeholder="Название продукта"/>
-              <AppInput placeholder="Количество"/>
-              <AppSelect placeholder="Ед. измерения"/>
-              <AppInput placeholder="Сумма"/>
+              <AppSelect placeholder="Название продукта" />
+              <AppInput placeholder="Количество" />
+              <AppSelect placeholder="Ед. измерения" />
+              <AppInput placeholder="Сумма" />
             </div>
             <template v-else>
               <div class="grid gap-4 grid-cols-6">
-                <AppDatePicker placeholder="с этой даты"/>
-                <AppDatePicker placeholder="по эту дату"/>
+                <AppDatePicker placeholder="с этой даты" />
+                <AppDatePicker placeholder="по эту дату" />
                 <AppSelect
-                    class="col-span-2"
-                    placeholder="№ накладной"
+                  class="col-span-2"
+                  placeholder="№ накладной"
                 />
                 <AppInput
-                    class="col-span-2"
-                    placeholder="Сумма"
+                  class="col-span-2"
+                  placeholder="Сумма"
                 />
               </div>
               <div class="grid grid-cols-4 gap-4 mt-1">
-                <AppSelect placeholder="Название продукта"/>
-                <AppInput placeholder="Количество"/>
-                <AppSelect placeholder="Ед. измерения"/>
-                <AppInput placeholder="Цена"/>
+                <AppSelect placeholder="Название продукта" />
+                <AppInput placeholder="Количество" />
+                <AppSelect placeholder="Ед. измерения" />
+                <AppInput placeholder="Цена" />
               </div>
             </template>
           </TransitionGroup>
@@ -275,61 +300,61 @@ const invoiceTableData = computed(() => {
         </template>
       </CollapseFilter>
       <TransitionGroup
-          name="nested"
-          :duration="{ enter: 500, leave: 1500 }"
-          tag="div"
-          class="relative overflow-x-hidden"
+        name="nested"
+        :duration="{ enter: 500, leave: 1500 }"
+        tag="div"
+        class="relative overflow-x-hidden"
       >
         <div
-            v-if="activeTab === TABS.PRODUCTS"
-            class="inner"
+          v-if="activeTab === TABS.PRODUCTS"
+          class="inner"
         >
           <ElTable
-              :data="productTableData"
-              class="custom-element-table"
+            :data="productTableData"
+            class="custom-element-table"
           >
             <ElTableColumn
-                prop="idx"
-                label="№"
-                :width="150"
+              prop="idx"
+              label="№"
+              :width="150"
             />
             <ElTableColumn
-                prop="product_name"
-                label="Название продукта"
+              prop="product_name"
+              label="Название продукта"
             />
             <ElTableColumn
-                prop="quantity"
-                label="Количество"
+              prop="quantity"
+              label="Количество"
             />
             <ElTableColumn
-                prop="unit_measurement"
-                label="Ед. измерения"
+              prop="unit_measurement"
+              label="Ед. измерения"
             />
             <ElTableColumn
-                prop="sum"
-                label="Сумма"
+              prop="sum"
+              label="Сумма"
             />
             <ElTableColumn
-                prop="action"
-                align="right"
-                label="Действие"
+              prop="action"
+              align="right"
+              label="Действие"
             >
               <template #default="{row}">
                 <div
-                    v-if="row.action"
-                    class="flex items-center justify-end gap-x-2"
+                  v-if="row.action"
+                  class="flex items-center justify-end gap-x-2"
                 >
                   <button class="action-btn">
                     <img
-                        src="@/assets/images/eye.svg"
-                        alt="eye"
+                      src="@/assets/images/eye.svg"
+                      alt="eye"
                     />
                   </button>
 
                   <button class="action-btn">
                     <img
-                        src="@/assets/images/download.svg"
-                        alt="download"
+                      src="@/assets/images/download.svg"
+                      alt="download"
                     />
                   </button>
                 </div>
@@ -342,53 +367,53 @@ const invoiceTableData = computed(() => {
             </div>
 
             <el-pagination
-                class="float-right"
-                background
-                layout="prev, pager, next"
-                :total="1000"
+              class="float-right"
+              background
+              layout="prev, pager, next"
+              :total="1000"
             />
           </div>
         </div>
         <div
-            v-else-if="activeTab === TABS.INVOICES"
-            class="inner"
+          v-else-if="activeTab === TABS.INVOICES"
+          class="inner"
         >
           <ElTable
-              :data="invoiceTableData"
-              class="custom-element-table"
+            :data="invoiceTableData"
+            class="custom-element-table"
           >
             <ElTableColumn
-                prop="idx"
-                label="№"
-                :width="150"
+              prop="idx"
+              label="№"
+              :width="150"
             />
             <ElTableColumn
-                prop="product_name"
-                label="Название продукта"
+              prop="product_name"
+              label="Название продукта"
             />
             <ElTableColumn
-                prop="invoice"
-                label="№ накладной"
+              prop="invoice"
+              label="№ накладной"
             />
             <ElTableColumn
-                prop="invoice_date"
-                label="Дата накладной"
+              prop="invoice_date"
+              label="Дата накладной"
             />
             <ElTableColumn
-                prop="quantity"
-                label="Количество"
+              prop="quantity"
+              label="Количество"
             />
             <ElTableColumn
-                prop="unit_measurement"
-                label="Ед. измерения"
+              prop="unit_measurement"
+              label="Ед. измерения"
             />
             <ElTableColumn
-                prop="price"
-                label="Цена"
+              prop="price"
+              label="Цена"
             />
             <ElTableColumn
-                prop="sum"
-                label="Сумма"
+              prop="sum"
+              label="Сумма"
             />
           </ElTable>
           <div class="mt-6 flex items-center justify-between">
@@ -397,10 +422,10 @@ const invoiceTableData = computed(() => {
             </div>
 
             <el-pagination
-                class="float-right"
-                background
-                layout="prev, pager, next"
-                :total="1000"
+              class="float-right"
+              background
+              layout="prev, pager, next"
+              :total="1000"
             />
           </div>
         </div>
