@@ -2,11 +2,12 @@
 import { reactive, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
+import { ValidationType } from "@/components/ui/form/app-form/app-form.type";
+import { toast } from "vue3-toastify";
 import Language from "@/components/language/index.vue";
 import AppInput from "@/components/ui/form/app-input/AppInput.vue";
 import AppForm from "@/components/ui/form/app-form/AppForm.vue";
-import { ValidationType } from "@/components/ui/form/app-form/app-form.type";
-import { toast } from "vue3-toastify";
+import Footer from "@/components/ui/Footer.vue"
 
 const { t } = useI18n();
 const router = useRouter();
@@ -35,7 +36,7 @@ const onSubmit = async () => {
   } else {
     await router.push("/home");
     toast.success('Успешно')
-    localStorage.setItem("current-menu", 0);
+    // localStorage.setItem("current-menu", 0);
   }
 };
 </script>
@@ -103,7 +104,7 @@ const onSubmit = async () => {
         />
 
         <!-- Forgot Password Link -->
-        <div class="text-right text-[#2E90FA] text-xs mt-1 cursor-pointer">
+        <div class="text-right text-[#2E90FA] text-xs mt-1 cursor-pointer" @click="router.push('/reset-password')">
           Забыли пароль?
         </div>
       </AppForm>
@@ -149,9 +150,7 @@ const onSubmit = async () => {
     </div>
 
     <!-- Footer Section -->
-    <footer class="text-[#A8AAAE] text-sm absolute right-8 bottom-10">
-      ©{{ new Date().getFullYear() }} Anysoft
-    </footer>
+    <Footer/>
   </div>
 </template>
 

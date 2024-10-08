@@ -16,28 +16,34 @@ const tableData = ref<TableData[]>([
   {
     id: 1,
     name: "Зарафшан",
-    type: "Начальник управления",
+    inn: "123456789012",
+    legal_address: "100052, Tashkent, st.Kichik Khalka Yuli 34-36",
+    oked: "54569",
   },
+
   {
     id: 2,
-    name: "Зафаробод",
-    type: "Начальник управления",
+    name: "Зарафшан",
+    inn: "123456789012",
+    legal_address: "100052, Tashkent, st.Kichik Khalka Yuli 34-36",
+    oked: "54569",
   },
+
   {
     id: 3,
-    name: "Навои",
-    type: "Начальник управления",
+    name: "Зарафшан",
+    inn: "123456789012",
+    legal_address: "100052, Tashkent, st.Kichik Khalka Yuli 34-36",
+    oked: "54569",
   },
   {
     id: 4,
-    name: "Нуробод",
-    type: "Начальник управления",
+    name: "Зарафшан",
+    inn: "123456789012",
+    legal_address: "100052, Tashkent, st.Kichik Khalka Yuli 34-36",
+    oked: "54569",
   },
-  {
-    id: 5,
-    name: "Учкудук",
-    type: "Начальник управления",
-  },
+
 ]);
 </script>
 
@@ -56,7 +62,7 @@ const tableData = ref<TableData[]>([
         />
 
         <button
-          @click="$router.push({name: 'reference-regional-directorates-add'})"
+          @click="$router.push({name: 'reference-suppliers-add'})"
           class="flex items-center justify-center gap-3 custom-apply-btn">
           <li
             :style="{
@@ -83,17 +89,19 @@ const tableData = ref<TableData[]>([
       <el-table :data="tableData" class="custom-element-table">
         <el-table-column prop="id" label="№" width="80" />
         <el-table-column prop="name" label="Наименование" sortable width="400" />
-        <el-table-column prop="name" label="Подчинение" sortable />
+        <el-table-column prop="inn" label="ИНН" sortable />
+        <el-table-column prop="legal_address" label="Юр. адрес" sortable />
+        <el-table-column prop="oked" label="ОКЭД" sortable />
         <el-table-column label="Действие" align="right">
           <template #default="scope">
             <button class="action-btn mr-[8px]"
-                    @click="$router.push({name: 'reference-regional-directorates-view', query: {type: 'view'}, params: {id: 1}})">
-              <img src="@/assets/images/eye.svg" alt="download" />
+                    @click="$router.push({name: 'reference-suppliers-view', query: {type: 'view'}, params: {id: 1}})">
+              <img src="../../../../../assets/images/eye.svg" alt="download" />
             </button>
 
             <button class="action-btn"
-                    @click="$router.push({name: 'reference-regional-directorates-detail', params: {id: 1}})">
-              <img src="@/assets/images/icons/edit.svg" alt="eye" />
+                    @click="$router.push({name: 'reference-suppliers-edit', params: {id: 1}})">
+              <img src="../../../../../assets/images/icons/edit.svg" alt="eye" />
             </button>
           </template>
         </el-table-column>

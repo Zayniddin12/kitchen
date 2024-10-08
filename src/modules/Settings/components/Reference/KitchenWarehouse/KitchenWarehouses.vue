@@ -12,44 +12,38 @@ interface TableData {
 }
 
 const input1 = ref<string>("");
-const tableData = ref<TableData[]>([
+const tableData = ref<any>([
   {
     id: 1,
-    name: "Мясной склад",
-    bases: "Зарафшан",
-    warehouse_capacity: "10 тонна",
-    storage_products: "Продукты хранения",
+    name: "Ёшлар",
+    type_base: "Зарафшан",
+    total: "10 тонна",
+    sum: "200",
+    type_kitchen: "Профилакторий",
   },
   {
     id: 2,
-    name: "Овощной склад",
-    bases: "Зарафшан",
-    warehouse_capacity: "10 тонна",
-    storage_products: "Помидоры, морковь, картофель",
+    name: "Ёшлар",
+    type_base: "Зарафшан",
+    total: "10 тонна",
+    sum: "200",
+    type_kitchen: "Профилакторий",
   },
-
   {
     id: 3,
-    name: "Рисовый склад",
-    bases: "Навои",
-    warehouse_capacity: "10 тонна",
-    storage_products: "Рис, горох",
+    name: "Ёшлар",
+    type_base: "Зарафшан",
+    total: "10 тонна",
+    sum: "200",
+    type_kitchen: "Профилакторий",
   },
-
   {
     id: 4,
-    name: "Мясной склад",
-    bases: "Нуробод",
-    warehouse_capacity: "10 тонна",
-    storage_products: "Мясные",
-  },
-
-  {
-    id: 5,
-    name: "Овощной склад",
-    bases: "Учкудук",
-    warehouse_capacity: "10 тонна",
-    storage_products: "Помидоры, морковь, картофель",
+    name: "Ёшлар",
+    type_base: "Зарафшан",
+    total: "10 тонна",
+    sum: "200",
+    type_kitchen: "Профилакторий",
   },
 
 ]);
@@ -70,7 +64,7 @@ const tableData = ref<TableData[]>([
         />
 
         <button
-          @click="$router.push({name: 'reference-main-bases-add'})"
+          @click="$router.push({name: 'reference-kitchen-warehouse-add'})"
           class="flex items-center justify-center gap-3 custom-apply-btn">
           <li
             :style="{
@@ -96,20 +90,21 @@ const tableData = ref<TableData[]>([
     <div class="mt-[24px]">
       <el-table :data="tableData" class="custom-element-table">
         <el-table-column prop="id" label="№" width="80" />
-        <el-table-column prop="name" label="Наименование склада" sortable width="400" />
-        <el-table-column prop="bases" label="База складов" sortable />
-        <el-table-column prop="warehouse_capacity" label="Вместимость склада" sortable />
-        <el-table-column prop="storage_products" label="Продукты хранения" sortable />
+        <el-table-column prop="name" label="Наименование" sortable />
+        <el-table-column prop="type_base" label="База складов" sortable />
+        <el-table-column prop="total" label="Вмес. склада" sortable />
+        <el-table-column prop="sum" label="Вмес. кухни" sortable />
+        <el-table-column prop="type_kitchen" label="Тип кухни" sortable />
         <el-table-column label="Действие" align="right">
           <template #default="scope">
             <button class="action-btn mr-[8px]"
-                    @click="$router.push({name: 'reference-main-bases-view', query: {type: 'view'}, params: {id: 1}})">
-              <img src="@/assets/images/eye.svg" alt="download" />
+                    @click="$router.push({name: 'reference-kitchen-warehouse-view', query: {type: 'view'}, params: {id: 1}})">
+              <img src="../../../../../assets/images/eye.svg" alt="download" />
             </button>
 
             <button class="action-btn"
-                    @click="$router.push({name: 'reference-main-bases-edit', params: {id: 1}})">
-              <img src="@/assets/images/icons/edit.svg" alt="eye" />
+                    @click="$router.push({name: 'reference-kitchen-warehouse-edit', params: {id: 1}})">
+              <img src="../../../../../assets/images/icons/edit.svg" alt="eye" />
             </button>
           </template>
         </el-table-column>
