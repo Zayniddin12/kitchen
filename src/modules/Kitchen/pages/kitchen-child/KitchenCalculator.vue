@@ -11,7 +11,7 @@ const route = useRoute();
 
 const num = ref(1);
 
-const tableData = ref<TableData[]>([
+const tableData = ([
   {
     id: 1,
     num: "1",
