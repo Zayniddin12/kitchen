@@ -18,8 +18,7 @@ const categories = computed(() => [
         price: 25000,
         cost_price: 3000,
         sum: 28000,
-        photo: DishesImg,
-        action: true
+        photo: DishesImg
       },
       {
         id: 2,
@@ -27,8 +26,7 @@ const categories = computed(() => [
         price: 25000,
         cost_price: 3000,
         sum: 28000,
-        photo: DishesImg,
-        action: true
+        photo: DishesImg
       },
       {
         id: 3,
@@ -36,8 +34,7 @@ const categories = computed(() => [
         price: 25000,
         cost_price: 3000,
         sum: 28000,
-        photo: DishesImg,
-        action: true
+        photo: DishesImg
       },
       {
         id: 4,
@@ -45,8 +42,7 @@ const categories = computed(() => [
         price: 25000,
         cost_price: 3000,
         sum: 28000,
-        photo: DishesImg,
-        action: true
+        photo: DishesImg
       },
       {
         id: 5,
@@ -54,8 +50,7 @@ const categories = computed(() => [
         price: 25000,
         cost_price: 3000,
         sum: 28000,
-        photo: DishesImg,
-        action: true
+        photo: DishesImg
       },
       {
         id: 6,
@@ -63,8 +58,7 @@ const categories = computed(() => [
         price: 25000,
         cost_price: 3000,
         sum: 28000,
-        photo: DishesImg,
-        action: true
+        photo: DishesImg
       },
       {
         id: 7,
@@ -72,8 +66,7 @@ const categories = computed(() => [
         price: 25000,
         cost_price: 3000,
         sum: 28000,
-        photo: DishesImg,
-        action: true
+        photo: DishesImg
       },
       {
         id: 8,
@@ -81,8 +74,7 @@ const categories = computed(() => [
         price: 25000,
         cost_price: 3000,
         sum: 28000,
-        photo: DishesImg,
-        action: true
+        photo: DishesImg
       }
     ]
   },
@@ -96,8 +88,7 @@ const categories = computed(() => [
         price: 25000,
         cost_price: 3000,
         sum: 28000,
-        photo: ColaImg,
-        action: true
+        photo: ColaImg
       },
       {
         id: 10,
@@ -105,8 +96,7 @@ const categories = computed(() => [
         price: 25000,
         cost_price: 3000,
         sum: 28000,
-        photo: ColaImg,
-        action: true
+        photo: ColaImg
       },
       {
         id: 11,
@@ -114,8 +104,7 @@ const categories = computed(() => [
         price: 25000,
         cost_price: 3000,
         sum: 28000,
-        photo: ColaImg,
-        action: true
+        photo: ColaImg
       },
       {
         id: 12,
@@ -123,8 +112,7 @@ const categories = computed(() => [
         price: 25000,
         cost_price: 3000,
         sum: 28000,
-        photo: ColaImg,
-        action: true
+        photo: ColaImg
       },
       {
         id: 13,
@@ -132,8 +120,7 @@ const categories = computed(() => [
         price: 25000,
         cost_price: 3000,
         sum: 28000,
-        photo: ColaImg,
-        action: true
+        photo: ColaImg
       },
       {
         id: 14,
@@ -141,8 +128,7 @@ const categories = computed(() => [
         price: 25000,
         cost_price: 3000,
         sum: 28000,
-        photo: ColaImg,
-        action: true
+        photo: ColaImg
       }
     ]
   }
@@ -215,15 +201,15 @@ const categories = computed(() => [
                 label="Действие"
             >
               <template #default="{row}">
-                <button
-                    v-if="row.action"
-                    class="action-btn"
+                <RouterLink
+                    class="action-btn inline-flex "
+                    :to="{name: 'KitchenDishesProductShow', params: {product_id: row.id}}"
                 >
                   <img
                       src="@/assets/images/eye.svg"
                       alt="eye"
                   />
-                </button>
+                </RouterLink>
               </template>
             </ElTableColumn>
           </ElTable>

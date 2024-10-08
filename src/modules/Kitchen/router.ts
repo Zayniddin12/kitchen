@@ -315,38 +315,84 @@ export default [
                             {
                                 path: "dishes",
                                 name: "KitchenDishes",
-                                component: () => import("@/modules/Kitchen/pages/kitchen-child/KitchenDishes.vue"),
-                                beforeEnter: (to, from, next) => {
-                                    const kitchenStore = useKitchenStore();
+                                redirect: { name: "KitchenDishes" },
+                                children: [
+                                    {
+                                        path: "",
+                                        name: "KitchenDishesIndex",
+                                        component: () => import("@/modules/Kitchen/pages/kitchen-child/dishes/Index.vue"),
+                                        beforeEnter: (to, from, next) => {
+                                            const kitchenStore = useKitchenStore();
 
-                                    kitchenStore.fetchPart(+to.params.department_id, to.params.part_name);
+                                            kitchenStore.fetchPart(+to.params.department_id, to.params.part_name);
 
-                                    if (!kitchenStore.activeSalesPart) return next({ name: "notFound" });
+                                            if (!kitchenStore.activeSalesPart) return next({ name: "notFound" });
 
-                                    to.meta.breadcrumb = [
-                                        {
-                                            label: "Кухня"
-                                        },
-                                        {
-                                            label: kitchenStore.part.name
-                                        },
-                                        {
-                                            label: kitchenStore.part.department_name
-                                        },
-                                        {
-                                            label: "Лагерь"
-                                        },
-                                        {
-                                            label: "Паҳлавон"
-                                        },
-                                        {
-                                            label: "Блюди",
-                                            isActionable: true
+                                            to.meta.breadcrumb = [
+                                                {
+                                                    label: "Кухня"
+                                                },
+                                                {
+                                                    label: kitchenStore.part.name
+                                                },
+                                                {
+                                                    label: kitchenStore.part.department_name
+                                                },
+                                                {
+                                                    label: "Лагерь"
+                                                },
+                                                {
+                                                    label: "Паҳлавон"
+                                                },
+                                                {
+                                                    label: "Блюди",
+                                                    isActionable: true
+                                                }
+                                            ];
+
+                                            next();
                                         }
-                                    ];
+                                    },
+                                    {
+                                        path: ":product_id(\\d+)",
+                                        name: "KitchenDishesProductShow",
+                                        component: () => import("@/modules/Kitchen/pages/kitchen-child/dishes/ProductShow.vue"),
+                                        beforeEnter: (to, from, next) => {
+                                            const kitchenStore = useKitchenStore();
 
-                                    next();
-                                }
+                                            kitchenStore.fetchPart(+to.params.department_id, to.params.part_name);
+
+                                            if (!kitchenStore.activeSalesPart) return next({ name: "notFound" });
+
+                                            to.meta.breadcrumb = [
+                                                {
+                                                    label: "Кухня"
+                                                },
+                                                {
+                                                    label: kitchenStore.part.name
+                                                },
+                                                {
+                                                    label: kitchenStore.part.department_name
+                                                },
+                                                {
+                                                    label: "Лагерь"
+                                                },
+                                                {
+                                                    label: "Паҳлавон"
+                                                },
+                                                {
+                                                    label: "Блюди",
+                                                },
+                                                {
+                                                    label: "Просмотр",
+                                                    isActionable: true
+                                                }
+                                            ];
+
+                                            next();
+                                        }
+                                    }
+                                ]
                             },
                             {
                                 path: "ration",

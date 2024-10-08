@@ -63,8 +63,7 @@ const closeChildSidebar = () => {
   margin-left: 152px;
   width: calc(100% - 180px);
   min-height: 65px !important;
-  right: 0;
-  left: 0;
+  right: 2rem;
 }
 
 .top-navbar-margin {
