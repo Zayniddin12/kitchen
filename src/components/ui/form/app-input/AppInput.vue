@@ -9,7 +9,7 @@ import { getRules, setRules } from "@/components/ui/form/validate";
 
 const [model, modifiers] = defineModel<AppInputValueType>();
 
-const updateModelValue = (value) => {
+const updateModelValue = (value: any) => {
   model.value = value;
 };
 

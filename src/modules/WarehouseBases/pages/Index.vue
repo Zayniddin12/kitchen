@@ -65,7 +65,7 @@ const defaultTab = TABS.PRODUCTS;
 const activeTab = ref<number | null>(null);
 
 const getActiveTab = () => {
-  const tab = +route.query?.tab;
+  const tab = +(route.query?.tab ?? defaultTab);
 
   const isValidTab = !isNaN(tab) && [TABS.PRODUCTS, TABS.INVOICES].includes(tab);
 

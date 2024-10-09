@@ -208,7 +208,7 @@ onMounted(() => {
               align="center"
               sortable
             >
-              <template #default="{row}">
+              <template #default="{row}: {row: Record<string,any>}">
                 <div class="flex items-center justify-center gap-x-3">
                   <img
                     :src="DishesImg"
@@ -242,7 +242,7 @@ onMounted(() => {
               align="right"
               label="Действие"
             >
-              <template #default="{row}">
+              <template #default="{row}: {row: Record<string,any>}">
                 <RouterLink
                   class="action-btn inline-flex "
                   :to="{name: 'KitchenDishesProductShow', params: {product_id: row.id}}"

@@ -1,6 +1,6 @@
 <script
-    setup
-    lang="ts"
+  setup
+  lang="ts"
 >
 
 import { computed, onMounted, ref } from "vue";
@@ -13,41 +13,41 @@ import { useKitchenStore } from "@/modules/Kitchen/store/kitchen.store";
 import { useRoute } from "vue-router";
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 
-const kitchenStore= useKitchenStore();
+const kitchenStore = useKitchenStore();
 const route = useRoute();
 
-const {setBreadCrumb} = useBreadcrumb();
+const { setBreadCrumb } = useBreadcrumb();
 
 const dateList = computed(() => {
   return [
     {
       value: "06.09.20024",
-      title: "Понедельник - 06.09.2024"
+      title: "Понедельник - 06.09.2024",
     },
     {
       value: "07.09.2024",
-      title: "Вторник - 07.09.2024"
+      title: "Вторник - 07.09.2024",
     },
     {
       value: "08.09.2024",
-      title: "Среда - 08.09.2024"
+      title: "Среда - 08.09.2024",
     },
     {
       value: "09.09.2024",
-      title: "Четверг - 09.09.2024"
+      title: "Четверг - 09.09.2024",
     },
     {
       value: "10.09.2024",
-      title: "Пятница - 10.09.2024"
+      title: "Пятница - 10.09.2024",
     },
     {
       value: "11.09.2024",
-      title: "Суббота - 11.09.2024"
+      title: "Суббота - 11.09.2024",
     },
     {
       value: "12.09.2024",
-      title: "Воскресенье - 12.09.2024"
-    }
+      title: "Воскресенье - 12.09.2024",
+    },
   ];
 });
 
@@ -57,45 +57,43 @@ const mealTimes = ref([
   {
     id: 1,
     title: "Завтрак",
-    isChecked: true
+    isChecked: true,
   },
   {
     id: 2,
     title: "Обед",
-    isChecked: true
+    isChecked: true,
   },
   {
     id: 3,
     title: "Ужин",
-    isChecked: true
+    isChecked: true,
   },
   {
     id: 4,
     title: "Сухой питания",
-    isChecked: true
-  }
+    isChecked: true,
+  },
 ]);
 
-const tableColumns = computed<TableColumnType[]>(() => {
-  return [
-    {
-      id: 1,
-      prop: "name",
-      label: "Название"
-    },
-    {
-      id: 2,
-      prop: "quantity",
-      label: "Количество"
-    },
-    {
-      id: 3,
-      prop: "unit_measurement",
-      label: "Ед. измерения",
-      align: "right"
-    }
-  ];
-});
+const tableColumns = computed<TableColumnType[]>(() => [
+  {
+    id: 1,
+    prop: "name",
+    label: "Название",
+  },
+  {
+    id: 2,
+    prop: "quantity",
+    label: "Количество",
+  },
+  {
+    id: 3,
+    prop: "unit_measurement",
+    label: "Ед. измерения",
+    align: "right",
+  },
+]);
 
 const tableData = computed(() => {
   return [
@@ -103,33 +101,33 @@ const tableData = computed(() => {
       id: 1,
       name: "Кабачки",
       quantity: 0.8,
-      unit_measurement: "кг"
+      unit_measurement: "кг",
     },
     {
       id: 2,
       name: "Кабачки",
       quantity: 0.4,
-      unit_measurement: "кг"
+      unit_measurement: "кг",
     },
     {
       id: 3,
       name: "Кабачки",
       quantity: 0.5,
-      unit_measurement: "кг"
+      unit_measurement: "кг",
     },
     {
       id: 4,
       name: "Кабачки",
       quantity: 0.2,
-      unit_measurement: "кг"
-    }
+      unit_measurement: "кг",
+    },
   ];
 });
 
 const setBreadCrumbFn = () => {
   kitchenStore.fetchPart(+route.params.department_id, route.params.part_name as string);
 
-  if(!kitchenStore.part) return
+  if (!kitchenStore.part) return;
 
   setBreadCrumb([
     {
@@ -144,22 +142,22 @@ const setBreadCrumbFn = () => {
     },
     {
       label: "Лагерь",
-      to: {name: "KitchenShowIndex"}
+      to: { name: "KitchenShowIndex" },
     },
     {
       label: "Паҳлавон",
-      to: {name: "KitchenShowChildIndex"}
+      to: { name: "KitchenShowChildIndex" },
     },
     {
       label: "Меню",
-      to: {name: "KitchenMenuIndex"}
+      to: { name: "KitchenMenuIndex" },
     },
     {
       label: "Редактировать",
       isActionable: true,
     },
-  ])
-}
+  ]);
+};
 
 onMounted(() => {
   setBreadCrumbFn();
@@ -180,10 +178,10 @@ onMounted(() => {
         <ElScrollbar class="mt-3">
           <div class="flex">
             <button
-                v-for="item in dateList"
-                :key="item.value"
-                :class="['py-2 px-4 text-center rounded-lg text-xs font-medium text-dark-gray transition duration-200 ease-in', {'bg-[#E2E6F3]': activeDate === item.value}]"
-                @click="activeDate = item.value"
+              v-for="item in dateList"
+              :key="item.value"
+              :class="['py-2 px-4 text-center rounded-lg text-xs font-medium text-dark-gray transition duration-200 ease-in', {'bg-[#E2E6F3]': activeDate === item.value}]"
+              @click="activeDate = item.value"
             >
               {{ item.title }}
             </button>
@@ -194,54 +192,54 @@ onMounted(() => {
         </h3>
         <div class="mt-3 flex flex-col gap-y-3">
           <div
-              v-for="item in mealTimes"
-              :key="item.id"
+            v-for="item in mealTimes"
+            :key="item.id"
           >
             <ElCheckbox
-                v-model="item.isChecked"
-                class="app-checkbox"
-                :label="item.title"
+              v-model="item.isChecked"
+              class="app-checkbox"
+              :label="item.title"
             />
             <div
-                v-if="item.isChecked"
-                class="mt-6"
+              v-if="item.isChecked"
+              class="mt-6"
             >
               <div class="flex items-center gap-x-6">
                 <AppTimePicker
-                    class="max-w-[141px]"
-                    label="Время начало"
-                    label-class="text-[#A8AAAE]"
+                  class="max-w-[141px]"
+                  label="Время начало"
+                  label-class="text-[#A8AAAE]"
                 />
                 <AppTimePicker
-                    class="max-w-[141px]"
-                    label="Время окончания"
-                    label-class="text-[#A8AAAE]"
+                  class="max-w-[141px]"
+                  label="Время окончания"
+                  label-class="text-[#A8AAAE]"
                 />
               </div>
               <div class="flex items-center gap-x-6">
                 <AppSelect
-                    label="Рацион"
-                    placeholder="Выберите"
-                    class="w-[222px]"
-                    label-class="text-[#A8AAAE]"
+                  label="Рацион"
+                  placeholder="Выберите"
+                  class="w-[222px]"
+                  label-class="text-[#A8AAAE]"
                 />
                 <AppInput
-                    label="Количество порции"
-                    label-class="text-[#A8AAAE]"
-                    class="w-[222px]"
+                  label="Количество порции"
+                  label-class="text-[#A8AAAE]"
+                  class="w-[222px]"
                 />
               </div>
               <div class="mt-6">
                 <ElTable
-                    :data="tableData"
-                    class="custom-element-table meal-plan-create__table"
+                  :data="tableData"
+                  class="custom-element-table meal-plan-create__table"
                 >
                   <ElTableColumn
-                      v-for="item in tableColumns"
-                      :key="item.prop"
-                      :prop="item.prop"
-                      :label="item.label"
-                      :align="item.align"
+                    v-for="item in tableColumns"
+                    :key="item.prop"
+                    :prop="item.prop"
+                    :label="item.label"
+                    :align="item.align ?? 'left'"
                   />
                   <template #append>
                     <div class="px-4 py-3.5 flex justify-end items-center gap-x-8">
@@ -273,14 +271,14 @@ onMounted(() => {
                   </template>
                 </ElTable>
                 <ElButton
-                    type="primary"
-                    plain
-                    class="mt-6 !bg-white !border-blue-500"
+                  type="primary"
+                  plain
+                  class="mt-6 !bg-white !border-blue-500"
                 >
                   <div class="flex items-center gap-x-2">
                     <svg
-                        :data-src="PlusIcon"
-                        class="size-4 meal-plan-create__plus-icon"
+                      :data-src="PlusIcon"
+                      class="size-4 meal-plan-create__plus-icon"
                     />
                     <span class="text-xs font-medium text-blue-500">
                           Добавить еще
@@ -294,16 +292,16 @@ onMounted(() => {
       </div>
       <div class="mt-6 flex justify-end items-center">
         <ElButton
-            class="!bg-[#E2E6F3] !text-dark-gray border-none"
-            size="large"
-            type="info"
+          class="!bg-[#E2E6F3] !text-dark-gray border-none"
+          size="large"
+          type="info"
         >
           Отменить
         </ElButton>
         <ElButton
-            class="!bg-blue-500"
-            type="primary"
-            size="large"
+          class="!bg-blue-500"
+          type="primary"
+          size="large"
         >
           Применить
         </ElButton>
