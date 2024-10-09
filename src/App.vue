@@ -9,7 +9,6 @@ import ResetPasswordLayout from "@/views/ResetPassword.vue";
 import IncomePasswordLayout from "@/views/IncomePassword.vue";
 import PasswordLayout from "@/views/Password.vue";
 
-
 const layouts = {
   MainLayout,
   LoginLayout,
