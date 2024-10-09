@@ -69,7 +69,7 @@ onUnmounted(() => {
 
 <template>
   <div class="sidebar w-[128px]">
-    <div class="sidebar-wrapper text-center relative flex flex-col justify-between">
+    <div class="sidebar-wrapper bg-white-blue dark:bg-dark text-center relative flex flex-col justify-between">
       <div class="overflow-auto">
         <img
           src="@/assets/images/logo.svg"

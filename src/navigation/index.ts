@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { computed } from "vue";
+import { computed, ref } from "vue";
 import { useKitchenWarehouseStore } from "@/modules/KitchenWarehouse/store/index.ts";
 import { useKitchenStore } from "@/modules/Kitchen/store/kitchen.store.ts";
 
@@ -7,6 +7,8 @@ export const useLayoutStore = defineStore("layoutStore", () => {
 
   const kitchenWarehouse = useKitchenWarehouseStore();
   const kitchenStore = useKitchenStore();
+
+  const currentTheme = ref(localStorage.getItem("currentTheme") || "light")
 
   const menuItems = computed(() => {
     return [
@@ -240,7 +242,15 @@ export const useLayoutStore = defineStore("layoutStore", () => {
     ];
   });
 
+  const changeTheme = (newTheme: string) => {
+    currentTheme.value = newTheme;
+    localStorage.setItem("currentTheme", currentTheme.value);
+  }
+
   return {
     menuItems,
+
+    changeTheme,
+    currentTheme
   };
 });

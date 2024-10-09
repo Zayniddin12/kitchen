@@ -9,8 +9,11 @@ import ResetPasswordLayout from "@/views/ResetPassword.vue";
 import IncomePasswordLayout from "@/views/IncomePassword.vue";
 import PasswordLayout from "@/views/Password.vue";
 import { useRoute } from "vue-router";
+import { useLayoutStore } from "@/navigation";
+import { watch } from "vue";
 
 const route = useRoute();
+const store = useLayoutStore();
 
 const layouts = {
   MainLayout,
@@ -20,6 +23,13 @@ const layouts = {
   IncomePasswordLayout,
   PasswordLayout,
 };
+
+document.getElementById('body').className = store.currentTheme
+watch(store, async () => {
+  if (store.currentTheme) {
+    document.getElementById('body').className = store.currentTheme
+  }
+})
 </script>
 
 <template>

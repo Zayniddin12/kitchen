@@ -11,6 +11,7 @@ import FreeModal from "@/layout/Create/components/FreeModal.vue";
 import MonthlyModal from "@/layout/Create/components/MonthlyModal.vue";
 import YearlyModal from "@/layout/Create/components/YearlyModal.vue";
 import { ref } from "vue";
+import ThemeToggler from "@/layout/Bars/ThemeToggler.vue"
 import AppInput from "@/components/ui/form/app-input/AppInput.vue";
 
 const editModal = ref<boolean>(false);
@@ -168,6 +169,8 @@ const openModals = (data: any) => {
         </template>
       </el-dropdown>
 
+      <ThemeToggler />
+
       <el-badge
         value="18"
         class="item cursor-pointer"
@@ -227,7 +230,6 @@ const openModals = (data: any) => {
 }
 
 .el-scrollbar {
-  //border-radius: 16px !important;
   background-color: transparent !important;
 }
 

@@ -25,7 +25,8 @@ export default {
         "blue-900": "var(--blue-900)",
         "blue": "#2E90FA",
 
-        "dark": "#000D24",
+        "dark": "#283046",
+        "body-dark": "#171D32",
         "dark-gray": "#4F5662",
         "white-blue": "var(--white-blue)",
         "cool-gray": "#8F9194",
