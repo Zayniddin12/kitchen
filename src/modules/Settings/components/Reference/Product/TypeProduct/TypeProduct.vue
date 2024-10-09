@@ -99,7 +99,7 @@ onMounted(() => {
         <el-input
           size="large"
           placeholder="Поиск"
-          :prefix-icon="Search as string"
+          :prefix-icon="Search as any"
           class="w-[300px]"
         />
 

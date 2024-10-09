@@ -65,7 +65,7 @@ const closeModal = () => {
   emit("update:editModal", false);
 };
 
-const headerClass = (item) => {
+const headerClass = (item: any) => {
   console.log(item);
 
   return "p-0";

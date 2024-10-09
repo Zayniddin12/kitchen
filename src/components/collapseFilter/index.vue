@@ -20,7 +20,7 @@ const activeNames = computed<string[]>(() => {
         <template #icon="{ isActive }">
           <div />
         </template>
-        <div class="border-[#e2e6f3] border bg-[#F8F9FC] rounded-[10px] py-[12px] px-[16px]">
+        <div class="border-[#e2e6f3] border bg-[#F8F9FC] dark:bg-dark rounded-[10px] py-[12px] px-[16px]">
           <h1 class="text-[#4F5662] font-medium text-[18px] mb-3">Фильтр</h1>
           <slot name="body" />
         </div>
@@ -38,5 +38,9 @@ const activeNames = computed<string[]>(() => {
 .el-collapse-item2 .el-collapse-item__wrap {
   border: none;
   overflow: unset;
+}
+
+.dark .el-collapse-item__wrap {
+  background-color: transparent!important;
 }
 </style>

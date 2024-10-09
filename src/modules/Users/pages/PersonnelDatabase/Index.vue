@@ -25,7 +25,7 @@ interface TableData {
 
 interface StatusInterface {
   title?: string;
-  state?: boolean;
+  status?: boolean;
 }
 
 const router = useRouter();

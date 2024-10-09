@@ -60,17 +60,6 @@ const tableData = ref<TableData[]>([
 const closeModal = () => {
   emit("update:editModal", false);
 };
-
-const headerClass = (item) => {
-  console.log(item);
-
-  return "p-0";
-};
-
-const openModals = () => {
-
-  editModal.value = true;
-};
 </script>
 
 <template>
