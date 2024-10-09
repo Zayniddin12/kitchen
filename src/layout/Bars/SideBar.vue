@@ -50,7 +50,7 @@ const closeChildSidebar = () => {
 };
 
 const pinSidebar = () => {
-  currentIndex.value = currentMenu.value
+  // currentIndex.value = currentMenu.value
 }
 
 onMounted(() => {

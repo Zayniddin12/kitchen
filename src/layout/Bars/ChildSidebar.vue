@@ -18,16 +18,13 @@ defineProps({
 
 const currentItem = ref<string>("");
 
-watch(() => route,
-  function() {
+watch(() => route, function() {
     if (route.params.id) {
       currentItem.value = route.params.id;
     } else {
       currentItem.value = route.path;
     }
-  },
-  { immediate: true },
-);
+  }, { immediate: true });
 
 const activeChildMenu = (item: any) => {
   const routePath = item.id ? `${item.route}/${item.title}/${item.id}` : item.route;

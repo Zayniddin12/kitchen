@@ -75,7 +75,6 @@ const actionButton = (value: TableData): void => {
         <img :src="isOpenFilter ? white : filter" alt="filter" class="mr-[12px]" />
         Фильтр
       </button>
-
     </div>
 
     <CollapseFilter v-model="isOpenFilter">
