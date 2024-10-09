@@ -1,11 +1,11 @@
 <script
-    setup
-    lang="ts"
+  setup
+  lang="ts"
 >
 
 import type {
   AppTimePickerPropsType,
-  AppTimePickerValueType
+  AppTimePickerValueType,
 } from "@/components/ui/form/app-time-picker/app-time-picker.type";
 import { computed, useSlots } from "vue";
 import { getRules, setRules } from "@/components/ui/form/validate";
@@ -17,7 +17,7 @@ const props = withDefaults(defineProps<AppTimePickerPropsType>(), {
   placeholder: "— : —",
   prefixIcon: "ss",
   format: "HH:MM",
-  labelClass: ""
+  labelClass: "",
 });
 
 const slots = useSlots();
@@ -44,23 +44,23 @@ const makeRange = (start: number, end: number) => {
 
 <template>
   <ElFormItem
-      :label
-      :label-position
-      :required
-      :size
-      :rules="setRules(getRules(props))"
-      :prop
-      :error
-      :class="appTimePickerClasses"
+    :label
+    :label-position
+    :required
+    :size
+    :rules="setRules(getRules(props))"
+    :prop
+    :error
+    :class="appTimePickerClasses"
   >
     <template
-        v-if="slots.label || label"
-        #label
+      v-if="slots.label || label"
+      #label
     >
       <span :class="labelClass">
       <slot
-          v-if="slots.label"
-          name="label"
+        v-if="slots.label"
+        name="label"
       />
         <template v-else>
           {{ label }}
@@ -68,29 +68,29 @@ const makeRange = (start: number, end: number) => {
       </span>
     </template>
     <ElTimePicker
-        v-model="model"
-        :id
-        :placeholder
-        :disabled
-        :readonly
-        :size
-        :name
-        :clearable
-        :editable
-        :start-placeholder
-        :end-placeholder
-        :is-range
-        :arrow-control
-        :range-separator
-        :format
-        :default-value
-        :value-format
-        :prefix-icon
-        :disabledHours
-        :disabled-second
-        :teleported
-        :empty-values
-        class="app-time-picker__time-picker"
+      v-model="model"
+      :id
+      :placeholder
+      :disabled
+      :readonly
+      :size
+      :name
+      :clearable
+      :editable
+      :start-placeholder
+      :end-placeholder
+      :is-range
+      :arrow-control
+      :range-separator
+      :format
+      :default-value
+      :value-format
+      :prefix-icon
+      :disabled-hours
+      :disabled-seconds
+      :teleported
+      :empty-values
+      class="app-time-picker__time-picker"
     />
   </ElFormItem>
 </template>

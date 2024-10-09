@@ -1,11 +1,14 @@
-<script setup lang="ts">
+<script
+  setup
+  lang="ts"
+>
 import AppDatePicker from "@/components/ui/form/app-date-picker/AppDatePicker.vue";
 import { TableColumnType } from "@/types/common.type";
 import { computed, onMounted } from "vue";
 
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 
-const {setBreadCrumb} = useBreadcrumb();
+const { setBreadCrumb } = useBreadcrumb();
 
 const tableColumns = computed<TableColumnType[]>(() => {
   return [
@@ -163,12 +166,12 @@ const setBreadCrumbFn = () => {
       label: "Остатка товаров",
       isActionable: true,
     },
-  ])
-}
+  ]);
+};
 
 onMounted(() => {
   setBreadCrumbFn();
-})
+});
 
 </script>
 
@@ -269,7 +272,7 @@ onMounted(() => {
         >
           <template #header>
             <RouterLink
-              v-if="!!column.link"
+              v-if="!!column?.link"
               :to="column.link"
             >
               {{ column.label }}

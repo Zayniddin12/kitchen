@@ -10,6 +10,8 @@ import IncomePasswordLayout from "@/views/IncomePassword.vue";
 import PasswordLayout from "@/views/Password.vue";
 import { useRoute } from "vue-router";
 
+const route = useRoute();
+
 const layouts = {
   MainLayout,
   LoginLayout,
@@ -18,8 +20,6 @@ const layouts = {
   IncomePasswordLayout,
   PasswordLayout,
 };
-
-const route = useRoute()
 </script>
 
 <template>
