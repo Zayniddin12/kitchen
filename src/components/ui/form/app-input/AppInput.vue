@@ -1,15 +1,15 @@
-<script setup lang="ts">
-import {
-  AppInputPropsType,
-  AppInputValueType,
-} from "@/components/ui/form/app-input/app-input.type";
+<script
+  setup
+  lang="ts"
+>
+import { AppInputPropsType, AppInputValueType } from "@/components/ui/form/app-input/app-input.type";
 import { computed, useSlots } from "vue";
 import { vMaska } from "maska";
 import { getRules, setRules } from "@/components/ui/form/validate";
 
 const [model, modifiers] = defineModel<AppInputValueType>();
 
-const updateModelValue = (value: AppInputValueType) => {
+const updateModelValue = (value) => {
   model.value = value;
 };
 
@@ -54,7 +54,10 @@ const inputMask = computed(() => {
       #label
     >
       <span :class="labelClass">
-      <slot v-if="slots.label" name="label" />
+      <slot
+        v-if="slots.label"
+        name="label"
+      />
         <template v-else>
           {{ label }}
         </template>

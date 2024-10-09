@@ -94,7 +94,3 @@ const makeRange = (start: number, end: number) => {
     />
   </ElFormItem>
 </template>
-
-<style lang="scss">
-
-</style>

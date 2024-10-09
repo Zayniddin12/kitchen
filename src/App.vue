@@ -20,7 +20,6 @@ const layouts = {
   IncomePasswordLayout,
   PasswordLayout,
 };
-
 </script>
 
 <template>
