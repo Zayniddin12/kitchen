@@ -11,16 +11,21 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "baseUrl": "./src",
-    "lib": ["ESNext", "DOM"],
+    "lib": [
+      "ESNext",
+      "DOM"
+    ],
     "paths": {
-      "@/*": ["*"]
+      "@/*": [
+        "*"
+      ]
     },
     "noEmit": true,
     "types": [
       "vue",
       "vite/client",
       "element-plus/global",
-      "@vue/runtime-core",
+      "@vue/runtime-core"
     ]
   },
   "include": [
@@ -29,5 +34,7 @@
     "src/**/*.tsx",
     "src/**/*.vue"
   ],
-  "exclude": ["node_modules"]
+  "exclude": [
+    "node_modules"
+  ]
 }

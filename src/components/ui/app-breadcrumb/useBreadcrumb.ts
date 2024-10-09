@@ -1,4 +1,4 @@
-import { onUnmounted, ref, watch } from "vue";
+import { ref } from "vue";
 import { BreadcrumbType } from "@/components/ui/app-breadcrumb/app-breadcrumb.type";
 
 const breadcrumb = ref<BreadcrumbType>([]);

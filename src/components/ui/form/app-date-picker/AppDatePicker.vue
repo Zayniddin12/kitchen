@@ -1,11 +1,11 @@
 <script
-    setup
-    lang="ts"
+  setup
+  lang="ts"
 >
 import { computed, h, shallowRef, useSlots } from "vue";
 import {
   AppDatePickerPropsType,
-  AppDatePickerValueType
+  AppDatePickerValueType,
 } from "@/components/ui/form/app-date-picker/app-date-picker.type";
 import CalendarIcon from "@/assets/images/icons/calendar.svg";
 import { getRules, setRules } from "@/components/ui/form/validate";
@@ -18,7 +18,7 @@ const props = withDefaults(defineProps<AppDatePickerPropsType>(), {
   format: "YYYY/MM/DD",
   type: "date",
   labelClass: "",
-  iconPosition: "end"
+  iconPosition: "end",
 });
 
 const slots = useSlots();
@@ -33,33 +33,33 @@ const appDatePickerClasses = computed<string[]>(() => {
   return classes;
 });
 
-const icon = shallowRef({
+const icon = shallowRef<any>({
   render() {
     return h("svg", {
       "data-src": CalendarIcon,
-      class: "app-date-picker__icon"
+      class: "app-date-picker__icon",
     });
-  }
+  },
 });
 </script>
 <template>
   <ElFormItem
-      :label-position
-      :required
-      :size
-      :rules="setRules(getRules(props))"
-      :prop
-      :error
-      :class="appDatePickerClasses"
+    :label-position
+    :required
+    :size
+    :rules="setRules(getRules(props))"
+    :prop
+    :error
+    :class="appDatePickerClasses"
   >
     <template
-        v-if="slots.label || label"
-        #label
+      v-if="slots.label || label"
+      #label
     >
       <span :class="labelClass">
         <slot
-            v-if="slots.label"
-            name="label"
+          v-if="slots.label"
+          name="label"
         />
         <template v-else>
           {{ label }}
@@ -67,31 +67,31 @@ const icon = shallowRef({
       </span>
     </template>
     <ElDatePicker
-        v-model="model"
-        :id
-        :placeholder
-        :disabled
-        :readonly
-        :size
-        :name
-        :clearable
-        :editable
-        :start-placeholder
-        :end-placeholder
-        :type
-        :format
-        :popper-class
-        :popper-options
-        :range-separator
-        :default-time
-        :default-value
-        :value-format
-        :unlink-panels
-        :prefix-icon="icon"
-        :disabled-date
-        :teleported
-        :empty-values
-        :class="['app-date-picker__date-picker', `app-date-picker__date-picker-icon--${iconPosition}`]"
+      v-model="model"
+      :id
+      :placeholder
+      :disabled
+      :readonly
+      :size
+      :name
+      :clearable
+      :editable
+      :start-placeholder
+      :end-placeholder
+      :type
+      :format
+      :popper-class
+      :popper-options
+      :range-separator
+      :default-time
+      :default-value
+      :value-format
+      :unlink-panels
+      :prefix-icon="icon"
+      :disabled-date
+      :teleported
+      :empty-values
+      :class="['app-date-picker__date-picker', `app-date-picker__date-picker-icon--${iconPosition}`]"
     />
   </ElFormItem>
 </template>
