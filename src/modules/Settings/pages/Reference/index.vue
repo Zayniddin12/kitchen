@@ -6,10 +6,12 @@ import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 interface MenuInterface {
   title: string;
   subTitle: string;
+  router?: string; // Router is optional now
 }
+
 interface UlItems {
   title: string;
-  menu: MenuInterface;
+  menu: MenuInterface[];
 }
 
 const router = useRouter();
@@ -125,10 +127,6 @@ const ulItems = ref<UlItems[]>([
   },
 ]);
 
-const detailPage = (value: any) => {
-  router.push(value.router);
-};
-
 const {setBreadCrumb} = useBreadcrumb();
 
 const setBreadCrumbFn = () => {
@@ -146,7 +144,6 @@ const setBreadCrumbFn = () => {
 onMounted(() => {
   setBreadCrumbFn();
 })
-
 </script>
 
 <template>
@@ -175,7 +172,7 @@ onMounted(() => {
           class="ml-[36px] !my-[15px]"
           v-for="(menu, index2) in item.menu"
           :key="index2"
-          @click="router.push(menu.router)"
+          @click="router.push(menu.router as string)"
         >
           <li
             class="text-[#4F5662] text-[14px] font-medium leading-[20px] cursor-pointer hover:underline hover:decoration-[#2E90FA] hover:text-[#2E90FA]"

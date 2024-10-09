@@ -20,7 +20,7 @@ const currentItem = ref<string>("");
 
 watch(() => route, function() {
     if (route.params.id) {
-      currentItem.value = route.params.id;
+      currentItem.value = route.params.id as string;
     } else {
       currentItem.value = route.path;
     }

@@ -13,10 +13,9 @@ interface TableData {
   id: number;
   num: string;
   date: string;
-  doc: string;
+  request: string;
+  sent: string;
   theme: string;
-  send: string;
-  receive: string;
 }
 
 interface TabItems {

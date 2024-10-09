@@ -16,7 +16,7 @@ let currentMenu = ref<number>(0);
 let childIsOpen = ref<boolean>(localStorage.getItem("child-sidebar") === "true");
 
 onMounted(() => {
-  currentMenu.value = JSON.parse(localStorage.getItem('current-menu'))
+  currentMenu.value = JSON.parse(localStorage.getItem('current-menu') as string)
 });
 
 watch(() => route.path, () => {
@@ -31,7 +31,7 @@ const activeMenu = (index: number, item: any) => {
   emit("update:childSidebar", !!item.children);
 
   localStorage.setItem("child-sidebar", "true");
-  localStorage.setItem("current-menu", currentMenu.value);
+  localStorage.setItem("current-menu", currentMenu.value as any);
 
   if (item.route) {
     router.push(item.route);

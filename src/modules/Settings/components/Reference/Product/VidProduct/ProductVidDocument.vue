@@ -12,6 +12,7 @@ interface TableData {
   id: number,
   name: Name,
   type: string,
+  photo: string,
 }
 
 const router = useRouter()

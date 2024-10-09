@@ -14,7 +14,7 @@ interface TableData {
 
 const router = useRouter();
 
-const tableData = ref<TableData>([
+const tableData = ref<TableData[]>([
   {
     id: 1,
     name: "Рацион 1",
@@ -51,6 +51,7 @@ const tableData = ref<TableData>([
     duration: "7 дней ",
   },
 ]);
+const input1 = ref<string>("")
 
 const { setBreadCrumb } = useBreadcrumb();
 

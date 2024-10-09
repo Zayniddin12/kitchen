@@ -25,9 +25,7 @@ const layouts = {
     class="overflow-y-auto"
   >
     <RouterView v-slot="{ Component }">
-      <transition name="nested">
-        <component :is="Component" />
-      </transition>
+      <component :is="Component" />
     </RouterView>
   </component>
 </template>

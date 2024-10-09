@@ -13,6 +13,16 @@ const { setBreadCrumb } = useBreadcrumb();
 
 const num = ref(1);
 
+interface TableData {
+  id: number;
+  num: string;
+  date: string;
+  doc: string;
+  theme: string;
+  send: string;
+  receive: string;
+}
+
 const tableData = ref<TableData[]>([
   {
     id: 1,

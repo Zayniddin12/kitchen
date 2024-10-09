@@ -9,7 +9,7 @@ interface ProductType{
 interface DistrictType{
     id: number,
     name: string,
-    products: ProductType[]
+    products?: ProductType[]
 }
 
 export const useDistrictStore = defineStore("destrictStore", () => {

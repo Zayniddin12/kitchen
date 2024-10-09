@@ -73,8 +73,8 @@ const addMeal = () => {
 };
 
 
-const deleteMeal = (mealIndex) => {
-  mealData.value = mealData.value.filter((meal, index) => index !== mealIndex);
+const deleteMeal = (mealIndex: any) => {
+  mealData.value = mealData.value.filter((meal: any, index: any) => index !== mealIndex);
 };
 
 const setBreadCrumbFn = () => {

@@ -15,7 +15,6 @@ interface TableData {
   system: string,
   dateSystem: string,
   doc: string,
-  nak: string,
   main: string,
   whom: string,
   toWhom: string,
