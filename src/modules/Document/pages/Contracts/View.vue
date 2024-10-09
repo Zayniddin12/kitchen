@@ -1,8 +1,12 @@
-<script setup lang="ts">
-import { ref } from "vue";
+<script
+  setup
+  lang="ts"
+>
+import { ref, watchEffect } from "vue";
 import { useRouter } from "vue-router";
 import AppInput from "@/components/ui/form/app-input/AppInput.vue";
 import AppSelect from "@/components/ui/form/app-select/AppSelect.vue";
+import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 
 interface TableData {
   typePro: string;
@@ -49,6 +53,29 @@ const tableData = ref<TableData[]>([
     sum: "200 000 сум",
   },
 ]);
+
+const { setBreadCrumb } = useBreadcrumb();
+
+const setBreadCrumbFn = () => {
+  setBreadCrumb([
+    {
+      label: "Документы",
+    },
+    {
+      label: "Контракты",
+      to: { name: "contracts" },
+    },
+    {
+      label: "Просмотр",
+      isActionable: true,
+    },
+  ]);
+};
+
+watchEffect(() => {
+  setBreadCrumbFn();
+});
+
 </script>
 
 <template>
@@ -68,13 +95,34 @@ const tableData = ref<TableData[]>([
     </div>
 
     <div class="p-[16px] rounded-[16px]">
-      <el-table :data="tableData" class="custom-element-table">
-        <el-table-column prop="typePro" label="Тип продукта" />
-        <el-table-column prop="vidPro" label="Вид продукта" />
-        <el-table-column prop="count" label="Количество" />
-        <el-table-column prop="unit" label="Ед. измерения" />
-        <el-table-column prop="cost" label="Цена" />
-        <el-table-column prop="sum" label="Сумма" />
+      <el-table
+        :data="tableData"
+        class="custom-element-table"
+      >
+        <el-table-column
+          prop="typePro"
+          label="Тип продукта"
+        />
+        <el-table-column
+          prop="vidPro"
+          label="Вид продукта"
+        />
+        <el-table-column
+          prop="count"
+          label="Количество"
+        />
+        <el-table-column
+          prop="unit"
+          label="Ед. измерения"
+        />
+        <el-table-column
+          prop="cost"
+          label="Цена"
+        />
+        <el-table-column
+          prop="sum"
+          label="Сумма"
+        />
         <template #append>
           <div class="flex items-center justify-end p-4">
             <h1 class="text-[#8F9194] text-[14px] font-bold mr-[5px]">Общая сумма: </h1>

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, watchEffect } from "vue";
 import { useRouter } from "vue-router";
 import CollapseFilter from "@/components/collapseFilter/index.vue";
 import appInput from "@/components/ui/form/app-input/AppInput.vue";
@@ -7,6 +7,7 @@ import appSelect from "@/components/ui/form/app-select/AppSelect.vue";
 import white from "@/assets/images/filter2.svg";
 import filter from "@/assets/images/filter.svg";
 import AppDatePicker from "@/components/ui/form/app-date-picker/AppDatePicker.vue";
+import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 
 interface TableData {
   id: number;
@@ -82,6 +83,28 @@ const actionButton = (value: TableData): void => {
 };
 
 const changeTab = (value: number) => activeTab.value = value;
+
+const { setBreadCrumb } = useBreadcrumb();
+
+const setBreadCrumbFn = () => {
+  setBreadCrumb([
+    {
+      label: "Документы",
+    },
+    {
+      label: "Запросы",
+    },
+    {
+      label: "Полученные",
+      isActionable: true,
+    },
+  ]);
+};
+
+watchEffect(() => {
+  setBreadCrumbFn();
+});
+
 </script>
 
 <template>

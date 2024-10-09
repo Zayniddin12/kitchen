@@ -1,5 +1,30 @@
 <script setup lang="ts">
 
+import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
+import { watchEffect } from "vue";
+
+const { setBreadCrumb } = useBreadcrumb();
+
+const setBreadCrumbFn = () => {
+  setBreadCrumb([
+    {
+      label: "Документы",
+    },
+    {
+      label: "Акты",
+      to: { name: "acts" },
+    },
+    {
+      label: "Просмотр",
+      isActionable: true,
+    },
+  ]);
+};
+
+watchEffect(() => {
+  setBreadCrumbFn();
+});
+
 </script>
 
 <template>

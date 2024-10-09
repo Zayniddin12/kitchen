@@ -7,22 +7,6 @@ export default [
     component: () => import("@/modules/Document/pages/OfficeNotes/Inbox/Inbox.vue"),
     meta: {
       title: "Входящие",
-      layout: "MainLayout",
-      breadcrumb: [
-        {
-          label: "Документы",
-          isActionable: false,
-        },
-        {
-          label: "Служебные записки",
-          isActionable: false,
-        },
-        {
-          label: "Входящие",
-          isActionable: true,
-        },
-      ],
-
     },
   },
   {
@@ -31,27 +15,6 @@ export default [
     component: () => import("@/modules/Document/pages/OfficeNotes/Inbox/View.vue"),
     meta: {
       title: "Просмотр",
-      layout: "MainLayout",
-      breadcrumb: [
-        {
-          label: "Документы",
-          isActionable: false,
-        },
-        {
-          label: "Служебные записки",
-          isActionable: false,
-        },
-        {
-          label: "Входящие",
-          isActionable: false,
-          to: "inbox",
-        },
-        {
-          label: "Просмотр",
-          isActionable: true,
-        },
-      ],
-
     },
   },
 
@@ -62,22 +25,6 @@ export default [
     component: () => import("@/modules/Document/pages/OfficeNotes/Outgoing/Index.vue"),
     meta: {
       title: "Исходящие",
-      layout: "MainLayout",
-      breadcrumb: [
-        {
-          label: "Документы",
-          isActionable: false,
-        },
-        {
-          label: "Служебные записки",
-          isActionable: false,
-        },
-        {
-          label: "Исходящие",
-          isActionable: true,
-        },
-      ],
-
     },
   },
   {
@@ -86,27 +33,6 @@ export default [
     component: () => import("@/modules/Document/pages/OfficeNotes/Outgoing/View.vue"),
     meta: {
       title: "Просмотр",
-      layout: "MainLayout",
-      breadcrumb: [
-        {
-          label: "Документы",
-          isActionable: false,
-        },
-        {
-          label: "Служебные записки",
-          isActionable: false,
-        },
-        {
-          label: "Исходящие",
-          isActionable: false,
-          to: "outgoing",
-        },
-        {
-          label: "Просмотр",
-          isActionable: true,
-        },
-      ],
-
     },
   },
 
@@ -117,22 +43,6 @@ export default [
     component: () => import("@/modules/Document/pages/OfficeNotes/Drafts/Index.vue"),
     meta: {
       title: "Черновики",
-      layout: "MainLayout",
-      breadcrumb: [
-        {
-          label: "Документы",
-          isActionable: false,
-        },
-        {
-          label: "Служебные записки",
-          isActionable: false,
-        },
-        {
-          label: "Черновики",
-          isActionable: true,
-        },
-      ],
-
     },
   },
   // -------------------------Служебные записки-------------------------------
@@ -146,22 +56,6 @@ export default [
     component: () => import("@/modules/Document/pages/Requests/Received/Index.vue"),
     meta: {
       title: "Полученные",
-      layout: "MainLayout",
-      breadcrumb: [
-        {
-          label: "Документы",
-          isActionable: false,
-        },
-        {
-          label: "Запросы",
-          isActionable: false,
-        },
-        {
-          label: "Полученные",
-          isActionable: true,
-        },
-      ],
-
     },
   },
   {
@@ -170,27 +64,6 @@ export default [
     component: () => import("@/modules/Document/pages/Requests/Received/View.vue"),
     meta: {
       title: "Просмотр",
-      layout: "MainLayout",
-      breadcrumb: [
-        {
-          label: "Документы",
-          isActionable: false,
-        },
-        {
-          label: "Запросы",
-          isActionable: false,
-        },
-        {
-          label: "Полученные",
-          isActionable: false,
-          to: "received",
-        },
-        {
-          label: "Просмотр",
-          isActionable: true,
-        },
-      ],
-
     },
   },
 
@@ -201,22 +74,6 @@ export default [
     component: () => import("@/modules/Document/pages/Requests/Sent/Index.vue"),
     meta: {
       title: "Отправленные",
-      layout: "MainLayout",
-      breadcrumb: [
-        {
-          label: "Документы",
-          isActionable: false,
-        },
-        {
-          label: "Запросы",
-          isActionable: false,
-        },
-        {
-          label: "Отправленные",
-          isActionable: true,
-        },
-      ],
-
     },
   },
   {
@@ -225,27 +82,6 @@ export default [
     component: () => import("@/modules/Document/pages/Requests/Sent/View.vue"),
     meta: {
       title: "Просмотр",
-      layout: "MainLayout",
-      breadcrumb: [
-        {
-          label: "Документы",
-          isActionable: false,
-        },
-        {
-          label: "Запросы",
-          isActionable: false,
-        },
-        {
-          label: "Отправленные",
-          isActionable: false,
-          to: "sent",
-        },
-        {
-          label: "Просмотр",
-          isActionable: true,
-        },
-      ],
-
     },
   },
 
@@ -256,22 +92,6 @@ export default [
     component: () => import("@/modules/Document/pages/Requests/Drafts/Index.vue"),
     meta: {
       title: "Черновики",
-      layout: "MainLayout",
-      breadcrumb: [
-        {
-          label: "Документы",
-          isActionable: false,
-        },
-        {
-          label: "Запросы",
-          isActionable: false,
-        },
-        {
-          label: "Черновики",
-          isActionable: true,
-        },
-      ],
-
     },
   },
 
@@ -284,22 +104,6 @@ export default [
     component: () => import("@/modules/Document/pages/Invoices/InvoiceInbox/Index.vue"),
     meta: {
       title: "Входящие",
-      layout: "MainLayout",
-      breadcrumb: [
-        {
-          label: "Документы",
-          isActionable: false,
-        },
-        {
-          label: "Накладные",
-          isActionable: false,
-        },
-        {
-          label: "Входящие",
-          isActionable: true,
-        },
-      ],
-
     },
   },
   {
@@ -308,27 +112,6 @@ export default [
     component: () => import("@/modules/Document/pages/Invoices/InvoiceInbox/View.vue"),
     meta: {
       title: "Просмотр",
-      layout: "MainLayout",
-      breadcrumb: [
-        {
-          label: "Документы",
-          isActionable: false,
-        },
-        {
-          label: "Накладные",
-          isActionable: false,
-        },
-        {
-          label: "Входящие",
-          isActionable: false,
-          to: 'invoice-inbox'
-        },
-        {
-          label: "Просмотр",
-          isActionable: true,
-        },
-      ],
-
     },
   },
 
@@ -339,22 +122,6 @@ export default [
     component: () => import("@/modules/Document/pages/Invoices/InvoiceOutgoing/Index.vue"),
     meta: {
       title: "Исходящие",
-      layout: "MainLayout",
-      breadcrumb: [
-        {
-          label: "Документы",
-          isActionable: false,
-        },
-        {
-          label: "Накладные",
-          isActionable: false,
-        },
-        {
-          label: "Исходящие",
-          isActionable: true,
-        },
-      ],
-
     },
   },
   {
@@ -363,27 +130,6 @@ export default [
     component: () => import("@/modules/Document/pages/Invoices/InvoiceOutgoing/View.vue"),
     meta: {
       title: "Исходящие",
-      layout: "MainLayout",
-      breadcrumb: [
-        {
-          label: "Документы",
-          isActionable: false,
-        },
-        {
-          label: "Накладные",
-          isActionable: false,
-        },
-        {
-          label: "Исходящие",
-          isActionable: false,
-          to: 'invoice-outgoing'
-        },
-        {
-          label: "Просмотр",
-          isActionable: true,
-        },
-      ],
-
     },
   },
   // -------------------------Запросы-------------------------------
@@ -395,17 +141,6 @@ export default [
     component: () => import("@/modules/Document/pages/Acts/Index.vue"),
     meta: {
       title: "Акты",
-      layout: "MainLayout",
-      breadcrumb: [
-        {
-          label: "Документы",
-          isActionable: false,
-        },
-        {
-          label: "Акты",
-          isActionable: true,
-        },
-      ],
     },
   },
   {
@@ -414,23 +149,6 @@ export default [
     component: () => import("@/modules/Document/pages/Acts/View.vue"),
     meta: {
       title: "Просмотр",
-      layout: "MainLayout",
-      breadcrumb: [
-        {
-          label: "Документы",
-          isActionable: false,
-        },
-        {
-          label: "Акты",
-          isActionable: false,
-          to: "acts",
-        },
-        {
-          label: "Просмотр",
-          isActionable: true,
-        },
-      ],
-
     },
   },
 
@@ -441,17 +159,6 @@ export default [
     component: () => import("@/modules/Document/pages/Contracts/Index.vue"),
     meta: {
       title: "Контракты",
-      layout: "MainLayout",
-      breadcrumb: [
-        {
-          label: "Документы",
-          isActionable: false,
-        },
-        {
-          label: "Контракты",
-          isActionable: true,
-        },
-      ],
     },
   },
   {
@@ -460,22 +167,6 @@ export default [
     component: () => import("@/modules/Document/pages/Contracts/Create.vue"),
     meta: {
       title: "Добавить",
-      layout: "MainLayout",
-      breadcrumb: [
-        {
-          label: "Документы",
-          isActionable: false,
-        },
-        {
-          label: "Контракты",
-          isActionable: false,
-          to: 'contracts'
-        },
-        {
-          label: "Добавить",
-          isActionable: true,
-        },
-      ],
     },
   },
   {
@@ -484,22 +175,6 @@ export default [
     component: () => import("@/modules/Document/pages/Contracts/View.vue"),
     meta: {
       title: "Просмотр",
-      layout: "MainLayout",
-      breadcrumb: [
-        {
-          label: "Документы",
-          isActionable: false,
-        },
-        {
-          label: "Контракты",
-          isActionable: false,
-          to: 'contracts'
-        },
-        {
-          label: "Просмотр",
-          isActionable: true,
-        },
-      ],
     },
   },
 ];
