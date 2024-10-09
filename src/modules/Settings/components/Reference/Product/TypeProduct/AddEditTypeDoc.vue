@@ -77,7 +77,7 @@ watch(() => route.name, () => {
         />
 
         <el-switch
-          :disabled="route.name === 'reference-type-product-view'"
+          :disabled="route.name === 'reference-type-product-view' as any"
           v-model="dataValue.is_active"
           class="mt-auto"
           active-text="Деактивация"

@@ -215,7 +215,7 @@ const option3 = {
       type: "bar",
       data: [356800000, 86480500, 286800000, 500000000, 125800000, 865800000],
       itemStyle: {
-        color: function(params) {
+        color: function(params: any) {
           // Define colors for each bar
           const colors = ["#36BFFA", "#53D28C", "#EE7677", "#FFB269", "#F670C7", "#9B8AFB"];
 
@@ -290,7 +290,7 @@ const changeBranch = (code: number) => {
   branches.value = code;
 };
 
-const handleClass = (item) => {
+const handleClass = () => {
   return "!bg-[#FBDDDD]";
 };
 
