@@ -38,8 +38,8 @@ const setActiveTab = (item: any) => {
 };
 
 const title = computed(() => {
-  return  route.name === "personal-database-create-form" ? "Добавить" : "Редактировать"
-})
+  return route.name === "personal-database-create-form" ? "Добавить" : "Редактировать";
+});
 
 const setBreadCrumbFn = () => {
   setBreadCrumb([
@@ -51,7 +51,7 @@ const setBreadCrumbFn = () => {
       to: { name: "personal-database" },
     },
     {
-      label:  title,
+      label: title.value,
       isActionable: true,
     },
   ]);

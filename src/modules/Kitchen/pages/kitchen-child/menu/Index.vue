@@ -25,7 +25,7 @@ interface ProductItemType {
   quantity: number;
   weight: number;
   name: string;
-  photo: string | object;
+  photo: string;
 }
 
 interface ProductCategoryType {
@@ -199,7 +199,7 @@ const activeDate = ref(dateList.value[0].value);
 
 const hasData = ref(true);
 
-const products = ref<ProductType[]>([
+const products = ref<ProductType[] | []>([
   {
     category: { id: 1, name: "Напитки" },
     data: [
@@ -225,7 +225,7 @@ const products = ref<ProductType[]>([
 
 const ordersModal = ref(false);
 
-const updateQuantity = (product, increment = true) => {
+const updateQuantity = (product: ProductItemType, increment = true) => {
   if (increment) {
     product.quantity++;
     ordersModal.value = true;
@@ -236,8 +236,12 @@ const updateQuantity = (product, increment = true) => {
 };
 
 const orders = computed(() =>
-  products.value.reduce((acc, product) => acc.concat(product.data.filter(item => item.quantity > 0)), []),
+  products.value.reduce<ProductItemType[]>((acc, product) =>
+      acc.concat(product.data.filter(item => item.quantity > 0)),
+    [] as ProductItemType[],
+  ),
 );
+
 
 const ordersSum = computed(() => orders.value.reduce((sum, order) => sum + order.price * order.quantity, 0));
 
@@ -555,7 +559,7 @@ onMounted(() => {
                     class="rounded-2xl border border-[#E2E6F3] p-4 bg-[#F8F9FC] flex gap-x-3"
                   >
                     <img
-                      :src="productItem.photo"
+                      :src="productItem.photo as any"
                       :alt="productItem.name"
                       class="rounded-xl w-30 h-[114px] object-contain"
                     />

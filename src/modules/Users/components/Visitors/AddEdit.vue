@@ -47,7 +47,7 @@ const previewImage = (event: any) => {
 
 const { setBreadCrumb } = useBreadcrumb();
 
-const title = computed(() => {
+const title = computed<string>(() => {
   return route.name === "visitors-create-form" ? "Добавить" : "Редактировать";
 });
 
@@ -61,7 +61,7 @@ const setBreadCrumbFn = () => {
       to: { name: "visitors" },
     },
     {
-      label: title,
+      label: title.value,
       isActionable: true,
     },
   ]);

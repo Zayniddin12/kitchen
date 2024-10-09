@@ -1,5 +1,5 @@
 import { ref } from "vue";
-import { BreadcrumbType } from "@/components/ui/app-breadcrumb/app-breadcrumb.type";
+import type { BreadcrumbType } from "@/components/ui/app-breadcrumb/app-breadcrumb.type";
 
 const breadcrumb = ref<BreadcrumbType>([]);
 

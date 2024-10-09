@@ -21,7 +21,7 @@ const { setBreadCrumb } = useBreadcrumb();
 const kitchenStore = useKitchenStore();
 
 // State
-const startDate = ref<Date | null>(null);
+const startDate = ref<Date | "">("");
 const intermediateDate1 = ref(false);
 const intermediateDate2 = ref(false);
 const activeScheduledDate = ref("");
