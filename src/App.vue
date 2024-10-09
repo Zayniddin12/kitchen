@@ -1,26 +1,32 @@
-<script setup lang="ts">
+<script
+  setup
+  lang="ts"
+>
 import MainLayout from "@/layout/MainLayout.vue";
 import LoginLayout from "@/layout/LoginLayout.vue";
 import ErrorLayout from "@/layout/ErrorLayout.vue";
-import ResetPasswordLayout from "./views/ResetPassword.vue";
-import IncomePasswordLayout from "./views/IncomePassword.vue";
-import PasswordLayout from "./views/Password.vue";
+import ResetPasswordLayout from "@/views/ResetPassword.vue";
+import IncomePasswordLayout from "@/views/IncomePassword.vue";
+import PasswordLayout from "@/views/Password.vue";
 
+// Layoutlarni soddalashtirish
 const layouts = {
-  MainLayout: MainLayout,
-  LoginLayout: LoginLayout,
-  ErrorLayout: ErrorLayout,
-  ResetPasswordLayout: ResetPasswordLayout,
-  IncomePasswordLayout: IncomePasswordLayout,
-  PasswordLayout: PasswordLayout,
+  MainLayout,
+  LoginLayout,
+  ErrorLayout,
+  ResetPasswordLayout,
+  IncomePasswordLayout,
+  PasswordLayout,
 };
 </script>
 
 <template>
   <component :is="layouts[$route.meta.layout] || MainLayout">
-    <transition name="fade">
-      <RouterView />
-    </transition>
+    <RouterView v-slot="{ Component }">
+      <transition name="fade">
+        <component :is="Component" />
+      </transition>
+    </RouterView>
   </component>
 </template>
 

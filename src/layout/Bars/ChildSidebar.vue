@@ -30,9 +30,9 @@ watch(() => route,
 );
 
 const activeChildMenu = (item: any) => {
-  const routePath = item.id ? `${item.route}/${item.title}/${item.id}` : item.route;
+  // const routePath = item.id ? `${item.route}/${item.title}/${item.id}` : item.route;
   currentItem.value = item.id || item.route;
-  router.push(routePath);
+  router.push(item.route);
   emit("closeSidebar");
 };
 </script>

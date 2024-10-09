@@ -1,5 +1,8 @@
-<script setup lang="ts">
-import { ref } from "vue";
+<script
+  setup
+  lang="ts"
+>
+import { ref, watchEffect } from "vue";
 import CollapseFilter from "@/components/collapseFilter/index.vue";
 import AppInput from "@/components/ui/form/app-input/AppInput.vue";
 import AppSelect from "@/components/ui/form/app-select/AppSelect.vue";
@@ -7,6 +10,7 @@ import white from "@/assets/images/filter2.svg";
 import filter from "@/assets/images/filter.svg";
 import AppDatePicker from "@/components/ui/form/app-date-picker/AppDatePicker.vue";
 import { useRouter } from "vue-router";
+import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 
 interface TableData {
   id: number;
@@ -61,8 +65,30 @@ const tableData = ref<TableData[]>([
 ]);
 
 const actionButton = (value: TableData): void => {
-  console.log(value, "value");
+  // console.log(value, "value");
 };
+
+const { setBreadCrumb } = useBreadcrumb();
+
+const setBreadCrumbFn = () => {
+  setBreadCrumb([
+    {
+      label: "Документы",
+    },
+    {
+      label: "Служебные записки",
+    },
+    {
+      label: "Входящие",
+      isActionable: true,
+    },
+  ]);
+};
+
+watchEffect(() => {
+  setBreadCrumbFn();
+});
+
 </script>
 
 <template>
@@ -70,9 +96,16 @@ const actionButton = (value: TableData): void => {
     <div class="flex items-center justify-between">
       <h1 class="m-0 font-semibold text-[32px]">Входящие</h1>
 
-      <button class="custom-filter-btn font-medium" :class="isOpenFilter ? '!bg-blue !text-white' : ''"
-              @click="isOpenFilter = !isOpenFilter">
-        <img :src="isOpenFilter ? white : filter" alt="filter" class="mr-[12px]" />
+      <button
+        class="custom-filter-btn font-medium"
+        :class="isOpenFilter ? '!bg-blue !text-white' : ''"
+        @click="isOpenFilter = !isOpenFilter"
+      >
+        <img
+          :src="isOpenFilter ? white : filter"
+          alt="filter"
+          class="mr-[12px]"
+        />
         Фильтр
       </button>
 
@@ -81,16 +114,40 @@ const actionButton = (value: TableData): void => {
     <CollapseFilter v-model="isOpenFilter">
       <template #body>
         <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          <app-date-picker placeholder="с этой даты" label="с этой даты" label-class="text-[#7F7D83]" />
-          <app-date-picker placeholder="по эту дату" label="по эту дату" label-class="text-[#7F7D83]"/>
+          <app-date-picker
+            placeholder="с этой даты"
+            label="с этой даты"
+            label-class="text-[#7F7D83]"
+          />
+          <app-date-picker
+            placeholder="по эту дату"
+            label="по эту дату"
+            label-class="text-[#7F7D83]"
+          />
 
-          <AppInput placeholder="Номер документа" label="Номер документа" label-class="text-[#7F7D83]"/>
-          <AppInput placeholder="Доставка картофеля" label="Доставка картофеля" label-class="text-[#7F7D83]"/>
+          <AppInput
+            placeholder="Номер документа"
+            label="Номер документа"
+            label-class="text-[#7F7D83]"
+          />
+          <AppInput
+            placeholder="Доставка картофеля"
+            label="Доставка картофеля"
+            label-class="text-[#7F7D83]"
+          />
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-2 gap-4">
-          <AppSelect placeholder="Кому" label="Кому" label-class="text-[#7F7D83]"/>
-          <AppSelect placeholder="Отправитель" label="Отправитель" label-class="text-[#7F7D83]"/>
+          <AppSelect
+            placeholder="Кому"
+            label="Кому"
+            label-class="text-[#7F7D83]"
+          />
+          <AppSelect
+            placeholder="Отправитель"
+            label="Отправитель"
+            label-class="text-[#7F7D83]"
+          />
         </div>
 
         <div class="flex items-center mt-[10px] justify-between">
@@ -103,21 +160,55 @@ const actionButton = (value: TableData): void => {
       </template>
     </CollapseFilter>
 
-    <el-table :data="tableData" class="custom-element-table">
-      <el-table-column prop="num" label="№" width="80" />
-      <el-table-column prop="date" label="Дата" />
-      <el-table-column prop="doc" label="№ документа" />
-      <el-table-column prop="theme" label="Тема" />
-      <el-table-column prop="send" label="Отправитель" />
-      <el-table-column prop="receive" label="Получатель" />
+    <el-table
+      :data="tableData"
+      class="custom-element-table"
+    >
+      <el-table-column
+        prop="num"
+        label="№"
+        width="80"
+      />
+      <el-table-column
+        prop="date"
+        label="Дата"
+      />
+      <el-table-column
+        prop="doc"
+        label="№ документа"
+      />
+      <el-table-column
+        prop="theme"
+        label="Тема"
+      />
+      <el-table-column
+        prop="send"
+        label="Отправитель"
+      />
+      <el-table-column
+        prop="receive"
+        label="Получатель"
+      />
       <el-table-column label="Действие">
         <template #default="scope">
-          <button class="action-btn" @click="router.push(`/inbox/${scope.row.id}`)">
-            <img src="@/assets/images/eye.svg" alt="eye" />
+          <button
+            class="action-btn"
+            @click="router.push(`/inbox/${scope.row.id}`)"
+          >
+            <img
+              src="@/assets/images/eye.svg"
+              alt="eye"
+            />
           </button>
 
-          <button class="action-btn ml-[8px]" @click="actionButton(scope.row)">
-            <img src="@/assets/images/download.svg" alt="download" />
+          <button
+            class="action-btn ml-[8px]"
+            @click="actionButton(scope.row)"
+          >
+            <img
+              src="@/assets/images/download.svg"
+              alt="download"
+            />
           </button>
         </template>
       </el-table-column>

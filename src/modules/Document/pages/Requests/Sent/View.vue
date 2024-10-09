@@ -1,4 +1,35 @@
-<script setup lang="ts">
+<script
+  setup
+  lang="ts"
+>
+
+import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
+import { watchEffect } from "vue";
+
+const { setBreadCrumb } = useBreadcrumb();
+
+const setBreadCrumbFn = () => {
+  setBreadCrumb([
+    {
+      label: "Документы",
+    },
+    {
+      label: "Запросы",
+    },
+    {
+      label: "Отправленные",
+      to: { name: "sent" },
+    },
+    {
+      label: "Просмотр",
+      isActionable: true,
+    },
+  ]);
+};
+
+watchEffect(() => {
+  setBreadCrumbFn();
+});
 
 </script>
 
@@ -8,7 +39,10 @@
       <div class="border-[#E2E6F3] border rounded-[15px]">
         <div class="px-[72px] pb-[70px]">
           <header class="flex items-center justify-center my-[24px] mb-6">
-            <img src="@/assets/images/logo.svg" alt="logo">
+            <img
+              src="@/assets/images/logo.svg"
+              alt="logo"
+            >
             <div class="flex flex-col ml-3">
               <b class="text-[#000D24] text-lg">NKMK</b>
               <span class="text-[#CBCCCE]">Jamg‘armasi</span>
@@ -44,7 +78,8 @@
           </div>
 
           <div class="text-[#4F5662] text-[14px]">
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 1000 кг перца сладкого свеженарезанного, выделенного у Вас в соответствии
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 1000 кг перца сладкого свеженарезанного, выделенного у Вас в
+            соответствии
             с договором № 3259031.1.1 от 31 июля
             2024 года, проведенным посредством электронных аукционов в августе текущего года, в целях обеспечения
             непрерывного питания продуктами лечебно-профилактического назначения. кормления и медико-санитарных больных
@@ -59,7 +94,10 @@
               </h1>
             </div>
 
-            <img src="@/assets/images/icons/qr.svg" alt="qr" />
+            <img
+              src="@/assets/images/icons/qr.svg"
+              alt="qr"
+            />
 
             <h1 class="text-[#A8AAAE] text-[14px] mr-[100px]">Эргашева Л.</h1>
           </div>
@@ -72,7 +110,11 @@
     </div>
 
     <button class="custom-white-btn ml-[24px] w-[260px]">
-      <img src="@/assets/images/icons/plane.svg" alt="plane" class="mr-[12px]"/>
+      <img
+        src="@/assets/images/icons/plane.svg"
+        alt="plane"
+        class="mr-[12px]"
+      />
       Отправить
     </button>
   </div>

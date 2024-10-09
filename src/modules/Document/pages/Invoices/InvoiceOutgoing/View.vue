@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, watchEffect } from "vue";
+import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 
 interface TableData {
   name: string;
@@ -39,6 +40,32 @@ const tableData = ref<TableData[]>([
     sum: "1 760 000 сум",
   },
 ]);
+
+const { setBreadCrumb } = useBreadcrumb();
+
+const setBreadCrumbFn = () => {
+  setBreadCrumb([
+    {
+      label: "Документы",
+    },
+    {
+      label: "Накладные",
+    },
+    {
+      label: "Исходящие",
+      to: { name: "invoice-outgoing" },
+    },
+    {
+      label: "Просмотр",
+      isActionable: true,
+    },
+  ]);
+};
+
+watchEffect(() => {
+  setBreadCrumbFn();
+});
+
 </script>
 
 <template>

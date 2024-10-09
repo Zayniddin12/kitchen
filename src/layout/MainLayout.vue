@@ -1,11 +1,13 @@
-<script setup lang="ts">
+<script
+  setup
+  lang="ts"
+>
 import { onMounted, ref, watch } from "vue";
 import { useRoute } from "vue-router";
-import {useKitchenStore} from "@/modules/Kitchen/store/kitchen.store";
+import { useKitchenStore } from "@/modules/Kitchen/store/kitchen.store";
 
 import NavBar from "@/layout/Bars/NavBar.vue";
 import SideBar from "@/layout/Bars/SideBar.vue";
-import Breadcrumb from "@/components/ui/Breadcrumb.vue";
 import AppBreadcrumb from "@/components/ui/app-breadcrumb/AppBreadcrumb.vue";
 
 const route = useRoute();
@@ -35,11 +37,10 @@ const closeChildSidebar = () => {
       class="main-layout min-h-screen p-6 pr-7 pt-28 dark:bg-darkLayoutMain bg-white ml-[128px] transition-all flex flex-col justify-between"
       :class="childSidebar ? 'ml-[396px]' : ''"
     >
-     <div class="flex flex-col">
-       <Breadcrumb />
-       <AppBreadcrumb/>
-       <slot />
-     </div>
+      <div class="flex flex-col">
+        <AppBreadcrumb />
+        <slot />
+      </div>
 
       <span class="mt-[28px] z-50 bg-[#fff] w-full text-[#8F9194] text-[12px]">Made by “Anysoft” software & solutions company</span>
     </div>

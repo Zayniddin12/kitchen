@@ -1,8 +1,12 @@
-<script setup lang="ts">
-import { ref } from "vue";
+<script
+  setup
+  lang="ts"
+>
+import { ref, watchEffect } from "vue";
 import { useRouter } from "vue-router";
 import AppInput from "@/components/ui/form/app-input/AppInput.vue";
 import AppSelect from "@/components/ui/form/app-select/AppSelect.vue";
+import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 
 const router = useRouter();
 
@@ -17,6 +21,29 @@ const deleteForm = (index: number) => {
     formRepeater.value.splice(index, 1);
   }
 };
+
+const { setBreadCrumb } = useBreadcrumb();
+
+const setBreadCrumbFn = () => {
+  setBreadCrumb([
+    {
+      label: "Документы",
+    },
+    {
+      label: "Контракты",
+      to: { name: "contracts" },
+    },
+    {
+      label: "Добавить",
+      isActionable: true,
+    },
+  ]);
+};
+
+watchEffect(() => {
+  setBreadCrumbFn();
+});
+
 </script>
 
 <template>
@@ -36,7 +63,11 @@ const deleteForm = (index: number) => {
     </div>
 
     <div class="bg-[#F8F9FC] p-[16px] rounded-[16px]">
-      <div class="grid grid-cols-6 gap-5 border-b mb-[16px]" v-for="(item, index) in formRepeater" :key="index">
+      <div
+        class="grid grid-cols-6 gap-5 border-b mb-[16px]"
+        v-for="(item, index) in formRepeater"
+        :key="index"
+      >
         <div>
           <label class="text-[#A8AAAE] text-[12px] font-medium mb-[4px] block">Тип продукта</label>
           <app-select placeholder="Выберите" />
@@ -72,7 +103,10 @@ const deleteForm = (index: number) => {
             class="bg-[#E2E6F3] rounded-[8px] p-[10px] ml-4"
             @click="deleteForm(index)"
           >
-            <img src="@/assets/images/icons/delete.svg" alt="delete" />
+            <img
+              src="@/assets/images/icons/delete.svg"
+              alt="delete"
+            />
           </button>
         </div>
       </div>
@@ -82,13 +116,21 @@ const deleteForm = (index: number) => {
       class="text-[#2E90FA] flex items-center border px-[16px] py-[8px] border-[#2E90FA] rounded-lg text-[12px] font-medium mt-[12px]"
       @click="repeaterAgain"
     >
-      <img src="@/assets/images/icons/plus2.svg" class="mr-[4px]" alt="plus"/>
+      <img
+        src="@/assets/images/icons/plus2.svg"
+        class="mr-[4px]"
+        alt="plus"
+      />
       Добавить еще
     </button>
   </div>
 
   <div class="flex items-center justify-end">
-    <button class="custom-cancel-btn" @click="router.push('/contracts')">Отменить</button>
+    <button
+      class="custom-cancel-btn"
+      @click="router.push('/contracts')"
+    >Отменить
+    </button>
     <button class="custom-apply-btn ml-[8px]">Добавить</button>
   </div>
 </template>
