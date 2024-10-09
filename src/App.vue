@@ -21,7 +21,10 @@ const layouts = {
 </script>
 
 <template>
-  <component :is="layouts[$route.meta.layout] || MainLayout">
+  <component
+    :is="layouts[$route.meta.layout] || MainLayout"
+    class="overflow-y-auto"
+  >
     <RouterView v-slot="{ Component }">
       <transition name="nested">
         <component :is="Component" />
@@ -29,9 +32,3 @@ const layouts = {
     </RouterView>
   </component>
 </template>
-
-<style>
-body {
-  overflow-x: hidden;
-}
-</style>
