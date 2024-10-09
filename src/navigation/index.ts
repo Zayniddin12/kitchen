@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
 import { computed, ref } from "vue";
-import { useKitchenWarehouseStore } from "@/modules/KitchenWarehouse/store/index.ts";
-import { useKitchenStore } from "@/modules/Kitchen/store/kitchen.store.ts";
+import { useKitchenWarehouseStore } from "@/modules/KitchenWarehouse/store";
+import { useKitchenStore } from "@/modules/Kitchen/store/kitchen.store";
 
 export const useLayoutStore = defineStore("layoutStore", () => {
 

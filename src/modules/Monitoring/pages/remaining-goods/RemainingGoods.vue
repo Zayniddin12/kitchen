@@ -155,7 +155,7 @@ const tableData = computed(() => {
       fund: 200,
     },
   ];
-}) as Record<string, any>[];
+});
 
 const setBreadCrumbFn = () => {
   setBreadCrumb([

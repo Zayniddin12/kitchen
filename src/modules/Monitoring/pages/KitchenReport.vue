@@ -324,8 +324,8 @@ onMounted(() => {
             <ElTableColumn
               v-for="column in attendanceTableColumns"
               :key="column.prop"
-              :width="column.width"
-              :sortable="column.sortable"
+              :width="column?.width ?? ''"
+              :sortable="!!column.sortable"
               :prop="column.prop"
             >
               <template #header>
@@ -351,8 +351,8 @@ onMounted(() => {
               <ElTableColumn
                 v-for="column in dishesTableColumns"
                 :key="column.prop"
-                :width="column.width"
-                :sortable="column.sortable"
+                :width="column.width ?? ''"
+                :sortable="!!column.sortable"
                 :prop="column.prop"
               >
                 <template #header>
@@ -374,8 +374,8 @@ onMounted(() => {
               <ElTableColumn
                 v-for="column in dishesTableColumns"
                 :key="column.prop"
-                :width="column.width"
-                :sortable="column.sortable"
+                :width="column.width ?? ''"
+                :sortable="!!column.sortable"
                 :prop="column.prop"
               >
                 <template #header>

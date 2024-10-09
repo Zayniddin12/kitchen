@@ -1,4 +1,7 @@
-<script setup lang="ts">
+<script
+  setup
+  lang="ts"
+>
 
 </script>
 
@@ -7,7 +10,3 @@
     ©{{ new Date().getFullYear() }} Anysoft
   </footer>
 </template>
-
-<style scoped lang="scss">
-
-</style>

@@ -1,9 +1,9 @@
 <script
-    setup
-    lang="ts"
+  setup
+  lang="ts"
 >
-import { computed, nextTick, ref, useTemplateRef, watch, onMounted, onBeforeUnmount } from "vue";
-import { onBeforeRouteUpdate, useRoute } from "vue-router";
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, useTemplateRef, watch } from "vue";
+import { useRoute } from "vue-router";
 import { useKitchenStore } from "@/modules/Kitchen/store/kitchen.store";
 import { TableColumnType } from "@/types/common.type";
 import { formatNumber } from "@/utils/helper";
@@ -19,7 +19,26 @@ import Plus3Icon from "@/assets/images/icons/plus3.svg";
 import RefreshIcon from "@/assets/images/icons/refresh.svg";
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 
-const {setBreadCrumb} = useBreadcrumb();
+interface ProductItemType {
+  id: number;
+  price: number;
+  quantity: number;
+  weight: number;
+  name: string;
+  photo: string | object;
+}
+
+interface ProductCategoryType {
+  id: number;
+  name: string;
+}
+
+interface ProductType {
+  category: ProductCategoryType;
+  data: ProductItemType[];
+}
+
+const { setBreadCrumb } = useBreadcrumb();
 
 const kitchenStore = useKitchenStore();
 const route = useRoute();
@@ -32,38 +51,22 @@ enum TABS {
 const activeTab = ref<number>(TABS.CURRENT);
 const tabItems = computed(() => [
   { value: TABS.CURRENT, name: "Текущее меню" },
-  { value: TABS.ALL, name: "Все меню" }
+  { value: TABS.ALL, name: "Все меню" },
 ]);
 
 watch(
-    () => route.query.tab,
-    () => {
-      const tab = Number(route.query.tab);
-      activeTab.value = [TABS.CURRENT, TABS.ALL].includes(tab) ? tab : TABS.CURRENT;
-    },
-    { immediate: true }
+  () => route.query.tab,
+  () => {
+    const tab = Number(route.query.tab);
+    activeTab.value = [TABS.CURRENT, TABS.ALL].includes(tab) ? tab : TABS.CURRENT;
+  },
+  { immediate: true },
 );
-
-onBeforeRouteUpdate((to, from, next) => {
-  kitchenStore.fetchPart(+to.params.department_id, +to.params.part_name);
-  if (!kitchenStore.part) {
-    return next({ name: "notFound" });
-  }
-  to.meta.breadcrumb = [
-    { label: "Кухня" },
-    { label: kitchenStore.part.name },
-    { label: kitchenStore.part.department_name },
-    { label: "Лагерь" },
-    { label: "Паҳлавон" },
-    { label: "Меню", isActionable: true }
-  ];
-  next();
-});
 
 const setBreadCrumbFn = () => {
   kitchenStore.fetchPart(+route.params.department_id, route.params.part_name as string);
 
-  if(!kitchenStore.part) return
+  if (!kitchenStore.part) return;
 
   setBreadCrumb([
     {
@@ -78,74 +81,74 @@ const setBreadCrumbFn = () => {
     },
     {
       label: "Лагерь",
-      to: {name: "KitchenShowIndex"}
+      to: { name: "KitchenShowIndex" },
     },
     {
       label: "Паҳлавон",
-      to: {name: "KitchenShowChildIndex"}
+      to: { name: "KitchenShowChildIndex" },
     },
     {
       label: "Меню",
       isActionable: true,
-    }
-  ])
-}
+    },
+  ]);
+};
 
 const currentTabTableColumns = computed<TableColumnType[]>(() => [
   { label: "Название", prop: "name" },
   { label: "Количество", prop: "quantity" },
   { label: "Ед. измерения", prop: "unit_measurement" },
   { label: "Цена", prop: "price" },
-  { label: "Сумма", prop: "sum" }
+  { label: "Сумма", prop: "sum" },
 ]);
 
 const salesAllTabTableColumns = computed<TableColumnType[]>(() => [
   {
     label: "№",
     prop: "idx",
-    sortable: false
+    sortable: false,
   },
   {
     label: "Тип рациона",
     prop: "type",
-    sortable: true
+    sortable: true,
   },
   {
     label: "Время",
     prop: "time",
     sortable: true,
-    align: "center"
+    align: "center",
   },
   {
     label: "Порция",
     prop: "portion",
     sortable: true,
-    align: "center"
+    align: "center",
   },
   {
     label: "Дата",
     prop: "date",
     sortable: true,
-    align: "center"
+    align: "center",
   },
   {
     label: "Себестоимость",
     prop: "cost_price",
     sortable: true,
-    align: "center"
+    align: "center",
   },
   {
     label: "Цена",
     prop: "price",
     sortable: true,
-    align: "center"
+    align: "center",
   },
   {
     label: "Действие",
     prop: "action",
     sortable: false,
-    align: "right"
-  }
+    align: "right",
+  },
 ]);
 
 const salesAllTabTableData = computed(() => {
@@ -159,7 +162,7 @@ const salesAllTabTableData = computed(() => {
       date: "23.08.2024",
       cost_price: "18 000 сум",
       price: "25 000 сум",
-      action: true
+      action: true,
     });
   }
 
@@ -167,19 +170,19 @@ const salesAllTabTableData = computed(() => {
 });
 
 const currentTabTableData = computed(() =>
-    Array.from({ length: 4 }, () => ({
-      name: "Кабачки",
-      quantity: 0.8,
-      unit_measurement: "грамм",
-      price: "1 800 сум",
-      sum: "15 000 сум"
-    }))
+  Array.from({ length: 4 }, () => ({
+    name: "Кабачки",
+    quantity: 0.8,
+    unit_measurement: "грамм",
+    price: "1 800 сум",
+    sum: "15 000 сум",
+  })),
 );
 
 const allTabTableData = computed(() => [
   { id: 1, idx: 1, type: "Рацион 1", time: "08:00-10:00", date: "23.08.2024", action: true },
   { id: 2, idx: 2, type: "Рацион 2", time: "12:00-13:00", date: "23.08.2024", action: true },
-  { id: 3, idx: 3, type: "Рацион 3", time: "18:00-20:00", date: "23.08.2024", action: true }
+  { id: 3, idx: 3, type: "Рацион 3", time: "18:00-20:00", date: "23.08.2024", action: true },
 ]);
 
 const dateList = ref([
@@ -189,21 +192,21 @@ const dateList = ref([
   { value: "09.09.2024", title: "Четверг - 09.09.2024" },
   { value: "10.09.2024", title: "Пятница - 10.09.2024" },
   { value: "11.09.2024", title: "Суббота - 11.09.2024" },
-  { value: "12.09.2024", title: "Воскресенье - 12.09.2024" }
+  { value: "12.09.2024", title: "Воскресенье - 12.09.2024" },
 ]);
 
 const activeDate = ref(dateList.value[0].value);
 
 const hasData = ref(true);
 
-const products = ref([
+const products = ref<ProductType[]>([
   {
     category: { id: 1, name: "Напитки" },
     data: [
       { id: 1, price: 14000, quantity: 0, weight: 1.5, name: "Coca Cola", photo: ColaImg },
       { id: 2, price: 12000, quantity: 0, weight: 1, name: "Coca Cola", photo: ColaImg },
-      { id: 3, price: 8000, quantity: 0, weight: 0.5, name: "Coca Cola", photo: ColaImg }
-    ]
+      { id: 3, price: 8000, quantity: 0, weight: 0.5, name: "Coca Cola", photo: ColaImg },
+    ],
   },
   {
     category: { id: 2, name: "Блюда" },
@@ -215,9 +218,9 @@ const products = ref([
       { id: 8, price: 12000, quantity: 0, weight: 0.5, name: "Блюда 5", photo: DishesImg },
       { id: 9, price: 14000, quantity: 0, weight: 1, name: "Блюда 6", photo: DishesImg },
       { id: 10, price: 15000, quantity: 0, weight: 1.5, name: "Блюда 7", photo: DishesImg },
-      { id: 11, price: 18000, quantity: 0, weight: 2, name: "Блюда 8", photo: DishesImg }
-    ]
-  }
+      { id: 11, price: 18000, quantity: 0, weight: 2, name: "Блюда 8", photo: DishesImg },
+    ],
+  },
 ]);
 
 const ordersModal = ref(false);
@@ -233,7 +236,7 @@ const updateQuantity = (product, increment = true) => {
 };
 
 const orders = computed(() =>
-    products.value.reduce((acc, product) => acc.concat(product.data.filter(item => item.quantity > 0)), [])
+  products.value.reduce((acc, product) => acc.concat(product.data.filter(item => item.quantity > 0)), []),
 );
 
 const ordersSum = computed(() => orders.value.reduce((sum, order) => sum + order.price * order.quantity, 0));
@@ -241,12 +244,12 @@ const ordersSum = computed(() => orders.value.reduce((sum, order) => sum + order
 const clearOrders = () => {
   products.value = products.value.map(product => ({
     ...product,
-    data: product.data.map(el => ({ ...el, quantity: 0 }))
+    data: product.data.map(el => ({ ...el, quantity: 0 })),
   }));
   ordersModal.value = false;
 };
 
-const ordersWrapper = useTemplateRef("ordersWrapper");
+const ordersWrapper = useTemplateRef<HTMLDivElement>("ordersWrapper");
 const menuSection = useTemplateRef("menuSection");
 
 const updateMenuSectionPadding = () => {
@@ -268,6 +271,7 @@ watch(ordersModal, async newValue => {
 });
 
 let resizeObserver: ResizeObserver | null = null;
+
 onMounted(() => {
   resizeObserver = new ResizeObserver(updateMenuSectionPadding);
   if (ordersWrapper.value) {
@@ -284,14 +288,14 @@ onBeforeUnmount(() => {
 
 onMounted(() => {
   setBreadCrumbFn();
-})
+});
 
 </script>
 
 <template>
   <section
-      class="menu"
-      ref="menuSection"
+    class="menu"
+    ref="menuSection"
   >
     <div>
       <h1 class="font-semibold text-[32px] text-dark">
@@ -300,31 +304,31 @@ onMounted(() => {
       <div class="mt-6 flex items-center justify-between gap-x-5">
         <div class="app-tabs !inline-flex">
           <RouterLink
-              v-for="item in tabItems"
-              :key="item.value"
-              :class="['app-tab', {'app-tab--active': activeTab === item.value}]"
-              :to="{query: {...route.query, ...{tab: item.value}}}"
+            v-for="item in tabItems"
+            :key="item.value"
+            :class="['app-tab', {'app-tab--active': activeTab === item.value}]"
+            :to="{query: {...route.query, ...{tab: item.value}}}"
           >
             {{ item.name }}
           </RouterLink>
         </div>
         <div
-            v-if="hasData"
-            class="flex items-center"
+          v-if="hasData"
+          class="flex items-center"
         >
           <template v-if="kitchenStore.activeMenuPart">
             <template v-if="activeTab === TABS.CURRENT">
               <ElButton
-                  class="!bg-blue-500 min-h-12 w-[253px]"
-                  type="primary"
-                  size="large"
-                  tag="RouterLink"
-                  :to="{name: 'KitchenMenuCookingDishCreate'}"
+                class="!bg-blue-500 min-h-12 w-[253px]"
+                type="primary"
+                size="large"
+                tag="RouterLink"
+                :to="{name: 'KitchenMenuCookingDishCreate'}"
               >
                 <div class="flex items-center gap-x-2">
                   <svg
-                      :data-src="PlusIcon"
-                      class="size-6"
+                    :data-src="PlusIcon"
+                    class="size-6"
                   />
                   <span class="text-lg font-medium">
                 Приготовить блюды
@@ -332,16 +336,16 @@ onMounted(() => {
                 </div>
               </ElButton>
               <ElButton
-                  class="!bg-[#28C76F] min-h-12 w-[149px]"
-                  size="large"
-                  type="success"
-                  tag="RouterLink"
-                  :to="{name: 'KitchenMenuSellCreate'}"
+                class="!bg-[#28C76F] min-h-12 w-[149px]"
+                size="large"
+                type="success"
+                tag="RouterLink"
+                :to="{name: 'KitchenMenuSellCreate'}"
               >
                 <div class="flex items-center gap-x-2">
                   <svg
-                      :data-src="SellIcon"
-                      class="size-6"
+                    :data-src="SellIcon"
+                    class="size-6"
                   />
                   <span class="text-lg font-medium">
                 Продать
@@ -351,15 +355,15 @@ onMounted(() => {
             </template>
             <template v-else-if="activeTab === TABS.ALL">
               <ElButton
-                  class="min-h-12 w-[253px] !bg-[#E2E6F3] border-none"
-                  size="large"
-                  tag="RouterLink"
-                  :to="{name: 'KitchenMenuEdit'}"
+                class="min-h-12 w-[253px] !bg-[#E2E6F3] border-none"
+                size="large"
+                tag="RouterLink"
+                :to="{name: 'KitchenMenuEdit'}"
               >
                 <div class="flex items-center gap-x-2">
                   <svg
-                      :data-src="EditIcon"
-                      class="size-6"
+                    :data-src="EditIcon"
+                    class="size-6"
                   />
                   <span class="text-dark-gray font-medium text-lg">
                   Редактировать
@@ -370,13 +374,13 @@ onMounted(() => {
           </template>
           <template v-if="kitchenStore.activeSalesPart && activeTab === TABS.ALL">
             <ElButton
-                class="min-h-12 w-[253px] !bg-[#E2E6F3] border-none"
-                size="large"
+              class="min-h-12 w-[253px] !bg-[#E2E6F3] border-none"
+              size="large"
             >
               <div class="flex items-center gap-x-2">
                 <svg
-                    :data-src="EditIcon"
-                    class="size-6"
+                  :data-src="EditIcon"
+                  class="size-6"
                 />
                 <span class="text-dark-gray font-medium text-lg">
                   Редактировать
@@ -384,14 +388,14 @@ onMounted(() => {
               </div>
             </ElButton>
             <ElButton
-                class="min-h-12 w-[253px] !bg-blue-500"
-                size="large"
-                type="primary"
+              class="min-h-12 w-[253px] !bg-blue-500"
+              size="large"
+              type="primary"
             >
               <div class="flex items-center gap-x-2">
                 <svg
-                    :data-src="RefreshIcon"
-                    class="size-6"
+                  :data-src="RefreshIcon"
+                  class="size-6"
                 />
                 <span class="text-white font-medium text-lg">
                   Начать сначала
@@ -403,24 +407,24 @@ onMounted(() => {
       </div>
       <div class="mt-6">
         <TransitionGroup
-            v-if="hasData"
-            name="nested"
-            :duration="{ enter: 500, leave: 1500 }"
-            tag="div"
-            class="relative overflow-x-hidden mt-6"
+          v-if="hasData"
+          name="nested"
+          :duration="{ enter: 500, leave: 1500 }"
+          tag="div"
+          class="relative overflow-x-hidden mt-6"
         >
           <div
-              v-if="activeTab === TABS.CURRENT"
-              class="inner"
+            v-if="activeTab === TABS.CURRENT"
+            class="inner"
           >
             <div
-                v-if="kitchenStore.activeMenuPart"
-                class="flex flex-col gap-y-8"
+              v-if="kitchenStore.activeMenuPart"
+              class="flex flex-col gap-y-8"
             >
               <div
-                  v-for="n in 3"
-                  :key="n"
-                  class="border rounded-2xl p-4 pb-6 border-[#E2E6F3]"
+                v-for="n in 3"
+                :key="n"
+                class="border rounded-2xl p-4 pb-6 border-[#E2E6F3]"
               >
                 <div class="flex justify-between gap-x-5">
                   <div class="flex flex-col gap-y-2">
@@ -430,8 +434,8 @@ onMounted(() => {
                     <div class="flex items-center gap-x-3 font-medium text-sm text-cool-gray">
                       <div class="flex items-center gap-x-1">
                         <svg
-                            :data-src="ClockIcon"
-                            class="size-5"
+                          :data-src="ClockIcon"
+                          class="size-5"
                         />
                         <span>
                           08:00-10:00
@@ -447,14 +451,14 @@ onMounted(() => {
                   </h3>
                 </div>
                 <ElTable
-                    :data="currentTabTableData"
-                    class="custom-element-table custom-element-table-normal mt-6"
+                  :data="currentTabTableData"
+                  class="custom-element-table custom-element-table-normal mt-6"
                 >
                   <ElTableColumn
-                      v-for="column in currentTabTableColumns"
-                      :key="column.prop"
-                      :label="column.label"
-                      :prop="column.prop"
+                    v-for="column in currentTabTableColumns"
+                    :key="column.prop"
+                    :label="column.label"
+                    :prop="column.prop"
                   />
                 </ElTable>
                 <div class="rounded-2xl p-4 bg-white-blue flex justify-between gap-x-24 mt-6">
@@ -534,26 +538,26 @@ onMounted(() => {
               </div>
             </div>
             <div
-                v-else-if="kitchenStore.activeSalesPart"
-                class="flex flex-col gap-y-6"
+              v-else-if="kitchenStore.activeSalesPart"
+              class="flex flex-col gap-y-6"
             >
               <div
-                  v-for="product in products"
-                  :key="product.category.id"
+                v-for="product in products"
+                :key="product.category.id"
               >
                 <h4 class="text-dark-gray font-semibold text-xl">
                   {{ product.category.name }}
                 </h4>
                 <div class="grid grid-cols-4 gap-6 mt-3">
                   <div
-                      v-for="productItem in product.data"
-                      :key="productItem.id"
-                      class="rounded-2xl border border-[#E2E6F3] p-4 bg-[#F8F9FC] flex gap-x-3"
+                    v-for="productItem in product.data"
+                    :key="productItem.id"
+                    class="rounded-2xl border border-[#E2E6F3] p-4 bg-[#F8F9FC] flex gap-x-3"
                   >
                     <img
-                        :src="productItem.photo"
-                        :alt="productItem.name"
-                        class="rounded-xl w-30 h-[114px] object-contain"
+                      :src="productItem.photo"
+                      :alt="productItem.name"
+                      class="rounded-xl w-30 h-[114px] object-contain"
                     />
                     <div>
                       <h5 class="text-dark font-semibold text-xl">
@@ -569,27 +573,27 @@ onMounted(() => {
                       </div>
                       <div class="mt-2.5 flex items-center gap-x-2">
                         <button
-                            @click="updateQuantity(productItem, false)"
-                            :disabled="productItem.quantity===0"
-                            class="size-7 text-[#292D324D] rounded-lg shadow-[0_2px_8.4px_0_#292D3214] bg-white flex items-center justify-center"
+                          @click="updateQuantity(productItem, false)"
+                          :disabled="productItem.quantity===0"
+                          class="size-7 text-[#292D324D] rounded-lg shadow-[0_2px_8.4px_0_#292D3214] bg-white flex items-center justify-center"
                         >
                           <img
-                              :src="MinusIcon"
-                              alt="minus icon"
-                              class="size-5"
+                            :src="MinusIcon"
+                            alt="minus icon"
+                            class="size-5"
                           />
                         </button>
                         <span class="text-base font-medium text-dark-gray">
                           {{ productItem.quantity }}
                         </span>
                         <button
-                            @click="updateQuantity(productItem)"
-                            class="size-7 text-[#292D324D] rounded-lg shadow-[0_2px_8.4px_0_#292D3214] bg-white flex items-center justify-center"
+                          @click="updateQuantity(productItem)"
+                          class="size-7 text-[#292D324D] rounded-lg shadow-[0_2px_8.4px_0_#292D3214] bg-white flex items-center justify-center"
                         >
                           <img
-                              :src="Plus3Icon"
-                              alt="minus icon"
-                              class="size-4"
+                            :src="Plus3Icon"
+                            alt="minus icon"
+                            class="size-4"
                           />
                         </button>
                       </div>
@@ -600,16 +604,16 @@ onMounted(() => {
             </div>
           </div>
           <div
-              v-else-if="activeTab === TABS.ALL"
-              class="inner"
+            v-else-if="activeTab === TABS.ALL"
+            class="inner"
           >
             <ElScrollbar>
               <div class="flex">
                 <button
-                    v-for="item in dateList"
-                    :key="item.value"
-                    :class="['py-2 px-4 text-center rounded-lg text-xs font-medium text-dark-gray transition duration-200 ease-in', {'bg-[#E2E6F3]': activeDate === item.value}]"
-                    @click="activeDate = item.value"
+                  v-for="item in dateList"
+                  :key="item.value"
+                  :class="['py-2 px-4 text-center rounded-lg text-xs font-medium text-dark-gray transition duration-200 ease-in', {'bg-[#E2E6F3]': activeDate === item.value}]"
+                  @click="activeDate = item.value"
                 >
                   {{ item.title }}
                 </button>
@@ -617,57 +621,57 @@ onMounted(() => {
             </ElScrollbar>
             <div class="mt-6">
               <div
-                  v-if="kitchenStore.activeMenuPart"
-                  class="flex flex-col gap-y-6"
+                v-if="kitchenStore.activeMenuPart"
+                class="flex flex-col gap-y-6"
               >
                 <div>
                   <h2 class="font-semibold text-2xl text-black">
                     Завтрак
                   </h2>
                   <ElTable
-                      :data="allTabTableData"
-                      class="custom-element-table custom-element-table-normal mt-4"
+                    :data="allTabTableData"
+                    class="custom-element-table custom-element-table-normal mt-4"
                   >
                     <ElTableColumn
-                        prop="idx"
-                        label="№"
+                      prop="idx"
+                      label="№"
                     />
                     <ElTableColumn
-                        prop="type"
-                        label="Тип рациона"
-                        sortable
+                      prop="type"
+                      label="Тип рациона"
+                      sortable
                     />
                     <ElTableColumn
-                        prop="time"
-                        label="Время"
-                        sortable
+                      prop="time"
+                      label="Время"
+                      sortable
                     />
                     <ElTableColumn
-                        prop="date"
-                        label="Дата"
-                        sortable
+                      prop="date"
+                      label="Дата"
+                      sortable
                     />
                     <ElTableColumn
-                        prop="action"
-                        label="Действие"
-                        align="right"
+                      prop="action"
+                      label="Действие"
+                      align="right"
                     >
-                      <template #default="{row}">
+                      <template #default="{row}: {row: Record<string,any>}">
                         <div
-                            v-if="row.action"
-                            class="flex items-center justify-end gap-x-2"
+                          v-if="row.action"
+                          class="flex items-center justify-end gap-x-2"
                         >
                           <button class="action-btn">
                             <img
-                                src="@/assets/images/eye.svg"
-                                alt="eye"
+                              src="@/assets/images/eye.svg"
+                              alt="eye"
                             />
                           </button>
 
                           <button class="action-btn">
                             <img
-                                src="@/assets/images/icons/edit.svg"
-                                alt="edit"
+                              src="@/assets/images/icons/edit.svg"
+                              alt="edit"
                             />
                           </button>
                         </div>
@@ -680,49 +684,49 @@ onMounted(() => {
                     Обед
                   </h2>
                   <ElTable
-                      :data="allTabTableData"
-                      class="custom-element-table custom-element-table-normal mt-4"
+                    :data="allTabTableData"
+                    class="custom-element-table custom-element-table-normal mt-4"
                   >
                     <ElTableColumn
-                        prop="idx"
-                        label="№"
+                      prop="idx"
+                      label="№"
                     />
                     <ElTableColumn
-                        prop="type"
-                        label="Тип рациона"
-                        sortable
+                      prop="type"
+                      label="Тип рациона"
+                      sortable
                     />
                     <ElTableColumn
-                        prop="time"
-                        label="Время"
-                        sortable
+                      prop="time"
+                      label="Время"
+                      sortable
                     />
                     <ElTableColumn
-                        prop="date"
-                        label="Дата"
-                        sortable
+                      prop="date"
+                      label="Дата"
+                      sortable
                     />
                     <ElTableColumn
-                        prop="action"
-                        label="Действие"
-                        align="right"
+                      prop="action"
+                      label="Действие"
+                      align="right"
                     >
-                      <template #default="{row}">
+                      <template #default="{row}: {row: Record<string,any>}">
                         <div
-                            v-if="row.action"
-                            class="flex items-center justify-end gap-x-2"
+                          v-if="row.action"
+                          class="flex items-center justify-end gap-x-2"
                         >
                           <button class="action-btn">
                             <img
-                                src="@/assets/images/eye.svg"
-                                alt="eye"
+                              src="@/assets/images/eye.svg"
+                              alt="eye"
                             />
                           </button>
 
                           <button class="action-btn">
                             <img
-                                src="@/assets/images/icons/edit.svg"
-                                alt="edit"
+                              src="@/assets/images/icons/edit.svg"
+                              alt="edit"
                             />
                           </button>
                         </div>
@@ -735,49 +739,49 @@ onMounted(() => {
                     Ужин
                   </h2>
                   <ElTable
-                      :data="allTabTableData"
-                      class="custom-element-table custom-element-table-normal mt-4"
+                    :data="allTabTableData"
+                    class="custom-element-table custom-element-table-normal mt-4"
                   >
                     <ElTableColumn
-                        prop="idx"
-                        label="№"
+                      prop="idx"
+                      label="№"
                     />
                     <ElTableColumn
-                        prop="type"
-                        label="Тип рациона"
-                        sortable
+                      prop="type"
+                      label="Тип рациона"
+                      sortable
                     />
                     <ElTableColumn
-                        prop="time"
-                        label="Время"
-                        sortable
+                      prop="time"
+                      label="Время"
+                      sortable
                     />
                     <ElTableColumn
-                        prop="date"
-                        label="Дата"
-                        sortable
+                      prop="date"
+                      label="Дата"
+                      sortable
                     />
                     <ElTableColumn
-                        prop="action"
-                        label="Действие"
-                        align="right"
+                      prop="action"
+                      label="Действие"
+                      align="right"
                     >
-                      <template #default="{row}">
+                      <template #default="{row}: {row: Record<string,any>}">
                         <div
-                            v-if="row.action"
-                            class="flex items-center justify-end gap-x-2"
+                          v-if="row.action"
+                          class="flex items-center justify-end gap-x-2"
                         >
                           <button class="action-btn">
                             <img
-                                src="@/assets/images/eye.svg"
-                                alt="eye"
+                              src="@/assets/images/eye.svg"
+                              alt="eye"
                             />
                           </button>
 
                           <button class="action-btn">
                             <img
-                                src="@/assets/images/icons/edit.svg"
-                                alt="edit"
+                              src="@/assets/images/icons/edit.svg"
+                              alt="edit"
                             />
                           </button>
                         </div>
@@ -790,49 +794,49 @@ onMounted(() => {
                     Сухой питания
                   </h2>
                   <ElTable
-                      :data="allTabTableData"
-                      class="custom-element-table custom-element-table-normal mt-4"
+                    :data="allTabTableData"
+                    class="custom-element-table custom-element-table-normal mt-4"
                   >
                     <ElTableColumn
-                        prop="idx"
-                        label="№"
+                      prop="idx"
+                      label="№"
                     />
                     <ElTableColumn
-                        prop="type"
-                        label="Тип рациона"
-                        sortable
+                      prop="type"
+                      label="Тип рациона"
+                      sortable
                     />
                     <ElTableColumn
-                        prop="time"
-                        label="Время"
-                        sortable
+                      prop="time"
+                      label="Время"
+                      sortable
                     />
                     <ElTableColumn
-                        prop="date"
-                        label="Дата"
-                        sortable
+                      prop="date"
+                      label="Дата"
+                      sortable
                     />
                     <ElTableColumn
-                        prop="action"
-                        label="Действие"
-                        align="right"
+                      prop="action"
+                      label="Действие"
+                      align="right"
                     >
-                      <template #default="{row}">
+                      <template #default="{row}: {row: Record<string,any>}">
                         <div
-                            v-if="row.action"
-                            class="flex items-center justify-end gap-x-2"
+                          v-if="row.action"
+                          class="flex items-center justify-end gap-x-2"
                         >
                           <button class="action-btn">
                             <img
-                                src="@/assets/images/eye.svg"
-                                alt="eye"
+                              src="@/assets/images/eye.svg"
+                              alt="eye"
                             />
                           </button>
 
                           <button class="action-btn">
                             <img
-                                src="@/assets/images/icons/edit.svg"
-                                alt="edit"
+                              src="@/assets/images/icons/edit.svg"
+                              alt="edit"
                             />
                           </button>
                         </div>
@@ -846,49 +850,49 @@ onMounted(() => {
                   Меню
                 </h4>
                 <ElTable
-                    :data="salesAllTabTableData"
-                    class="custom-element-table custom-element-table-normal menu__sales-all-tab-table mt-4"
+                  :data="salesAllTabTableData"
+                  class="custom-element-table custom-element-table-normal menu__sales-all-tab-table mt-4"
                 >
                   <ElTableColumn
-                      v-for="column in salesAllTabTableColumns"
-                      :key="column.prop"
-                      :prop="column.prop"
-                      :label="column.label"
-                      :sortable="column.sortable"
-                      :align="column.align"
+                    v-for="column in salesAllTabTableColumns"
+                    :key="column.prop"
+                    :prop="column.prop"
+                    :label="column.label"
+                    :sortable="!!column.sortable"
+                    :align="column.align ?? 'left'"
                   >
                     <template
-                        v-if="column.prop === 'type'"
-                        #default="{row}"
+                      v-if="column.prop === 'type'"
+                      #default="{row}: {row: Record<string,any>}"
                     >
                       <div class="flex items-center gap-x-3">
                         <img
-                            :src="DishesImg"
-                            :alt="row.type"
-                            class="size-8 rounded-full object-contain"
+                          :src="DishesImg"
+                          :alt="row.type"
+                          class="size-8 rounded-full object-contain"
                         />
-                        <span>{{row.type}}</span>
+                        <span>{{ row.type }}</span>
                       </div>
                     </template>
                     <template
-                        v-if="column.prop === 'action'"
-                        #default="{row}"
+                      v-if="column.prop === 'action'"
+                      #default="{row}: {row: Record<string,any>}"
                     >
                       <div
-                          v-if="row.action"
-                          class="flex items-center justify-end gap-x-2"
+                        v-if="row.action"
+                        class="flex items-center justify-end gap-x-2"
                       >
                         <button class="action-btn">
                           <img
-                              src="@/assets/images/eye.svg"
-                              alt="eye"
+                            src="@/assets/images/eye.svg"
+                            alt="eye"
                           />
                         </button>
 
                         <button class="action-btn">
                           <img
-                              src="@/assets/images/icons/edit.svg"
-                              alt="edit"
+                            src="@/assets/images/icons/edit.svg"
+                            alt="edit"
                           />
                         </button>
                       </div>
@@ -900,28 +904,28 @@ onMounted(() => {
           </div>
         </TransitionGroup>
         <div
-            v-else
-            class="mx-auto mt-[100px] w-[342px] text-center"
+          v-else
+          class="mx-auto mt-[100px] w-[342px] text-center"
         >
           <img
-              :src="mailPlanImg"
-              alt="mail plan create img"
-              class="w-full h-[264px]"
+            :src="mailPlanImg"
+            alt="mail plan create img"
+            class="w-full h-[264px]"
           />
           <p class="text-black font-medium text-sm mt-6">
             План питания еще не составлен
           </p>
           <ElButton
-              class="!bg-blue-500 mt-6"
-              type="primary"
-              size="large"
-              tag="router-link"
-              :to="{name: 'KitchenMenuCreate'}"
+            class="!bg-blue-500 mt-6"
+            type="primary"
+            size="large"
+            tag="router-link"
+            :to="{name: 'KitchenMenuCreate'}"
           >
             <div class="flex items-center gap-x-2">
               <svg
-                  :data-src="PlusIcon"
-                  class="size-6"
+                :data-src="PlusIcon"
+                class="size-6"
               />
               <span class="text-lg font-medium">
                 Добавить
@@ -933,9 +937,9 @@ onMounted(() => {
     </div>
     <Teleport to="body">
       <div
-          v-show="activeTab === TABS.CURRENT && ordersModal"
-          ref="ordersWrapper"
-          class="fixed bottom-0 pt-6 right-0 w-full z-[100] bg-white shadow-[0_0_3px_-1px_#0A090B0A]"
+        v-show="activeTab === TABS.CURRENT && ordersModal"
+        ref="ordersWrapper"
+        class="fixed bottom-0 pt-6 right-0 w-full z-[100] bg-white shadow-[0_0_3px_-1px_#0A090B0A]"
       >
         <div class="flex items-center justify-between px-6 pb-4">
           <h4 class="text-2xl text-black font-semibold">Заказы</h4>
@@ -944,34 +948,34 @@ onMounted(() => {
               Общая сумма: {{ formatNumber(ordersSum) }} сум
             </h6>
             <ElButton
-                @click="clearOrders"
-                class="!bg-[#E2E6F3] border-none text-sm !text-dark-gray"
-                size="large"
+              @click="clearOrders"
+              class="!bg-[#E2E6F3] border-none text-sm !text-dark-gray"
+              size="large"
             >
               Отменить
             </ElButton>
             <ElButton
-                type="primary"
-                size="large"
-                class="!bg-blue"
+              type="primary"
+              size="large"
+              class="!bg-blue"
             >
               Продать
             </ElButton>
           </div>
         </div>
         <div
-            v-if="orders.length>0"
-            class="grid grid-cols-5 gap-x-12 gap-y-10 max-h-[220px] overflow-y-auto px-6 pb-6 pt-4"
+          v-if="orders.length>0"
+          class="grid grid-cols-5 gap-x-12 gap-y-10 max-h-[220px] overflow-y-auto px-6 pb-6 pt-4"
         >
           <div
-              v-for="item in orders"
-              :key="item.id"
+            v-for="item in orders"
+            :key="item.id"
           >
             <div class="flex gap-x-4 items-start">
               <img
-                  :src="item.photo"
-                  :alt="item.name"
-                  class="size-9 rounded-full"
+                :src="item.photo"
+                :alt="item.name"
+                class="size-9 rounded-full"
               />
               <div>
                 <div class="flex items-center gap-x-3">
@@ -980,27 +984,27 @@ onMounted(() => {
                   </strong>
                   <div class="bg-[#F8F9FC] p-1 rounded-lg flex items-center gap-x-2">
                     <button
-                        @click="updateQuantity(item, false)"
-                        :disabled="item.quantity===0"
-                        class="size-7 text-[#292D324D] rounded-lg shadow-[0_2px_8.4px_0_#292D3214] bg-white flex items-center justify-center"
+                      @click="updateQuantity(item, false)"
+                      :disabled="item.quantity===0"
+                      class="size-7 text-[#292D324D] rounded-lg shadow-[0_2px_8.4px_0_#292D3214] bg-white flex items-center justify-center"
                     >
                       <img
-                          :src="MinusIcon"
-                          alt="minus icon"
-                          class="size-5"
+                        :src="MinusIcon"
+                        alt="minus icon"
+                        class="size-5"
                       />
                     </button>
                     <span class="text-base font-medium text-dark-gray">
                   {{ item.quantity }}
                 </span>
                     <button
-                        @click="updateQuantity(item)"
-                        class="size-7 text-[#292D324D] rounded-lg shadow-[0_2px_8.4px_0_#292D3214] bg-white flex items-center justify-center"
+                      @click="updateQuantity(item)"
+                      class="size-7 text-[#292D324D] rounded-lg shadow-[0_2px_8.4px_0_#292D3214] bg-white flex items-center justify-center"
                     >
                       <img
-                          :src="Plus3Icon"
-                          alt="minus icon"
-                          class="size-4"
+                        :src="Plus3Icon"
+                        alt="minus icon"
+                        class="size-4"
                       />
                     </button>
                   </div>

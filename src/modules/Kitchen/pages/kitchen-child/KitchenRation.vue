@@ -12,8 +12,18 @@ const kitchenStore = useKitchenStore();
 const route = useRoute();
 const { setBreadCrumb } = useBreadcrumb();
 
-const tableData = computed(() => {
-  const data = [];
+interface TableDataType {
+  id: number;
+  idx: number;
+  type: string;
+  unique_number: string;
+  price: string;
+  nd_price: string;
+  sum: string;
+}
+
+const tableData = computed<TableDataType[]>(() => {
+  const data: TableDataType[] = [];
 
   for (let i = 1; i <= 12; i++) {
     data.push({
@@ -88,7 +98,7 @@ onMounted(() => {
           sortable
           align="center"
         >
-          <template #default="{row}">
+          <template #default="{row}: {row: TableDataType}">
             <ElDropdown
               placement="bottom"
               class="kitchen-ration__table__dropdown"

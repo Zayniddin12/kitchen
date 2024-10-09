@@ -92,13 +92,13 @@ const setBreadCrumbFn = () => {
     },
     {
       label: "Лагерь",
-      to: {name: "KitchenShowIndex"}
+      to: { name: "KitchenShowIndex" },
     },
     {
       label: "Паҳлавон",
       isActionable: true,
     },
-  ])
+  ]);
 };
 
 onMounted(() => {
@@ -133,7 +133,3 @@ onMounted(() => {
     </div>
   </section>
 </template>
-
-<style lang="scss">
-
-</style>
