@@ -34,16 +34,17 @@ const setActiveTab = (item: any) => {
   activeTab.value = item.value;
 };
 
-const previewImage = (event: any) => {
-  const input = event.target;
-  if (input.files && input.files[0]) {
+const previewImage = (event: Event) => {
+  const input = event.target as HTMLInputElement;
+  if (input.files && input?.files[0]) {
     const reader = new FileReader();
-    reader.onload = (e) => {
-      user_photo_new.value = e.target.result as any;
+    reader.onload = (e: ProgressEvent<FileReader>) => {
+      user_photo_new.value = e.target?.result as string;
     };
     reader.readAsDataURL(input.files[0]);
   }
 };
+
 
 const { setBreadCrumb } = useBreadcrumb();
 
