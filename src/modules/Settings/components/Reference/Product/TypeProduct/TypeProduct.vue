@@ -1,4 +1,7 @@
-<script setup lang="ts">
+<script
+  setup
+  lang="ts"
+>
 import { Search } from "@element-plus/icons-vue";
 import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
@@ -19,7 +22,7 @@ interface name {
   ru: string;
 }
 
-const router = useRouter()
+const router = useRouter();
 
 const tableData = ref<TableData[]>([
   {
@@ -94,36 +97,67 @@ onMounted(() => {
 
       <div class="flex items-center">
         <el-input
-          v-model="input1"
           size="large"
           placeholder="Поиск"
-          :prefix-icon="Search"
+          :prefix-icon="Search as string"
           class="w-[300px]"
         />
 
-        <button class="custom-apply-btn ml-[16px]" @click="router.push('/reference-type-product-create')">
-          <img src="../../../../../../assets/images/icons/plus.svg" alt="plus" />
+        <button
+          class="custom-apply-btn ml-[16px]"
+          @click="router.push('/reference-type-product-create')"
+        >
+          <img
+            src="@/assets/images/icons/plus.svg"
+            alt="plus"
+          />
           Добавить
         </button>
       </div>
     </div>
 
     <div class="mt-[24px]">
-      <el-table :data="tableData" class="custom-element-table">
-        <el-table-column prop="id" label="№" width="80" />
-        <el-table-column prop="name" label="Наименование типа" sortable>
+      <el-table
+        :data="tableData"
+        class="custom-element-table"
+      >
+        <el-table-column
+          prop="id"
+          label="№"
+          width="80"
+        />
+        <el-table-column
+          prop="name"
+          label="Наименование типа"
+          sortable
+        >
           <template #default="scope">
             {{ scope.row?.name?.[$i18n.locale] }}
           </template>
         </el-table-column>
-        <el-table-column label="Действие" align="right">
+        <el-table-column
+          label="Действие"
+          align="right"
+        >
           <template #default="scope">
-            <button class="action-btn" @click="router.push(`/reference-type-product-view/${scope.row.id}`)">
-              <img src="../../../../../../assets/images/eye.svg" alt="eye" />
+            <button
+              class="action-btn"
+              @click="router.push(`/reference-type-product-view/${scope.row.id}`)"
+            >
+              <img
+                src="../../../../../../assets/images/eye.svg"
+                alt="eye"
+              />
             </button>
 
-            <button class="action-btn ml-[8px]" @click="router.push(`/reference-type-product-edit/${scope.row.id}`)">
-              <img src="../../../../../../assets/images/icons/edit.svg" alt="edit" />
+            <button
+              class="action-btn ml-[8px]"
+              @click="router.push(`/reference-type-product-edit/${scope.row.id}`)"
+            >
+              <img
+                src="../../../../../../assets/images/icons/edit.svg"
+                alt="edit"
+              />
             </button>
           </template>
         </el-table-column>
