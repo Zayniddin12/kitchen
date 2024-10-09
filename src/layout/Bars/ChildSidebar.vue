@@ -37,7 +37,7 @@ const activeChildMenu = (item: any) => {
 <template>
   <div>
     <header class="flex items-center justify-between pt-[16px] pb-[32px] px-[24px]">
-      <h1 class="text-[#000000] font-medium text-[20px]">{{ header }}</h1>
+      <h1 class="text-[#000000] font-medium text-[20px] dark:text-white">{{ header }}</h1>
 
       <div class="flex items-center cursor-pointer">
         <img
@@ -73,7 +73,7 @@ const activeChildMenu = (item: any) => {
               width="24px"
               height="24px"
             />
-            {{ item.title }}
+           <span class="dark:text-white"> {{ item.title }}</span>
           </div>
         </template>
         <template #icon="{ isActive }">
@@ -90,7 +90,7 @@ const activeChildMenu = (item: any) => {
         <div
           v-for="(sub, index2) in item.children"
           :key="index2"
-          class="text-left py-[10px] px-[12px] text-dark text-[14px] font-medium cursor-pointer"
+          class="text-left py-[10px] px-[12px] text-dark text-[14px] font-medium cursor-pointer dark:text-white"
           :class="{ activeMenu: currentItem == sub.route }"
           @click.stop="activeChildMenu(sub)"
         >
@@ -111,7 +111,7 @@ const activeChildMenu = (item: any) => {
             width="24px"
             height="24px"
           />
-          {{ item.title }}
+          <span class="dark:text-white">{{ item.title }}</span>
         </div>
       </div>
     </el-collapse>
@@ -138,6 +138,10 @@ const activeChildMenu = (item: any) => {
 }
 
 .activeMenu {
-  @apply bg-[#ffffff] rounded-md shadow-menu;
+  @apply bg-[#ffffff] dark:bg-body-dark rounded-md shadow-menu;
+}
+
+.dark .svg-class path {
+  stroke: #fff;
 }
 </style>

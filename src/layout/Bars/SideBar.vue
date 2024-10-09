@@ -85,7 +85,7 @@ onUnmounted(() => {
         >
           <div
             :class="{ activeListItem: currentMenu == index }"
-            class="h-[88px] flex flex-col justify-center items-center cursor-pointer p-[12px] hover:bg-white hover:shadow-menu hover:font-medium rounded-lg"
+            class="h-[88px] flex flex-col justify-center items-center cursor-pointer p-[12px] hover:bg-white dark:hover:bg-body-dark hover:shadow-menu hover:font-medium rounded-lg"
           >
             <svg
               :data-src="'/sidebar/' + item.icon + '.svg'"
@@ -94,13 +94,13 @@ onUnmounted(() => {
               height="24px"
             />
 
-            <h1 class="text-[13px] font-medium font-500 mt-[4px] text-[#4F5662]">{{ item.title }}</h1>
+            <h1 class="text-[13px] font-medium font-500 mt-[4px] text-[#4F5662] dark:text-white">{{ item.title }}</h1>
           </div>
 
           <!-----------------------------------child sidebar----------------------------------->
           <div
             v-if="currentIndex === index && item.children && childIsOpen"
-            class="w-[260px] bg-white-blue rounded-[16px] h-[100%] absolute top-0 left-[120px] transition overflow-auto"
+            class="w-[260px] dark:bg-dark bg-white-blue rounded-[16px] h-[100%] absolute top-0 left-[120px] transition overflow-auto"
           >
             <ChildSidebar
               :children="item.children"
@@ -148,7 +148,11 @@ onUnmounted(() => {
 }
 
 .activeListItem {
-  @apply bg-white shadow-menu font-medium;
+  @apply bg-white dark:bg-body-dark shadow-menu font-medium;
+}
+
+.dark .activeListItem .svg-class path {
+  stroke: #fff;
 }
 
 .activeListItem .svg-class path {
@@ -157,6 +161,10 @@ onUnmounted(() => {
 
 .activeListItem h1 {
   color: #000d24 !important;
+}
+
+.dark .activeListItem h1 {
+  color: #fff !important;
 }
 
 .svg-class path {

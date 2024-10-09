@@ -12,7 +12,6 @@ import MonthlyModal from "@/layout/Create/components/MonthlyModal.vue";
 import YearlyModal from "@/layout/Create/components/YearlyModal.vue";
 import { ref } from "vue";
 import ThemeToggler from "@/layout/Bars/ThemeToggler.vue"
-import AppInput from "@/components/ui/form/app-input/AppInput.vue";
 
 const editModal = ref<boolean>(false);
 const editModal2 = ref<boolean>(false);
@@ -86,7 +85,7 @@ const openModals = (data: any) => {
         <Search />
       </el-icon>
       <input
-        class="bg-white-blue w-[552px] rounded-2xl text-black px-[16px] py-[12px] pl-[50px] outline-none"
+        class="bg-white-blue dark:bg-dark w-[552px] rounded-2xl text-black px-[16px] py-[12px] pl-[50px] outline-none"
         placeholder="Поиск"
       />
     </div>
@@ -169,7 +168,7 @@ const openModals = (data: any) => {
         </template>
       </el-dropdown>
 
-      <ThemeToggler />
+      <ThemeToggler v-if="false"/>
 
       <el-badge
         value="18"
@@ -200,7 +199,7 @@ const openModals = (data: any) => {
           alt="avatar"
         />
         <div class="">
-          <h2 class="m-0 text-[14px] font-medium text-black">
+          <h2 class="m-0 text-[14px] font-medium text-black dark:text-white">
             Мухаммадамин Нурматов
           </h2>
           <span class="text-[#A8AAAE] text-sm">Директор</span>
