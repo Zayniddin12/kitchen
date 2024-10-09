@@ -83,9 +83,6 @@ const option = ref({
         },
       },
       color: ["#D0D5DD", "#7CD4FD"],
-      labelLine: {
-        show: false,
-      },
       data: data,
 
     },
@@ -156,9 +153,9 @@ const option2 = ref({
         },
       },
       color: ["#D0D5DD", "#7CD4FD"],
-      labelLine: {
-        show: false,
-      },
+      // labelLine: {
+      //   show: false,
+      // },
       data: data2,
 
     },

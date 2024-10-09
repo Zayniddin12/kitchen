@@ -20,12 +20,12 @@ interface TableData {
   position: string,
   phone: string,
   oneId: string,
-  status: StatusInterface,
+  status?: StatusInterface,
 }
 
 interface StatusInterface {
-  title: string;
-  state: boolean;
+  title?: string;
+  state?: boolean;
 }
 
 const router = useRouter();

@@ -11,12 +11,12 @@ const router = useRouter();
 const value1 = ref<boolean>(false);
 const user_photo_new = ref<string>("");
 
-const previewImage = (event) => {
+const previewImage = (event: any) => {
   const input = event.target;
   if (input.files && input.files[0]) {
     const reader = new FileReader();
     reader.onload = (e) => {
-      user_photo_new.value = e.target.result;
+      user_photo_new.value = e.target.result as any;
     };
     reader.readAsDataURL(input.files[0]);
   }

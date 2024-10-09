@@ -16,7 +16,7 @@ const router = useRouter();
 
 const repeater = ref<[]>([{}]);
 const value = ref<boolean>(true);
-const tableData = ref<TableData>([
+const tableData = ref<TableData[]>([
   {
     id: "Плов",
     name: "80",

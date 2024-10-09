@@ -1,17 +1,20 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-/** @type {import('tailwindcss').Config} */
+/** @type {import("tailwindcss").Config} */
 exports.default = {
     content: [
-        "./index.html",
-        "./src/**/*.{vue,js,ts,jsx,tsx}",
+        './src/**/*.{vue,js,ts,jsx,tsx}',
+        './public/index.html',
     ],
+    darkMode: 'class',
     theme: {
         extend: {
             boxShadow: {
-                'menu': '0px 1.5px 4px -1px #0A090B12',
+                "menu": "0px 1.5px 4px -1px #0A090B12",
             },
             colors: {
+                "black-text": "#000D24",
+                "black-sub": "#A8AAAE",
                 "blue-50": "var(--blue-50)",
                 "blue-100": "var(--blue-100)",
                 "blue-200": "var(--blue-200)",

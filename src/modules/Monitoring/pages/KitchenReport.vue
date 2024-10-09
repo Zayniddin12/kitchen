@@ -42,7 +42,7 @@ const getActiveTab = () => {
 };
 
 
-const attendanceTableColumns = computed<TableColumnType>(() => {
+const attendanceTableColumns = computed<TableColumnType[]>(() => {
   return [
     {
       label: "№",
@@ -115,7 +115,7 @@ const attendanceTableData = computed(() => {
   return dataList;
 });
 
-const dishesTableColumns = computed<TableColumnType>(() => {
+const dishesTableColumns = computed<TableColumnType[]>(() => {
   return [
     {
       label: "№",

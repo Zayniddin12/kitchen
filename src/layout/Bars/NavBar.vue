@@ -55,7 +55,7 @@ const navbarMenuList = [
   },
 ];
 
-const openModals = (data) => {
+const openModals = (data: any) => {
 
   if (data.id == 1) {
     editModal.value = true;

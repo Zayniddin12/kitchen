@@ -5,8 +5,8 @@ import ru from './locale/ru.json';
 
 // Define the type for messages based on the structure of uz.json and ru.json
 interface Messages {
-  uz: typeof uz;
-  ru: typeof ru;
+  uz?: typeof uz;
+  ru?: typeof ru;
 }
 
 let language = localStorage.getItem('language') || 'ru';
@@ -24,6 +24,6 @@ const i18nOptions: I18nOptions<Messages> = {
 };
 
 // Create i18n instance with typed messages
-const i18n = createI18n<Messages>(i18nOptions);
+const i18n = createI18n<Messages>(i18nOptions as any);
 
 export default i18n;

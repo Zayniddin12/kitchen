@@ -44,7 +44,7 @@ let count1 = 60;
 const timer = setInterval(() => {
   const minutes = Math.floor(count1 / 60);
   const seconds = count1 % 60;
-  count.value = `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+  count.value = `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}` as any;
   count1--;
   if (count1 < 0) {
     clearInterval(timer);

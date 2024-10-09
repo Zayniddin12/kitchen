@@ -14,12 +14,17 @@ interface Tabs {
   value: number;
 }
 
+interface Status {
+  status: boolean;
+  title: string;
+}
+
 interface TableData {
   id: number,
   sureName: string,
   position: string,
   phone: string,
-  status: string,
+  status: Status,
 }
 
 const router = useRouter();

@@ -4,9 +4,14 @@ import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 
+interface Name {
+  uz: string;
+  ru: string;
+}
+
 interface TableData {
   id: number;
-  name: string;
+  name: Name;
 }
 
 interface name {

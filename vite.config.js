@@ -1,18 +1,25 @@
-import { fileURLToPath, URL } from 'node:url'
-
-import { defineConfig } from 'vite'
-import vue from '@vitejs/plugin-vue'
-import vueDevTools from 'vite-plugin-vue-devtools'
-
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+var node_url_1 = require("node:url");
+var vite_1 = require("vite");
+var plugin_vue_1 = require("@vitejs/plugin-vue");
+var vite_plugin_vue_devtools_1 = require("vite-plugin-vue-devtools");
 // https://vitejs.dev/config/
-export default defineConfig({
+exports.default = (0, vite_1.defineConfig)({
+    css: {
+        preprocessorOptions: {
+            scss: {
+                api: "modern-compiler", // or "modern"
+            },
+        },
+    },
     plugins: [
-        vue(),
-        vueDevTools(),
+        (0, plugin_vue_1.default)(),
+        (0, vite_plugin_vue_devtools_1.default)(),
     ],
     resolve: {
         alias: {
-            '@': fileURLToPath(new URL('./src', import.meta.url))
-        }
-    }
-})
+            "@": (0, node_url_1.fileURLToPath)(new node_url_1.URL("./src", import.meta.url)),
+        },
+    },
+});
