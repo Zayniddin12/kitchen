@@ -30,7 +30,7 @@ const setActiveTab = (item: any) => {
   activeTab.value = item.value;
 };
 
-const previewImage = (event) => {
+const previewImage = (event: any) => {
   const input = event.target;
   if (input.files && input.files[0]) {
     const reader = new FileReader();

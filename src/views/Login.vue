@@ -137,9 +137,7 @@ const onSubmit = async () => {
         </div>
 
         <!-- OneID Button -->
-        <button
-          class="w-full bg-[#4825C2] py-2.5 flex items-center justify-center text-white rounded-lg mt-4"
-        >
+        <button class="w-full bg-[#4825C2] py-2.5 flex items-center justify-center text-white rounded-lg mt-4">
           ONE
           <img
             class="ml-2"

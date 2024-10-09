@@ -13,11 +13,13 @@ export const useLayoutStore = defineStore("layoutStore", () => {
       {
         title: "Главная",
         route: "/home",
-        icon: "smart-home"
+        icon: "smart-home",
+        unique: 'home'
       },
       {
         title: "Документы",
         icon: "document",
+        unique: 'document',
         children: [
           {
             title: "Служебные записки",
