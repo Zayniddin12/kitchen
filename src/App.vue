@@ -9,7 +9,7 @@ import ResetPasswordLayout from "@/views/ResetPassword.vue";
 import IncomePasswordLayout from "@/views/IncomePassword.vue";
 import PasswordLayout from "@/views/Password.vue";
 
-// Layoutlarni soddalashtirish
+
 const layouts = {
   MainLayout,
   LoginLayout,
@@ -23,7 +23,7 @@ const layouts = {
 <template>
   <component :is="layouts[$route.meta.layout] || MainLayout">
     <RouterView v-slot="{ Component }">
-      <transition name="fade">
+      <transition name="nested">
         <component :is="Component" />
       </transition>
     </RouterView>
@@ -31,13 +31,7 @@ const layouts = {
 </template>
 
 <style>
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.5s ease;
-}
-
-.fade-enter-from,
-.fade-leave-to {
-  opacity: 0;
+body {
+  overflow-x: hidden;
 }
 </style>
