@@ -20,7 +20,7 @@
       "vue",
       "vite/client",
       "element-plus/global",
-      "@vue/runtime-core"
+      "@vue/runtime-core",
     ]
   },
   "include": [

@@ -32,16 +32,8 @@ const changeRoute = (item: any) => {
   }
 };
 
-watch(
-  () => route.params,
-  (newParams, oldParams) => {
-    console.log(`Route params changed from ${oldParams.title} to ${newParams.title}`);
-  },
-);
-
 const handleClickHome = () => {
   router.push("/home");
-  localStorage.setItem("current-menu", "0");
 };
 </script>
 

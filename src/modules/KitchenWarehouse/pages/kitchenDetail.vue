@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useRoute } from "vue-router";
-import { ref } from "vue";
+import { ref, watchEffect } from "vue";
 
 import filterIcon from "@/assets/images/filter.svg";
 import AppSelect from "@/components/ui/form/app-select/AppSelect.vue";
@@ -10,6 +10,8 @@ import CollapseFilter from "@/components/collapseFilter/index.vue";
 
 import ByProducts from '../components/Products.vue'
 import ByInvoices from '../components/Invoices.vue'
+import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
+import { useKitchenWarehouseStore } from "@/modules/KitchenWarehouse/store";
 
 interface Tabs {
   title: string;
@@ -17,7 +19,6 @@ interface Tabs {
 }
 
 const route = useRoute();
-document.title = route.params.kithchen;
 
 const activeTab = ref<number>(0);
 const filterFormOpened = ref<boolean>(false);
@@ -36,11 +37,44 @@ const setActiveTab = (item: any) => {
   activeTab.value = item.value;
   filterFormOpened.value = false;
 };
+
+const { setBreadCrumb } = useBreadcrumb();
+const kitchenWarehouseStore = useKitchenWarehouseStore();
+
+const setBreadCrumbFn = () => {
+  kitchenWarehouseStore.fetchDynamicItemState(+route.params.id);
+
+  if (!kitchenWarehouseStore.dynamicItemState) return;
+
+  setBreadCrumb([
+    {
+      label: "Склад кухни",
+      isActionable: false,
+    },
+    {
+      label: kitchenWarehouseStore.dynamicItemState.title,
+      to: { name: "kitchen-warehouse-title-id" },
+    },
+    {
+      label: "Кухня",
+      to: {name: "kitchen-warehouse-id-id3"}
+    },
+    {
+      label: "Табассум",
+      isActionable: true
+    }
+  ]);
+};
+
+watchEffect(() => {
+  setBreadCrumbFn();
+});
+
 </script>
 
 <template>
   <div>
-    <h1 class="m-0 font-semibold text-[32px]">{{ route.params.kithchen }}</h1>
+    <h1 class="m-0 font-semibold text-[32px]">Табассум</h1>
 
     <div class="rounded-2xl py-3 px-4 border mt-6">
       <h3 class="text-dark font-medium text-lg">

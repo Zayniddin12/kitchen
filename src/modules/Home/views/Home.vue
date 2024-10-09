@@ -10,10 +10,11 @@ import {
   GridComponent,
 } from "echarts/components";
 import VChart, { THEME_KEY } from "vue-echarts";
-import { ref, provide } from "vue";
+import { ref, provide, watchEffect } from "vue";
 import { tableData } from "@/modules/Home/constants";
 import AppDatePicker from "@/components/ui/form/app-date-picker/AppDatePicker.vue";
 import AppSelect from "@/components/ui/form/app-select/AppSelect.vue";
+import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 
 use([
   CanvasRenderer,
@@ -293,9 +294,23 @@ const changeBranch = (code: number) => {
 };
 
 const handleClass = (item) => {
-
   return "!bg-[#FBDDDD]";
 };
+
+const { setBreadCrumb } = useBreadcrumb();
+
+const setBreadCrumbFn = () => {
+  setBreadCrumb([
+    {
+      label: "Главная",
+      isActionable: true,
+    },
+  ]);
+};
+
+watchEffect(() => {
+  setBreadCrumbFn();
+});
 
 </script>
 
