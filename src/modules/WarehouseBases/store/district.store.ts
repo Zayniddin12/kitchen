@@ -114,6 +114,7 @@ export const useDistrictStore = defineStore("destrictStore", () => {
 
         if(!district.value) return
 
+        // @ts-ignore
         product.value = district.value.products.find(el => el.id === product_id) ?? null;
     }
 
