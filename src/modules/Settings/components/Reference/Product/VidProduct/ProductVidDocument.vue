@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { Search } from "@element-plus/icons-vue";
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
+import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 
 interface Name {
   uz: string;
@@ -63,6 +64,33 @@ const tableData = ref<TableData[]>([
     type: "Напитки",
   },
 ]);
+
+const { setBreadCrumb } = useBreadcrumb();
+
+const setBreadCrumbFn = () => {
+  setBreadCrumb([
+    {
+      label: "Настройки",
+    },
+    {
+      label: "Продукты",
+      to: { name: "reference" },
+    },
+    {
+      label: "Виды продуктов",
+      to: { name: "reference" },
+    },
+    {
+      label: "Типы продуктов",
+      isActionable: true,
+    },
+  ]);
+};
+
+onMounted(() => {
+  setBreadCrumbFn();
+});
+
 </script>
 
 <template>

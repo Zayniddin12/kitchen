@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 import { Search } from "@element-plus/icons-vue";
 import { useRouter } from "vue-router";
+import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 
 interface CreateBtn {
   title: string;
@@ -22,6 +23,29 @@ const createBtn = ref<CreateBtn[]>([
 ]);
 const search = ref<string>('')
 const isSearch = ref<boolean>(false);
+
+const {setBreadCrumb} = useBreadcrumb();
+
+const setBreadCrumbFn = () => {
+  setBreadCrumb([
+    {
+      label: "Кадры",
+    },
+    {
+      label: "Посетители",
+      to: {name: "visitors"},
+    },
+    {
+      label: "Добавить",
+      isActionable: true,
+    },
+  ])
+}
+
+onMounted(() => {
+  setBreadCrumbFn();
+})
+
 </script>
 
 <template>

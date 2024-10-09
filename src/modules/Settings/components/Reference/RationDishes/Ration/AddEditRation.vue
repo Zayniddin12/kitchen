@@ -2,7 +2,8 @@
 import { useRoute, useRouter } from "vue-router";
 import AppInput from "@/components/ui/form/app-input/AppInput.vue";
 import AppSelect from "@/components/ui/form/app-select/AppSelect.vue";
-import { ref } from "vue";
+import { ref, watch } from "vue";
+import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 
 interface TableData {
   id: string;
@@ -47,6 +48,37 @@ const handleDelete = (index: number) => {
     repeater.value.splice(index, 1);
   }
 };
+
+const { setBreadCrumb } = useBreadcrumb();
+
+const setBreadCrumbFn = () => {
+  setBreadCrumb([
+    {
+      label: "Настройки",
+    },
+    {
+      label: "Справочники",
+      to: { name: "reference" },
+    },
+    {
+      label: "Рационы и блюда",
+      to: { name: "reference" },
+    },
+    {
+      label: "Рационы",
+      to: {name: "reference-ration"},
+    },
+    {
+      label: String(route?.meta?.breadcrumbItemTitle ?? ""),
+      isActionable: true,
+    },
+  ]);
+};
+
+watch(() => route.name, () => {
+  setBreadCrumbFn();
+}, {immediate: true});
+
 </script>
 
 <template>

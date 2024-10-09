@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import AppInput from "@/components/ui/form/app-input/AppInput.vue";
+import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 
 interface Name {
   uz: string;
@@ -23,6 +24,36 @@ const dataValue = ref<DataValue>({
   },
   is_active: true,
 });
+
+const { setBreadCrumb } = useBreadcrumb();
+
+const setBreadCrumbFn = () => {
+  setBreadCrumb([
+    {
+      label: "Настройки",
+    },
+    {
+      label: "Справочники",
+    },
+    {
+      label: "Продукты",
+      to: { name: "reference" },
+    },
+    {
+      label: "Типы продуктов",
+      to: {name: "reference-type-product"},
+    },
+    {
+      label: String(route?.meta?.breadcrumbItemTitle ?? ""),
+      isActionable: true,
+    },
+  ]);
+};
+
+watch(() => route.name, () => {
+  setBreadCrumbFn();
+}, {immediate: true});
+
 </script>
 
 <template>

@@ -1,12 +1,19 @@
-<script setup lang="ts">
-import { ref } from "vue";
+<script
+  setup
+  lang="ts"
+>
+import { onMounted, ref } from "vue";
 import { Search } from "@element-plus/icons-vue";
 import { useRouter } from "vue-router";
+import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
+
+const { setBreadCrumb } = useBreadcrumb();
 
 interface Tabs {
   title: string;
   value: number;
 }
+
 interface TableData {
   id: number,
   sureName: string,
@@ -15,7 +22,7 @@ interface TableData {
   status: string,
 }
 
-const router = useRouter()
+const router = useRouter();
 
 const activeTab = ref<number>(0);
 const tabs = ref<Tabs[]>([
@@ -84,11 +91,28 @@ const tableData = ref<TableData[]>([
     },
   },
 ]);
-const input1 = ref<string>('')
+const input1 = ref<string>("");
 
 const setActiveTab = (item: any) => {
   activeTab.value = item.value;
 };
+
+const setBreadCrumbFn = () => {
+  setBreadCrumb([
+    {
+      label: "Кадры",
+    },
+    {
+      label: "Посетители",
+      isActionable: true,
+    },
+  ]);
+};
+
+onMounted(() => {
+  setBreadCrumbFn();
+});
+
 </script>
 
 <template>
@@ -96,7 +120,10 @@ const setActiveTab = (item: any) => {
     <h1 class="m-0 font-semibold text-[32px]">Посетители</h1>
 
     <div class="flex items-center justify-end my-[24px]">
-      <div class="app-tabs" v-show="false">
+      <div
+        class="app-tabs"
+        v-show="false"
+      >
         <div
           v-for="item in tabs"
           :key="item.value"
@@ -120,25 +147,57 @@ const setActiveTab = (item: any) => {
           @click="router.push('/visitors-create')"
           class="custom-apply-btn ml-[16px] !px-[30px]"
         >
-          <img src="@/assets/images/icons/plus.svg" alt="add">
+          <img
+            src="@/assets/images/icons/plus.svg"
+            alt="add"
+          >
           Добавить
         </button>
       </div>
     </div>
 
-    <el-table :data="tableData" class="custom-element-table">
-      <el-table-column prop="id" label="№" width="80" />
-      <el-table-column prop="sureName" label="Фамилия И.О." sortable width="400">
+    <el-table
+      :data="tableData"
+      class="custom-element-table"
+    >
+      <el-table-column
+        prop="id"
+        label="№"
+        width="80"
+      />
+      <el-table-column
+        prop="sureName"
+        label="Фамилия И.О."
+        sortable
+        width="400"
+      >
         <template #default="scope">
           <div class="flex items-center">
-            <img src="@/assets/images/avatar.png" class="h-[32px] w-[32px]" alt="avatar" />
+            <img
+              src="@/assets/images/avatar.png"
+              class="h-[32px] w-[32px]"
+              alt="avatar"
+            />
             <p class="text-[#4F5662] text-[14px] ml-[12px]">{{ scope.row.sureName }}</p>
           </div>
         </template>
       </el-table-column>
-      <el-table-column prop="position" label="Место работы" sortable />
-      <el-table-column prop="phone" label="График работы" sortable />
-      <el-table-column prop="status" sortable label="Статус" width="200">
+      <el-table-column
+        prop="position"
+        label="Место работы"
+        sortable
+      />
+      <el-table-column
+        prop="phone"
+        label="График работы"
+        sortable
+      />
+      <el-table-column
+        prop="status"
+        sortable
+        label="Статус"
+        width="200"
+      >
         <template #default="scope">
           <div
             :class="scope.row.status.status ? 'text-[#22A95E] bg-[#D4F4E2]' : 'text-[#8F9194] bg-[#EEEEEF]'"
@@ -150,12 +209,24 @@ const setActiveTab = (item: any) => {
       </el-table-column>
       <el-table-column label="Действие">
         <template #default="scope">
-          <button class="action-btn" @click="router.push(`/visitors-view/${scope.row.id}`)">
-            <img src="@/assets/images/eye.svg" alt="eye" />
+          <button
+            class="action-btn"
+            @click="router.push(`/visitors-view/${scope.row.id}`)"
+          >
+            <img
+              src="@/assets/images/eye.svg"
+              alt="eye"
+            />
           </button>
 
-          <button class="action-btn ml-[8px]" @click="router.push(`/visitors-edit-form/${scope.row.id}`)">
-            <img src="@/assets/images/icons/edit.svg" alt="edit" />
+          <button
+            class="action-btn ml-[8px]"
+            @click="router.push(`/visitors-edit-form/${scope.row.id}`)"
+          >
+            <img
+              src="@/assets/images/icons/edit.svg"
+              alt="edit"
+            />
           </button>
         </template>
       </el-table-column>

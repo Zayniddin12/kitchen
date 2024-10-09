@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
 import { Search } from "@element-plus/icons-vue";
 import { useRoute, useRouter } from "vue-router";
 import AppInput from "@/components/ui/form/app-input/AppInput.vue";
+import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 
 const route = useRoute();
 const router = useRouter();
@@ -42,6 +43,56 @@ const tableData = ref<TableData[]>([
     type: "Начальник управления",
   },
 ]);
+
+const activeBreadCrumbItemTitle = computed<string>(() => {
+  switch (route.name) {
+    case "reference-regional-directorates-add":
+      return "Добавить";
+    case "reference-regional-directorates-edit":
+      return "Редактировать";
+    case "reference-regional-directorates-view":
+      return "Просмотр";
+    default:
+      return "";
+  }
+});
+
+const { setBreadCrumb } = useBreadcrumb();
+
+const setBreadCrumbFn = () => {
+  setBreadCrumb([
+    {
+      label: "Настройки",
+      isActionable: false,
+    },
+    {
+      label: "Справочники",
+      isActionable: false,
+      to: { name: "reference" },
+    },
+
+    {
+      label: "Управ, комбинаты и склады",
+      isActionable: false,
+      to: { name: "reference" },
+    },
+
+    {
+      label: "Региональные управления",
+      isActionable: false,
+      to: { name: "reference-regional-directorates" },
+    },
+    {
+      label: activeBreadCrumbItemTitle.value,
+      isActionable: true,
+    },
+  ]);
+};
+
+watch(route.name, () => {
+  setBreadCrumbFn();
+}, {immediate: true});
+
 </script>
 
 <template>

@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { Search } from "@element-plus/icons-vue";
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
+import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 
 interface TableData {
   id: number;
@@ -11,45 +12,72 @@ interface TableData {
   duration: string;
 }
 
-const router = useRouter()
+const router = useRouter();
 
 const tableData = ref<TableData>([
   {
     id: 1,
-    name: 'Рацион 1',
-    unique: 'R-00000',
-    type: 'ЛПП, Буфет, Кухня',
-    duration: '7 дней ',
+    name: "Рацион 1",
+    unique: "R-00000",
+    type: "ЛПП, Буфет, Кухня",
+    duration: "7 дней ",
   },
   {
     id: 2,
-    name: 'Рацион 2',
-    unique: 'R-00000',
-    type: 'ЛПП, Буфет, Кухня',
-    duration: '7 дней ',
+    name: "Рацион 2",
+    unique: "R-00000",
+    type: "ЛПП, Буфет, Кухня",
+    duration: "7 дней ",
   },
   {
     id: 3,
-    name: 'Рацион 3',
-    unique: 'R-00000',
-    type: 'ЛПП, Буфет, Кухня',
-    duration: '7 дней ',
+    name: "Рацион 3",
+    unique: "R-00000",
+    type: "ЛПП, Буфет, Кухня",
+    duration: "7 дней ",
   },
   {
     id: 4,
-    name: 'Рацион 4',
-    unique: 'R-00000',
-    type: 'ЛПП, Буфет, Кухня',
-    duration: '7 дней ',
+    name: "Рацион 4",
+    unique: "R-00000",
+    type: "ЛПП, Буфет, Кухня",
+    duration: "7 дней ",
   },
   {
     id: 5,
-    name: 'Рацион 5',
-    unique: 'R-00000',
-    type: 'ЛПП, Буфет, Кухня',
-    duration: '7 дней ',
+    name: "Рацион 5",
+    unique: "R-00000",
+    type: "ЛПП, Буфет, Кухня",
+    duration: "7 дней ",
   },
 ]);
+
+const { setBreadCrumb } = useBreadcrumb();
+
+const setBreadCrumbFn = () => {
+  setBreadCrumb([
+    {
+      label: "Настройки",
+    },
+    {
+      label: "Справочники",
+      to: { name: "reference" },
+    },
+    {
+      label: "Рационы и блюда",
+      to: { name: "reference" },
+    },
+    {
+      label: "Рационы",
+      isActionable: true,
+    },
+  ]);
+};
+
+onMounted(() => {
+  setBreadCrumbFn();
+});
+
 </script>
 
 <template>
@@ -76,10 +104,10 @@ const tableData = ref<TableData>([
     <div class="mt-[24px]">
       <el-table :data="tableData" class="custom-element-table">
         <el-table-column prop="id" label="№" width="80" />
-        <el-table-column prop="name" label="Наименование рациона" sortable/>
-        <el-table-column prop="unique" label="Уникальный номер" sortable/>
-        <el-table-column prop="type" label="Тип кухни" sortable/>
-        <el-table-column prop="duration" label="Длительность" sortable/>
+        <el-table-column prop="name" label="Наименование рациона" sortable />
+        <el-table-column prop="unique" label="Уникальный номер" sortable />
+        <el-table-column prop="type" label="Тип кухни" sortable />
+        <el-table-column prop="duration" label="Длительность" sortable />
         <el-table-column label="Действие" align="right">
           <template #default="scope">
             <button class="action-btn" @click="router.push(`/reference-ration-view/${scope.row.id}`)">
