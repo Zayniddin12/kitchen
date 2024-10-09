@@ -1,4 +1,7 @@
-<script setup lang="ts">
+<script
+  setup
+  lang="ts"
+>
 import { computed, onMounted, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
@@ -11,7 +14,7 @@ interface Tabs {
 }
 
 const router = useRouter();
-const route = useRoute()
+const route = useRoute();
 
 const tabs = ref<Tabs[]>([
   {
@@ -30,8 +33,8 @@ const setActiveTab = (item: any) => {
 };
 
 const title = computed(() => {
-  return  "Просмотр"
-})
+  return "Просмотр";
+});
 
 const setBreadCrumbFn = () => {
   setBreadCrumb([
@@ -43,7 +46,7 @@ const setBreadCrumbFn = () => {
       to: { name: "personal-database" },
     },
     {
-      label:  title,
+      label: title.value,
       isActionable: true,
     },
   ]);
@@ -57,7 +60,7 @@ onMounted(() => {
 
 <template>
   <div>
-    <h1 class="m-0 font-semibold text-[32px]">{{title}}</h1>
+    <h1 class="m-0 font-semibold text-[32px]">{{ title }}</h1>
 
     <div class="flex items-center justify-between">
       <div class="app-tabs w-[345px] my-[24px]">
@@ -72,23 +75,37 @@ onMounted(() => {
         </div>
       </div>
 
-      <button class="custom-cancel-btn flex items-center" @click="router.push(`/personal-database-edit-form/${route.params.id}`)">
-        <img src="@/assets/images/icons/edit.svg" alt="edit" class="mr-[8px]" />
+      <button
+        class="custom-cancel-btn flex items-center"
+        @click="router.push(`/personal-database-edit-form/${route.params.id}`)"
+      >
+        <img
+          src="@/assets/images/icons/edit.svg"
+          alt="edit"
+          class="mr-[8px]"
+        />
         Редактировать
       </button>
     </div>
 
-    <div class="border rounded-[24px] pb-[32px] overflow-hidden" v-if="activeTab === 0">
+    <div
+      class="border rounded-[24px] pb-[32px] overflow-hidden"
+      v-if="activeTab === 0"
+    >
       <div class="py-[70px] bg-[#F8F9FC] px-[24px] relative">
-       <div class="top-[32px] absolute flex items-center">
-         <div class="rounded-full overflow-hidden border-4 border-gray-100">
-           <img src="../../../../assets/images/avatar.png" alt="Profile Picture" class="object-cover h-[160px] w-[160px] rounded-full">
-         </div>
+        <div class="top-[32px] absolute flex items-center">
+          <div class="rounded-full overflow-hidden border-4 border-gray-100">
+            <img
+              src="../../../../assets/images/avatar.png"
+              alt="Profile Picture"
+              class="object-cover h-[160px] w-[160px] rounded-full"
+            >
+          </div>
 
-         <div class="text-xl font-semibold text-gray-900 ml-[24px]">
-           Хамидов Иброхим Илхомович
-         </div>
-       </div>
+          <div class="text-xl font-semibold text-gray-900 ml-[24px]">
+            Хамидов Иброхим Илхомович
+          </div>
+        </div>
       </div>
 
       <div class="px-[24px] mt-[90px]">
@@ -171,16 +188,26 @@ onMounted(() => {
       </div>
     </div>
 
-    <div class="border rounded-[24px] py-[32px] px-[24px] w-[50%] m-auto relative group" v-else>
+    <div
+      class="border rounded-[24px] py-[32px] px-[24px] w-[50%] m-auto relative group"
+      v-else
+    >
       <button class="absolute top-2 left-2 opacity-0 group-hover:opacity-100 edit__btn transition-opacity duration-300 bg-blue-500 text-white px-4 py-2 rounded-lg">
         Изменить фото
       </button>
-      <img src="@/assets/images/bigMan.png" class="w-full group-hover:filter group-hover:brightness-50 transition duration-300" alt="bigMan" />
+      <img
+        src="@/assets/images/bigMan.png"
+        class="w-full group-hover:filter group-hover:brightness-50 transition duration-300"
+        alt="bigMan"
+      />
     </div>
   </div>
 </template>
 
-<style scoped lang="scss">
+<style
+  scoped
+  lang="scss"
+>
 .edit__btn {
   @apply bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50
 }
