@@ -6,52 +6,50 @@ import Settings from "@/modules/Settings/router";
 import Warehouse from "@/modules/WarehouseBases/router";
 import KitchenWarehouse from "@/modules/KitchenWarehouse/router";
 import Kitchen from "@/modules/Kitchen/router";
-import Users from "@/modules/Users/router"
+import Users from "@/modules/Users/router";
 
 const routes: Array<RouteRecordRaw> = [
-    ...home,
-    ...Inbox,
-    ...Monitoring,
-    ...Settings,
-    ...Warehouse,
-    ...KitchenWarehouse,
-    ...Kitchen,
-    ...Users,
+  ...home,
+  ...Inbox,
+  ...Monitoring,
+  ...Settings,
+  ...Warehouse,
+  ...KitchenWarehouse,
+  ...Kitchen,
+  ...Users,
 
   {
     path: "/",
-    redirect: () => {
-      return { name: "login" };
-    }
+    redirect: { name: "login" },
   },
   {
     path: "/login",
     name: "login",
-    component: import("@/views/Login.vue"),
+    component: () => import("@/views/Login.vue"),
     meta: { layout: "LoginLayout" },
   },
   {
     path: "/reset-password",
     name: "reset-password",
-    component: import("@/views/ResetPassword.vue"),
+    component: () => import("@/views/ResetPassword.vue"),
     meta: { layout: "ResetPasswordLayout" },
   },
   {
     path: "/income-password",
     name: "income-password",
-    component: import("@/views/IncomePassword.vue"),
+    component: () => import("@/views/IncomePassword.vue"),
     meta: { layout: "IncomePasswordLayout" },
   },
   {
     path: "/new-password",
     name: "new-password",
-    component: import("@/views/Password.vue"),
+    component: () => import("@/views/Password.vue"),
     meta: { layout: "PasswordLayout" },
   },
   {
     path: "/:pathMatch(.*)*",
     name: "notFound",
-    component: import("@/components/errors/404.vue"),
+    component: () => import("@/components/errors/404.vue"),
     meta: { layout: "ErrorLayout" },
   },
 ];

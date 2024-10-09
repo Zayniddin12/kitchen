@@ -10,10 +10,15 @@ import IncomePasswordLayout from "@/views/IncomePassword.vue";
 import PasswordLayout from "@/views/Password.vue";
 import { useRoute } from "vue-router";
 import { useLayoutStore } from "@/navigation";
-import { watch } from "vue";
+import { onMounted, watch } from "vue";
+
+interface RouteMeta {
+  layout?: "MainLayout" | "LoginLayout" | "ErrorLayout" | "ResetPasswordLayout" | "IncomePasswordLayout" | "PasswordLayout";
+}
 
 const route = useRoute();
 const store = useLayoutStore();
+const layout = (route.meta as RouteMeta).layout;
 
 const layouts = {
   MainLayout,
@@ -24,21 +29,23 @@ const layouts = {
   PasswordLayout,
 };
 
-document.getElementById('body').className = store.currentTheme
-watch(store, async () => {
-  if (store.currentTheme) {
-    document.getElementById('body').className = store.currentTheme
+onMounted(() => {
+  const bodyElement = document.getElementById("body");
+  if (bodyElement) {
+    bodyElement.className = store.currentTheme;
   }
-})
+});
+
+watch(store, async () => {
+  const bodyElement = document.getElementById("body");
+  if (bodyElement && store.currentTheme) {
+    bodyElement.className = store.currentTheme;
+  }
+});
 </script>
 
 <template>
-  <component
-    :is="layouts[route.meta.layout] || MainLayout"
-    class="overflow-y-auto"
-  >
-    <RouterView v-slot="{ Component }">
-      <component :is="Component" />
-    </RouterView>
+  <component :is="layouts[layout ?? 'MainLayout']">
+    <RouterView />
   </component>
 </template>
