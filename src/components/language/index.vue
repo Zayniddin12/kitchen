@@ -37,7 +37,7 @@ const changeLanguage = (item: Language): void => {
   setItem(langStorageKey, item.value);
 };
 
-const currentLanguageTitle = computed(() => lang.value.title);
+const currentLanguageTitle = computed<string>(() => lang.value.title);
 </script>
 
 <template>
