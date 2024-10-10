@@ -88,6 +88,7 @@ export const useLayoutStore = defineStore("layoutStore", () => {
       {
         title: "Мониторинг",
         icon: "monitoring",
+        unique: "monitoring",
         children: [
           {
             title: "Остатка товаров",
@@ -104,6 +105,7 @@ export const useLayoutStore = defineStore("layoutStore", () => {
       {
         title: "Базы складов",
         icon: "building-warehouse",
+        unique: "building-warehouse",
         children: [
           {
             title: "Зарафшан",
@@ -200,16 +202,19 @@ export const useLayoutStore = defineStore("layoutStore", () => {
       {
         title: "Склад кухни",
         icon: "building-warehouse",
+        unique: "warehouse",
         children: kitchenWarehouse.dynamicState,
       },
       {
         title: "Кухня",
         icon: "kitchen",
+        unique: "kitchen",
         children: kitchenStore.kitchenMenu,
       },
       {
         title: "Кадры",
         icon: "users",
+        unique: "users",
         children: [
           {
             title: "База кадров",
@@ -226,6 +231,7 @@ export const useLayoutStore = defineStore("layoutStore", () => {
       {
         title: "Настройки",
         icon: "settings",
+        unique: "settings",
         children: [
           {
             title: "Справочники",

@@ -87,10 +87,10 @@ onMounted(() => {
           <div class="top-[32px] absolute flex items-center">
             <div class="rounded-full overflow-hidden border-4 border-gray-100">
               <img
-                src="../../../../assets/images/avatar.png"
+                src="@/assets/images/avatar.png"
                 alt="Profile Picture"
                 class="object-cover h-[160px] w-[160px] rounded-full"
-              >
+              />
             </div>
 
             <div class="text-xl font-semibold text-gray-900 ml-[24px]">
@@ -198,12 +198,12 @@ onMounted(() => {
             alt="upload"
           />
 
-          <p class="text-gray-700 text-sm mt-[24px]">Перетащите фотографию для загрузки</p>
-          <p class="text-gray-400 text-xs mb-[24px]">Максимальный размер фотографии 10 МБ</p>
+          <span class="text-gray-700 text-sm mt-[24px]">Перетащите фотографию для загрузки</span>
+          <span class="text-gray-400 text-xs mb-[24px]">Максимальный размер фотографии 10 МБ</span>
 
-          <div class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600">
+          <span class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600">
             Выбрать фото
-          </div>
+          </span>
         </label>
       </template>
     </div>

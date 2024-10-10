@@ -283,6 +283,37 @@ const optionLine = {
   },
 };
 
+interface Branch{
+  title: string;
+  value: number
+}
+
+const branch = ref<Branch[]>([
+  {
+    title: 'Все',
+    value: 0
+  },
+  {
+    title: 'Зарафшан',
+    value: 1
+  },
+  {
+    title: 'Навои',
+    value: 2
+  },
+  {
+    title: 'Нуробод',
+    value: 3
+  },
+  {
+    title: 'Учкудук',
+    value: 4
+  },
+  {
+    title: 'Зафаробод',
+    value: 5
+  },
+])
 
 const branches = ref<number>(0);
 
@@ -317,35 +348,14 @@ watchEffect(() => {
       Главная
     </h1>
 
-    <div class="flex items-center rounded bg-[#F8F9FC] p-[4px] w-[586px] mb-[24px]">
-      <button @click="changeBranch(0)" :class="{'bg-[#FFFFFF] rounded-[8px] text-[#000D24]': branches == 0}"
-              class="px-[20px] py-[10px] text-[14px] text-[#4F5662] font-medium">
-        Все
-      </button>
-
-      <button @click="changeBranch(1)" :class="{'bg-[#FFFFFF] rounded-[8px] text-[#000D24]': branches == 1}"
-              class="px-[20px] py-[10px] text-[14px] text-[#4F5662] font-medium">
-        Зарафшан
-      </button>
-
-      <button @click="changeBranch(2)" :class="{'bg-[#FFFFFF] rounded-[8px] text-[#000D24]': branches == 2}"
-              class="px-[20px] py-[10px] text-[14px] text-[#4F5662] font-medium">
-        Навои
-      </button>
-
-      <button @click="changeBranch(3)" :class="{'bg-[#FFFFFF] rounded-[8px] text-[#000D24]': branches == 3}"
-              class="px-[20px] py-[10px] text-[14px] text-[#4F5662] font-medium">
-        Нуробод
-      </button>
-
-      <button @click="changeBranch(4)" :class="{'bg-[#FFFFFF] rounded-[8px] text-[#000D24]': branches == 4}"
-              class="px-[20px] py-[10px] text-[14px] text-[#4F5662] font-medium">
-        Учкудук
-      </button>
-
-      <button @click="changeBranch(5)" :class="{'bg-[#FFFFFF] rounded-[8px] text-[#000D24]': branches == 5}"
-              class="px-[20px] py-[10px] text-[14px] text-[#4F5662] font-medium">
-        Зафаробод
+    <div class="flex items-center rounded-md bg-[#F8F9FC] p-[4px] w-[586px] mb-[24px]">
+      <button v-for="(event, index) in branch"
+              :key="index"
+              @click="changeBranch(event.value)"
+              :class="{'bg-[#FFFFFF] rounded-[8px] text-[#000D24] shadow': branches == event.value}"
+              class="px-[20px] py-[10px] text-[14px] text-[#4F5662] font-medium"
+      >
+        {{event.title}}
       </button>
     </div>
 

@@ -43,6 +43,30 @@ watch(() => route.path, () => {
   currentMenu.value = storedMenu ? JSON.parse(storedMenu) as number : 0;
 });
 
+// watch(() => route.path, (value) => {
+//   let results = [];
+//
+//   store.menuItems.forEach((item, index) => {
+//     if (item.children) {
+//       item.children.forEach(child => {
+//         if (child.children) {
+//           results.push(...child.children.map(grandChild => grandChild.route).filter(Boolean));
+//         } else {
+//           results.push(child.route);
+//         }
+//       });
+//     } else {
+//       results.push(item.route)
+//     }
+//   });
+//
+//   console.log(results.includes(value), 'results');
+//   console.log(value === route.path)
+//   currentMenu.value = value;
+//
+// }, {immediate: true});
+
+
 const activeMenu = (index: number, item: MenuItem) => {
   currentIndex.value = index;
   currentMenu.value = index;
@@ -63,7 +87,7 @@ const closeChildSidebar = () => {
 };
 
 const pinSidebar = () => {
-  // currentIndex.value = currentMenu.value
+  console.log('pin is not finished yet')
 };
 
 const logOut = () => {
@@ -78,22 +102,22 @@ const logOut = () => {
     <div class="sidebar-wrapper bg-white-blue dark:bg-dark text-center relative flex flex-col justify-between">
       <div class="overflow-auto">
         <img src="@/assets/images/logo.svg"
-            class="m-auto pt-[16px] pb-[40px]"
-            alt="logo"
+             class="m-auto pt-[16px] pb-[40px]"
+             alt="logo"
         />
 
         <div v-for="(item, index) in store.menuItems"
-            :key="index"
-            class="px-[11px]"
-            @click.stop="activeMenu(index, item)"
+             :key="index"
+             class="px-[11px]"
+             @click.stop="activeMenu(index, item)"
         >
           <div :class="{ activeListItem: currentMenu == index }"
-              class="h-[88px] flex flex-col justify-center items-center cursor-pointer p-[12px] hover:bg-white dark:hover:bg-body-dark hover:shadow-menu hover:font-medium rounded-lg"
+               class="h-[88px] flex flex-col justify-center items-center cursor-pointer p-[12px] hover:bg-white dark:hover:bg-body-dark hover:shadow-menu hover:font-medium rounded-lg"
           >
             <svg :data-src="'/sidebar/' + item?.icon + '.svg'"
-                class="svg-class shrink-1"
-                width="24px"
-                height="24px"
+                 class="svg-class shrink-1"
+                 width="24px"
+                 height="24px"
             />
 
             <h1 class="text-[13px] font-medium font-500 mt-[4px] text-[#4F5662] dark:text-white">{{ item.title }}</h1>
@@ -101,7 +125,7 @@ const logOut = () => {
 
           <!-----------------------------------child sidebar----------------------------------->
           <div v-if="currentIndex === index && item.children && childIsOpen"
-              class="w-[260px] dark:bg-dark bg-white-blue rounded-[16px] h-[100%] absolute top-0 left-[120px] transition overflow-auto"
+               class="w-[260px] dark:bg-dark bg-white-blue rounded-[16px] h-[100%] absolute top-0 left-[120px] transition overflow-auto"
           >
             <ChildSidebar
                 :children="item.children as any"

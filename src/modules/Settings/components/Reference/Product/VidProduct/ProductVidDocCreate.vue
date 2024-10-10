@@ -74,12 +74,12 @@ watch(() => route.name, () => {
                    class="cursor-pointer bg-[#F8F9FC] rounded-[16px] border-dashed border border-gray-300 flex flex-col items-center justify-center p-10">
               <img src="../../../../../../assets/images/icons/upload.svg" alt="upload" />
 
-              <p class="text-gray-700 text-sm mt-[24px]">Перетащите фотографию для загрузки</p>
-              <p class="text-gray-400 text-xs mb-[24px]">Максимальный размер фотографии 10 МБ</p>
+              <span class="text-gray-700 text-sm mt-[24px]">Перетащите фотографию для загрузки</span>
+              <span class="text-gray-400 text-xs mb-[24px]">Максимальный размер фотографии 10 МБ</span>
 
-              <div class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600">
+              <span class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600">
                 Выбрать фото
-              </div>
+              </span>
             </label>
           </template>
         </div>

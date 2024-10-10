@@ -12,6 +12,7 @@ import { useRoute } from "vue-router";
 import { useLayoutStore } from "@/navigation";
 import { computed, onMounted, watch } from "vue";
 
+
 interface RouteMeta {
   layout?: "MainLayout" | "LoginLayout" | "ErrorLayout" | "ResetPasswordLayout" | "IncomePasswordLayout" | "PasswordLayout";
 }

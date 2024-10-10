@@ -16,7 +16,7 @@ const langItems = ref<Language[]>([
   {
     title: "Русский",
     value: "ru",
-  },
+  }
 ]);
 
 const storedLanguage = localStorage.getItem("language");
