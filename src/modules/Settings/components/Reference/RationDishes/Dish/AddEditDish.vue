@@ -61,14 +61,16 @@ const tableData = ref<TableData[]>([
   },
 ]);
 
-const previewImage = (event: any) => {
+const previewImage = (event: Event) => {
   const input = event.target as HTMLInputElement;
-  if (input?.files && input?.files[0]) {
+  if (input?.files && input.files[0]) {
     const reader = new FileReader();
-    reader.onload = (e) => {
-      user_photo_new.value = e.target.result as string;
+    reader.onload = (e: ProgressEvent<FileReader>) => {
+      if (e.target?.result) {
+        user_photo_new.value = e.target.result as string;
+      }
     };
-    reader.readAsDataURL(input?.files[0]);
+    reader.readAsDataURL(input.files[0]);
   }
 };
 

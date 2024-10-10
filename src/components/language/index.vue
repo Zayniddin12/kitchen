@@ -20,10 +20,7 @@ const langItems = ref<Language[]>([
 ]);
 
 const storedLanguage = localStorage.getItem("language");
-const lang = ref<Language>(storedLanguage ? langItems.value.find((item) => item.value === storedLanguage)! : {
-  title: "Русский",
-  value: "ru",
-});
+const lang = ref<Language>(storedLanguage ? langItems.value.find((item) => item.value === storedLanguage)! : { title: "Русский", value: "ru" });
 
 const changeLanguage = (item: Language): void => {
   lang.value = item;
@@ -31,7 +28,7 @@ const changeLanguage = (item: Language): void => {
   localStorage.setItem("language", item.value);
 };
 
-const currentLanguageTitle = computed(() => lang.value.title);
+const currentLanguageTitle = computed<string>(() => lang.value.title);
 </script>
 
 <template>
@@ -45,9 +42,9 @@ const currentLanguageTitle = computed(() => lang.value.title);
     <template #dropdown>
       <el-dropdown-menu>
         <el-dropdown-item
-          v-for="(item, index) in langItems"
-          :key="index"
-          @click="changeLanguage(item)"
+            v-for="(item, index) in langItems"
+            :key="index"
+            @click="changeLanguage(item)"
         >
           {{ item.title }}
         </el-dropdown-item>
