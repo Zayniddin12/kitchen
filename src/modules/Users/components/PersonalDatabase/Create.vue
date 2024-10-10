@@ -13,6 +13,7 @@ const { setBreadCrumb } = useBreadcrumb();
 interface CreateBtn {
   title: string;
   icon: string;
+  value: number
 }
 
 const router = useRouter();

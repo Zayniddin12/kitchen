@@ -11,6 +11,7 @@ import AppInput from "@/components/ui/form/app-input/AppInput.vue";
 interface CreateBtn {
   title: string;
   icon: string;
+  value: number
 }
 
 const router = useRouter();

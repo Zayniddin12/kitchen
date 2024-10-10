@@ -10,7 +10,7 @@ import IncomePasswordLayout from "@/views/IncomePassword.vue";
 import PasswordLayout from "@/views/Password.vue";
 import { useRoute } from "vue-router";
 import { useLayoutStore } from "@/navigation";
-import { computed, onMounted, watch } from "vue";
+import { computed } from "vue";
 
 
 interface RouteMeta {
@@ -29,20 +29,6 @@ const layouts = {
   IncomePasswordLayout,
   PasswordLayout,
 };
-
-onMounted(() => {
-  const bodyElement = document.getElementById("body");
-  if (bodyElement) {
-    bodyElement.className = store.currentTheme;
-  }
-});
-
-watch(store, async () => {
-  const bodyElement = document.getElementById("body");
-  if (bodyElement && store.currentTheme) {
-    bodyElement.className = store.currentTheme;
-  }
-});
 </script>
 
 <template>
