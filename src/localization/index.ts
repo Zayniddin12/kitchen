@@ -1,7 +1,8 @@
-import { createI18n, type I18nOptions } from 'vue-i18n';
+import { createI18n, type I18nOptions } from "vue-i18n";
 
-import uz from './locale/uz.json';
-import ru from './locale/ru.json';
+import uz from "@/localization/locale/uz.json";
+import ru from "@/localization/locale/ru.json";
+import { getItem } from "@/utils/localStorage";
 
 // Define the type for messages based on the structure of uz.json and ru.json
 interface Messages {
@@ -9,7 +10,7 @@ interface Messages {
   ru?: typeof ru;
 }
 
-let language = localStorage.getItem('language') || 'ru';
+let language = getItem("language") || "ru";
 
 // Create I18n options with proper typing
 const i18nOptions: I18nOptions<Messages> = {

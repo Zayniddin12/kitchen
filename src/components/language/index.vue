@@ -1,7 +1,11 @@
-<script lang="ts" setup>
-import { ref, computed } from "vue";
+<script
+  lang="ts"
+  setup
+>
+import { computed, ref } from "vue";
 import { ArrowDown } from "@element-plus/icons-vue";
 import i18n from "@/localization";
+import { getItem, setItem } from "@/utils/localStorage";
 
 interface Language {
   title: string;
@@ -19,7 +23,9 @@ const langItems = ref<Language[]>([
   },
 ]);
 
-const storedLanguage = localStorage.getItem("language");
+const langStorageKey = "language";
+
+const storedLanguage = getItem(langStorageKey);
 const lang = ref<Language>(storedLanguage ? langItems.value.find((item) => item.value === storedLanguage)! : {
   title: "Русский",
   value: "ru",
@@ -28,14 +34,17 @@ const lang = ref<Language>(storedLanguage ? langItems.value.find((item) => item.
 const changeLanguage = (item: Language): void => {
   lang.value = item;
   i18n.global.locale.value = item.value;
-  localStorage.setItem("language", item.value);
+  setItem(langStorageKey, item.value);
 };
 
 const currentLanguageTitle = computed(() => lang.value.title);
 </script>
 
 <template>
-  <el-dropdown trigger="click" class="w-[100px]">
+  <el-dropdown
+    trigger="click"
+    class="w-[100px]"
+  >
     <span class="el-dropdown-link text-[#2E90FA] outline-0">
       {{ currentLanguageTitle }}
       <el-icon class="el-icon--right">
