@@ -21,7 +21,6 @@ const monthlyModal = ref<boolean>(false);
 const yearlyModal = ref<boolean>(false);
 const dropdown = ref<any>(null);
 
-
 const navbarMenuList = [
   {
     id: 1,
@@ -56,7 +55,6 @@ const navbarMenuList = [
 ];
 
 const openModals = (data: any) => {
-
   if (data.id == 1) {
     editModal.value = true;
   } else if (data.id == 2) {
@@ -245,16 +243,13 @@ const openModals = (data: any) => {
   background-color: #FFFFFF !important;
   border-radius: 8px;
   color: #000D24 !important;
-
+  box-shadow: 0 1.9px 7px -1px #0A090B12;
 }
 
 .custom-dropdown {
-  /* Move dropdown 10px to the right */
   transform: translateX(10px);
-
-  /* Or use margin or padding adjustments */
-  margin-left: 10px; /* Move to the right */
-  margin-top: 5px; /* Move downward */
+  margin-left: 10px;
+  margin-top: 5px;
 }
 
 .el-badge__content.is-fixed {

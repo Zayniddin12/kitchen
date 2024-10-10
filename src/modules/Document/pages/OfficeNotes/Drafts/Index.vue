@@ -200,18 +200,18 @@ watchEffect(() => {
       />
       <el-table-column label="Действие">
         <template #default="scope">
-          <button
-            class="action-btn"
-            @click="viewDraft"
-          >
-            <img
-              src="@/assets/images/eye.svg"
-              alt="eye"
-            />
-          </button>
+<!--          <button-->
+<!--            class="action-btn"-->
+<!--            @click="viewDraft"-->
+<!--          >-->
+<!--            <img-->
+<!--              src="@/assets/images/eye.svg"-->
+<!--              alt="eye"-->
+<!--            />-->
+<!--          </button>-->
 
           <button
-            class="action-btn ml-[8px]"
+            class="action-btn ml-[20px]"
             @click="handleEdit"
           >
             <img

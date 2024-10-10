@@ -18,7 +18,7 @@ interface UserData {
 }
 
 const userData = reactive<UserData>({
-  phone: "+998990893954",
+  phone: "+998",
   code: "",
 });
 const count = ref<number>();
