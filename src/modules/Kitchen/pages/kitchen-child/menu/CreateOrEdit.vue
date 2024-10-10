@@ -35,7 +35,7 @@ const mealTimes = ref([
 ]);
 
 // Diets
-const activeDiet = ref<number | undefined>(1);
+const activeDiet = ref<number | undefined>();
 const diets = reactive([{ id: 1, name: "Рацион1 R-0000" }]);
 
 // Table Columns

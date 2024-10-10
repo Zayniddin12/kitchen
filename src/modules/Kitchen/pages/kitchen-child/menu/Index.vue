@@ -977,7 +977,7 @@ watchEffect(() => {
           >
             <div class="flex gap-x-4 items-start">
               <img
-                :src="item.photo"
+                :src="item.photo as any"
                 :alt="item.name"
                 class="size-9 rounded-full"
               />
