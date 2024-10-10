@@ -126,13 +126,13 @@ const setBreadCrumbFn = () => {
 
 onMounted(() => {
   if (route.name === "KitchenMenuEdit") {
+    activeDiet.value = 1;
     startDate.value = new Date();
     intermediateDate1.value = true;
     mealTimes.value = mealTimes.value.map(el => {
       el.isChecked = true;
       return el;
     });
-    activeDiet.value = 1;
   }
 });
 
