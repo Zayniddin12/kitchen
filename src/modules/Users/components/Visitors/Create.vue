@@ -1,6 +1,9 @@
-<script setup lang="ts">
-import {onMounted, ref} from "vue";
-import {useRouter} from "vue-router";
+<script
+  setup
+  lang="ts"
+>
+import { ref, watchEffect } from "vue";
+import { useRouter } from "vue-router";
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 import AppDatePicker from "@/components/ui/form/app-date-picker/AppDatePicker.vue";
 import AppInput from "@/components/ui/form/app-input/AppInput.vue";
@@ -10,24 +13,24 @@ interface CreateBtn {
   icon: string;
 }
 
-const router = useRouter()
+const router = useRouter();
 
 const createBtn = ref<CreateBtn[]>([
   {
     title: "ПИНФЛ",
     icon: "pinFl",
-    value: 0
+    value: 0,
   },
   {
     title: "Серия и номер паспорта",
     icon: "seria",
-    value: 1
+    value: 1,
   },
 ]);
-const search = ref<string>('')
+const search = ref<string>("");
 
-const activeTab = ref<number>(0)
-const {setBreadCrumb} = useBreadcrumb();
+const activeTab = ref<number>(0);
+const { setBreadCrumb } = useBreadcrumb();
 
 const setBreadCrumbFn = () => {
   setBreadCrumb([
@@ -36,18 +39,18 @@ const setBreadCrumbFn = () => {
     },
     {
       label: "Посетители",
-      to: {name: "visitors"},
+      to: { name: "visitors" },
     },
     {
       label: "Добавить",
       isActionable: true,
     },
-  ])
-}
+  ]);
+};
 
-onMounted(() => {
+watchEffect(() => {
   setBreadCrumbFn();
-})
+});
 
 const setActiveTab = (item: any) => {
   activeTab.value = item.value;
@@ -60,17 +63,18 @@ const setActiveTab = (item: any) => {
 
     <div class="flex items-center gap-6 justify-center mt-[50px]">
       <div class="app-tabs">
-        <div v-for="item in createBtn"
-             :key="item.value"
-             class="cursor-pointer flex items-center"
-             :class="['app-tab', {'app-tab--active': activeTab === item.value}]"
-             @click="setActiveTab(item)"
+        <div
+          v-for="item in createBtn"
+          :key="item.value"
+          class="cursor-pointer flex items-center"
+          :class="['app-tab', {'app-tab--active': activeTab === item.value}]"
+          @click="setActiveTab(item)"
         >
           <svg
-              :data-src="'/sidebar/' + item.icon + '.svg'"
-              width="20px"
-              height="20px"
-              class="mr-[8px]"
+            :data-src="'/sidebar/' + item.icon + '.svg'"
+            width="20px"
+            height="20px"
+            class="mr-[8px]"
           />
           {{ item.title }}
         </div>
@@ -79,17 +83,23 @@ const setActiveTab = (item: any) => {
 
     <div class="w-[370px] m-auto">
       <div class="border  rounded-[24px] p-[24px] my-[16px]">
-        <app-input placeholder="Введите" label="ПИНФЛ" label-class="text-[#A8AAAE]"/>
+        <app-input
+          placeholder="Введите"
+          label="ПИНФЛ"
+          label-class="text-[#A8AAAE]"
+        />
 
         <app-date-picker
-            v-if="activeTab === 1" label="Дата рождения" placeholder="дд.мм.гггг"
-            label-class="text-[#A8AAAE]"
+          v-if="activeTab === 1"
+          label="Дата рождения"
+          placeholder="дд.мм.гггг"
+          label-class="text-[#A8AAAE]"
         />
       </div>
 
       <button
-          class="custom-apply-btn ml-auto"
-          @click="router.push('/visitors-create-form')"
+        class="custom-apply-btn ml-auto"
+        @click="router.push('/visitors-create-form')"
       >
         Найти
       </button>

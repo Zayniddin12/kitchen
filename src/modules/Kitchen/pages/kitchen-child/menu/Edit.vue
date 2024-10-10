@@ -3,7 +3,7 @@
   lang="ts"
 >
 
-import { computed, onMounted, ref } from "vue";
+import { computed, ref, watchEffect } from "vue";
 import PlusIcon from "@/assets/images/icons/plus.svg";
 import AppTimePicker from "@/components/ui/form/app-time-picker/AppTimePicker.vue";
 import AppSelect from "@/components/ui/form/app-select/AppSelect.vue";
@@ -159,7 +159,7 @@ const setBreadCrumbFn = () => {
   ]);
 };
 
-onMounted(() => {
+watchEffect(() => {
   setBreadCrumbFn();
 });
 

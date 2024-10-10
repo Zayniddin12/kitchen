@@ -4,7 +4,7 @@
 >
 import AppDatePicker from "@/components/ui/form/app-date-picker/AppDatePicker.vue";
 import { TableColumnType } from "@/types/common.type";
-import { computed, onMounted } from "vue";
+import { computed, watchEffect } from "vue";
 
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 
@@ -169,7 +169,7 @@ const setBreadCrumbFn = () => {
   ]);
 };
 
-onMounted(() => {
+watchEffect(() => {
   setBreadCrumbFn();
 });
 

@@ -6,7 +6,7 @@ import AppDatePicker from "@/components/ui/form/app-date-picker/AppDatePicker.vu
 import AppTimePicker from "@/components/ui/form/app-time-picker/AppTimePicker.vue";
 import AppSelect from "@/components/ui/form/app-select/AppSelect.vue";
 import AppInput from "@/components/ui/form/app-input/AppInput.vue";
-import { computed, onMounted, ref, watch } from "vue";
+import { computed, ref, watch, watchEffect } from "vue";
 import { formatDate } from "@/utils/helper";
 import { useKitchenStore } from "@/modules/Kitchen/store/kitchen.store";
 import PlusIcon from "@/assets/images/icons/plus.svg";
@@ -124,7 +124,7 @@ const setBreadCrumbFn = () => {
   ]);
 };
 
-onMounted(() => {
+watchEffect(() => {
   setBreadCrumbFn();
 });
 
@@ -178,6 +178,7 @@ onMounted(() => {
             </button>
           </div>
           <div class="mt-6">
+            {{ kitchenStore.activeMenuPart }}
             <template v-if="kitchenStore.activeMenuPart">
               <h3 class="text-lg font-medium text-dark">
                 Выбирайте время еды!

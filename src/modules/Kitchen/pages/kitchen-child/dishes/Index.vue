@@ -3,7 +3,7 @@
   lang="ts"
 >
 
-import { computed, onMounted } from "vue";
+import { computed, watchEffect } from "vue";
 import ColaImg from "@/assets/images/kitchen/test/cola.png";
 import DishesImg from "@/assets/images/kitchen/test/dishes.png";
 import { useRoute } from "vue-router";
@@ -172,7 +172,7 @@ const setBreadCrumbFn = () => {
   ]);
 };
 
-onMounted(() => {
+watchEffect(() => {
   setBreadCrumbFn();
 });
 

@@ -2,7 +2,7 @@
   setup
   lang="ts"
 >
-import { onMounted, ref } from "vue";
+import { ref, watchEffect } from "vue";
 import { Search } from "@element-plus/icons-vue";
 import { useRouter } from "vue-router";
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
@@ -114,10 +114,9 @@ const setBreadCrumbFn = () => {
   ]);
 };
 
-onMounted(() => {
+watchEffect(() => {
   setBreadCrumbFn();
 });
-
 </script>
 
 <template>

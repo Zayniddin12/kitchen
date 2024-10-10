@@ -4,7 +4,7 @@
 >
 import AppDatePicker from "@/components/ui/form/app-date-picker/AppDatePicker.vue";
 import { TableColumnType } from "@/types/common.type";
-import { computed, onMounted } from "vue";
+import { computed, watchEffect } from "vue";
 import NotFoundPage from "@/components/errors/404.vue";
 import { useDistrictStore } from "@/modules/Monitoring/store/district.store";
 import { useRoute } from "vue-router";
@@ -119,10 +119,9 @@ const setBreadCrumbFn = () => {
   ]);
 };
 
-onMounted(() => {
+watchEffect(() => {
   setBreadCrumbFn();
 });
-
 </script>
 
 <template>

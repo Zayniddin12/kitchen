@@ -2,7 +2,7 @@
   setup
   lang="ts"
 >
-import { computed, nextTick, onBeforeUnmount, onMounted, ref, useTemplateRef, watch } from "vue";
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, useTemplateRef, watch, watchEffect } from "vue";
 import { useRoute } from "vue-router";
 import { useKitchenStore } from "@/modules/Kitchen/store/kitchen.store";
 import { TableColumnType } from "@/types/common.type";
@@ -25,7 +25,7 @@ interface ProductItemType {
   quantity: number;
   weight: number;
   name: string;
-  photo: string;
+  photo: string | object;
 }
 
 interface ProductCategoryType {
@@ -290,7 +290,7 @@ onBeforeUnmount(() => {
   }
 });
 
-onMounted(() => {
+watchEffect(() => {
   setBreadCrumbFn();
 });
 

@@ -3,7 +3,7 @@
   lang="ts"
 >
 
-import { computed, onMounted } from "vue";
+import { computed, watchEffect } from "vue";
 import { useKitchenStore } from "@/modules/Kitchen/store/kitchen.store";
 import { useRoute } from "vue-router";
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
@@ -71,10 +71,9 @@ const setBreadCrumbFn = () => {
   ]);
 };
 
-onMounted(() => {
+watchEffect(() => {
   setBreadCrumbFn();
 });
-
 </script>
 
 <template>

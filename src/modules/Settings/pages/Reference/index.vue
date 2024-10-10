@@ -1,5 +1,8 @@
-<script setup lang="ts">
-import { onMounted, ref } from "vue";
+<script
+  setup
+  lang="ts"
+>
+import { ref, watchEffect } from "vue";
 import { useRouter } from "vue-router";
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 
@@ -127,7 +130,7 @@ const ulItems = ref<UlItems[]>([
   },
 ]);
 
-const {setBreadCrumb} = useBreadcrumb();
+const { setBreadCrumb } = useBreadcrumb();
 
 const setBreadCrumbFn = () => {
   setBreadCrumb([
@@ -137,13 +140,13 @@ const setBreadCrumbFn = () => {
     {
       label: "Справочники",
       isActionable: true,
-    }
+    },
   ]);
-}
+};
 
-onMounted(() => {
+watchEffect(() => {
   setBreadCrumbFn();
-})
+});
 </script>
 
 <template>

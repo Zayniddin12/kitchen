@@ -2,7 +2,7 @@
   setup
   lang="ts"
 >
-import { computed, onMounted, ref } from "vue";
+import { computed, ref, watchEffect } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import AppInput from "@/components/ui/form/app-input/AppInput.vue";
 import AppDatePicker from "@/components/ui/form/app-date-picker/AppDatePicker.vue";
@@ -58,7 +58,7 @@ const setBreadCrumbFn = () => {
   ]);
 };
 
-onMounted(() => {
+watchEffect(() => {
   setBreadCrumbFn();
 });
 

@@ -2,7 +2,7 @@
   setup
   lang="ts"
 >
-import { ref, watch } from "vue";
+import { ref, watchEffect } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import AppInput from "@/components/ui/form/app-input/AppInput.vue";
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
@@ -74,9 +74,9 @@ const setBreadCrumbFn = () => {
   ]);
 };
 
-watch(() => route.name, () => {
+watchEffect(() => {
   setBreadCrumbFn();
-}, { immediate: true });
+});
 
 
 </script>
