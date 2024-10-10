@@ -10,7 +10,7 @@ import IncomePasswordLayout from "@/views/IncomePassword.vue";
 import PasswordLayout from "@/views/Password.vue";
 import { useRoute } from "vue-router";
 import { useLayoutStore } from "@/navigation";
-import { onMounted, watch } from "vue";
+import { computed, onMounted, watch } from "vue";
 
 interface RouteMeta {
   layout?: "MainLayout" | "LoginLayout" | "ErrorLayout" | "ResetPasswordLayout" | "IncomePasswordLayout" | "PasswordLayout";
@@ -18,7 +18,7 @@ interface RouteMeta {
 
 const route = useRoute();
 const store = useLayoutStore();
-const layout = (route.meta as RouteMeta).layout;
+const layout = computed(() => (route.meta as RouteMeta).layout);
 
 const layouts = {
   MainLayout,
@@ -45,7 +45,10 @@ watch(store, async () => {
 </script>
 
 <template>
-  <component :is="layouts[layout ?? 'MainLayout']">
+  <component
+    v-if="layout"
+    :is="layouts[layout]"
+  >
     <RouterView />
   </component>
 </template>

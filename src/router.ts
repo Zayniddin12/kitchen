@@ -60,6 +60,11 @@ const router = createRouter({
   routes,
 });
 
+router.beforeEach((to, from, next) => {
+  if (!to.meta.layout) to.meta.layout = "MainLayout";
+  next();
+});
+
 router.afterEach((to: any) => {
   const DEFAULT_TITLE = "KITCHEN";
   document.title = to.meta.title || DEFAULT_TITLE;
