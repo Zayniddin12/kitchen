@@ -1,16 +1,13 @@
 <script
-    setup
-    lang="ts"
+  setup
+  lang="ts"
 >
-import {
-  AppSelectPropsType,
-  AppSelectValueType
-} from "@/components/ui/form/app-select/app-select.type";
-import { computed, readonly, useSlots } from "vue";
+import { AppSelectPropsType, AppSelectValueType } from "@/components/ui/form/app-select/app-select.type";
+import { computed, useSlots } from "vue";
 import { getRules, setRules } from "@/components/ui/form/validate";
 
 const model = defineModel<AppSelectValueType>({
-  default: ""
+  default: "",
 });
 
 const props = withDefaults(defineProps<AppSelectPropsType>(), {
@@ -18,7 +15,7 @@ const props = withDefaults(defineProps<AppSelectPropsType>(), {
   itemValue: "",
   itemLabel: "",
   labelClass: "",
-  placeholder: "Выбирать"
+  placeholder: "Выбирать",
 });
 
 const slots = useSlots();
@@ -36,22 +33,22 @@ const appSelectClasses = computed<string[]>(() => {
 
 <template>
   <ElFormItem
-      :label-position
-      :required
-      :class="appSelectClasses"
-      :size
-      :prop
-      :error
-      :rules="setRules(getRules(props))"
+    :label-position
+    :required
+    :class="appSelectClasses"
+    :size
+    :prop
+    :error
+    :rules="setRules(getRules(props))"
   >
     <template
-        v-if="slots.label || label"
-        #label
+      v-if="slots.label || label"
+      #label
     >
       <span :class="labelClass">
       <slot
-          v-if="slots.label"
-          name="label"
+        v-if="slots.label"
+        name="label"
       />
         <template v-else>
           {{ label }}
@@ -59,52 +56,52 @@ const appSelectClasses = computed<string[]>(() => {
       </span>
     </template>
     <ElSelect
-        v-model="model"
-        :value-key="itemValue"
-        :size
-        :placeholder
-        :readonly
-        :disabled
-        :clearable
-        :name
-        :suffix-icon
-        :multiple
-        :multiple-limit
-        :collapse-tags
-        :collapseTagsTooltip
-        :maxCollapseTags
-        :loading
-        :loading-text
-        :filterable
-        :no-match-text
-        :no-data-text
-        :popper-class
-        :default-first-option
-        :teleported
-        :persistent
-        :automatic-dropdown
-        :placement
-        class="app-select__select"
+      v-model="model"
+      :value-key="itemValue"
+      :size
+      :placeholder
+      :readonly
+      :disabled
+      :clearable
+      :name
+      :suffix-icon
+      :multiple
+      :multiple-limit
+      :collapse-tags
+      :collapseTagsTooltip
+      :maxCollapseTags
+      :loading
+      :loading-text
+      :filterable
+      :no-match-text
+      :no-data-text
+      :popper-class
+      :default-first-option
+      :teleported
+      :persistent
+      :automatic-dropdown
+      :placement
+      class="app-select__select"
     >
       <ElOption
-          v-for="item in items"
-          :key="item[itemValue]"
-          :label="item[itemLabel]"
-          :value="item[itemValue]"
+        v-for="item in items"
+        :key="item[itemValue]"
+        :label="item[itemLabel]"
+        :value="item[itemValue]"
       >
         <slot
-            v-if="slots.option"
-            name="option"
-            v-bind="item"
+          v-if="slots.option"
+          name="option"
+          v-bind="item"
         />
 
       </ElOption>
       <template
-          #footer
-          v-if="slots.footer"
+        #footer
+        v-if="slots.footer"
       >
         <slot
-            name="footer"
+          name="footer"
         />
       </template>
     </ElSelect>

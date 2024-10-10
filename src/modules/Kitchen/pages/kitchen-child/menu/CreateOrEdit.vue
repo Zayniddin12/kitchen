@@ -6,7 +6,7 @@ import AppDatePicker from "@/components/ui/form/app-date-picker/AppDatePicker.vu
 import AppTimePicker from "@/components/ui/form/app-time-picker/AppTimePicker.vue";
 import AppSelect from "@/components/ui/form/app-select/AppSelect.vue";
 import AppInput from "@/components/ui/form/app-input/AppInput.vue";
-import { computed, ref, watch, watchEffect } from "vue";
+import { computed, onMounted, reactive, ref, watch, watchEffect } from "vue";
 import { formatDate } from "@/utils/helper";
 import { useKitchenStore } from "@/modules/Kitchen/store/kitchen.store";
 import PlusIcon from "@/assets/images/icons/plus.svg";
@@ -35,8 +35,8 @@ const mealTimes = ref([
 ]);
 
 // Diets
-const activeDiet = ref("");
-const diets = computed(() => [{ id: 1, name: "Рацион1 R-0000" }]);
+const activeDiet = ref<number | undefined>(1);
+const diets = reactive([{ id: 1, name: "Рацион1 R-0000" }]);
 
 // Table Columns
 const tableColumns: TableColumnType[] = [
@@ -79,7 +79,7 @@ const scheduledDates = computed(() => {
     const date = new Date(startDate.value);
     date.setDate(date.getDate() + i);
     const formattedDate = formatDate(date);
-    formattedDates.push({ date: formattedDate, title: formattedDate });
+    formattedDates.push({ date: formattedDate.date, title: `${formattedDate.week} - ${formattedDate.date}` });
   }
   return formattedDates;
 });
@@ -118,15 +118,43 @@ const setBreadCrumbFn = () => {
       to: { name: "KitchenMenuIndex" },
     },
     {
-      label: "Добавить",
+      label: route.meta.breadcrumbItemTitle ?? "",
       isActionable: true,
     },
   ]);
 };
 
+onMounted(() => {
+  if (route.name === "KitchenMenuEdit") {
+    startDate.value = new Date();
+    intermediateDate1.value = true;
+    mealTimes.value = mealTimes.value.map(el => {
+      el.isChecked = true;
+      return el;
+    });
+    activeDiet.value = 1;
+  }
+});
+
 watchEffect(() => {
   setBreadCrumbFn();
 });
+
+const scheduledItemDateClass = (date: string): string[] => {
+  const classes: string[] = ["text-center rounded-lg font-medium"];
+
+  const isActiveItem = date === activeScheduledDate.value;
+
+  if (route.name === "KitchenMenuCreate") {
+    classes.push("text-sm text-[#A8AAAE] mr-6 last:mr-0");
+    if (isActiveItem) classes.push("text-blue-500");
+  } else if (route.name === "KitchenMenuEdit") {
+    classes.push("text-dark-gray transition duration-200 ease-in text-xs py-2 px-3");
+    if (isActiveItem) classes.push("bg-[#E2E6F3]");
+  }
+
+  return classes;
+};
 
 </script>
 
@@ -134,8 +162,11 @@ watchEffect(() => {
 <template>
   <section class="meal-plan-create">
     <div>
-      <h1 class="font-semibold text-[32px] text-dark">
-        Добавить меню
+      <h1
+        v-if="route.meta.title"
+        class="font-semibold text-[32px] text-dark"
+      >
+        {{ route.meta.title }}
       </h1>
       <div>
         <div class="p-6 rounded-3xl border border-[#E2E6F3] mt-6 min-h-[671px]">
@@ -143,42 +174,47 @@ watchEffect(() => {
             <h3 class="text-lg font-medium text-dark">
               Введите дату!
             </h3>
-            <AppDatePicker
-              v-model="startDate"
-              placeholder="дд.мм.гггг"
-              format="DD.MM.YYYY"
-              class="w-[141px] mt-3"
-              icon-position="start"
-            />
-            <ElSwitch
-              v-model="intermediateDate1"
-              active-text="7 дней"
-              class="app-switch"
-              @change="intermediateDate2 = false"
-            />
-            <br class="mt-3">
-            <ElSwitch
-              v-model="intermediateDate2"
-              active-text="10 дней"
-              class="app-switch"
-              @change="intermediateDate1 = false"
-            />
+            <template v-if="route.name === 'KitchenMenuCreate'">
+              <AppDatePicker
+                v-model="startDate"
+                placeholder="дд.мм.гггг"
+                format="DD.MM.YYYY"
+                class="w-[141px] mt-3"
+                icon-position="start"
+              />
+              <ElSwitch
+                v-model="intermediateDate1"
+                active-text="7 дней"
+                class="app-switch"
+                @change="intermediateDate2 = false"
+              />
+              <br class="mt-3">
+              <ElSwitch
+                v-model="intermediateDate2"
+                active-text="10 дней"
+                class="app-switch"
+                @change="intermediateDate1 = false"
+              />
+            </template>
           </div>
-          <div
+          <ElScrollbar
             v-if="scheduledDates.length>0"
-            class="flex flex-wrap items-center gap-6 text-sm mt-8 font-medium text-[#A8AAAE]"
+            class="mt-8"
           >
-            <button
-              v-for="item in scheduledDates"
-              :key="item.date"
-              :class="[{'text-blue-500': item.date === activeScheduledDate}]"
-              @click="activeScheduledDate = item.date"
+            <div
+              class="flex flex-wrap items-center"
             >
-              {{ item.title }}
-            </button>
-          </div>
+              <button
+                v-for="item in scheduledDates"
+                :key="item.date"
+                :class="scheduledItemDateClass(item.date)"
+                @click="activeScheduledDate = item.date"
+              >
+                {{ item.title }}
+              </button>
+            </div>
+          </ElScrollbar>
           <div class="mt-6">
-            {{ kitchenStore.activeMenuPart }}
             <template v-if="kitchenStore.activeMenuPart">
               <h3 class="text-lg font-medium text-dark">
                 Выбирайте время еды!
@@ -201,12 +237,18 @@ watchEffect(() => {
                       <AppTimePicker
                         class="max-w-[141px]"
                         label="Время начало"
-                        label-class="text-[#A8AAAE]"
+                        label-class="text-[#A8AAAE] text-xs font-medium"
                       />
                       <AppTimePicker
                         class="max-w-[141px]"
                         label="Время окончания"
-                        label-class="text-[#A8AAAE]"
+                        label-class="text-[#A8AAAE] text-xs font-medium"
+                      />
+                      <AppInput
+                        type="number"
+                        class="max-w-[141px]"
+                        label="Количество порции"
+                        label-class="text-[#A8AAAE] text-xs font-medium"
                       />
                     </div>
                     <AppSelect
