@@ -176,7 +176,7 @@ watchEffect(() => {
           v-for="(menu, index2) in item.menu"
           :key="index2"
         >
-         <router-link :to="menu.router">
+         <router-link :to="menu.router as string">
            <li
                class="text-[#4F5662] text-[14px] font-medium leading-[20px] cursor-pointer hover:underline hover:decoration-[#2E90FA] hover:text-[#2E90FA]"
            >
