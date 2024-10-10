@@ -398,7 +398,7 @@ const openModals = () => {
             <table
               class="min-w-full border border-gray-300 bg-white text-left text-sm text-gray-900 rounded-[8px] border-separate table-my border-spacing-0"
             >
-
+              <tbody>
               <tr class="border-gray-300">
                 <td class="border-r border-b p-2 font-medium">Название продукта</td>
                 <td class="p-2 border-b border-gray-300 ">Картофель</td>
@@ -465,7 +465,7 @@ const openModals = () => {
                 <td class="border-r border-b p-2 font-medium">Номер и дата удостоверения качества</td>
                 <td class="p-2 border-b border-gray-300">№ УК-0614 от 07.02.2024</td>
               </tr>
-
+              </tbody>
             </table>
           </div>
 

@@ -7,6 +7,7 @@ import { useRoute, useRouter } from "vue-router";
 import AppInput from "@/components/ui/form/app-input/AppInput.vue";
 import AppSelect from "@/components/ui/form/app-select/AppSelect.vue";
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
+import AppMediaUploader from "@/components/ui/form/app-media-uploader/AppMediaUploader.vue";
 
 interface TableData {
   id: string;
@@ -26,7 +27,7 @@ const router = useRouter();
 
 const user_photo_new = ref<string>("");
 const repeater = ref<Repeater[]>([{
-  title: '',
+  title: "",
   value: 0,
 }]);
 
@@ -76,8 +77,8 @@ const previewImage = (event: Event) => {
 
 const repeaterAgain = () => {
   repeater.value.push({
-    title: '',
-    value: 0
+    title: "",
+    value: 0,
   });
 };
 
@@ -126,48 +127,7 @@ watch(() => route.name, () => {
     <div class="mt-[24px] flex items-start">
       <div class="w-[90%]">
         <div class="border rounded-[24px] p-[24px]">
-          <div
-            class="rounded-[24px] py-[32px] px-[24px] w-[50%] flex justify-center m-auto relative group"
-            v-if="user_photo_new"
-          >
-            <img
-              :src="user_photo_new"
-              alt="#"
-            />
-
-            <button
-              @click="user_photo_new = ''"
-              class="absolute top-2 left-2 opacity-0 group-hover:opacity-100 edit__btn transition-opacity duration-300 bg-blue-500 text-white px-4 py-2 rounded-lg"
-            >
-              Изменить фото
-            </button>
-          </div>
-
-          <template v-else>
-            <input
-              type="file"
-              class="hidden"
-              id="fileInput"
-              @change="previewImage"
-            />
-            <label
-              for="fileInput"
-              class="cursor-pointer bg-[#F8F9FC] rounded-[16px] border-dashed border border-gray-300 flex flex-col items-center justify-center p-10 h-[224px]"
-            >
-              <img
-                src="@/assets/images/icons/upload.svg"
-                alt="upload"
-              />
-
-              <span class="text-gray-700 text-sm mt-[24px]">Перетащите фотографию для загрузки</span>
-              <span class="text-gray-400 text-xs mb-[24px]">Максимальный размер фотографии 10 МБ</span>
-
-              <span class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600">
-                Выбрать фото
-              </span>
-            </label>
-          </template>
-
+          <AppMediaUploader class="mt-4" />
           <div class="mt-[24px] grid grid-cols-2 gap-5">
             <app-input
               label="Наименование (RU)"
@@ -284,7 +244,6 @@ watch(() => route.name, () => {
             </div>
           </template>
         </div>
-
         <div
           class="flex items-center justify-between mt-[24px]"
           v-if="route.name === 'reference-dish-create' || route.name === 'reference-dish-id'"

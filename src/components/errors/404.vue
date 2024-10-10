@@ -1,11 +1,7 @@
-<script setup lang="ts">
-import { useRouter } from "vue-router";
-
-const router = useRouter();
-
-const backToHome = () => {
-  router.push("/");
-};
+<script
+  setup
+  lang="ts"
+>
 </script>
 
 <template>
@@ -24,12 +20,12 @@ const backToHome = () => {
         Извините, запрошенная вами страница не найдена пожалуйста, вернитесь на
         главную страницу
       </p>
-      <button
-        class="bg-[#2E90FA] w-[200px] py-[10px] rounded-lg text-white m-auto"
-        @click="backToHome"
+      <RouterLink
+        to="/"
+        class="bg-[#2E90FA] w-[200px] text-center py-[10px] rounded-lg text-white m-auto"
       >
         Вернуться на главную
-      </button>
+      </RouterLink>
     </div>
   </div>
 </template>

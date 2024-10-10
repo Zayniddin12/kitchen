@@ -158,7 +158,7 @@ onMounted(() => {
           class="mt-2"
           striped
         />
-        <p class="mt-4 text-xs text-[#A8AAAE]">
+        <p class="mt-4 text-xs text-black-sub">
           Этот элемент показывает процент заполненности склада, помогая вам следить за остатками и эффективно управлять
           запасами.
         </p>
