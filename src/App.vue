@@ -11,7 +11,7 @@ import PasswordLayout from "@/views/Password.vue";
 import { useRoute } from "vue-router";
 import { useLayoutStore } from "@/navigation";
 import { computed } from "vue";
-
+import useConfirm from "@/components/ui/app-confirm/useConfirm";
 
 interface RouteMeta {
   layout?: "MainLayout" | "LoginLayout" | "ErrorLayout" | "ResetPasswordLayout" | "IncomePasswordLayout" | "PasswordLayout";
@@ -29,6 +29,13 @@ const layouts = {
   IncomePasswordLayout,
   PasswordLayout,
 };
+
+const { confirm } = useConfirm();
+
+const deleteMethod = () => {
+  confirm.show();
+};
+
 </script>
 
 <template>
@@ -36,6 +43,12 @@ const layouts = {
     v-if="layout"
     :is="layouts[layout]"
   >
+    <ElButton
+      @click="deleteMethod"
+      type="danger"
+    >
+      Delete
+    </ElButton>
     <RouterView />
   </component>
 </template>

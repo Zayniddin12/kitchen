@@ -28,3 +28,11 @@ export const generateRandomID = (): string => {
 
   return result;
 };
+
+export const filterObjectValues = (obj: Record<string, any>): Record<string, any> => {
+  return Object.fromEntries(
+    Object.entries(obj)
+      .filter(([_, value]) => value),
+  )
+    ;
+};
