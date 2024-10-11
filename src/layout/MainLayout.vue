@@ -10,11 +10,11 @@ import AppBreadcrumb from "@/components/ui/app-breadcrumb/AppBreadcrumb.vue";
 const route = useRoute();
 const kitchenStore = useKitchenStore();
 
-const storedSidebar: boolean = JSON.parse(localStorage.getItem("child-sidebar") as string) || false;
-const childSidebar = ref<boolean>(storedSidebar);
+const storedSidebar: boolean = JSON.parse(localStorage.getItem("child-sidebar-pin") as string) || false;
+const childSidebar = ref<boolean>(JSON.parse(localStorage.getItem("child-sidebar-pin") || "false"));
 
 onMounted(() => {
-  childSidebar.value = false;
+  childSidebar.value = JSON.parse(localStorage.getItem("child-sidebar-pin") || "false");
   kitchenStore.fetchDepartments();
 });
 
@@ -34,6 +34,7 @@ const closeChildSidebar = () => {
       class="main-layout min-h-screen p-6 pr-7 pt-28 dark:bg-darkLayoutMain dark:bg-body-dark bg-white ml-[128px] transition-all flex flex-col justify-between"
       :class="childSidebar ? 'ml-[396px]' : ''"
     >
+      <!--      {{ childSidebar }}-->
       <div class="flex flex-col">
         <AppBreadcrumb />
         <slot />
