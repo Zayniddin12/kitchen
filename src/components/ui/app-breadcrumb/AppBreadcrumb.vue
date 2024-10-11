@@ -12,7 +12,7 @@ const { breadcrumb, setBreadCrumb } = useBreadcrumb();
 const route = useRoute();
 
 const clickHome = () => {
-  setItem("current-menu", "0");
+  sessionStorage.setItem("current-menu", "0");
 };
 
 type itemComponentTagType = "span" | "RouterLink" | "button";
