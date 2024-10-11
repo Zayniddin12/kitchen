@@ -1,13 +1,12 @@
 <script setup lang="ts">
-import {ref, onMounted, watch, onUnmounted} from "vue";
-import {useRoute, useRouter} from "vue-router";
-import {useLayoutStore} from "@/navigation";
+import { ref, onMounted, watch, onUnmounted } from "vue";
+import { useRoute, useRouter } from "vue-router";
+import { useLayoutStore } from "@/navigation";
 import ChildSidebar from "@/layout/Bars/ChildSidebar.vue";
-import {ElNotification} from "element-plus";
 
 const emit = defineEmits<{
-  (e: 'update:childSidebar', value: boolean): void;
-  (e: 'closeChildSidebar2'): void;
+  (e: "update:childSidebar", value: boolean): void;
+  (e: "closeChildSidebar2"): void;
 }>();
 
 const store = useLayoutStore();
@@ -16,7 +15,8 @@ let route = useRoute();
 
 let currentIndex = ref<number>(0);
 let currentMenu = ref<number>(0);
-const isSidebar = ref(false)
+let childIsOpen = ref<boolean>(localStorage.getItem("child-sidebar") === "true");
+let childIsOpenPin = ref<boolean>(JSON.parse(localStorage.getItem("child-sidebar-pin") || "false"));
 
 interface MenuItem {
   title?: string;
@@ -26,50 +26,72 @@ interface MenuItem {
 }
 
 onMounted(() => {
-  const storedMenu = sessionStorage.getItem('current-menu');
+  const storedMenu: string | number = sessionStorage.getItem("current-menu") | 0;
+  const storedSidebar = localStorage.getItem("child-sidebar");
 
+  if (childIsOpenPin.value) {
+    // alert("Hello");
+    currentIndex.value = Number(storedMenu);
+  } else {
+    currentIndex.value = 0;
+  }
+
+  console.log(currentIndex.value);
+
+  // currentIndex.value = Number(storedMenu);
   currentMenu.value = storedMenu ? JSON.parse(storedMenu) as number : 0;
+  childIsOpen.value = storedSidebar === "true";
 
-  document.body.addEventListener('click', closeChildSidebar);
+  document.body.addEventListener("click", closeChildSidebar);
 });
 
 onUnmounted(() => {
-  document.body.removeEventListener('click', closeChildSidebar);
+  document.body.removeEventListener("click", closeChildSidebar);
+  localStorage.setItem("child-sidebar-pin", JSON.stringify(false));
 });
 
 watch(() => route.path, () => {
-  const storedMenu = sessionStorage.getItem('current-menu');
+  const storedMenu = sessionStorage.getItem("current-menu");
   currentMenu.value = storedMenu ? JSON.parse(storedMenu) as number : 0;
 });
 
 
 const activeMenu = (index: number, item: MenuItem) => {
-  if (item.route) {
-    router.push(item.route);
-  }
-
-  isSidebar.value = true;
   currentIndex.value = index;
   currentMenu.value = index;
+  childIsOpen.value = !!item.children;
   emit("update:childSidebar", !!item.children);
 
   localStorage.setItem("child-sidebar", "true");
   sessionStorage.setItem("current-menu", currentMenu.value.toString());
+
+  if (item.route) {
+    router.push(item.route);
+  }
 };
 
 const closeChildSidebar = () => {
-  currentIndex.value = 0;
-  isSidebar.value = false
-  emit("update:childSidebar", false);
+  if (childIsOpenPin.value) {
+    emit("update:childSidebar", childIsOpenPin.value);
+  } else {
+    currentIndex.value = 0;
+    emit("update:childSidebar", childIsOpenPin.value);
+  }
+
+
 };
 
 const pinSidebar = () => {
-  ElNotification({title: 'Warning', message: 'pin is not finished yet', type: 'warning'})
+  localStorage.setItem("child-sidebar-pin", JSON.stringify(!JSON.parse(localStorage.getItem("child-sidebar-pin") || "false")));
+  childIsOpenPin.value = JSON.parse(localStorage.getItem("child-sidebar-pin") || "false");
 };
 
 const logOut = () => {
-  localStorage.removeItem('child-sidebar');
-  sessionStorage.removeItem('current-menu');
+  const arr = ["current-menu", "child-sidebar"];
+
+  for (let i = 0; i < arr.length; i++) {
+    localStorage.removeItem(arr[i]);
+  }
   router.push("/login");
 };
 </script>
@@ -91,44 +113,25 @@ const logOut = () => {
           <div :class="{ activeListItem: currentMenu == index }"
                class="h-[88px] flex flex-col justify-center items-center cursor-pointer p-[12px] hover:bg-white dark:hover:bg-body-dark hover:shadow-menu hover:font-medium rounded-lg"
           >
-            <li
-                :style="{
-                  maskImage: `url(/sidebar/${item.icon}.svg)`,
-                  backgroundColor: '#8F9194',
-                  color: '#8F9194',
-                  width: '24px',
-                  height: '24px',
-                  maskSize: '24px',
-                  maskPosition: 'center',
-                  maskRepeat: 'no-repeat'
-                 }"
+            <svg :data-src="'/sidebar/' + item?.icon + '.svg'"
+                 class="svg-class shrink-1"
+                 width="24px"
+                 height="24px"
             />
 
             <h1 class="text-[13px] font-medium font-500 mt-[4px] text-[#4F5662] dark:text-white">{{ item.title }}</h1>
           </div>
 
           <!-----------------------------------child sidebar----------------------------------->
-          <div v-show="currentIndex === index && item.children"
+          <div v-if="currentIndex === index && item.children"
                class="w-[260px] dark:bg-dark bg-white-blue rounded-[16px] h-[100%] absolute top-0 left-[120px] transition overflow-auto"
           >
-            <header class="flex items-center justify-between pt-[16px] pb-[32px] px-[24px]">
-              <h1 class="text-[#000000] font-medium text-[20px] dark:text-white">{{ item.title }}</h1>
-
-              <div class="flex items-center cursor-pointer">
-                <img src="@/assets/images/pin.svg"
-                     alt="pin" @click.stop="pinSidebar"
-                />
-                <img
-                    src="@/assets/images/close.svg"
-                    class="ml-[15px]" alt="close"
-                    @click.stop="closeChildSidebar"
-                />
-              </div>
-            </header>
-
             <ChildSidebar
+                :childIsOpenPin="childIsOpenPin"
                 :children="item.children as any"
+                :header="item.title"
                 @closeSidebar="closeChildSidebar"
+                @toggleSidebarPin="pinSidebar"
             />
           </div>
         </div>
@@ -174,9 +177,8 @@ const logOut = () => {
   stroke: #fff;
 }
 
-.activeListItem li {
-  color: #000d24 !important;
-  background-color: #000d24 !important;
+.activeListItem .svg-class path {
+  stroke: #000d24;
 }
 
 .activeListItem h1 {
