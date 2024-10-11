@@ -44,7 +44,7 @@ const onSubmit = async () => {
       message: 'Успешно',
       type: 'success',
     })
-    localStorage.setItem("current-menu", '0');
+    sessionStorage.setItem("current-menu", '0');
   }
 };
 </script>

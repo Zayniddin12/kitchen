@@ -25,7 +25,7 @@ interface MenuItem {
 }
 
 onMounted(() => {
-  const storedMenu = localStorage.getItem('current-menu');
+  const storedMenu = sessionStorage.getItem('current-menu');
   const storedSidebar = localStorage.getItem('child-sidebar');
 
   currentMenu.value = storedMenu ? JSON.parse(storedMenu) as number : 0;
@@ -39,7 +39,7 @@ onUnmounted(() => {
 });
 
 watch(() => route.path, () => {
-  const storedMenu = localStorage.getItem('current-menu');
+  const storedMenu = sessionStorage.getItem('current-menu');
   currentMenu.value = storedMenu ? JSON.parse(storedMenu) as number : 0;
 });
 
@@ -51,7 +51,7 @@ const activeMenu = (index: number, item: MenuItem) => {
   emit("update:childSidebar", !!item.children);
 
   localStorage.setItem("child-sidebar", "true");
-  localStorage.setItem("current-menu", currentMenu.value.toString());
+  sessionStorage.setItem("current-menu", currentMenu.value.toString());
 
   if (item.route) {
     router.push(item.route);
