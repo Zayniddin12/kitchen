@@ -13,9 +13,10 @@ import { filterObjectValues } from "@/utils/helper";
 const activeConfirm = ref<null | ConfirmInitParamsType>(null);
 const openConfirmModal = ref(false);
 
+let resolvePromise: (value?: "confirm" | "save") => void;
+let rejectPromise: (reason?: "cancel") => void;
+
 export default function() {
-  let resolvePromise: (value?: "confirm" | "save") => void;
-  let rejectPromise: (reason?: "cancel") => void;
 
   const confirm = {
     defaultButtons: function(type: DefaultButtonType): ButtonType[] {
@@ -30,7 +31,7 @@ export default function() {
           { label: "Удалить", status: "danger", action: "confirm" },
         ],
         show: [
-          { label: "Понятно", action: "cancel", status: "primary" },
+          { label: "Понятно", action: "confirm", status: "primary" },
         ],
       };
 
