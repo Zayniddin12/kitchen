@@ -320,8 +320,7 @@ watchEffect(() => {
           v-if="hasData"
           class="flex items-center"
         >
-          <template v-if="kitchenStore.activeMenuPart">
-            <template v-if="activeTab === TABS.CURRENT">
+            <template v-if="activeTab === TABS.CURRENT && kitchenStore.activeMenuPart">
               <ElButton
                 class="!bg-blue-500 min-h-12 w-[253px]"
                 type="primary"
@@ -375,38 +374,6 @@ watchEffect(() => {
                 </div>
               </ElButton>
             </template>
-          </template>
-          <template v-if="kitchenStore.activeSalesPart && activeTab === TABS.ALL">
-            <ElButton
-              class="min-h-12 w-[253px] !bg-[#E2E6F3] border-none"
-              size="large"
-            >
-              <div class="flex items-center gap-x-2">
-                <svg
-                  :data-src="EditIcon"
-                  class="size-6"
-                />
-                <span class="text-dark-gray font-medium text-lg">
-                  Редактировать
-                </span>
-              </div>
-            </ElButton>
-            <ElButton
-              class="min-h-12 w-[253px] !bg-blue-500"
-              size="large"
-              type="primary"
-            >
-              <div class="flex items-center gap-x-2">
-                <svg
-                  :data-src="RefreshIcon"
-                  class="size-6"
-                />
-                <span class="text-white font-medium text-lg">
-                  Начать сначала
-                </span>
-              </div>
-            </ElButton>
-          </template>
         </div>
       </div>
       <div class="mt-6">
