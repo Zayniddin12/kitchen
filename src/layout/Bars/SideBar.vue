@@ -3,6 +3,7 @@ import {ref, onMounted, watch, onUnmounted} from "vue";
 import {useRoute, useRouter} from "vue-router";
 import {useLayoutStore} from "@/navigation";
 import ChildSidebar from "@/layout/Bars/ChildSidebar.vue";
+import {ElNotification} from "element-plus";
 
 const emit = defineEmits<{
   (e: 'update:childSidebar', value: boolean): void;
@@ -15,7 +16,7 @@ let route = useRoute();
 
 let currentIndex = ref<number>(0);
 let currentMenu = ref<number>(0);
-let childIsOpen = ref<boolean>(localStorage.getItem("child-sidebar") === "true");
+const isSidebar = ref(false)
 
 interface MenuItem {
   title?: string;
@@ -26,10 +27,8 @@ interface MenuItem {
 
 onMounted(() => {
   const storedMenu = sessionStorage.getItem('current-menu');
-  const storedSidebar = localStorage.getItem('child-sidebar');
 
   currentMenu.value = storedMenu ? JSON.parse(storedMenu) as number : 0;
-  childIsOpen.value = storedSidebar === "true";
 
   document.body.addEventListener('click', closeChildSidebar);
 });
@@ -45,34 +44,32 @@ watch(() => route.path, () => {
 
 
 const activeMenu = (index: number, item: MenuItem) => {
+  if (item.route) {
+    router.push(item.route);
+  }
+
+  isSidebar.value = true;
   currentIndex.value = index;
   currentMenu.value = index;
-  childIsOpen.value = !!item.children;
   emit("update:childSidebar", !!item.children);
 
   localStorage.setItem("child-sidebar", "true");
   sessionStorage.setItem("current-menu", currentMenu.value.toString());
-
-  if (item.route) {
-    router.push(item.route);
-  }
 };
 
 const closeChildSidebar = () => {
   currentIndex.value = 0;
+  isSidebar.value = false
   emit("update:childSidebar", false);
 };
 
 const pinSidebar = () => {
-  console.log('pin is not finished yet')
+  ElNotification({title: 'Warning', message: 'pin is not finished yet', type: 'warning'})
 };
 
 const logOut = () => {
-  const arr = ['current-menu', 'child-sidebar']
-
-  for (let i = 0; i < arr.length; i++) {
-    localStorage.removeItem(arr[i]);
-  }
+  localStorage.removeItem('child-sidebar');
+  sessionStorage.removeItem('current-menu');
   router.push("/login");
 };
 </script>
@@ -111,14 +108,27 @@ const logOut = () => {
           </div>
 
           <!-----------------------------------child sidebar----------------------------------->
-          <div v-if="currentIndex === index && item.children && childIsOpen"
+          <div v-show="currentIndex === index && item.children"
                class="w-[260px] dark:bg-dark bg-white-blue rounded-[16px] h-[100%] absolute top-0 left-[120px] transition overflow-auto"
           >
+            <header class="flex items-center justify-between pt-[16px] pb-[32px] px-[24px]">
+              <h1 class="text-[#000000] font-medium text-[20px] dark:text-white">{{ item.title }}</h1>
+
+              <div class="flex items-center cursor-pointer">
+                <img src="@/assets/images/pin.svg"
+                     alt="pin" @click.stop="pinSidebar"
+                />
+                <img
+                    src="@/assets/images/close.svg"
+                    class="ml-[15px]" alt="close"
+                    @click.stop="closeChildSidebar"
+                />
+              </div>
+            </header>
+
             <ChildSidebar
                 :children="item.children as any"
-                :header="item.title"
                 @closeSidebar="closeChildSidebar"
-                @pinSidebar="pinSidebar"
             />
           </div>
         </div>
@@ -165,8 +175,8 @@ const logOut = () => {
 }
 
 .activeListItem li {
-  color: #000d24!important;
-  background-color: #000d24!important;
+  color: #000d24 !important;
+  background-color: #000d24 !important;
 }
 
 .activeListItem h1 {

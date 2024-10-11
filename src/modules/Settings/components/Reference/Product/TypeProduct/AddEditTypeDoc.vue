@@ -61,7 +61,7 @@ watch(() => route.name, () => {
     <h1 class="m-0 font-semibold text-[32px] leading-[48px]">{{ route.meta.title }}</h1>
 
     <div class="flex items-start mt-[24px]">
-      <div class="grid grid-cols-2 border rounded-[24px] p-[24px] gap-5 h-[50vh] w-[90%]">
+      <div class="grid grid-cols-2 border rounded-[24px] p-[24px] gap-5 h-[50vh] w-[70%]">
         <app-input
           :disabled="route.name === 'reference-type-product-view'"
           v-model="dataValue.name.ru"
@@ -95,7 +95,7 @@ watch(() => route.name, () => {
       </button>
     </div>
 
-    <div class="flex items-start justify-between mt-[24px] w-[89%]"
+    <div class="flex items-start justify-between mt-[24px] w-[70%]"
          v-if="route.name === 'reference-type-product-edit-id' || route.name === 'reference-type-product-create'">
       <button
         class="custom-danger-btn"

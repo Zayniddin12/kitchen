@@ -59,7 +59,7 @@ watchEffect(() => {
     <h1 class="m-0 font-semibold text-[32px] leading-[48px]">{{ route.meta.title }}</h1>
 
     <div class="flex items-start mt-[24px]">
-      <div class="border rounded-[24px] p-[24px] w-[90%]  h-[65vh]">
+      <div class="border rounded-[24px] p-[24px] w-[70%]  h-[65vh]">
         <AppMediaUploader />
 
         <div class="grid grid-cols-2 gap-4 mt-[24px]">
@@ -114,7 +114,7 @@ watchEffect(() => {
     </div>
 
     <div
-      class="flex items-center justify-between mt-[24px] w-[90%]"
+      class="flex items-center justify-between mt-[24px] w-[70%]"
       v-if="route.name === 'reference-vid-add' || route.name === 'reference-vid-edit-id'"
     >
       <button

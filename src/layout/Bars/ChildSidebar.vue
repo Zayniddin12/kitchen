@@ -19,10 +19,6 @@ const props = defineProps({
     type: Array as PropType<SidebarItem[]>,
     required: true,
   },
-  header: {
-    type: String,
-    default: "",
-  },
 });
 
 const currentItem = ref<string>("");
@@ -46,15 +42,6 @@ const activeChildMenu = (item: SidebarItem) => {
 
 <template>
   <div>
-    <header class="flex items-center justify-between pt-[16px] pb-[32px] px-[24px]">
-      <h1 class="text-[#000000] font-medium text-[20px] dark:text-white">{{ header }}</h1>
-
-      <div class="flex items-center cursor-pointer">
-        <img src="@/assets/images/pin.svg" alt="pin" />
-        <img src="@/assets/images/close.svg" class="ml-[15px]" alt="close" @click.stop="emit('closeSidebar')" />
-      </div>
-    </header>
-
     <el-collapse
         v-for="(item, index) in children"
         :key="index"
@@ -85,7 +72,7 @@ const activeChildMenu = (item: SidebarItem) => {
 
         <div v-for="(sub, index2) in item.children"
             :key="index2"
-            class="text-left py-[10px] px-[12px] text-dark text-[14px] font-medium cursor-pointer dark:text-white"
+            class="text-left py-[10px] px-[12px] text-dark text-[14px] font-medium cursor-pointer dark:text-white ml-[35px]"
             :class="{ activeMenu: currentItem == sub.route }"
             @click.stop="activeChildMenu(sub)"
         >
