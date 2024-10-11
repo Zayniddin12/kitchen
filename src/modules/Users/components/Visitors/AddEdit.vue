@@ -174,13 +174,13 @@ watchEffect(() => {
 
           <div class="grid grid-cols-2 gap-4 mt-[40px]">
             <app-select
-              label="Место работы (необязательно)"
+              label="Место работы"
               label-class="text-[#A8AAAE] text-[12px] font-medium"
               placeholder="Выберите"
             />
 
             <app-select
-              label="График работы (необязательно)"
+              label="График работы"
               label-class="text-[#A8AAAE] text-[12px] font-medium"
               placeholder="Выберите"
             />
@@ -201,9 +201,10 @@ watchEffect(() => {
       <button
         class="custom-cancel-btn"
         @click="router.push('/visitors')"
-      >Отменить
+      >
+        Отменить
       </button>
-      <button class="custom-apply-btn ml-[8px]">Добавить</button>
+      <button class="custom-apply-btn ml-[8px]">{{route.name === 'visitors-edit-form-id' ? 'Сохранить' : 'Добавить'}}</button>
     </div>
   </div>
 </template>

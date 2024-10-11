@@ -3,8 +3,8 @@
     class="w-[30px]"
     @click="toggleTheme"
   >
-    <img v-if="currentTheme === 'light'" src="@/assets/images/icons/moon.svg" alt="">
-    <img v-else src="@/assets/images/icons/sun.svg" alt="">
+    <img v-if="currentTheme === 'light'" src="@/assets/images/icons/moon.svg" alt="moon"/>
+    <img v-else src="@/assets/images/icons/sun.svg" alt="sun"/>
   </button>
 </template>
 

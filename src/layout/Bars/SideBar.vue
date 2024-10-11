@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import {ref, onMounted, watch, onUnmounted} from "vue";
-import {useRoute, useRouter} from "vue-router";
-import {useLayoutStore} from "@/navigation";
+import { ref, onMounted, watch, onUnmounted } from "vue";
+import { useRoute, useRouter } from "vue-router";
+import { useLayoutStore } from "@/navigation";
 import ChildSidebar from "@/layout/Bars/ChildSidebar.vue";
 
 const emit = defineEmits<{
-  (e: 'update:childSidebar', value: boolean): void;
-  (e: 'closeChildSidebar2'): void;
+  (e: "update:childSidebar", value: boolean): void;
+  (e: "closeChildSidebar2"): void;
 }>();
 
 const store = useLayoutStore();
@@ -16,6 +16,7 @@ let route = useRoute();
 let currentIndex = ref<number>(0);
 let currentMenu = ref<number>(0);
 let childIsOpen = ref<boolean>(localStorage.getItem("child-sidebar") === "true");
+let childIsOpenPin = ref<boolean>(JSON.parse(localStorage.getItem("child-sidebar-pin") || "false"));
 
 interface MenuItem {
   title?: string;
@@ -25,47 +26,32 @@ interface MenuItem {
 }
 
 onMounted(() => {
-  const storedMenu = localStorage.getItem('current-menu');
-  const storedSidebar = localStorage.getItem('child-sidebar');
+  const storedMenu: string | number = sessionStorage.getItem("current-menu") | 0;
+  const storedSidebar = localStorage.getItem("child-sidebar");
+
+  if (childIsOpenPin.value) {
+    currentIndex.value = Number(storedMenu);
+  } else {
+    currentIndex.value = 0;
+  }
+
+  console.log(currentIndex.value);
 
   currentMenu.value = storedMenu ? JSON.parse(storedMenu) as number : 0;
   childIsOpen.value = storedSidebar === "true";
 
-  document.body.addEventListener('click', closeChildSidebar);
+  document.body.addEventListener("click", closeChildSidebar);
 });
 
 onUnmounted(() => {
-  document.body.removeEventListener('click', closeChildSidebar);
+  document.body.removeEventListener("click", closeChildSidebar);
+  localStorage.setItem("child-sidebar-pin", JSON.stringify(false));
 });
 
 watch(() => route.path, () => {
-  const storedMenu = localStorage.getItem('current-menu');
+  const storedMenu = sessionStorage.getItem("current-menu");
   currentMenu.value = storedMenu ? JSON.parse(storedMenu) as number : 0;
 });
-
-// watch(() => route.path, (value) => {
-//   let results = [];
-//
-//   store.menuItems.forEach((item, index) => {
-//     if (item.children) {
-//       item.children.forEach(child => {
-//         if (child.children) {
-//           results.push(...child.children.map(grandChild => grandChild.route).filter(Boolean));
-//         } else {
-//           results.push(child.route);
-//         }
-//       });
-//     } else {
-//       results.push(item.route)
-//     }
-//   });
-//
-//   console.log(results.includes(value), 'results');
-//   console.log(value === route.path)
-//   currentMenu.value = value;
-//
-// }, {immediate: true});
-
 
 const activeMenu = (index: number, item: MenuItem) => {
   currentIndex.value = index;
@@ -74,7 +60,7 @@ const activeMenu = (index: number, item: MenuItem) => {
   emit("update:childSidebar", !!item.children);
 
   localStorage.setItem("child-sidebar", "true");
-  localStorage.setItem("current-menu", currentMenu.value.toString());
+  sessionStorage.setItem("current-menu", currentMenu.value.toString());
 
   if (item.route) {
     router.push(item.route);
@@ -82,17 +68,25 @@ const activeMenu = (index: number, item: MenuItem) => {
 };
 
 const closeChildSidebar = () => {
-  currentIndex.value = 0;
-  emit("update:childSidebar", false);
+  if (childIsOpenPin.value) {
+    emit("update:childSidebar", childIsOpenPin.value);
+  } else {
+    currentIndex.value = 0;
+    emit("update:childSidebar", childIsOpenPin.value);
+  }
 };
 
 const pinSidebar = () => {
-  console.log('pin is not finished yet')
+  localStorage.setItem("child-sidebar-pin", JSON.stringify(!JSON.parse(localStorage.getItem("child-sidebar-pin") || "false")));
+  childIsOpenPin.value = JSON.parse(localStorage.getItem("child-sidebar-pin") || "false");
 };
 
 const logOut = () => {
-  localStorage.removeItem('current-menu');
-  localStorage.removeItem('child-sidebar');
+  const arr = ["current-menu", "child-sidebar"];
+
+  for (let i = 0; i < arr.length; i++) {
+    localStorage.removeItem(arr[i]);
+  }
   router.push("/login");
 };
 </script>
@@ -124,14 +118,15 @@ const logOut = () => {
           </div>
 
           <!-----------------------------------child sidebar----------------------------------->
-          <div v-if="currentIndex === index && item.children && childIsOpen"
+          <div v-if="currentIndex === index && item.children"
                class="w-[260px] dark:bg-dark bg-white-blue rounded-[16px] h-[100%] absolute top-0 left-[120px] transition overflow-auto"
           >
             <ChildSidebar
+                :childIsOpenPin="childIsOpenPin"
                 :children="item.children as any"
                 :header="item.title"
                 @closeSidebar="closeChildSidebar"
-                @pinSidebar="pinSidebar"
+                @toggleSidebarPin="pinSidebar"
             />
           </div>
         </div>

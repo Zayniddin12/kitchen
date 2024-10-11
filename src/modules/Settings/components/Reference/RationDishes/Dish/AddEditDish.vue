@@ -1,13 +1,14 @@
 <script
-  setup
-  lang="ts"
+    setup
+    lang="ts"
 >
-import { ref, watch } from "vue";
-import { useRoute, useRouter } from "vue-router";
+import {ref, watch} from "vue";
+import {useRoute, useRouter} from "vue-router";
 import AppInput from "@/components/ui/form/app-input/AppInput.vue";
 import AppSelect from "@/components/ui/form/app-select/AppSelect.vue";
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 import AppMediaUploader from "@/components/ui/form/app-media-uploader/AppMediaUploader.vue";
+import AppTimePicker from "@/components/ui/form/app-time-picker/AppTimePicker.vue";
 
 interface TableData {
   id: string;
@@ -88,7 +89,7 @@ const handleDelete = (index: number) => {
   }
 };
 
-const { setBreadCrumb } = useBreadcrumb();
+const {setBreadCrumb} = useBreadcrumb();
 
 const setBreadCrumbFn = () => {
   setBreadCrumb([
@@ -97,15 +98,15 @@ const setBreadCrumbFn = () => {
     },
     {
       label: "Справочники",
-      to: { name: "reference" },
+      to: {name: "reference"},
     },
     {
       label: "Рационы и блюда",
-      to: { name: "reference" },
+      to: {name: "reference"},
     },
     {
       label: "Блюда",
-      to: { name: "reference-dish" },
+      to: {name: "reference-dish"},
     },
     {
       label: String(route?.meta?.breadcrumbItemTitle ?? ""),
@@ -116,7 +117,7 @@ const setBreadCrumbFn = () => {
 
 watch(() => route.name, () => {
   setBreadCrumbFn();
-}, { immediate: true });
+}, {immediate: true});
 
 </script>
 
@@ -127,102 +128,115 @@ watch(() => route.name, () => {
     <div class="mt-[24px] flex items-start">
       <div class="w-[90%]">
         <div class="border rounded-[24px] p-[24px]">
-          <AppMediaUploader class="mt-4" />
-          <div class="mt-[24px] grid grid-cols-2 gap-5">
+          <AppMediaUploader class="mt-4"/>
+
+          <div class="mt-[24px] grid grid-cols-3 gap-5">
             <app-input
-              label="Наименование (RU)"
-              placeholder="Введите"
-              label-class="text-[#A8AAAE] text-[12px]"
+                label="Наименование (RU)"
+                placeholder="Введите"
+                label-class="text-[#A8AAAE] text-[12px]"
             />
 
             <app-input
-              label="Наименование (UZ)"
-              placeholder="Введите"
-              label-class="text-[#A8AAAE] text-[12px]"
+                label="Наименование (UZ)"
+                placeholder="Введите"
+                label-class="text-[#A8AAAE] text-[12px]"
             />
 
             <app-input
-              label="Уникальный номер рациона"
-              placeholder="Введите"
-              label-class="text-[#A8AAAE] text-[12px]"
+                disabled
+                label="Уникальный номер рациона"
+                placeholder="Введите"
+                label-class="text-[#A8AAAE] text-[12px]"
             />
 
             <app-select
-              label="Ед. измерения"
-              placeholder="Выберите"
-              label-class="text-[#A8AAAE] text-[12px]"
+                label="Тип кухни"
+                placeholder="Выберите"
+                label-class="text-[#A8AAAE] text-[12px]"
+            />
+
+            <div class="flex items-center">
+              <app-time-picker type="time" label="Время начало" class="w-full" label-class="text-[#A8AAAE] font-medium text-[12px]"/>
+
+              <app-time-picker label="Время окончания" class="w-full ml-[8px]" label-class="text-[#A8AAAE] font-medium text-[12px]"/>
+            </div>
+
+            <app-select
+                label="Длительность"
+                placeholder="Выберите"
+                label-class="text-[#A8AAAE] text-[12px]"
             />
           </div>
 
           <template v-if="route.name === 'reference-view-id'">
             <el-table
-              :data="tableData"
-              class="custom-element-table mt-[40px]"
+                :data="tableData"
+                class="custom-element-table mt-[40px]"
             >
               <el-table-column
-                prop="id"
-                label="Состав"
+                  prop="id"
+                  label="Состав"
               />
               <el-table-column
-                prop="type"
-                label="Тип продукта"
+                  prop="count"
+                  label="Количество"
               />
               <el-table-column
-                prop="vid"
-                label="Вид продукта"
-              />
-              <el-table-column
-                prop="count"
-                label="Количество"
-              />
-              <el-table-column
-                prop="count2"
-                label="Ед. измерения"
+                  prop="count2"
+                  label="Ед. измерения"
               />
             </el-table>
           </template>
 
           <template v-else>
             <div class="mt-[24px]">
-              <h1 class="text-[#000D24] text-[18px] font-medium">Состав рациона</h1>
+              <h1 class="text-[#000D24] text-[18px] font-medium">Состав блюда</h1>
 
               <div class="bg-[#F8F9FC] rounded-[16px] p-[16px] mt-[24px]">
                 <div
-                  class="grid grid-cols-4 gap-4 border-b mt-[16px]"
-                  v-for="(item, index) in repeater"
-                  :key="index"
+                    class="grid grid-cols-5 gap-4 border-b mt-[16px]"
+                    v-for="(item, index) in repeater"
+                    :key="index"
                 >
                   <app-select
-                    label="Тип продукта"
-                    label-class="text-[#A8AAAE] text-[12px]"
-                    placeholder="Выберите"
+                      label="Блюдо"
+                      label-class="text-[#A8AAAE] text-[12px]"
+                      placeholder="Выберите"
                   />
 
                   <app-select
-                    label="Вид продукта"
-                    label-class="text-[#A8AAAE] text-[12px]"
-                    placeholder="Выберите"
+                      label="Тип продукта"
+                      label-class="text-[#A8AAAE] text-[12px]"
+                      placeholder="Выберите"
+                  />
+
+                  <app-select
+                      label="Вид продукта"
+                      label-class="text-[#A8AAAE] text-[12px]"
+                      placeholder="Выберите"
                   />
 
                   <app-input
-                    label="Количество"
-                    label-class="text-[#A8AAAE] text-[12px]"
-                    placeholder="0.0"
+                      label="Количество"
+                      label-class="text-[#A8AAAE] text-[12px]"
+                      placeholder="0.0"
                   />
 
                   <div class="flex items-center">
                     <app-input
-                      label="Ед. измерения"
-                      label-class="text-[#A8AAAE] text-[12px]"
-                      placeholder="кг"
+                        label="Ед. измерения"
+                        disabled
+                        label-class="text-[#A8AAAE] text-[12px]"
+                        placeholder="кг"
                     />
                     <button
-                      class="custom-cancel-btn ml-[16px] mt-2"
-                      @click="handleDelete(index)"
+                        class="bg-[#E2E6F3] rounded-[8px] flex justify-center items-center h-[40px] w-[40px] ml-[16px] mt-2"
+                        @click="handleDelete(index)"
                     >
                       <img
-                        src="@/assets/images/icons/delete.svg"
-                        alt="delete"
+                          src="@/assets/images/icons/delete.svg"
+                          alt="delete"
                       />
                     </button>
                   </div>
@@ -230,14 +244,13 @@ watch(() => route.name, () => {
               </div>
 
               <button
-                v-if="route.name === 'reference-create' || route.name === 'reference-dish-id'"
-                class="text-[#2E90FA] flex items-center border px-[16px] py-[8px] border-[#2E90FA] rounded-lg text-[12px] font-medium mt-[12px]"
-                @click="repeaterAgain"
+                  class="text-[#2E90FA] flex items-center border px-[16px] py-[8px] border-[#2E90FA] rounded-lg text-[12px] font-medium mt-[12px]"
+                  @click="repeaterAgain"
               >
                 <img
-                  src="@/assets/images/icons/plus2.svg"
-                  class="mr-[4px]"
-                  alt="plus"
+                    src="@/assets/images/icons/plus2.svg"
+                    class="mr-[4px]"
+                    alt="plus"
                 />
                 Добавить еще
               </button>
@@ -245,34 +258,37 @@ watch(() => route.name, () => {
           </template>
         </div>
         <div
-          class="flex items-center justify-between mt-[24px]"
-          v-if="route.name === 'reference-dish-create' || route.name === 'reference-dish-id'"
+            class="flex items-center justify-between mt-[24px]"
+            v-if="route.name === 'reference-dish-create' || route.name === 'reference-dish-id'"
         >
           <button
-            class="custom-danger-btn"
-            v-if="route.name === 'reference-dish-id'"
+              class="custom-danger-btn"
+              v-if="route.name === 'reference-dish-id'"
           >Удалить
           </button>
 
           <div class="flex items-center justify-end ml-auto">
             <button
-              class="custom-cancel-btn"
-              @click="router.go(-1)"
+                class="custom-cancel-btn"
+                @click="router.go(-1)"
             >Отменить
             </button>
-            <button class="custom-apply-btn ml-[8px]">Сохранить</button>
+            <button class="custom-apply-btn ml-[8px]">
+              {{ route.name === 'reference-dish-id' ? 'Сохранить' : 'Добавить' }}
+            </button>
           </div>
         </div>
       </div>
 
       <button
-        class="custom-cancel-btn flex items-center ml-[24px]"
-        v-if="route.name === 'reference-view-id'"
+          class="custom-cancel-btn flex items-center ml-[24px]"
+          v-if="route.name === 'reference-view-id'"
+          @click="router.push(`/reference-dish-edit/${route.params.id}`)"
       >
         <img
-          src="@/assets/images/icons/edit.svg"
-          alt="edit"
-          class="mr-[12px]"
+            src="@/assets/images/icons/edit.svg"
+            alt="edit"
+            class="mr-[12px]"
         />
         Редактировать
       </button>
@@ -281,8 +297,8 @@ watch(() => route.name, () => {
 </template>
 
 <style
-  scoped
-  lang="scss"
+    scoped
+    lang="scss"
 >
 .edit__btn {
   @apply bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50

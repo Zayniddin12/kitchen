@@ -160,6 +160,7 @@ const change = (e: any) => {
     <el-table
       :data="tableData"
       class="custom-element-table"
+      stripe
     >
       <el-table-column
         prop="id"
@@ -206,7 +207,7 @@ const change = (e: any) => {
         <template #default="scope">
           <div
             :class="scope.row.status.status ? 'text-[#22A95E] bg-[#D4F4E2]' : 'text-[#8F9194] bg-[#EEEEEF]'"
-            class="py-[8px] px-[16px] rounded-full text-center text-[12px] font-medium"
+            class="py-[8px] px-[16px] rounded-full text-center text-[13px] font-medium w-[70%]"
           >
             {{ scope.row.status.title }}
           </div>
