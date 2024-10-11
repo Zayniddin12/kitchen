@@ -3,7 +3,7 @@
   lang="ts"
 >
 import { useRoute } from "vue-router";
-import { onMounted, ref } from "vue";
+import { ref, watchEffect } from "vue";
 import AppSelect from "@/components/ui/form/app-select/AppSelect.vue";
 import AppInput from "@/components/ui/form/app-input/AppInput.vue";
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
@@ -88,7 +88,7 @@ const setBreadCrumbFn = () => {
   ]);
 };
 
-onMounted(() => {
+watchEffect(() => {
   setBreadCrumbFn();
 });
 

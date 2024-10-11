@@ -1,8 +1,11 @@
-<script setup lang="ts">
+<script
+  setup
+  lang="ts"
+>
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
-import { onMounted } from "vue";
+import { watchEffect } from "vue";
 
-const {setBreadCrumb} = useBreadcrumb();
+const { setBreadCrumb } = useBreadcrumb();
 
 const setBreadCrumbFn = () => {
   setBreadCrumb([
@@ -11,15 +14,15 @@ const setBreadCrumbFn = () => {
       isActionable: true,
     },
   ]);
-}
+};
 
-onMounted(() => {
+watchEffect(() => {
   setBreadCrumbFn();
-})
+});
 </script>
 
 <template>
-<div>логи</div>
+  <div>логи</div>
 </template>
 
 <style lang="scss">

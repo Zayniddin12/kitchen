@@ -13,7 +13,7 @@ const route = useRoute();
 interface Kitchen {
   title: string;
   subTitle: string;
-  image: string;
+  id: number;
 }
 
 const kitchen = ref<Kitchen[]>([

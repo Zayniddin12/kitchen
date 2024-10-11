@@ -3,7 +3,7 @@
   lang="ts"
 >
 import { useRoute } from "vue-router";
-import { onMounted, ref } from "vue";
+import { ref, watchEffect } from "vue";
 import { useKitchenStore } from "@/modules/Kitchen/store/kitchen.store";
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 
@@ -12,6 +12,16 @@ const route = useRoute();
 const { setBreadCrumb } = useBreadcrumb();
 
 const num = ref(1);
+
+interface TableData {
+  id: number;
+  num: string;
+  date: string;
+  doc: string;
+  theme: string;
+  send: string;
+  receive: string;
+}
 
 const tableData = ref<TableData[]>([
   {
@@ -87,7 +97,7 @@ const setBreadCrumbFn = () => {
   ]);
 };
 
-onMounted(() => {
+watchEffect(() => {
   setBreadCrumbFn();
 });
 

@@ -5,7 +5,7 @@
 import AppInput from "@/components/ui/form/app-input/AppInput.vue";
 import AppSelect from "@/components/ui/form/app-select/AppSelect.vue";
 import { useRoute } from "vue-router";
-import { onMounted, ref } from "vue";
+import { ref, watchEffect } from "vue";
 import { useKitchenStore } from "@/modules/Kitchen/store/kitchen.store";
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 
@@ -73,8 +73,8 @@ const addMeal = () => {
 };
 
 
-const deleteMeal = (mealIndex) => {
-  mealData.value = mealData.value.filter((meal, index) => index !== mealIndex);
+const deleteMeal = (mealIndex: any) => {
+  mealData.value = mealData.value.filter((meal: any, index: any) => index !== mealIndex);
 };
 
 const setBreadCrumbFn = () => {
@@ -112,7 +112,7 @@ const setBreadCrumbFn = () => {
   ]);
 };
 
-onMounted(() => {
+watchEffect(() => {
   setBreadCrumbFn();
 });
 

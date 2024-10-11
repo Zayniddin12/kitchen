@@ -1,7 +1,10 @@
-<script setup lang="ts">
+<script
+  setup
+  lang="ts"
+>
 import AppDatePicker from "@/components/ui/form/app-date-picker/AppDatePicker.vue";
 import { TableColumnType } from "@/types/common.type";
-import { computed, onMounted } from "vue";
+import { computed, watchEffect } from "vue";
 import NotFoundPage from "@/components/errors/404.vue";
 import { useDistrictStore } from "@/modules/Monitoring/store/district.store";
 import { useRoute } from "vue-router";
@@ -9,7 +12,7 @@ import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 
 const districtStore = useDistrictStore();
 const route = useRoute();
-const {setBreadCrumb} = useBreadcrumb();
+const { setBreadCrumb } = useBreadcrumb();
 
 const tableColumns = computed<TableColumnType[]>(() => {
   return [
@@ -94,12 +97,12 @@ const tableData = computed(() => {
   }
 
   return dataList;
-}) as Record<string, any>[];
+});
 
 const setBreadCrumbFn = () => {
   districtStore.getDistrict(+route.params.id);
 
-  if(!districtStore.district) return
+  if (!districtStore.district) return;
 
   setBreadCrumb([
     {
@@ -113,13 +116,12 @@ const setBreadCrumbFn = () => {
       label: districtStore.district.name,
       isActionable: true,
     },
-  ])
-}
+  ]);
+};
 
-onMounted(() => {
+watchEffect(() => {
   setBreadCrumbFn();
-})
-
+});
 </script>
 
 <template>
@@ -216,8 +218,8 @@ onMounted(() => {
         <ElTableColumn
           v-for="column in tableColumns"
           :key="column.prop"
-          :width="column.width"
-          :sortable="column.sortable"
+          :width="column?.width ?? ''"
+          :sortable="!!column.sortable"
           :prop="column.prop"
         >
           <template #header>

@@ -5,8 +5,8 @@
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 import { setItem } from "@/utils/localStorage";
 import { BreadcrumbItemType } from "@/components/ui/app-breadcrumb/app-breadcrumb.type";
-import { onMounted, watch } from "vue";
-import { onBeforeRouteLeave, useRoute } from "vue-router";
+import { watch } from "vue";
+import { useRoute } from "vue-router";
 
 const { breadcrumb, setBreadCrumb } = useBreadcrumb();
 const route = useRoute();

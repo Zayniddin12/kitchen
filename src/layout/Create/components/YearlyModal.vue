@@ -12,6 +12,15 @@ const props = defineProps({
   },
 });
 
+interface TableData {
+  id: number;
+  title: string;
+  total_count: number;
+  measurement: string;
+  price: string;
+  sum: string;
+}
+
 const tableData = ref<TableData[]>([
   {
     id: 1,

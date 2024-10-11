@@ -4,7 +4,7 @@
 >
 import AppDatePicker from "@/components/ui/form/app-date-picker/AppDatePicker.vue";
 import { TableColumnType } from "@/types/common.type";
-import { computed, onMounted, ref, watch } from "vue";
+import { computed, ref, watch, watchEffect } from "vue";
 import { useRoute } from "vue-router";
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 
@@ -42,7 +42,7 @@ const getActiveTab = () => {
 };
 
 
-const attendanceTableColumns = computed<TableColumnType>(() => {
+const attendanceTableColumns = computed<TableColumnType[]>(() => {
   return [
     {
       label: "№",
@@ -115,7 +115,7 @@ const attendanceTableData = computed(() => {
   return dataList;
 });
 
-const dishesTableColumns = computed<TableColumnType>(() => {
+const dishesTableColumns = computed<TableColumnType[]>(() => {
   return [
     {
       label: "№",
@@ -204,7 +204,7 @@ watch(() => route.query, () => {
   getActiveTab();
 }, { immediate: true });
 
-onMounted(() => {
+watchEffect(() => {
   setBreadCrumbFn();
 });
 
@@ -324,8 +324,8 @@ onMounted(() => {
             <ElTableColumn
               v-for="column in attendanceTableColumns"
               :key="column.prop"
-              :width="column.width"
-              :sortable="column.sortable"
+              :width="column?.width ?? ''"
+              :sortable="!!column.sortable"
               :prop="column.prop"
             >
               <template #header>
@@ -351,8 +351,8 @@ onMounted(() => {
               <ElTableColumn
                 v-for="column in dishesTableColumns"
                 :key="column.prop"
-                :width="column.width"
-                :sortable="column.sortable"
+                :width="column.width ?? ''"
+                :sortable="!!column.sortable"
                 :prop="column.prop"
               >
                 <template #header>
@@ -374,8 +374,8 @@ onMounted(() => {
               <ElTableColumn
                 v-for="column in dishesTableColumns"
                 :key="column.prop"
-                :width="column.width"
-                :sortable="column.sortable"
+                :width="column.width ?? ''"
+                :sortable="!!column.sortable"
                 :prop="column.prop"
               >
                 <template #header>

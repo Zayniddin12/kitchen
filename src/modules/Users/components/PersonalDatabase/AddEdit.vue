@@ -2,13 +2,14 @@
   setup
   lang="ts"
 >
-import { computed, onMounted, ref } from "vue";
+import { computed, ref, watchEffect } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import AppInput from "@/components/ui/form/app-input/AppInput.vue";
 import AppDatePicker from "@/components/ui/form/app-date-picker/AppDatePicker.vue";
 import AppSelect from "@/components/ui/form/app-select/AppSelect.vue";
 
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
+import AppMediaUploader from "@/components/ui/form/app-media-uploader/AppMediaUploader.vue";
 
 const { setBreadCrumb } = useBreadcrumb();
 
@@ -38,8 +39,8 @@ const setActiveTab = (item: any) => {
 };
 
 const title = computed(() => {
-  return  route.name === "personal-database-create-form" ? "Добавить" : "Редактировать"
-})
+  return route.name === "personal-database-create-form" ? "Добавить" : "Редактировать";
+});
 
 const setBreadCrumbFn = () => {
   setBreadCrumb([
@@ -51,13 +52,13 @@ const setBreadCrumbFn = () => {
       to: { name: "personal-database" },
     },
     {
-      label:  title,
+      label: title.value,
       isActionable: true,
     },
   ]);
 };
 
-onMounted(() => {
+watchEffect(() => {
   setBreadCrumbFn();
 });
 
@@ -87,10 +88,10 @@ onMounted(() => {
           <div class="top-[32px] absolute flex items-center">
             <div class="rounded-full overflow-hidden border-4 border-gray-100">
               <img
-                src="../../../../assets/images/avatar.png"
+                src="@/assets/images/avatar.png"
                 alt="Profile Picture"
                 class="object-cover h-[160px] w-[160px] rounded-full"
-              >
+              />
             </div>
 
             <div class="text-xl font-semibold text-gray-900 ml-[24px]">
@@ -184,27 +185,11 @@ onMounted(() => {
       </template>
 
       <template v-else>
-        <input
-          type="file"
-          id="inputFile"
-          class="hidden"
-        >
-        <label
-          for="inputFile"
-          class="cursor-pointer bg-[#F8F9FC] rounded-[16px] border-dashed border border-gray-300 flex flex-col items-center justify-center p-10 h-[60vh]"
-        >
-          <img
-            src="@/assets/images/icons/upload.svg"
-            alt="upload"
-          />
+        <AppMediaUploader
+          class="m-6"
+          :height="633"
+        />
 
-          <p class="text-gray-700 text-sm mt-[24px]">Перетащите фотографию для загрузки</p>
-          <p class="text-gray-400 text-xs mb-[24px]">Максимальный размер фотографии 10 МБ</p>
-
-          <div class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600">
-            Выбрать фото
-          </div>
-        </label>
       </template>
     </div>
 

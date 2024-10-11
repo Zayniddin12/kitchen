@@ -1,15 +1,20 @@
-<script setup lang="ts">
-import { onMounted, ref } from "vue";
+<script
+  setup
+  lang="ts"
+>
+import { ref, watchEffect } from "vue";
 import { useRouter } from "vue-router";
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 
 interface MenuInterface {
   title: string;
   subTitle: string;
+  router?: string; // Router is optional now
 }
+
 interface UlItems {
   title: string;
-  menu: MenuInterface;
+  menu: MenuInterface[];
 }
 
 const router = useRouter();
@@ -125,11 +130,7 @@ const ulItems = ref<UlItems[]>([
   },
 ]);
 
-const detailPage = (value: any) => {
-  router.push(value.router);
-};
-
-const {setBreadCrumb} = useBreadcrumb();
+const { setBreadCrumb } = useBreadcrumb();
 
 const setBreadCrumbFn = () => {
   setBreadCrumb([
@@ -139,14 +140,13 @@ const setBreadCrumbFn = () => {
     {
       label: "Справочники",
       isActionable: true,
-    }
+    },
   ]);
-}
+};
 
-onMounted(() => {
+watchEffect(() => {
   setBreadCrumbFn();
-})
-
+});
 </script>
 
 <template>
@@ -175,18 +175,19 @@ onMounted(() => {
           class="ml-[36px] !my-[15px]"
           v-for="(menu, index2) in item.menu"
           :key="index2"
-          @click="router.push(menu.router)"
         >
-          <li
-            class="text-[#4F5662] text-[14px] font-medium leading-[20px] cursor-pointer hover:underline hover:decoration-[#2E90FA] hover:text-[#2E90FA]"
-          >
-            {{ menu.title }}
-          </li>
-          <li
-            class="text-[12px] text-[#A8AAAE] font-normal mt-[4px] leading-[16px] cursor-pointer"
-          >
-            {{ menu.subTitle }}
-          </li>
+         <router-link :to="menu.router as string">
+           <li
+               class="text-[#4F5662] text-[14px] font-medium leading-[20px] cursor-pointer hover:underline hover:decoration-[#2E90FA] hover:text-[#2E90FA]"
+           >
+             {{ menu.title }}
+           </li>
+           <li
+               class="text-[12px] text-[#A8AAAE] font-normal mt-[4px] leading-[16px] cursor-pointer"
+           >
+             {{ menu.subTitle }}
+           </li>
+         </router-link>
         </ul>
       </div>
     </div>

@@ -65,7 +65,7 @@ const defaultTab = TABS.PRODUCTS;
 const activeTab = ref<number | null>(null);
 
 const getActiveTab = () => {
-  const tab = +route.query?.tab;
+  const tab = +(route.query?.tab ?? defaultTab);
 
   const isValidTab = !isNaN(tab) && [TABS.PRODUCTS, TABS.INVOICES].includes(tab);
 
@@ -158,7 +158,7 @@ onMounted(() => {
           class="mt-2"
           striped
         />
-        <p class="mt-4 text-xs text-[#A8AAAE]">
+        <p class="mt-4 text-xs text-black-sub">
           Этот элемент показывает процент заполненности склада, помогая вам следить за остатками и эффективно управлять
           запасами.
         </p>

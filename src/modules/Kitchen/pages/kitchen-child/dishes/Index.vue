@@ -3,7 +3,7 @@
   lang="ts"
 >
 
-import { computed, onMounted } from "vue";
+import { computed, watchEffect } from "vue";
 import ColaImg from "@/assets/images/kitchen/test/cola.png";
 import DishesImg from "@/assets/images/kitchen/test/dishes.png";
 import { useRoute } from "vue-router";
@@ -172,7 +172,7 @@ const setBreadCrumbFn = () => {
   ]);
 };
 
-onMounted(() => {
+watchEffect(() => {
   setBreadCrumbFn();
 });
 
@@ -208,7 +208,7 @@ onMounted(() => {
               align="center"
               sortable
             >
-              <template #default="{row}">
+              <template #default="{row}: {row: Record<string,any>}">
                 <div class="flex items-center justify-center gap-x-3">
                   <img
                     :src="DishesImg"
@@ -237,23 +237,6 @@ onMounted(() => {
               align="center"
               sortable
             />
-            <ElTableColumn
-              prop="action"
-              align="right"
-              label="Действие"
-            >
-              <template #default="{row}">
-                <RouterLink
-                  class="action-btn inline-flex "
-                  :to="{name: 'KitchenDishesProductShow', params: {product_id: row.id}}"
-                >
-                  <img
-                    src="@/assets/images/eye.svg"
-                    alt="eye"
-                  />
-                </RouterLink>
-              </template>
-            </ElTableColumn>
           </ElTable>
         </div>
       </div>

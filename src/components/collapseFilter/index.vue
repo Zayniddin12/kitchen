@@ -1,26 +1,35 @@
-<script setup lang="ts">
+<script
+  setup
+  lang="ts"
+>
 
-import { computed, watch } from "vue";
+import { computed } from "vue";
 
 const model = defineModel<boolean>();
 
 const activeNames = computed<string[]>(() => {
   return model.value ? ["1"] : [];
-})
+});
 
 </script>
 
 <template>
   <div class="el-collapse-item2 transition-all pt-[24px]">
-    <el-collapse v-model="activeNames" class="border-0">
-      <el-collapse-item name="1" class="border-b-0">
+    <el-collapse
+      v-model="activeNames"
+      class="border-0"
+    >
+      <el-collapse-item
+        name="1"
+        class="border-b-0"
+      >
         <template #title>
           <slot name="header" />
         </template>
         <template #icon="{ isActive }">
           <div />
         </template>
-        <div class="border-[#e2e6f3] border bg-[#F8F9FC] rounded-[10px] py-[12px] px-[16px]">
+        <div class="border-[#e2e6f3] border bg-[#F8F9FC] dark:bg-dark rounded-[10px] py-[12px] px-[16px]">
           <h1 class="text-[#4F5662] font-medium text-[18px] mb-3">Фильтр</h1>
           <slot name="body" />
         </div>
@@ -38,5 +47,9 @@ const activeNames = computed<string[]>(() => {
 .el-collapse-item2 .el-collapse-item__wrap {
   border: none;
   overflow: unset;
+}
+
+.dark .el-collapse-item__wrap {
+  background-color: transparent !important;
 }
 </style>

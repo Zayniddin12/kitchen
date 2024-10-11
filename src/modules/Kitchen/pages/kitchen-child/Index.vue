@@ -2,7 +2,7 @@
   setup
   lang="ts"
 >
-import { computed, onMounted } from "vue";
+import { computed, watchEffect } from "vue";
 import kitchenIcon from "@/assets/images/icons/kitchen/kitchen.svg";
 import menuIcon from "@/assets/images/icons/kitchen/menu-icon.svg";
 import calculatorIcon from "@/assets/images/icons/kitchen/calculator-icon.svg";
@@ -92,16 +92,16 @@ const setBreadCrumbFn = () => {
     },
     {
       label: "Лагерь",
-      to: {name: "KitchenShowIndex"}
+      to: { name: "KitchenShowIndex" },
     },
     {
       label: "Паҳлавон",
       isActionable: true,
     },
-  ])
+  ]);
 };
 
-onMounted(() => {
+watchEffect(() => {
   setBreadCrumbFn();
 });
 
@@ -133,7 +133,3 @@ onMounted(() => {
     </div>
   </section>
 </template>
-
-<style lang="scss">
-
-</style>

@@ -12,6 +12,18 @@ html {
   scroll-behavior: smooth;
 }
 
+.dark h1,
+.dark h2,
+.dark h3,
+.dark h4,
+.dark h5,
+.dark h6,
+.dark span,
+.dark p,
+.dark a {
+  color: #fff;
+}
+
 ::-webkit-scrollbar {
   width: 12px;
   height: 12px;
@@ -22,6 +34,10 @@ html {
   scrollbar-color: #F8F9FC #f1f1f1;
 }
 
+.dark .custom-filter-btn {
+  background-color: #283046;
+  color: #fff;
+}
 
 .custom-filter-btn {
   background-color: var(--white-blue);
@@ -108,19 +124,33 @@ html {
   ul {
     .is-active {
       background-color: #2E90FA !important;
-      border-radius: 8px;
     }
 
     li {
       background-color: var(--white-blue) !important;
       height: 40px;
       width: 40px;
+      border-radius: 8px;
     }
   }
 }
 
-.el-table .cell {
-  //padding: 0 1!important;
+.dark .el-pagination {
+  button {
+    color: #fff;
+    background-color: #283046 !important;
+  }
+
+  ul {
+    .is-active {
+      background-color: #2E90FA !important;
+    }
+
+    li {
+      color: #fff;
+      background-color: #283046 !important;
+    }
+  }
 }
 
 .custom-element-table {
@@ -164,7 +194,7 @@ html {
   }
 
   &--has-append tbody tr:last-child {
-    td:last-child, td:first-child{
+    td:last-child, td:first-child {
       border-radius: 0 !important;
     }
   }

@@ -1,5 +1,8 @@
-<script setup lang="ts">
-import { onMounted, ref } from "vue";
+<script
+  setup
+  lang="ts"
+>
+import { ref, watchEffect } from "vue";
 import { Search } from "@element-plus/icons-vue";
 import { useRoute } from "vue-router";
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
@@ -68,7 +71,7 @@ const setBreadCrumbFn = () => {
   ]);
 };
 
-onMounted(() => {
+watchEffect(() => {
   setBreadCrumbFn();
 });
 
@@ -90,7 +93,8 @@ onMounted(() => {
 
         <button
           @click="$router.push({name: 'reference-warehouse-bases-add'})"
-          class="flex items-center justify-center gap-3 custom-apply-btn">
+          class="flex items-center justify-center gap-3 custom-apply-btn"
+        >
           <li
             :style="{
                   maskImage: 'url(/icons/plusIcon.svg)',
@@ -113,20 +117,49 @@ onMounted(() => {
     </div>
 
     <div class="mt-[24px]">
-      <el-table :data="tableData" class="custom-element-table">
-        <el-table-column prop="id" label="№" width="80" />
-        <el-table-column prop="name" label="Наименование базы" sortable width="400" />
-        <el-table-column prop="type" label="Юр. адрес" sortable />
-        <el-table-column label="Действие" align="right">
+      <el-table
+        :data="tableData"
+        class="custom-element-table"
+      >
+        <el-table-column
+          prop="id"
+          label="№"
+          width="80"
+        />
+        <el-table-column
+          prop="name"
+          label="Наименование базы"
+          sortable
+          width="400"
+        />
+        <el-table-column
+          prop="type"
+          label="Юр. адрес"
+          sortable
+        />
+        <el-table-column
+          label="Действие"
+          align="right"
+        >
           <template #default="scope">
-            <button class="action-btn mr-[8px]"
-                    @click="$router.push({name: 'reference-warehouse-bases-view', query: {type: 'view'}, params: {id: 1}})">
-              <img src="@/assets/images/eye.svg" alt="download" />
+            <button
+              class="action-btn mr-[8px]"
+              @click="$router.push({name: 'reference-warehouse-bases-view', query: {type: 'view'}, params: {id: 1}})"
+            >
+              <img
+                src="@/assets/images/eye.svg"
+                alt="download"
+              />
             </button>
 
-            <button class="action-btn"
-                    @click="$router.push({name: 'reference-warehouse-bases-edit', params: {id: 1}})">
-              <img src="@/assets/images/icons/edit.svg" alt="eye" />
+            <button
+              class="action-btn"
+              @click="$router.push({name: 'reference-warehouse-bases-edit', params: {id: 1}})"
+            >
+              <img
+                src="@/assets/images/icons/edit.svg"
+                alt="eye"
+              />
             </button>
           </template>
         </el-table-column>

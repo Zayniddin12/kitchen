@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { reactive, ref } from "vue";
+import {reactive, ref} from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { ValidationType } from "@/components/ui/form/app-form/app-form.type";
-import { toast } from "vue3-toastify";
+import { ElNotification } from 'element-plus'
 import Language from "@/components/language/index.vue";
 import AppInput from "@/components/ui/form/app-input/AppInput.vue";
 import AppForm from "@/components/ui/form/app-form/AppForm.vue";
@@ -18,8 +18,8 @@ interface UserData {
 }
 
 const userData = reactive<UserData>({
-  login: "",
-  password: "",
+  login: "+998990893954",
+  password: "1",
 });
 
 const v$ = ref<ValidationType | null>(null);
@@ -32,11 +32,19 @@ const onSubmit = async () => {
   if (!v$.value) return;
 
   if (!(await v$.value.validate())){
-    toast.error('Ошибка')
+    ElNotification({
+      title: 'Error',
+      message: 'Ошибка',
+      type: 'error',
+    })
   } else {
     await router.push("/home");
-    toast.success('Успешно')
-    // localStorage.setItem("current-menu", 0);
+    ElNotification({
+      title: 'Успешно',
+      message: 'Успешно',
+      type: 'success',
+    })
+    localStorage.setItem("current-menu", '0');
   }
 };
 </script>
@@ -52,9 +60,7 @@ const onSubmit = async () => {
       alt="login"
     />
 
-    <!-- Login Form Section -->
     <div class="w-full lg:w-1/4 md:w-1/2 m-auto">
-      <!-- Logo and Title -->
       <header class="flex items-center mb-6">
         <img
           src="@/assets/images/logo.svg"
@@ -67,30 +73,27 @@ const onSubmit = async () => {
         </div>
       </header>
 
-      <!-- Form Title -->
       <h1 class="text-dark text-xl font-bold">{{ t("Войти в аккаунт") }}</h1>
       <p class="text-[#A8AAAE] text-[14px] mt-[6px] w-[90%]">
         Введите свои учетные данные для доступа к вашей учетной записи
       </p>
 
-      <!-- Login Form -->
       <AppForm
         :value="userData"
         @validation="setValidation"
         class="mt-6"
       >
-        <!-- Username Input -->
         <app-input
           v-model="userData.login"
-          placeholder="Введите"
-          label="Логин"
+          placeholder="+998"
+          label="Номер телефона"
           label-class="text-[#A8AAAE] text-sm"
           required
           prop="login"
           trigger="change"
+          maxlength="13"
         />
 
-        <!-- Password Input -->
         <app-input
           v-model="userData.password"
           type="password"
@@ -103,13 +106,11 @@ const onSubmit = async () => {
           trigger="change"
         />
 
-        <!-- Forgot Password Link -->
-        <div class="text-right text-[#2E90FA] text-xs mt-1 cursor-pointer" @click="router.push('/reset-password')">
+        <router-link class="float-right mb-[20px] text-[#2E90FA] text-xs mt-1 cursor-pointer" to="/reset-password">
           Забыли пароль?
-        </div>
+        </router-link>
       </AppForm>
 
-        <!-- Login Button -->
         <div class="mt-6">
           <button
             @click="onSubmit"
@@ -119,10 +120,7 @@ const onSubmit = async () => {
           </button>
         </div>
 
-        <!-- Divider with text -->
-        <div
-          class="flex items-center justify-between text-[#7F7D83] text-sm mt-4"
-        >
+        <div class="flex items-center justify-between text-[#7F7D83] text-sm mt-4">
           <img
             src="@/assets/images/line.svg"
             class="ml-4 md:w-[40%] lg:w-[40%] w-[20%]"
@@ -136,7 +134,6 @@ const onSubmit = async () => {
           />
         </div>
 
-        <!-- OneID Button -->
         <button class="w-full bg-[#4825C2] py-2.5 flex items-center justify-center text-white rounded-lg mt-4">
           ONE
           <img
@@ -147,8 +144,6 @@ const onSubmit = async () => {
         </button>
     </div>
 
-    <!-- Footer Section -->
     <Footer/>
   </div>
 </template>
-

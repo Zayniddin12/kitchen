@@ -14,9 +14,17 @@ interface TableData {
 const route = useRoute();
 const router = useRouter();
 
-const repeater = ref<[]>([{}]);
+interface Repeater {
+  title: string;
+  value: number;
+}
+
+const repeater = ref<Repeater[]>([{
+  title: '',
+  value: 0,
+}]);
 const value = ref<boolean>(true);
-const tableData = ref<TableData>([
+const tableData = ref<TableData[]>([
   {
     id: "Плов",
     name: "80",
@@ -40,7 +48,10 @@ const tableData = ref<TableData>([
 ]);
 
 const repeaterAgain = () => {
-  repeater.value.push({});
+  repeater.value.push({
+    title: '',
+    value: 0
+  });
 };
 
 const handleDelete = (index: number) => {

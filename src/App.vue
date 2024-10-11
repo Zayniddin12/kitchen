@@ -8,6 +8,18 @@ import ErrorLayout from "@/layout/ErrorLayout.vue";
 import ResetPasswordLayout from "@/views/ResetPassword.vue";
 import IncomePasswordLayout from "@/views/IncomePassword.vue";
 import PasswordLayout from "@/views/Password.vue";
+import { useRoute } from "vue-router";
+import { useLayoutStore } from "@/navigation";
+import { computed } from "vue";
+
+
+interface RouteMeta {
+  layout?: "MainLayout" | "LoginLayout" | "ErrorLayout" | "ResetPasswordLayout" | "IncomePasswordLayout" | "PasswordLayout";
+}
+
+const route = useRoute();
+const store = useLayoutStore();
+const layout = computed(() => (route.meta as RouteMeta).layout);
 
 const layouts = {
   MainLayout,
@@ -21,13 +33,9 @@ const layouts = {
 
 <template>
   <component
-    :is="layouts[$route.meta.layout] || MainLayout"
-    class="overflow-y-auto"
+    v-if="layout"
+    :is="layouts[layout]"
   >
-    <RouterView v-slot="{ Component }">
-      <transition name="nested">
-        <component :is="Component" />
-      </transition>
-    </RouterView>
+    <RouterView />
   </component>
 </template>

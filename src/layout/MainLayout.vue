@@ -1,8 +1,5 @@
-<script
-  setup
-  lang="ts"
->
-import { onMounted, ref, watch } from "vue";
+<script setup lang="ts">
+import { onMounted, ref } from "vue";
 import { useRoute } from "vue-router";
 import { useKitchenStore } from "@/modules/Kitchen/store/kitchen.store";
 
@@ -34,7 +31,7 @@ const closeChildSidebar = () => {
     />
 
     <div
-      class="main-layout min-h-screen p-6 pr-7 pt-28 dark:bg-darkLayoutMain bg-white ml-[128px] transition-all flex flex-col justify-between"
+      class="main-layout min-h-screen p-6 pr-7 pt-28 dark:bg-darkLayoutMain dark:bg-body-dark bg-white ml-[128px] transition-all flex flex-col justify-between"
       :class="childSidebar ? 'ml-[396px]' : ''"
     >
       <div class="flex flex-col">
@@ -42,12 +39,12 @@ const closeChildSidebar = () => {
         <slot />
       </div>
 
-      <span class="mt-[28px] z-50 bg-[#fff] w-full text-[#8F9194] text-[12px]">Made by “Anysoft” software & solutions company</span>
+      <span class="mt-[28px] z-50 bg-transparent !dark:body-dark w-full text-[#8F9194] text-[12px]">Made by “Anysoft” software & solutions company</span>
     </div>
 
     <div
       :class="childSidebar ? 'top-navbar-margin' : ''"
-      class="top-navbar bg-lightLayoutStorm dark:bg-darkLayoutStorm text-white transition-all bg-[#fff]"
+      class="top-navbar bg-lightLayoutStorm dark:bg-body-dark text-white transition-all bg-[#fff]"
     >
       <NavBar />
     </div>
@@ -55,6 +52,10 @@ const closeChildSidebar = () => {
 </template>
 
 <style lang="scss">
+.dark #app {
+  background-color: #171D32;
+}
+
 .top-navbar {
   position: fixed;
   z-index: 99;
@@ -66,7 +67,7 @@ const closeChildSidebar = () => {
   margin-left: 152px;
   width: calc(100% - 180px);
   min-height: 65px !important;
-  right: 2rem;
+  right: 1.8rem;
 }
 
 .top-navbar-margin {

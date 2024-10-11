@@ -13,6 +13,15 @@ const props = defineProps({
 });
 const editModal = ref<boolean>(false);
 
+interface TableData {
+  id: number;
+  title: string;
+  total_count: number;
+  measurement: string;
+  price: string;
+  sum: string;
+}
+
 const tableData = ref<TableData[]>([
   {
     id: 1,
@@ -50,17 +59,6 @@ const tableData = ref<TableData[]>([
 
 const closeModal = () => {
   emit("update:editModal", false);
-};
-
-const headerClass = (item) => {
-  console.log(item);
-
-  return "p-0";
-};
-
-const openModals = () => {
-
-  editModal.value = true;
 };
 </script>
 

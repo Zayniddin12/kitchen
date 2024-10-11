@@ -2,31 +2,35 @@
   setup
   lang="ts"
 >
-import { onMounted, ref } from "vue";
-import { Search } from "@element-plus/icons-vue";
+import { ref, watchEffect } from "vue";
 import { useRouter } from "vue-router";
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
+import AppInput from "@/components/ui/form/app-input/AppInput.vue";
+import AppDatePicker from "@/components/ui/form/app-date-picker/AppDatePicker.vue";
 
 const { setBreadCrumb } = useBreadcrumb();
 
 interface CreateBtn {
   title: string;
   icon: string;
+  value: number
 }
 
 const router = useRouter();
 
+const activeTab = ref<number>(0);
 const createBtn = ref<CreateBtn[]>([
   {
     title: "ПИНФЛ",
     icon: "pinFl",
+    value: 0,
   },
   {
     title: "Серия и номер паспорта",
     icon: "seria",
+    value: 1,
   },
 ]);
-const isSearch = ref<boolean>(false);
 const search = ref<string>("");
 
 const setBreadCrumbFn = () => {
@@ -45,57 +49,61 @@ const setBreadCrumbFn = () => {
   ]);
 };
 
-onMounted(() => {
+watchEffect(() => {
   setBreadCrumbFn();
 });
 
+const setActiveTab = (item: any) => {
+  activeTab.value = item.value;
+};
 </script>
 
 <template>
   <div>
     <h1 class="m-0 font-semibold text-[32px]">Добавить</h1>
 
-    <div
-      class="mt-[24px] flex justify-center create-form"
-      v-if="isSearch"
-    >
-      <el-input
-        v-model="search"
-        style="max-width: 500px"
-        placeholder="Серия и номер паспорта"
-        class="input-with-select"
-      >
-        <template #prepend>
-          <el-button :icon="Search" />
-        </template>
-        <template #append>
-          <el-button
-            type="primary"
-            @click="router.push('/personal-database-create-form')"
-          >
-            Найти
-          </el-button>
-        </template>
-      </el-input>
+    <div class="flex items-center gap-6 justify-center mt-[50px]">
+      <div class="app-tabs">
+        <div
+          v-for="item in createBtn"
+          :key="item.value"
+          class="cursor-pointer flex items-center"
+          :class="['app-tab', {'app-tab--active': activeTab === item.value}]"
+          @click="setActiveTab(item)"
+        >
+          <svg
+            :data-src="'/sidebar/' + item.icon + '.svg'"
+            width="20px"
+            height="20px"
+            class="mr-[8px]"
+          />
+          {{ item.title }}
+        </div>
+      </div>
     </div>
 
-    <div
-      v-else
-      class="flex items-center gap-6 justify-center h-[60vh]"
-    >
-      <div
-        class="bg-[#F8F9FC] rounded-[24px] w-[300px] h-[200px] flex items-center justify-center flex-col cursor-pointer"
-        v-for="(item, index) in createBtn"
-        :key="index"
-        @click="isSearch =! isSearch"
-      >
-        <svg
-          :data-src="'/sidebar/' + item.icon + '.svg'"
-          width="40px"
-          height="40px"
+    <div class="w-[370px] m-auto">
+      <div class="border  rounded-[24px] p-[24px] my-[16px]">
+        <app-input
+          placeholder="Введите"
+          label="ПИНФЛ"
+          label-class="text-[#A8AAAE]"
         />
-        <h1 class="text-[#4F5662] text-[14px] font-medium mt-[16px]">{{ item.title }}</h1>
+
+        <app-date-picker
+          v-if="activeTab === 1"
+          label="Дата рождения"
+          placeholder="дд.мм.гггг"
+          label-class="text-[#A8AAAE]"
+        />
       </div>
+
+      <button
+        class="custom-apply-btn ml-auto"
+        @click="router.push('/personal-database-create-form')"
+      >
+        Найти
+      </button>
     </div>
   </div>
 </template>

@@ -1,5 +1,3 @@
-import { useKitchenStore } from "@/modules/Kitchen/store/kitchen.store";
-
 export default [
   {
     path: "/kitchen/:department_id(\\d+)/:part_name",
@@ -46,11 +44,24 @@ export default [
                   {
                     path: "create",
                     name: "KitchenMenuCreate",
-                    component: () => import("@/modules/Kitchen/pages/kitchen-child/menu/Create.vue"),
+                    component: () => import("@/modules/Kitchen/pages/kitchen-child/menu/CreateOrEdit.vue"),
+                    meta: {
+                      title: "Добавить меню",
+                      breadcrumbItemTitle: "Добавить",
+                    },
                   },
                   {
                     path: "edit",
                     name: "KitchenMenuEdit",
+                    component: () => import("@/modules/Kitchen/pages/kitchen-child/menu/CreateOrEdit.vue"),
+                    meta: {
+                      title: "Редактировать",
+                      breadcrumbItemTitle: "Редактировать",
+                    },
+                  },
+                  {
+                    path: "edit-old",
+                    name: "KitchenMenuEditOld",
                     component: () => import("@/modules/Kitchen/pages/kitchen-child/menu/Edit.vue"),
                   },
                   {

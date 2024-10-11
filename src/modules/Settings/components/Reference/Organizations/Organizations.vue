@@ -9,7 +9,8 @@ const route = useRoute();
 interface TableData {
   id: number;
   name: string;
-  type: string;
+  inn: string;
+  legal_address: string;
 }
 
 const input1 = ref<string>("");

@@ -1,25 +1,27 @@
-import {defineStore} from "pinia";
-import {computed} from "vue";
-import {useKitchenWarehouseStore} from "@/modules/KitchenWarehouse/store/index.ts";
-import {useKitchenStore} from "@/modules/Kitchen/store/kitchen.store.ts";
+import { defineStore } from "pinia";
+import { computed, ref } from "vue";
+import { useKitchenWarehouseStore } from "@/modules/KitchenWarehouse/store";
+import { useKitchenStore } from "@/modules/Kitchen/store/kitchen.store";
 
 export const useLayoutStore = defineStore("layoutStore", () => {
-  
+
   const kitchenWarehouse = useKitchenWarehouseStore();
   const kitchenStore = useKitchenStore();
-  
-  const menuItems = computed( () => {
+
+  const currentTheme = ref(localStorage.getItem("currentTheme") || "light")
+
+  const menuItems = computed(() => {
     return [
       {
         title: "Главная",
         route: "/home",
         icon: "smart-home",
-        unique: 'home'
+        unique: "home",
       },
       {
         title: "Документы",
         icon: "document",
-        unique: 'document',
+        unique: "document",
         children: [
           {
             title: "Служебные записки",
@@ -36,8 +38,8 @@ export const useLayoutStore = defineStore("layoutStore", () => {
               {
                 title: "Черновики",
                 route: "/drafts",
-              }
-            ]
+              },
+            ],
           },
           {
             title: "Запросы",
@@ -45,17 +47,17 @@ export const useLayoutStore = defineStore("layoutStore", () => {
             children: [
               {
                 title: "Полученные",
-                route: "/received"
+                route: "/received",
               },
               {
                 title: "Отправленные",
-                route: "/sent"
+                route: "/sent",
               },
               {
                 title: "Черновики",
-                route: "/draft"
-              }
-            ]
+                route: "/draft",
+              },
+            ],
           },
           {
             title: "Накладные",
@@ -63,45 +65,47 @@ export const useLayoutStore = defineStore("layoutStore", () => {
             children: [
               {
                 title: "Входящие",
-                route: "/invoice-inbox"
+                route: "/invoice-inbox",
               },
               {
                 title: "Исходящие",
-                route: "/invoice-outgoing"
-              }
-            ]
+                route: "/invoice-outgoing",
+              },
+            ],
           },
           {
             title: "Акты",
             icon: "document",
-            route: "/acts"
+            route: "/acts",
           },
           {
             title: "Контракты",
             icon: "contract",
-            route: "/contracts"
-          }
-        ]
+            route: "/contracts",
+          },
+        ],
       },
       {
         title: "Мониторинг",
         icon: "monitoring",
+        unique: "monitoring",
         children: [
           {
             title: "Остатка товаров",
             icon: "box",
-            route: "/monitoring/remaining-goods"
+            route: "/monitoring/remaining-goods",
           },
           {
             title: "Отчет о кухне",
             icon: "kitchen",
-            route: "/monitoring/kitchen-report"
-          }
-        ]
+            route: "/monitoring/kitchen-report",
+          },
+        ],
       },
       {
         title: "Базы складов",
         icon: "building-warehouse",
+        unique: "building-warehouse",
         children: [
           {
             title: "Зарафшан",
@@ -109,17 +113,17 @@ export const useLayoutStore = defineStore("layoutStore", () => {
             children: [
               {
                 title: "Мясной склад",
-                route: "/warehouse/1/1"
+                route: "/warehouse/1/1",
               },
               {
                 title: "Овощной склад",
-                route: "/warehouse/1/2"
+                route: "/warehouse/1/2",
               },
               {
                 title: "Рисовый склад",
-                route: "/warehouse/1/3"
-              }
-            ]
+                route: "/warehouse/1/3",
+              },
+            ],
           },
           {
             title: "Навои",
@@ -127,17 +131,17 @@ export const useLayoutStore = defineStore("layoutStore", () => {
             children: [
               {
                 title: "Мясной склад",
-                route: "/warehouse/2/1"
+                route: "/warehouse/2/1",
               },
               {
                 title: "Овощной склад",
-                route: "/warehouse/2/2"
+                route: "/warehouse/2/2",
               },
               {
                 title: "Рисовый склад",
-                route: "/warehouse/2/3"
-              }
-            ]
+                route: "/warehouse/2/3",
+              },
+            ],
           },
           {
             title: "Учкудук",
@@ -145,17 +149,17 @@ export const useLayoutStore = defineStore("layoutStore", () => {
             children: [
               {
                 title: "Мясной склад",
-                route: "/warehouse/3/1"
+                route: "/warehouse/3/1",
               },
               {
                 title: "Овощной склад",
-                route: "/warehouse/3/2"
+                route: "/warehouse/3/2",
               },
               {
                 title: "Рисовый склад",
-                route: "/warehouse/3/3"
-              }
-            ]
+                route: "/warehouse/3/3",
+              },
+            ],
           },
           {
             title: "Нуробод",
@@ -163,17 +167,17 @@ export const useLayoutStore = defineStore("layoutStore", () => {
             children: [
               {
                 title: "Мясной склад",
-                route: "/warehouse/4/1"
+                route: "/warehouse/4/1",
               },
               {
                 title: "Овощной склад",
-                route: "/warehouse/4/2"
+                route: "/warehouse/4/2",
               },
               {
                 title: "Рисовый склад",
-                route: "/warehouse/4/3"
-              }
-            ]
+                route: "/warehouse/4/3",
+              },
+            ],
           },
           {
             title: "Зафаробод",
@@ -181,66 +185,78 @@ export const useLayoutStore = defineStore("layoutStore", () => {
             children: [
               {
                 title: "Мясной склад",
-                route: "/warehouse/5/1"
+                route: "/warehouse/5/1",
               },
               {
                 title: "Овощной склад",
-                route: "/warehouse/5/2"
+                route: "/warehouse/5/2",
               },
               {
                 title: "Рисовый склад",
-                route: "/warehouse/5/3"
-              }
-            ]
-          }
-        ]
+                route: "/warehouse/5/3",
+              },
+            ],
+          },
+        ],
       },
       {
         title: "Склад кухни",
         icon: "building-warehouse",
+        unique: "warehouse",
         children: kitchenWarehouse.dynamicState,
       },
       {
         title: "Кухня",
         icon: "kitchen",
-        children: kitchenStore.kitchenMenu
+        unique: "kitchen",
+        children: kitchenStore.kitchenMenu,
       },
       {
         title: "Кадры",
         icon: "users",
+        unique: "users",
         children: [
           {
             title: "База кадров",
             icon: "record",
-            route: "/personal-database"
+            route: "/personal-database",
           },
           {
             title: "Посетители",
             icon: "derictory",
-            route: "/visitors"
+            route: "/visitors",
           },
-        ]
+        ],
       },
       {
         title: "Настройки",
         icon: "settings",
+        unique: "settings",
         children: [
           {
             title: "Справочники",
             icon: "record",
-            route: "/reference"
+            route: "/reference",
           },
           {
             title: "Логи",
             icon: "users",
-            route: "/personnel"
-          }
-        ]
-      }
-    ]
+            route: "/personnel",
+          },
+        ],
+      },
+    ];
   });
-  
+
+  const changeTheme = (newTheme: string) => {
+    currentTheme.value = newTheme;
+    localStorage.setItem("currentTheme", currentTheme.value);
+  }
+
   return {
-    menuItems
+    menuItems,
+
+    changeTheme,
+    currentTheme
   };
 });

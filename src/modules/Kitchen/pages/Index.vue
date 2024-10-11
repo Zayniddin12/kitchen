@@ -3,9 +3,8 @@
   lang="ts"
 >
 
-import { computed, onMounted, watch } from "vue";
-import { onBeforeRouteUpdate, useRoute } from "vue-router";
-import { useRouter } from "vue-router";
+import { computed, watch } from "vue";
+import { useRoute, useRouter } from "vue-router";
 import { useKitchenStore } from "@/modules/Kitchen/store/kitchen.store";
 import medicalKitchenIcon from "@/assets/images/icons/kitchen/medical-kitchen.svg";
 import kitchenIcon from "@/assets/images/icons/kitchen/kitchen.svg";
@@ -113,10 +112,3 @@ watch(() => route.params, () => {
     </div>
   </section>
 </template>
-
-<style
-  scoped
-  lang="scss"
->
-
-</style>

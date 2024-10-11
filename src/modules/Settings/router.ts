@@ -138,10 +138,7 @@ export default [
   {
     path: "/reference-warehouse-bases-detail/:id",
     name: "reference-warehouse-bases-edit",
-    component: () =>
-      import(
-        "@/modules/Settings/components/Reference/WarehouseBasesAddEditView.vue"
-        ),
+    component: () => import("@/modules/Settings/components/Reference/WarehouseBasesAddEditView.vue"),
     meta: {
       title: "Редактировать базу складов",
       breadcrumbItemTitle: "Редактировать",
@@ -432,8 +429,7 @@ export default [
   {
     path: "/reference-vid-edit/:id",
     name: "reference-vid-edit-id",
-    component: () =>
-      import("@/modules/Settings/components/Reference/Product/VidProduct/ProductVidDocCreate.vue"),
+    component: () => import("@/modules/Settings/components/Reference/Product/VidProduct/ProductVidDocCreate.vue"),
     meta: {
       title: "Редактировать вид продукта",
       breadcrumbItemTitle: "Редактировать",

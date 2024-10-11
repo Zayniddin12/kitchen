@@ -2,7 +2,7 @@
   setup
   lang="ts"
 >
-import { onMounted, ref } from "vue";
+import { ref, watchEffect } from "vue";
 import { Search } from "@element-plus/icons-vue";
 import { useRouter } from "vue-router";
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
@@ -20,12 +20,12 @@ interface TableData {
   position: string,
   phone: string,
   oneId: string,
-  status: StatusInterface,
+  status?: StatusInterface,
 }
 
 interface StatusInterface {
-  title: string;
-  state: boolean;
+  title?: string;
+  status?: boolean;
 }
 
 const router = useRouter();
@@ -110,10 +110,13 @@ const setBreadCrumbFn = () => {
   ]);
 };
 
-onMounted(() => {
+watchEffect(() => {
   setBreadCrumbFn();
 });
 
+const change = (e: any) => {
+  console.log(e);
+};
 </script>
 
 <template>
@@ -240,10 +243,10 @@ onMounted(() => {
       </div>
 
       <el-pagination
-        class="float-right"
         background
         layout="prev, pager, next"
         :total="1000"
+        @change="change"
       />
     </div>
   </div>
