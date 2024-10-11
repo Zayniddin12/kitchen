@@ -119,6 +119,7 @@ watchEffect(() => {
     <div class="mt-[24px]">
       <el-table
         :data="tableData"
+        stripe
         class="custom-element-table"
       >
         <el-table-column
@@ -128,7 +129,7 @@ watchEffect(() => {
         />
         <el-table-column
           prop="name"
-          label="Наименование типа"
+          label="Наименование типа продукта"
           sortable
         >
           <template #default="scope">

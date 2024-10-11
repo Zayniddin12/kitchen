@@ -88,14 +88,15 @@ watch(() => route.name, () => {
       <button
         @click="router.push(`/reference-type-product-edit/${route.params.id}`)"
         v-if="route.name === 'reference-type-product-view-id'"
-        class="custom-cancel-btn flex items-center ml-[24px]"
+        class="custom-light-btn flex items-center ml-[24px]"
       >
-        <img src="@/assets/images/icons/edit.svg" class="mr-[12px]" alt="edit" />
+        <img src="@/assets/images/icons/edit.svg" alt="edit" />
         Редактировать
       </button>
     </div>
 
-    <div class="flex items-start justify-between mt-[24px] w-[89%]">
+    <div class="flex items-start justify-between mt-[24px] w-[89%]"
+         v-if="route.name === 'reference-type-product-edit-id' || route.name === 'reference-type-product-create'">
       <button
         class="custom-danger-btn"
         v-if="route.name === 'reference-type-product-edit-id'"
@@ -105,7 +106,7 @@ watch(() => route.name, () => {
 
       <div class="flex items-start justify-end ml-auto">
         <button class="custom-cancel-btn" @click="router.go(-1)">Отменить</button>
-        <button class="custom-apply-btn ml-[8px]">Добавить</button>
+        <button class="custom-apply-btn ml-[8px]">{{route.name === 'reference-type-product-edit-id' ? 'Сохранить' : 'Добавить'}}</button>
       </div>
     </div>
   </div>

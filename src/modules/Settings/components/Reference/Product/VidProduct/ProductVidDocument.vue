@@ -116,7 +116,7 @@ onMounted(() => {
     </div>
 
     <div class="mt-[24px]">
-      <el-table :data="tableData" class="custom-element-table">
+      <el-table :data="tableData" class="custom-element-table" stripe>
         <el-table-column prop="id" label="№" width="80" />
         <el-table-column prop="photo" label="Картинка вида продукта" sortable>
           <template #default="scope"><img src="https://avatar.iran.liara.run/public" alt="#" class="h-[32px]"/></template>

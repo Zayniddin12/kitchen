@@ -94,10 +94,17 @@ const logOut = () => {
           <div :class="{ activeListItem: currentMenu == index }"
                class="h-[88px] flex flex-col justify-center items-center cursor-pointer p-[12px] hover:bg-white dark:hover:bg-body-dark hover:shadow-menu hover:font-medium rounded-lg"
           >
-            <svg :data-src="'/sidebar/' + item?.icon + '.svg'"
-                 class="svg-class shrink-1"
-                 width="24px"
-                 height="24px"
+            <li
+                :style="{
+                  maskImage: `url(/sidebar/${item.icon}.svg)`,
+                  backgroundColor: '#8F9194',
+                  color: '#8F9194',
+                  width: '24px',
+                  height: '24px',
+                  maskSize: '24px',
+                  maskPosition: 'center',
+                  maskRepeat: 'no-repeat'
+                 }"
             />
 
             <h1 class="text-[13px] font-medium font-500 mt-[4px] text-[#4F5662] dark:text-white">{{ item.title }}</h1>
@@ -157,8 +164,9 @@ const logOut = () => {
   stroke: #fff;
 }
 
-.activeListItem .svg-class path {
-  stroke: #000d24;
+.activeListItem li {
+  color: #000d24!important;
+  background-color: #000d24!important;
 }
 
 .activeListItem h1 {

@@ -165,18 +165,18 @@ watchEffect(() => {
 
           <div class="mt-[40px] grid grid-cols-3 gap-4">
             <app-input
-              label="OneID (необязательно)"
+              label="OneID"
               label-class="text-[#A8AAAE] text-[12px] font-medium"
             />
 
             <app-select
-              label="Должность в системе(необязательно)"
+              label="Должность в системе"
               placeholder=""
               label-class="text-[#A8AAAE] text-[12px] font-medium"
             />
 
             <app-select
-              label="Роли (необязательно)"
+              label="Роли"
               placeholder=""
               label-class="text-[#A8AAAE] text-[12px] font-medium"
             />

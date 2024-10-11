@@ -59,7 +59,7 @@ watchEffect(() => {
     <h1 class="m-0 font-semibold text-[32px] leading-[48px]">{{ route.meta.title }}</h1>
 
     <div class="flex items-start mt-[24px]">
-      <div class="border rounded-[24px] p-[24px] w-[90%]">
+      <div class="border rounded-[24px] p-[24px] w-[90%]  h-[65vh]">
         <AppMediaUploader />
 
         <div class="grid grid-cols-2 gap-4 mt-[24px]">
@@ -72,7 +72,7 @@ watchEffect(() => {
 
           <app-input
             :disabled="route.name === 'reference-vid-view-id'"
-            label="Наименование (RU)"
+            label="Наименование (UZ)"
             label-class="text-[#A8AAAE] text-[12px]"
             placeholder="Введите"
           />
@@ -129,7 +129,7 @@ watchEffect(() => {
           @click="router.go(-1)"
         >Отменить
         </button>
-        <button class="custom-apply-btn ml-[8px]">Добавить</button>
+        <button class="custom-apply-btn ml-[8px]">{{route.name === 'reference-vid-edit-id' ? 'Сохранить' : 'Добавить'}}</button>
       </div>
     </div>
   </div>
