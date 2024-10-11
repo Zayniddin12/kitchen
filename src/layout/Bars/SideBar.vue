@@ -43,29 +43,6 @@ watch(() => route.path, () => {
   currentMenu.value = storedMenu ? JSON.parse(storedMenu) as number : 0;
 });
 
-// watch(() => route.path, (value) => {
-//   let results = [];
-//
-//   store.menuItems.forEach((item, index) => {
-//     if (item.children) {
-//       item.children.forEach(child => {
-//         if (child.children) {
-//           results.push(...child.children.map(grandChild => grandChild.route).filter(Boolean));
-//         } else {
-//           results.push(child.route);
-//         }
-//       });
-//     } else {
-//       results.push(item.route)
-//     }
-//   });
-//
-//   console.log(results.includes(value), 'results');
-//   console.log(value === route.path)
-//   currentMenu.value = value;
-//
-// }, {immediate: true});
-
 
 const activeMenu = (index: number, item: MenuItem) => {
   currentIndex.value = index;
@@ -91,8 +68,11 @@ const pinSidebar = () => {
 };
 
 const logOut = () => {
-  localStorage.removeItem('current-menu');
-  localStorage.removeItem('child-sidebar');
+  const arr = ['current-menu', 'child-sidebar']
+
+  for (let i = 0; i < arr.length; i++) {
+    localStorage.removeItem(arr[i]);
+  }
   router.push("/login");
 };
 </script>

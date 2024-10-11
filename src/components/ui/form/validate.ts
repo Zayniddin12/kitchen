@@ -22,7 +22,7 @@ export const setRules = (rules: RulesType): Arrayable<FormItemRule> | ValidateRu
     if (rules.required) {
         formRules.push({
             required: true,
-            message: 'Required field',
+            message: 'Обязательное поле',
             trigger,
         });
     }

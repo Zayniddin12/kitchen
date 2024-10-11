@@ -69,18 +69,12 @@ const activeChildMenu = (item: SidebarItem) => {
       >
         <template #title>
           <div class="flex items-center px-3">
-            <svg
-                :data-src="'/sidebar/' + item.icon + '.svg'"
-                class="svg-class shrink-1 mr-[12px]"
-                width="24px"
-                height="24px"
-            />
+            <svg :data-src="'/sidebar/' + item.icon + '.svg'" class="svg-class shrink-1 mr-[12px]" width="24px" height="24px"/>
             <span class="dark:text-white">{{ item.title }}</span>
           </div>
         </template>
         <template #icon="{ isActive }">
-          <img
-              v-if="item.children && item.children.length"
+          <img v-if="item.children && item.children.length"
               src="@/assets/images/arrowUp.svg"
               :class="!isActive ? 'rotate-180' : ''"
               class="transition-all"
@@ -89,8 +83,7 @@ const activeChildMenu = (item: SidebarItem) => {
           <div v-else />
         </template>
 
-        <div
-            v-for="(sub, index2) in item.children"
+        <div v-for="(sub, index2) in item.children"
             :key="index2"
             class="text-left py-[10px] px-[12px] text-dark text-[14px] font-medium cursor-pointer dark:text-white"
             :class="{ activeMenu: currentItem == sub.route }"
@@ -100,19 +93,13 @@ const activeChildMenu = (item: SidebarItem) => {
         </div>
       </el-collapse-item>
 
-      <div
-          v-else
+      <div v-else
           class="text-dark-gray text-[14px] text-left py-[10px] font-medium cursor-pointer px-[12px]"
           :class="{ activeMenu: item && currentItem === (item.route || item.id) }"
           @click.stop="activeChildMenu(item)"
       >
         <div class="flex items-center">
-          <svg
-              :data-src="'/sidebar/' + item.icon + '.svg'"
-              class="svg-class shrink-1 mr-[12px]"
-              width="24px"
-              height="24px"
-          />
+          <svg :data-src="'/sidebar/' + item.icon + '.svg'" class="svg-class shrink-1 mr-[12px]" width="24px" height="24px"/>
           <span class="dark:text-white">{{ item?.title }}</span>
         </div>
       </div>

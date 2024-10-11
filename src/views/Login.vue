@@ -3,7 +3,7 @@ import {reactive, ref} from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { ValidationType } from "@/components/ui/form/app-form/app-form.type";
-import { toast } from "vue3-toastify";
+import { ElNotification } from 'element-plus'
 import Language from "@/components/language/index.vue";
 import AppInput from "@/components/ui/form/app-input/AppInput.vue";
 import AppForm from "@/components/ui/form/app-form/AppForm.vue";
@@ -18,8 +18,8 @@ interface UserData {
 }
 
 const userData = reactive<UserData>({
-  login: "+998",
-  password: "",
+  login: "+998990893954",
+  password: "1",
 });
 
 const v$ = ref<ValidationType | null>(null);
@@ -32,10 +32,18 @@ const onSubmit = async () => {
   if (!v$.value) return;
 
   if (!(await v$.value.validate())){
-    toast.error('Ошибка')
+    ElNotification({
+      title: 'Error',
+      message: 'Ошибка',
+      type: 'error',
+    })
   } else {
     await router.push("/home");
-    toast.success('Успешно')
+    ElNotification({
+      title: 'Успешно',
+      message: 'Успешно',
+      type: 'success',
+    })
     localStorage.setItem("current-menu", '0');
   }
 };
@@ -98,9 +106,9 @@ const onSubmit = async () => {
           trigger="change"
         />
 
-        <div class="text-right text-[#2E90FA] text-xs mt-1 cursor-pointer" @click="router.push('/reset-password')">
+        <router-link class="float-right mb-[20px] text-[#2E90FA] text-xs mt-1 cursor-pointer" to="/reset-password">
           Забыли пароль?
-        </div>
+        </router-link>
       </AppForm>
 
         <div class="mt-6">
@@ -112,9 +120,7 @@ const onSubmit = async () => {
           </button>
         </div>
 
-        <div
-          class="flex items-center justify-between text-[#7F7D83] text-sm mt-4"
-        >
+        <div class="flex items-center justify-between text-[#7F7D83] text-sm mt-4">
           <img
             src="@/assets/images/line.svg"
             class="ml-4 md:w-[40%] lg:w-[40%] w-[20%]"

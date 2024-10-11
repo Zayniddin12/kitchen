@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { reactive, ref, watch } from "vue";
+import { reactive, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
-import { toast } from "vue3-toastify";
+import { ElNotification } from 'element-plus'
 import { ValidationType } from "@/components/ui/form/app-form/app-form.type";
 import Language from "@/components/language/index.vue";
 import AppInput from "@/components/ui/form/app-input/AppInput.vue";
@@ -32,10 +32,18 @@ const onSubmit = async () => {
   if (!v$.value) return;
 
   if (!(await v$.value.validate())) {
-    toast.error("Ошибка");
+    ElNotification({
+      title: 'Error',
+      message: 'Ошибка',
+      type: 'error',
+    })
   } else {
     await router.push("/login");
-    toast.success("Успешно");
+    ElNotification({
+      title: 'Success',
+      message: 'Успешно',
+      type: 'success',
+    })
   }
 };
 </script>
@@ -43,7 +51,6 @@ const onSubmit = async () => {
 <template>
   <div class="p-8 h-screen flex flex-col lg:flex-row items-center relative bg-[#ffffff]">
     <Language class="fixed top-[32px] right-[32px]" />
-
 
     <!-- Login Form Section -->
     <div class="w-full lg:w-1/4 md:w-1/2 m-auto">

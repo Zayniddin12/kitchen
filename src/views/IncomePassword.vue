@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import { reactive, ref, watch } from "vue";
+import { reactive, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
-import { toast } from "vue3-toastify";
 import { ValidationType } from "@/components/ui/form/app-form/app-form.type";
 import Language from "@/components/language/index.vue";
 import AppInput from "@/components/ui/form/app-input/AppInput.vue";
 import AppForm from "@/components/ui/form/app-form/AppForm.vue";
 import Footer from "@/components/ui/Footer.vue";
+import {ElNotification} from "element-plus";
 
 const { t } = useI18n();
 const router = useRouter();
@@ -33,10 +33,18 @@ const onSubmit = async () => {
   if (!v$.value) return;
 
   if (!(await v$.value.validate())) {
-    toast.error("Ошибка");
+    ElNotification({
+      title: 'Error',
+      message: 'Ошибка',
+      type: 'error',
+    })
   } else {
     await router.push("/new-password");
-    toast.success("Успешно");
+    ElNotification({
+      title: 'Success',
+      message: 'Успешно',
+      type: 'success',
+    })
   }
 };
 
