@@ -53,7 +53,6 @@ watch(() => route.path, () => {
   currentMenu.value = storedMenu ? JSON.parse(storedMenu) as number : 0;
 });
 
-
 const activeMenu = (index: number, item: MenuItem) => {
   currentIndex.value = index;
   currentMenu.value = index;
