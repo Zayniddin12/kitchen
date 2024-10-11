@@ -30,7 +30,6 @@ onMounted(() => {
   const storedSidebar = localStorage.getItem("child-sidebar");
 
   if (childIsOpenPin.value) {
-    // alert("Hello");
     currentIndex.value = Number(storedMenu);
   } else {
     currentIndex.value = 0;
@@ -38,7 +37,6 @@ onMounted(() => {
 
   console.log(currentIndex.value);
 
-  // currentIndex.value = Number(storedMenu);
   currentMenu.value = storedMenu ? JSON.parse(storedMenu) as number : 0;
   childIsOpen.value = storedSidebar === "true";
 
@@ -77,8 +75,6 @@ const closeChildSidebar = () => {
     currentIndex.value = 0;
     emit("update:childSidebar", childIsOpenPin.value);
   }
-
-
 };
 
 const pinSidebar = () => {
