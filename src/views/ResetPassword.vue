@@ -30,18 +30,10 @@ const onSubmit = async () => {
   if (!v$.value) return;
 
   if (!(await v$.value.validate())) {
-    ElNotification({
-      title: 'Error',
-      message: 'Ошибка',
-      type: 'error',
-    })
+    ElNotification({title: 'Error', message: 'Ошибка', type: 'error'})
   } else {
     await router.push("/income-password");
-    ElNotification({
-      title: 'Success',
-      message: 'Успешно',
-      type: 'success',
-    })
+    ElNotification({title: 'Success', message: 'Успешно', type: 'success'})
   }
 };
 </script>

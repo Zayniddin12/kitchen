@@ -73,13 +73,22 @@ const openModals = (data: any) => {
 
 <template>
   <div class="flex justify-between items-start">
-    <el-input
-        v-model="input1"
-        class="w-[552px]"
-        size="large"
-        placeholder="Поиск"
-        :prefix-icon="Search"
-    />
+    <div class="relative">
+      <el-input
+          v-model="input1"
+          class="w-[552px]"
+          size="large"
+          placeholder="Поиск"
+          :prefix-icon="Search"
+      />
+
+      <div class="bg-[#F8F9FC] text-gray-900 shadow-md border absolute w-full rounded-md mt-[5px]"
+           v-if="input1 && input1.length > 0"
+      >
+        <router-link v-for="(index3) in 10" :key="index3" class="px-4 py-2 block" to="#">lorem ipsum dolor</router-link>
+      </div>
+    </div>
+
     <div class="flex items-center gap-6">
       <el-dropdown
           trigger="click"

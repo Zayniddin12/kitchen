@@ -1,15 +1,15 @@
 <script setup lang="ts">
-import { reactive, ref } from "vue";
-import { useI18n } from "vue-i18n";
-import { useRouter } from "vue-router";
-import { ElNotification } from 'element-plus'
-import { ValidationType } from "@/components/ui/form/app-form/app-form.type";
+import {reactive, ref} from "vue";
+import {useI18n} from "vue-i18n";
+import {useRouter} from "vue-router";
+import {ElNotification} from 'element-plus'
+import {ValidationType} from "@/components/ui/form/app-form/app-form.type";
 import Language from "@/components/language/index.vue";
 import AppInput from "@/components/ui/form/app-input/AppInput.vue";
 import AppForm from "@/components/ui/form/app-form/AppForm.vue";
 import Footer from "@/components/ui/Footer.vue";
 
-const { t } = useI18n();
+const {t} = useI18n();
 const router = useRouter();
 
 interface UserData {
@@ -32,33 +32,25 @@ const onSubmit = async () => {
   if (!v$.value) return;
 
   if (!(await v$.value.validate())) {
-    ElNotification({
-      title: 'Error',
-      message: 'Ошибка',
-      type: 'error',
-    })
+    ElNotification({title: 'Error', message: 'Ошибка', type: 'error'})
   } else {
     await router.push("/login");
-    ElNotification({
-      title: 'Success',
-      message: 'Успешно',
-      type: 'success',
-    })
+    ElNotification({title: 'Success', message: 'Успешно', type: 'success'})
   }
 };
 </script>
 
 <template>
   <div class="p-8 h-screen flex flex-col lg:flex-row items-center relative bg-[#ffffff]">
-    <Language class="fixed top-[32px] right-[32px]" />
+    <Language class="fixed top-[32px] right-[32px]"/>
 
     <!-- Login Form Section -->
     <div class="w-full lg:w-1/4 md:w-1/2 m-auto">
       <header class="flex items-center justify-center mb-6">
         <img
-          src="@/assets/images/logo.svg"
-          alt="logo"
-          class="h-[50px]"
+            src="@/assets/images/logo.svg"
+            alt="logo"
+            class="h-[50px]"
         />
         <div class="flex flex-col ml-3">
           <b class="text-dark text-lg">НГМК</b>
@@ -76,47 +68,46 @@ const onSubmit = async () => {
       </p>
 
       <AppForm
-        :value="userData"
-        @validation="setValidation"
-        class="mt-[24px]"
+          :value="userData"
+          @validation="setValidation"
+          class="mt-[24px]"
       >
         <app-input
-          v-model="userData.password"
-          placeholder="Введите"
-          label="Новый пароль"
-          label-class="text-[#A8AAAE] text-sm"
-          required
-          show-password
-          prop="password"
-          maxlength="13"
+            v-model="userData.password"
+            placeholder="Введите"
+            label="Новый пароль"
+            label-class="text-[#A8AAAE] text-sm"
+            required
+            show-password
+            prop="password"
+            maxlength="13"
         />
 
         <app-input
-          v-model="userData.confirm_code"
-          placeholder="Введите"
-          label="Подтвердите пароль"
-          label-class="text-[#A8AAAE] text-sm"
-          required
-          show-password
-          prop="confirm_code"
+            v-model="userData.confirm_code"
+            placeholder="Введите"
+            label="Подтвердите пароль"
+            label-class="text-[#A8AAAE] text-sm"
+            required
+            show-password
+            prop="confirm_code"
         />
       </AppForm>
 
       <button
-        @click="onSubmit"
-        class="w-full bg-[#2E90FA] py-2.5 text-white rounded-lg mt-[25px]"
+          @click="onSubmit"
+          class="w-full bg-[#2E90FA] py-2.5 text-white rounded-lg mt-[25px]"
       >
         Отправить код
       </button>
 
       <div class="flex items-center justify-center mt-[22px] cursor-pointer" @click="router.go(-1)">
-        <img src="@/assets/images/icons/back.svg" alt="back" />
+        <img src="@/assets/images/icons/back.svg" alt="back"/>
         <p class="text-[#2E90FA] text-[14px] font-medium ml-[8px]">Назад</p>
       </div>
     </div>
 
-    <!-- Footer Section -->
-    <Footer />
+    <Footer/>
   </div>
 </template>
 
