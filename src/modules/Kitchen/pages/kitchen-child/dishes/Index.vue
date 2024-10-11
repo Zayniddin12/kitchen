@@ -237,23 +237,6 @@ watchEffect(() => {
               align="center"
               sortable
             />
-            <ElTableColumn
-              prop="action"
-              align="right"
-              label="Действие"
-            >
-              <template #default="{row}: {row: Record<string,any>}">
-                <RouterLink
-                  class="action-btn inline-flex "
-                  :to="{name: 'KitchenDishesProductShow', params: {product_id: row.id}}"
-                >
-                  <img
-                    src="@/assets/images/eye.svg"
-                    alt="eye"
-                  />
-                </RouterLink>
-              </template>
-            </ElTableColumn>
           </ElTable>
         </div>
       </div>
