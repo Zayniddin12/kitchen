@@ -62,13 +62,13 @@ const activeMenu = (index: number, item: MenuItem) => {
 };
 
 const closeChildSidebar = () => {
-  if (childIsOpenPin.value) {
-    emit("update:childSidebar", childIsOpenPin.value);
-  } else {
+  if (!childIsOpenPin.value) {
     currentIndex.value = 0;
-    emit("update:childSidebar", childIsOpenPin.value);
   }
+
+  emit("update:childSidebar", childIsOpenPin.value);
 };
+
 
 const pinSidebar = () => {
   localStorage.setItem("child-sidebar-pin", JSON.stringify(!JSON.parse(localStorage.getItem("child-sidebar-pin") || "false")));
@@ -174,6 +174,7 @@ const logOut = () => {
   color: #000d24 !important;
   background-color: #000d24 !important;
 }
+
 .activeListItem h1 {
   color: #000d24 !important;
 }
