@@ -7,6 +7,7 @@ import AppSelect from "@/components/ui/form/app-select/AppSelect.vue";
 import AppDatePicker from "@/components/ui/form/app-date-picker/AppDatePicker.vue";
 import FromWhoModal from "@/layout/Create/components/FromWhoModal.vue";
 import { ref } from "vue";
+import useConfirm from "@/components/ui/app-confirm/useConfirm";
 
 const emit = defineEmits(["update:editModal"]);
 const props = defineProps({
@@ -61,8 +62,13 @@ const tableData = ref<TableData[]>([
   },
 ]);
 
+const { confirm } = useConfirm();
+
 const closeModal = () => {
-  emit("update:editModal", false);
+  // Let it come out when the form changes
+  confirm.cancel().then((response) => {
+    emit("update:editModal", false);
+  });
 };
 
 const headerClass = (item: any) => {

@@ -112,7 +112,6 @@ watchEffect(() => {
             class="w-full"
             placeholder="Введите количество порций"
             label="Порция"
-            pla
             label-class="text-[#A8AAAE] text-[12px] font-medium"
           />
         </div>
