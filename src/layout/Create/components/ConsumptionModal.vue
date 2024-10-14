@@ -153,6 +153,36 @@ const closeModal = () => {
 
           </el-table>
 
+          <div class="flex items-center justify-between mb-[24px] mt-[40px]">
+            <h1 class="text-[#4F5662] text-[14px] font-semibold">Бухгалтер:</h1>
+            <span class="ml-2 text-[#A8AAAE] text-[14px] font-medium block"> Жалилов М.</span>
+          </div>
+
+          <div class="flex items-center justify-between mb-[24px]">
+            <h1 class="text-[#4F5662] text-[14px] font-semibold">Кладовщик:</h1>
+            <span class="ml-2 text-[#A8AAAE] text-[14px] font-medium block"> Эргашева Л.</span>
+          </div>
+
+          <div class="flex items-center justify-between mb-[24px]">
+            <h1 class="text-[#4F5662] text-[14px] font-semibold">Товаровед:</h1>
+            <span class="ml-2 text-[#A8AAAE] text-[14px] font-medium block"> Жалилов М.</span>
+          </div>
+
+          <div class="flex items-center justify-between mb-[24px]">
+            <h1 class="text-[#4F5662] text-[14px] font-semibold">Экспедитор:</h1>
+            <span class="ml-2 text-[#A8AAAE] text-[14px] font-medium block">Акромов О.</span>
+          </div>
+
+          <div class="flex items-center justify-between mb-[24px]">
+            <h1 class="text-[#4F5662] text-[14px] font-semibold">Зав. склад</h1>
+            <span class="ml-2 text-[#A8AAAE] text-[14px] font-medium block">Каххоров А.</span>
+          </div>
+
+          <div class="flex items-center justify-between mb-[24px]">
+            <h1 class="text-[#4F5662] text-[14px] font-semibold">Начальник базы</h1>
+            <span class="ml-2 text-[#A8AAAE] text-[14px] font-medium block">Маликов Б.</span>
+          </div>
+
 
         </div>
       </div>

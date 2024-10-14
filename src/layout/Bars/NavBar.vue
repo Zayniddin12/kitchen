@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import {Search} from "@element-plus/icons-vue";
-import {ref} from "vue";
+import { Search } from "@element-plus/icons-vue";
+import { ref } from "vue";
 import Language from "@/components/language/index.vue";
 import MemoModal from "@/layout/Create/components/MemoModal.vue";
 import ComingModal from "@/layout/Create/components/ComingModal.vue";
@@ -8,7 +8,7 @@ import ConsumptionModal from "@/layout/Create/components/ConsumptionModal.vue";
 import FreeModal from "@/layout/Create/components/FreeModal.vue";
 import MonthlyModal from "@/layout/Create/components/MonthlyModal.vue";
 import YearlyModal from "@/layout/Create/components/YearlyModal.vue";
-import ThemeToggler from "@/layout/Bars/ThemeToggler.vue"
+import ThemeToggler from "@/layout/Bars/ThemeToggler.vue";
 
 const editModal = ref<boolean>(false);
 const editModal2 = ref<boolean>(false);
@@ -17,7 +17,7 @@ const freeModal = ref<boolean>(false);
 const monthlyModal = ref<boolean>(false);
 const yearlyModal = ref<boolean>(false);
 const dropdown = ref<any>(null);
-const input1 = ref<string>('')
+const input1 = ref<string>("");
 
 const navbarMenuList = [
   {
@@ -75,11 +75,11 @@ const openModals = (data: any) => {
   <div class="flex justify-between items-start">
     <div class="relative">
       <el-input
-          v-model="input1"
-          class="w-[552px]"
-          size="large"
-          placeholder="Поиск"
-          :prefix-icon="Search"
+        v-model="input1"
+        class="w-[552px]"
+        size="large"
+        placeholder="Поиск"
+        :prefix-icon="Search"
       />
 
       <div class="bg-[#F8F9FC] text-gray-900 shadow-md border absolute w-full rounded-md mt-[5px]"
@@ -91,15 +91,16 @@ const openModals = (data: any) => {
 
     <div class="flex items-center gap-6">
       <el-dropdown
-          trigger="click"
-          :hide-on-click="false"
-          ref="dropdown"
+        trigger="click"
+        :hide-on-click="false"
+        ref="dropdown"
       >
-        <button class="flex items-center bg-[#2E90FA] rounded-[8px] border-[1.5px] py-[10px] px-[20px] active:bg-[#175CD3] active:border-[#1849A9] active:border-[1.5px]">
+        <button
+          class="flex items-center bg-[#2E90FA] rounded-[8px] border-[1.5px] py-[10px] px-[20px] active:bg-[#175CD3] active:border-[#1849A9] active:border-[1.5px]">
           <img
-              src="@/assets/images/icons/plus.svg"
-              class="mr-[8px]"
-              alt="plus"
+            src="@/assets/images/icons/plus.svg"
+            class="mr-[8px]"
+            alt="plus"
           />
 
           <span class="text-white vertical-mid">Создать</span>
@@ -107,27 +108,28 @@ const openModals = (data: any) => {
         <template #dropdown>
           <el-dropdown-menu class="navbar-dropdown">
             <el-dropdown-item
-                class="item-drop"
-                v-for="(item, in1) in navbarMenuList"
-                :key="in1"
+              class="item-drop"
+              v-for="(item, in1) in navbarMenuList"
+              :key="in1"
             >
               <button
-                  @click="openModals(item)"
-                  v-if="!item.children"
-                  class="flex items-center justify-between p-[10px] w-full"
+                @click="openModals(item)"
+                v-if="!item.children"
+                class="flex items-center justify-between p-[10px] w-full"
               >
                 <span class="text-[#4F5662] text-[14px] font-medium mr-[4px]">{{ item.title }}</span>
                 <img
-                    src="@/assets/arrow-right.svg"
-                    alt="arrow icon"
+                  v-if="in1 !== 0"
+                  src="@/assets/arrow-right.svg"
+                  alt="arrow icon"
                 />
               </button>
               <el-dropdown
-                  trigger="click"
-                  class="w-full"
-                  placement="right-start"
-                  popper-class="custom-dropdown"
-                  v-else
+                trigger="click"
+                class="w-full"
+                placement="right-start"
+                popper-class="custom-dropdown"
+                v-else
               >
                 <button class="flex items-center justify-between p-[10px] w-full">
                   <span class="text-[#4F5662] text-[14px] font-medium mr-[4px]">{{ item.title }}</span>
@@ -137,18 +139,18 @@ const openModals = (data: any) => {
                 <template #dropdown>
                   <el-dropdown-menu class="navbar-dropdown right-[20px]">
                     <el-dropdown-item
-                        class="item-drop"
-                        v-for="(child, index) in item.children"
-                        :key="index"
+                      class="item-drop"
+                      v-for="(child, index) in item.children"
+                      :key="index"
                     >
                       <button
-                          @click="openModals(child)"
-                          class="flex items-center justify-between p-[10px] w-full"
+                        @click="openModals(child)"
+                        class="flex items-center justify-between p-[10px] w-full"
                       >
                         <span class="text-[#4F5662] text-[14px] font-medium mr-12">{{ child.title }}</span>
                         <img
-                            src="@/assets/arrow-right.svg"
-                            alt="arrow icon"
+                          src="@/assets/arrow-right.svg"
+                          alt="arrow icon"
                         />
                       </button>
                     </el-dropdown-item>
@@ -161,7 +163,7 @@ const openModals = (data: any) => {
         </template>
       </el-dropdown>
 
-      <ThemeToggler v-if="false"/>
+      <ThemeToggler v-if="false" />
 
       <el-badge value="18" class="item cursor-pointer">
         <img src="@/assets/images/icons/bell.svg" alt="bell" />
@@ -171,12 +173,12 @@ const openModals = (data: any) => {
         <img src="@/assets/images/icons/mail.svg" alt="mail" />
       </el-badge>
 
-      <Language v-if="false"/>
+      <Language v-if="false" />
 
       <div class="flex items-center gap-3">
         <img src="@/assets/images/avatar.png"
-            class="h-[40px] w-[40px] object-contain rounded-full"
-            alt="avatar"
+             class="h-[40px] w-[40px] object-contain rounded-full"
+             alt="avatar"
         />
         <div class="flex flex-col">
           <h2 class="m-0 text-[14px] font-medium text-black dark:text-white">
@@ -189,12 +191,12 @@ const openModals = (data: any) => {
 
 
     <!----------Создать modal---------->
-    <MemoModal v-model:editModal="editModal"/>
-    <ComingModal v-model:editModal="editModal2"/>
-    <ConsumptionModal v-model:editModal="editConsumptionModal"/>
-    <FreeModal v-model:editModal="freeModal"/>
-    <MonthlyModal v-model:editModal="monthlyModal"/>
-    <YearlyModal v-model:editModal="yearlyModal"/>
+    <MemoModal v-model:editModal="editModal" />
+    <ComingModal v-model:editModal="editModal2" />
+    <ConsumptionModal v-model:editModal="editConsumptionModal" />
+    <FreeModal v-model:editModal="freeModal" />
+    <MonthlyModal v-model:editModal="monthlyModal" />
+    <YearlyModal v-model:editModal="yearlyModal" />
     <!----------Создать modal---------->
   </div>
 </template>
