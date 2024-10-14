@@ -130,7 +130,7 @@ watch(() => route.name, () => {
         <div class="border rounded-[24px] p-[24px]">
           <AppMediaUploader class="mt-4"/>
 
-          <div class="mt-[24px] grid grid-cols-3 gap-5">
+          <div class="mt-[24px] grid grid-cols-2 gap-5">
             <app-input
                 label="Наименование (RU)"
                 placeholder="Введите"
@@ -143,27 +143,9 @@ watch(() => route.name, () => {
                 label-class="text-[#A8AAAE] text-[12px]"
             />
 
-            <app-input
-                disabled
-                label="Уникальный номер рациона"
-                placeholder="Введите"
-                label-class="text-[#A8AAAE] text-[12px]"
-            />
 
             <app-select
-                label="Тип кухни"
-                placeholder="Выберите"
-                label-class="text-[#A8AAAE] text-[12px]"
-            />
-
-            <div class="flex items-center">
-              <app-time-picker type="time" label="Время начало" class="w-full" label-class="text-[#A8AAAE] font-medium text-[12px]"/>
-
-              <app-time-picker label="Время окончания" class="w-full ml-[8px]" label-class="text-[#A8AAAE] font-medium text-[12px]"/>
-            </div>
-
-            <app-select
-                label="Длительность"
+                label="Ед. измерения"
                 placeholder="Выберите"
                 label-class="text-[#A8AAAE] text-[12px]"
             />
@@ -195,16 +177,10 @@ watch(() => route.name, () => {
 
               <div class="bg-[#F8F9FC] rounded-[16px] p-[16px] mt-[24px]">
                 <div
-                    class="grid grid-cols-5 gap-4 border-b mt-[16px]"
+                    class="grid grid-cols-4 gap-4 border-b mt-[16px]"
                     v-for="(item, index) in repeater"
                     :key="index"
                 >
-                  <app-select
-                      label="Блюдо"
-                      label-class="text-[#A8AAAE] text-[12px]"
-                      placeholder="Выберите"
-                  />
-
                   <app-select
                       label="Тип продукта"
                       label-class="text-[#A8AAAE] text-[12px]"
@@ -281,7 +257,7 @@ watch(() => route.name, () => {
       </div>
 
       <button
-          class="custom-cancel-btn flex items-center ml-[24px]"
+          class="custom-light-btn flex items-center ml-[24px]"
           v-if="route.name === 'reference-view-id'"
           @click="router.push(`/reference-dish-edit/${route.params.id}`)"
       >

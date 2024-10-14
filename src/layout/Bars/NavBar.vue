@@ -76,7 +76,7 @@ const openModals = (data: any) => {
     <div class="relative">
       <div class="relative">
         <el-icon
-          class="absolute top-[50%] translate-y-[-50%] left-[19px] z-9999"
+          class="absolute top-[50%] translate-y-[-50%] left-[19px]"
           color="#8F9194"
         >
           <Search />
@@ -252,6 +252,5 @@ const openModals = (data: any) => {
   right: calc(3px + var(--el-badge-size) / 2);
   top: 1px;
   transform: translateY(-50%) translateX(100%);
-  z-index: var(--el-index-normal);
 }
 </style>

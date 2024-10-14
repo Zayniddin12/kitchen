@@ -23,7 +23,7 @@ interface MenuItem {
 }
 
 onMounted(() => {
-  const storedMenu: string | number = sessionStorage.getItem("current-menu") | 0;
+  const storedMenu: string | null = sessionStorage.getItem("current-menu") | 0;
   const storedSidebar = localStorage.getItem("child-sidebar");
 
   if (childIsOpenPin.value) {
@@ -32,7 +32,7 @@ onMounted(() => {
     currentIndex.value = 0;
   }
 
-  currentMenu.value = storedMenu ? JSON.parse(storedMenu) as number : 0;
+  currentMenu.value = storedMenu ? JSON.parse(storedMenu as any) as number : 0;
   childIsOpen.value = storedSidebar === "true";
 
   document.body.addEventListener("click", closeChildSidebar);
@@ -74,7 +74,6 @@ const pinSidebar = () => {
   localStorage.setItem("child-sidebar-pin", JSON.stringify(!JSON.parse(localStorage.getItem("child-sidebar-pin") || "false")));
   childIsOpenPin.value = JSON.parse(localStorage.getItem("child-sidebar-pin") || "false");
   closeChildSidebar();
-
 };
 
 const logOut = () => {
@@ -85,7 +84,7 @@ const logOut = () => {
 </script>
 
 <template>
-  <div class="sidebar w-[128px]">
+  <div class="sidebar w-[128px] z-10">
     <div class="sidebar-wrapper bg-white-blue dark:bg-dark text-center relative flex flex-col justify-between">
       <div class="overflow-auto">
         <img src="@/assets/images/logo.svg"
@@ -101,10 +100,17 @@ const logOut = () => {
           <div :class="{ activeListItem: currentMenu == index }"
                class="h-[88px] flex flex-col justify-center items-center cursor-pointer p-[12px] hover:bg-white dark:hover:bg-body-dark hover:shadow-menu hover:font-medium rounded-lg"
           >
-            <svg :data-src="'/sidebar/' + item?.icon + '.svg'"
-                 class="svg-class shrink-1"
-                 width="24px"
-                 height="24px"
+            <li
+                :style="{
+                  maskImage: `url(/sidebar/${item.icon}.svg)`,
+                  backgroundColor: '#8F9194',
+                  color: '#8F9194',
+                  width: '24px',
+                  height: '24px',
+                  maskSize: '24px',
+                  maskPosition: 'center',
+                  maskRepeat: 'no-repeat'
+                 }"
             />
 
             <h1 class="text-[13px] font-medium font-500 mt-[4px] text-[#4F5662] dark:text-white">{{ item.title }}</h1>
@@ -140,7 +146,6 @@ const logOut = () => {
 <style lang="scss">
 .sidebar {
   position: fixed;
-  z-index: 99;
   left: 0;
   top: 0;
   height: 100%;
@@ -165,10 +170,10 @@ const logOut = () => {
   stroke: #fff;
 }
 
-.activeListItem .svg-class path {
-  stroke: #000d24;
+.activeListItem li {
+  color: #000d24 !important;
+  background-color: #000d24 !important;
 }
-
 .activeListItem h1 {
   color: #000d24 !important;
 }
