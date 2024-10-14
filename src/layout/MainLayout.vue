@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import {onMounted, ref, watch} from "vue";
-import {useRoute} from "vue-router";
-import {useKitchenStore} from "@/modules/Kitchen/store/kitchen.store";
+import { onMounted, ref, watch } from "vue";
+import { useRoute } from "vue-router";
+import { useKitchenStore } from "@/modules/Kitchen/store/kitchen.store";
 
 import NavBar from "@/layout/Bars/NavBar.vue";
 import SideBar from "@/layout/Bars/SideBar.vue";
@@ -11,7 +11,7 @@ const route = useRoute();
 const kitchenStore = useKitchenStore();
 
 const childSidebar = ref<boolean>(JSON.parse(localStorage.getItem("child-sidebar-pin" as string) || "false"));
-const margin = ref('ml-[396px]')
+const margin = ref("ml-[396px]");
 
 onMounted(() => {
   childSidebar.value = JSON.parse(localStorage.getItem("child-sidebar-pin") || "false");
@@ -22,39 +22,40 @@ const closeChildSidebar = () => {
   childSidebar.value = false;
 };
 
-watch(() => route.name, function (val) {
-  if (val === 'home') {
-    margin.value = ''
-    childSidebar.value = false
+watch(() => route.name, function(val) {
+  if (val === "home") {
+    // margin.value = ''
+    childSidebar.value = false;
   } else {
-    margin.value = 'ml-[396px]';
+    margin.value = "ml-[396px]";
   }
-}, {immediate: true})
+}, { immediate: true });
 </script>
 
 <template>
   <div>
     <SideBar
-        v-model:childSidebar="childSidebar"
-        @closeChildSidebar2="closeChildSidebar"
+      v-model:childSidebar="childSidebar"
+      @closeChildSidebar2="closeChildSidebar"
     />
 
-    <div class="main-layout min-h-screen p-6 pr-7 pt-28 dark:bg-darkLayoutMain dark:bg-body-dark bg-white ml-[128px] transition-all flex flex-col justify-between"
-        :class="childSidebar ? margin : ''"
+    <div
+      class="main-layout min-h-screen p-6 pr-7 pt-28 dark:bg-darkLayoutMain dark:bg-body-dark bg-white ml-[128px] transition-all flex flex-col justify-between"
+      :class="childSidebar ? margin : ''"
     >
       <div class="flex flex-col">
-        <AppBreadcrumb/>
-        <slot/>
+        <AppBreadcrumb />
+        <slot />
       </div>
 
       <span class="mt-[28px] z-50 bg-transparent !dark:body-dark w-full text-[#8F9194] text-[12px]">Made by “Anysoft” software & solutions company</span>
     </div>
 
     <div
-        :class="childSidebar ? 'top-navbar-margin' : ''"
-        class="top-navbar bg-lightLayoutStorm dark:bg-body-dark text-white transition-all bg-[#fff]"
+      :class="childSidebar ? 'top-navbar-margin' : ''"
+      class="top-navbar bg-lightLayoutStorm dark:bg-body-dark text-white transition-all bg-[#fff]"
     >
-      <NavBar/>
+      <NavBar />
     </div>
   </div>
 </template>
