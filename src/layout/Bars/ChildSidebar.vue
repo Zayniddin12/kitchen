@@ -67,7 +67,8 @@ const activeChildMenu = (item: SidebarItem) => {
                   maskRepeat: 'no-repeat'
                    }"
         />
-        <img src="@/assets/images/close.svg" class="ml-[15px]" alt="close" @click.stop="emit('closeSidebar')" />
+        <img src="@/assets/images/close.svg" class="ml-[15px]" alt="close"
+             @click.stop="emit('closeSidebar', 'close')" />
       </div>
     </header>
 
@@ -153,6 +154,7 @@ const activeChildMenu = (item: SidebarItem) => {
 }
 
 .activePin li {
+  transform: rotate(-45deg);
   color: #000d24 !important;
   background-color: #000d24 !important;
 }
