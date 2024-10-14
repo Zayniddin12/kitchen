@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import {ref, onMounted, watch, onUnmounted} from "vue";
-import {useRoute, useRouter} from "vue-router";
-import {useLayoutStore} from "@/navigation";
+import { ref, onMounted, watch, onUnmounted } from "vue";
+import { useRoute, useRouter } from "vue-router";
+import { useLayoutStore } from "@/navigation";
 import ChildSidebar from "@/layout/Bars/ChildSidebar.vue";
 
 const emit = defineEmits<{ (e: "update:childSidebar", value: boolean): void; (e: "closeChildSidebar2"): void; }>();
@@ -36,13 +36,13 @@ onMounted(() => {
   childIsOpen.value = storedSidebar === "true";
 
   document.body.addEventListener("click", closeChildSidebar);
-  emit('update:childSidebar', false)
+  emit("update:childSidebar", false);
 });
 
 onUnmounted(() => {
   document.body.removeEventListener("click", closeChildSidebar);
   localStorage.setItem("child-sidebar-pin", JSON.stringify(false));
-  emit('update:childSidebar', false)
+  emit("update:childSidebar", false);
 });
 
 watch(() => route.path, () => {
@@ -57,7 +57,7 @@ const activeMenu = (index: number, item: MenuItem) => {
 
   if (item.route) {
     router.push(item.route);
-    childIsOpenPin.value = false
+    childIsOpenPin.value = false;
   }
 };
 
@@ -73,13 +73,13 @@ const closeChildSidebar = () => {
 const pinSidebar = () => {
   localStorage.setItem("child-sidebar-pin", JSON.stringify(!JSON.parse(localStorage.getItem("child-sidebar-pin") || "false")));
   childIsOpenPin.value = JSON.parse(localStorage.getItem("child-sidebar-pin") || "false");
-  closeChildSidebar()
-  // currentIndex.value = 1;
+  closeChildSidebar();
+
 };
 
 const logOut = () => {
-  localStorage.removeItem('child-sidebar');
-  sessionStorage.removeItem('current-menu')
+  localStorage.removeItem("child-sidebar");
+  sessionStorage.removeItem("current-menu");
   router.push("/login");
 };
 </script>
@@ -115,11 +115,11 @@ const logOut = () => {
                class="w-[260px] dark:bg-dark bg-white-blue rounded-[16px] h-[100%] absolute top-0 left-[120px] transition overflow-auto"
           >
             <ChildSidebar
-                :childIsOpenPin="childIsOpenPin"
-                :children="item.children as any"
-                :header="item.title"
-                @closeSidebar="closeChildSidebar"
-                @toggleSidebarPin="pinSidebar"
+              :childIsOpenPin="childIsOpenPin"
+              :children="item.children as any"
+              :header="item.title"
+              @closeSidebar="closeChildSidebar"
+              @toggleSidebarPin="pinSidebar"
             />
           </div>
         </div>
@@ -128,8 +128,8 @@ const logOut = () => {
       <!------------------------log out---------------------------->
       <button class="flex flex-col items-center cursor-pointer mb-[10px]" @click.stop="logOut">
         <img
-            src="@/assets/images/logout.svg"
-            alt="logout"
+          src="@/assets/images/logout.svg"
+          alt="logout"
         />
         <span class="text-[#EA5455] text-[14px] font-medium block">Выход</span>
       </button>

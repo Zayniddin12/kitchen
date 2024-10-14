@@ -12,7 +12,7 @@ interface SidebarItem {
 
 const route = useRoute();
 const router = useRouter();
-const emit = defineEmits<{ (e: "closeSidebar"): void; }>();
+const emit = defineEmits<{ (e: string): void; }>();
 
 const props = defineProps({
   childIsOpenPin: {
@@ -72,20 +72,21 @@ const activeChildMenu = (item: SidebarItem) => {
     </header>
 
     <el-collapse
-        v-for="(item, index) in children"
-        :key="index"
-        accordion
-        class="border-0 px-3"
+      v-for="(item, index) in children"
+      :key="index"
+      accordion
+      class="border-0 px-3"
     >
       <el-collapse-item
-          v-if="item.children"
-          :title="item.title"
-          :name="index + 1"
-          class="element-collapse"
+        v-if="item.children"
+        :title="item.title"
+        :name="index + 1"
+        class="element-collapse"
       >
         <template #title>
           <div class="flex items-center px-3">
-            <svg :data-src="'/sidebar/' + item.icon + '.svg'" class="svg-class shrink-1 mr-[12px]" width="24px" height="24px" />
+            <svg :data-src="'/sidebar/' + item.icon + '.svg'" class="svg-class shrink-1 mr-[12px]" width="24px"
+                 height="24px" />
             <span class="dark:text-white">{{ item.title }}</span>
           </div>
         </template>
@@ -115,7 +116,8 @@ const activeChildMenu = (item: SidebarItem) => {
            @click.stop="activeChildMenu(item)"
       >
         <div class="flex items-center">
-          <svg :data-src="'/sidebar/' + item.icon + '.svg'" class="svg-class shrink-1 mr-[12px]" width="24px" height="24px" />
+          <svg :data-src="'/sidebar/' + item.icon + '.svg'" class="svg-class shrink-1 mr-[12px]" width="24px"
+               height="24px" />
           <span class="dark:text-white">{{ item?.title }}</span>
         </div>
       </div>
