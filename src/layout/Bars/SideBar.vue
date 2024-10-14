@@ -1,13 +1,10 @@
 <script setup lang="ts">
-import { ref, onMounted, watch, onUnmounted } from "vue";
-import { useRoute, useRouter } from "vue-router";
-import { useLayoutStore } from "@/navigation";
+import {ref, onMounted, watch, onUnmounted} from "vue";
+import {useRoute, useRouter} from "vue-router";
+import {useLayoutStore} from "@/navigation";
 import ChildSidebar from "@/layout/Bars/ChildSidebar.vue";
 
-const emit = defineEmits<{
-  (e: "update:childSidebar", value: boolean): void;
-  (e: "closeChildSidebar2"): void;
-}>();
+const emit = defineEmits<{ (e: "update:childSidebar", value: boolean): void; (e: "closeChildSidebar2"): void; }>();
 
 const store = useLayoutStore();
 const router = useRouter();
@@ -35,17 +32,17 @@ onMounted(() => {
     currentIndex.value = 0;
   }
 
-  console.log(currentIndex.value);
-
   currentMenu.value = storedMenu ? JSON.parse(storedMenu) as number : 0;
   childIsOpen.value = storedSidebar === "true";
 
   document.body.addEventListener("click", closeChildSidebar);
+  emit('update:childSidebar', false)
 });
 
 onUnmounted(() => {
   document.body.removeEventListener("click", closeChildSidebar);
   localStorage.setItem("child-sidebar-pin", JSON.stringify(false));
+  emit('update:childSidebar', false)
 });
 
 watch(() => route.path, () => {
@@ -56,14 +53,11 @@ watch(() => route.path, () => {
 const activeMenu = (index: number, item: MenuItem) => {
   currentIndex.value = index;
   currentMenu.value = index;
-  childIsOpen.value = !!item.children;
-  emit("update:childSidebar", !!item.children);
-
-  localStorage.setItem("child-sidebar", "true");
   sessionStorage.setItem("current-menu", currentMenu.value.toString());
 
   if (item.route) {
     router.push(item.route);
+    childIsOpenPin.value = false
   }
 };
 
@@ -79,14 +73,13 @@ const closeChildSidebar = () => {
 const pinSidebar = () => {
   localStorage.setItem("child-sidebar-pin", JSON.stringify(!JSON.parse(localStorage.getItem("child-sidebar-pin") || "false")));
   childIsOpenPin.value = JSON.parse(localStorage.getItem("child-sidebar-pin") || "false");
+  closeChildSidebar()
+  currentIndex.value = 1;
 };
 
 const logOut = () => {
-  const arr = ["current-menu", "child-sidebar"];
-
-  for (let i = 0; i < arr.length; i++) {
-    localStorage.removeItem(arr[i]);
-  }
+  localStorage.removeItem('child-sidebar');
+  sessionStorage.removeItem('current-menu')
   router.push("/login");
 };
 </script>
@@ -133,7 +126,7 @@ const logOut = () => {
       </div>
 
       <!------------------------log out---------------------------->
-      <button class="flex flex-col items-center cursor-pointer mb-[10px]" @click="logOut">
+      <button class="flex flex-col items-center cursor-pointer mb-[10px]" @click.stop="logOut">
         <img
             src="@/assets/images/logout.svg"
             alt="logout"
