@@ -74,13 +74,19 @@ const openModals = (data: any) => {
 <template>
   <div class="flex justify-between items-start">
     <div class="relative">
-      <el-input
-        v-model="input1"
-        class="w-[552px]"
-        size="large"
-        placeholder="Поиск"
-        :prefix-icon="Search"
-      />
+      <div class="relative">
+        <el-icon
+          class="absolute top-[50%] translate-y-[-50%] left-[19px] z-9999"
+          color="#8F9194"
+        >
+          <Search />
+        </el-icon>
+        <input
+          v-model="input1"
+          class="bg-white-blue dark:bg-dark w-[552px] rounded-2xl text-black px-[16px] py-[12px] pl-[50px] outline-none"
+          placeholder="Поиск"
+        />
+      </div>
 
       <div class="bg-[#F8F9FC] text-gray-900 shadow-md border absolute w-full rounded-md mt-[5px]"
            v-if="input1 && input1.length > 0"

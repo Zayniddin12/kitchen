@@ -49,15 +49,14 @@ const activeChildMenu = (item: SidebarItem) => {
 </script>
 
 <template>
-  <div>
+  <div @click.stop>
     <header class="flex items-center justify-between pt-[16px] pb-[32px] px-[24px]">
       <h1 class="text-[#000000] font-medium text-[20px] dark:text-white">{{ header }}</h1>
 
       <div class="flex items-center cursor-pointer" :class="{ activePin: childIsOpenPin }">
 
-        <li
-          @click.stop="emit('toggleSidebarPin')"
-          :style="{
+        <li @click.stop="emit('toggleSidebarPin')"
+            :style="{
                   maskImage: 'url(/icons/pin.svg)',
                   backgroundColor: '#8F9194',
                   color: '#8F9194',
@@ -67,27 +66,26 @@ const activeChildMenu = (item: SidebarItem) => {
                   maskPosition: 'center',
                   maskRepeat: 'no-repeat'
                    }"
-        ></li>
+        />
         <img src="@/assets/images/close.svg" class="ml-[15px]" alt="close" @click.stop="emit('closeSidebar')" />
       </div>
     </header>
 
     <el-collapse
-      v-for="(item, index) in children"
-      :key="index"
-      accordion
-      class="border-0 px-3"
+        v-for="(item, index) in children"
+        :key="index"
+        accordion
+        class="border-0 px-3"
     >
       <el-collapse-item
-        v-if="item.children"
-        :title="item.title"
-        :name="index + 1"
-        class="element-collapse"
+          v-if="item.children"
+          :title="item.title"
+          :name="index + 1"
+          class="element-collapse"
       >
         <template #title>
           <div class="flex items-center px-3">
-            <svg :data-src="'/sidebar/' + item.icon + '.svg'" class="svg-class shrink-1 mr-[12px]" width="24px"
-                 height="24px" />
+            <svg :data-src="'/sidebar/' + item.icon + '.svg'" class="svg-class shrink-1 mr-[12px]" width="24px" height="24px" />
             <span class="dark:text-white">{{ item.title }}</span>
           </div>
         </template>
@@ -103,7 +101,7 @@ const activeChildMenu = (item: SidebarItem) => {
 
         <div v-for="(sub, index2) in item.children"
              :key="index2"
-             class="text-left py-[10px] px-[12px] text-dark text-[14px] font-medium cursor-pointer dark:text-white"
+             class="ml-[36px] text-left py-[10px] px-[12px] text-dark text-[14px] font-medium cursor-pointer dark:text-white"
              :class="{ activeMenu: currentItem == sub.route }"
              @click.stop="activeChildMenu(sub)"
         >
@@ -117,8 +115,7 @@ const activeChildMenu = (item: SidebarItem) => {
            @click.stop="activeChildMenu(item)"
       >
         <div class="flex items-center">
-          <svg :data-src="'/sidebar/' + item.icon + '.svg'" class="svg-class shrink-1 mr-[12px]" width="24px"
-               height="24px" />
+          <svg :data-src="'/sidebar/' + item.icon + '.svg'" class="svg-class shrink-1 mr-[12px]" width="24px" height="24px" />
           <span class="dark:text-white">{{ item?.title }}</span>
         </div>
       </div>
@@ -146,7 +143,7 @@ const activeChildMenu = (item: SidebarItem) => {
 }
 
 .activeMenu {
-  @apply bg-[#ffffff] dark:bg-body-dark rounded-md shadow-menu;
+  @apply bg-[#ffffff] dark:bg-body-dark rounded-[8px] shadow-menu;
 }
 
 .dark .svg-class path {

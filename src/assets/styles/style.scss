@@ -7,7 +7,6 @@
 @import "@/assets/styles/components/ui/app-switch";
 @import "@/assets/styles/components/ui/app-checkbox";
 
-
 html {
   scroll-behavior: smooth;
 }
@@ -107,6 +106,10 @@ html {
   background-color: #f8f9fc;
   border-radius: 8px;
   padding: 8px;
+}
+
+.custom-light-btn {
+  @apply flex items-center gap-4 bg-[#F8F9FC] py-[10px] px-[20px] rounded-[8px] text-[#4F5662] text-[18px]
 }
 
 .el-pagination {
