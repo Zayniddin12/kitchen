@@ -1,6 +1,10 @@
-<script setup lang="ts">
+<script
+  setup
+  lang="ts"
+>
 import AppInput from "@/components/ui/form/app-input/AppInput.vue";
 import AppSelect from "@/components/ui/form/app-select/AppSelect.vue";
+import useConfirm from "@/components/ui/app-confirm/useConfirm";
 
 const emit = defineEmits(["update:editModal"]);
 const props = defineProps({
@@ -10,8 +14,12 @@ const props = defineProps({
   },
 });
 
+const { confirm } = useConfirm();
+
 const closeModal = () => {
-  emit("update:editModal", false);
+  confirm.cancel({ disabledBody: true }).then((response) => {
+    emit("update:editModal", false);
+  });
 };
 </script>
 
@@ -31,7 +39,10 @@ const closeModal = () => {
       <div class="border-[#E2E6F3] bg-[#fff] rounded-[15px] w-[60%] mr-0">
         <div class="px-[72px] pb-[150px]">
           <header class="flex items-center justify-center my-[24px] mb-6">
-            <img src="@/assets/images/logo.svg" alt="logo">
+            <img
+              src="@/assets/images/logo.svg"
+              alt="logo"
+            >
             <div class="flex flex-col ml-3">
               <b class="text-[#000D24] text-lg">NKMK</b>
               <span class="text-[#CBCCCE]">Jamg‘armasi</span>
@@ -78,7 +89,10 @@ const closeModal = () => {
               </h1>
             </div>
 
-            <img src="@/assets/images/icons/qr.svg" alt="qr" />
+            <img
+              src="@/assets/images/icons/qr.svg"
+              alt="qr"
+            />
 
             <h1 class="text-[#A8AAAE] text-[14px] mr-[100px]">Эргашева Л.</h1>
           </div>
@@ -99,13 +113,21 @@ const closeModal = () => {
 
           <app-input placeholder="Тема" />
 
-          <app-input placeholder="Отображение сообщения служебки" type="textarea" :rows="5" />
+          <app-input
+            placeholder="Отображение сообщения служебки"
+            type="textarea"
+            :rows="5"
+          />
 
           <app-input placeholder="Отправитель" />
         </div>
 
-        <div class="flex items-start justify-between">
-          <button class="custom-cancel-btn" @click="closeModal">Отменить</button>
+        <div class="flex items-start justify-end gap-x-2">
+          <button
+            class="custom-cancel-btn"
+            @click="closeModal"
+          >Отменить
+          </button>
           <button class="custom-apply-btn">Сохранить как черновик</button>
           <button class="custom-send-btn">Отправить</button>
         </div>

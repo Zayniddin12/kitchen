@@ -1,10 +1,12 @@
-<script setup lang="ts">
+<script
+  setup
+  lang="ts"
+>
 import { ref, watch } from "vue";
-import { Search } from "@element-plus/icons-vue";
 import { useRoute, useRouter } from "vue-router";
 import AppInput from "@/components/ui/form/app-input/AppInput.vue";
-import AppSelect from "@/components/ui/form/app-select/AppSelect.vue";
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
+import useConfirm from "@/components/ui/app-confirm/useConfirm";
 
 const route = useRoute();
 const router = useRouter();
@@ -19,6 +21,7 @@ interface TableData {
 const input1 = ref<string>("");
 
 const { setBreadCrumb } = useBreadcrumb();
+const { confirm } = useConfirm();
 
 const setBreadCrumbFn = () => {
   setBreadCrumb([
@@ -37,7 +40,7 @@ const setBreadCrumbFn = () => {
 
     {
       label: "Организации",
-      to: {name: "reference-organization"},
+      to: { name: "reference-organization" },
     },
     {
       label: String(route?.meta?.breadcrumbItemTitle ?? ""),
@@ -48,7 +51,25 @@ const setBreadCrumbFn = () => {
 
 watch(() => route.name, () => {
   setBreadCrumbFn();
-}, {immediate: true});
+}, { immediate: true });
+
+const cancelFn = () => {
+  confirm.cancel().then(response => {
+    router.push({ name: "reference-organization" });
+  });
+};
+
+const deleteFn = () => {
+  confirm.delete().then(response => {
+    router.push({ name: "reference-organization" });
+  });
+};
+
+const switchChange = () => {
+  confirm.show().then(response => {
+
+  });
+};
 
 </script>
 
@@ -63,16 +84,28 @@ watch(() => route.name, () => {
       <div class="w-[70%]">
         <div class="border border-[#E2E6F3] rounded-[24px] p-[24px] h-[65vh] flex flex-col">
           <div class="grid grid-cols-2 gap-4">
-            <app-input label="Наименование" placeholder="Введите"
-                       label-class="text-[#A8AAAE] font-medium text-[12px]" class="w-full" />
+            <app-input
+              label="Наименование"
+              placeholder="Введите"
+              label-class="text-[#A8AAAE] font-medium text-[12px]"
+              class="w-full"
+            />
 
-            <app-input label="Юр. адрес" placeholder="Введите"
-                       label-class="text-[#A8AAAE] font-medium text-[12px]" class="w-full" />
+            <app-input
+              label="Юр. адрес"
+              placeholder="Введите"
+              label-class="text-[#A8AAAE] font-medium text-[12px]"
+              class="w-full"
+            />
           </div>
 
           <div class="grid grid-cols-2 gap-4">
-            <app-input label="ИНН" placeholder="Выберите"
-                       label-class="text-[#A8AAAE] font-medium text-[12px]" class="w-full" />
+            <app-input
+              label="ИНН"
+              placeholder="Выберите"
+              label-class="text-[#A8AAAE] font-medium text-[12px]"
+              class="w-full"
+            />
             <span class="blo"></span>
           </div>
 
@@ -81,18 +114,29 @@ watch(() => route.name, () => {
             v-if="route.params.id && !route.query.type"
             active-text="Деактивация"
             class="app-switch mt-auto"
+            :before-change="switchChange"
           />
         </div>
 
-        <div v-if="!route.query.type" class="flex items-center mt-[24px] "
-             :class="!route.params.id ? 'justify-end' : 'justify-between'">
-          <button v-if="route.params.id" class="custom-danger-btn">
+        <div
+          v-if="!route.query.type"
+          class="flex items-center mt-[24px] "
+          :class="!route.params.id ? 'justify-end' : 'justify-between'"
+        >
+          <button
+            v-if="route.params.id"
+            class="custom-danger-btn"
+            @click="deleteFn"
+          >
             Удалить
           </button>
 
 
           <div class="flex items-center gap-4">
-            <button class="custom-cancel-btn">
+            <button
+              @click="cancelFn"
+              class="custom-cancel-btn"
+            >
               Отменить
             </button>
 
@@ -104,9 +148,11 @@ watch(() => route.name, () => {
       </div>
 
       <div class="w-[30%]">
-        <button @click="router.push({name: 'reference-organization-edit', params: {id: 1}})"
-                v-if="route.query.type == 'view'"
-                class="flex items-center gap-4 bg-[#F8F9FC] py-[10px] px-[20px] rounded-[8px]">
+        <button
+          @click="router.push({name: 'reference-organization-edit', params: {id: 1}})"
+          v-if="route.query.type == 'view'"
+          class="flex items-center gap-4 bg-[#F8F9FC] py-[10px] px-[20px] rounded-[8px]"
+        >
           <li
             :style="{
                   maskImage: 'url(/icons/edit.svg)',

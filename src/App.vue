@@ -10,7 +10,7 @@ import IncomePasswordLayout from "@/views/IncomePassword.vue";
 import PasswordLayout from "@/views/Password.vue";
 import { useRoute } from "vue-router";
 import { computed } from "vue";
-  import AppConfirm from "@/components/ui/app-confirm/AppConfirm.vue";
+import AppConfirm from "@/components/ui/app-confirm/AppConfirm.vue";
 
 interface RouteMeta {
   layout?: "MainLayout" | "LoginLayout" | "ErrorLayout" | "ResetPasswordLayout" | "IncomePasswordLayout" | "PasswordLayout";
@@ -31,11 +31,11 @@ const layouts = {
 </script>
 
 <template>
+  <AppConfirm />
   <component
     v-if="layout"
     :is="layouts[layout]"
   >
     <RouterView />
   </component>
-  <AppConfirm/>
 </template>

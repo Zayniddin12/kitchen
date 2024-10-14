@@ -18,22 +18,29 @@ const buttonClass = (status?: ButtonStatusType): string[] => {
   return classes;
 };
 
+const closeDialog = () => {
+  sendAction("cancel");
+};
+
+// watch(openConfirmModal, closeDialog);
+
 </script>
 
 <template>
   <ElDialog
     v-model="openConfirmModal"
-    width="500"
+    width="480"
     align-center
     :show-close="false"
     class="p-7 !rounded-3xl confirm-dialog"
+    :before-close="closeDialog"
   >
     <template
       #title
       v-if="activeConfirm?.title"
     >
       <h5
-        class="text-xl font-bold text-[#0A090B] max-w-[279px]"
+        class="text-xl font-bold text-[#0A090B]"
         v-html="activeConfirm.title"
       />
     </template>
@@ -46,7 +53,7 @@ const buttonClass = (status?: ButtonStatusType): string[] => {
       #footer
       v-if="activeConfirm?.buttons?.length"
     >
-      <div class="mt-6 flex items-center gap-x-4 text-sm font-medium justify-end">
+      <div class="mt-6 flex items-center gap-x-3 text-sm font-medium justify-end">
         <button
           v-for="button in activeConfirm.buttons"
           :key="button.action"

@@ -66,7 +66,7 @@ const { confirm } = useConfirm();
 
 const closeModal = () => {
   // Let it come out when the form changes
-  confirm.cancel().then((response) => {
+  confirm.cancel({ disabledBody: true }).then((response) => {
     emit("update:editModal", false);
   });
 };
@@ -255,7 +255,7 @@ const openModals = () => {
                 @click="openModals"
                 class="flex items-center justify-center gap-3 border-[1px] border-[#2E90FA] rounded-[8px] w-full text-[#2E90FA] text-[14px] font-medium py-[10px]"
               >
-                <li
+                <span
                   :style="{
                   maskImage: 'url(/icons/plusIcon.svg)',
                   backgroundColor: '#2E90FA',
@@ -266,7 +266,7 @@ const openModals = () => {
                   maskPosition: 'center',
                   maskRepeat: 'no-repeat'
                    }"
-                ></li>
+                ></span>
                 Добавить
               </button>
             </template>

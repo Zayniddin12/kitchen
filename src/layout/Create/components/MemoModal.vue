@@ -22,7 +22,7 @@ const { confirm } = useConfirm();
 
 const closeModal = () => {
   // Let it come out when the form changes
-  confirm.cancel().then((response) => {
+  confirm.cancel({ disabledBody: true }).then((response) => {
     emit("update:editModal", false);
   });
 };

@@ -14,6 +14,7 @@ export type DefaultButtonTypes = Record<DefaultButtonType, ButtonType[]>;
 export interface ConfirmParamsType {
   title?: textType;
   description?: textType;
+  disabledBody?: boolean;
 }
 
 export interface ConfirmInitParamsType extends ConfirmParamsType {

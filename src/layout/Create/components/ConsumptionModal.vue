@@ -6,6 +6,7 @@ import AppInput from "@/components/ui/form/app-input/AppInput.vue";
 import AppSelect from "@/components/ui/form/app-select/AppSelect.vue";
 import AppDatePicker from "@/components/ui/form/app-date-picker/AppDatePicker.vue";
 import { ref } from "vue";
+import useConfirm from "@/components/ui/app-confirm/useConfirm";
 
 const emit = defineEmits(["update:editModal"]);
 const props = defineProps({
@@ -60,15 +61,13 @@ const tableData = ref<TableData[]>([
   },
 ]);
 
-const closeModal = () => {
-  const { confirm } = useConfirm();
+const { confirm } = useConfirm();
 
-  const closeModal = () => {
-    // Let it come out when the form changes
-    confirm.cancel().then((response) => {
-      emit("update:editModal", false);
-    });
-  };
+const closeModal = () => {
+  // Let it come out when the form changes
+  confirm.cancel({ disabledBody: true }).then((response) => {
+    emit("update:editModal", false);
+  });
 };
 </script>
 
