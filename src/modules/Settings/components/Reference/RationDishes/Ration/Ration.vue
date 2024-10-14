@@ -105,7 +105,24 @@ onMounted(() => {
     <div class="mt-[24px]">
       <el-table stripe  :data="tableData" class="custom-element-table">
         <el-table-column prop="id" label="№" width="80" />
-        <el-table-column prop="name" label="Наименование рациона" sortable />
+        <el-table-column prop="name" label="Наименование рациона" sortable>
+<!--          <template #header="{ column }"> sortable icon-->
+<!--            <div class="flex items-center">-->
+<!--              <span>Наименование рациона</span>-->
+
+<!--             <div class="flex flex-col ml-[6px] gap-1">-->
+<!--               <svg width="12" height="6" viewBox="0 0 12 6" fill="none" xmlns="http://www.w3.org/2000/svg">-->
+<!--                 <path d="M10.5 5.25L6 0.75L1.5 5.25" stroke="#A8AAAE" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>-->
+<!--               </svg>-->
+
+
+<!--               <svg width="12" height="6" viewBox="0 0 12 6" fill="none" xmlns="http://www.w3.org/2000/svg">-->
+<!--                 <path d="M1.5 0.75L6 5.25L10.5 0.75" stroke="#A8AAAE" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>-->
+<!--               </svg>-->
+<!--             </div>-->
+<!--            </div>-->
+<!--          </template>-->
+        </el-table-column>
         <el-table-column prop="unique" label="Уникальный номер" sortable />
         <el-table-column prop="type" label="Тип кухни" sortable />
         <el-table-column prop="duration" label="Длительность" sortable />
@@ -124,3 +141,9 @@ onMounted(() => {
     </div>
   </div>
 </template>
+
+<!--<style>-->
+<!--.custom-element-table .el-table__header-wrapper .caret-wrapper {-->
+<!--  display: none;-->
+<!--}-->
+<!--</style>-->
