@@ -35,12 +35,12 @@ onMounted(() => {
   currentMenu.value = storedMenu ? JSON.parse(storedMenu as any) as number : 0;
   childIsOpen.value = storedSidebar === "true";
 
-  document.body.addEventListener("click", closeChildSidebar);
+  document.body.addEventListener("click", () => closeChildSidebar("any"));
   emit("update:childSidebar", false);
 });
 
 onUnmounted(() => {
-  document.body.removeEventListener("click", closeChildSidebar);
+  document.body.removeEventListener("click", () => closeChildSidebar("any"));
   localStorage.setItem("child-sidebar-pin", JSON.stringify(false));
   emit("update:childSidebar", false);
 });
@@ -61,7 +61,14 @@ const activeMenu = (index: number, item: MenuItem) => {
   }
 };
 
-const closeChildSidebar = (value) => {
+const closeChildSidebar = (value: string) => {
+
+  if (value == "any") {
+    if (!childIsOpenPin.value) {
+      currentIndex.value = 0;
+    }
+
+  }
 
   if (value && value == "close" && childIsOpenPin.value) {
     currentIndex.value = 0;
@@ -78,7 +85,7 @@ const closeChildSidebar = (value) => {
   }
 
   if (!childIsOpenPin.value) {
-    currentIndex.value = 0;
+    // currentIndex.value = 0;
   }
 
 

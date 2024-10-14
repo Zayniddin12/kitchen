@@ -54,6 +54,7 @@ const activeChildMenu = (item: SidebarItem) => {
       <h1 class="text-[#000000] font-medium text-[20px] dark:text-white">{{ header }}</h1>
 
       <div class="flex items-center cursor-pointer" :class="{ activePin: childIsOpenPin }">
+        <!--        {{ childIsOpenPin}}-->
 
         <li @click.stop="emit('toggleSidebarPin')"
             :style="{
