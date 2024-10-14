@@ -23,17 +23,17 @@ const buttonClass = (status?: ButtonStatusType): string[] => {
 <template>
   <ElDialog
     v-model="openConfirmModal"
-    width="450"
+    width="500"
     align-center
     :show-close="false"
-    class="text-center p-7 !rounded-3xl confirm-dialog"
+    class="p-7 !rounded-3xl confirm-dialog"
   >
     <template
       #title
       v-if="activeConfirm?.title"
     >
       <h5
-        class="text-xl font-bold text-[#0A090B] max-w-[279px] mx-auto"
+        class="text-xl font-bold text-[#0A090B] max-w-[279px]"
         v-html="activeConfirm.title"
       />
     </template>
@@ -46,7 +46,7 @@ const buttonClass = (status?: ButtonStatusType): string[] => {
       #footer
       v-if="activeConfirm?.buttons?.length"
     >
-      <div :class="['mt-6 flex items-center gap-x-4 text-sm font-medium', `${activeConfirm.buttons.length>2 ? 'justify-center' : 'justify-end'}`]">
+      <div class="mt-6 flex items-center gap-x-4 text-sm font-medium justify-end">
         <button
           v-for="button in activeConfirm.buttons"
           :key="button.action"

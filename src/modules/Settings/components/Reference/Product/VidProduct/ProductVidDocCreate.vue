@@ -100,7 +100,7 @@ watchEffect(() => {
       </div>
 
       <button
-        class="custom-cancel-btn flex items-center ml-[24px]"
+        class="custom-light-btn flex items-center ml-[24px]"
         @click="router.push(`/reference-vid-edit/${route.params.id}`)"
         v-if="route.name === 'reference-vid-view-id'"
       >

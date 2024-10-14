@@ -24,7 +24,6 @@ const closeChildSidebar = () => {
 
 watch(() => route.name, function(val) {
   if (val === "home") {
-    // margin.value = ''
     childSidebar.value = false;
   } else {
     margin.value = "ml-[396px]";
@@ -48,7 +47,7 @@ watch(() => route.name, function(val) {
         <slot />
       </div>
 
-      <span class="mt-[28px] z-50 bg-transparent !dark:body-dark w-full text-[#8F9194] text-[12px]">Made by “Anysoft” software & solutions company</span>
+      <span class="mt-[28px] bg-transparent !dark:body-dark w-full text-[#8F9194] text-[12px]">Made by “Anysoft” software & solutions company</span>
     </div>
 
     <div
