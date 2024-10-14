@@ -61,19 +61,36 @@ const activeMenu = (index: number, item: MenuItem) => {
   }
 };
 
-const closeChildSidebar = () => {
+const closeChildSidebar = (value) => {
+
+  if (value && value == "close" && childIsOpenPin.value) {
+    currentIndex.value = 0;
+    emit("update:childSidebar", false);
+
+    localStorage.setItem("child-sidebar-pin", JSON.stringify(false));
+    childIsOpenPin.value = JSON.parse(localStorage.getItem("child-sidebar-pin") || "false");
+    console.log(value);
+  }
+
+
+  if (value && value == "close" && !childIsOpenPin.value) {
+    currentIndex.value = 0;
+  }
+
   if (!childIsOpenPin.value) {
     currentIndex.value = 0;
   }
 
+
   emit("update:childSidebar", childIsOpenPin.value);
+
 };
 
 
 const pinSidebar = () => {
   localStorage.setItem("child-sidebar-pin", JSON.stringify(!JSON.parse(localStorage.getItem("child-sidebar-pin") || "false")));
   childIsOpenPin.value = JSON.parse(localStorage.getItem("child-sidebar-pin") || "false");
-  closeChildSidebar();
+  closeChildSidebar("toggle");
 };
 
 const logOut = () => {
@@ -100,8 +117,9 @@ const logOut = () => {
           <div :class="{ activeListItem: currentMenu == index }"
                class="h-[88px] flex flex-col justify-center items-center cursor-pointer p-[12px] hover:bg-white dark:hover:bg-body-dark hover:shadow-menu hover:font-medium rounded-lg"
           >
+            <!--            {{ currentIndex }}-->
             <li
-                :style="{
+              :style="{
                   maskImage: `url(/sidebar/${item.icon}.svg)`,
                   backgroundColor: '#8F9194',
                   color: '#8F9194',
