@@ -1,10 +1,10 @@
 /** @type {import("tailwindcss").Config} */
 export default {
   content: [
-    './src/**/*.{vue,js,ts,jsx,tsx}',
-    './public/index.html',
+    "./src/**/*.{vue,js,ts,jsx,tsx}",
+    "./public/index.html",
   ],
-  darkMode: 'class',
+  darkMode: "class",
   theme: {
     extend: {
       boxShadow: {
