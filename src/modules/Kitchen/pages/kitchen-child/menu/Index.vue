@@ -16,7 +16,6 @@ import ClockIcon from "@/assets/images/icons/clock.svg";
 import EditIcon from "@/assets/images/icons/edit.svg";
 import MinusIcon from "@/assets/images/icons/minus.svg";
 import Plus3Icon from "@/assets/images/icons/plus3.svg";
-import RefreshIcon from "@/assets/images/icons/refresh.svg";
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 
 interface ProductItemType {
@@ -320,60 +319,60 @@ watchEffect(() => {
           v-if="hasData"
           class="flex items-center"
         >
-            <template v-if="activeTab === TABS.CURRENT && kitchenStore.activeMenuPart">
-              <ElButton
-                class="!bg-blue-500 min-h-12 w-[253px]"
-                type="primary"
-                size="large"
-                tag="RouterLink"
-                :to="{name: 'KitchenMenuCookingDishCreate'}"
-              >
-                <div class="flex items-center gap-x-2">
-                  <svg
-                    :data-src="PlusIcon"
-                    class="size-6"
-                  />
-                  <span class="text-lg font-medium">
+          <template v-if="activeTab === TABS.CURRENT && kitchenStore.activeMenuPart">
+            <ElButton
+              class="!bg-blue-500 min-h-12 w-[253px]"
+              type="primary"
+              size="large"
+              tag="RouterLink"
+              :to="{name: 'KitchenMenuCookingDishCreate'}"
+            >
+              <div class="flex items-center gap-x-2">
+                <svg
+                  :data-src="PlusIcon"
+                  class="size-6"
+                />
+                <span class="text-lg font-medium">
                 Приготовить блюды
               </span>
-                </div>
-              </ElButton>
-              <ElButton
-                class="!bg-[#28C76F] min-h-12 w-[149px]"
-                size="large"
-                type="success"
-                tag="RouterLink"
-                :to="{name: 'KitchenMenuSellCreate'}"
-              >
-                <div class="flex items-center gap-x-2">
-                  <svg
-                    :data-src="SellIcon"
-                    class="size-6"
-                  />
-                  <span class="text-lg font-medium">
+              </div>
+            </ElButton>
+            <ElButton
+              class="!bg-[#28C76F] min-h-12 w-[149px]"
+              size="large"
+              type="success"
+              tag="RouterLink"
+              :to="{name: 'KitchenMenuSellCreate'}"
+            >
+              <div class="flex items-center gap-x-2">
+                <svg
+                  :data-src="SellIcon"
+                  class="size-6"
+                />
+                <span class="text-lg font-medium">
                 Продать
               </span>
-                </div>
-              </ElButton>
-            </template>
-            <template v-else-if="activeTab === TABS.ALL">
-              <ElButton
-                class="min-h-12 w-[253px] !bg-[#E2E6F3] border-none"
-                size="large"
-                tag="RouterLink"
-                :to="{name: 'KitchenMenuEdit'}"
-              >
-                <div class="flex items-center gap-x-2">
-                  <svg
-                    :data-src="EditIcon"
-                    class="size-6"
-                  />
-                  <span class="text-dark-gray font-medium text-lg">
+              </div>
+            </ElButton>
+          </template>
+          <template v-else-if="activeTab === TABS.ALL">
+            <ElButton
+              class="min-h-12 w-[253px] !bg-[#E2E6F3] border-none"
+              size="large"
+              tag="RouterLink"
+              :to="{name: 'KitchenMenuEdit'}"
+            >
+              <div class="flex items-center gap-x-2">
+                <svg
+                  :data-src="EditIcon"
+                  class="size-6"
+                />
+                <span class="text-dark-gray font-medium text-lg">
                   Редактировать
                 </span>
-                </div>
-              </ElButton>
-            </template>
+              </div>
+            </ElButton>
+          </template>
         </div>
       </div>
       <div class="mt-6">
@@ -853,12 +852,15 @@ watchEffect(() => {
                         v-if="row.action"
                         class="flex items-center justify-end gap-x-2"
                       >
-                        <button class="action-btn">
+                        <RouterLink
+                          :to="{name: 'KitchenMenuShow', params: {id: row.idx}}"
+                          class="action-btn"
+                        >
                           <img
                             src="@/assets/images/eye.svg"
                             alt="eye"
                           />
-                        </button>
+                        </RouterLink>
 
                         <button class="action-btn">
                           <img
@@ -910,7 +912,7 @@ watchEffect(() => {
       <div
         v-show="activeTab === TABS.CURRENT && ordersModal"
         ref="ordersWrapper"
-        class="fixed bottom-0 pt-6 right-0 w-full z-[100] bg-white shadow-[0_0_3px_-1px_#0A090B0A]"
+        class="fixed bottom-0 pt-6 right-0 w-full z-[100] bg-white shadow-[0_0_33px_-15px_#0A090B1F]"
       >
         <div class="flex items-center justify-between px-6 pb-4">
           <h4 class="text-2xl text-black font-semibold">Заказы</h4>
@@ -936,7 +938,7 @@ watchEffect(() => {
         </div>
         <div
           v-if="orders.length>0"
-          class="grid grid-cols-5 gap-x-12 gap-y-10 max-h-[220px] overflow-y-auto px-6 pb-6 pt-4"
+          class="grid grid-cols-5 gap-x-20 gap-y-10 max-h-[220px] overflow-y-auto px-6 pb-6 pt-4"
         >
           <div
             v-for="item in orders"
@@ -980,7 +982,7 @@ watchEffect(() => {
                     </button>
                   </div>
                 </div>
-                <div class="flex flex-col mt-1.5 gap-x-1.5 font-medium text-base text-cool-gray">
+                <div class="flex flex-col mt-1.5 gap-x-1.5 font-medium text-lg text-cool-gray">
               <span>
                 {{ item.weight }} литр
               </span>

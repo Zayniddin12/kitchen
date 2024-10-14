@@ -3,7 +3,6 @@
   lang="ts"
 >
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
-import { setItem } from "@/utils/localStorage";
 import { BreadcrumbItemType } from "@/components/ui/app-breadcrumb/app-breadcrumb.type";
 import { watch } from "vue";
 import { useRoute } from "vue-router";
