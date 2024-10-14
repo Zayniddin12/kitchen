@@ -1,8 +1,12 @@
-<script setup lang="ts">
+<script
+  setup
+  lang="ts"
+>
 import AppInput from "@/components/ui/form/app-input/AppInput.vue";
 import AppSelect from "@/components/ui/form/app-select/AppSelect.vue";
 import AppDatePicker from "@/components/ui/form/app-date-picker/AppDatePicker.vue";
 import { ref } from "vue";
+import useConfirm from "@/components/ui/app-confirm/useConfirm";
 
 const emit = defineEmits(["update:editModal"]);
 const props = defineProps({
@@ -56,8 +60,13 @@ const tableData = ref<TableData[]>([
   },
 ]);
 
+const { confirm } = useConfirm();
+
 const closeModal = () => {
-  emit("update:editModal", false);
+  // Let it come out when the form changes
+  confirm.cancel({ disabledBody: true }).then((response) => {
+    emit("update:editModal", false);
+  });
 };
 </script>
 
@@ -77,7 +86,10 @@ const closeModal = () => {
       <div class="border-[#E2E6F3] bg-[#fff] border rounded-[15px] w-[65%] mr-0">
         <div class="px-[72px] pb-[150px]">
           <header class="flex items-center justify-center my-[24px] mb-6">
-            <img src="@/assets/images/logo.svg" alt="logo">
+            <img
+              src="@/assets/images/logo.svg"
+              alt="logo"
+            >
             <div class="flex flex-col ml-3">
               <b class="text-[#000D24] text-lg">NKMK</b>
               <span class="text-[#CBCCCE]">Jamg‘armasi</span>
@@ -123,13 +135,33 @@ const closeModal = () => {
             просим получить до 23 августа доверенность от отдела ДМ «Фонд НКМК» на продукцию.
           </div>
 
-          <el-table :data="tableData" class="custom-element-table" header-cell-class-name="custom-cell-header"
-                    cell-class-name="custom-cell-header">
-            <el-table-column prop="title" label="Название" class="!p-0" />
-            <el-table-column prop="total_count" label="Количество" />
-            <el-table-column prop="measurement" label="Ед. измерения" />
-            <el-table-column prop="price" label="Цена" />
-            <el-table-column prop="sum" label="Сумма" />
+          <el-table
+            :data="tableData"
+            class="custom-element-table"
+            header-cell-class-name="custom-cell-header"
+            cell-class-name="custom-cell-header"
+          >
+            <el-table-column
+              prop="title"
+              label="Название"
+              class="!p-0"
+            />
+            <el-table-column
+              prop="total_count"
+              label="Количество"
+            />
+            <el-table-column
+              prop="measurement"
+              label="Ед. измерения"
+            />
+            <el-table-column
+              prop="price"
+              label="Цена"
+            />
+            <el-table-column
+              prop="sum"
+              label="Сумма"
+            />
 
             <template #append>
               <div class="flex items-center justify-end p-4">
@@ -148,7 +180,10 @@ const closeModal = () => {
               </h1>
             </div>
 
-            <img src="@/assets/images/icons/qr.svg" alt="qr" />
+            <img
+              src="@/assets/images/icons/qr.svg"
+              alt="qr"
+            />
 
             <h1 class="text-[#A8AAAE] text-[14px] mr-[100px]">Эргашева Л.</h1>
           </div>
@@ -157,24 +192,41 @@ const closeModal = () => {
 
       <div class="w-[35%] ml-[24px] flex flex-col justify-between">
         <div>
-          <app-input placeholder="Накладние" label="Накладние"
-                     label-class="text-[#A8AAAE] text-[12px] font-medium" />
+          <app-input
+            placeholder="Накладние"
+            label="Накладние"
+            label-class="text-[#A8AAAE] text-[12px] font-medium"
+          />
 
           <app-input placeholder="Z 04-04-01/463" />
 
           <app-date-picker placeholder="24.08.2024" />
 
-          <app-select placeholder="Получатель" label="Получатель"
-                      label-class="text-[#A8AAAE] text-[12px] font-medium" />
+          <app-select
+            placeholder="Получатель"
+            label="Получатель"
+            label-class="text-[#A8AAAE] text-[12px] font-medium"
+          />
 
-          <app-input placeholder="Полученные" label="Полученные"
-                     label-class="text-[#A8AAAE] text-[12px] font-medium" />
+          <app-input
+            placeholder="Полученные"
+            label="Полученные"
+            label-class="text-[#A8AAAE] text-[12px] font-medium"
+          />
 
-          <app-input placeholder="Тема" label="Тема"
-                     label-class="text-[#A8AAAE] text-[12px] font-medium" />
+          <app-input
+            placeholder="Тема"
+            label="Тема"
+            label-class="text-[#A8AAAE] text-[12px] font-medium"
+          />
 
-          <app-input placeholder="Содержание запроса" type="textarea" :rows="5" label="Содержание запроса"
-                     label-class="text-[#A8AAAE] text-[12px] font-medium" />
+          <app-input
+            placeholder="Содержание запроса"
+            type="textarea"
+            :rows="5"
+            label="Содержание запроса"
+            label-class="text-[#A8AAAE] text-[12px] font-medium"
+          />
 
         </div>
 
@@ -183,29 +235,50 @@ const closeModal = () => {
                 Таблица получаемых продуктов
             </span>
 
-          <app-select placeholder="Тип продукта" label="Тип продукта"
-                      label-class="text-[#A8AAAE] text-[12px] font-medium" />
+          <app-select
+            placeholder="Тип продукта"
+            label="Тип продукта"
+            label-class="text-[#A8AAAE] text-[12px] font-medium"
+          />
 
-          <app-select placeholder="Вид продукта" label="Вид продукта"
-                      label-class="text-[#A8AAAE] text-[12px] font-medium" />
+          <app-select
+            placeholder="Вид продукта"
+            label="Вид продукта"
+            label-class="text-[#A8AAAE] text-[12px] font-medium"
+          />
 
-          <app-input placeholder="Количество" label="Количество"
-                     label-class="text-[#A8AAAE] text-[12px] font-medium" />
+          <app-input
+            placeholder="Количество"
+            label="Количество"
+            label-class="text-[#A8AAAE] text-[12px] font-medium"
+          />
 
-          <app-input placeholder="Ед. измерения" label="Ед. измерения"
-                     label-class="text-[#A8AAAE] text-[12px] font-medium" />
+          <app-input
+            placeholder="Ед. измерения"
+            label="Ед. измерения"
+            label-class="text-[#A8AAAE] text-[12px] font-medium"
+          />
 
-          <app-input placeholder="Цена" label="Цена"
-                     label-class="text-[#A8AAAE] text-[12px] font-medium" />
+          <app-input
+            placeholder="Цена"
+            label="Цена"
+            label-class="text-[#A8AAAE] text-[12px] font-medium"
+          />
 
-          <app-input placeholder="Сумма" label="Сумма"
-                     label-class="text-[#A8AAAE] text-[12px] font-medium" />
-          <app-input placeholder="Отображение итого суммы полученных продуктов"
-                     label="Отображение итого суммы полученных продуктов"
-                     label-class="text-[#A8AAAE] text-[12px] font-medium" />
+          <app-input
+            placeholder="Сумма"
+            label="Сумма"
+            label-class="text-[#A8AAAE] text-[12px] font-medium"
+          />
+          <app-input
+            placeholder="Отображение итого суммы полученных продуктов"
+            label="Отображение итого суммы полученных продуктов"
+            label-class="text-[#A8AAAE] text-[12px] font-medium"
+          />
 
           <button
-            class="flex items-center justify-center gap-3 border-[1px] border-[#2E90FA] rounded-[8px] w-full text-[#2E90FA] text-[14px] font-medium py-[10px]">
+            class="flex items-center justify-center gap-3 border-[1px] border-[#2E90FA] rounded-[8px] w-full text-[#2E90FA] text-[14px] font-medium py-[10px]"
+          >
             <li
               :style="{
                   maskImage: 'url(/icons/plusIcon.svg)',
@@ -225,12 +298,19 @@ const closeModal = () => {
         </div>
 
         <div>
-          <app-input placeholder="Отправитель" label="Отправитель"
-                     label-class="text-[#A8AAAE] text-[12px] font-medium" />
+          <app-input
+            placeholder="Отправитель"
+            label="Отправитель"
+            label-class="text-[#A8AAAE] text-[12px] font-medium"
+          />
         </div>
 
         <div class="flex items-start justify-between">
-          <button class="custom-cancel-btn" @click="closeModal">Отменить</button>
+          <button
+            class="custom-cancel-btn"
+            @click="closeModal"
+          >Отменить
+          </button>
           <button class="custom-apply-btn">Сохранить как черновик</button>
           <button class="custom-send-btn">Отправить</button>
         </div>

@@ -4,13 +4,15 @@
 >
 import AppInput from "@/components/ui/form/app-input/AppInput.vue";
 import AppSelect from "@/components/ui/form/app-select/AppSelect.vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { ref, watchEffect } from "vue";
 import { useKitchenStore } from "@/modules/Kitchen/store/kitchen.store";
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
+import useConfirm from "@/components/ui/app-confirm/useConfirm";
 
 const kitchenStore = useKitchenStore();
 const route = useRoute();
+const router = useRouter();
 const { setBreadCrumb } = useBreadcrumb();
 
 const num = ref(1);
@@ -72,9 +74,12 @@ const addMeal = () => {
   });
 };
 
-
 const deleteMeal = (mealIndex: any) => {
-  mealData.value = mealData.value.filter((meal: any, index: any) => index !== mealIndex);
+  if (mealData.value.length < 2) return;
+
+  confirm.delete().then(response => {
+    mealData.value = mealData.value.filter((meal: any, index: any) => index !== mealIndex);
+  });
 };
 
 const setBreadCrumbFn = () => {
@@ -115,6 +120,14 @@ const setBreadCrumbFn = () => {
 watchEffect(() => {
   setBreadCrumbFn();
 });
+
+const { confirm } = useConfirm();
+
+const cancel = () => {
+  confirm.cancel().then(response => {
+    router.push({ name: "KitchenMenuIndex" });
+  });
+};
 
 </script>
 
@@ -176,6 +189,7 @@ watchEffect(() => {
 
             <div class="w-[5%] flex justify-end">
               <button
+                :disabled="mealData.length === 1"
                 @click="deleteMeal(index)"
                 class="bg-[#E2E6F3] rounded-[8px] p-[10px] ml-4"
               >
@@ -194,42 +208,42 @@ watchEffect(() => {
           @click="addMeal"
           class="flex items-center justify-center gap-3 border-[1px] border-[#2E90FA] rounded-[8px] text-[#2E90FA] text-[14px] font-medium py-[8px] px-[16px]"
         >
-          <li
+          <span
             :style="{
-                  maskImage: 'url(/icons/plusIcon.svg)',
-                  backgroundColor: '#2E90FA',
-                  color: '#2E90FA',
-                  width: '20px',
-                  height: '20px',
-                  maskSize: '20px',
-                  maskPosition: 'center',
-                  maskRepeat: 'no-repeat'
-                   }"
-          ></li>
+              maskImage: 'url(/icons/plusIcon.svg)',
+              backgroundColor: '#2E90FA',
+              color: '#2E90FA',
+              width: '20px',
+              height: '20px',
+              maskSize: '20px',
+              maskPosition: 'center',
+              maskRepeat: 'no-repeat'
+            }"
+          ></span>
           Добавить еще
         </button>
 
         <div class="flex items-center gap-x-8">
           <div class="flex items-center gap-x-1 text-sm">
-                          <span class="text-cool-gray">
-                            Цена:
-                          </span>
+            <span class="text-cool-gray">
+              Цена:
+            </span>
             <strong class="font-semibold text-dark">
               25 000 сум
             </strong>
           </div>
           <div class="flex items-center gap-x-1 text-sm">
-                          <span class="text-cool-gray">
-                            НДС:
-                          </span>
+            <span class="text-cool-gray">
+              НДС:
+            </span>
             <strong class="font-semibold text-dark">
               3 000 сум
             </strong>
           </div>
           <div class="flex items-center gap-x-1 text-sm">
-                          <span class="text-cool-gray">
-                            Общая сумма:
-                          </span>
+            <span class="text-cool-gray">
+              Общая сумма:
+            </span>
             <strong class="font-semibold text-dark">
               28 000 сум
             </strong>
@@ -238,9 +252,22 @@ watchEffect(() => {
       </div>
 
       <div class="flex justify-end mt-[24px]">
-        <button class="custom-apply-btn">Продать</button>
+        <ElButton
+          size="large"
+          class="!bg-[#E2E6F3] !border-none !text-dark-gray"
+          @click="cancel"
+        >
+          Отменить
+        </ElButton>
+        <ElButton
+          size="large"
+          type="primary"
+          class="!bg-blue-500"
+        >
+          Продать
+          <!--    send btn text => Применить-->
+        </ElButton>
       </div>
-
     </div>
   </div>
 </template>

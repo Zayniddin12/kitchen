@@ -7,6 +7,7 @@ import { useRouter } from "vue-router";
 import AppInput from "@/components/ui/form/app-input/AppInput.vue";
 import AppSelect from "@/components/ui/form/app-select/AppSelect.vue";
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
+import useConfirm from "@/components/ui/app-confirm/useConfirm";
 
 const router = useRouter();
 
@@ -16,9 +17,13 @@ const repeaterAgain = () => {
   formRepeater.value.push({});
 };
 
+const { confirm } = useConfirm();
+
 const deleteForm = (index: number) => {
   if (formRepeater.value.length > 1) {
-    formRepeater.value.splice(index, 1);
+    confirm.delete().then(() => {
+      formRepeater.value.splice(index, 1);
+    });
   }
 };
 
@@ -43,6 +48,12 @@ const setBreadCrumbFn = () => {
 watchEffect(() => {
   setBreadCrumbFn();
 });
+
+const cancel = () => {
+  confirm.cancel().then(response => {
+    router.push("/contracts");
+  });
+};
 
 </script>
 
@@ -100,6 +111,7 @@ watchEffect(() => {
           </div>
 
           <button
+            :disabled="formRepeater.length === 1"
             class="bg-[#E2E6F3] rounded-[8px] p-[10px] ml-4"
             @click="deleteForm(index)"
           >
@@ -128,7 +140,7 @@ watchEffect(() => {
   <div class="flex items-center justify-end">
     <button
       class="custom-cancel-btn"
-      @click="router.push('/contracts')"
+      @click="cancel"
     >Отменить
     </button>
     <button class="custom-apply-btn ml-[8px]">Добавить</button>
