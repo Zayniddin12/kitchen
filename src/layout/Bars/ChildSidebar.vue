@@ -111,7 +111,7 @@ const activeChildMenu = (item: SidebarItem) => {
 
       <div v-else
            class="text-dark-gray text-[14px] text-left py-[10px] font-medium cursor-pointer px-[12px]"
-           :class="{ activeMenu: item && currentItem === (item.route || item.id) }"
+           :class="{ activeMenu: currentItem == item.route ? true : currentItem == item.id }"
            @click.stop="activeChildMenu(item)"
       >
         <div class="flex items-center">
