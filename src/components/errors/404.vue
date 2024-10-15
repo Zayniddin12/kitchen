@@ -1,7 +1,7 @@
-<script
-  setup
-  lang="ts"
->
+<script setup lang="ts">
+import {useRouter} from "vue-router";
+
+const router = useRouter()
 </script>
 
 <template>
@@ -20,12 +20,12 @@
         Извините, запрошенная вами страница не найдена пожалуйста, вернитесь на
         главную страницу
       </p>
-      <RouterLink
-        to="/"
-        class="bg-[#2E90FA] w-[200px] text-center py-[10px] rounded-lg text-white m-auto"
+      <button
+          class="bg-[#2E90FA] w-[200px] py-[10px] rounded-lg text-white m-auto"
+          @click="router.go(-1)"
       >
         Вернуться на главную
-      </RouterLink>
+      </button>
     </div>
   </div>
 </template>
