@@ -218,6 +218,14 @@ const products = ref<ProductType[] | []>([
       { id: 9, price: 14000, quantity: 0, weight: 1, name: "Блюда 6", photo: DishesImg },
       { id: 10, price: 15000, quantity: 0, weight: 1.5, name: "Блюда 7", photo: DishesImg },
       { id: 11, price: 18000, quantity: 0, weight: 2, name: "Блюда 8", photo: DishesImg },
+      { id: 4, price: 12000, quantity: 0, weight: 0.5, name: "Блюда 1", photo: DishesImg },
+      { id: 5, price: 14000, quantity: 0, weight: 1, name: "Блюда 2", photo: DishesImg },
+      { id: 6, price: 15000, quantity: 0, weight: 1.5, name: "Блюда 3", photo: DishesImg },
+      { id: 7, price: 18000, quantity: 0, weight: 2, name: "Блюда 4", photo: DishesImg },
+      { id: 8, price: 12000, quantity: 0, weight: 0.5, name: "Блюда 5", photo: DishesImg },
+      { id: 9, price: 14000, quantity: 0, weight: 1, name: "Блюда 6", photo: DishesImg },
+      { id: 10, price: 15000, quantity: 0, weight: 1.5, name: "Блюда 7", photo: DishesImg },
+      { id: 11, price: 18000, quantity: 0, weight: 2, name: "Блюда 8", photo: DishesImg },
     ],
   },
 ]);
@@ -519,55 +527,51 @@ watchEffect(() => {
                 <h4 class="text-dark-gray font-semibold text-xl">
                   {{ product.category.name }}
                 </h4>
-                <div class="grid grid-cols-4 gap-6 mt-3">
+                <div class="grid grid-cols-8 gap-6 mt-3">
                   <div
                     v-for="productItem in product.data"
                     :key="productItem.id"
-                    class="rounded-2xl border border-[#E2E6F3] p-4 bg-[#F8F9FC] flex gap-x-3"
+                    class="menu__card"
                   >
+                    <h5 class="menu__card-title">
+                      {{ productItem.name }}
+                    </h5>
                     <img
                       :src="productItem.photo as any"
                       :alt="productItem.name"
-                      class="rounded-xl w-30 h-[114px] object-contain"
+                      class="menu__card-img"
                     />
-                    <div>
-                      <h5 class="text-dark font-semibold text-xl">
-                        {{ productItem.name }}
-                      </h5>
-                      <div class="flex flex-col gap-y-1 text-sm font-medium mt-1 text-cool-gray">
+                    <div class="menu__card-subtitles">
                         <span>
                         {{ productItem.weight }} литр
                       </span>
-                        <span>
+                      <span>
                         {{ formatNumber(productItem.price) }} UZS
                       </span>
-                      </div>
-                      <div class="mt-2.5 flex items-center gap-x-2">
-                        <button
-                          @click="updateQuantity(productItem, false)"
-                          :disabled="productItem.quantity===0"
-                          class="size-7 text-[#292D324D] rounded-lg shadow-[0_2px_8.4px_0_#292D3214] bg-white flex items-center justify-center"
-                        >
-                          <img
-                            :src="MinusIcon"
-                            alt="minus icon"
-                            class="size-5"
-                          />
-                        </button>
-                        <span class="text-base font-medium text-dark-gray">
+                    </div>
+                    <div class="menu__card__actions">
+                      <button
+                        @click="updateQuantity(productItem, false)"
+                        :disabled="productItem.quantity===0"
+                        class="menu__card__action-btn"
+                      >
+                        <svg
+                          :data-src="MinusIcon"
+                          class="menu__card__action-btn__icon"
+                        />
+                      </button>
+                      <span>
                           {{ productItem.quantity }}
                         </span>
-                        <button
-                          @click="updateQuantity(productItem)"
-                          class="size-7 text-[#292D324D] rounded-lg shadow-[0_2px_8.4px_0_#292D3214] bg-white flex items-center justify-center"
-                        >
-                          <img
-                            :src="Plus3Icon"
-                            alt="minus icon"
-                            class="size-4"
-                          />
-                        </button>
-                      </div>
+                      <button
+                        @click="updateQuantity(productItem)"
+                        class="menu__card__action-btn"
+                      >
+                        <svg
+                          :data-src="Plus3Icon"
+                          class="menu__card__action-btn__icon"
+                        />
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -1004,3 +1008,39 @@ watchEffect(() => {
     </Teleport>
   </section>
 </template>
+
+<style lang="scss">
+.menu {
+
+  &__card {
+    @apply rounded-2xl border border-[#E2E6F3] p-4 bg-[#F8F9FC] flex flex-col gap-x-3 text-center;
+
+    &-img {
+      @apply rounded-xl object-contain w-full mt-3;
+    }
+
+    &-title {
+      @apply text-dark font-semibold text-xl;
+    }
+
+    &-subtitles {
+      @apply flex flex-col gap-y-1 text-sm font-medium text-cool-gray mt-3;
+    }
+
+    &__actions {
+      @apply mt-3.5 flex items-center justify-center gap-x-2 text-base font-medium text-dark-gray;
+    }
+
+    &__action {
+
+      &-btn {
+        @apply size-7 text-[#292D324D] rounded-lg shadow-[0_2px_8.4px_0_#292D3214] bg-white flex items-center justify-center;
+
+        &__icon {
+          @apply size-4;
+        }
+      }
+    }
+  }
+}
+</style>
