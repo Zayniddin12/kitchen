@@ -195,7 +195,6 @@ const openModals = (data: any) => {
       </div>
     </div>
 
-
     <!----------Создать modal---------->
     <MemoModal v-model:editModal="editModal" />
     <ComingModal v-model:editModal="editModal2" />

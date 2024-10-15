@@ -202,7 +202,7 @@ const logOut = () => {
   @apply bg-white dark:bg-body-dark shadow-menu font-medium;
 }
 
-.dark .activeListItem .svg-class path {
+.dark .activeListItem li {
   stroke: #fff;
 }
 

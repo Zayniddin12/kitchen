@@ -80,7 +80,6 @@ const switchChange = async (): Promise<boolean> => {
     return false;
   }
 };
-
 </script>
 
 <template>
