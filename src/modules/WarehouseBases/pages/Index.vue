@@ -18,7 +18,6 @@ const route = useRoute();
 const { setBreadCrumb } = useBreadcrumb();
 
 onBeforeRouteUpdate((to, from, next) => {
-
   districtStore.getProduct(+to.params.district_id, +to.params.product_id);
 
   if (!districtStore.district || !districtStore.product) return next({ name: "notFound" });
