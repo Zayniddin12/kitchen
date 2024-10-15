@@ -6,10 +6,11 @@ import { ref, watchEffect } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import AppInput from "@/components/ui/form/app-input/AppInput.vue";
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
+import useConfirm from "@/components/ui/app-confirm/useConfirm";
 
 const route = useRoute();
 const router = useRouter();
-
+const { confirm } = useConfirm();
 
 interface TableData {
   id: number;
@@ -78,6 +79,26 @@ watchEffect(() => {
   setBreadCrumbFn();
 });
 
+const cancelFn = () => {
+  confirm.cancel().then(response => {
+    router.push({ name: "reference-warehouse-bases" });
+  });
+};
+
+const deleteFn = () => {
+  confirm.delete().then(response => {
+    router.push({ name: "reference-warehouse-bases" });
+  });
+};
+
+const switchChange = async (): Promise<boolean> => {
+  try {
+    const response = await confirm.show();
+    return true;
+  } catch (error) {
+    return false;
+  }
+};
 
 </script>
 
@@ -121,15 +142,13 @@ watchEffect(() => {
               class="w-full"
             />
           </div>
-
-
-          <!--          <ElSwitch-->
-          <!--            v-if="route.params.id && !route.query.type"-->
-          <!--            active-text="Деактивация"-->
-          <!--            class="app-switch mt-auto"-->
-          <!--          />-->
+          <ElSwitch
+            v-if="route.params.id && !route.query.type"
+            active-text="Деактивация"
+            class="app-switch mt-auto"
+            :before-change="switchChange"
+          />
         </div>
-
         <div
           v-if="!route.query.type"
           class="flex items-center mt-[24px] "
@@ -138,13 +157,17 @@ watchEffect(() => {
           <button
             v-if="route.params.id"
             class="custom-danger-btn"
+            @click="deleteFn"
           >
             Удалить
           </button>
 
 
           <div class="flex items-center gap-4">
-            <button class="custom-cancel-btn">
+            <button
+              @click="cancelFn"
+              class="custom-cancel-btn"
+            >
               Отменить
             </button>
 

@@ -104,15 +104,18 @@ const cancelFn = () => {
 };
 
 const deleteFn = () => {
-  confirm.cancel().then(() => {
+  confirm.delete().then(() => {
     router.push({ name: "reference-regional-directorates" });
   });
 };
 
-const switchChange = () => {
-  confirm.show().then(response => {
-
-  });
+const switchChange = async (): Promise<boolean> => {
+  try {
+    const response = await confirm.show();
+    return true;
+  } catch (error) {
+    return false;
+  }
 };
 
 </script>

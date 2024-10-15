@@ -1,5 +1,8 @@
-<script setup lang="ts">
-import { ref, onMounted, watch, onUnmounted } from "vue";
+<script
+  setup
+  lang="ts"
+>
+import { onMounted, onUnmounted, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useLayoutStore } from "@/navigation";
 import ChildSidebar from "@/layout/Bars/ChildSidebar.vue";
@@ -110,18 +113,28 @@ const logOut = () => {
   <div class="sidebar w-[128px] z-10">
     <div class="sidebar-wrapper bg-white-blue dark:bg-dark text-center relative flex flex-col justify-between">
       <div class="overflow-auto">
+<<<<<<< HEAD
          <img src="@/assets/images/logo.svg"
               class="m-auto pt-[16px] pb-[40px]"
               alt="logo"
          />
+=======
+        <img
+          src="@/assets/images/logo.svg"
+          class="m-auto pt-[16px] pb-[40px]"
+          alt="logo"
+        />
+>>>>>>> 308d9889cbae2369f728472b5d526b68217fc039
 
-        <div v-for="(item, index) in store.menuItems"
-             :key="index"
-             class="px-[11px]"
-             @click.stop="activeMenu(index, item)"
+        <div
+          v-for="(item, index) in store.menuItems"
+          :key="index"
+          class="px-[11px]"
+          @click.stop="activeMenu(index, item)"
         >
-          <div :class="{ activeListItem: currentMenu == index }"
-               class="h-[88px] flex flex-col justify-center items-center cursor-pointer p-[12px] hover:bg-white dark:hover:bg-body-dark hover:shadow-menu hover:font-medium rounded-lg"
+          <div
+            :class="{ activeListItem: currentMenu == index }"
+            class="h-[88px] flex flex-col justify-center items-center cursor-pointer p-[12px] hover:bg-white dark:hover:bg-body-dark hover:shadow-menu hover:font-medium rounded-lg"
           >
             <li
               :style="{
@@ -140,22 +153,29 @@ const logOut = () => {
           </div>
 
           <!-----------------------------------child sidebar----------------------------------->
-          <div v-if="currentIndex === index && item.children"
-               class="w-[260px] dark:bg-dark bg-white-blue rounded-[16px] h-[100%] absolute top-0 left-[120px] transition overflow-auto"
-          >
-            <ChildSidebar
-              :childIsOpenPin="childIsOpenPin"
-              :children="item.children as any"
-              :header="item.title"
-              @closeSidebar="closeChildSidebar"
-              @toggleSidebarPin="pinSidebar"
-            />
-          </div>
+          <Transition name="nested-reverse">
+            <div
+              v-if="currentIndex === index && item.children"
+              class="w-[260px] dark:bg-dark bg-white-blue rounded-[16px] h-[100%] absolute top-0 left-[120px] transition overflow-auto"
+            >
+              <ChildSidebar
+                :childIsOpenPin="childIsOpenPin"
+                :children="item.children as any"
+                :header="item.title"
+                @closeSidebar="closeChildSidebar"
+                @toggleSidebarPin="pinSidebar"
+              />
+            </div>
+
+          </Transition>
         </div>
       </div>
 
       <!------------------------log out---------------------------->
-      <button class="flex flex-col items-center cursor-pointer mb-[10px]" @click.stop="logOut">
+      <button
+        class="flex flex-col items-center cursor-pointer mb-[10px]"
+        @click.stop="logOut"
+      >
         <img
           src="@/assets/images/logout.svg"
           alt="logout"

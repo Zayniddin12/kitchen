@@ -104,6 +104,9 @@ export default [
                 path: "calculator",
                 name: "KitchenCalculator",
                 component: () => import("@/modules/Kitchen/pages/kitchen-child/KitchenCalculator.vue"),
+                meta: {
+                  title: "Калькулятор",
+                },
               },
             ],
           },

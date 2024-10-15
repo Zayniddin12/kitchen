@@ -9,6 +9,7 @@ import AppSelect from "@/components/ui/form/app-select/AppSelect.vue";
 import { useRoute, useRouter } from "vue-router";
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 import AppMediaUploader from "@/components/ui/form/app-media-uploader/AppMediaUploader.vue";
+import useConfirm from "@/components/ui/app-confirm/useConfirm";
 
 interface Tabs {
   title: string;
@@ -29,23 +30,10 @@ const tabs = ref<Tabs[]>([
     value: 1,
   },
 ]);
-let user_photo_new = ref<string>("");
 
 const setActiveTab = (item: any) => {
   activeTab.value = item.value;
 };
-
-const previewImage = (event: Event) => {
-  const input = event.target as HTMLInputElement;
-  if (input.files && input?.files[0]) {
-    const reader = new FileReader();
-    reader.onload = (e: any) => {
-      user_photo_new.value = e.target?.result as string;
-    };
-    reader.readAsDataURL(input.files[0]);
-  }
-};
-
 
 const { setBreadCrumb } = useBreadcrumb();
 
@@ -72,6 +60,30 @@ const setBreadCrumbFn = () => {
 watchEffect(() => {
   setBreadCrumbFn();
 });
+
+const { confirm } = useConfirm();
+
+const deleteFn = () => {
+  confirm.delete().then(response => {
+    router.push({ name: "visitors" });
+  });
+};
+
+const cancelFn = () => {
+  confirm.cancel().then(response => {
+    router.push({ name: "visitors" });
+  });
+};
+
+const switchChange = async (): Promise<boolean> => {
+  try {
+    const response = await confirm.show();
+    return true;
+  } catch (error) {
+    return false;
+  }
+};
+
 </script>
 
 <template>
@@ -184,6 +196,12 @@ watchEffect(() => {
               label-class="text-[#A8AAAE] text-[12px] font-medium"
               placeholder="Выберите"
             />
+            <ElSwitch
+              v-if="route.params.id && !route.query.type"
+              active-text="Деактивация"
+              class="app-switch mt-auto"
+              :before-change="switchChange"
+            />
           </div>
         </div>
       </template>
@@ -197,14 +215,25 @@ watchEffect(() => {
       </template>
     </div>
 
-    <div class="flex items-center justify-end mt-[24px]">
+    <div class="flex items-center justify-between mt-[24px]">
       <button
-        class="custom-cancel-btn"
-        @click="router.push('/visitors')"
+        v-if="route.params.id"
+        @click="deleteFn"
+        class="custom-danger-btn"
       >
-        Отменить
+        Удалить
       </button>
-      <button class="custom-apply-btn ml-[8px]">{{route.name === 'visitors-edit-form-id' ? 'Сохранить' : 'Добавить'}}</button>
+      <div class="flex items-center">
+        <button
+          class="custom-cancel-btn"
+          @click="cancelFn"
+        >
+          Отменить
+        </button>
+        <button class="custom-apply-btn ml-[8px]">
+          {{ route.name === "visitors-edit-form-id" ? "Сохранить" : "Добавить" }}
+        </button>
+      </div>
     </div>
   </div>
 </template>
