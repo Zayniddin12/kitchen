@@ -116,8 +116,7 @@ const activeChildMenu = (item: SidebarItem) => {
            @click.stop="activeChildMenu(item)"
       >
         <div class="flex items-center">
-          <svg :data-src="'/sidebar/' + item.icon + '.svg'" class="svg-class shrink-1 mr-[12px]" width="24px"
-               height="24px" />
+          <svg :data-src="'/sidebar/' + item.icon + '.svg'" class="svg-class shrink-1 mr-[12px]" width="24px" height="24px" />
           <span class="dark:text-white">{{ item?.title }}</span>
         </div>
       </div>

@@ -14,15 +14,13 @@ const router = useRouter()
 
     <div class="flex flex-col items-center">
       <div class="text-dark font-bold text-[32px]">Страница не найдена</div>
-      <p
-        class="text-[14px] text-[#A8AAAE] font-[400] mt-[8px] mb-[24px] lg:w-[30%] md:lg:w-[30%] w-full m-auto text-center"
-      >
+      <p class="text-[14px] text-[#A8AAAE] font-[400] mt-[8px] mb-[24px] lg:w-[30%] md:lg:w-[30%] w-full m-auto text-center">
         Извините, запрошенная вами страница не найдена пожалуйста, вернитесь на
         главную страницу
       </p>
       <button
           class="bg-[#2E90FA] w-[200px] py-[10px] rounded-lg text-white m-auto"
-          @click="router.go(-1)"
+          @click="router.push('/home')"
       >
         Вернуться на главную
       </button>
