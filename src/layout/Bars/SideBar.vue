@@ -93,7 +93,6 @@ const closeChildSidebar = (value: string) => {
 
 };
 
-
 const pinSidebar = () => {
   localStorage.setItem("child-sidebar-pin", JSON.stringify(!JSON.parse(localStorage.getItem("child-sidebar-pin") || "false")));
   childIsOpenPin.value = JSON.parse(localStorage.getItem("child-sidebar-pin") || "false");
