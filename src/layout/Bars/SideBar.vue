@@ -113,18 +113,11 @@ const logOut = () => {
   <div class="sidebar w-[128px] z-10">
     <div class="sidebar-wrapper bg-white-blue dark:bg-dark text-center relative flex flex-col justify-between">
       <div class="overflow-auto">
-<<<<<<< HEAD
-         <img src="@/assets/images/logo.svg"
-              class="m-auto pt-[16px] pb-[40px]"
-              alt="logo"
-         />
-=======
         <img
           src="@/assets/images/logo.svg"
           class="m-auto pt-[16px] pb-[40px]"
           alt="logo"
         />
->>>>>>> 308d9889cbae2369f728472b5d526b68217fc039
 
         <div
           v-for="(item, index) in store.menuItems"
