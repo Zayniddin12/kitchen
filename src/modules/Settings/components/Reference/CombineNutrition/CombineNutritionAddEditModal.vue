@@ -88,15 +88,18 @@ const cancelFn = () => {
 };
 
 const deleteFn = () => {
-  confirm.cancel().then(() => {
+  confirm.delete().then(() => {
     router.push({ name: "reference-combine-nutrition" });
   });
 };
 
-const changeSwitch = () => {
-  confirm.show().then(response => {
-    console.log("SS");
-  });
+const switchChange = async (): Promise<boolean> => {
+  try {
+    const response = await confirm.show();
+    return true;
+  } catch (error) {
+    return false;
+  }
 };
 
 </script>
@@ -140,7 +143,7 @@ const changeSwitch = () => {
             v-if="route.params.id && !route.query.type"
             active-text="Деактивация"
             class="app-switch mt-auto"
-            :before-change="changeSwitch"
+            :before-change="switchChange"
           />
         </div>
 

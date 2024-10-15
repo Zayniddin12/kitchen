@@ -92,11 +92,15 @@ const deleteFn = () => {
   });
 };
 
-const switchChange = () => {
-  confirm.show().then(response => {
-
-  });
+const switchChange = async (): Promise<boolean> => {
+  try {
+    const response = await confirm.show();
+    return true;
+  } catch (error) {
+    return false;
+  }
 };
+
 
 </script>
 

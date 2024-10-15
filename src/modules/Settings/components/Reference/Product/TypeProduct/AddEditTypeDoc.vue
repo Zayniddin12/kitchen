@@ -61,7 +61,6 @@ watch(() => route.name, () => {
 
 const deleteFn = () => {
   confirm.delete().then(response => {
-    console.log("delete");
     router.push({ name: "reference-vid-product" });
   });
 };
@@ -73,10 +72,13 @@ const cancelFn = () => {
   });
 };
 
-const showConfirmFn = async () => {
-  confirm.show().then(response => {
-    // dataValue.value.is_active = !dataValue.value.is_active;
-  });
+const switchChange = async (): Promise<boolean> => {
+  try {
+    const response = await confirm.show();
+    return true;
+  } catch (error) {
+    return false;
+  }
 };
 
 </script>
@@ -109,7 +111,7 @@ const showConfirmFn = async () => {
           class="mt-auto"
           active-text="Деактивация"
           v-if="route.name === 'reference-type-product-edit-id'"
-          :before-change="showConfirmFn"
+          :before-change="switchChange"
         />
       </div>
 

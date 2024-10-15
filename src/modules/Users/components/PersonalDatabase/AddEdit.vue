@@ -10,9 +10,7 @@ import AppSelect from "@/components/ui/form/app-select/AppSelect.vue";
 
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 import AppMediaUploader from "@/components/ui/form/app-media-uploader/AppMediaUploader.vue";
-
-const { setBreadCrumb } = useBreadcrumb();
-
+import useConfirm from "@/components/ui/app-confirm/useConfirm";
 
 interface Tabs {
   title: string;
@@ -21,6 +19,8 @@ interface Tabs {
 
 const router = useRouter();
 const route = useRoute();
+const { confirm } = useConfirm();
+const { setBreadCrumb } = useBreadcrumb();
 
 const tabs = ref<Tabs[]>([
   {
@@ -61,6 +61,27 @@ const setBreadCrumbFn = () => {
 watchEffect(() => {
   setBreadCrumbFn();
 });
+
+const deleteFn = () => {
+  confirm.delete().then(response => {
+    router.push({ name: "personal-database" });
+  });
+};
+
+const cancelFn = () => {
+  confirm.cancel().then(response => {
+    router.push({ name: "personal-database" });
+  });
+};
+
+const switchChange = async (): Promise<boolean> => {
+  try {
+    const response = await confirm.show();
+    return true;
+  } catch (error) {
+    return false;
+  }
+};
 
 </script>
 
@@ -159,7 +180,6 @@ watchEffect(() => {
               label="ПИНФЛ"
               label-class="text-[#A8AAAE] text-[12px] font-medium"
             />
-
             <div />
           </div>
 
@@ -180,6 +200,12 @@ watchEffect(() => {
               placeholder=""
               label-class="text-[#A8AAAE] text-[12px] font-medium"
             />
+            <ElSwitch
+              v-if="route.params.id && !route.query.type"
+              active-text="Деактивация"
+              class="app-switch mt-auto"
+              :before-change="switchChange"
+            />
           </div>
         </div>
       </template>
@@ -193,13 +219,23 @@ watchEffect(() => {
       </template>
     </div>
 
-    <div class="flex items-center justify-end mt-[24px]">
+    <div class="flex items-center justify-between mt-[24px]">
       <button
-        class="custom-cancel-btn"
-        @click="router.push('/personal-database')"
-      >Отменить
+        v-if="route.params.id"
+        @click="deleteFn"
+        class="custom-danger-btn"
+      >
+        Удалить
       </button>
-      <button class="custom-apply-btn ml-[8px]">Добавить</button>
+      <div class="flex items-center">
+        <button
+          class="custom-cancel-btn"
+          @click="cancelFn"
+        >
+          Отменить
+        </button>
+        <button class="custom-apply-btn ml-[8px]">Добавить</button>
+      </div>
     </div>
   </div>
 </template>

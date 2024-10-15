@@ -55,12 +55,14 @@ const deleteFn = () => {
   });
 };
 
-const switchChange = () => {
-  confirm.show().then(response => {
-    // value1.value = !value1.value;
-  });
+const switchChange = async (): Promise<boolean> => {
+  try {
+    const response = await confirm.show();
+    return true;
+  } catch (error) {
+    return false;
+  }
 };
-
 </script>
 
 <template>
