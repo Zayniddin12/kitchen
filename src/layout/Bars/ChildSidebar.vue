@@ -54,6 +54,7 @@ const activeChildMenu = (item: SidebarItem) => {
       <h1 class="text-[#000000] font-medium text-[20px] dark:text-white">{{ header }}</h1>
 
       <div class="flex items-center cursor-pointer" :class="{ activePin: childIsOpenPin }">
+        <!--        {{ childIsOpenPin}}-->
 
         <li @click.stop="emit('toggleSidebarPin')"
             :style="{
@@ -67,7 +68,8 @@ const activeChildMenu = (item: SidebarItem) => {
                   maskRepeat: 'no-repeat'
                    }"
         />
-        <img src="@/assets/images/close.svg" class="ml-[15px]" alt="close" @click.stop="emit('closeSidebar')" />
+        <img src="@/assets/images/close.svg" class="ml-[15px]" alt="close"
+             @click.stop="emit('closeSidebar', 'close')" />
       </div>
     </header>
 
@@ -153,6 +155,7 @@ const activeChildMenu = (item: SidebarItem) => {
 }
 
 .activePin li {
+  transform: rotate(-45deg);
   color: #000d24 !important;
   background-color: #000d24 !important;
 }

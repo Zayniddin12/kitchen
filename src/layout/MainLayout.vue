@@ -24,6 +24,7 @@ const closeChildSidebar = () => {
 
 watch(() => route.name, function(val) {
   if (val === "home") {
+    localStorage.setItem("child-sidebar-pin", JSON.stringify(false));
     childSidebar.value = false;
   } else {
     margin.value = "ml-[396px]";
@@ -40,7 +41,7 @@ watch(() => route.name, function(val) {
 
     <div
       class="main-layout min-h-screen p-6 pr-7 pt-28 dark:bg-darkLayoutMain dark:bg-body-dark bg-white ml-[128px] transition-all flex flex-col justify-between"
-      :class="childSidebar ? margin : ''"
+      :class="childSidebar && route.name !== 'home' ? margin : ''"
     >
       <div class="flex flex-col">
         <AppBreadcrumb />
@@ -51,7 +52,7 @@ watch(() => route.name, function(val) {
     </div>
 
     <div
-      :class="childSidebar ? 'top-navbar-margin' : ''"
+      :class="childSidebar && route.name !== 'home' ? 'top-navbar-margin' : ''"
       class="top-navbar bg-lightLayoutStorm dark:bg-body-dark text-white transition-all bg-[#fff]"
     >
       <NavBar />
