@@ -487,7 +487,6 @@ watchEffect(() => {
       </div>
     </div>
 
-
     <div class="p-[24px] bg-[#F8F9FC] rounded-[24px] mb-[40px]" v-for="item in 2">
       <div class="flex items-center justify-between">
         <div>

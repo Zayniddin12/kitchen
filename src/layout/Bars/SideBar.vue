@@ -1,7 +1,4 @@
-<script
-  setup
-  lang="ts"
->
+<script setup lang="ts">
 import { onMounted, onUnmounted, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useLayoutStore } from "@/navigation";
@@ -93,7 +90,6 @@ const closeChildSidebar = (value: string) => {
 
 
   emit("update:childSidebar", childIsOpenPin.value);
-
 };
 
 const pinSidebar = () => {
