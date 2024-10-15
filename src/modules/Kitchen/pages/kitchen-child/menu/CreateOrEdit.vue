@@ -277,6 +277,7 @@ const cancel = () => {
                     >
                       <ElTable
                         :data="tableData"
+                        stripe
                         class="custom-element-table meal-plan-create__table"
                       >
                         <ElTableColumn
@@ -352,6 +353,7 @@ const cancel = () => {
               </div>
               <ElTable
                 :data="tableData2"
+                stripe
                 class="custom-element-table meal-plan-create__table"
               >
                 <ElTableColumn

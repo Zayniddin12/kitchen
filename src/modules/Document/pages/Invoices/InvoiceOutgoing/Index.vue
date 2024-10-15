@@ -138,7 +138,7 @@ watchEffect(() => {
       </template>
     </CollapseFilter>
 
-    <el-table :data="tableData" class="custom-element-table">
+    <el-table :data="tableData" stripe class="custom-element-table">
       <el-table-column prop="num" label="№" width="80" />
       <el-table-column prop="system" label="№ в системе" />
       <el-table-column prop="dateSystem" label="Дата в системе" />

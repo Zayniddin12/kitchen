@@ -422,6 +422,7 @@ watchEffect(() => {
                 </div>
                 <ElTable
                   :data="currentTabTableData"
+                  stripe
                   class="custom-element-table custom-element-table-normal mt-6"
                 >
                   <ElTableColumn
@@ -600,6 +601,7 @@ watchEffect(() => {
                   </h2>
                   <ElTable
                     :data="allTabTableData"
+                    stripe
                     class="custom-element-table custom-element-table-normal mt-4"
                   >
                     <ElTableColumn
@@ -655,6 +657,7 @@ watchEffect(() => {
                   </h2>
                   <ElTable
                     :data="allTabTableData"
+                    stripe
                     class="custom-element-table custom-element-table-normal mt-4"
                   >
                     <ElTableColumn
@@ -710,6 +713,7 @@ watchEffect(() => {
                   </h2>
                   <ElTable
                     :data="allTabTableData"
+                    stripe
                     class="custom-element-table custom-element-table-normal mt-4"
                   >
                     <ElTableColumn
@@ -765,6 +769,7 @@ watchEffect(() => {
                   </h2>
                   <ElTable
                     :data="allTabTableData"
+                    stripe
                     class="custom-element-table custom-element-table-normal mt-4"
                   >
                     <ElTableColumn
@@ -821,6 +826,7 @@ watchEffect(() => {
                 </h4>
                 <ElTable
                   :data="salesAllTabTableData"
+                  stripe
                   class="custom-element-table custom-element-table-normal menu__sales-all-tab-table mt-4"
                 >
                   <ElTableColumn

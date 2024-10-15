@@ -179,6 +179,7 @@ const switchChange = () => {
           <template v-if="route.name === 'reference-ration-view-id'">
             <el-table
               :data="tableData"
+              stripe
               class="custom-element-table mt-[40px]"
             >
               <el-table-column

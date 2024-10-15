@@ -320,6 +320,7 @@ watchEffect(() => {
           <ElTable
             :data="attendanceTableData"
             class="custom-element-table"
+            stripe
           >
             <ElTableColumn
               v-for="column in attendanceTableColumns"
@@ -346,6 +347,7 @@ watchEffect(() => {
             </h2>
             <ElTable
               :data="dishesTableData"
+              stripe
               class="custom-element-table mt-4"
             >
               <ElTableColumn
@@ -368,6 +370,7 @@ watchEffect(() => {
               Раздаваемых
             </h2>
             <ElTable
+                stripe
               :data="dishesTableData"
               class="custom-element-table mt-4"
             >

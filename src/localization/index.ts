@@ -8,7 +8,7 @@ import { computed, reactive, ref, watch } from "vue";
 const localeKey = "language";
 
 export const availableLocales = reactive<LOCALES[]>(Object.values(LOCALES));
-export const defaultLocale: LOCALES = LOCALES.UZ;
+export const defaultLocale: LOCALES = LOCALES.RU;
 
 const isValidLocale = (locale: string): locale is LOCALES =>
   availableLocales.includes(locale as LOCALES);

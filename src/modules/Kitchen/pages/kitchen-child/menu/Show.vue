@@ -95,6 +95,7 @@ watchEffect(() => {
         </h6>
         <ElTable
           :data="tableData"
+          stripe
           class="mt-4 custom-element-table custom-element-table--has-append"
         >
           <ElTableColumn

@@ -157,6 +157,7 @@ watchEffect(() => {
     <el-table
       :data="tableData"
       class="custom-element-table"
+      stripe
     >
       <el-table-column
         prop="id"

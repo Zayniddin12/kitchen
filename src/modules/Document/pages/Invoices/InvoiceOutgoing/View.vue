@@ -128,7 +128,7 @@ watchEffect(() => {
           <span class="ml-2 text-[#A8AAAE] text-[14px] font-medium block">85 897 VAA</span>
         </div>
 
-        <el-table :data="tableData" class="custom-element-table">
+        <el-table :data="tableData" stripe class="custom-element-table">
           <el-table-column prop="name" label="Название" />
           <el-table-column prop="count" label="Количество" />
           <el-table-column prop="count2" label="Ед. измерения" />

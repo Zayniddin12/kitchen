@@ -155,6 +155,7 @@ const deleteFn = () => {
           <template v-if="route.name === 'reference-view-id'">
             <el-table
               :data="tableData"
+              stripe
               class="custom-element-table mt-[40px]"
             >
               <el-table-column

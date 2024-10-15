@@ -311,6 +311,7 @@ onMounted(() => {
         >
           <ElTable
             :data="productTableData"
+            stripe
             class="custom-element-table"
           >
             <ElTableColumn
@@ -381,6 +382,7 @@ onMounted(() => {
           <ElTable
             :data="invoiceTableData"
             class="custom-element-table"
+            stripe
           >
             <ElTableColumn
               prop="idx"

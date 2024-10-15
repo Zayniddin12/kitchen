@@ -162,6 +162,7 @@ const openModals = () => {
 
           <el-table
             :data="tableData"
+            stripe
             class="custom-element-table"
             header-cell-class-name="custom-cell-header"
             cell-class-name="custom-cell-header"

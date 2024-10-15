@@ -136,6 +136,7 @@ watchEffect(() => {
           </h2>
           <ElTable
             :data="category.products"
+            stripe
             class="custom-element-table custom-element-table-normal mt-6"
           >
             <ElTableColumn

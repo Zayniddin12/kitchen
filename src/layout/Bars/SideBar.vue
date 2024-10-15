@@ -111,10 +111,10 @@ const logOut = () => {
   <div class="sidebar w-[128px] z-10">
     <div class="sidebar-wrapper bg-white-blue dark:bg-dark text-center relative flex flex-col justify-between">
       <div class="overflow-auto">
-        <img src="@/assets/images/logo.svg"
-             class="m-auto pt-[16px] pb-[40px]"
-             alt="logo"
-        />
+         <img src="@/assets/images/logo.svg"
+              class="m-auto pt-[16px] pb-[40px]"
+              alt="logo"
+         />
 
         <div v-for="(item, index) in store.menuItems"
              :key="index"
@@ -124,7 +124,6 @@ const logOut = () => {
           <div :class="{ activeListItem: currentMenu == index }"
                class="h-[88px] flex flex-col justify-center items-center cursor-pointer p-[12px] hover:bg-white dark:hover:bg-body-dark hover:shadow-menu hover:font-medium rounded-lg"
           >
-            <!--            {{ currentIndex }}-->
             <li
               :style="{
                   maskImage: `url(/sidebar/${item.icon}.svg)`,
