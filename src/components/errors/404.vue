@@ -7,9 +7,9 @@ const router = useRouter()
 <template>
   <div class="flex flex-col justify-center h-[100vh]">
     <img
-      src="@/assets/images/404.svg"
-      class="m-auto mt-0 mb-0 w-[50%] h-[50%]"
-      alt="404"
+        src="@/assets/images/404.svg"
+        class="m-auto mt-0 mb-0 w-[50%] h-[50%]"
+        alt="404"
     />
 
     <div class="flex flex-col items-center">
