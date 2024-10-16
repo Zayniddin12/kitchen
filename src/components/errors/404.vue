@@ -2,6 +2,11 @@
 import {useRouter} from "vue-router";
 
 const router = useRouter()
+
+const backToHome = () => {
+  router.push('/home')
+  sessionStorage.setItem('current-menu', "0")
+}
 </script>
 
 <template>
@@ -20,7 +25,7 @@ const router = useRouter()
       </p>
       <button
           class="bg-[#2E90FA] w-[200px] py-[10px] rounded-lg text-white m-auto"
-          @click="router.push('/home')"
+          @click="backToHome"
       >
         Вернуться на главную
       </button>
