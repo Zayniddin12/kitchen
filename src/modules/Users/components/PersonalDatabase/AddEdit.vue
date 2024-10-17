@@ -180,7 +180,11 @@ const switchChange = async (): Promise<boolean> => {
               label="ПИНФЛ"
               label-class="text-[#A8AAAE] text-[12px] font-medium"
             />
-            <div />
+
+            <app-input
+                label="Номер телефона"
+                label-class="text-[#A8AAAE] text-[12px] font-medium"
+            />
           </div>
 
           <div class="mt-[40px] grid grid-cols-3 gap-4">

@@ -181,7 +181,10 @@ const switchChange = async (): Promise<boolean> => {
               label-class="text-[#A8AAAE] text-[12px] font-medium"
             />
 
-            <div />
+            <app-input
+                label="Номер телефона"
+                label-class="text-[#A8AAAE] text-[12px] font-medium"
+            />
           </div>
 
           <div class="grid grid-cols-2 gap-4 mt-[40px]">
