@@ -60,10 +60,8 @@ const activeChildMenu = (item: SidebarItem) => {
         class="flex items-center cursor-pointer"
         :class="{ activePin: childIsOpenPin }"
       >
-
-        <li
-          @click.stop="emit('toggleSidebarPin')"
-          :style="{
+        <button  @click.stop="emit('toggleSidebarPin')">
+          <li :style="{
                   maskImage: 'url(/icons/pin.svg)',
                   backgroundColor: '#8F9194',
                   color: '#8F9194',
@@ -72,14 +70,13 @@ const activeChildMenu = (item: SidebarItem) => {
                   maskSize: '24px',
                   maskPosition: 'center',
                   maskRepeat: 'no-repeat'
-                   }"
-        />
-        <img
-          src="@/assets/images/close.svg"
-          class="ml-[15px]"
-          alt="close"
-          @click.stop="emit('closeSidebar', 'close')"
-        />
+                 }"
+          />
+        </button>
+
+        <button @click.stop="emit('closeSidebar', 'close')" class="ml-[15px]">
+          <img src="@/assets/images/close.svg" alt="close"/>
+        </button>
       </div>
     </header>
 
