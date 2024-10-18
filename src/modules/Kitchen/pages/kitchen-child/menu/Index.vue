@@ -18,6 +18,7 @@ import MinusIcon from "@/assets/images/icons/minus.svg";
 import Plus3Icon from "@/assets/images/icons/plus3.svg";
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 import useConfirm from "@/components/ui/app-confirm/useConfirm";
+import { getItem } from "@/utils/localStorage";
 
 interface ProductItemType {
   id: number;
@@ -223,6 +224,22 @@ const products = ref<ProductType[] | []>([
   },
 ]);
 
+const productsWrapperClassName = computed<string[]>(() => {
+  const className = ["grid gap-6 mt-3"];
+
+  if (!childSideBarPin.value && !ordersModal.value) {
+    className.push("grid-cols-9");
+  } else if (childSideBarPin.value && !ordersModal.value) {
+    className.push("grid-cols-8");
+  } else if (!childSideBarPin.value && ordersModal.value) {
+    className.push("grid-cols-7");
+  } else {
+    className.push("grid-cols-6");
+  }
+
+  return className;
+});
+
 const ordersModal = ref(false);
 const ordersWrapper = useTemplateRef<HTMLDivElement>("ordersWrapper");
 const menuSection = useTemplateRef("menuSection");
@@ -261,6 +278,12 @@ const clearOrders = () => {
     ordersModal.value = false;
   });
 };
+
+const childSideBarPin = computed(() => {
+  const pin = getItem("child-sidebar-pin");
+
+  return pin && pin === "true";
+});
 
 const oldMaxWidth = ref<number>(0);
 
@@ -534,7 +557,7 @@ watch(
                 <h4 class="text-dark-gray font-semibold text-xl">
                   {{ product.category.name }}
                 </h4>
-                <div :class="['grid gap-6 mt-3', `${ordersModal ? 'grid-cols-7' : 'grid-cols-9'}`]">
+                <div :class="productsWrapperClassName">
                   <div
                     v-for="productItem in product.data"
                     :key="productItem.id"
