@@ -312,6 +312,11 @@ watch(ordersModal, async newValue => {
   updateMenuSectionWidth(newValue);
 });
 
+watch(() => sideBarStore.childSideBarOpen, async newValue => {
+  await nextTick();
+  updateMenuSectionWidth(newValue);
+}, { immediate: true });
+
 watchEffect(() => {
   setBreadCrumbFn();
 });

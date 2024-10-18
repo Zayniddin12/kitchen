@@ -28,6 +28,7 @@ interface MenuItem {
 }
 
 watch(childIsOpenPin, (newValue) => {
+  console.log(newValue);
   sidebarStore.setChildSideBarOpen(newValue);
 }, { immediate: true });
 
