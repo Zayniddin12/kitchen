@@ -8,7 +8,7 @@ export const useLayoutStore = defineStore("layoutStore", () => {
   const kitchenWarehouse = useKitchenWarehouseStore();
   const kitchenStore = useKitchenStore();
 
-  const currentTheme = ref(localStorage.getItem("currentTheme") || "light")
+  const currentTheme = ref(localStorage.getItem("currentTheme") || "light");
 
   const menuItems = computed(() => {
     return [
@@ -251,12 +251,12 @@ export const useLayoutStore = defineStore("layoutStore", () => {
   const changeTheme = (newTheme: string) => {
     currentTheme.value = newTheme;
     localStorage.setItem("currentTheme", currentTheme.value);
-  }
+  };
 
   return {
     menuItems,
 
     changeTheme,
-    currentTheme
+    currentTheme,
   };
 });
