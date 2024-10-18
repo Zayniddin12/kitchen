@@ -1,10 +1,13 @@
-<script setup lang="ts">
+<script
+  setup
+  lang="ts"
+>
 import { onMounted, onUnmounted, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useLayoutStore } from "@/navigation";
 import ChildSidebar from "@/layout/Bars/ChildSidebar.vue";
 
-const emit = defineEmits<{ (e: "update:childSidebar", value: boolean): void; (e: "closeChildSidebar2"): void; }>();
+const emit = defineEmits<{ (e: "update:childSidebar", value: boolean): void; }>();
 
 const store = useLayoutStore();
 const router = useRouter();
@@ -23,7 +26,7 @@ interface MenuItem {
 }
 
 onMounted(() => {
-  const storedMenu: string | null = sessionStorage.getItem("current-menu") | 0;
+  const storedMenu: number = sessionStorage.getItem("current-menu") | 0;
   const storedSidebar = localStorage.getItem("child-sidebar");
 
   if (childIsOpenPin.value) {
