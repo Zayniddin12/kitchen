@@ -18,7 +18,7 @@ import MinusIcon from "@/assets/images/icons/minus.svg";
 import Plus3Icon from "@/assets/images/icons/plus3.svg";
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 import useConfirm from "@/components/ui/app-confirm/useConfirm";
-import { getItem } from "@/utils/localStorage";
+import { useSidebarStore } from "@/layout/Bars/sidebar.store";
 
 interface ProductItemType {
   id: number;
@@ -224,14 +224,17 @@ const products = ref<ProductType[] | []>([
   },
 ]);
 
+const sideBarStore = useSidebarStore();
+
 const productsWrapperClassName = computed<string[]>(() => {
+
   const className = ["grid gap-6 mt-3"];
 
-  if (!childSideBarPin.value && !ordersModal.value) {
+  if (!sideBarStore.childSideBarOpen && !ordersModal.value) {
     className.push("grid-cols-9");
-  } else if (childSideBarPin.value && !ordersModal.value) {
+  } else if (sideBarStore.childSideBarOpen && !ordersModal.value) {
     className.push("grid-cols-8");
-  } else if (!childSideBarPin.value && ordersModal.value) {
+  } else if (!sideBarStore.childSideBarOpen && ordersModal.value) {
     className.push("grid-cols-7");
   } else {
     className.push("grid-cols-6");
@@ -278,12 +281,6 @@ const clearOrders = () => {
     ordersModal.value = false;
   });
 };
-
-const childSideBarPin = computed(() => {
-  const pin = getItem("child-sidebar-pin");
-
-  return pin && pin === "true";
-});
 
 const oldMaxWidth = ref<number>(0);
 

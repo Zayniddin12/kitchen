@@ -6,10 +6,12 @@ import { onMounted, onUnmounted, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useLayoutStore } from "@/navigation";
 import ChildSidebar from "@/layout/Bars/ChildSidebar.vue";
+import { useSidebarStore } from "@/layout/Bars/sidebar.store";
 
 const emit = defineEmits<{ (e: "update:childSidebar", value: boolean): void; }>();
 
 const store = useLayoutStore();
+const sidebarStore = useSidebarStore();
 const router = useRouter();
 let route = useRoute();
 
@@ -24,6 +26,10 @@ interface MenuItem {
   route?: string;
   children?: MenuItem[];
 }
+
+watch(childIsOpenPin, (newValue) => {
+  sidebarStore.setChildSideBarOpen(newValue);
+}, { immediate: true });
 
 onMounted(() => {
   const storedMenu: number = sessionStorage.getItem("current-menu") | 0;
