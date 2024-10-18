@@ -259,7 +259,7 @@ const orders = computed(() =>
   products.value
     .reduce<ProductItemType[]>((acc, product) =>
       acc.concat(product.data.filter(item => item.quantity > 0)), [] as ProductItemType[])
-    .sort((a, b) => b.last_updated - a.last_updated),
+    .sort((a, b) => a.last_updated - b.last_updated),
 );
 
 
