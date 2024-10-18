@@ -96,6 +96,7 @@ watchEffect(() => {
 
     <div class="p-[16px] rounded-[16px]">
       <el-table
+          stripe
         :data="tableData"
         class="custom-element-table"
       >

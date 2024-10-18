@@ -1,6 +1,10 @@
-<script setup lang="ts">
+<script
+  setup
+  lang="ts"
+>
 import AppInput from "@/components/ui/form/app-input/AppInput.vue";
-import AppSelect from "@/components/ui/form/app-select/AppSelect.vue";
+import useConfirm from "@/components/ui/app-confirm/useConfirm";
+import { togglePageScrolling } from "@/utils/helper";
 
 const emit = defineEmits(["update:editModal"]);
 const props = defineProps({
@@ -10,8 +14,14 @@ const props = defineProps({
   },
 });
 
+const { confirm } = useConfirm();
+
 const closeModal = () => {
-  emit("update:editModal", false);
+  // Let it come out when the form changes
+  confirm.cancel({ disabledBody: true }).then((response) => {
+    emit("update:editModal", false);
+    togglePageScrolling(true);
+  });
 };
 </script>
 
@@ -29,13 +39,19 @@ const closeModal = () => {
 
     <div class="bg-[#F8F9FC] p-[24px] rounded-[24px] border border-[#E2E6F3]">
       <div class="flex items-center gap-6 mb-[24]">
-        <app-input placeholder="Введите" class="w-full">
+        <app-input
+          placeholder="Введите"
+          class="w-full"
+        >
 
           <template #label>
             <span class="text-[#A8AAAE] text-[12px] font-medium">Наименование</span>
           </template>
         </app-input>
-        <app-input placeholder="Введите" class="w-full">
+        <app-input
+          placeholder="Введите"
+          class="w-full"
+        >
 
           <template #label>
             <span class="text-[#A8AAAE] text-[12px] font-medium">Юр. адрес</span>
@@ -44,21 +60,30 @@ const closeModal = () => {
       </div>
 
       <div class="flex items-center gap-6 mb-[24px]">
-        <app-input placeholder="Введите" class="w-full">
+        <app-input
+          placeholder="Введите"
+          class="w-full"
+        >
 
           <template #label>
             <span class="text-[#A8AAAE] text-[12px] font-medium">ИНН</span>
           </template>
         </app-input>
 
-        <app-input placeholder="Введите" class="w-full">
+        <app-input
+          placeholder="Введите"
+          class="w-full"
+        >
 
           <template #label>
             <span class="text-[#A8AAAE] text-[12px] font-medium">Номер лицензии</span>
           </template>
         </app-input>
 
-        <app-input placeholder="Введите" class="w-full">
+        <app-input
+          placeholder="Введите"
+          class="w-full"
+        >
 
           <template #label>
             <span class="text-[#A8AAAE] text-[12px] font-medium">Сертификат</span>
@@ -67,21 +92,30 @@ const closeModal = () => {
       </div>
 
       <div class="flex items-center gap-6 mb-[24px]">
-        <app-input placeholder="Введите" class="w-full">
+        <app-input
+          placeholder="Введите"
+          class="w-full"
+        >
 
           <template #label>
             <span class="text-[#A8AAAE] text-[12px] font-medium">Срок сертификата</span>
           </template>
         </app-input>
 
-        <app-input placeholder="Введите" class="w-full">
+        <app-input
+          placeholder="Введите"
+          class="w-full"
+        >
 
           <template #label>
             <span class="text-[#A8AAAE] text-[12px] font-medium">Руководитель</span>
           </template>
         </app-input>
 
-        <app-input placeholder="Введите" class="w-full">
+        <app-input
+          placeholder="Введите"
+          class="w-full"
+        >
 
           <template #label>
             <span class="text-[#A8AAAE] text-[12px] font-medium">Контакты</span>
@@ -91,7 +125,11 @@ const closeModal = () => {
     </div>
 
     <div class="flex items-center justify-end gap-2 mt-[24px]">
-      <button class="custom-cancel-btn" @click="closeModal">Отменить</button>
+      <button
+        class="custom-cancel-btn"
+        @click="closeModal"
+      >Отменить
+      </button>
       <button class="custom-apply-btn">Добавить</button>
     </div>
 

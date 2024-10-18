@@ -57,7 +57,6 @@ const setBreadCrumbFn = () => {
 onMounted(() => {
   setBreadCrumbFn();
 });
-
 </script>
 
 <template>

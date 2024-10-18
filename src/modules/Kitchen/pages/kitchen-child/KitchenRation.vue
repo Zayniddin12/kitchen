@@ -84,6 +84,7 @@ watchEffect(() => {
       </h1>
       <ElTable
         :data="tableData"
+        stripe
         class="mt-6 custom-element-table custom-element-table-normal kitchen-ration__table"
       >
         <ElTableColumn

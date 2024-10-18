@@ -153,6 +153,7 @@ watchEffect(() => {
 
         <el-table
           :data="tableData"
+          stripe
           class="custom-element-table"
         >
           <el-table-column

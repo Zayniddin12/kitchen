@@ -113,7 +113,7 @@ onMounted(() => {
     </div>
 
     <div class="mt-[24px]">
-      <el-table :data="tableData" class="custom-element-table">
+      <el-table :data="tableData" stripe class="custom-element-table">
         <el-table-column prop="id" label="№" width="80" />
         <el-table-column prop="name" label="Наименование" sortable width="400" />
         <el-table-column prop="name" label="Региональное управление" sortable />

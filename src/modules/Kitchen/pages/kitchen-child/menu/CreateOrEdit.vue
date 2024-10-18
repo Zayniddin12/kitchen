@@ -11,10 +11,12 @@ import { formatDate } from "@/utils/helper";
 import { useKitchenStore } from "@/modules/Kitchen/store/kitchen.store";
 import PlusIcon from "@/assets/images/icons/plus.svg";
 import { TableColumnType } from "@/types/common.type";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
+import useConfirm from "@/components/ui/app-confirm/useConfirm";
 
 const route = useRoute();
+const router = useRouter();
 const { setBreadCrumb } = useBreadcrumb();
 
 // Store
@@ -156,6 +158,14 @@ const scheduledItemDateClass = (date: string): string[] => {
   return classes;
 };
 
+const { confirm } = useConfirm();
+
+const cancel = () => {
+  confirm.cancel().then(response => {
+    router.push({ name: "KitchenMenuIndex" });
+  });
+};
+
 </script>
 
 
@@ -267,6 +277,7 @@ const scheduledItemDateClass = (date: string): string[] => {
                     >
                       <ElTable
                         :data="tableData"
+                        stripe
                         class="custom-element-table meal-plan-create__table"
                       >
                         <ElTableColumn
@@ -342,6 +353,7 @@ const scheduledItemDateClass = (date: string): string[] => {
               </div>
               <ElTable
                 :data="tableData2"
+                stripe
                 class="custom-element-table meal-plan-create__table"
               >
                 <ElTableColumn
@@ -391,8 +403,8 @@ const scheduledItemDateClass = (date: string): string[] => {
                     class="size-4 meal-plan-create__plus-icon"
                   />
                   <span class="text-xs font-medium text-blue-500">
-                          Добавить еще
-                        </span>
+                    Добавить еще
+                  </span>
                 </div>
               </ElButton>
             </template>
@@ -402,6 +414,7 @@ const scheduledItemDateClass = (date: string): string[] => {
           <ElButton
             size="large"
             class="!bg-[#E2E6F3] !border-none !text-dark-gray"
+            @click="cancel"
           >
             Отменить
           </ElButton>

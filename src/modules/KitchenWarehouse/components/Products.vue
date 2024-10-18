@@ -121,7 +121,7 @@ const tableData2 = ref<TableData[]>([
   <!------------------------Мясные---------------------->
   <h2 class="text-[#000D24] font-medium text-[18px] mb-[12px] ml-1">Мясные</h2>
 
-  <el-table :data="tableData" class="custom-element-table">
+  <el-table :data="tableData" stripe class="custom-element-table">
     <el-table-column prop="num" label="№" width="80" />
     <el-table-column prop="name" label="Название продукта" />
     <el-table-column prop="count" label="Количество" width="160"/>
@@ -170,7 +170,7 @@ const tableData2 = ref<TableData[]>([
 
   <!--------------------Зерновые------------------------->
   <h2 class="text-[#000D24] font-medium text-[18px] mb-[12px] ml-1 mt-[16px]">Зерновые</h2>
-  <el-table :data="tableData2" class="custom-element-table">
+  <el-table :data="tableData2" stripe class="custom-element-table">
     <el-table-column prop="num" label="№" width="80" />
     <el-table-column prop="name" label="Рыбное мясо" />
     <el-table-column prop="count" width="160" label="Количество" />

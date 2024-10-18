@@ -4,7 +4,6 @@
 >
 
 import { computed, watchEffect } from "vue";
-import ColaImg from "@/assets/images/kitchen/test/cola.png";
 import DishesImg from "@/assets/images/kitchen/test/dishes.png";
 import { useRoute } from "vue-router";
 import { useKitchenStore } from "@/modules/Kitchen/store/kitchen.store";
@@ -85,60 +84,6 @@ const categories = computed(() => [
       },
     ],
   },
-  {
-    id: 2,
-    name: "Напитки",
-    products: [
-      {
-        id: 9,
-        name: "Coca cola",
-        price: 25000,
-        cost_price: 3000,
-        sum: 28000,
-        photo: ColaImg,
-      },
-      {
-        id: 10,
-        name: "Coca cola",
-        price: 25000,
-        cost_price: 3000,
-        sum: 28000,
-        photo: ColaImg,
-      },
-      {
-        id: 11,
-        name: "Coca cola",
-        price: 25000,
-        cost_price: 3000,
-        sum: 28000,
-        photo: ColaImg,
-      },
-      {
-        id: 12,
-        name: "Coca cola",
-        price: 25000,
-        cost_price: 3000,
-        sum: 28000,
-        photo: ColaImg,
-      },
-      {
-        id: 13,
-        name: "Coca cola",
-        price: 25000,
-        cost_price: 3000,
-        sum: 28000,
-        photo: ColaImg,
-      },
-      {
-        id: 14,
-        name: "Coca cola",
-        price: 25000,
-        cost_price: 3000,
-        sum: 28000,
-        photo: ColaImg,
-      },
-    ],
-  },
 ]);
 
 const setBreadCrumbFn = () => {
@@ -191,6 +136,7 @@ watchEffect(() => {
           </h2>
           <ElTable
             :data="category.products"
+            stripe
             class="custom-element-table custom-element-table-normal mt-6"
           >
             <ElTableColumn

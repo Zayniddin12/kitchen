@@ -131,6 +131,10 @@ watchEffect(() => {
                 <p>25.04.2013</p>
               </div>
               <div class="mb-4">
+                <span class="text-blue-500">Номер телефона:</span>
+                <p>+998 99 000 00 00</p>
+              </div>
+              <div class="mb-4">
                 <span class="text-blue-500">OneID:</span>
                 <p>—</p>
               </div>

@@ -67,7 +67,7 @@ const tableData = ref<TableData[]>([
 </script>
 
 <template>
-  <el-table :data="tableData" class="custom-element-table">
+  <el-table :data="tableData" stripe class="custom-element-table">
     <el-table-column prop="num" label="№" width="80" />
     <el-table-column prop="name" label="Название продукта" />
     <el-table-column prop="count" label="Количество" />

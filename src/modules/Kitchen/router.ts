@@ -42,6 +42,11 @@ export default [
                     component: () => import("@/modules/Kitchen/pages/kitchen-child/menu/Index.vue"),
                   },
                   {
+                    path: ":id(\\d+)",
+                    name: "KitchenMenuShow",
+                    component: () => import("@/modules/Kitchen/pages/kitchen-child/menu/Show.vue"),
+                  },
+                  {
                     path: "create",
                     name: "KitchenMenuCreate",
                     component: () => import("@/modules/Kitchen/pages/kitchen-child/menu/CreateOrEdit.vue"),
@@ -58,11 +63,6 @@ export default [
                       title: "Редактировать",
                       breadcrumbItemTitle: "Редактировать",
                     },
-                  },
-                  {
-                    path: "edit-old",
-                    name: "KitchenMenuEditOld",
-                    component: () => import("@/modules/Kitchen/pages/kitchen-child/menu/Edit.vue"),
                   },
                   {
                     path: "sell-create",
@@ -104,6 +104,9 @@ export default [
                 path: "calculator",
                 name: "KitchenCalculator",
                 component: () => import("@/modules/Kitchen/pages/kitchen-child/KitchenCalculator.vue"),
+                meta: {
+                  title: "Калькулятор",
+                },
               },
             ],
           },

@@ -1,7 +1,14 @@
-<script setup lang="ts">
+<script
+  setup
+  lang="ts"
+>
+
 import AppInput from "@/components/ui/form/app-input/AppInput.vue";
 import AppSelect from "@/components/ui/form/app-select/AppSelect.vue";
 import AppDatePicker from "@/components/ui/form/app-date-picker/AppDatePicker.vue";
+import useConfirm from "@/components/ui/app-confirm/useConfirm";
+
+const model = defineModel<boolean>();
 
 const emit = defineEmits(["update:editModal"]);
 const props = defineProps({
@@ -11,8 +18,13 @@ const props = defineProps({
   },
 });
 
+const { confirm } = useConfirm();
+
 const closeModal = () => {
-  emit("update:editModal", false);
+  // Let it come out when the form changes
+  confirm.cancel({ disabledBody: true }).then((response) => {
+    emit("update:editModal", false);
+  });
 };
 </script>
 
@@ -32,7 +44,10 @@ const closeModal = () => {
       <div class="border-[#E2E6F3] bg-[#fff] border rounded-[15px] w-[65%] mr-0">
         <div class="px-[72px] pb-[150px]">
           <header class="flex items-center justify-center my-[24px] mb-6">
-            <img src="@/assets/images/logo.svg" alt="logo">
+            <img
+              src="@/assets/images/logo.svg"
+              alt="logo"
+            >
             <div class="flex flex-col ml-3">
               <b class="text-[#000D24] text-lg">NKMK</b>
               <span class="text-[#CBCCCE]">Jamg‘armasi</span>
@@ -79,7 +94,10 @@ const closeModal = () => {
               </h1>
             </div>
 
-            <img src="@/assets/images/icons/qr.svg" alt="qr" />
+            <img
+              src="@/assets/images/icons/qr.svg"
+              alt="qr"
+            />
 
             <h1 class="text-[#A8AAAE] text-[14px] mr-[100px]">Эргашева Л.</h1>
           </div>
@@ -88,30 +106,53 @@ const closeModal = () => {
 
       <div class="w-[35%] ml-[24px] flex flex-col justify-between">
         <div>
-          <app-input placeholder="Служебная записка" label="Название документа"
-                     label-class="text-[#A8AAAE] text-[12px] font-medium" />
+          <app-input
+            placeholder="Служебная записка"
+            label="Название документа"
+            label-class="text-[#A8AAAE] text-[12px] font-medium"
+          />
 
-          <app-date-picker placeholder="24.08.2024" label="Дата создания документа"
-                           label-class="text-[#A8AAAE] text-[12px] font-medium" />
+          <app-date-picker
+            placeholder="24.08.2024"
+            label="Дата создания документа"
+            label-class="text-[#A8AAAE] text-[12px] font-medium"
+          />
 
           <app-input placeholder="№ документа" />
 
-          <app-select placeholder="Выберите" label="Кому"
-                      label-class="text-[#A8AAAE] text-[12px] font-medium" />
+          <app-select
+            placeholder="Выберите"
+            label="Кому"
+            label-class="text-[#A8AAAE] text-[12px] font-medium"
+          />
 
-          <app-input placeholder="Введите" label="Тема"
-                     label-class="text-[#A8AAAE] text-[12px] font-medium" />
+          <app-input
+            placeholder="Введите"
+            label="Тема"
+            label-class="text-[#A8AAAE] text-[12px] font-medium"
+          />
 
-          <app-input label="Сообщения"
-                     label-class="text-[#A8AAAE] text-[12px] font-medium" placeholder="Отображение сообщения служебки"
-                     type="textarea" :rows="5" />
+          <app-input
+            label="Сообщения"
+            label-class="text-[#A8AAAE] text-[12px] font-medium"
+            placeholder="Отображение сообщения служебки"
+            type="textarea"
+            :rows="5"
+          />
 
-          <app-select placeholder="Выберите" label="Отправитель"
-                      label-class="text-[#A8AAAE] text-[12px] font-medium" />
+          <app-select
+            placeholder="Выберите"
+            label="Отправитель"
+            label-class="text-[#A8AAAE] text-[12px] font-medium"
+          />
         </div>
 
         <div class="flex items-start justify-between">
-          <button class="custom-cancel-btn" @click="closeModal">Отменить</button>
+          <button
+            class="custom-cancel-btn"
+            @click="closeModal"
+          >Отменить
+          </button>
           <button class="custom-apply-btn">Сохранить как черновик</button>
           <button class="custom-send-btn">Отправить</button>
         </div>

@@ -7,9 +7,11 @@ import { useRoute, useRouter } from "vue-router";
 import AppInput from "@/components/ui/form/app-input/AppInput.vue";
 import AppSelect from "@/components/ui/form/app-select/AppSelect.vue";
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
+import useConfirm from "@/components/ui/app-confirm/useConfirm";
 
 const route = useRoute();
 const router = useRouter();
+const { confirm } = useConfirm();
 
 const input1 = ref<string>("");
 const tableData = ref([
@@ -54,6 +56,27 @@ const setBreadCrumbFn = () => {
 watch(() => route.name, () => {
   setBreadCrumbFn();
 }, { immediate: true });
+
+const cancelFn = () => {
+  confirm.cancel().then(response => {
+    router.push({ name: "reference-main-bases" });
+  });
+};
+
+const deleteFn = () => {
+  confirm.delete().then(response => {
+    router.push({ name: "reference-main-bases" });
+  });
+};
+
+const switchChange = async (): Promise<boolean> => {
+  try {
+    const response = await confirm.show();
+    return true;
+  } catch (error) {
+    return false;
+  }
+};
 
 </script>
 
@@ -124,6 +147,7 @@ watch(() => route.name, () => {
             <el-table
               :data="tableData"
               class="custom-element-table"
+              stripe
             >
               <el-table-column
                 prop="id"
@@ -143,6 +167,7 @@ watch(() => route.name, () => {
             v-if="route.params.id && !route.query.type"
             active-text="Деактивация"
             class="app-switch mt-auto"
+            :before-change="switchChange"
           />
         </div>
 
@@ -154,13 +179,17 @@ watch(() => route.name, () => {
           <button
             v-if="route.params.id"
             class="custom-danger-btn"
+            @click="deleteFn"
           >
             Удалить
           </button>
 
 
           <div class="flex items-center gap-4">
-            <button class="custom-cancel-btn">
+            <button
+              @click="cancelFn"
+              class="custom-cancel-btn"
+            >
               Отменить
             </button>
 

@@ -8,23 +8,12 @@ import AppInput from "@/components/ui/form/app-input/AppInput.vue";
 import AppSelect from "@/components/ui/form/app-select/AppSelect.vue";
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 import AppMediaUploader from "@/components/ui/form/app-media-uploader/AppMediaUploader.vue";
+import useConfirm from "@/components/ui/app-confirm/useConfirm";
 
 const route = useRoute();
 const router = useRouter();
 
 const value1 = ref<boolean>(false);
-const user_photo_new = ref<string>("");
-
-const previewImage = (event: any) => {
-  const input = event.target as HTMLInputElement;
-  if (input.files && input?.files[0]) {
-    const reader = new FileReader();
-    reader.onload = (e: any) => {
-      user_photo_new.value = e.target.result as string;
-    };
-    reader.readAsDataURL(input.files[0]);
-  }
-};
 
 const { setBreadCrumb } = useBreadcrumb();
 
@@ -52,6 +41,28 @@ watchEffect(() => {
   setBreadCrumbFn();
 });
 
+const { confirm } = useConfirm();
+
+const cancelFn = () => {
+  confirm.cancel().then(response => {
+    router.push({ name: "reference-vid-product" });
+  });
+};
+
+const deleteFn = () => {
+  confirm.delete().then(response => {
+    router.push({ name: "reference-vid-product" });
+  });
+};
+
+const switchChange = async (): Promise<boolean> => {
+  try {
+    const response = await confirm.show();
+    return true;
+  } catch (error) {
+    return false;
+  }
+};
 </script>
 
 <template>
@@ -96,6 +107,7 @@ watchEffect(() => {
           v-model="value1"
           active-text="Деактивация"
           v-if="route.name === 'reference-vid-edit-id'"
+          :before-change="switchChange"
         />
       </div>
 
@@ -105,7 +117,7 @@ watchEffect(() => {
         v-if="route.name === 'reference-vid-view-id'"
       >
         <img
-          src="../../../../../../assets/images/icons/edit.svg"
+          src="@/assets/images/icons/edit.svg"
           alt="edit"
           class="mr-[12px]"
         />
@@ -120,16 +132,21 @@ watchEffect(() => {
       <button
         class="custom-danger-btn"
         v-if="route.name === 'reference-vid-edit-id'"
-      >Удалить
+        @click="deleteFn"
+      >
+        Удалить
       </button>
 
       <div class="flex items-center ml-auto">
         <button
           class="custom-cancel-btn"
-          @click="router.go(-1)"
-        >Отменить
+          @click="cancelFn"
+        >
+          Отменить
         </button>
-        <button class="custom-apply-btn ml-[8px]">{{route.name === 'reference-vid-edit-id' ? 'Сохранить' : 'Добавить'}}</button>
+        <button class="custom-apply-btn ml-[8px]">
+          {{ route.name === "reference-vid-edit-id" ? "Сохранить" : "Добавить" }}
+        </button>
       </div>
     </div>
   </div>

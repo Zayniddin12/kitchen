@@ -48,7 +48,7 @@ watch(() => route.name, function(val) {
         <slot />
       </div>
 
-      <span class="mt-[28px] bg-transparent !dark:body-dark w-full text-[#8F9194] text-[12px]">Made by “Anysoft” software & solutions company</span>
+      <span class="mt-[28px] bg-transparent !dark:body-dark w-full text-[#8F9194] text-[12px] select-none">Made by “Anysoft” software & solutions company</span>
     </div>
 
     <div

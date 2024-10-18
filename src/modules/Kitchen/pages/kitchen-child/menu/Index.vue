@@ -16,8 +16,8 @@ import ClockIcon from "@/assets/images/icons/clock.svg";
 import EditIcon from "@/assets/images/icons/edit.svg";
 import MinusIcon from "@/assets/images/icons/minus.svg";
 import Plus3Icon from "@/assets/images/icons/plus3.svg";
-import RefreshIcon from "@/assets/images/icons/refresh.svg";
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
+import useConfirm from "@/components/ui/app-confirm/useConfirm";
 
 interface ProductItemType {
   id: number;
@@ -53,15 +53,6 @@ const tabItems = computed(() => [
   { value: TABS.CURRENT, name: "Текущее меню" },
   { value: TABS.ALL, name: "Все меню" },
 ]);
-
-watch(
-  () => route.query.tab,
-  () => {
-    const tab = Number(route.query.tab);
-    activeTab.value = [TABS.CURRENT, TABS.ALL].includes(tab) ? tab : TABS.CURRENT;
-  },
-  { immediate: true },
-);
 
 const setBreadCrumbFn = () => {
   kitchenStore.fetchPart(+route.params.department_id, route.params.part_name as string);
@@ -219,16 +210,27 @@ const products = ref<ProductType[] | []>([
       { id: 9, price: 14000, quantity: 0, weight: 1, name: "Блюда 6", photo: DishesImg },
       { id: 10, price: 15000, quantity: 0, weight: 1.5, name: "Блюда 7", photo: DishesImg },
       { id: 11, price: 18000, quantity: 0, weight: 2, name: "Блюда 8", photo: DishesImg },
+      { id: 12, price: 12000, quantity: 0, weight: 0.5, name: "Блюда 9", photo: DishesImg },
+      { id: 13, price: 14000, quantity: 0, weight: 1, name: "Блюда 10", photo: DishesImg },
+      { id: 13, price: 15000, quantity: 0, weight: 1.5, name: "Блюда 11", photo: DishesImg },
+      { id: 15, price: 18000, quantity: 0, weight: 2, name: "Блюда 12", photo: DishesImg },
+      { id: 16, price: 12000, quantity: 0, weight: 0.5, name: "Блюда 13", photo: DishesImg },
+      { id: 17, price: 14000, quantity: 0, weight: 1, name: "Блюда 14", photo: DishesImg },
+      { id: 18, price: 15000, quantity: 0, weight: 1.5, name: "Блюда 15", photo: DishesImg },
+      { id: 19, price: 18000, quantity: 0, weight: 2, name: "Блюда 16", photo: DishesImg },
     ],
   },
 ]);
 
 const ordersModal = ref(false);
+const ordersWrapper = useTemplateRef<HTMLDivElement>("ordersWrapper");
+const menuSection = useTemplateRef("menuSection");
 
 const updateQuantity = (product: ProductItemType, increment = true) => {
   if (increment) {
     product.quantity++;
     ordersModal.value = true;
+
   } else if (product.quantity > 0) {
     product.quantity--;
     if (orders.value.length === 0) ordersModal.value = false;
@@ -236,69 +238,80 @@ const updateQuantity = (product: ProductItemType, increment = true) => {
 };
 
 const orders = computed(() =>
-  products.value.reduce<ProductItemType[]>((acc, product) =>
-      acc.concat(product.data.filter(item => item.quantity > 0)),
-    [] as ProductItemType[],
-  ),
+  products.value
+    .reduce<ProductItemType[]>((acc, product) =>
+        acc.concat(product.data.filter(item => item.quantity > 0)),
+      [] as ProductItemType[])
 );
 
 
 const ordersSum = computed(() => orders.value.reduce((sum, order) => sum + order.price * order.quantity, 0));
+const { confirm } = useConfirm();
 
 const clearOrders = () => {
-  products.value = products.value.map(product => ({
-    ...product,
-    data: product.data.map(el => ({ ...el, quantity: 0 })),
-  }));
-  ordersModal.value = false;
+  confirm.cancel().then(response => {
+
+    if (response !== "confirm") return;
+
+    products.value = products.value.map(product => ({
+      ...product,
+      data: product.data.map(el => ({ ...el, quantity: 0 })),
+    }));
+    ordersModal.value = false;
+  });
 };
 
-const ordersWrapper = useTemplateRef<HTMLDivElement>("ordersWrapper");
-const menuSection = useTemplateRef("menuSection");
+const oldMaxWidth = ref<number>(0);
 
-const updateMenuSectionPadding = () => {
-  if (ordersWrapper.value && menuSection.value) {
-    const height = ordersWrapper.value.offsetHeight;
-    menuSection.value.style.paddingBottom = `${height}px`;
+const updateMenuSectionWidth = (modalOpened: boolean = true) => {
+  const menuEl = menuSection.value;
+  const ordersEl = ordersWrapper.value;
+
+  if (!menuEl) return;
+
+  if (!modalOpened) {
+    menuEl.style.removeProperty("max-width");
+    return;
   }
+
+  if (!ordersEl) {
+    if (oldMaxWidth.value) menuEl.style.maxWidth = `${oldMaxWidth.value}px`;
+    return;
+  }
+
+  const maxWidth = Math.max(0, menuEl.offsetWidth - ordersEl.offsetWidth);
+
+  oldMaxWidth.value = maxWidth;
+
+  menuEl.style.maxWidth = `${maxWidth}px`;
 };
 
 watch(ordersModal, async newValue => {
-  if (newValue) {
-    await nextTick();
-    updateMenuSectionPadding();
-  } else {
-    if (menuSection.value) {
-      menuSection.value.style.paddingBottom = "0px";
-    }
-  }
-});
-
-let resizeObserver: ResizeObserver | null = null;
-
-onMounted(() => {
-  resizeObserver = new ResizeObserver(updateMenuSectionPadding);
-  if (ordersWrapper.value) {
-    resizeObserver.observe(ordersWrapper.value);
-  }
-});
-
-onBeforeUnmount(() => {
-  if (resizeObserver && ordersWrapper.value) {
-    resizeObserver.unobserve(ordersWrapper.value);
-    resizeObserver.disconnect();
-  }
+  await nextTick();
+  updateMenuSectionWidth(newValue);
 });
 
 watchEffect(() => {
   setBreadCrumbFn();
 });
 
+watch(
+  () => route.query.tab,
+  () => {
+    const tab = Number(route.query.tab);
+    activeTab.value = [TABS.CURRENT, TABS.ALL].includes(tab) ? tab : TABS.CURRENT;
+
+    if (ordersModal.value) updateMenuSectionWidth(activeTab.value === TABS.CURRENT);
+
+  },
+  { immediate: true },
+);
+
 </script>
 
 <template>
   <section
-    class="menu"
+    class="menu transition-all duration-200"
     ref="menuSection"
   >
     <div>
@@ -320,66 +333,48 @@ watchEffect(() => {
           v-if="hasData"
           class="flex items-center"
         >
-          <template v-if="kitchenStore.activeMenuPart">
-            <template v-if="activeTab === TABS.CURRENT">
-              <ElButton
-                class="!bg-blue-500 min-h-12 w-[253px]"
-                type="primary"
-                size="large"
-                tag="RouterLink"
-                :to="{name: 'KitchenMenuCookingDishCreate'}"
-              >
-                <div class="flex items-center gap-x-2">
-                  <svg
-                    :data-src="PlusIcon"
-                    class="size-6"
-                  />
-                  <span class="text-lg font-medium">
+          <template v-if="activeTab === TABS.CURRENT && kitchenStore.activeMenuPart">
+            <ElButton
+              class="!bg-blue-500 min-h-12 w-[253px]"
+              type="primary"
+              size="large"
+              tag="RouterLink"
+              :to="{name: 'KitchenMenuCookingDishCreate'}"
+            >
+              <div class="flex items-center gap-x-2">
+                <svg
+                  :data-src="PlusIcon"
+                  class="size-6"
+                />
+                <span class="text-lg font-medium">
                 Приготовить блюды
               </span>
-                </div>
-              </ElButton>
-              <ElButton
-                class="!bg-[#28C76F] min-h-12 w-[149px]"
-                size="large"
-                type="success"
-                tag="RouterLink"
-                :to="{name: 'KitchenMenuSellCreate'}"
-              >
-                <div class="flex items-center gap-x-2">
-                  <svg
-                    :data-src="SellIcon"
-                    class="size-6"
-                  />
-                  <span class="text-lg font-medium">
+              </div>
+            </ElButton>
+            <ElButton
+              class="!bg-[#28C76F] min-h-12 w-[149px]"
+              size="large"
+              type="success"
+              tag="RouterLink"
+              :to="{name: 'KitchenMenuSellCreate'}"
+            >
+              <div class="flex items-center gap-x-2">
+                <svg
+                  :data-src="SellIcon"
+                  class="size-6"
+                />
+                <span class="text-lg font-medium">
                 Продать
               </span>
-                </div>
-              </ElButton>
-            </template>
-            <template v-else-if="activeTab === TABS.ALL">
-              <ElButton
-                class="min-h-12 w-[253px] !bg-[#E2E6F3] border-none"
-                size="large"
-                tag="RouterLink"
-                :to="{name: 'KitchenMenuEdit'}"
-              >
-                <div class="flex items-center gap-x-2">
-                  <svg
-                    :data-src="EditIcon"
-                    class="size-6"
-                  />
-                  <span class="text-dark-gray font-medium text-lg">
-                  Редактировать
-                </span>
-                </div>
-              </ElButton>
-            </template>
+              </div>
+            </ElButton>
           </template>
-          <template v-if="kitchenStore.activeSalesPart && activeTab === TABS.ALL">
+          <template v-else-if="activeTab === TABS.ALL">
             <ElButton
               class="min-h-12 w-[253px] !bg-[#E2E6F3] border-none"
               size="large"
+              tag="RouterLink"
+              :to="{name: 'KitchenMenuEdit'}"
             >
               <div class="flex items-center gap-x-2">
                 <svg
@@ -388,21 +383,6 @@ watchEffect(() => {
                 />
                 <span class="text-dark-gray font-medium text-lg">
                   Редактировать
-                </span>
-              </div>
-            </ElButton>
-            <ElButton
-              class="min-h-12 w-[253px] !bg-blue-500"
-              size="large"
-              type="primary"
-            >
-              <div class="flex items-center gap-x-2">
-                <svg
-                  :data-src="RefreshIcon"
-                  class="size-6"
-                />
-                <span class="text-white font-medium text-lg">
-                  Начать сначала
                 </span>
               </div>
             </ElButton>
@@ -456,6 +436,7 @@ watchEffect(() => {
                 </div>
                 <ElTable
                   :data="currentTabTableData"
+                  stripe
                   class="custom-element-table custom-element-table-normal mt-6"
                 >
                   <ElTableColumn
@@ -552,55 +533,51 @@ watchEffect(() => {
                 <h4 class="text-dark-gray font-semibold text-xl">
                   {{ product.category.name }}
                 </h4>
-                <div class="grid grid-cols-4 gap-6 mt-3">
+                <div :class="['grid gap-6 mt-3', `${ordersModal ? 'grid-cols-7' : 'grid-cols-9'}`]">
                   <div
                     v-for="productItem in product.data"
                     :key="productItem.id"
-                    class="rounded-2xl border border-[#E2E6F3] p-4 bg-[#F8F9FC] flex gap-x-3"
+                    class="menu__card"
                   >
+                    <h5 class="menu__card-title">
+                      {{ productItem.name }}
+                    </h5>
                     <img
                       :src="productItem.photo as any"
                       :alt="productItem.name"
-                      class="rounded-xl w-30 h-[114px] object-contain"
+                      class="menu__card-img"
                     />
-                    <div>
-                      <h5 class="text-dark font-semibold text-xl">
-                        {{ productItem.name }}
-                      </h5>
-                      <div class="flex flex-col gap-y-1 text-sm font-medium mt-1 text-cool-gray">
+                    <div class="menu__card-subtitles">
                         <span>
                         {{ productItem.weight }} литр
                       </span>
-                        <span>
+                      <span>
                         {{ formatNumber(productItem.price) }} UZS
                       </span>
-                      </div>
-                      <div class="mt-2.5 flex items-center gap-x-2">
-                        <button
-                          @click="updateQuantity(productItem, false)"
-                          :disabled="productItem.quantity===0"
-                          class="size-7 text-[#292D324D] rounded-lg shadow-[0_2px_8.4px_0_#292D3214] bg-white flex items-center justify-center"
-                        >
-                          <img
-                            :src="MinusIcon"
-                            alt="minus icon"
-                            class="size-5"
-                          />
-                        </button>
-                        <span class="text-base font-medium text-dark-gray">
+                    </div>
+                    <div class="menu__card__actions">
+                      <button
+                        @click="updateQuantity(productItem, false)"
+                        :disabled="productItem.quantity===0"
+                        class="menu__card__action-btn"
+                      >
+                        <svg
+                          :data-src="MinusIcon"
+                          class="menu__card__action-btn__icon"
+                        />
+                      </button>
+                      <span>
                           {{ productItem.quantity }}
                         </span>
-                        <button
-                          @click="updateQuantity(productItem)"
-                          class="size-7 text-[#292D324D] rounded-lg shadow-[0_2px_8.4px_0_#292D3214] bg-white flex items-center justify-center"
-                        >
-                          <img
-                            :src="Plus3Icon"
-                            alt="minus icon"
-                            class="size-4"
-                          />
-                        </button>
-                      </div>
+                      <button
+                        @click="updateQuantity(productItem)"
+                        class="menu__card__action-btn"
+                      >
+                        <svg
+                          :data-src="Plus3Icon"
+                          class="menu__card__action-btn__icon"
+                        />
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -634,6 +611,7 @@ watchEffect(() => {
                   </h2>
                   <ElTable
                     :data="allTabTableData"
+                    stripe
                     class="custom-element-table custom-element-table-normal mt-4"
                   >
                     <ElTableColumn
@@ -689,6 +667,7 @@ watchEffect(() => {
                   </h2>
                   <ElTable
                     :data="allTabTableData"
+                    stripe
                     class="custom-element-table custom-element-table-normal mt-4"
                   >
                     <ElTableColumn
@@ -744,6 +723,7 @@ watchEffect(() => {
                   </h2>
                   <ElTable
                     :data="allTabTableData"
+                    stripe
                     class="custom-element-table custom-element-table-normal mt-4"
                   >
                     <ElTableColumn
@@ -799,6 +779,7 @@ watchEffect(() => {
                   </h2>
                   <ElTable
                     :data="allTabTableData"
+                    stripe
                     class="custom-element-table custom-element-table-normal mt-4"
                   >
                     <ElTableColumn
@@ -855,6 +836,7 @@ watchEffect(() => {
                 </h4>
                 <ElTable
                   :data="salesAllTabTableData"
+                  stripe
                   class="custom-element-table custom-element-table-normal menu__sales-all-tab-table mt-4"
                 >
                   <ElTableColumn
@@ -886,12 +868,15 @@ watchEffect(() => {
                         v-if="row.action"
                         class="flex items-center justify-end gap-x-2"
                       >
-                        <button class="action-btn">
+                        <RouterLink
+                          :to="{name: 'KitchenMenuShow', params: {id: row.idx}}"
+                          class="action-btn"
+                        >
                           <img
                             src="@/assets/images/eye.svg"
                             alt="eye"
                           />
-                        </button>
+                        </RouterLink>
 
                         <button class="action-btn">
                           <img
@@ -939,93 +924,129 @@ watchEffect(() => {
         </div>
       </div>
     </div>
-    <Teleport to="body">
-      <div
-        v-show="activeTab === TABS.CURRENT && ordersModal"
-        ref="ordersWrapper"
-        class="fixed bottom-0 pt-6 right-0 w-full z-[100] bg-white shadow-[0_0_3px_-1px_#0A090B0A]"
-      >
-        <div class="flex items-center justify-between px-6 pb-4">
-          <h4 class="text-2xl text-black font-semibold">Заказы</h4>
-          <div class="flex items-center">
-            <h6 class="text-lg text-dark font-semibold mr-6">
-              Общая сумма: {{ formatNumber(ordersSum) }} сум
-            </h6>
-            <ElButton
-              @click="clearOrders"
-              class="!bg-[#E2E6F3] border-none text-sm !text-dark-gray"
-              size="large"
-            >
-              Отменить
-            </ElButton>
-            <ElButton
-              type="primary"
-              size="large"
-              class="!bg-blue"
-            >
-              Продать
-            </ElButton>
-          </div>
-        </div>
+    <Transition name="nested">
+      <Teleport to="body">
         <div
-          v-if="orders.length>0"
-          class="grid grid-cols-5 gap-x-12 gap-y-10 max-h-[220px] overflow-y-auto px-6 pb-6 pt-4"
+          v-if="activeTab === TABS.CURRENT && ordersModal"
+          ref="ordersWrapper"
+          class="fixed top-0 right-0 pt-8 pb-6 w-[22%] h-screen flex flex-col justify-between z-10 bg-white shadow-[-32px_72px_96px_0_#0926450F] rounded-l-[32px]"
         >
-          <div
-            v-for="item in orders"
-            :key="item.id"
-          >
-            <div class="flex gap-x-4 items-start">
-              <img
-                :src="item.photo as any"
-                :alt="item.name"
-                class="size-9 rounded-full"
-              />
-              <div>
-                <div class="flex items-center gap-x-3">
-                  <strong class="text-black font-medium text-xl">
-                    {{ item.name }}
-                  </strong>
-                  <div class="bg-[#F8F9FC] p-1 rounded-lg flex items-center gap-x-2">
-                    <button
-                      @click="updateQuantity(item, false)"
-                      :disabled="item.quantity===0"
-                      class="size-7 text-[#292D324D] rounded-lg shadow-[0_2px_8.4px_0_#292D3214] bg-white flex items-center justify-center"
-                    >
-                      <img
-                        :src="MinusIcon"
-                        alt="minus icon"
-                        class="size-5"
-                      />
-                    </button>
-                    <span class="text-base font-medium text-dark-gray">
-                  {{ item.quantity }}
-                </span>
-                    <button
-                      @click="updateQuantity(item)"
-                      class="size-7 text-[#292D324D] rounded-lg shadow-[0_2px_8.4px_0_#292D3214] bg-white flex items-center justify-center"
-                    >
-                      <img
-                        :src="Plus3Icon"
-                        alt="minus icon"
-                        class="size-4"
-                      />
-                    </button>
-                  </div>
-                </div>
-                <div class="flex flex-col mt-1.5 gap-x-1.5 font-medium text-base text-cool-gray">
-              <span>
-                {{ item.weight }} литр
-              </span>
+          <div>
+            <h4 class="text-xl text-black font-semibold px-8">Заказы</h4>
+            <div
+              v-if="orders.length>0"
+              class="grid grid-cols-2 gap-6 mt-6 px-8 max-h-[76vh] overflow-y-auto"
+            >
+              <div
+                class="menu__card"
+                v-for="productItem in orders"
+                :key="productItem.id"
+              >
+                <h5 class="menu__card-title">
+                  {{ productItem.name }}
+                </h5>
+                <img
+                  :src="productItem.photo as any"
+                  :alt="productItem.name"
+                  class="menu__card-img"
+                />
+                <div class="menu__card-subtitles">
+                        <span>
+                        {{ productItem.weight }} литр
+                      </span>
                   <span>
-                {{ formatNumber(item.price) }} сум
-              </span>
+                        {{ formatNumber(productItem.price) }} UZS
+                      </span>
+                </div>
+                <div class="menu__card__actions">
+                  <button
+                    @click="updateQuantity(productItem, false)"
+                    :disabled="productItem.quantity===0"
+                    class="menu__card__action-btn"
+                  >
+                    <svg
+                      :data-src="MinusIcon"
+                      class="menu__card__action-btn__icon"
+                    />
+                  </button>
+                  <span>
+                          {{ productItem.quantity }}
+                        </span>
+                  <button
+                    @click="updateQuantity(productItem)"
+                    class="menu__card__action-btn"
+                  >
+                    <svg
+                      :data-src="Plus3Icon"
+                      class="menu__card__action-btn__icon"
+                    />
+                  </button>
                 </div>
               </div>
             </div>
           </div>
+          <div class="mt-6 px-8">
+            <div class="flex items-center justify-between gap-x-4 text-lg">
+                <span class="font-medium text-[#A8AAAE]">
+                  Общая сумма:
+                </span>
+              <strong class="font-semibold text-dark">{{ formatNumber(ordersSum) }} сум</strong>
+            </div>
+            <div class="grid grid-cols-2 mt-6">
+              <ElButton
+                @click="clearOrders"
+                class="!bg-[#E2E6F3] border-none text-sm !text-dark-gray"
+                size="large"
+              >
+                Отменить
+              </ElButton>
+              <ElButton
+                type="primary"
+                size="large"
+                class="!bg-blue"
+              >
+                Продать
+              </ElButton>
+            </div>
+          </div>
         </div>
-      </div>
-    </Teleport>
+      </Teleport>
+    </Transition>
   </section>
 </template>
+
+<style lang="scss">
+.menu {
+
+  &__card {
+    @apply rounded-2xl border border-[#E2E6F3] p-4 bg-[#F8F9FC] flex flex-col gap-x-3 text-center;
+
+    &-img {
+      @apply rounded-xl object-contain w-full mt-3;
+    }
+
+    &-title {
+      @apply text-dark font-semibold text-xl;
+    }
+
+    &-subtitles {
+      @apply flex flex-col gap-y-1 text-sm font-medium text-cool-gray mt-3;
+    }
+
+    &__actions {
+      @apply mt-3.5 flex items-center justify-center gap-x-2 text-base font-medium text-dark-gray;
+    }
+
+    &__action {
+
+      &-btn {
+        @apply size-7 text-[#292D324D] rounded-lg shadow-[0_2px_8.4px_0_#292D3214] bg-white flex items-center justify-center;
+
+        &__icon {
+          @apply size-4;
+        }
+      }
+    }
+  }
+}
+</style>

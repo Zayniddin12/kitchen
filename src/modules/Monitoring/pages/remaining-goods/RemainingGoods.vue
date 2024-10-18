@@ -261,6 +261,7 @@ watchEffect(() => {
         </div>
       </div>
       <ElTable
+          stripe
         :data="tableData"
         class="custom-element-table"
       >

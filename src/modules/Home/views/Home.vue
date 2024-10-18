@@ -9,8 +9,8 @@ import {
   GraphicComponent,
   GridComponent,
 } from "echarts/components";
-import VChart, { THEME_KEY } from "vue-echarts";
-import { ref, provide, watchEffect } from "vue";
+import VChart from "vue-echarts";
+import { ref, watchEffect } from "vue";
 import { tableData } from "@/modules/Home/constants";
 import AppDatePicker from "@/components/ui/form/app-date-picker/AppDatePicker.vue";
 import AppSelect from "@/components/ui/form/app-select/AppSelect.vue";
@@ -27,8 +27,6 @@ use([
   GraphicComponent,
   GridComponent,
 ]);
-
-// provide(THEME_KEY, "dark");
 
 const data = [
   { value: 1200, name: "Общая вместимость" },
@@ -243,7 +241,7 @@ const optionLine = {
   series: [
     {
       name: "Мясной склад",
-      data: [120, 132, 101, 134, 90, 230, 210, 180, 200, 250, 300, 280],
+      data: [120, 132, 101, 134, 90, 230, 210, 180, 200, 250, 300, 280, 320, 240, 500],
       type: "line",
       smooth: true,
       lineStyle: {
@@ -253,7 +251,7 @@ const optionLine = {
     },
     {
       name: "Овощной склад",
-      data: [220, 182, 191, 234, 290, 330, 310, 210, 150, 220, 270, 310],
+      data: [220, 182, 191, 234, 290, 330, 310, 210, 150, 220, 270, 310, 120, 54, 350],
       type: "line",
       smooth: true,
       lineStyle: {
@@ -263,7 +261,7 @@ const optionLine = {
     },
     {
       name: "Рисовый склад",
-      data: [150, 232, 201, 154, 190, 330, 410, 140, 120, 130, 140, 160],
+      data: [150, 232, 201, 154, 190, 330, 410, 140, 120, 130, 140, 160, 150, 230, 300],
       type: "line",
       smooth: true,
       lineStyle: {
@@ -489,7 +487,6 @@ watchEffect(() => {
       </div>
     </div>
 
-
     <div class="p-[24px] bg-[#F8F9FC] rounded-[24px] mb-[40px]" v-for="item in 2">
       <div class="flex items-center justify-between">
         <div>
@@ -515,10 +512,7 @@ watchEffect(() => {
         </div>
       </div>
 
-      <div>
-
-        <v-chart class="line-chart" :option="optionLine" autoresize />
-      </div>
+      <v-chart class="line-chart" :option="optionLine" autoresize />
     </div>
 
     <div class="flex items-center gap-4 mb-[40px]">
@@ -540,7 +534,6 @@ watchEffect(() => {
       </div>
 
       <div class="w-[50%] bg-[#F8F9FC] rounded-[24px] p-[16px]">
-
         <div class="flex items-center mb-[38px]">
           <div class="flex items-center gap-2">
             <div class="bg-[#FFFFFF] p-[8px] rounded-[8px] flex items-center justify-center">
@@ -555,9 +548,7 @@ watchEffect(() => {
 
         <v-chart class="chart" :option="option2" autoresize />
       </div>
-
     </div>
-
   </div>
 </template>
 

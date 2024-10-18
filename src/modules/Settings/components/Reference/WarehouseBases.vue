@@ -119,6 +119,7 @@ watchEffect(() => {
     <div class="mt-[24px]">
       <el-table
         :data="tableData"
+        stripe
         class="custom-element-table"
       >
         <el-table-column
