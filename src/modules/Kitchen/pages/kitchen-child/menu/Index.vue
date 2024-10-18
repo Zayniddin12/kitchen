@@ -2,7 +2,7 @@
   setup
   lang="ts"
 >
-import { computed, nextTick, onBeforeUnmount, onMounted, ref, useTemplateRef, watch, watchEffect } from "vue";
+import { computed, nextTick, ref, useTemplateRef, watch, watchEffect } from "vue";
 import { useRoute } from "vue-router";
 import { useKitchenStore } from "@/modules/Kitchen/store/kitchen.store";
 import { TableColumnType } from "@/types/common.type";
@@ -18,6 +18,7 @@ import MinusIcon from "@/assets/images/icons/minus.svg";
 import Plus3Icon from "@/assets/images/icons/plus3.svg";
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 import useConfirm from "@/components/ui/app-confirm/useConfirm";
+import { getItem } from "@/utils/localStorage";
 
 interface ProductItemType {
   id: number;
@@ -26,6 +27,7 @@ interface ProductItemType {
   weight: number;
   name: string;
   photo: string | object;
+  last_updated?: Date;
 }
 
 interface ProductCategoryType {
@@ -222,6 +224,22 @@ const products = ref<ProductType[] | []>([
   },
 ]);
 
+const productsWrapperClassName = computed<string[]>(() => {
+  const className = ["grid gap-6 mt-3"];
+
+  if (!childSideBarPin.value && !ordersModal.value) {
+    className.push("grid-cols-9");
+  } else if (childSideBarPin.value && !ordersModal.value) {
+    className.push("grid-cols-8");
+  } else if (!childSideBarPin.value && ordersModal.value) {
+    className.push("grid-cols-7");
+  } else {
+    className.push("grid-cols-6");
+  }
+
+  return className;
+});
+
 const ordersModal = ref(false);
 const ordersWrapper = useTemplateRef<HTMLDivElement>("ordersWrapper");
 const menuSection = useTemplateRef("menuSection");
@@ -230,7 +248,7 @@ const updateQuantity = (product: ProductItemType, increment = true) => {
   if (increment) {
     product.quantity++;
     ordersModal.value = true;
-
+    product.last_updated = new Date();
   } else if (product.quantity > 0) {
     product.quantity--;
     if (orders.value.length === 0) ordersModal.value = false;
@@ -240,8 +258,8 @@ const updateQuantity = (product: ProductItemType, increment = true) => {
 const orders = computed(() =>
   products.value
     .reduce<ProductItemType[]>((acc, product) =>
-        acc.concat(product.data.filter(item => item.quantity > 0)),
-      [] as ProductItemType[])
+      acc.concat(product.data.filter(item => item.quantity > 0)), [] as ProductItemType[])
+    .sort((a, b) => b.last_updated - a.last_updated),
 );
 
 
@@ -260,6 +278,12 @@ const clearOrders = () => {
     ordersModal.value = false;
   });
 };
+
+const childSideBarPin = computed(() => {
+  const pin = getItem("child-sidebar-pin");
+
+  return pin && pin === "true";
+});
 
 const oldMaxWidth = ref<number>(0);
 
@@ -533,7 +557,7 @@ watch(
                 <h4 class="text-dark-gray font-semibold text-xl">
                   {{ product.category.name }}
                 </h4>
-                <div :class="['grid gap-6 mt-3', `${ordersModal ? 'grid-cols-7' : 'grid-cols-9'}`]">
+                <div :class="productsWrapperClassName">
                   <div
                     v-for="productItem in product.data"
                     :key="productItem.id"
@@ -929,7 +953,7 @@ watch(
         <div
           v-if="activeTab === TABS.CURRENT && ordersModal"
           ref="ordersWrapper"
-          class="fixed top-0 right-0 pt-8 pb-6 w-[22%] h-screen flex flex-col justify-between z-10 bg-white shadow-[-32px_72px_96px_0_#0926450F] rounded-l-[32px]"
+          class="fixed top-0 right-0 pt-8 pb-6 w-[21%] h-screen flex flex-col justify-between z-10 bg-white shadow-[-32px_72px_96px_0_#0926450F] rounded-l-[32px]"
         >
           <div>
             <h4 class="text-xl text-black font-semibold px-8">Заказы</h4>

@@ -1,8 +1,10 @@
-<script setup lang="ts">
+<script
+  setup
+  lang="ts"
+>
 import { onMounted, ref, watch } from "vue";
 import { useRoute } from "vue-router";
 import { useKitchenStore } from "@/modules/Kitchen/store/kitchen.store";
-
 import NavBar from "@/layout/Bars/NavBar.vue";
 import SideBar from "@/layout/Bars/SideBar.vue";
 import AppBreadcrumb from "@/components/ui/app-breadcrumb/AppBreadcrumb.vue";
@@ -18,10 +20,6 @@ onMounted(() => {
   kitchenStore.fetchDepartments();
 });
 
-const closeChildSidebar = () => {
-  childSidebar.value = false;
-};
-
 watch(() => route.name, function(val) {
   if (val === "home") {
     localStorage.setItem("child-sidebar-pin", JSON.stringify(false));
@@ -34,10 +32,7 @@ watch(() => route.name, function(val) {
 
 <template>
   <div>
-    <SideBar
-      v-model:childSidebar="childSidebar"
-      @closeChildSidebar2="closeChildSidebar"
-    />
+    <SideBar v-model:childSidebar="childSidebar" />
 
     <div
       class="main-layout min-h-screen p-6 pr-7 pt-28 dark:bg-darkLayoutMain dark:bg-body-dark bg-white ml-[128px] transition-all flex flex-col justify-between"

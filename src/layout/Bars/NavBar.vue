@@ -1,4 +1,7 @@
-<script setup lang="ts">
+<script
+  setup
+  lang="ts"
+>
 import { Search } from "@element-plus/icons-vue";
 import { ref } from "vue";
 import Language from "@/components/language/index.vue";
@@ -88,10 +91,17 @@ const openModals = (data: any) => {
         />
       </div>
 
-      <div class="bg-[#F8F9FC] text-gray-900 shadow-md border absolute w-full rounded-md mt-[5px]"
-           v-if="input1 && input1.length > 0"
+      <div
+        class="bg-[#F8F9FC] text-gray-900 shadow-md border absolute w-full rounded-md mt-[5px]"
+        v-if="input1 && input1.length > 0"
       >
-        <router-link v-for="(index3) in 10" :key="index3" class="px-4 py-2 block" to="#">lorem ipsum dolor</router-link>
+        <router-link
+          v-for="(index3) in 10"
+          :key="index3"
+          class="px-4 py-2 block"
+          to="#"
+        >lorem ipsum dolor
+        </router-link>
       </div>
     </div>
 
@@ -102,7 +112,8 @@ const openModals = (data: any) => {
         ref="dropdown"
       >
         <button
-          class="flex items-center bg-[#2E90FA] rounded-[8px] border-[1.5px] py-[10px] px-[20px] active:bg-[#175CD3] active:border-[#1849A9] active:border-[1.5px]">
+          class="flex items-center bg-[#2E90FA] rounded-[8px] border-[1.5px] py-[10px] px-[20px] active:bg-[#175CD3] active:border-[#1849A9] active:border-[1.5px]"
+        >
           <img
             src="@/assets/images/icons/plus.svg"
             class="mr-[8px]"
@@ -139,7 +150,10 @@ const openModals = (data: any) => {
               >
                 <button class="flex items-center justify-between p-[10px] w-full">
                   <span class="text-[#4F5662] text-[14px] font-medium mr-[4px]">{{ item.title }}</span>
-                  <img src="@/assets/arrow-right.svg" alt="arrow icon" />
+                  <img
+                    src="@/assets/arrow-right.svg"
+                    alt="arrow icon"
+                  />
                 </button>
 
                 <template #dropdown>
@@ -171,20 +185,33 @@ const openModals = (data: any) => {
 
       <ThemeToggler v-if="false" />
 
-      <el-badge value="18" class="item cursor-pointer">
-        <img src="@/assets/images/icons/bell.svg" alt="bell" />
+      <el-badge
+        value="18"
+        class="item cursor-pointer"
+      >
+        <img
+          src="@/assets/images/icons/bell.svg"
+          alt="bell"
+        />
       </el-badge>
 
-      <el-badge value="18" class="item cursor-pointer">
-        <img src="@/assets/images/icons/mail.svg" alt="mail" />
+      <el-badge
+        value="18"
+        class="item cursor-pointer"
+      >
+        <img
+          src="@/assets/images/icons/mail.svg"
+          alt="mail"
+        />
       </el-badge>
 
       <Language v-if="false" />
 
       <div class="flex items-center gap-3">
-        <img src="@/assets/images/avatar.png"
-             class="h-[40px] w-[40px] object-contain rounded-full"
-             alt="avatar"
+        <img
+          src="@/assets/images/avatar.png"
+          class="h-[40px] w-[40px] object-contain rounded-full"
+          alt="avatar"
         />
         <div class="flex flex-col">
           <h2 class="m-0 text-[14px] font-medium text-black dark:text-white">
