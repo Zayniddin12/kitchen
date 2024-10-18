@@ -14,7 +14,7 @@ const activeNames = computed<string[]>(() => {
 </script>
 
 <template>
-  <div class="el-collapse-item2 transition-all pt-[24px]">
+  <div class="el-collapse-item2 transition-all pt-6">
     <el-collapse
       v-model="activeNames"
       class="border-0"
@@ -29,8 +29,8 @@ const activeNames = computed<string[]>(() => {
         <template #icon="{ isActive }">
           <div />
         </template>
-        <div class="border-[#e2e6f3] border bg-[#F8F9FC] dark:bg-dark rounded-[10px] py-[12px] px-[16px]">
-          <h1 class="text-[#4F5662] font-medium text-[18px] mb-3">Фильтр</h1>
+        <div class="border-[#e2e6f3] border bg-[#F8F9FC] dark:bg-dark rounded-[10px] py-3 px-4">
+          <h1 class="text-[#4F5662] font-medium text-lg mb-3">Фильтр</h1>
           <slot name="body" />
         </div>
       </el-collapse-item>

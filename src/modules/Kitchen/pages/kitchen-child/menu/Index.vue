@@ -2,7 +2,7 @@
   setup
   lang="ts"
 >
-import { computed, nextTick, onBeforeUnmount, onMounted, ref, useTemplateRef, watch, watchEffect } from "vue";
+import { computed, nextTick, ref, useTemplateRef, watch, watchEffect } from "vue";
 import { useRoute } from "vue-router";
 import { useKitchenStore } from "@/modules/Kitchen/store/kitchen.store";
 import { TableColumnType } from "@/types/common.type";
@@ -26,6 +26,7 @@ interface ProductItemType {
   weight: number;
   name: string;
   photo: string | object;
+  last_updated?: Date;
 }
 
 interface ProductCategoryType {
@@ -230,7 +231,7 @@ const updateQuantity = (product: ProductItemType, increment = true) => {
   if (increment) {
     product.quantity++;
     ordersModal.value = true;
-
+    product.last_updated = new Date();
   } else if (product.quantity > 0) {
     product.quantity--;
     if (orders.value.length === 0) ordersModal.value = false;
@@ -240,8 +241,8 @@ const updateQuantity = (product: ProductItemType, increment = true) => {
 const orders = computed(() =>
   products.value
     .reduce<ProductItemType[]>((acc, product) =>
-        acc.concat(product.data.filter(item => item.quantity > 0)),
-      [] as ProductItemType[])
+      acc.concat(product.data.filter(item => item.quantity > 0)), [] as ProductItemType[])
+    .sort((a, b) => b.last_updated - a.last_updated),
 );
 
 
@@ -929,7 +930,7 @@ watch(
         <div
           v-if="activeTab === TABS.CURRENT && ordersModal"
           ref="ordersWrapper"
-          class="fixed top-0 right-0 pt-8 pb-6 w-[22%] h-screen flex flex-col justify-between z-10 bg-white shadow-[-32px_72px_96px_0_#0926450F] rounded-l-[32px]"
+          class="fixed top-0 right-0 pt-8 pb-6 w-[21%] h-screen flex flex-col justify-between z-10 bg-white shadow-[-32px_72px_96px_0_#0926450F] rounded-l-[32px]"
         >
           <div>
             <h4 class="text-xl text-black font-semibold px-8">Заказы</h4>
