@@ -107,7 +107,7 @@ export const useKitchenStore = defineStore("kitchenStore", () => {
   const kitchenMenu = computed(() => {
     if (!departments.value.length) return [];
 
-    return departments.value.map((item) => {
+    return departments.value.map(item => {
       const newItem = {} as Record<string, any>;
       newItem.title = item.name;
       newItem.icon = "building-warehouse";
@@ -137,7 +137,8 @@ export const useKitchenStore = defineStore("kitchenStore", () => {
   const fetchPart = (department_id: number, part_name: string) => {
     if (!departments.value.length) return;
 
-    const department = departments.value.find(el => el.id === department_id) ?? null;
+    const department =
+      departments.value.find(el => el.id === department_id) ?? null;
 
     if (!department) return;
 
@@ -153,7 +154,6 @@ export const useKitchenStore = defineStore("kitchenStore", () => {
       },
     };
   };
-
 
   return {
     departments,
