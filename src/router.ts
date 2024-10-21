@@ -20,7 +20,12 @@ const routes: Array<RouteRecordRaw> = [
 
   {
     path: "/",
-    redirect: { name: "login" },
+    redirect: () => {
+      // if (isUserLoggedIn()) {
+      //   return {name: "users"};
+      // }
+      return {name: "login"};
+    },
   },
   {
     path: "/login",
@@ -63,6 +68,15 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
   if (!to.meta.layout) to.meta.layout = "MainLayout";
   next();
+
+  // const isLoggedIn = isUserLoggedIn();
+  // if (to.meta.loginNotRequired) return next();
+  //
+  // if (!isLoggedIn) {
+  //   return next({name: "login"});
+  // }
+  // next();
+
 });
 
 router.afterEach((to: any) => {

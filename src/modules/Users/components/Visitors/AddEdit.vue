@@ -88,8 +88,7 @@ const switchChange = async (): Promise<boolean> => {
 
 <template>
   <div>
-    <h1 class="m-0 font-semibold text-[32px]">
-      {{ title }}</h1>
+    <h1 class="m-0 font-semibold text-[32px]">{{ title }}</h1>
 
     <div class="app-tabs w-[345px] my-[24px]">
       <div
@@ -109,9 +108,9 @@ const switchChange = async (): Promise<boolean> => {
           <div class="top-[32px] absolute flex items-center">
             <div class="rounded-full overflow-hidden border-4 border-gray-100">
               <img
-                src="@/assets/images/avatar.png"
-                alt="Profile Picture"
-                class="object-cover h-[160px] w-[160px] rounded-full"
+                  src="@/assets/images/avatar.png"
+                  alt="Profile Picture"
+                  class="object-cover h-[160px] w-[160px] rounded-full"
               >
             </div>
 
@@ -124,61 +123,61 @@ const switchChange = async (): Promise<boolean> => {
         <div class="px-[24px] mt-[90px]">
           <div class="grid grid-cols-3 gap-4">
             <app-input
-              label="Фамилия"
-              label-class="text-[#A8AAAE] text-[12px] font-medium"
+                label="Фамилия"
+                label-class="text-[#A8AAAE] text-[12px] font-medium"
             />
 
             <app-input
-              label="Имя"
-              label-class="text-[#A8AAAE] text-[12px] font-medium"
+                label="Имя"
+                label-class="text-[#A8AAAE] text-[12px] font-medium"
             />
 
             <app-input
-              label="Отчество"
-              label-class="text-[#A8AAAE] text-[12px] font-medium"
+                label="Отчество"
+                label-class="text-[#A8AAAE] text-[12px] font-medium"
             />
 
             <app-date-picker
-              placeholder=""
-              label="Дата рождения"
-              label-class="text-[#A8AAAE] text-[12px] font-medium"
+                placeholder=""
+                label="Дата рождения"
+                label-class="text-[#A8AAAE] text-[12px] font-medium"
             />
 
             <app-input
-              label="Национальность"
-              label-class="text-[#A8AAAE] text-[12px] font-medium"
+                label="Национальность"
+                label-class="text-[#A8AAAE] text-[12px] font-medium"
             />
 
             <app-input
-              label="Пол"
-              label-class="text-[#A8AAAE] text-[12px] font-medium"
+                label="Пол"
+                label-class="text-[#A8AAAE] text-[12px] font-medium"
             />
 
             <app-input
-              label="Серия и номер паспорта"
-              label-class="text-[#A8AAAE] text-[12px] font-medium"
+                label="Серия и номер паспорта"
+                label-class="text-[#A8AAAE] text-[12px] font-medium"
             />
 
             <app-input
-              label="Кем выдан"
-              label-class="text-[#A8AAAE] text-[12px] font-medium"
+                label="Кем выдан"
+                label-class="text-[#A8AAAE] text-[12px] font-medium"
             />
 
             <app-date-picker
-              label="Дата выпуска"
-              placeholder=""
-              label-class="text-[#A8AAAE] text-[12px] font-medium"
+                label="Дата выпуска"
+                placeholder=""
+                label-class="text-[#A8AAAE] text-[12px] font-medium"
             />
 
             <app-date-picker
-              label="Срок действия"
-              placeholder=""
-              label-class="text-[#A8AAAE] text-[12px] font-medium"
+                label="Срок действия"
+                placeholder=""
+                label-class="text-[#A8AAAE] text-[12px] font-medium"
             />
 
             <app-input
-              label="ПИНФЛ"
-              label-class="text-[#A8AAAE] text-[12px] font-medium"
+                label="ПИНФЛ"
+                label-class="text-[#A8AAAE] text-[12px] font-medium"
             />
 
             <app-input
@@ -189,21 +188,21 @@ const switchChange = async (): Promise<boolean> => {
 
           <div class="grid grid-cols-2 gap-4 mt-[40px]">
             <app-select
-              label="Место работы"
-              label-class="text-[#A8AAAE] text-[12px] font-medium"
-              placeholder="Выберите"
+                label="Место работы"
+                label-class="text-[#A8AAAE] text-[12px] font-medium"
+                placeholder="Выберите"
             />
 
             <app-select
-              label="График работы"
-              label-class="text-[#A8AAAE] text-[12px] font-medium"
-              placeholder="Выберите"
+                label="График работы"
+                label-class="text-[#A8AAAE] text-[12px] font-medium"
+                placeholder="Выберите"
             />
             <ElSwitch
-              v-if="route.params.id && !route.query.type"
-              active-text="Деактивация"
-              class="app-switch mt-auto"
-              :before-change="switchChange"
+                v-if="route.params.id && !route.query.type"
+                active-text="Деактивация"
+                class="app-switch mt-auto"
+                :before-change="switchChange"
             />
           </div>
         </div>
