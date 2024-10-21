@@ -1,22 +1,27 @@
-<script
-  setup
-  lang="ts"
->
+<script setup lang="ts">
 import { onMounted, onUnmounted, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useLayoutStore } from "@/navigation";
 import ChildSidebar from "@/layout/Bars/ChildSidebar.vue";
+import { useSidebarStore } from "@/layout/Bars/sidebar.store";
 
-const emit = defineEmits<{ (e: "update:childSidebar", value: boolean): void; }>();
+const emit = defineEmits<{
+  (e: "update:childSidebar", value: boolean): void;
+}>();
 
 const store = useLayoutStore();
+const sidebarStore = useSidebarStore();
 const router = useRouter();
 let route = useRoute();
 
 let currentIndex = ref<number>(0);
 let currentMenu = ref<number>(0);
-let childIsOpen = ref<boolean>(localStorage.getItem("child-sidebar") === "true");
-let childIsOpenPin = ref<boolean>(JSON.parse(localStorage.getItem("child-sidebar-pin") || "false"));
+let childIsOpen = ref<boolean>(
+  localStorage.getItem("child-sidebar") === "true"
+);
+let childIsOpenPin = ref<boolean>(
+  JSON.parse(localStorage.getItem("child-sidebar-pin") || "false")
+);
 
 interface MenuItem {
   title?: string;
@@ -24,6 +29,14 @@ interface MenuItem {
   route?: string;
   children?: MenuItem[];
 }
+
+watch(
+  childIsOpenPin,
+  newValue => {
+    sidebarStore.setChildSideBarOpen(newValue);
+  },
+  { immediate: true }
+);
 
 onMounted(() => {
   const storedMenu: number = sessionStorage.getItem("current-menu") | 0;
@@ -35,7 +48,9 @@ onMounted(() => {
     currentIndex.value = 0;
   }
 
-  currentMenu.value = storedMenu ? JSON.parse(storedMenu as any) as number : 0;
+  currentMenu.value = storedMenu
+    ? (JSON.parse(storedMenu as any) as number)
+    : 0;
   childIsOpen.value = storedSidebar === "true";
 
   document.body.addEventListener("click", () => closeChildSidebar("any"));
@@ -48,10 +63,13 @@ onUnmounted(() => {
   emit("update:childSidebar", false);
 });
 
-watch(() => route.path, () => {
-  const storedMenu = sessionStorage.getItem("current-menu");
-  currentMenu.value = storedMenu ? JSON.parse(storedMenu) as number : 0;
-});
+watch(
+  () => route.path,
+  () => {
+    const storedMenu = sessionStorage.getItem("current-menu");
+    currentMenu.value = storedMenu ? (JSON.parse(storedMenu) as number) : 0;
+  }
+);
 
 const activeMenu = (index: number, item: MenuItem) => {
   currentIndex.value = index;
@@ -65,12 +83,10 @@ const activeMenu = (index: number, item: MenuItem) => {
 };
 
 const closeChildSidebar = (value: string) => {
-
   if (value == "any") {
     if (!childIsOpenPin.value) {
       currentIndex.value = 0;
     }
-
   }
 
   if (value && value == "close" && childIsOpenPin.value) {
@@ -78,10 +94,11 @@ const closeChildSidebar = (value: string) => {
     emit("update:childSidebar", false);
 
     localStorage.setItem("child-sidebar-pin", JSON.stringify(false));
-    childIsOpenPin.value = JSON.parse(localStorage.getItem("child-sidebar-pin") || "false");
+    childIsOpenPin.value = JSON.parse(
+      localStorage.getItem("child-sidebar-pin") || "false"
+    );
     console.log(value);
   }
-
 
   if (value && value == "close" && !childIsOpenPin.value) {
     currentIndex.value = 0;
@@ -91,13 +108,19 @@ const closeChildSidebar = (value: string) => {
     // currentIndex.value = 0;
   }
 
-
   emit("update:childSidebar", childIsOpenPin.value);
 };
 
 const pinSidebar = () => {
-  localStorage.setItem("child-sidebar-pin", JSON.stringify(!JSON.parse(localStorage.getItem("child-sidebar-pin") || "false")));
-  childIsOpenPin.value = JSON.parse(localStorage.getItem("child-sidebar-pin") || "false");
+  localStorage.setItem(
+    "child-sidebar-pin",
+    JSON.stringify(
+      !JSON.parse(localStorage.getItem("child-sidebar-pin") || "false")
+    )
+  );
+  childIsOpenPin.value = JSON.parse(
+    localStorage.getItem("child-sidebar-pin") || "false"
+  );
   closeChildSidebar("toggle");
 };
 
@@ -110,7 +133,9 @@ const logOut = () => {
 
 <template>
   <div class="sidebar w-[128px] z-10">
-    <div class="sidebar-wrapper bg-white-blue dark:bg-dark text-center relative flex flex-col justify-between">
+    <div
+      class="sidebar-wrapper bg-white-blue dark:bg-dark text-center relative flex flex-col justify-between"
+    >
       <div class="overflow-auto">
         <img
           src="@/assets/images/logo.svg"
@@ -130,18 +155,22 @@ const logOut = () => {
           >
             <li
               :style="{
-                  maskImage: `url(/sidebar/${item.icon}.svg)`,
-                  backgroundColor: '#8F9194',
-                  color: '#8F9194',
-                  width: '24px',
-                  height: '24px',
-                  maskSize: '24px',
-                  maskPosition: 'center',
-                  maskRepeat: 'no-repeat'
-                 }"
+                maskImage: `url(/sidebar/${item.icon}.svg)`,
+                backgroundColor: '#8F9194',
+                color: '#8F9194',
+                width: '24px',
+                height: '24px',
+                maskSize: '24px',
+                maskPosition: 'center',
+                maskRepeat: 'no-repeat',
+              }"
             />
 
-            <h1 class="text-[13px] font-medium font-500 mt-[4px] text-[#4F5662] dark:text-white">{{ item.title }}</h1>
+            <h1
+              class="text-[13px] font-medium font-500 mt-[4px] text-[#4F5662] dark:text-white"
+            >
+              {{ item.title }}
+            </h1>
           </div>
 
           <!-----------------------------------child sidebar----------------------------------->
@@ -158,7 +187,6 @@ const logOut = () => {
                 @toggleSidebarPin="pinSidebar"
               />
             </div>
-
           </Transition>
         </div>
       </div>
