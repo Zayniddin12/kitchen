@@ -21,9 +21,9 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: "/",
     redirect: () => {
-      if (isUserLoggedIn()) {
-        return {name: "users"};
-      }
+      // if (isUserLoggedIn()) {
+      //   return {name: "users"};
+      // }
       return {name: "login"};
     },
   },

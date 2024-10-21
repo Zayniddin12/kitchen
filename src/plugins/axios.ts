@@ -15,9 +15,9 @@ import i18n from "@/plugins/i18n";
 
 
 const errorText = {
-    ru: 'Система неверна или срок действия компании истек. Перезагрузите систему(Ctrl + R) или обратитесь к администратору',
-    oz: 'Тизим нотўғри ёки компания муддати тугаган. Тизимни қайта ёқинг(Ctrl + R) ёки администраторингизга мурожаат қилинг',
-    uz: 'Tizim noto\'g\'ri yoki kompaniya muddati tugagan. Tizimni qayta yoqing(Ctrl + R) yoki administratoringizga murojaat qiling'
+    ru: 'Error',
+    oz: 'Error',
+    uz: 'Error'
 }
 const axiosIns = axios.create({
     baseURL: import.meta.env.VITE_BACKEND,
