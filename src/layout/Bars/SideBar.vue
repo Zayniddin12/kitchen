@@ -72,6 +72,10 @@ const activeMenu = (index: number, item: MenuItem) => {
   currentIndex.value = index;
   currentMenu.value = index;
   sessionStorage.setItem("current-menu", currentMenu.value.toString());
+  if (item.route == "/home") {
+    localStorage.setItem("child-sidebar", JSON.stringify(false));
+    emit("update:childSidebar", false);
+  }
 
   if (item.children && item.children.length) {
     childSidebar.value = true;
