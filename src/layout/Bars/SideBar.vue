@@ -7,15 +7,19 @@ import { useRoute, useRouter } from "vue-router";
 import { useLayoutStore } from "@/navigation";
 import ChildSidebar from "@/layout/Bars/ChildSidebar.vue";
 
-const emit = defineEmits<{ (e: "update:childSidebar", value: boolean): void; }>();
+const emit = defineEmits<{
+  (e: "update:childSidebarPin", value: boolean): void;
+  (e: "update:childSidebar", value: boolean): void;
+}>();
 
 const store = useLayoutStore();
 const router = useRouter();
 let route = useRoute();
 
+const childSidebar = ref<boolean>(false);
 let currentIndex = ref<number>(0);
 let currentMenu = ref<number>(0);
-let childIsOpen = ref<boolean>(localStorage.getItem("child-sidebar") === "true");
+let childIsOpen = ref<boolean>(JSON.parse(localStorage.getItem("child-sidebar") || "false"));
 let childIsOpenPin = ref<boolean>(JSON.parse(localStorage.getItem("child-sidebar-pin") || "false"));
 
 interface MenuItem {
@@ -36,16 +40,16 @@ onMounted(() => {
   }
 
   currentMenu.value = storedMenu ? JSON.parse(storedMenu as any) as number : 0;
-  childIsOpen.value = storedSidebar === "true";
+  // childIsOpen.value = storedSidebar === "true";
 
   document.body.addEventListener("click", () => closeChildSidebar("any"));
-  emit("update:childSidebar", false);
+  emit("update:childSidebarPin", false);
 });
 
 onUnmounted(() => {
   document.body.removeEventListener("click", () => closeChildSidebar("any"));
   localStorage.setItem("child-sidebar-pin", JSON.stringify(false));
-  emit("update:childSidebar", false);
+  emit("update:childSidebarPin", false);
 });
 
 watch(() => route.path, () => {
@@ -57,6 +61,15 @@ const activeMenu = (index: number, item: MenuItem) => {
   currentIndex.value = index;
   currentMenu.value = index;
   sessionStorage.setItem("current-menu", currentMenu.value.toString());
+
+  if (item.children && item.children.length) {
+    childSidebar.value = true;
+    localStorage.setItem("child-sidebar", JSON.stringify(true));
+    emit("update:childSidebar", true);
+  } else {
+    emit("update:childSidebar", false);
+    childSidebar.value = false;
+  }
 
   if (item.route) {
     router.push(item.route);
@@ -75,11 +88,14 @@ const closeChildSidebar = (value: string) => {
 
   if (value && value == "close" && childIsOpenPin.value) {
     currentIndex.value = 0;
+    // emit("update:childSidebarPin", false);
     emit("update:childSidebar", false);
 
-    localStorage.setItem("child-sidebar-pin", JSON.stringify(false));
+    // localStorage.setItem("child-sidebar-pin", JSON.stringify(false));
+    localStorage.setItem("child-sidebar", JSON.stringify(false));
     childIsOpenPin.value = JSON.parse(localStorage.getItem("child-sidebar-pin") || "false");
-    console.log(value);
+    childIsOpen.value = JSON.parse(localStorage.getItem("child-sidebar") || "false");
+
   }
 
 
@@ -92,7 +108,7 @@ const closeChildSidebar = (value: string) => {
   }
 
 
-  emit("update:childSidebar", childIsOpenPin.value);
+  emit("update:childSidebarPin", childIsOpenPin.value);
 };
 
 const pinSidebar = () => {
@@ -151,6 +167,7 @@ const logOut = () => {
               class="w-[260px] dark:bg-dark bg-white-blue rounded-[16px] h-[100%] absolute top-0 left-[120px] transition overflow-auto"
             >
               <ChildSidebar
+                :childSidebar="childSidebar"
                 :childIsOpenPin="childIsOpenPin"
                 :children="item.children as any"
                 :header="item.title"

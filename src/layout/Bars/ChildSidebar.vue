@@ -15,10 +15,14 @@ interface SidebarItem {
 
 const route = useRoute();
 const router = useRouter();
-const emit = defineEmits<{ (e: string): void; }>();
+const emit = defineEmits<{ (e: "toggleSidebarPin"): void; (e: "closeSidebar", value?: string): void; }>();
 
 const props = defineProps({
   childIsOpenPin: {
+    type: Boolean,
+    default: false,
+  },
+  childSidebar: {
     type: Boolean,
     default: false,
   },
@@ -60,7 +64,7 @@ const activeChildMenu = (item: SidebarItem) => {
         class="flex items-center cursor-pointer"
         :class="{ activePin: childIsOpenPin }"
       >
-        <button  @click.stop="emit('toggleSidebarPin')">
+        <button @click.stop="emit('toggleSidebarPin')">
           <li :style="{
                   maskImage: 'url(/icons/pin.svg)',
                   backgroundColor: '#8F9194',
@@ -75,7 +79,7 @@ const activeChildMenu = (item: SidebarItem) => {
         </button>
 
         <button @click.stop="emit('closeSidebar', 'close')" class="ml-[15px]">
-          <img src="@/assets/images/close.svg" alt="close"/>
+          <img src="@/assets/images/close.svg" alt="close" />
         </button>
       </div>
     </header>
