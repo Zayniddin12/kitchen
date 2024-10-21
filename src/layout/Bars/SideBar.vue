@@ -84,7 +84,7 @@ const activeMenu = (index: number, item: MenuItem) => {
 
   if (item.route) {
     router.push(item.route);
-    childIsOpenPin.value = false;
+    // childIsOpenPin.value = false;
   }
 };
 
@@ -116,7 +116,7 @@ const closeChildSidebar = (value: string) => {
   }
 
 
-    emit("update:childSidebarPin", childIsOpenPin.value);
+  emit("update:childSidebarPin", childIsOpenPin.value);
 };
 
 const pinSidebar = () => {
@@ -150,6 +150,7 @@ const logOut = () => {
           class="m-auto pt-[16px] pb-[40px]"
           alt="logo"
         />
+        {{ childIsOpenPin }}
 
         <div
           v-for="(item, index) in store.menuItems"
