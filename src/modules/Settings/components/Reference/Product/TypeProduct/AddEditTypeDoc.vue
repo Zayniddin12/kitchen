@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import {computed, ref, watch} from "vue";
 import {useRoute, useRouter} from "vue-router";
+import {useSettingsStore} from "@/modules/Settings/store";
+import { ElNotification } from 'element-plus';
 import AppInput from "@/components/ui/form/app-input/AppInput.vue";
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 import useConfirm from "@/components/ui/app-confirm/useConfirm";
-import {useSettingsStore} from "@/modules/Settings/store";
 
 interface Name {
   uz: string;
@@ -57,6 +58,7 @@ const setBreadCrumbFn = () => {
 
 const deleteFn = () => {
   confirm.delete().then(response => {
+    store.DELETE_TYPE_PRODUCT(route.params.id)
     router.push({name: "reference-vid-product"});
   });
 };
@@ -77,16 +79,34 @@ const switchChange = async (): Promise<boolean> => {
   }
 };
 
-const handleSubmitProduct = () => {
-  if (route.params.id) {
-    store.UPDATE_TYPE_PRODUCT({
-      id: route.params.id as string | number,
-      data: dataValue.value as DataValue,
-    })
-  } else {
-    store.CREATE_TYPE_PRODUCT(dataValue.value)
+const handleSubmitProduct = async (): Promise<void> => {
+  try {
+    const payload = dataValue.value as DataValue;
+
+    if (route.params.id) {
+      await store.UPDATE_TYPE_PRODUCT({
+        id: route.params.id as string | number,
+        data: payload,
+      });
+    } else {
+      await store.CREATE_TYPE_PRODUCT(payload);
+    }
+
+    ElNotification({
+      title: 'Success',
+      message: route.params.id ? 'Product updated successfully' : 'Product created successfully',
+      type: 'success',
+    });
+  } catch (error) {
+    ElNotification({
+      title: 'Error',
+      message: 'An error occurred while saving the product',
+      type: 'error',
+    });
   }
-}
+};
+
+
 
 const setDisabled = computed(() => {
   return route.name === 'reference-type-product-view-id';
@@ -96,6 +116,8 @@ const routeInfo = computed(() => ({
   name: route.name,
   params: route.params,
 }));
+
+
 
 watch(routeInfo, (newVal) => {
   if (newVal.name) {

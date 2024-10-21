@@ -2,65 +2,13 @@
 import {Search} from "@element-plus/icons-vue";
 import {onMounted, ref, watchEffect} from "vue";
 import {useRouter} from "vue-router";
-import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 import {useSettingsStore} from "@/modules/Settings/store";
 import {ElNotification} from "element-plus";
-
-interface Name {
-  uz: string;
-  ru: string;
-}
-
-interface TableData {
-  id: number;
-  name: Name;
-}
-
-interface name {
-  uz: string;
-  ru: string;
-}
+import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 
 const store = useSettingsStore()
 const router = useRouter();
 
-const tableData = ref<TableData[]>([
-  {
-    id: 1,
-    name: {
-      uz: "Gosht",
-      ru: "Мясные",
-    },
-  },
-  {
-    id: 2,
-    name: {
-      uz: "Молочные",
-      ru: "Молочные",
-    },
-  },
-  {
-    id: 3,
-    name: {
-      uz: "Овощи",
-      ru: "Овощи",
-    },
-  },
-  {
-    id: 4,
-    name: {
-      uz: "Молочные",
-      ru: "Молочные",
-    },
-  },
-  {
-    id: 5,
-    name: {
-      uz: "Напитки",
-      ru: "Напитки",
-    },
-  },
-]);
 const search = ref<string>('')
 const loading = ref(false);
 let debounceTimeout;
@@ -87,28 +35,30 @@ const setBreadCrumbFn = () => {
   ]);
 };
 
-onMounted(async () => {
-  loading.value = true
+onMounted(() => {
+  refresh()
+})
 
+const refresh = async () => {
+  loading.value = true
   try {
-    await store.GET_TYPE_PRODUCT()
+    await store.GET_TYPE_PRODUCT(search.value)
   } catch (e) {
     ElNotification({title: e, type: 'error'})
     loading.value = false
   } finally {
     loading.value = false
   }
-})
+}
 
 const changeInput = () => {
   clearTimeout(debounceTimeout);
-  loading.value = true
+  loading.value = true;
 
   debounceTimeout = setTimeout(async () => {
-    await store.GET_TYPE_PRODUCT({search: search.value})
-    loading.value = false
+    await refresh()
   }, 500);
-}
+};
 
 watchEffect(() => {
   setBreadCrumbFn();
@@ -143,44 +93,42 @@ watchEffect(() => {
       </div>
     </div>
 
-    <div class="mt-[24px]">
-      <el-table
-          v-loading="loading"
-          :data="tableData"
-          stripe
-          class="custom-element-table"
-          empty-text="Нет доступных данных"
-      >
-        <el-table-column prop="id" label="№" width="80"/>
-        <el-table-column prop="name" label="Наименование типа продукта" sortable>
-          <template #default="scope">
-            {{ scope.row?.name?.[$i18n.locale] }}
-          </template>
-        </el-table-column>
-        <el-table-column label="Действие" align="right">
-          <template #default="scope">
-            <button
-                class="action-btn"
-                @click="router.push(`/reference-type-product-view/${scope.row.id}`)"
-            >
-              <img
-                  src="../../../../../../assets/images/eye.svg"
-                  alt="eye"
-              />
-            </button>
+    <el-table
+        v-loading="loading"
+        :data="store.typeProduct"
+        stripe
+        class="custom-element-table mt-[24px]"
+        empty-text="Нет доступных данных"
+    >
+      <el-table-column prop="id" label="№" width="80"/>
+      <el-table-column prop="name" label="Наименование типа продукта" sortable>
+        <template #default="scope">
+          {{ scope.row?.name?.[$i18n.locale] }}
+        </template>
+      </el-table-column>
+      <el-table-column label="Действие" align="right">
+        <template #default="scope">
+          <button
+              class="action-btn"
+              @click="router.push(`/reference-type-product-view/${scope.row.id}`)"
+          >
+            <img
+                src="../../../../../../assets/images/eye.svg"
+                alt="eye"
+            />
+          </button>
 
-            <button
-                class="action-btn ml-[8px]"
-                @click="router.push(`/reference-type-product-edit/${scope.row.id}`)"
-            >
-              <img
-                  src="../../../../../../assets/images/icons/edit.svg"
-                  alt="edit"
-              />
-            </button>
-          </template>
-        </el-table-column>
-      </el-table>
-    </div>
+          <button
+              class="action-btn ml-[8px]"
+              @click="router.push(`/reference-type-product-edit/${scope.row.id}`)"
+          >
+            <img
+                src="../../../../../../assets/images/icons/edit.svg"
+                alt="edit"
+            />
+          </button>
+        </template>
+      </el-table-column>
+    </el-table>
   </div>
 </template>
