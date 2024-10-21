@@ -6,6 +6,10 @@ import ChildSidebar from "@/layout/Bars/ChildSidebar.vue";
 import { useSidebarStore } from "@/layout/Bars/sidebar.store";
 
 const emit = defineEmits<{
+<<<<<<< HEAD
+=======
+  (e: "update:childSidebarPin", value: boolean): void;
+>>>>>>> 31740a8f2a6f855e1074dffec1a35ffb012d1d55
   (e: "update:childSidebar", value: boolean): void;
 }>();
 
@@ -14,14 +18,20 @@ const sidebarStore = useSidebarStore();
 const router = useRouter();
 let route = useRoute();
 
+const childSidebar = ref<boolean>(false);
 let currentIndex = ref<number>(0);
 let currentMenu = ref<number>(0);
+<<<<<<< HEAD
 let childIsOpen = ref<boolean>(
   localStorage.getItem("child-sidebar") === "true"
 );
 let childIsOpenPin = ref<boolean>(
   JSON.parse(localStorage.getItem("child-sidebar-pin") || "false")
 );
+=======
+let childIsOpen = ref<boolean>(JSON.parse(localStorage.getItem("child-sidebar") || "false"));
+let childIsOpenPin = ref<boolean>(JSON.parse(localStorage.getItem("child-sidebar-pin") || "false"));
+>>>>>>> 31740a8f2a6f855e1074dffec1a35ffb012d1d55
 
 interface MenuItem {
   title?: string;
@@ -48,19 +58,24 @@ onMounted(() => {
     currentIndex.value = 0;
   }
 
+<<<<<<< HEAD
   currentMenu.value = storedMenu
     ? (JSON.parse(storedMenu as any) as number)
     : 0;
   childIsOpen.value = storedSidebar === "true";
+=======
+  currentMenu.value = storedMenu ? JSON.parse(storedMenu as any) as number : 0;
+  // childIsOpen.value = storedSidebar === "true";
+>>>>>>> 31740a8f2a6f855e1074dffec1a35ffb012d1d55
 
   document.body.addEventListener("click", () => closeChildSidebar("any"));
-  emit("update:childSidebar", false);
+  emit("update:childSidebarPin", false);
 });
 
 onUnmounted(() => {
   document.body.removeEventListener("click", () => closeChildSidebar("any"));
   localStorage.setItem("child-sidebar-pin", JSON.stringify(false));
-  emit("update:childSidebar", false);
+  emit("update:childSidebarPin", false);
 });
 
 watch(
@@ -75,6 +90,15 @@ const activeMenu = (index: number, item: MenuItem) => {
   currentIndex.value = index;
   currentMenu.value = index;
   sessionStorage.setItem("current-menu", currentMenu.value.toString());
+
+  if (item.children && item.children.length) {
+    childSidebar.value = true;
+    localStorage.setItem("child-sidebar", JSON.stringify(true));
+    emit("update:childSidebar", true);
+  } else {
+    emit("update:childSidebar", false);
+    childSidebar.value = false;
+  }
 
   if (item.route) {
     router.push(item.route);
@@ -91,13 +115,22 @@ const closeChildSidebar = (value: string) => {
 
   if (value && value == "close" && childIsOpenPin.value) {
     currentIndex.value = 0;
+    // emit("update:childSidebarPin", false);
     emit("update:childSidebar", false);
 
+<<<<<<< HEAD
     localStorage.setItem("child-sidebar-pin", JSON.stringify(false));
     childIsOpenPin.value = JSON.parse(
       localStorage.getItem("child-sidebar-pin") || "false"
     );
     console.log(value);
+=======
+    // localStorage.setItem("child-sidebar-pin", JSON.stringify(false));
+    localStorage.setItem("child-sidebar", JSON.stringify(false));
+    childIsOpenPin.value = JSON.parse(localStorage.getItem("child-sidebar-pin") || "false");
+    childIsOpen.value = JSON.parse(localStorage.getItem("child-sidebar") || "false");
+
+>>>>>>> 31740a8f2a6f855e1074dffec1a35ffb012d1d55
   }
 
   if (value && value == "close" && !childIsOpenPin.value) {
@@ -108,7 +141,12 @@ const closeChildSidebar = (value: string) => {
     // currentIndex.value = 0;
   }
 
+<<<<<<< HEAD
   emit("update:childSidebar", childIsOpenPin.value);
+=======
+
+  emit("update:childSidebarPin", childIsOpenPin.value);
+>>>>>>> 31740a8f2a6f855e1074dffec1a35ffb012d1d55
 };
 
 const pinSidebar = () => {
@@ -180,6 +218,7 @@ const logOut = () => {
               class="w-[260px] dark:bg-dark bg-white-blue rounded-[16px] h-[100%] absolute top-0 left-[120px] transition overflow-auto"
             >
               <ChildSidebar
+                :childSidebar="childSidebar"
                 :childIsOpenPin="childIsOpenPin"
                 :children="item.children as any"
                 :header="item.title"

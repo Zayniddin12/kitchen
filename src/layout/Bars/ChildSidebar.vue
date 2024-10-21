@@ -15,10 +15,14 @@ interface SidebarItem {
 
 const route = useRoute();
 const router = useRouter();
-const emit = defineEmits<{ (e: string): void; }>();
+const emit = defineEmits<{ (e: "toggleSidebarPin"): void; (e: "closeSidebar", value?: string): void; }>();
 
 const props = defineProps({
   childIsOpenPin: {
+    type: Boolean,
+    default: false,
+  },
+  childSidebar: {
     type: Boolean,
     default: false,
   },
@@ -61,8 +65,12 @@ const activeChildMenu = (item: SidebarItem) => {
         :class="{ activePin: childIsOpenPin }"
       >
         <button @click.stop="emit('toggleSidebarPin')">
+<<<<<<< HEAD
           <li
             :style="{
+=======
+          <li :style="{
+>>>>>>> 31740a8f2a6f855e1074dffec1a35ffb012d1d55
                   maskImage: 'url(/icons/pin.svg)',
                   backgroundColor: '#8F9194',
                   color: '#8F9194',
@@ -75,6 +83,7 @@ const activeChildMenu = (item: SidebarItem) => {
           />
         </button>
 
+<<<<<<< HEAD
         <button
           @click.stop="emit('closeSidebar', 'close')"
           class="ml-[15px]"
@@ -83,6 +92,10 @@ const activeChildMenu = (item: SidebarItem) => {
             src="@/assets/images/close.svg"
             alt="close"
           />
+=======
+        <button @click.stop="emit('closeSidebar', 'close')" class="ml-[15px]">
+          <img src="@/assets/images/close.svg" alt="close" />
+>>>>>>> 31740a8f2a6f855e1074dffec1a35ffb012d1d55
         </button>
       </div>
     </header>
