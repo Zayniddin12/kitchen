@@ -195,16 +195,6 @@ const openModals = (data: any) => {
         />
       </el-badge>
 
-      <el-badge
-        value="18"
-        class="item cursor-pointer"
-      >
-        <img
-          src="@/assets/images/icons/mail.svg"
-          alt="mail"
-        />
-      </el-badge>
-
       <Language v-if="false" />
 
       <div class="flex items-center gap-3">

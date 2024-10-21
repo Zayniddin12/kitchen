@@ -6,19 +6,11 @@ import {
 } from "@/auth/jwtService";
 import router from "@/router";
 import axios from "axios";
-
+import {ElNotification} from "element-plus";
 
 import {refreshEndpoint} from "@/auth/jwt.config";
 
-import {toast} from "vue3-toastify";
-import i18n from "@/plugins/i18n";
 
-
-const errorText = {
-    ru: 'Error',
-    oz: 'Error',
-    uz: 'Error'
-}
 const axiosIns = axios.create({
     baseURL: import.meta.env.VITE_BACKEND,
     timeout: 20000,
@@ -96,12 +88,12 @@ axiosIns.interceptors.response.use(
                 error.response.data &&
                 error.response.data.message
             ) {
-                toast.error(error.response.data.message);
+                ElNotification({title: 'Error', message: error.response.data.message, type: 'error',})
             }
         } else if (error.response.status === 500) {
-            toast.error("Error from server!");
+            ElNotification({title: 'Error', message: "Error from server!", type: 'error',})
         } else if (error.response.status === 502) {
-            toast.info(errorText[i18n.global.locale.value])
+            ElNotification({title: 'Error', message: "Error from server 502", type: 'info',})
         }
 
 

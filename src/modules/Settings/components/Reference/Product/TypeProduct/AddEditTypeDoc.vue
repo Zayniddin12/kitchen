@@ -1,12 +1,10 @@
-<script
-  setup
-  lang="ts"
->
-import { ref, watch } from "vue";
-import { useRoute, useRouter } from "vue-router";
+<script setup lang="ts">
+import {computed, ref, watch} from "vue";
+import {useRoute, useRouter} from "vue-router";
 import AppInput from "@/components/ui/form/app-input/AppInput.vue";
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 import useConfirm from "@/components/ui/app-confirm/useConfirm";
+import {useSettingsStore} from "@/modules/Settings/store";
 
 interface Name {
   uz: string;
@@ -18,9 +16,12 @@ interface DataValue {
   is_active: boolean
 }
 
+const store = useSettingsStore()
 const route = useRoute();
 const router = useRouter();
-const { confirm } = useConfirm();
+const {confirm} = useConfirm();
+const {setBreadCrumb} = useBreadcrumb();
+
 
 const dataValue = ref<DataValue>({
   name: {
@@ -30,7 +31,6 @@ const dataValue = ref<DataValue>({
   is_active: true,
 });
 
-const { setBreadCrumb } = useBreadcrumb();
 
 const setBreadCrumbFn = () => {
   setBreadCrumb([
@@ -42,11 +42,11 @@ const setBreadCrumbFn = () => {
     },
     {
       label: "Продукты",
-      to: { name: "reference" },
+      to: {name: "reference"},
     },
     {
       label: "Типы продуктов",
-      to: { name: "reference-type-product" },
+      to: {name: "reference-type-product"},
     },
     {
       label: String(route?.meta?.breadcrumbItemTitle ?? ""),
@@ -55,20 +55,16 @@ const setBreadCrumbFn = () => {
   ]);
 };
 
-watch(() => route.name, () => {
-  setBreadCrumbFn();
-}, { immediate: true });
-
 const deleteFn = () => {
   confirm.delete().then(response => {
-    router.push({ name: "reference-vid-product" });
+    router.push({name: "reference-vid-product"});
   });
 };
 
 const cancelFn = () => {
   confirm.cancel().then(response => {
     console.log("edit");
-    router.push({ name: "reference-vid-product" });
+    router.push({name: "reference-vid-product"});
   });
 };
 
@@ -80,6 +76,28 @@ const switchChange = async (): Promise<boolean> => {
     return false;
   }
 };
+
+const createTypeProduct = () => {
+  if (route.params.id) {
+    store.UPDATE_TYPE_PRODUCT({
+          id: route.params.id as string | number,
+          data: {
+            test: '123'
+          }
+        }
+    )
+  } else {
+    store.CREATE_TYPE_PRODUCT({test: 'test'})
+  }
+}
+
+const setDisabled = computed(() => {
+  return route.name === 'reference-type-product-view-id';
+})
+
+watch(() => route.name, () => {
+  setBreadCrumbFn();
+}, {immediate: true});
 </script>
 
 <template>
@@ -89,63 +107,65 @@ const switchChange = async (): Promise<boolean> => {
     <div class="flex items-start mt-[24px]">
       <div class="grid grid-cols-2 border rounded-[24px] p-[24px] gap-5 h-[50vh] w-[70%]">
         <app-input
-          :disabled="route.name === 'reference-type-product-view'"
-          v-model="dataValue.name.ru"
-          label="Наименование (RU)"
-          placeholder="Введите"
-          label-class="text-[#A8AAAE] text-[12px]"
+            :disabled="setDisabled"
+            v-model="dataValue.name.ru"
+            label="Наименование (RU)"
+            placeholder="Введите"
+            label-class="text-[#A8AAAE] text-[12px]"
         />
 
         <app-input
-          :disabled="route.name === 'reference-type-product-view'"
-          v-model="dataValue.name.uz"
-          label="Наименование (UZ)"
-          placeholder="Введите"
-          label-class="text-[#A8AAAE] text-[12px]"
+            :disabled="setDisabled"
+            v-model="dataValue.name.uz"
+            label="Наименование (UZ)"
+            placeholder="Введите"
+            label-class="text-[#A8AAAE] text-[12px]"
         />
 
         <el-switch
-          :disabled="route.name === 'reference-type-product-view' as any"
-          v-model="dataValue.is_active"
-          class="mt-auto"
-          active-text="Деактивация"
-          v-if="route.name === 'reference-type-product-edit-id'"
-          :before-change="switchChange"
+            :disabled="route.name === 'reference-type-product-view' as any"
+            v-model="dataValue.is_active"
+            class="mt-auto"
+            active-text="Деактивация"
+            v-if="route.name === 'reference-type-product-edit-id'"
+            :before-change="switchChange"
         />
       </div>
 
       <button
-        @click="router.push(`/reference-type-product-edit/${route.params.id}`)"
-        v-if="route.name === 'reference-type-product-view-id'"
-        class="custom-light-btn flex items-center ml-[24px]"
+          @click="router.push(`/reference-type-product-edit/${route.params.id}`)"
+          v-if="route.name === 'reference-type-product-view-id'"
+          class="custom-light-btn flex items-center ml-[24px]"
       >
         <img
-          src="@/assets/images/icons/edit.svg"
-          alt="edit"
+            src="@/assets/images/icons/edit.svg"
+            alt="edit"
         />
         Редактировать
       </button>
     </div>
 
     <div
-      class="flex items-start justify-between mt-[24px] w-[70%]"
-      v-if="route.name === 'reference-type-product-edit-id' || route.name === 'reference-type-product-create'"
+        class="flex items-start justify-between mt-[24px] w-[70%]"
+        v-if="route.name === 'reference-type-product-edit-id' || route.name === 'reference-type-product-create'"
     >
       <button
-        class="custom-danger-btn"
-        v-if="route.name === 'reference-type-product-edit-id'"
-        @click="deleteFn"
+          class="custom-danger-btn"
+          v-if="route.name === 'reference-type-product-edit-id'"
+          @click="deleteFn"
       >
         Удалить
       </button>
 
       <div class="flex items-start justify-end ml-auto">
         <button
-          class="custom-cancel-btn"
-          @click="cancelFn"
-        >Отменить
+            class="custom-cancel-btn"
+            @click="cancelFn"
+        >
+          Отменить
         </button>
-        <button class="custom-apply-btn ml-[8px]">
+
+        <button class="custom-apply-btn ml-[8px]" @click="createTypeProduct">
           {{ route.name === "reference-type-product-edit-id" ? "Сохранить" : "Добавить" }}
         </button>
       </div>
