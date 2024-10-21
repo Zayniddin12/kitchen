@@ -65,8 +65,6 @@ const activeChildMenu = (item: SidebarItem) => {
         :class="{ activePin: childIsOpenPin }"
       >
         <button @click.stop="emit('toggleSidebarPin')">
-
-
           <li :style="{
                   maskImage: 'url(/icons/pin.svg)',
                   backgroundColor: '#8F9194',
@@ -79,7 +77,6 @@ const activeChildMenu = (item: SidebarItem) => {
                  }"
           />
         </button>
-
 
         <button @click.stop="emit('closeSidebar', 'close')" class="ml-[15px]">
           <img src="@/assets/images/close.svg" alt="close" />
