@@ -150,7 +150,6 @@ const logOut = () => {
           class="m-auto pt-[16px] pb-[40px]"
           alt="logo"
         />
-        {{ childIsOpenPin }}
 
         <div
           v-for="(item, index) in store.menuItems"
