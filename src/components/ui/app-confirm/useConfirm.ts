@@ -57,7 +57,7 @@ export default function() {
     cancel: (params: ConfirmParamsType = {}) =>
       openModal(
         "cancel",
-        params.title || "<div class='max-w-[279px]'>Вы уверены что хотите отменить?</div>",
+        params.title || "<div>Вы уверены что хотите отменить?</div>",
         params.description || "Все не сохраненные изменения будут потеряны",
         !!params.disabledBody,
       ),
