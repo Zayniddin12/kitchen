@@ -51,7 +51,6 @@ axiosIns.interceptors.response.use(
             console.log('ERROR ', error)
         }
 
-
         const {config: originalRequest} = error;
         if (error.response && error.response.status === 401 && router.currentRoute.value.meta.layout !== "LoginLayout") {
 
@@ -82,15 +81,11 @@ axiosIns.interceptors.response.use(
                 await logout()
             }
             return retryOriginalRequest;
-        } else if (error.response.status === 422) {
-            if (
-                error.response &&
-                error.response.data &&
-                error.response.data.message
-            ) {
+        } else if (error.response?.status === 422) {
+            if (error.response && error.response.data && error.response.data.message) {
                 ElNotification({title: 'Error', message: error.response.data.message, type: 'error',})
             }
-        } else if (error.response.status === 500) {
+        } else if (error.response?.status === 500) {
             ElNotification({title: 'Error', message: "Error from server!", type: 'error',})
         } else if (error.response.status === 502) {
             ElNotification({title: 'Error', message: "Error from server 502", type: 'info',})

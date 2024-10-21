@@ -87,9 +87,9 @@ const setBreadCrumbFn = () => {
   ]);
 };
 
-
 onMounted(async () => {
   loading.value = true
+
   try {
     await store.GET_TYPE_PRODUCT()
   } catch (e) {
@@ -104,8 +104,8 @@ const changeInput = () => {
   clearTimeout(debounceTimeout);
   loading.value = true
 
-  debounceTimeout = setTimeout(() => {
-    console.log(search.value, 'search');
+  debounceTimeout = setTimeout(async () => {
+    await store.GET_TYPE_PRODUCT({search: search.value})
     loading.value = false
   }, 500);
 }

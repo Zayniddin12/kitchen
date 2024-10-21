@@ -64,7 +64,7 @@ const deleteFn = () => {
 const cancelFn = () => {
   confirm.cancel().then(response => {
     console.log("edit");
-    router.push({name: "reference-vid-product"});
+    router.push({name: "reference-type-product"});
   });
 };
 
@@ -77,17 +77,14 @@ const switchChange = async (): Promise<boolean> => {
   }
 };
 
-const createTypeProduct = () => {
+const handleSubmitProduct = () => {
   if (route.params.id) {
     store.UPDATE_TYPE_PRODUCT({
-          id: route.params.id as string | number,
-          data: {
-            test: '123'
-          }
-        }
-    )
+      id: route.params.id as string | number,
+      data: dataValue.value as DataValue,
+    })
   } else {
-    store.CREATE_TYPE_PRODUCT({test: 'test'})
+    store.CREATE_TYPE_PRODUCT(dataValue.value)
   }
 }
 
@@ -95,9 +92,21 @@ const setDisabled = computed(() => {
   return route.name === 'reference-type-product-view-id';
 })
 
-watch(() => route.name, () => {
-  setBreadCrumbFn();
-}, {immediate: true});
+const routeInfo = computed(() => ({
+  name: route.name,
+  params: route.params,
+}));
+
+watch(routeInfo, (newVal) => {
+  if (newVal.name) {
+    setBreadCrumbFn()
+  }
+
+  if (newVal.params) {
+    const data = store.GET_TYPE_PRODUCT_DETAIL(route.params.id as string | number)
+    console.log(data, 'detail data')
+  }
+}, { immediate: true });
 </script>
 
 <template>
@@ -145,10 +154,8 @@ watch(() => route.name, () => {
       </button>
     </div>
 
-    <div
-        class="flex items-start justify-between mt-[24px] w-[70%]"
-        v-if="route.name === 'reference-type-product-edit-id' || route.name === 'reference-type-product-create'"
-    >
+    <div class="flex items-start justify-between mt-[24px] w-[70%]"
+         v-if="route.name === 'reference-type-product-edit-id' || route.name === 'reference-type-product-create'">
       <button
           class="custom-danger-btn"
           v-if="route.name === 'reference-type-product-edit-id'"
@@ -165,7 +172,7 @@ watch(() => route.name, () => {
           Отменить
         </button>
 
-        <button class="custom-apply-btn ml-[8px]" @click="createTypeProduct">
+        <button class="custom-apply-btn ml-[8px]" @click="handleSubmitProduct">
           {{ route.name === "reference-type-product-edit-id" ? "Сохранить" : "Добавить" }}
         </button>
       </div>
