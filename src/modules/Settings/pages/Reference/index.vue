@@ -1,7 +1,4 @@
-<script
-  setup
-  lang="ts"
->
+<script setup lang="ts">
 import { ref, watchEffect } from "vue";
 import { useRouter } from "vue-router";
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
@@ -9,7 +6,7 @@ import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 interface MenuInterface {
   title: string;
   subTitle: string;
-  router?: string; // Router is optional now
+  router?: string;
 }
 
 interface UlItems {
@@ -125,6 +122,16 @@ const ulItems = ref<UlItems[]>([
         title: "Организации",
         subTitle: "Организации",
         router: "reference-organization",
+      },
+    ],
+  },
+  {
+    title: "Единицы измерения",
+    menu: [
+      {
+        title: "Единицы измерения",
+        subTitle: "Единицы измерения",
+        router: "reference-unit",
       },
     ],
   },

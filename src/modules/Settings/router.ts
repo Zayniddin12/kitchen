@@ -513,4 +513,15 @@ export default [
   },
   // Блюда end
   // Рационы и блюда end
+
+  // Единицы измерения
+  {
+    path: "/reference-unit",
+    name: "reference-unit",
+    component: () => import("@/modules/Settings/components/Reference/Unit/Unit.vue"),
+    meta: {
+      title: "Единицы измерения",
+    },
+  },
+  // Единицы измерения end
 ];
