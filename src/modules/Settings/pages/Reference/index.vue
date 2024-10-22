@@ -183,18 +183,20 @@ watchEffect(() => {
           v-for="(menu, index2) in item.menu"
           :key="index2"
         >
-         <router-link :to="menu.router as string">
-           <li
-               class="text-[#4F5662] text-[14px] font-medium leading-[20px] cursor-pointer hover:underline hover:decoration-[#2E90FA] hover:text-[#2E90FA]"
-           >
-             {{ menu.title }}
-           </li>
-           <li
-               class="text-[12px] text-[#A8AAAE] font-normal mt-[4px] leading-[16px] cursor-pointer"
-           >
-             {{ menu.subTitle }}
-           </li>
-         </router-link>
+          <router-link :to="menu.router as string">
+            <div class="inline-block py-[8px] px-[12px] rounded-[16px] hover:bg-[#F8F9FC]">
+              <li
+                class="text-[#4F5662] text-[14px] font-medium leading-[20px] cursor-pointer"
+              >
+                {{ menu.title }}
+              </li>
+              <li
+                class="text-[12px] text-[#A8AAAE] font-normal mt-[4px] leading-[16px] cursor-pointer"
+              >
+                {{ menu.subTitle }}
+              </li>
+            </div>
+          </router-link>
         </ul>
       </div>
     </div>
