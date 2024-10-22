@@ -6,6 +6,7 @@ import {
 } from "@/auth/jwtService";
 import router from "@/router";
 import axios from "axios";
+import {i18n} from "@/localization";
 import {ElNotification} from "element-plus";
 
 import {refreshEndpoint} from "@/auth/jwt.config";
@@ -15,7 +16,16 @@ const axiosIns = axios.create({
     baseURL: import.meta.env.VITE_BACKEND,
     timeout: 20000,
 
-    headers: {Accept: "application/json"},
+    headers: {
+        Accept: "application/json",
+        "x-app-lang": i18n.locale.value,
+
+        // "x-device-model": "Intel Mac OS",
+        // "x-app-version": "0.0.1",
+        // "x-app-build": "1",
+        // "x-device-uid": "71C7B833-C6EA-4326-A8FF-CB8551867656",
+        // "x-device-type": "web",
+    },
 });
 
 let isAlreadyFetchingAccessToken = false;

@@ -3,9 +3,9 @@ import {computed, ref, watch} from "vue";
 import {useRoute, useRouter} from "vue-router";
 import {useSettingsStore} from "@/modules/Settings/store";
 import { ElNotification } from 'element-plus';
-import AppInput from "@/components/ui/form/app-input/AppInput.vue";
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 import useConfirm from "@/components/ui/app-confirm/useConfirm";
+import AppInput from "@/components/ui/form/app-input/AppInput.vue";
 
 interface Name {
   uz: string;
@@ -107,16 +107,14 @@ const handleSubmitProduct = async (): Promise<void> => {
 };
 
 
-
 const setDisabled = computed(() => {
   return route.name === 'reference-type-product-view-id';
 })
 
 const routeInfo = computed(() => ({
   name: route.name,
-  params: route.params,
+  params: route.params.id,
 }));
-
 
 
 watch(routeInfo, (newVal) => {

@@ -5,19 +5,10 @@ import {ref} from "vue";
 export const useSettingsStore = defineStore("settingsStore", () => {
 
     // dilshod
-    const typeProduct = ref<Array[]>([])
-    const vidProduct = ref<Array[]>([
-        {
-            id: 1,
-            photo: '',
-            name: {
-                uz: 'Куриное мясо',
-                ru: 'Куриное мясо',
-            },
-            type: "Мясные",
-        },
-    ])
+    const typeProduct = ref<any[]>([])
+    const vidProduct = ref<any[]>([])
     const typeProductDetail = ref({})
+    const units = ref<any[]>([])
     // dilshod
 
 
@@ -31,7 +22,7 @@ export const useSettingsStore = defineStore("settingsStore", () => {
     // Продукты Типы документов
     const GET_TYPE_PRODUCT = async (params: any) => {
         const {data} = await $axios.get('/product-types/categories', {params})
-        typeProduct.value = data
+        typeProduct.value = data.data
     }
 
     const GET_TYPE_PRODUCT_DETAIL = async (id: number) => {
@@ -40,7 +31,7 @@ export const useSettingsStore = defineStore("settingsStore", () => {
     }
 
     const CREATE_TYPE_PRODUCT = (data: any) => {
-        return $axios.post('/product-types/categories', data)
+        return $axios.post('/product-types', data)
     }
 
     const UPDATE_TYPE_PRODUCT = ({id, data}: { id: string | number; data: any }) => {
@@ -54,8 +45,14 @@ export const useSettingsStore = defineStore("settingsStore", () => {
     // Продукты Виды документов
 
     const GET_VID_PRODUCT = async (params: any) => {
-        const {data} = await $axios.get('/getApi', {params})
-        vidProduct.value = data
+        const {data} = await $axios.get('/product-types', {params})
+        vidProduct.value = data.data
+    }
+
+    // Единицы измерения
+    const GET_UNITS = async (params: any) => {
+        const {data} = await $axios.get('/measurement-units', {params})
+        units.value = data.data
     }
     // dilshod end
 
@@ -77,7 +74,10 @@ export const useSettingsStore = defineStore("settingsStore", () => {
         DELETE_TYPE_PRODUCT,
 
         vidProduct,
-        GET_VID_PRODUCT
+        GET_VID_PRODUCT,
+
+        units,
+        GET_UNITS
         // dilshod end
     }
 })

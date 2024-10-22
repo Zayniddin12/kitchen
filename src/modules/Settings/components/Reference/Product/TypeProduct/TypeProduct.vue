@@ -9,7 +9,7 @@ import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 const store = useSettingsStore()
 const router = useRouter();
 
-const search = ref<string>('')
+const search = ref<null | string>(null)
 const loading = ref(false);
 let debounceTimeout;
 
@@ -42,7 +42,7 @@ onMounted(() => {
 const refresh = async () => {
   loading.value = true
   try {
-    await store.GET_TYPE_PRODUCT(search.value)
+    await store.GET_TYPE_PRODUCT({search: search.value})
   } catch (e) {
     ElNotification({title: e, type: 'error'})
     loading.value = false
@@ -98,7 +98,7 @@ watchEffect(() => {
         :data="store.typeProduct"
         stripe
         class="custom-element-table mt-[24px]"
-        empty-text="Нет доступных данных"
+        :empty-text="'Нет доступных данных'"
     >
       <el-table-column prop="id" label="№" width="80"/>
       <el-table-column prop="name" label="Наименование типа продукта" sortable>

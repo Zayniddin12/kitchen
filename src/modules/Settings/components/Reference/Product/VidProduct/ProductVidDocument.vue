@@ -10,7 +10,7 @@ const store = useSettingsStore()
 const router = useRouter()
 const {setBreadCrumb} = useBreadcrumb();
 
-const input1 = ref<string>("");
+const input1 = ref<null | string>(null);
 const loading = ref<boolean>(false)
 let time;
 
@@ -84,7 +84,13 @@ const changeSearch = () => {
       </div>
     </div>
 
-    <el-table :data="store.vidProduct" v-loading="loading" class="custom-element-table mt-[24px]" stripe>
+    <el-table
+        :data="store.vidProduct"
+        v-loading="loading"
+        class="custom-element-table mt-[24px]"
+        stripe
+        empty-text="Нет доступных данных"
+    >
       <el-table-column prop="id" label="№" width="80"/>
       <el-table-column prop="photo" label="Картинка вида продукта" sortable>
         <template #default="scope">
