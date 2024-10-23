@@ -3,83 +3,42 @@ import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 import {onMounted, ref} from "vue";
 import {useRoute} from "vue-router";
 import {Search} from "@element-plus/icons-vue";
-
-interface TableData {
-  id: number;
-  name: string;
-  type: string;
-}
+import {useSettingsStore} from "@/modules/Settings/store";
+import {ElNotification} from "element-plus";
 
 const {setBreadCrumb} = useBreadcrumb();
 const route = useRoute()
+const store = useSettingsStore()
 
-const input1 = ref<string>('')
-const tableData = ref<TableData[]>([
-  {
-    id: 1,
-    name: "Килограм",
-    type: "кг",
-  },
-  {
-    id: 2,
-    name: "Тонна",
-    type: "тн",
-  },
-  {
-    id: 3,
-    name: "Грамм",
-    type: "гр",
-  },
-  {
-    id: 4,
-    name: "Литр",
-    type: "л",
-  },
-  {
-    id: 5,
-    name: "Штука",
-    type: "шт",
-  },
-  {
-    id: 6,
-    name: "Порция",
-    type: "кг",
-  },
-  {
-    id: 7,
-    name: "Банка",
-    type: "кг",
-  },
-  {
-    id: 8,
-    name: "Упаковка",
-    type: "кг",
-  },
-  {
-    id: 9,
-    name: "Пачка",
-    type: "кг",
-  },
-  {
-    id: 10,
-    name: "Рулон",
-    type: "кг",
-  },
-  {
-    id: 10,
-    name: "Человек",
-    type: "кг",
-  },
-  {
-    id: 10,
-    name: "Количество людей",
-    type: "кг",
-  },
-]);
+const input1 = ref<null>(null)
+const loading = ref<boolean>(false)
+let time: ReturnType<typeof setTimeout>
 
-onMounted(() => {
+onMounted(async () => {
   setBreadCrumbFn()
+
+  await refresh()
 })
+
+const refresh = async () => {
+  loading.value = true
+  try {
+    await store.GET_UNITS({search: input1.value})
+  } catch (e: any) {
+    ElNotification({title: e.message, type: 'error'})
+    loading.value = false
+  } finally {
+    loading.value = false
+  }
+}
+
+const changeSearch = (): void => {
+  clearTimeout(time)
+
+  time = setTimeout(() => {
+    refresh()
+  }, 500)
+}
 
 const setBreadCrumbFn = () => {
   setBreadCrumb([
@@ -106,13 +65,14 @@ const setBreadCrumbFn = () => {
           placeholder="Поиск"
           :prefix-icon="Search"
           class="w-[300px] mr-[16px]"
+          @input="changeSearch"
       />
     </div>
 
-    <el-table :data="tableData" stripe class="custom-element-table mt-[24px]">
+    <el-table :data="store.units.units" stripe class="custom-element-table mt-[24px]" v-loading="loading">
       <el-table-column prop="id" label="№" width="80" :class-name="'tableHeadClass'"/>
       <el-table-column prop="name" label="Наименование единиц измерения" sortable width="400" :class-name="'tableHeadClass'"/>
-      <el-table-column prop="type" label="Сокращение единиц" sortable :class-name="'tableHeadClass'"/>
+      <el-table-column prop="unit" label="Сокращение единиц" sortable :class-name="'tableHeadClass'"/>
     </el-table>
   </div>
 </template>

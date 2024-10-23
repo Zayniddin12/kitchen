@@ -418,7 +418,7 @@ export default [
     },
   },
   {
-    path: "/reference-view-edit/:id",
+    path: "/reference-vid-view/:id",
     name: "reference-vid-view-id",
     component: () => import("@/modules/Settings/components/Reference/Product/VidProduct/ProductVidDocCreate.vue"),
     meta: {

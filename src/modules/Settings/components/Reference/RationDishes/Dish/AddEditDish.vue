@@ -1,7 +1,4 @@
-<script
-  setup
-  lang="ts"
->
+<script setup lang="ts">
 import { ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import AppInput from "@/components/ui/form/app-input/AppInput.vue";
@@ -23,14 +20,50 @@ interface Repeater {
   value: number;
 }
 
+const file = ref("");
+
 const route = useRoute();
 const router = useRouter();
 const { confirm } = useConfirm();
+const { setBreadCrumb } = useBreadcrumb();
+const setBreadCrumbFn = () => {
+  setBreadCrumb([
+    {
+      label: "Настройки",
+    },
+    {
+      label: "Справочники",
+      to: { name: "reference" },
+    },
+    {
+      label: "Рационы и блюда",
+      to: { name: "reference" },
+    },
+    {
+      label: "Блюда",
+      to: { name: "reference-dish" },
+    },
+    {
+      label: String(route?.meta?.breadcrumbItemTitle ?? ""),
+      isActionable: true,
+    },
+  ]);
+};
 
 const repeater = ref<Repeater[]>([{
   title: "",
   value: 0,
 }]);
+const dataValue = ref({
+  name: {
+    ru: '',
+    uz: ''
+  },
+  number: '',
+  quantity: '',
+  unit_id: '',
+  image: '',
+})
 
 const tableData = ref<TableData[]>([
   {
@@ -78,48 +111,26 @@ const handleDelete = (index: number) => {
   }
 };
 
-const { setBreadCrumb } = useBreadcrumb();
-
-const setBreadCrumbFn = () => {
-  setBreadCrumb([
-    {
-      label: "Настройки",
-    },
-    {
-      label: "Справочники",
-      to: { name: "reference" },
-    },
-    {
-      label: "Рационы и блюда",
-      to: { name: "reference" },
-    },
-    {
-      label: "Блюда",
-      to: { name: "reference-dish" },
-    },
-    {
-      label: String(route?.meta?.breadcrumbItemTitle ?? ""),
-      isActionable: true,
-    },
-  ]);
-};
-
-watch(() => route.name, () => {
-  setBreadCrumbFn();
-}, { immediate: true });
-
 const cancelFn = () => {
-  confirm.cancel().then(response => {
-    router.push({ name: "reference-dish" });
+  confirm.cancel().then(() => {
+    router.push('/reference-dish');
   });
 };
 
 const deleteFn = () => {
-  confirm.delete().then(response => {
-    router.push({ name: "reference-dish" });
+  confirm.delete().then(() => {
+    router.push('/reference-dish');
   });
 };
 
+const handleSubmit = () => {
+
+}
+
+
+watch(() => route.name, () => {
+  setBreadCrumbFn();
+}, { immediate: true });
 </script>
 
 <template>
@@ -129,7 +140,8 @@ const deleteFn = () => {
     <div class="mt-[24px] flex items-start">
       <div class="w-[90%]">
         <div class="border rounded-[24px] p-[24px]">
-          <AppMediaUploader class="mt-4" />
+          {{file}}
+          <AppMediaUploader v-model="file" class="mt-4" />
 
           <div class="mt-[24px] grid grid-cols-2 gap-5">
             <app-input
@@ -242,6 +254,7 @@ const deleteFn = () => {
             </div>
           </template>
         </div>
+
         <div
           class="flex items-center justify-between mt-[24px]"
           v-if="route.name === 'reference-dish-create' || route.name === 'reference-dish-id'"
@@ -261,7 +274,8 @@ const deleteFn = () => {
             >
               Отменить
             </button>
-            <button class="custom-apply-btn ml-[8px]">
+
+            <button class="custom-apply-btn ml-[8px]" @click="handleSubmit">
               {{ route.name === "reference-dish-id" ? "Сохранить" : "Добавить" }}
             </button>
           </div>

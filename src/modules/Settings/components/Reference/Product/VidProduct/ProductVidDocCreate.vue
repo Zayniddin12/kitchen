@@ -1,21 +1,49 @@
-<script
-  setup
-  lang="ts"
->
-import { ref, watchEffect } from "vue";
-import { useRoute, useRouter } from "vue-router";
+<script setup lang="ts">
+import {computed, onMounted, ref, watchEffect} from "vue";
+import {useRoute, useRouter} from "vue-router";
 import AppInput from "@/components/ui/form/app-input/AppInput.vue";
 import AppSelect from "@/components/ui/form/app-select/AppSelect.vue";
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 import AppMediaUploader from "@/components/ui/form/app-media-uploader/AppMediaUploader.vue";
 import useConfirm from "@/components/ui/app-confirm/useConfirm";
+import {useSettingsStore} from "@/modules/Settings/store";
+import {ElNotification} from "element-plus";
 
+interface Name {
+  uz: string;
+  ru: string;
+}
+
+interface DataValue {
+  name: Name;
+  image: string | null;
+  parent_id: string | number;
+  measurement_unit_id: string | number;
+  is_active: boolean | string;
+}
+
+const store = useSettingsStore()
 const route = useRoute();
 const router = useRouter();
+const {confirm} = useConfirm();
+const {setBreadCrumb} = useBreadcrumb();
 
-const value1 = ref<boolean>(false);
+const dataValue = ref<DataValue>({
+  name: {
+    uz: '',
+    ru: ''
+  },
+  image: '',
+  parent_id: '',
+  measurement_unit_id: '',
+  is_active: true
+})
 
-const { setBreadCrumb } = useBreadcrumb();
+onMounted(() => {
+  store.GET_UNITS()
+  store.GET_TYPE_PRODUCT()
+})
+
 
 const setBreadCrumbFn = () => {
   setBreadCrumb([
@@ -24,11 +52,11 @@ const setBreadCrumbFn = () => {
     },
     {
       label: "Продукты",
-      to: { name: "reference" },
+      to: {name: "reference"},
     },
     {
       label: "Виды продуктов",
-      to: { name: "reference-vid-product" },
+      to: {name: "reference-vid-product"},
     },
     {
       label: String(route?.meta?.breadcrumbItemTitle ?? ""),
@@ -37,21 +65,15 @@ const setBreadCrumbFn = () => {
   ]);
 };
 
-watchEffect(() => {
-  setBreadCrumbFn();
-});
-
-const { confirm } = useConfirm();
-
 const cancelFn = () => {
-  confirm.cancel().then(response => {
-    router.push({ name: "reference-vid-product" });
+  confirm.cancel().then(() => {
+    router.push('/reference-vid-product');
   });
 };
 
 const deleteFn = () => {
-  confirm.delete().then(response => {
-    router.push({ name: "reference-vid-product" });
+  confirm.delete().then(() => {
+    router.push('/reference-vid-product');
   });
 };
 
@@ -63,88 +85,129 @@ const switchChange = async (): Promise<boolean> => {
     return false;
   }
 };
+
+const handleSubmit = async () => {
+  try {
+    const formData = new FormData();
+    formData.append('name[uz]', dataValue.value.name.uz);
+    formData.append('name[ru]', dataValue.value.name.ru);
+    formData.append('image', dataValue.value.image);
+    formData.append('parent_id', dataValue.value.parent_id);
+    formData.append('measurement_unit_id', dataValue.value.measurement_unit_id);
+    formData.append('is_active', dataValue.value.is_active);
+
+    if (route.params.id) {
+      await store.UPDATE_VID_PRODUCT({
+        id: route.params.id as string | number,
+        data: formData
+      })
+    } else {
+      await store.CREATE_VID_PRODUCT(formData)
+    }
+    ElNotification({title: 'Success', type: 'success'});
+    await router.push('/reference-vid-product')
+  } catch (e) {
+    ElNotification({title: 'Error', type: 'error'});
+  }
+}
+
+const isDisabled = computed(() => {
+  return route.name === 'reference-vid-view-id'
+})
+
+watchEffect(() => {
+  setBreadCrumbFn();
+});
 </script>
 
 <template>
   <div>
+    <pre>{{ dataValue }}</pre>
     <h1 class="m-0 font-semibold text-[32px] leading-[48px]">{{ route.meta.title }}</h1>
 
     <div class="flex items-start mt-[24px]">
-      <div class="border rounded-[24px] p-[24px] w-[70%]  h-[65vh]">
-        <AppMediaUploader />
+      <div class="border rounded-[24px] p-[24px] w-[70%]  min-h-[65vh]">
+        <AppMediaUploader v-model="dataValue.image"/>
 
         <div class="grid grid-cols-2 gap-4 mt-[24px]">
           <app-input
-            :disabled="route.name === 'reference-vid-view-id'"
-            label="Наименование (RU)"
-            label-class="text-[#A8AAAE] text-[12px]"
-            placeholder="Введите"
+              v-model="dataValue.name.ru"
+              :disabled="isDisabled"
+              label="Наименование (RU)"
+              label-class="text-[#A8AAAE] text-[12px]"
+              placeholder="Введите"
           />
 
           <app-input
-            :disabled="route.name === 'reference-vid-view-id'"
-            label="Наименование (UZ)"
-            label-class="text-[#A8AAAE] text-[12px]"
-            placeholder="Введите"
+              v-model="dataValue.name.uz"
+              :disabled="isDisabled"
+              label="Наименование (UZ)"
+              label-class="text-[#A8AAAE] text-[12px]"
+              placeholder="Введите"
           />
 
           <app-select
-            :disabled="route.name === 'reference-vid-view-id'"
-            label="Тип продукта"
-            label-class="text-[#A8AAAE] text-[12px]"
-            placeholder="Введите"
+              v-model="dataValue.parent_id"
+              :disabled="isDisabled"
+              label="Тип продукта"
+              label-class="text-[#A8AAAE] text-[12px]"
+              placeholder="Введите"
+              itemValue="id"
+              itemLabel="name"
+              :items="store.typeProduct.product_categories"
           />
 
           <app-select
-            :disabled="route.name === 'reference-vid-view-id'"
-            label="Единица измерения"
-            label-class="text-[#A8AAAE] text-[12px]"
-            placeholder="Введите"
+              v-model="dataValue.measurement_unit_id"
+              :disabled="isDisabled"
+              label="Единица измерения"
+              label-class="text-[#A8AAAE] text-[12px]"
+              placeholder="Введите"
+              itemValue="id"
+              itemLabel="name"
+              :items="store.units.units"
           />
         </div>
 
         <el-switch
-          v-model="value1"
-          active-text="Деактивация"
-          v-if="route.name === 'reference-vid-edit-id'"
-          :before-change="switchChange"
+            v-model="dataValue.is_active"
+            active-text="Деактивация"
+            v-if="route.name === 'reference-vid-edit-id'"
+            :before-change="switchChange"
         />
       </div>
 
       <button
-        class="custom-light-btn flex items-center ml-[24px]"
-        @click="router.push(`/reference-vid-edit/${route.params.id}`)"
-        v-if="route.name === 'reference-vid-view-id'"
+          class="custom-light-btn flex items-center ml-[24px]"
+          @click="router.push(`/reference-vid-edit/${route.params.id}`)"
+          v-if="route.name === 'reference-vid-view-id'"
       >
         <img
-          src="@/assets/images/icons/edit.svg"
-          alt="edit"
-          class="mr-[12px]"
+            src="@/assets/images/icons/edit.svg"
+            alt="edit"
+            class="mr-[12px]"
         />
         Редактировать
       </button>
     </div>
 
-    <div
-      class="flex items-center justify-between mt-[24px] w-[70%]"
-      v-if="route.name === 'reference-vid-add' || route.name === 'reference-vid-edit-id'"
+    <div class="flex items-center justify-between mt-[24px] w-[70%]"
+         v-if="route.name === 'reference-vid-add' || route.name === 'reference-vid-edit-id'"
     >
       <button
-        class="custom-danger-btn"
-        v-if="route.name === 'reference-vid-edit-id'"
-        @click="deleteFn"
+          class="custom-danger-btn"
+          v-if="route.name === 'reference-vid-edit-id'"
+          @click="deleteFn"
       >
         Удалить
       </button>
 
       <div class="flex items-center ml-auto">
-        <button
-          class="custom-cancel-btn"
-          @click="cancelFn"
-        >
+        <button class="custom-cancel-btn" @click="cancelFn">
           Отменить
         </button>
-        <button class="custom-apply-btn ml-[8px]">
+
+        <button class="custom-apply-btn ml-[8px]" @click="handleSubmit">
           {{ route.name === "reference-vid-edit-id" ? "Сохранить" : "Добавить" }}
         </button>
       </div>

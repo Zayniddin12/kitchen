@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import {computed, ref, watch} from "vue";
+import {computed, onMounted, ref, watch} from "vue";
 import {useRoute, useRouter} from "vue-router";
 import {useSettingsStore} from "@/modules/Settings/store";
-import { ElNotification } from 'element-plus';
-import AppInput from "@/components/ui/form/app-input/AppInput.vue";
+import {ElNotification} from 'element-plus';
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 import useConfirm from "@/components/ui/app-confirm/useConfirm";
+import AppInput from "@/components/ui/form/app-input/AppInput.vue";
 
 interface Name {
   uz: string;
@@ -32,6 +32,14 @@ const dataValue = ref<DataValue>({
   is_active: true,
 });
 
+onMounted(async () => {
+  if (route.params.id) {
+    const typeDoc = await store.GET_TYPE_PRODUCT_DETAIL(route.params.id as string | number)
+    if (typeDoc && typeDoc.data && typeDoc.data.product_type) {
+      dataValue.value = typeDoc.data.product_type;
+    }
+  }
+})
 
 const setBreadCrumbFn = () => {
   setBreadCrumb([
@@ -57,16 +65,16 @@ const setBreadCrumbFn = () => {
 };
 
 const deleteFn = () => {
-  confirm.delete().then(response => {
+  confirm.delete().then(() => {
     store.DELETE_TYPE_PRODUCT(route.params.id)
-    router.push({name: "reference-vid-product"});
+    router.push('/reference-type-product');
+    ElNotification({title: 'Success', type: 'success'});
   });
 };
 
 const cancelFn = () => {
-  confirm.cancel().then(response => {
-    console.log("edit");
-    router.push({name: "reference-type-product"});
+  confirm.cancel().then(() => {
+    router.push('/reference-type-product');
   });
 };
 
@@ -86,49 +94,30 @@ const handleSubmitProduct = async (): Promise<void> => {
     if (route.params.id) {
       await store.UPDATE_TYPE_PRODUCT({
         id: route.params.id as string | number,
-        data: payload,
+        data: {
+          name: payload.name,
+          is_active: payload.is_active,
+        },
       });
     } else {
       await store.CREATE_TYPE_PRODUCT(payload);
     }
 
-    ElNotification({
-      title: 'Success',
-      message: route.params.id ? 'Product updated successfully' : 'Product created successfully',
-      type: 'success',
-    });
+    ElNotification({title: 'Success', type: 'success'});
+    await router.push('/reference-type-product')
   } catch (error) {
-    ElNotification({
-      title: 'Error',
-      message: 'An error occurred while saving the product',
-      type: 'error',
-    });
+    ElNotification({title: 'Error', type: 'error'});
   }
 };
-
 
 
 const setDisabled = computed(() => {
   return route.name === 'reference-type-product-view-id';
 })
 
-const routeInfo = computed(() => ({
-  name: route.name,
-  params: route.params,
-}));
-
-
-
-watch(routeInfo, (newVal) => {
-  if (newVal.name) {
-    setBreadCrumbFn()
-  }
-
-  if (newVal.params) {
-    const data = store.GET_TYPE_PRODUCT_DETAIL(route.params.id as string | number)
-    console.log(data, 'detail data')
-  }
-}, { immediate: true });
+watch(route.name, () => {
+  setBreadCrumbFn()
+}, {immediate: true});
 </script>
 
 <template>

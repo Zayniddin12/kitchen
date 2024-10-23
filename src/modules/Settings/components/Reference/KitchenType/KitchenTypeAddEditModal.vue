@@ -1,54 +1,50 @@
-<script
-  setup
-  lang="ts"
->
-import { ref, watch } from "vue";
-import { useRoute, useRouter } from "vue-router";
-import AppInput from "@/components/ui/form/app-input/AppInput.vue";
-import AppSelect from "@/components/ui/form/app-select/AppSelect.vue";
+<script setup lang="ts">
+import {computed, onMounted, ref, watch} from "vue";
+import {useRoute, useRouter} from "vue-router";
+import {ValidationType} from "@/components/ui/form/app-form/app-form.type";
+import {useSettingsStore} from "@/modules/Settings/store";
+import {ElNotification} from "element-plus";
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 import useConfirm from "@/components/ui/app-confirm/useConfirm";
+import AppInput from "@/components/ui/form/app-input/AppInput.vue";
+import AppForm from "@/components/ui/form/app-form/AppForm.vue";
 
-const route = useRoute();
-const router = useRouter();
-const { confirm } = useConfirm();
-
-interface TableData {
-  id: number;
-  name: string;
-  type: string;
+interface Name {
+  uz: string;
+  ru: string;
 }
 
-const input1 = ref<string>("");
-const tableData = ref<TableData[]>([
-  {
-    id: 1,
-    name: "Зарафшан",
-    type: "Начальник управления",
-  },
-  {
-    id: 2,
-    name: "Зафаробод",
-    type: "Начальник управления",
-  },
-  {
-    id: 3,
-    name: "Навои",
-    type: "Начальник управления",
-  },
-  {
-    id: 4,
-    name: "Нуробод",
-    type: "Начальник управления",
-  },
-  {
-    id: 5,
-    name: "Учкудук",
-    type: "Начальник управления",
-  },
-]);
+interface DataValue {
+  name: Name;
+  status: boolean | string
+}
 
-const { setBreadCrumb } = useBreadcrumb();
+const v$ = ref<ValidationType | null>(null);
+const setValidation = (value: ValidationType) => {
+  v$.value = value;
+};
+
+const store = useSettingsStore();
+const route = useRoute();
+const router = useRouter();
+const {confirm} = useConfirm();
+const {setBreadCrumb} = useBreadcrumb();
+
+const dataValue = ref<DataValue>({
+  name: {
+    uz: '',
+    ru: '',
+  },
+  status: 'active'
+});
+
+onMounted(() => {
+  if (route.params.id) {
+    const kitchen = store.GET_KITCHEN_TYPE_DETAIL(route.params.id as string | number)
+    console.log(kitchen, 'kitchen')
+  }
+});
+
 
 const setBreadCrumbFn = () => {
   setBreadCrumb([
@@ -57,17 +53,17 @@ const setBreadCrumbFn = () => {
     },
     {
       label: "Справочники",
-      to: { name: "reference" },
+      to: {name: "reference"},
     },
 
     {
       label: "Управ, комбинаты и склады",
-      to: { name: "reference" },
+      to: {name: "reference"},
     },
 
     {
       label: "Типы кухни",
-      to: { name: "reference-kitchen-type" },
+      to: {name: "reference-kitchen-type"},
     },
     {
       label: String(route?.meta?.breadcrumbItemTitle ?? ""),
@@ -76,19 +72,17 @@ const setBreadCrumbFn = () => {
   ]);
 };
 
-watch(() => route.name, () => {
-  setBreadCrumbFn();
-}, { immediate: true });
-
 const cancelFn = () => {
   confirm.cancel().then(response => {
-    router.push({ name: "reference-kitchen-type" });
+    router.push('/reference-kitchen-type');
   });
 };
 
 const deleteFn = () => {
-  confirm.delete().then(response => {
-    router.push({ name: "reference-kitchen-type" });
+  confirm.delete().then((response: any) => {
+    store.DELETE_KITCHEN_TYPE(route.params.id)
+    router.push('/reference-kitchen-type');
+    ElNotification({title: 'Success', type: 'success'});
   });
 };
 
@@ -101,74 +95,103 @@ const switchChange = async (): Promise<boolean> => {
   }
 };
 
+const handleSubmit = async () => {
+  if (!v$.value) return;
+
+  if ((await v$.value.validate())) {
+    try {
+      const payload = dataValue.value as DataValue;
+
+      if (route.params.id) {
+        await store.UPDATE_KITCHEN_TYPE({
+          id: route.params.id as string | number,
+          data: payload
+        })
+      } else {
+        await store.CREATE_KITCHEN_TYPE(payload)
+      }
+      ElNotification({title: 'Success', type: 'success'});
+      await router.push('/reference-kitchen-type');
+    } catch (e) {
+      ElNotification({title: 'Error', type: 'error'});
+    }
+  }
+};
+
+
+const isDisabled = computed(() => {
+  return route.name === 'reference-kitchen-type-view'
+});
+
+watch(() => route.name, () => {
+  setBreadCrumbFn();
+}, {immediate: true});
 </script>
 
 <template>
   <div>
-    <div class="flex items-center justify-between mb-[24px]">
-      <h1 class="m-0 font-semibold text-[32px] leading-[48px]">{{ route.meta.title }}</h1>
-
-    </div>
+    <h1 class="m-0 font-semibold text-[32px] leading-[48px] mb-[24px]">{{ route.meta.title }}</h1>
 
     <div class="flex gap-6">
       <div class="w-[70%]">
-        <div class="border border-[#E2E6F3] rounded-[24px] p-[24px] h-[65vh] flex flex-col">
-          <div class="flex items-center gap-4">
-            <app-input
-              label="Наименование (RU)"
-              placeholder="Введите"
-              label-class="text-[#A8AAAE] font-medium text-[12px]"
-              class="w-full"
-            />
+        <AppForm
+            :value="dataValue"
+            @validation="setValidation"
+            class="mt-6"
+        >
+          <div class="border border-[#E2E6F3] rounded-[24px] p-[24px] h-[65vh] flex flex-col">
+            <div class="flex items-center gap-4">
+              <app-input
+                  v-model="dataValue.name.ru"
+                  label="Наименование (RU)"
+                  placeholder="Введите"
+                  label-class="text-[#A8AAAE] font-medium text-[12px]"
+                  class="w-full"
+                  :disabled="isDisabled"
+                  required
+                  prop="name.ru"
+              />
 
-            <app-input
-              label="Наименование (UZ)"
-              placeholder="Введите"
-              label-class="text-[#A8AAAE] font-medium text-[12px]"
-              class="w-full"
+              <app-input
+                  v-model="dataValue.name.uz"
+                  label="Наименование (UZ)"
+                  placeholder="Введите"
+                  label-class="text-[#A8AAAE] font-medium text-[12px]"
+                  class="w-full"
+                  :disabled="isDisabled"
+                  required
+                  prop="name.uz"
+              />
+            </div>
+
+            <ElSwitch
+                v-model="dataValue.status"
+                v-if="route.params.id && !route.query.type"
+                active-text="Деактивация"
+                class="app-switch mt-auto"
+                :before-change="switchChange"
             />
           </div>
+        </AppForm>
 
-          <div class="flex items-center gap-4">
-            <app-select
-              label="????????"
-              placeholder="Выберите"
-              label-class="text-[#A8AAAE] font-medium text-[12px]"
-              class="w-[50%]"
-            />
-            <span class="blo"></span>
-          </div>
-          <ElSwitch
-            v-if="route.params.id && !route.query.type"
-            active-text="Деактивация"
-            class="app-switch mt-auto"
-            :before-change="switchChange"
-          />
-        </div>
-
-        <div
-          v-if="!route.query.type"
-          class="flex items-center mt-[24px] "
-          :class="!route.params.id ? 'justify-end' : 'justify-between'"
+        <div v-if="!route.query.type"
+             class="flex items-center mt-[24px] "
+             :class="!route.params.id ? 'justify-end' : 'justify-between'"
         >
           <button
-            v-if="route.params.id"
-            @click="deleteFn"
-            class="custom-danger-btn"
+              @click="deleteFn"
+              v-if="route.params.id"
+              class="custom-danger-btn"
           >
             Удалить
           </button>
 
-
           <div class="flex items-center gap-4">
-            <button
-              @click="cancelFn"
-              class="custom-cancel-btn"
-            >
+            <button @click="cancelFn" class="custom-cancel-btn">
               Отменить
             </button>
 
-            <button class="custom-apply-btn">
+            <button class="custom-apply-btn" @click="handleSubmit">
               {{ $route.params.id ? "Сохранить" : "Добавить" }}
             </button>
           </div>
@@ -177,22 +200,11 @@ const switchChange = async (): Promise<boolean> => {
 
       <div class="w-[30%]">
         <button
-          @click="router.push({name: 'reference-kitchen-type-edit', params: {id: 1}})"
-          v-if="route.query.type == 'view'"
-          class="flex items-center gap-4 bg-[#F8F9FC] py-[10px] px-[20px] rounded-[8px]"
+            @click="router.push({name: 'reference-kitchen-type-edit', params: {id: route.params.id}})"
+            v-if="route.query.type == 'view'"
+            class="flex items-center gap-4 bg-[#F8F9FC] py-[10px] px-[20px] rounded-[8px]"
         >
-          <li
-            :style="{
-                  maskImage: 'url(/icons/edit.svg)',
-                  backgroundColor: '#8F9194',
-                  color: '#8F9194',
-                  width: '20px',
-                  height: '20px',
-                  maskSize: '20px',
-                  maskPosition: 'center',
-                  maskRepeat: 'no-repeat'
-                   }"
-          ></li>
+          <img src="@/assets/images/icons/edit.svg" alt="#"/>
           Редактировать
         </button>
       </div>
