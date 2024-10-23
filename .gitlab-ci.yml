@@ -38,7 +38,7 @@ build_image_main:
   variables:
     ENV_TAG: latest
   only:
-    - main
+    - master
 
 deploy_to_prod:
   extends: .deploy_to_k8s
@@ -47,4 +47,4 @@ deploy_to_prod:
     DEPLOYMENT: $KUBE_DEPLOYMENT_NAME
     KUBECONFIG: $ENV_KUBECONFIG
   only:
-    - main
+    - master
