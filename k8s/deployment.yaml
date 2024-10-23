@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   labels:
     app: wms
-  name: wms-deployment
+  name: wms
   namespace: nkmk
 spec:
   selector:

@@ -7,7 +7,7 @@ before_script:
 
 variables:
   KUBE_NAMESPACE: nkmk
-  KUBE_DEPLOYMENT_NAME: wms-deployment
+  KUBE_DEPLOYMENT_NAME: wms
 
 .build_image:
   stage: build
@@ -33,7 +33,7 @@ variables:
     - kubectl rollout status deployment/$KUBE_DEPLOYMENT_NAME -n $KUBE_NAMESPACE
     - rm -rf ~/.kube
 
-build_image_main:
+build_image:
   extends: .build_image
   variables:
     ENV_TAG: latest
