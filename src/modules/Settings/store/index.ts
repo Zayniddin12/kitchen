@@ -3,9 +3,13 @@ import $axios from "@/plugins/axios";
 import { ref } from "vue";
 
 interface TypeDocument {
-  id: string | number;
-  name: string;
+  document_categories: Array<{ id: string | number, name: string }>;
 }
+
+interface VidDocument {
+  documents: Array<{ id: string | number, name: string }>;
+}
+
 
 export const useSettingsStore = defineStore("settingsStore", () => {
   // dilshod
@@ -42,8 +46,12 @@ export const useSettingsStore = defineStore("settingsStore", () => {
 
 
   // begzod
-  const typeDocument = ref<TypeDocument[] | []>([]);
-  const vidDocument = ref<TypeDocument[] | []>([]);
+  const typeDocument = ref<TypeDocument>({
+    document_categories: [],
+  });
+  const vidDocument = ref<VidDocument>({
+    documents: [],
+  });
 
   // begzod end
 
@@ -51,13 +59,13 @@ export const useSettingsStore = defineStore("settingsStore", () => {
   // begzod
 
   // Документы Типы документов
-  const GET_TYPE_DOCUMENT = async (params: any) => {
+  const GET_TYPE_DOCUMENT = async (params?: { search: string | null }) => {
     const { data } = await $axios.get("/documents/categories", { params });
     typeDocument.value = data.data;
   };
 
 
-  const GET_VID_DOCUMENT = async (params: any) => {
+  const GET_VID_DOCUMENT = async (params?: { search: string | null }) => {
     const { data } = await $axios.get("/documents", { params });
     vidDocument.value = data.data;
   };
