@@ -92,17 +92,9 @@ const handleSubmitProduct = async (): Promise<void> => {
       await store.CREATE_TYPE_PRODUCT(payload);
     }
 
-    ElNotification({
-      title: 'Success',
-      message: route.params.id ? 'Product updated successfully' : 'Product created successfully',
-      type: 'success',
-    });
+    ElNotification({title: 'Success', type: 'success' });
   } catch (error) {
-    ElNotification({
-      title: 'Error',
-      message: 'An error occurred while saving the product',
-      type: 'error',
-    });
+    ElNotification({title: 'Error', type: 'error' });
   }
 };
 

@@ -1,51 +1,20 @@
 <script setup lang="ts">
-import { onMounted, ref } from "vue";
-import { Search } from "@element-plus/icons-vue";
-import { useRoute } from "vue-router";
+import {onMounted, ref} from "vue";
+import {Search} from "@element-plus/icons-vue";
+import {useRoute} from "vue-router";
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
+import {ElNotification} from "element-plus";
+import {useSettingsStore} from "@/modules/Settings/store";
 
-const route = useRoute();
-
-interface TableData {
-  id: number;
-  name: string;
-  inn: string;
-  legal_address: string;
+interface Params {
+  search: string;
+  page: number;
+  per_page: number;
 }
 
-const input1 = ref<string>("");
-const tableData = ref<TableData[]>([
-  {
-    id: 1,
-    name: "Зарафшан",
-    inn: "123456789012",
-    legal_address: "100052, Tashkent, st.Kichik Khalka Yuli 34-36",
-  },
-
-  {
-    id: 2,
-    name: "Зарафшан",
-    inn: "123456789012",
-    legal_address: "100052, Tashkent, st.Kichik Khalka Yuli 34-36",
-  },
-
-  {
-    id: 3,
-    name: "Зарафшан",
-    inn: "123456789012",
-    legal_address: "100052, Tashkent, st.Kichik Khalka Yuli 34-36",
-  },
-
-  {
-    id: 4,
-    name: "Зарафшан",
-    inn: "123456789012",
-    legal_address: "100052, Tashkent, st.Kichik Khalka Yuli 34-36",
-  },
-]);
-
-const { setBreadCrumb } = useBreadcrumb();
-
+const route = useRoute();
+const store = useSettingsStore();
+const {setBreadCrumb} = useBreadcrumb();
 const setBreadCrumbFn = () => {
   setBreadCrumb([
     {
@@ -53,12 +22,12 @@ const setBreadCrumbFn = () => {
     },
     {
       label: "Справочники",
-      to: { name: "reference" },
+      to: {name: "reference"},
     },
 
     {
       label: "Поставщики и организации",
-      to: { name: "reference" },
+      to: {name: "reference"},
     },
 
     {
@@ -68,11 +37,48 @@ const setBreadCrumbFn = () => {
   ]);
 };
 
+const params = ref<Params>({
+  search: null,
+  page: 1,
+  per_page: 10
+})
+const loading = ref<boolean>(false)
+let debounceTimeout;
+
 onMounted(() => {
   setBreadCrumbFn();
+
+  refresh()
 });
 
+const refresh = async () => {
+  loading.value = true
+  try {
+    await store.GET_ORGANIZATION(params.value)
+  } catch (e) {
+    loading.value = false
+    ElNotification({title: e, type: 'error'})
+  } finally {
+    loading.value = false
+  }
+}
 
+const handleSearch = () => {
+  clearTimeout(debounceTimeout);
+  loading.value = true;
+
+  debounceTimeout = setTimeout(async () => {
+    params.value.page = 1
+
+    await refresh()
+  }, 500);
+}
+
+const changePagination = (event: any) => {
+  params.value.page = event;
+
+  refresh()
+}
 </script>
 
 <template>
@@ -82,57 +88,66 @@ onMounted(() => {
 
       <div class="flex items-center">
         <el-input
-          v-model="input1"
-          size="large"
-          placeholder="Поиск"
-          :prefix-icon="Search"
-          class="w-[300px] mr-[16px]"
+            v-model="params.search"
+            size="large"
+            placeholder="Поиск"
+            :prefix-icon="Search"
+            class="w-[300px] mr-[16px]"
+            @input="handleSearch"
         />
 
         <button
-          @click="$router.push({name: 'reference-organization-add'})"
-          class="flex items-center justify-center gap-3 custom-apply-btn">
-          <li
-            :style="{
-                  maskImage: 'url(/icons/plusIcon.svg)',
-                  backgroundColor: '#fff',
-                  color: '#fff',
-                  width: '20px',
-                  height: '20px',
-                  maskSize: '20px',
-                  maskPosition: 'center',
-                  maskRepeat: 'no-repeat'
-                   }"
-          ></li>
+            @click="$router.push({name: 'reference-organization-add'})"
+            class="flex items-center justify-center gap-3 custom-apply-btn"
+        >
+          <img src="@/assets/images/icons/plus.svg" alt="plus">
           Добавить
-        </button>
-
-        <button>
-
         </button>
       </div>
     </div>
 
     <div class="mt-[24px]">
-      <el-table :data="tableData" stripe class="custom-element-table">
-        <el-table-column prop="id" label="№" width="80" />
-        <el-table-column prop="name" label="Наименование" sortable width="400" />
-        <el-table-column prop="inn" label="ИНН" sortable />
-        <el-table-column prop="legal_address" label="Юр. адрес" sortable />
+      <el-table
+          :data="store.organization.organizations"
+          stripe
+          class="custom-element-table"
+          v-loading="loading"
+          :empty-text="'Нет доступных данных'"
+      >
+        <el-table-column prop="id" label="№" width="80"/>
+        <el-table-column prop="name" label="Наименование" sortable width="400"/>
+        <el-table-column prop="tin" label="ИНН" sortable/>
+        <el-table-column prop="address" label="Юр. адрес" sortable/>
         <el-table-column label="Действие" align="right">
           <template #default="scope">
             <button class="action-btn mr-[8px]"
-                    @click="$router.push({name: 'reference-organization-view', query: {type: 'view'}, params: {id: 1}})">
-              <img src="../../../../../assets/images/eye.svg" alt="download" />
+                    @click="$router.push({name: 'reference-organization-view', query: {type: 'view'}, params: {id: scope.row.id}})">
+              <img src="../../../../../assets/images/eye.svg" alt="download"/>
             </button>
 
             <button class="action-btn"
-                    @click="$router.push({name: 'reference-organization-edit', params: {id: 1}})">
-              <img src="../../../../../assets/images/icons/edit.svg" alt="eye" />
+                    @click="$router.push({name: 'reference-organization-edit', params: {id: scope.row.id}})">
+              <img src="../../../../../assets/images/icons/edit.svg" alt="eye"/>
             </button>
           </template>
         </el-table-column>
       </el-table>
+
+      <div class="mt-[24px] flex items-center justify-between">
+        <div class="text-cool-gray text-[14px]">
+          Показано 1–10 из {{ store.organization.paginator.total_count }} результатов
+        </div>
+
+        <el-pagination
+            v-model:current-page="params.page"
+            :page-size="params.per_page"
+            class="float-right"
+            background
+            layout="prev, pager, next"
+            :total="store.organization.paginator.total_count"
+            @change="changePagination"
+        />
+      </div>
     </div>
   </div>
 </template>
