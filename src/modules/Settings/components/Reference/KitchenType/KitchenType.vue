@@ -4,7 +4,6 @@ import {Search} from "@element-plus/icons-vue";
 import {useRoute} from "vue-router";
 import {useSettingsStore} from "@/modules/Settings/store";
 import {ElNotification} from "element-plus";
-import {useI18n} from "vue-i18n";
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 
 interface Params {
@@ -14,7 +13,6 @@ interface Params {
 }
 
 const store = useSettingsStore();
-const i18 = useI18n()
 const route = useRoute();
 const {setBreadCrumb} = useBreadcrumb();
 
@@ -104,10 +102,8 @@ const handleSearch = (): void => {
       </div>
     </div>
 
-    <pre>{{ store.kitchenTypes }}</pre>
-
     <el-table
-        :data="[]"
+        :data="store.kitchenTypes.kitchen_types"
         stripe class="custom-element-table mt-[24px]"
         v-loading="loading"
         :empty-text="'Нет доступных данных'"
@@ -116,17 +112,19 @@ const handleSearch = (): void => {
       <el-table-column prop="name" label="Наименование кухни" sortable width="400">
         <template #default="scope">
            <span v-if="scope.row.name">
-             {{i18.locale === 'ru' ? scope.row.name.ru : scope.row.name.uz}}
+             {{ scope.row.name[$i18n.locale] }}
            </span>
         </template>
       </el-table-column>
       <el-table-column label="Действие" align="right">
         <template #default="scope">
-          <button class="action-btn mr-[8px]" @click="$router.push({name: 'reference-kitchen-type-view', query: {type: 'view'}, params: {id: scope.row.id}})">
+          <button class="action-btn mr-[8px]"
+                  @click="$router.push({name: 'reference-kitchen-type-view', query: {type: 'view'}, params: {id: scope.row.id}})">
             <img src="../../../../../assets/images/eye.svg" alt="download"/>
           </button>
 
-          <button class="action-btn" @click="$router.push({name: 'reference-kitchen-type-edit', params: {id: scope.row.id}})">
+          <button class="action-btn"
+                  @click="$router.push({name: 'reference-kitchen-type-edit', params: {id: scope.row.id}})">
             <img src="../../../../../assets/images/icons/edit.svg" alt="eye"/>
           </button>
         </template>

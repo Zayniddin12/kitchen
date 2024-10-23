@@ -38,10 +38,12 @@ const dataValue = ref<DataValue>({
   status: 'active'
 });
 
-onMounted(() => {
+onMounted(async () => {
   if (route.params.id) {
-    const kitchen = store.GET_KITCHEN_TYPE_DETAIL(route.params.id as string | number)
-    console.log(kitchen, 'kitchen')
+    const kitchen = await store.GET_KITCHEN_TYPE_DETAIL(route.params.id as string | number)
+    if(kitchen && kitchen.kitchen_type) {
+      dataValue.value = kitchen.kitchen_type;
+    }
   }
 });
 
