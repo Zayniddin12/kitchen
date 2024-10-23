@@ -73,7 +73,11 @@ export const useSettingsStore = defineStore("settingsStore", () => {
     }
 
     const CREATE_VID_PRODUCT = (data: any) => {
-        return $axios.post('/product', data)
+        return $axios.post('/product-types', data, {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        })
     }
 
     const UPDATE_VID_PRODUCT = ({id, data}: { id: string | number; data: any }) => {

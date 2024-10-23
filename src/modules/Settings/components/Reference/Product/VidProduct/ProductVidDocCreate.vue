@@ -16,8 +16,10 @@ interface Name {
 
 interface DataValue {
   name: Name;
+  image: string | null;
+  parent_id: string | number;
+  measurement_unit_id: string | number;
   is_active: boolean | string;
-  units: string
 }
 
 const store = useSettingsStore()
@@ -31,7 +33,9 @@ const dataValue = ref<DataValue>({
     uz: '',
     ru: ''
   },
-  units: '',
+  image: '',
+  parent_id: '',
+  measurement_unit_id: '',
   is_active: true
 })
 
@@ -82,16 +86,23 @@ const switchChange = async (): Promise<boolean> => {
   }
 };
 
-const handleClick = async () => {
+const handleSubmit = async () => {
   try {
-    const payload = dataValue.value as DataValue;
+    const formData = new FormData();
+    formData.append('name[uz]', dataValue.value.name.uz);
+    formData.append('name[ru]', dataValue.value.name.ru);
+    formData.append('image', dataValue.value.image);
+    formData.append('parent_id', dataValue.value.parent_id);
+    formData.append('measurement_unit_id', dataValue.value.measurement_unit_id);
+    formData.append('is_active', dataValue.value.is_active);
+
     if (route.params.id) {
       await store.UPDATE_VID_PRODUCT({
         id: route.params.id as string | number,
-        data: payload
+        data: formData
       })
     } else {
-      await store.CREATE_VID_PRODUCT(payload)
+      await store.CREATE_VID_PRODUCT(formData)
     }
     ElNotification({title: 'Success', type: 'success'});
     await router.push('/reference-vid-product')
@@ -116,7 +127,7 @@ watchEffect(() => {
 
     <div class="flex items-start mt-[24px]">
       <div class="border rounded-[24px] p-[24px] w-[70%]  min-h-[65vh]">
-        <AppMediaUploader/>
+        <AppMediaUploader v-model="dataValue.image"/>
 
         <div class="grid grid-cols-2 gap-4 mt-[24px]">
           <app-input
@@ -136,6 +147,7 @@ watchEffect(() => {
           />
 
           <app-select
+              v-model="dataValue.parent_id"
               :disabled="isDisabled"
               label="Тип продукта"
               label-class="text-[#A8AAAE] text-[12px]"
@@ -146,7 +158,7 @@ watchEffect(() => {
           />
 
           <app-select
-              v-model="dataValue.units"
+              v-model="dataValue.measurement_unit_id"
               :disabled="isDisabled"
               label="Единица измерения"
               label-class="text-[#A8AAAE] text-[12px]"
@@ -195,7 +207,7 @@ watchEffect(() => {
           Отменить
         </button>
 
-        <button class="custom-apply-btn ml-[8px]" @click="handleClick">
+        <button class="custom-apply-btn ml-[8px]" @click="handleSubmit">
           {{ route.name === "reference-vid-edit-id" ? "Сохранить" : "Добавить" }}
         </button>
       </div>

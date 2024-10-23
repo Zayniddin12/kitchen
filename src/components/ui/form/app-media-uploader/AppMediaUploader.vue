@@ -46,6 +46,8 @@ const uploadImage = async (event: Event) => {
 
   await readImage(file);
 
+  model.value = mediaFile.value;
+
   setTimeout(() => isLoading.value = false, 500);
 };
 
