@@ -25,7 +25,7 @@ const params = ref<Params>({
   page: 1,
 })
 const loading = ref<boolean>(false)
-let debounceTimeout;
+let debounceTimeout: ReturnType<typeof setTimeout>
 
 onMounted(() => {
   setBreadCrumbFn();
@@ -37,23 +37,23 @@ const refresh = async () => {
   loading.value = true
   try {
     await store.GET_REGIONAL(params.value)
-  } catch (e) {
+  } catch (e: any) {
     ElNotification({title: e, type: 'error'})
     loading.value = false
   }
   loading.value = false
 }
 
-const handleSearch = () => {
+const handleSearch = (): void => {
   clearTimeout(debounceTimeout);
   loading.value = true;
 
   debounceTimeout = setTimeout(async () => {
-    params.value.page = 1
+    params.value.page = 1;
 
-    await refresh()
+    await refresh();
   }, 500);
-}
+};
 
 const changePagination = (e: any) => {
   params.value.page = e;

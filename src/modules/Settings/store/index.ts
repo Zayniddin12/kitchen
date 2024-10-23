@@ -4,9 +4,15 @@ import {ref} from "vue";
 
 export const useSettingsStore = defineStore("settingsStore", () => {
     // dilshod
-    const typeProduct = ref<any[]>([])
-    const vidProduct = ref<any[]>([])
-    const units = ref<any[]>([])
+    const typeProduct = ref({
+        product_categories: [] as any
+    })
+    const vidProduct = ref({
+        product_types: [] as any
+    })
+    const units = ref({
+        units: [] as any
+    })
     const providers = ref({
         providers: [] as any,
         paginator: {} as any
@@ -23,6 +29,10 @@ export const useSettingsStore = defineStore("settingsStore", () => {
         kitchenTypes: [] as any,
         paginator: {} as any
     })
+    const meals = ref({
+        meals: [] as any,
+        pagination: {} as any
+    })
     // dilshod
 
 
@@ -34,13 +44,13 @@ export const useSettingsStore = defineStore("settingsStore", () => {
 
     // dilshod
     // Продукты Типы документов
-    const GET_TYPE_PRODUCT = async (params: any) => {
+    const GET_TYPE_PRODUCT = async (params?: any) => {
         const {data} = await $axios.get('/product-types/categories', {params})
         typeProduct.value = data.data
     }
 
     const GET_TYPE_PRODUCT_DETAIL = async (id: number) => {
-        const {data} = await $axios.get(`/get/${id}/`)
+        const {data} = await $axios.get(`/product-types/${id}/`)
         return data
     }
 
@@ -49,11 +59,11 @@ export const useSettingsStore = defineStore("settingsStore", () => {
     }
 
     const UPDATE_TYPE_PRODUCT = ({id, data}: { id: string | number; data: any }) => {
-        return $axios.patch(`/update/${id}/`, data)
+        return $axios.put(`/product-types/${id}/`, data)
     }
 
     const DELETE_TYPE_PRODUCT = (id: number) => {
-        return $axios.delete(`/delete/${id}/`)
+        return $axios.delete(`/product-types/${id}/`)
     }
 
     // Продукты Виды документов
@@ -62,8 +72,16 @@ export const useSettingsStore = defineStore("settingsStore", () => {
         vidProduct.value = data.data
     }
 
+    const CREATE_VID_PRODUCT = (data: any) => {
+        return $axios.post('/product', data)
+    }
+
+    const UPDATE_VID_PRODUCT = ({id, data}: { id: string | number; data: any }) => {
+        return $axios.put(`/product-types/${id}/`, data)
+    }
+
     // Единицы измерения
-    const GET_UNITS = async (params: any) => {
+    const GET_UNITS = async (params?: any) => {
         const {data} = await $axios.get('/measurement-units', {params})
         units.value = data.data
     }
@@ -159,6 +177,12 @@ export const useSettingsStore = defineStore("settingsStore", () => {
     const DELETE_KITCHEN_TYPE = async (id: number) => {
         return $axios.delete(`/kitchen-types/${id}`)
     }
+
+    // Блюда
+    const GET_MEALS = async (params: any) => {
+        const {data} = await $axios.get('/meals', {params})
+        meals.value = data.data
+    }
     // dilshod end
 
 
@@ -179,6 +203,8 @@ export const useSettingsStore = defineStore("settingsStore", () => {
 
         vidProduct,
         GET_VID_PRODUCT,
+        CREATE_VID_PRODUCT,
+        UPDATE_VID_PRODUCT,
 
         units,
         GET_UNITS,
@@ -209,7 +235,10 @@ export const useSettingsStore = defineStore("settingsStore", () => {
         UPDATE_KITCHEN_TYPE,
         GET_KITCHEN_TYPE,
         GET_KITCHEN_TYPE_DETAIL,
-        DELETE_KITCHEN_TYPE
+        DELETE_KITCHEN_TYPE,
+
+        meals,
+        GET_MEALS
         // dilshod end
     }
 })

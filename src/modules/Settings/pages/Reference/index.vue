@@ -36,13 +36,13 @@ const ulItems = ref<UlItems[]>([
     title: "Продукты",
     menu: [
       {
-        title: "Типы документов",
-        subTitle: "Типы документов",
+        title: "Типы продуктов",
+        subTitle: "Типы продуктов",
         router: "reference-type-product",
       },
       {
-        title: "Виды документов",
-        subTitle: "Виды документов",
+        title: "Виды продуктов",
+        subTitle: "Виды продуктов",
         router: "reference-vid-product",
       },
     ],

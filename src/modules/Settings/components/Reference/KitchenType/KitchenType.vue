@@ -37,7 +37,7 @@ const refresh = async () => {
   loading.value = true
   try {
     await store.GET_KITCHEN_TYPE(params.value)
-  } catch (e) {
+  } catch (e: any) {
     ElNotification({title: e, type: 'error'})
     loading.value = false
   } finally {
@@ -89,7 +89,7 @@ const handleSearch = (): void => {
             v-model="params.search"
             size="large"
             placeholder="Поиск"
-            :prefix-icon="Search as string"
+            :prefix-icon="Search as any"
             class="w-[300px] mr-[16px]"
             @input="handleSearch"
         />

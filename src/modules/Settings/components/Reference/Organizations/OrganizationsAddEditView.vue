@@ -59,7 +59,7 @@ const dataValue = ref<DataValue>({
 
 onMounted(async () => {
   if (route.params.id) {
-    const data = await store.GET_ORGANIZATION_DETAIL(route.params.id)
+    const data = await store.GET_ORGANIZATION_DETAIL(route.params.id as string | number)
     if (data && data.organization) {
       dataValue.value = data.organization;
     }
@@ -73,7 +73,7 @@ const cancelFn = () => {
 };
 
 const deleteFn = () => {
-  confirm.delete().then(response => {
+  confirm.delete().then(() => {
     store.DELETE_ORGANIZATION(route.params.id)
     router.push('/reference-organization');
     ElNotification({title: 'Success', type: 'success'});

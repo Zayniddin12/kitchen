@@ -7,7 +7,7 @@ import {ElNotification} from "element-plus";
 import {useSettingsStore} from "@/modules/Settings/store";
 
 interface Params {
-  search: string;
+  search: string | null;
   page: number;
   per_page: number;
 }
@@ -43,7 +43,7 @@ const params = ref<Params>({
   per_page: 10
 })
 const loading = ref<boolean>(false)
-let debounceTimeout;
+let debounceTimeout: ReturnType<typeof setTimeout>
 
 onMounted(() => {
   setBreadCrumbFn();
@@ -55,7 +55,7 @@ const refresh = async () => {
   loading.value = true
   try {
     await store.GET_ORGANIZATION(params.value)
-  } catch (e) {
+  } catch (e: any) {
     loading.value = false
     ElNotification({title: e, type: 'error'})
   } finally {
@@ -63,16 +63,16 @@ const refresh = async () => {
   }
 }
 
-const handleSearch = () => {
+const handleSearch = (): void => {
   clearTimeout(debounceTimeout);
   loading.value = true;
 
   debounceTimeout = setTimeout(async () => {
-    params.value.page = 1
+    params.value.page = 1;
 
-    await refresh()
+    await refresh();
   }, 500);
-}
+};
 
 const changePagination = (event: any) => {
   params.value.page = event;

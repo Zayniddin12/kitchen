@@ -40,7 +40,7 @@ const dataValue = ref<DataValue>({
 
 onMounted(() => {
   if (route.params.id) {
-    const kitchen = store.GET_KITCHEN_TYPE_DETAIL(route.params.id)
+    const kitchen = store.GET_KITCHEN_TYPE_DETAIL(route.params.id as string | number)
     console.log(kitchen, 'kitchen')
   }
 });
@@ -79,7 +79,7 @@ const cancelFn = () => {
 };
 
 const deleteFn = () => {
-  confirm.delete().then(response => {
+  confirm.delete().then((response: any) => {
     store.DELETE_KITCHEN_TYPE(route.params.id)
     router.push('/reference-kitchen-type');
     ElNotification({title: 'Success', type: 'success'});

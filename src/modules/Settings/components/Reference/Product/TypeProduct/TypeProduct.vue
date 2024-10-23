@@ -11,7 +11,7 @@ const router = useRouter();
 
 const search = ref<null | string>(null)
 const loading = ref(false);
-let debounceTimeout;
+let debounceTimeout: ReturnType<typeof setTimeout>
 
 const {setBreadCrumb} = useBreadcrumb();
 
@@ -43,7 +43,7 @@ const refresh = async () => {
   loading.value = true
   try {
     await store.GET_TYPE_PRODUCT({search: search.value})
-  } catch (e) {
+  } catch (e: any) {
     ElNotification({title: e, type: 'error'})
     loading.value = false
   } finally {
@@ -51,12 +51,11 @@ const refresh = async () => {
   }
 }
 
-const changeInput = () => {
+const changeInput = (): void => {
   clearTimeout(debounceTimeout);
-  loading.value = true;
 
   debounceTimeout = setTimeout(async () => {
-    await refresh()
+    await refresh();
   }, 500);
 };
 
@@ -95,7 +94,7 @@ watchEffect(() => {
 
     <el-table
         v-loading="loading"
-        :data="store.typeProduct"
+        :data="store.typeProduct.product_categories"
         stripe
         class="custom-element-table mt-[24px]"
         :empty-text="'Нет доступных данных'"
@@ -103,7 +102,7 @@ watchEffect(() => {
       <el-table-column prop="id" label="№" width="80"/>
       <el-table-column prop="name" label="Наименование типа продукта" sortable>
         <template #default="scope">
-          {{ scope.row?.name?.[$i18n.locale] }}
+          {{ scope.row.name }}
         </template>
       </el-table-column>
       <el-table-column label="Действие" align="right">

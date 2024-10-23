@@ -12,7 +12,7 @@ const {setBreadCrumb} = useBreadcrumb();
 
 const input1 = ref<null | string>(null);
 const loading = ref<boolean>(false)
-let time;
+let time: ReturnType<typeof setTimeout>
 
 
 onMounted(() => {
@@ -25,7 +25,7 @@ const refresh = async () => {
 
   try {
     await store.GET_VID_PRODUCT({search: input1.value})
-  } catch (e) {
+  } catch (e: any) {
     ElNotification({title: e, type: 'error'})
     loading.value = false
   } finally {
@@ -53,12 +53,12 @@ const setBreadCrumbFn = () => {
   ]);
 };
 
-const changeSearch = () => {
-  clearTimeout(time)
+const changeSearch = (): void => {
+  clearTimeout(time);
 
-  time = setTimeout(() => {
-    refresh()
-  }, 500)
+  time = setTimeout(async () => {
+    await refresh();
+  }, 500);
 }
 </script>
 
@@ -84,8 +84,11 @@ const changeSearch = () => {
       </div>
     </div>
 
+    <button @click="router.push(`/reference-vid-view/${1}`)">1</button>
+    <pre>{{ store.vidProduct.product_types}}</pre>
+
     <el-table
-        :data="store.vidProduct"
+        :data="store.vidProduct.product_types"
         v-loading="loading"
         class="custom-element-table mt-[24px]"
         stripe
@@ -94,18 +97,22 @@ const changeSearch = () => {
       <el-table-column prop="id" label="№" width="80"/>
       <el-table-column prop="photo" label="Картинка вида продукта" sortable>
         <template #default="scope">
-          <img src="https://avatar.iran.liara.run/public" alt="#" class="h-[32px]"/>
+          <img v-if="scope.row.image" :src="scope.row.image" alt="#" class="h-[32px] rounded-full"/>
+          <img
+              v-else
+              src="https://cdn.vectorstock.com/i/1000v/51/99/icon-of-user-avatar-for-web-site-or-mobile-app-vector-3125199.jpg"
+              alt="#" class="h-[32px] rounded-full"/>
         </template>
       </el-table-column>
       <el-table-column prop="name" label="Наименование вида продукта" sortable>
         <template #default="scope">
-          {{ scope.row?.name?.[$i18n.locale] }}
+          {{ scope.row.name }}
         </template>
       </el-table-column>
-      <el-table-column prop="type" label="Тип продукта" sortable/>
+      <el-table-column prop="parent_name" label="Тип продукта" sortable/>
       <el-table-column label="Действие" align="right">
         <template #default="scope">
-          <button class="action-btn" @click="router.push(`/reference-view-edit/${scope.row.id}`)">
+          <button class="action-btn" @click="router.push(`/reference-vid-view/${scope.row.id}`)">
             <img src="../../../../../../assets/images/eye.svg" alt="eye"/>
           </button>
 

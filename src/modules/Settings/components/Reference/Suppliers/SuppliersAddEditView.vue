@@ -11,16 +11,16 @@ import AppForm from "@/components/ui/form/app-form/AppForm.vue";
 import {ValidationType} from "@/components/ui/form/app-form/app-form.type";
 
 interface DataValue {
-  name: string;
-  address: string;
-  oked: string;
-  tin: string;
-  license: string;
-  sertificate: string;
-  sert_end_date: string;
-  director: string;
-  phone: string;
-  status: string;
+  name?: string;
+  address?: string;
+  oked?: string;
+  tin?: string;
+  license?: string;
+  sertificate?: string;
+  sert_end_date?: string;
+  director?: string;
+  phone?: string;
+  status?: string;
 }
 
 const store = useSettingsStore()
