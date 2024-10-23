@@ -150,6 +150,13 @@ const deleteFn = () => {
               placeholder="Выберите"
               label-class="text-[#A8AAAE] text-[12px]"
             />
+
+            <app-input
+              label="Уникальный номер блюда"
+              placeholder="Введите"
+              label-class="text-[#A8AAAE] font-medium text-[12px]"
+              disabled
+            />
           </div>
 
           <template v-if="route.name === 'reference-view-id'">
