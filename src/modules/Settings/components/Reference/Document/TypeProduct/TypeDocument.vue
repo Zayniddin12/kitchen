@@ -3,6 +3,8 @@ import { onMounted, ref } from "vue";
 import { Search } from "@element-plus/icons-vue";
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 import { useSettingsStore } from "@/modules/Settings/store";
+import { ElNotification } from "element-plus";
+import { watchDebounced } from "@vueuse/core";
 
 const settingsStore = useSettingsStore();
 
@@ -12,28 +14,7 @@ interface TableData {
 }
 
 const search = ref<null | string>(null);
-const tableData = ref<TableData[]>([
-  {
-    id: 1,
-    name: "Служебные записки",
-  },
-  {
-    id: 2,
-    name: "Запросы",
-  },
-  {
-    id: 3,
-    name: "Накладные",
-  },
-  {
-    id: 4,
-    name: "Акты",
-  },
-  {
-    id: 5,
-    name: "Контракты",
-  },
-]);
+const loading = ref<boolean>(false);
 
 const { setBreadCrumb } = useBreadcrumb();
 
@@ -57,20 +38,35 @@ const setBreadCrumbFn = () => {
   ]);
 };
 
-onMounted(async () => {
-  try {
-    await settingsStore.GET_TYPE_DOCUMENT({ search: search.value });
-  } catch (e) {
 
-  }
+onMounted(() => {
+  refresh();
+
   setBreadCrumbFn();
 });
+
+const refresh = async () => {
+  loading.value = true;
+  try {
+    await settingsStore.GET_TYPE_DOCUMENT({ search: search.value });
+  } catch (e: any) {
+    ElNotification({ title: e, type: "error" });
+    loading.value = false;
+  } finally {
+    loading.value = false;
+  }
+};
+
+
+watchDebounced(search, () => {
+  refresh();
+}, { debounce: 1000, maxWait: 5000 });
 </script>
 
 <template>
   <div>
     <div class="flex items-center justify-between">
-      <h1 class="m-0 font-semibold text-[32px] leading-[48px]">Типы документов {{ settingsStore.typeDocument }}</h1>
+      <h1 class="m-0 font-semibold text-[32px] leading-[48px]">Типы документов</h1>
 
       <el-input
         v-model="search"
@@ -82,7 +78,9 @@ onMounted(async () => {
     </div>
 
     <div class="mt-[24px]">
-      <el-table :data="tableData" stripe class="custom-element-table">
+      <el-table v-loading="loading"
+                :empty-text="'Нет доступных данных'" :data="settingsStore.typeDocument.document_categories" stripe
+                class="custom-element-table">
         <el-table-column prop="id" label="№" width="80" />
         <el-table-column prop="name" label="Наименование типа" sortable />
       </el-table>
