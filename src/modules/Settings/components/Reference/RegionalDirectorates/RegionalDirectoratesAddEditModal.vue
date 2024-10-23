@@ -72,7 +72,7 @@ const dataValue = ref<DataValue>({
 
 onMounted(async () => {
   if (route.params.id) {
-    const managements = await store.GET_REGIONAL_DETAIL(route.params.id)
+    const managements = await store.GET_REGIONAL_DETAIL(route.params.id as number)
     if (managements && managements.management) {
       dataValue.value = managements.management
     }
@@ -88,7 +88,7 @@ const cancelFn = () => {
 
 const deleteFn = () => {
   confirm.delete().then(() => {
-    store.DELETE_REGIONAL(route.params.id)
+    store.DELETE_REGIONAL(route.params.id as number)
     router.push('/reference-regional-directorates');
     ElNotification({title: 'Success', type: 'success'});
   });

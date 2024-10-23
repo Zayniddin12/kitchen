@@ -74,7 +74,7 @@ const dataValue = ref<DataValue>({
 
 onMounted(async () => {
   if (route.params.id) {
-    const providerData = await store.GET_PROVIDERS_DETAIL(route.params.id);
+    const providerData: DataValue = await store.GET_PROVIDERS_DETAIL(route.params.id as string | number);
     if (providerData && providerData.provider) {
       dataValue.value = providerData.provider;
     }
@@ -89,7 +89,7 @@ const cancelFn = () => {
 
 const deleteFn = () => {
   confirm.delete().then(() => {
-    store.DELETE_PROVIDERS(route.params.id)
+    store.DELETE_PROVIDERS(route.params.id as string | number)
     router.push('/reference-suppliers');
     ElNotification({title: 'Success', type: 'success'});
   });

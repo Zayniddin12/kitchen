@@ -19,6 +19,7 @@ const axiosIns = axios.create({
     headers: {
         Accept: "application/json",
         "x-app-lang": i18n.locale.value,
+        "x-device-type": "web",
 
         // "x-device-model": "Intel Mac OS",
         // "x-app-version": "0.0.1",
@@ -31,11 +32,11 @@ const axiosIns = axios.create({
 let isAlreadyFetchingAccessToken = false;
 let subscribers = [];
 
-const onAccessTokenFetched = (accessToken) => {
+const onAccessTokenFetched = (accessToken: any) => {
     subscribers = subscribers.filter((callback) => callback(accessToken));
 };
 
-const addSubscriber = (callback) => {
+const addSubscriber = (callback: any) => {
     subscribers.push(callback);
 };
 
@@ -66,7 +67,7 @@ axiosIns.interceptors.response.use(
 
             const retryOriginalRequest = new Promise((resolve) => {
 
-                addSubscriber((access) => {
+                addSubscriber((access: any) => {
                     let token = getAccessToken();
                     if (access) {
                         originalRequest.headers.Authorization = `Bearer ${token}`;

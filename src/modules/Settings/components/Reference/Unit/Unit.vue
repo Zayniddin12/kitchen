@@ -12,7 +12,7 @@ const store = useSettingsStore()
 
 const input1 = ref<null>(null)
 const loading = ref<boolean>(false)
-let time;
+let time: ReturnType<typeof setTimeout>
 
 onMounted(async () => {
   setBreadCrumbFn()
@@ -24,7 +24,7 @@ const refresh = async () => {
   loading.value = true
   try {
     await store.GET_UNITS({search: input1.value})
-  } catch (e) {
+  } catch (e: any) {
     ElNotification({title: e.message, type: 'error'})
     loading.value = false
   } finally {
@@ -32,7 +32,7 @@ const refresh = async () => {
   }
 }
 
-const changeSearch = () => {
+const changeSearch = (): void => {
   clearTimeout(time)
 
   time = setTimeout(() => {

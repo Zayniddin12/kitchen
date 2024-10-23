@@ -3,22 +3,25 @@ import $axios from "@/plugins/axios";
 import {ref} from "vue";
 
 export const useSettingsStore = defineStore("settingsStore", () => {
-
     // dilshod
     const typeProduct = ref<any[]>([])
     const vidProduct = ref<any[]>([])
     const units = ref<any[]>([])
     const providers = ref({
-        providers: [],
-        paginator: {}
+        providers: [] as any,
+        paginator: {} as any
     })
     const regional = ref({
-        managements: [],
-        paginator: {}
+        managements: [] as any,
+        paginator: {} as any
     })
     const organization = ref({
-        organization: [],
-        paginator: {}
+        organization: [] as any,
+        paginator: {} as any
+    })
+    const kitchenTypes = ref({
+        kitchenTypes: [] as any,
+        paginator: {} as any
     })
     // dilshod
 
@@ -54,7 +57,6 @@ export const useSettingsStore = defineStore("settingsStore", () => {
     }
 
     // Продукты Виды документов
-
     const GET_VID_PRODUCT = async (params: any) => {
         const {data} = await $axios.get('/product-types', {params})
         vidProduct.value = data.data
@@ -134,6 +136,29 @@ export const useSettingsStore = defineStore("settingsStore", () => {
     const DELETE_ORGANIZATION = async (id: number) => {
         return $axios.delete(`/organizations/${id}`)
     }
+
+    // тип кухни
+    const CREATE_KITCHEN_TYPE = (data: any) => {
+        return $axios.post('/kitchen-types', data)
+    }
+
+    const UPDATE_KITCHEN_TYPE = ({id, data}: { id: string | number; data: any }) => {
+        return $axios.put(`/kitchen-types/${id}/`, data)
+    }
+
+    const GET_KITCHEN_TYPE = async (params: any) => {
+        const {data} = await $axios.get('/kitchen-types', {params})
+        kitchenTypes.value = data.data
+    }
+
+    const GET_KITCHEN_TYPE_DETAIL = async (id: number) => {
+        const {data} = await $axios.get(`/kitchen-types/${id}/`)
+        return data.data
+    }
+
+    const DELETE_KITCHEN_TYPE = async (id: number) => {
+        return $axios.delete(`/kitchen-types/${id}`)
+    }
     // dilshod end
 
 
@@ -177,7 +202,14 @@ export const useSettingsStore = defineStore("settingsStore", () => {
         GET_ORGANIZATION,
         UPDATE_ORGANIZATION,
         GET_ORGANIZATION_DETAIL,
-        DELETE_ORGANIZATION
+        DELETE_ORGANIZATION,
+
+        kitchenTypes,
+        CREATE_KITCHEN_TYPE,
+        UPDATE_KITCHEN_TYPE,
+        GET_KITCHEN_TYPE,
+        GET_KITCHEN_TYPE_DETAIL,
+        DELETE_KITCHEN_TYPE
         // dilshod end
     }
 })

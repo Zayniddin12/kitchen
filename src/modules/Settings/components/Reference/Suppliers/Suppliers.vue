@@ -58,8 +58,8 @@ const refresh = async () => {
   try {
     await store.GET_PROVIDERS(params.value)
   } catch (e) {
-    loading.value = false
     ElNotification({title: e, type: 'error'})
+    loading.value = false
   }
   loading.value = false
 }
