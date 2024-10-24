@@ -10,6 +10,7 @@ import AppMediaUploader from "@/components/ui/form/app-media-uploader/AppMediaUp
 import useConfirm from "@/components/ui/app-confirm/useConfirm";
 import AppForm from "@/components/ui/form/app-form/AppForm.vue";
 import {Name} from "@/utils/helper";
+import {ElNotification} from "element-plus";
 
 interface Repeater {
   typeProduct: string;
@@ -123,10 +124,19 @@ const handleSubmit = async () => {
   if (!v$.value) return;
 
   if ((await v$.value.validate())) {
-    if (route.params.id) {
-
-    } else {
-      await store.CREATE_MEALS(dataValue.value);
+    try {
+      if (route.params.id) {
+        await store.UPDATE_MEALS({
+          id: route.params.id as string | number,
+          data: dataValue.value
+        })
+      } else {
+        await store.CREATE_MEALS(dataValue.value);
+      }
+      ElNotification({title: 'Success', type: 'success'});
+      await router.push('/reference-dish');
+    } catch (e) {
+      ElNotification({title: 'Error', type: 'error'});
     }
   }
 }
@@ -139,7 +149,7 @@ watch(() => route.name, () => {
 
 <template>
   <div>
-<!--    <pre>{{ dataValue }}</pre>-->
+    <pre>{{ dataValue }}</pre>
     <h1 class="m-0 font-semibold text-[32px] leading-[48px]">{{ route.meta.title }}</h1>
 
     <div class="mt-[24px] flex items-start">
@@ -224,8 +234,8 @@ watch(() => route.name, () => {
 
               <div class="bg-[#F8F9FC] rounded-[16px] p-[16px] mt-[24px]">
                 <div class="grid grid-cols-4 gap-4 border-b mt-[16px]"
-                    v-for="(item, index) in dataValue.compositions"
-                    :key="index"
+                     v-for="(item, index) in dataValue.compositions"
+                     :key="index"
                 >
                   <app-select
                       v-model="item.typeProduct"
@@ -263,7 +273,9 @@ watch(() => route.name, () => {
                         :items="store.units.units"
                     />
 
-                    <button class="bg-[#E2E6F3] rounded-[8px] flex justify-center items-center h-[40px] w-[40px] ml-[16px] mt-2" @click="handleDelete(index)">
+                    <button
+                        class="bg-[#E2E6F3] rounded-[8px] flex justify-center items-center h-[40px] w-[40px] ml-[16px] mt-2"
+                        @click="handleDelete(index)">
                       <img src="@/assets/images/icons/delete.svg" alt="delete"/>
                     </button>
                   </div>
