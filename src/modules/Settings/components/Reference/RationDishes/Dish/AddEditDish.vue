@@ -1,20 +1,15 @@
 <script setup lang="ts">
 import {onMounted, ref, watch} from "vue";
 import {useRoute, useRouter} from "vue-router";
+import {ValidationType} from "@/components/ui/form/app-form/app-form.type";
+import {useSettingsStore} from "@/modules/Settings/store";
 import AppInput from "@/components/ui/form/app-input/AppInput.vue";
 import AppSelect from "@/components/ui/form/app-select/AppSelect.vue";
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 import AppMediaUploader from "@/components/ui/form/app-media-uploader/AppMediaUploader.vue";
 import useConfirm from "@/components/ui/app-confirm/useConfirm";
-import {useSettingsStore} from "@/modules/Settings/store";
-
-interface TableData {
-  id: string;
-  type: string;
-  vid: string;
-  count: string;
-  count2: string;
-}
+import AppForm from "@/components/ui/form/app-form/AppForm.vue";
+import {Name} from "@/utils/helper";
 
 interface Repeater {
   typeProduct: string;
@@ -23,7 +18,20 @@ interface Repeater {
   unit_id: string;
 }
 
-const store = useSettingsStore()
+interface DataValue {
+  number: string;
+  quantity: string;
+  unit_id: string;
+  image: string | File;
+  compositions: Repeater
+}
+
+const v$ = ref<ValidationType | null>(null);
+const setValidation = (value: ValidationType) => {
+  v$.value = value;
+};
+
+const store = useSettingsStore();
 const route = useRoute();
 const router = useRouter();
 const {confirm} = useConfirm();
@@ -52,50 +60,49 @@ const setBreadCrumbFn = () => {
   ]);
 };
 
-const repeater = ref<Repeater[]>([{
-  typeProduct: '',
-  product_type_id: "",
-  quantity: 0,
-  unit_id: '',
-}]);
-const dataValue = ref({
-  name: {
-    ru: '',
-    uz: ''
-  },
+const dataValue = ref<DataValue>({
+  name: new Name(),
   number: '',
   quantity: '',
   unit_id: '',
   image: '',
+  compositions: [
+    {
+      typeProduct: '',
+      product_type_id: "",
+      quantity: 0,
+      unit_id: '',
+    }
+  ]
 })
 const existingImage = ref<string>('')
 
-const tableData = ref<TableData[]>([
-  {
-    id: "Картофель",
-    type: "Овощи",
-    vid: "Картофель",
-    count: "0.1",
-    count2: "кг",
-  }
-]);
-
-onMounted(async() => {
+onMounted(async () => {
   await store.GET_UNITS()
   await store.GET_TYPE_PRODUCT()
+
+  if (route.params.id) {
+    const meals = await store.GET_MEALS_DETAIL(route.params.id as string | number)
+    if (meals && meals.meal) {
+      dataValue.value = meals.meal
+      existingImage.value = meals.meal.image
+    }
+  }
 })
 
 const repeaterAgain = () => {
-  repeater.value.push({
-    title: "",
-    value: 0,
+  dataValue.value.compositions.push({
+    typeProduct: '',
+    product_type_id: "",
+    quantity: 0,
+    unit_id: '',
   });
 };
 
 const handleDelete = (index: number) => {
-  if (repeater.value.length > 1) {
-    confirm.delete().then(response => {
-      repeater.value.splice(index, 1);
+  if (dataValue.value.compositions.length > 1) {
+    confirm.delete().then(() => {
+      dataValue.value.compositions.splice(index, 1);
     });
   }
 };
@@ -112,8 +119,16 @@ const deleteFn = () => {
   });
 };
 
-const handleSubmit = () => {
+const handleSubmit = async () => {
+  if (!v$.value) return;
 
+  if ((await v$.value.validate())) {
+    if (route.params.id) {
+
+    } else {
+      await store.CREATE_MEALS(dataValue.value);
+    }
+  }
 }
 
 
@@ -124,7 +139,7 @@ watch(() => route.name, () => {
 
 <template>
   <div>
-    <pre>{{repeater}}</pre>
+<!--    <pre>{{ dataValue }}</pre>-->
     <h1 class="m-0 font-semibold text-[32px] leading-[48px]">{{ route.meta.title }}</h1>
 
     <div class="mt-[24px] flex items-start">
@@ -136,41 +151,55 @@ watch(() => route.name, () => {
               class="mt-4"
           />
 
-          <div class="mt-[24px] grid grid-cols-2 gap-5">
-            <app-input
-                v-model="dataValue.name.ru"
-                label="Наименование (RU)"
-                placeholder="Введите"
-                label-class="text-[#A8AAAE] text-[12px]"
-            />
+          <AppForm
+              :value="dataValue"
+              @validation="setValidation"
+              class="mt-6"
+          >
+            <div class="mt-[24px] grid grid-cols-2 gap-5">
+              <app-input
+                  v-model="dataValue.name.ru"
+                  label="Наименование (RU)"
+                  placeholder="Введите"
+                  label-class="text-[#A8AAAE] text-[12px]"
+                  required
+                  prop="name.ru"
+              />
 
-            <app-input
-                v-model="dataValue.name.uz"
-                label="Наименование (UZ)"
-                placeholder="Введите"
-                label-class="text-[#A8AAAE] text-[12px]"
-            />
+              <app-input
+                  v-model="dataValue.name.uz"
+                  label="Наименование (UZ)"
+                  placeholder="Введите"
+                  label-class="text-[#A8AAAE] text-[12px]"
+                  required
+                  prop="name.uz"
+              />
 
+              <app-input
+                  v-model="dataValue.number"
+                  label="Уникальный номер блюда"
+                  placeholder="Автоматически"
+                  label-class="text-[#A8AAAE] font-medium text-[12px]"
+                  disabled
+              />
 
-            <app-select
-                v-model="dataValue.unit_id"
-                label="Ед. измерения"
-                placeholder="Выберите"
-                label-class="text-[#A8AAAE] text-[12px]"
-            />
-
-            <app-input
-                v-model="dataValue.number"
-                label="Уникальный номер блюда"
-                placeholder="Введите"
-                label-class="text-[#A8AAAE] font-medium text-[12px]"
-                disabled
-            />
-          </div>
+              <app-select
+                  v-model="dataValue.unit_id"
+                  label="Ед. измерения"
+                  placeholder="Выберите"
+                  label-class="text-[#A8AAAE] text-[12px]"
+                  required
+                  prop="unit_id"
+                  itemValue="id"
+                  itemLabel="name"
+                  :items="store.units.units"
+              />
+            </div>
+          </AppForm>
 
           <template v-if="route.name === 'reference-view-id'">
             <el-table
-                :data="tableData"
+                :data="[]"
                 stripe
                 class="custom-element-table mt-[40px]"
             >
@@ -194,13 +223,12 @@ watch(() => route.name, () => {
               <h1 class="text-[#000D24] text-[18px] font-medium">Состав блюда</h1>
 
               <div class="bg-[#F8F9FC] rounded-[16px] p-[16px] mt-[24px]">
-                <div
-                    class="grid grid-cols-4 gap-4 border-b mt-[16px]"
-                    v-for="(item, index) in repeater"
+                <div class="grid grid-cols-4 gap-4 border-b mt-[16px]"
+                    v-for="(item, index) in dataValue.compositions"
                     :key="index"
                 >
                   <app-select
-                      v-model="typeProduct"
+                      v-model="item.typeProduct"
                       label="Тип продукта"
                       label-class="text-[#A8AAAE] text-[12px]"
                       placeholder="Выберите"
@@ -226,6 +254,7 @@ watch(() => route.name, () => {
                   <div class="flex items-center">
                     <app-select
                         v-model="item.unit_id"
+                        class="w-full"
                         label="Ед. измерения"
                         label-class="text-[#A8AAAE] text-[12px]"
                         placeholder="кг"
@@ -233,14 +262,9 @@ watch(() => route.name, () => {
                         itemLabel="name"
                         :items="store.units.units"
                     />
-                    <button
-                        class="bg-[#E2E6F3] rounded-[8px] flex justify-center items-center h-[40px] w-[40px] ml-[16px] mt-2"
-                        @click="handleDelete(index)"
-                    >
-                      <img
-                          src="@/assets/images/icons/delete.svg"
-                          alt="delete"
-                      />
+
+                    <button class="bg-[#E2E6F3] rounded-[8px] flex justify-center items-center h-[40px] w-[40px] ml-[16px] mt-2" @click="handleDelete(index)">
+                      <img src="@/assets/images/icons/delete.svg" alt="delete"/>
                     </button>
                   </div>
                 </div>

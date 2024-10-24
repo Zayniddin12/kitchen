@@ -222,6 +222,15 @@ export const useSettingsStore = defineStore("settingsStore", () => {
     const { data } = await $axios.get("/meals", { params });
     meals.value = data.data;
   };
+
+  const CREATE_MEALS = (data: any) => {
+    return $axios.post("/meals", data);
+  };
+
+  const GET_MEALS_DETAIL = async (id: number) => {
+    const { data } = await $axios.get(`/meals/${id}`);
+    return data.data;
+  };
   // dilshod end
 
 
@@ -280,6 +289,8 @@ export const useSettingsStore = defineStore("settingsStore", () => {
 
     meals,
     GET_MEALS,
+    CREATE_MEALS,
+    GET_MEALS_DETAIL
     // dilshod end
   };
 });
