@@ -1,0 +1,10 @@
+[build]
+
+command = "npm run build-only"
+publish="/build"
+base = "/"
+
+[[redirects]]
+from = "/*"
+ro = "/index.html"
+status = 200

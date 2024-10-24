@@ -1,0 +1,233 @@
+<script setup lang="ts">
+import {computed, onMounted, ref, watch} from "vue";
+import {useRoute, useRouter} from "vue-router";
+import AppInput from "@/components/ui/form/app-input/AppInput.vue";
+import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
+import useConfirm from "@/components/ui/app-confirm/useConfirm";
+import {useSettingsStore} from "@/modules/Settings/store";
+import {ElNotification} from "element-plus";
+import AppForm from "@/components/ui/form/app-form/AppForm.vue";
+import {ValidationType} from "@/components/ui/form/app-form/app-form.type";
+
+interface DataValue {
+  name: string;
+  address: string;
+  tin: string;
+}
+
+const v$ = ref<ValidationType | null>(null);
+const setValidation = (value: ValidationType) => {
+  v$.value = value;
+};
+
+const store = useSettingsStore()
+const route = useRoute();
+const router = useRouter();
+const {setBreadCrumb} = useBreadcrumb();
+const {confirm} = useConfirm();
+const setBreadCrumbFn = () => {
+  setBreadCrumb([
+    {
+      label: "Настройки",
+    },
+    {
+      label: "Справочники",
+      to: {name: "reference"},
+    },
+
+    {
+      label: "Поставщики и организации",
+      to: {name: "reference"},
+    },
+
+    {
+      label: "Организации",
+      to: {name: "reference-organization"},
+    },
+    {
+      label: String(route?.meta?.breadcrumbItemTitle ?? ""),
+      isActionable: true,
+    },
+  ]);
+};
+
+const dataValue = ref<DataValue>({
+  name: '',
+  address: '',
+  tin: '',
+})
+
+onMounted(async () => {
+  if (route.params.id) {
+    const data = await store.GET_ORGANIZATION_DETAIL(route.params.id as string | number)
+    if (data && data.organization) {
+      dataValue.value = data.organization;
+    }
+  }
+})
+
+const cancelFn = () => {
+  confirm.cancel().then(response => {
+    router.push({name: "reference-organization"});
+  });
+};
+
+const deleteFn = () => {
+  confirm.delete().then(() => {
+    store.DELETE_ORGANIZATION(route.params.id)
+    router.push('/reference-organization');
+    ElNotification({title: 'Success', type: 'success'});
+  });
+};
+
+const switchChange = async (): Promise<boolean> => {
+  try {
+    const response = await confirm.show();
+    return true;
+  } catch (error) {
+    return false;
+  }
+};
+
+const handleSubmit = async () => {
+  if (!v$.value) return;
+
+  if ((await v$.value.validate())) {
+    try {
+      const payload = dataValue.value as DataValue
+
+      if (route.params.id) {
+        await store.UPDATE_ORGANIZATION({
+          id: route.params.id as string | number,
+          data: {
+            name: payload.name,
+            address: payload.address,
+            tin: payload.tin,
+          }
+        })
+      } else {
+        await store.CREATE_ORGANIZATION(payload)
+      }
+      ElNotification({title: 'Success', type: 'success'});
+      await router.push('/reference-organization')
+    } catch (e) {
+      ElNotification({title: 'Error', type: 'error'});
+    }
+  }
+}
+
+const isDisabled = computed(() => {
+  return route.name === 'reference-organization-view'
+})
+
+watch(() => route.name, () => {
+  setBreadCrumbFn();
+}, {immediate: true});
+</script>
+
+<template>
+  <div>
+    <div class="flex items-center justify-between mb-[24px]">
+      <h1 class="m-0 font-semibold text-[32px] leading-[48px]">{{ route.meta.title }}</h1>
+    </div>
+
+    <div class="flex gap-6">
+      <div class="w-[70%]">
+        <AppForm
+            :value="dataValue"
+            @validation="setValidation"
+            class="mt-6"
+        >
+          <div class="border border-[#E2E6F3] rounded-[24px] p-[24px] h-[65vh] flex flex-col">
+            <div class="grid grid-cols-2 gap-4">
+              <app-input
+                  v-model="dataValue.name"
+                  label="Наименование"
+                  placeholder="Введите"
+                  label-class="text-[#A8AAAE] font-medium text-[12px]"
+                  class="w-full"
+                  required
+                  prop="name"
+                  :disabled="isDisabled"
+              />
+
+              <app-input
+                  v-model="dataValue.address"
+                  label="Юр. адрес"
+                  placeholder="Введите"
+                  label-class="text-[#A8AAAE] font-medium text-[12px]"
+                  class="w-full"
+                  required
+                  prop="address"
+                  :disabled="isDisabled"
+              />
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+              <app-input
+                  v-model="dataValue.tin"
+                  label="ИНН"
+                  placeholder="Выберите"
+                  label-class="text-[#A8AAAE] font-medium text-[12px]"
+                  class="w-full"
+                  required
+                  prop="tin"
+                  :disabled="isDisabled"
+              />
+            </div>
+
+            <ElSwitch
+                v-if="route.params.id && !route.query.type"
+                active-text="Деактивация"
+                class="app-switch mt-auto"
+                :before-change="switchChange"
+            />
+          </div>
+        </AppForm>
+
+        <div v-if="!route.query.type"
+            class="flex items-center mt-[24px] "
+            :class="!route.params.id ? 'justify-end' : 'justify-between'"
+        >
+          <button v-if="route.params.id" class="custom-danger-btn" @click="deleteFn">
+            Удалить
+          </button>
+
+
+          <div class="flex items-center gap-4">
+            <button @click="cancelFn" class="custom-cancel-btn">
+              Отменить
+            </button>
+
+            <button class="custom-apply-btn" @click="handleSubmit">
+              {{ $route.params.id ? "Сохранить" : "Добавить" }}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="w-[30%]">
+        <button
+            @click="router.push({name: 'reference-organization-edit', params: {id: route.params.id}})"
+            v-if="route.query.type == 'view'"
+            class="flex items-center gap-4 bg-[#F8F9FC] py-[10px] px-[20px] rounded-[8px]"
+        >
+          <li
+              :style="{
+                  maskImage: 'url(/icons/edit.svg)',
+                  backgroundColor: '#8F9194',
+                  color: '#8F9194',
+                  width: '20px',
+                  height: '20px',
+                  maskSize: '20px',
+                  maskPosition: 'center',
+                  maskRepeat: 'no-repeat'
+                   }"
+          ></li>
+          Редактировать
+        </button>
+      </div>
+    </div>
+  </div>
+</template>
+

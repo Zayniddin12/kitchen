@@ -1,0 +1,12 @@
+@mixin font-face(
+  $family,
+  $path,
+  $weight: 400,
+  $format
+) {
+  @font-face {
+    font-family: $family;
+    src: url('#{$path}') format($format);
+    font-weight: $weight;
+  }
+}

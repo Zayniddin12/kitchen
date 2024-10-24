@@ -1,0 +1,286 @@
+@import '@/assets/styles/mixins';
+@import '@/assets/styles/fonts';
+@import '@/assets/styles/settings';
+@import '@/assets/styles/tailwind';
+@import "@/assets/styles/components/ui/app-form";
+@import "@/assets/styles/components/ui/app-tab";
+@import "@/assets/styles/components/ui/app-switch";
+@import "@/assets/styles/components/ui/app-checkbox";
+
+html {
+  scroll-behavior: smooth;
+}
+
+.dark h1,
+.dark h2,
+.dark h3,
+.dark h4,
+.dark h5,
+.dark h6,
+.dark span,
+.dark p,
+.dark a {
+  color: #fff;
+}
+
+:root {
+  /* THEME VARIABLES */
+  --background-color: #FFFFFF;
+  --background-color-2: #F4F7FD;
+  --text-color: #000000;
+
+}
+
+/* CIRCLE STYLES AND ANIMATION */
+
+.darkCircle {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #2B2C37;
+  clip-path: circle(0% at 50% 0%);
+  z-index: -1;
+}
+
+.lightCircle {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #FFFFFF;
+  clip-path: circle(0% at 50% 0%);
+  z-index: -1;
+}
+
+.darkCircle.grow {
+  animation-name: circle-grow;
+  animation-duration: 0.7s;
+  animation-timing-function: ease-in-out;
+}
+
+.lightCircle.grow {
+  animation-name: circle-grow;
+  animation-duration: 0.7s;
+  animation-timing-function: ease-in-out;
+}
+
+.dark {
+  --background-color: #2B2C37;
+  --background-color-2: #20212C;
+  --text-color: #fff;
+  transition: background-color 0.3s ease-in-out 0.4s, color 0.7s ease-in-out;
+}
+
+.light {
+  --background-color: #FFFFFF;
+  --background-color-2: #F4F7FD;
+  --text-color: #000000;
+  transition: background-color 0.3s ease-in-out 0.4s, color 0.7s ease-in-out;
+}
+
+@keyframes circle-grow {
+  0% {
+    clip-path: circle(0% at 50% 0%);
+  }
+
+  100% {
+    clip-path: circle(150% at 50% 0%);
+  }
+}
+
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #F8F9FC #f1f1f1;
+}
+
+.dark .custom-filter-btn {
+  background-color: #283046;
+  color: #fff;
+}
+
+.custom-filter-btn {
+  background-color: var(--white-blue);
+  display: flex;
+  align-items: center;
+  padding: 10px 20px;
+  border-radius: 10px;
+  color: #4F5662;
+  font-size: 18px;
+}
+
+.custom-reset-btn {
+  padding: 10px 20px;
+  color: #EA5455;
+  border-radius: 10px;
+}
+
+.custom-apply-btn {
+  padding: 10px 20px;
+  color: white;
+  border-radius: 10px;
+  font-size: 14px;
+  background-color: #2E90FA;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
+
+.custom-white-btn {
+  padding: 10px 20px;
+  color: #4F5662;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 500;
+  background-color: #F8F9FC;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.custom-cancel-btn {
+  padding: 10px 20px;
+  color: #4F5662;
+  border-radius: 10px;
+  font-size: 14px;
+  background-color: #E2E6F3;
+}
+
+.custom-danger-btn {
+  padding: 10px 20px;
+  color: #FFFFFF;
+  border-radius: 10px;
+  font-size: 14px;
+  background-color: #EA5455;
+}
+
+.custom-send-btn {
+  padding: 10px 20px;
+  color: white;
+  border-radius: 10px;
+  font-size: 14px;
+  background-color: #28C76F;
+}
+
+.action-btn {
+  background-color: #f8f9fc;
+  border-radius: 8px;
+  padding: 8px;
+}
+
+.custom-light-btn {
+  @apply flex items-center gap-4 bg-[#F8F9FC] py-[10px] px-[20px] rounded-[8px] text-[#4F5662] text-[18px]
+}
+
+.el-pagination {
+  button {
+    background-color: var(--white-blue) !important;
+    border-radius: 8px;
+    height: 40px;
+    width: 40px;
+
+    .el-icon {
+      display: inherit !important;
+    }
+  }
+
+  ul {
+    .is-active {
+      background-color: #2E90FA !important;
+    }
+
+    li {
+      background-color: var(--white-blue) !important;
+      height: 40px;
+      width: 40px;
+      border-radius: 8px;
+    }
+  }
+}
+
+.dark .el-pagination {
+  button {
+    color: #fff;
+    background-color: #283046 !important;
+  }
+
+  ul {
+    .is-active {
+      background-color: #2E90FA !important;
+    }
+
+    li {
+      color: #fff;
+      background-color: #283046 !important;
+    }
+  }
+}
+
+.custom-element-table {
+  border-radius: 15px !important;
+  border: 1px solid #e2e6f3 !important;
+
+  thead th {
+    color: #4f5662;
+    font-size: 14px;
+    line-height: 20px;
+    text-align: left;
+    background-color: var(--white-blue) !important;
+    padding: 14px 16px !important;
+    font-weight: 500;
+  }
+
+  thead tr:first-child th:first-child {
+    border-top-left-radius: 10px;
+  }
+
+  thead tr:first-child th:last-child {
+    border-top-right-radius: 10px;
+  }
+
+  tbody td {
+    padding: 14px 16px !important;
+  }
+
+  tbody tr:last-child td:first-child {
+    border-bottom-left-radius: 10px !important;
+  }
+
+  tbody tr:last-child td:last-child {
+    border-bottom-right-radius: 10px;
+  }
+
+  &-normal {
+    thead th {
+      font-weight: 500;
+    }
+  }
+
+  &--has-append tbody tr:last-child {
+    td:last-child, td:first-child {
+      border-radius: 0 !important;
+    }
+  }
+}
+
+.el-overlay {
+  //z-index: 99999!important;
+  backdrop-filter: blur(14px)
+}
+
+.el-dialog {
+  background-color: #f8f9fc;
+  border-radius: 15px;
+}
+
+.el-table__inner-wrapper {
+  z-index: 0 !important;
+}

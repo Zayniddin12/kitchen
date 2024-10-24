@@ -1,0 +1,149 @@
+<script setup lang="ts">
+import { Search } from "@element-plus/icons-vue";
+import { onMounted, ref } from "vue";
+import { useRouter } from "vue-router";
+import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
+
+interface TableData {
+  id: number;
+  name: string;
+  unique: string;
+  type: string;
+  duration: string;
+}
+
+const router = useRouter();
+
+const tableData = ref<TableData[]>([
+  {
+    id: 1,
+    name: "Рацион 1",
+    unique: "R-00000",
+    type: "ЛПП, Буфет, Кухня",
+    duration: "7 дней ",
+  },
+  {
+    id: 2,
+    name: "Рацион 2",
+    unique: "R-00000",
+    type: "ЛПП, Буфет, Кухня",
+    duration: "7 дней ",
+  },
+  {
+    id: 3,
+    name: "Рацион 3",
+    unique: "R-00000",
+    type: "ЛПП, Буфет, Кухня",
+    duration: "7 дней ",
+  },
+  {
+    id: 4,
+    name: "Рацион 4",
+    unique: "R-00000",
+    type: "ЛПП, Буфет, Кухня",
+    duration: "7 дней ",
+  },
+  {
+    id: 5,
+    name: "Рацион 5",
+    unique: "R-00000",
+    type: "ЛПП, Буфет, Кухня",
+    duration: "7 дней ",
+  },
+]);
+const input1 = ref<string>("")
+
+const { setBreadCrumb } = useBreadcrumb();
+
+const setBreadCrumbFn = () => {
+  setBreadCrumb([
+    {
+      label: "Настройки",
+    },
+    {
+      label: "Справочники",
+      to: { name: "reference" },
+    },
+    {
+      label: "Рационы и блюда",
+      to: { name: "reference" },
+    },
+    {
+      label: "Рационы",
+      isActionable: true,
+    },
+  ]);
+};
+
+onMounted(() => {
+  setBreadCrumbFn();
+});
+
+</script>
+
+<template>
+  <div>
+    <div class="flex items-center justify-between">
+      <h1 class="m-0 font-semibold text-[32px] leading-[48px]">Рационы</h1>
+
+      <div class="flex items-center">
+        <el-input
+          v-model="input1"
+          size="large"
+          placeholder="Поиск"
+          :prefix-icon="Search"
+          class="w-[300px]"
+        />
+
+        <button class="custom-apply-btn ml-[16px]" @click="router.push('/reference-ration-create')">
+          <img src="@/assets/images/icons/plus.svg" alt="plus" />
+          Добавить
+        </button>
+      </div>
+    </div>
+
+    <div class="mt-[24px]">
+      <el-table stripe  :data="tableData" class="custom-element-table">
+        <el-table-column prop="id" label="№" width="80" />
+        <el-table-column prop="name" label="Наименование рациона" sortable>
+<!--          <template #header="{ column }"> sortable icon-->
+<!--            <div class="flex items-center">-->
+<!--              <span>Наименование рациона</span>-->
+
+<!--             <div class="flex flex-col ml-[6px] gap-1">-->
+<!--               <svg width="12" height="6" viewBox="0 0 12 6" fill="none" xmlns="http://www.w3.org/2000/svg">-->
+<!--                 <path d="M10.5 5.25L6 0.75L1.5 5.25" stroke="#A8AAAE" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>-->
+<!--               </svg>-->
+
+
+<!--               <svg width="12" height="6" viewBox="0 0 12 6" fill="none" xmlns="http://www.w3.org/2000/svg">-->
+<!--                 <path d="M1.5 0.75L6 5.25L10.5 0.75" stroke="#A8AAAE" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>-->
+<!--               </svg>-->
+<!--             </div>-->
+<!--            </div>-->
+<!--          </template>-->
+        </el-table-column>
+        <el-table-column prop="unique" label="Уникальный номер" sortable />
+        <el-table-column prop="type" label="Тип кухни" sortable />
+        <el-table-column prop="duration" label="Длительность" sortable />
+        <el-table-column label="Действие" align="right">
+          <template #default="scope">
+            <button class="action-btn" @click="router.push(`/reference-ration-view/${scope.row.id}`)">
+              <img src="@/assets/images/eye.svg" alt="eye" />
+            </button>
+
+            <button class="action-btn ml-[8px]" @click="router.push(`/reference-ration-edit/${scope.row.id}`)">
+              <img src="@/assets/images/icons/edit.svg" alt="edit" />
+            </button>
+          </template>
+        </el-table-column>
+      </el-table>
+    </div>
+  </div>
+</template>
+
+<!--<style>-->
+<!--.custom-element-table .el-table__header-wrapper .caret-wrapper {-->
+<!--  display: none;-->
+<!--}-->
+<!--</style>-->

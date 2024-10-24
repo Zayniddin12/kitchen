@@ -1,0 +1,47 @@
+:root {
+  --app-form-item-box-shadow: 0px 0px 0px 2px #618df2;
+}
+
+.app-form {
+  &-item {
+    --font-size: 14px;
+    --label-margin-bottom: 4px;
+    --label-line-height: 20px;
+
+    &--large {
+      --font-size: 16px;
+      --label-margin-bottom: 6px;
+      --label-line-height: 22px;
+    }
+
+    &--small {
+      --font-size: 12px;
+      --label-line-height: 16px;
+    }
+
+    .el-form-item {
+      &__label {
+        margin-bottom: var(--label-margin-bottom);
+        line-height: var(--label-line-height);
+        color: #2d2b32;
+        letter-spacing: -0.05px;
+        font-size: var(--font-size);
+      }
+    }
+
+    .el-input__wrapper,
+    .el-select__wrapper {
+      padding: 1px 12px;
+      background-color: white;
+
+      &.is-focus,
+      &.is-focused {
+        box-shadow: var(--app-form-item-box-shadow) !important;
+      }
+    }
+
+    .el-input__prefix-inner > :last-child {
+      margin-right: 0;
+    }
+  }
+}
