@@ -100,7 +100,10 @@ const handleSubmitProduct = async (): Promise<void> => {
         },
       });
     } else {
-      await store.CREATE_TYPE_PRODUCT(payload);
+      await store.CREATE_TYPE_PRODUCT({
+        is_active: +payload.is_active,
+        name: payload.name,
+      });
     }
 
     ElNotification({title: 'Success', type: 'success'});
