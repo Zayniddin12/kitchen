@@ -6,7 +6,7 @@ COPY package.json yarn.lock ./
 
 RUN yarn install --network-timeout 1000000000
 COPY . .
-RUN yarn build
+RUN yarn build-only
 
 # Stage 2: Serve the app with Node.js
 FROM node:20.17.0-alpine
