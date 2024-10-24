@@ -2,52 +2,28 @@
   setup
   lang="ts"
 >
-import { ref, watch } from "vue";
+import { reactive, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import AppInput from "@/components/ui/form/app-input/AppInput.vue";
 import AppSelect from "@/components/ui/form/app-select/AppSelect.vue";
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 import useConfirm from "@/components/ui/app-confirm/useConfirm";
+import {
+  FoodFactoriesCreateFormType
+} from "@/modules/Settings/components/Reference/CombineNutrition/combine-nutrition.type";
+import { Name } from "@/utils/helper";
+import AppOverlay from "@/components/ui/app-overlay/AppOverlay.vue";
 
 const route = useRoute();
 const router = useRouter();
 const { confirm } = useConfirm();
 
-
-interface TableData {
-  id: number;
-  name: string;
-  type: string;
-}
-
 const input1 = ref<string>("");
-const tableData = ref<TableData[]>([
-  {
-    id: 1,
-    name: "Зарафшан",
-    type: "Начальник управления",
-  },
-  {
-    id: 2,
-    name: "Зафаробод",
-    type: "Начальник управления",
-  },
-  {
-    id: 3,
-    name: "Навои",
-    type: "Начальник управления",
-  },
-  {
-    id: 4,
-    name: "Нуробод",
-    type: "Начальник управления",
-  },
-  {
-    id: 5,
-    name: "Учкудук",
-    type: "Начальник управления",
-  },
-]);
+
+const form = reactive<FoodFactoriesCreateFormType>({
+  name: new Name(),
+  management_id: null
+});
 
 const { setBreadCrumb } = useBreadcrumb();
 
@@ -108,12 +84,11 @@ const switchChange = async (): Promise<boolean> => {
   <div>
     <div class="flex items-center justify-between mb-[24px]">
       <h1 class="m-0 font-semibold text-[32px] leading-[48px]">{{ route.meta.title }}</h1>
-
     </div>
 
     <div class="flex gap-6">
       <div class="w-[70%]">
-        <div class="border border-[#E2E6F3] rounded-[24px] p-[24px] h-[65vh] flex flex-col">
+        <AppOverlay class="border border-[#E2E6F3] rounded-[24px] p-[24px] h-[65vh] flex flex-col">
           <div class="flex items-center gap-4">
             <app-input
               label="Наименование (RU)"
@@ -145,7 +120,7 @@ const switchChange = async (): Promise<boolean> => {
             class="app-switch mt-auto"
             :before-change="switchChange"
           />
-        </div>
+        </AppOverlay>
 
         <div
           v-if="!route.query.type"

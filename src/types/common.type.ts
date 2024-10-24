@@ -7,3 +7,8 @@ export interface TableColumnType {
 
   [key: string]: any;
 }
+
+export interface NameType{
+  uz: string,
+  ru: string,
+}

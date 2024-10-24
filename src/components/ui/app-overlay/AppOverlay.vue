@@ -30,7 +30,10 @@ const attrs = useAttrs();
     >
       <slot/>
     </component>
-    <div class="absolute inset-0 z-10">
+    <div
+        v-show="loading"
+        class="absolute inset-0 z-10"
+    >
       <div
           class="absolute bg-[#f6f6f6] inset-0 opacity-80 backdrop-blur-sm"
           :style="{borderRadius: `${rounded}px`}"
