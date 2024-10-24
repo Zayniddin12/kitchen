@@ -13,16 +13,29 @@ interface VidDocument {
   documents: Array<{ id: string | number, name: string }>;
 }
 
+interface Params {
+  search?: string | null;
+  page?: number | string;
+  per_page?: number | string;
+}
+
+interface Pagination {
+  current_page: number | null;
+  per_page: number | null;
+  has_more: boolean;
+  items_count: number | null;
+  total_count: number | null;
+  pages_count: number | null;
+}
+
 interface rationList {
   rations: object[];
-  pagination: {
-    current_page: number | null
-    per_page: number | null
-    has_more: boolean
-    items_count: number | null
-    total_count: number | null
-    pages_count: number | null
-  };
+  pagination: Pagination;
+}
+
+interface WarehouseBasesList {
+  kitchen_types: object[];
+  pagination: Pagination;
 }
 
 export const useSettingsStore = defineStore("settingsStore", () => {
@@ -81,10 +94,21 @@ export const useSettingsStore = defineStore("settingsStore", () => {
 
   const rationItem = ref<object>({});
 
-  // begzod end
 
+  const wareHouseList = ref<WarehouseBasesList>({
+    kitchen_types: [],
+    pagination: {
+      current_page: 0,
+      per_page: 0,
+      has_more: false,
+      items_count: 0,
+      total_count: 0,
+      pages_count: 0,
+    },
+  });
 
-  // begzod
+  const wareHouseItem = ref<object>({});
+
 
   // Документы Типы документов
   const GET_TYPE_DOCUMENT = async (params?: { search: string | null }) => {
@@ -122,6 +146,34 @@ export const useSettingsStore = defineStore("settingsStore", () => {
 
   const DELETE_RATION = async (id: string | number) => {
     return await $axios.delete("/rations/" + id);
+
+  };
+
+
+  // Базы складов
+
+  const GET_WAREHOUSE_BASES_LIST = async (params?: Params) => {
+    const { data } = await $axios.get("/bases", { params });
+    wareHouseList.value = data.data;
+  };
+
+  const GET_WAREHOUSE_BASES_ITEM = async (id: string | number) => {
+    const { data } = await $axios.get("/bases/" + id);
+    wareHouseItem.value = data.data;
+  };
+
+  const CRETE_WAREHOUSE_BASES = async (data) => {
+    return await $axios.post("/bases/", data);
+
+  };
+
+  const UPDATE_WAREHOUSE_BASES = async ({ id, data }: { id: string, data: any }) => {
+    return await $axios.post("/bases/" + id, data);
+
+  };
+
+  const DELETE_WAREHOUSE_BASES = async (id: string | number) => {
+    return await $axios.delete("/bases/" + id);
 
   };
 
@@ -316,8 +368,15 @@ export const useSettingsStore = defineStore("settingsStore", () => {
     // begzod
     vidDocument,
     typeDocument,
+    wareHouseList,
+    wareHouseItem,
     GET_TYPE_DOCUMENT,
     GET_VID_DOCUMENT,
+    GET_WAREHOUSE_BASES_LIST,
+    GET_WAREHOUSE_BASES_ITEM,
+    UPDATE_WAREHOUSE_BASES,
+    CRETE_WAREHOUSE_BASES,
+    DELETE_WAREHOUSE_BASES,
     // begzod end
 
     // abbos
