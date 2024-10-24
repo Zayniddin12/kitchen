@@ -56,7 +56,6 @@ const refresh = async () => {
   }
 };
 
-
 watchDebounced(search, () => {
   refresh();
 }, { debounce: 1000, maxWait: 5000 });
