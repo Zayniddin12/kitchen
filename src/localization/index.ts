@@ -51,6 +51,7 @@ watch(activeLocale, (newLocale) => {
 export const changeLocale = (locale: LOCALES) => {
   if (isValidLocale(locale)) {
     activeLocale.value = locale;
+    window.location.reload();
   }
 };
 

@@ -95,7 +95,7 @@ export default [
   },
 
   {
-    path: "/reference-combine-nutrition-detail/:id",
+    path: "/reference-combine-nutrition-detail/:id(\\d+)",
     name: "reference-combine-nutrition-edit",
     component: () => import("@/modules/Settings/components/Reference/CombineNutrition/CombineNutritionAddEditModal.vue"),
     meta: {
