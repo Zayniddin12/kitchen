@@ -56,7 +56,7 @@ export default [
   },
 
   {
-    path: "/reference-regional-directorates-detail/:id",
+    path: "/reference-regional-directorates-detail/:id(\\d+)",
     name: "reference-regional-directorates-edit",
     component: () => import("@/modules/Settings/components/Reference/RegionalDirectorates/RegionalDirectoratesAddEditModal.vue"),
     meta: {
@@ -65,7 +65,7 @@ export default [
   },
 
   {
-    path: "/reference-regional-directorates-view/:id",
+    path: "/reference-regional-directorates-view/:id(\\d+)",
     name: "reference-regional-directorates-view",
     component: () => import("@/modules/Settings/components/Reference/RegionalDirectorates/RegionalDirectoratesAddEditModal.vue"),
     meta: {
@@ -95,7 +95,7 @@ export default [
   },
 
   {
-    path: "/reference-combine-nutrition-detail/:id",
+    path: "/reference-combine-nutrition-detail/:id(\\d+)",
     name: "reference-combine-nutrition-edit",
     component: () => import("@/modules/Settings/components/Reference/CombineNutrition/CombineNutritionAddEditModal.vue"),
     meta: {
@@ -105,7 +105,7 @@ export default [
   },
 
   {
-    path: "/reference-combine-nutrition-view/:id",
+    path: "/reference-combine-nutrition-view/:id(\\d+)",
     name: "reference-combine-nutrition-view",
     component: () => import("@/modules/Settings/components/Reference/CombineNutrition/CombineNutritionAddEditModal.vue"),
     meta: {
@@ -136,7 +136,7 @@ export default [
   },
 
   {
-    path: "/reference-warehouse-bases-detail/:id",
+    path: "/reference-warehouse-bases-detail/:id(\\d+)",
     name: "reference-warehouse-bases-edit",
     component: () => import("@/modules/Settings/components/Reference/WarehouseBasesAddEditView.vue"),
     meta: {
@@ -146,7 +146,7 @@ export default [
   },
 
   {
-    path: "/reference-warehouse-bases-view/:id",
+    path: "/reference-warehouse-bases-view/:id(\\d+)",
     name: "reference-warehouse-bases-view",
     component: () => import("@/modules/Settings/components/Reference/WarehouseBasesAddEditView.vue"),
     meta: {
@@ -177,7 +177,7 @@ export default [
   },
 
   {
-    path: "/reference-main-bases-detail/:id",
+    path: "/reference-main-bases-detail/:id(\\d+)",
     name: "reference-main-bases-edit",
     component: () => import("@/modules/Settings/components/Reference/MainBases/MainBasesAddEditView.vue"),
     meta: {
@@ -187,7 +187,7 @@ export default [
   },
 
   {
-    path: "/reference-main-bases-view/:id",
+    path: "/reference-main-bases-view/:id(\\d+)",
     name: "reference-main-bases-view",
     component: () => import("@/modules/Settings/components/Reference/MainBases/MainBasesAddEditView.vue"),
     meta: {
@@ -217,7 +217,7 @@ export default [
   },
 
   {
-    path: "/reference-kitchen-warehouse-detail/:id",
+    path: "/reference-kitchen-warehouse-detail/:id(\\d+)",
     name: "reference-kitchen-warehouse-edit",
     component: () => import("@/modules/Settings/components/Reference/KitchenWarehouse/KitchenWarehousesAddEditView.vue"),
     meta: {
@@ -227,7 +227,7 @@ export default [
   },
 
   {
-    path: "/reference-kitchen-warehouse-view/:id",
+    path: "/reference-kitchen-warehouse-view/:id(\\d+)",
     name: "reference-kitchen-warehouse-view",
     component: () => import("@/modules/Settings/components/Reference/KitchenWarehouse/KitchenWarehousesAddEditView.vue"),
     meta: {
@@ -258,7 +258,7 @@ export default [
   },
 
   {
-    path: "/reference-kitchen-type-detail/:id",
+    path: "/reference-kitchen-type-detail/:id(\\d+)",
     name: "reference-kitchen-type-edit",
     component: () => import("@/modules/Settings/components/Reference/KitchenType/KitchenTypeAddEditModal.vue"),
     meta: {
@@ -268,7 +268,7 @@ export default [
   },
 
   {
-    path: "/reference-kitchen-type-view/:id",
+    path: "/reference-kitchen-type-view/:id(\\d+)",
     name: "reference-kitchen-type-view",
     component: () => import("@/modules/Settings/components/Reference/KitchenType/KitchenTypeAddEditModal.vue"),
     meta: {
@@ -299,7 +299,7 @@ export default [
   },
 
   {
-    path: "/reference-suppliers-detail/:id",
+    path: "/reference-suppliers-detail/:id(\\d+)",
     name: "reference-suppliers-edit",
     component: () => import("@/modules/Settings/components/Reference/Suppliers/SuppliersAddEditView.vue"),
     meta: {
@@ -309,7 +309,7 @@ export default [
   },
 
   {
-    path: "/reference-suppliers-view/:id",
+    path: "/reference-suppliers-view/:id(\\d+)",
     name: "reference-suppliers-view",
     component: () => import("@/modules/Settings/components/Reference/Suppliers/SuppliersAddEditView.vue"),
     meta: {
@@ -340,7 +340,7 @@ export default [
   },
 
   {
-    path: "/reference-organization-detail/:id",
+    path: "/reference-organization-detail/:id(\\d+)",
     name: "reference-organization-edit",
     component: () => import("@/modules/Settings/components/Reference/Organizations/OrganizationsAddEditView.vue"),
     meta: {
@@ -350,7 +350,7 @@ export default [
   },
 
   {
-    path: "/reference-organization-view/:id",
+    path: "/reference-organization-view/:id(\\d+)",
     name: "reference-organization-view",
     component: () => import("@/modules/Settings/components/Reference/Organizations/OrganizationsAddEditView.vue"),
     meta: {
@@ -379,7 +379,7 @@ export default [
     },
   },
   {
-    path: "/reference-type-product-edit/:id",
+    path: "/reference-type-product-edit/:id(\\d+)",
     name: "reference-type-product-edit-id",
     component: () =>
       import("@/modules/Settings/components/Reference/Product/TypeProduct/AddEditTypeDoc.vue"),
@@ -389,7 +389,7 @@ export default [
     },
   },
   {
-    path: "/reference-type-product-view/:id",
+    path: "/reference-type-product-view/:id(\\d+)",
     name: "reference-type-product-view-id",
     component: () =>
       import("@/modules/Settings/components/Reference/Product/TypeProduct/AddEditTypeDoc.vue"),
@@ -418,7 +418,7 @@ export default [
     },
   },
   {
-    path: "/reference-vid-view/:id",
+    path: "/reference-vid-view/:id(\\d+)",
     name: "reference-vid-view-id",
     component: () => import("@/modules/Settings/components/Reference/Product/VidProduct/ProductVidDocCreate.vue"),
     meta: {
@@ -427,7 +427,7 @@ export default [
     },
   },
   {
-    path: "/reference-vid-edit/:id",
+    path: "/reference-vid-edit/:id(\\d+)",
     name: "reference-vid-edit-id",
     component: () => import("@/modules/Settings/components/Reference/Product/VidProduct/ProductVidDocCreate.vue"),
     meta: {
@@ -457,7 +457,7 @@ export default [
     },
   },
   {
-    path: "/reference-ration-edit/:id",
+    path: "/reference-ration-edit/:id(\\d+)",
     name: "reference-ration-edit-id",
     component: () => import("@/modules/Settings/components/Reference/RationDishes/Ration/AddEditRation.vue"),
     meta: {
@@ -466,7 +466,7 @@ export default [
     },
   },
   {
-    path: "/reference-ration-view/:id",
+    path: "/reference-ration-view/:id(\\d+)",
     name: "reference-ration-view-id",
     component: () => import("@/modules/Settings/components/Reference/RationDishes/Ration/AddEditRation.vue"),
     meta: {
@@ -494,7 +494,7 @@ export default [
     },
   },
   {
-    path: "/reference-dish-edit/:id",
+    path: "/reference-dish-edit/:id(\\d+)",
     name: "reference-dish-id",
     component: () => import("@/modules/Settings/components/Reference/RationDishes/Dish/AddEditDish.vue"),
     meta: {
@@ -503,7 +503,7 @@ export default [
     },
   },
   {
-    path: "/reference-dish-view/:id",
+    path: "/reference-dish-view/:id(\\d+)",
     name: "reference-view-id",
     component: () => import("@/modules/Settings/components/Reference/RationDishes/Dish/AddEditDish.vue"),
     meta: {

@@ -164,7 +164,11 @@ export const useSettingsStore = defineStore("settingsStore", () => {
   };
 
   const UPDATE_VID_PRODUCT = ({ id, data }: { id: string | number; data: any }) => {
-    return $axios.put(`/product-types/${id}/`, data);
+    return $axios.post(`/product-types/${id}/`, data, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
   };
 
   // Единицы измерения
@@ -207,7 +211,7 @@ export const useSettingsStore = defineStore("settingsStore", () => {
 
   const GET_REGIONAL = async (params: any) => {
     const { data } = await $axios.get("/managements", { params });
-    regional.value = data;
+    regional.value = data.data;
   };
 
   const GET_REGIONAL_DETAIL = async (id: number) => {
@@ -270,6 +274,15 @@ export const useSettingsStore = defineStore("settingsStore", () => {
     const { data } = await $axios.get("/meals", { params });
     meals.value = data.data;
   };
+
+  const CREATE_MEALS = (data: any) => {
+    return $axios.post("/meals", data);
+  };
+
+  const GET_MEALS_DETAIL = async (id: number) => {
+    const { data } = await $axios.get(`/meals/${id}`);
+    return data.data;
+  };
   // dilshod end
 
 
@@ -328,6 +341,8 @@ export const useSettingsStore = defineStore("settingsStore", () => {
 
     meals,
     GET_MEALS,
+    CREATE_MEALS,
+    GET_MEALS_DETAIL
     // dilshod end
   };
 });

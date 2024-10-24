@@ -112,7 +112,7 @@ const handleSearch = (): void => {
       <el-table-column prop="name" label="Наименование кухни" sortable width="400">
         <template #default="scope">
            <span v-if="scope.row.name">
-             {{ scope.row.name[$i18n.locale] }}
+             {{ scope.row.name }}
            </span>
         </template>
       </el-table-column>

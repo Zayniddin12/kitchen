@@ -95,12 +95,15 @@ const handleSubmitProduct = async (): Promise<void> => {
       await store.UPDATE_TYPE_PRODUCT({
         id: route.params.id as string | number,
         data: {
+          is_active: +payload.is_active,
           name: payload.name,
-          is_active: payload.is_active,
         },
       });
     } else {
-      await store.CREATE_TYPE_PRODUCT(payload);
+      await store.CREATE_TYPE_PRODUCT({
+        is_active: +payload.is_active,
+        name: payload.name,
+      });
     }
 
     ElNotification({title: 'Success', type: 'success'});

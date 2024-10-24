@@ -6,7 +6,6 @@ import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 import {useSettingsStore} from "@/modules/Settings/store";
 import {ElNotification} from "element-plus";
 
-
 interface Params {
   search: string | null;
   page: number;
@@ -79,6 +78,10 @@ const changePagination = (event: any) => {
 
   refresh()
 }
+
+const setDefaultImage = (event) => {
+  event.target.src = 'https://www.landuse-ca.org/wp-content/uploads/2019/04/no-photo-available.png';
+};
 </script>
 
 <template>
@@ -112,7 +115,7 @@ const changePagination = (event: any) => {
       <el-table-column prop="id" label="№" width="80"/>
       <el-table-column prop="image" label="Картинка блюды" sortable>
         <template #default="scope">
-          <img :src="scope.row.image" class="h-[32px] w-[32px] object-cover rounded-full" alt="photo"/>
+          <img @error="setDefaultImage" :src="scope.row.image" class="h-[32px] w-[32px] object-cover rounded-full" alt="photo"/>
         </template>
       </el-table-column>
       <el-table-column prop="name" label="Наименование блюда" sortable/>

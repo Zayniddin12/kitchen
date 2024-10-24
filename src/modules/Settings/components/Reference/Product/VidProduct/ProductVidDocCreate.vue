@@ -8,6 +8,8 @@ import AppMediaUploader from "@/components/ui/form/app-media-uploader/AppMediaUp
 import useConfirm from "@/components/ui/app-confirm/useConfirm";
 import {useSettingsStore} from "@/modules/Settings/store";
 import {ElNotification} from "element-plus";
+import AppForm from "@/components/ui/form/app-form/AppForm.vue";
+import {ValidationType} from "@/components/ui/form/app-form/app-form.type";
 
 interface Name {
   uz: string;
@@ -21,6 +23,11 @@ interface DataValue {
   measurement_unit_id: string | number | null;
   is_active: boolean | number;
 }
+
+const v$ = ref<ValidationType | null>(null);
+const setValidation = (value: ValidationType) => {
+  v$.value = value;
+};
 
 const store = useSettingsStore()
 const route = useRoute();
@@ -38,6 +45,7 @@ const dataValue = ref<DataValue>({
   measurement_unit_id: '',
   is_active: true
 })
+const existingImage = ref<string>('')
 
 onMounted(async () => {
   await store.GET_UNITS()
@@ -47,6 +55,7 @@ onMounted(async () => {
     const detail = await store.GET_TYPE_PRODUCT_DETAIL(route.params.id as string | number)
     if (detail && detail.data) {
       dataValue.value = detail.data.product_type
+      existingImage.value = dataValue.value.image;
     }
   }
 })
@@ -94,33 +103,42 @@ const switchChange = async (): Promise<boolean> => {
 };
 
 const handleSubmit = async () => {
-  try {
-    const formData = new FormData();
-    formData.append('name[uz]', dataValue.value.name.uz);
-    formData.append('name[ru]', dataValue.value.name.ru);
-    if (dataValue.value.image){
-      formData.append('image', dataValue.value.image);
-    }
-    formData.append('parent_id', dataValue.value.parent_id);
-    formData.append('measurement_unit_id', dataValue.value.measurement_unit_id);
-    if (dataValue.value.is_active) {
-      formData.append('is_active', +dataValue.value.is_active);
-    }
+  if (!v$.value) return;
 
-    if (route.params.id) {
-      await store.UPDATE_VID_PRODUCT({
-        id: route.params.id as string | number,
-        data: formData
-      })
-    } else {
-      await store.CREATE_VID_PRODUCT(formData)
+  if ((await v$.value.validate())) {
+    try {
+      const formData = new FormData();
+      formData.append('name[uz]', dataValue.value.name.uz);
+      formData.append('name[ru]', dataValue.value.name.ru);
+      formData.append('parent_id', dataValue.value.parent_id);
+      formData.append('measurement_unit_id', Number(dataValue.value.measurement_unit_id));
+      if (route.params.id) formData.append('_method', 'PUT')
+
+      if (dataValue.value.image && dataValue.value.image !== existingImage.value) {
+        formData.append('image', dataValue.value.image);
+      }
+
+      if (dataValue.value.is_active) {
+        formData.append('is_active', +dataValue.value.is_active);
+      }
+
+      if (route.params.id) {
+        await store.UPDATE_VID_PRODUCT({
+          id: route.params.id as string | number,
+          data: formData
+        });
+      } else {
+        await store.CREATE_VID_PRODUCT(formData);
+      }
+
+      ElNotification({title: 'Success', type: 'success'});
+      await router.push('/reference-vid-product');
     }
-    ElNotification({title: 'Success', type: 'success'});
-    await router.push('/reference-vid-product')
-  } catch (e) {
-    ElNotification({title: 'Error', type: 'error'});
+    catch (e) {
+      ElNotification({title: 'Error', type: 'error'});
+    }
   }
-}
+};
 
 const isDisabled = computed(() => {
   return route.name === 'reference-vid-view-id'
@@ -139,47 +157,61 @@ watchEffect(() => {
       <div class="border rounded-[24px] p-[24px] w-[70%]  min-h-[65vh]">
         <AppMediaUploader
             v-model="dataValue.image"
+            :value="existingImage"
         />
+        <AppForm
+            :value="dataValue"
+            @validation="setValidation"
+            class="mt-6"
+        >
+          <div class="grid grid-cols-2 gap-4 mt-[24px]">
+            <app-input
+                v-model="dataValue.name.ru"
+                :disabled="isDisabled"
+                label="Наименование (RU)"
+                label-class="text-[#A8AAAE] text-[12px]"
+                placeholder="Введите"
+                required
+                prop="name.ru"
+            />
 
-        <div class="grid grid-cols-2 gap-4 mt-[24px]">
-          <app-input
-              v-model="dataValue.name.ru"
-              :disabled="isDisabled"
-              label="Наименование (RU)"
-              label-class="text-[#A8AAAE] text-[12px]"
-              placeholder="Введите"
-          />
+            <app-input
+                v-model="dataValue.name.uz"
+                :disabled="isDisabled"
+                label="Наименование (UZ)"
+                label-class="text-[#A8AAAE] text-[12px]"
+                placeholder="Введите"
+                required
+                prop="name.uz"
+            />
 
-          <app-input
-              v-model="dataValue.name.uz"
-              :disabled="isDisabled"
-              label="Наименование (UZ)"
-              label-class="text-[#A8AAAE] text-[12px]"
-              placeholder="Введите"
-          />
+            <app-select
+                v-model="dataValue.parent_id"
+                :disabled="isDisabled"
+                label="Тип продукта"
+                label-class="text-[#A8AAAE] text-[12px]"
+                placeholder="Введите"
+                itemValue="id"
+                itemLabel="name"
+                :items="store.typeProduct.product_categories"
+                required
+                prop="parent_id"
+            />
 
-          <app-select
-              v-model="dataValue.parent_id"
-              :disabled="isDisabled"
-              label="Тип продукта"
-              label-class="text-[#A8AAAE] text-[12px]"
-              placeholder="Введите"
-              itemValue="id"
-              itemLabel="name"
-              :items="store.typeProduct.product_categories"
-          />
-
-          <app-select
-              v-model="dataValue.measurement_unit_id"
-              :disabled="isDisabled"
-              label="Единица измерения"
-              label-class="text-[#A8AAAE] text-[12px]"
-              placeholder="Введите"
-              itemValue="id"
-              itemLabel="name"
-              :items="store.units.units"
-          />
-        </div>
+            <app-select
+                v-model="dataValue.measurement_unit_id"
+                :disabled="isDisabled"
+                label="Единица измерения"
+                label-class="text-[#A8AAAE] text-[12px]"
+                placeholder="Введите"
+                itemValue="id"
+                itemLabel="name"
+                :items="store.units.units"
+                required
+                prop="measurement_unit_id"
+            />
+          </div>
+        </AppForm>
 
         <el-switch
             v-model="dataValue.is_active"

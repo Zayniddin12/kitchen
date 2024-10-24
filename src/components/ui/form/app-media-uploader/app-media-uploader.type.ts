@@ -1,4 +1,4 @@
-export type AppMediaUploaderValueType = string | ArrayBuffer;
+export type AppMediaUploaderValueType = string | ArrayBuffer | File;
 
 export interface AppMediaUploaderPropsType {
   value?: AppMediaUploaderValueType;

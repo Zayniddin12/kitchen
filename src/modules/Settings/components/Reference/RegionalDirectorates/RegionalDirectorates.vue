@@ -151,7 +151,7 @@ const setBreadCrumbFn = () => {
 
       <div class="mt-[24px] flex items-center justify-between">
         <div class="text-cool-gray text-[14px]">
-          Показано 1–10 из {{ store.providers.paginator.total_count }} результатов
+          Показано 1–10 из {{ store.regional.paginator.total_count }} результатов
         </div>
 
         <el-pagination
