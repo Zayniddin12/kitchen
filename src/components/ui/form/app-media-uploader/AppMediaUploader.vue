@@ -6,18 +6,19 @@ import {
   AppMediaUploaderPropsType,
   AppMediaUploaderValueType,
 } from "@/components/ui/form/app-media-uploader/app-media-uploader.type";
-import { computed, ref, useTemplateRef } from "vue";
+import {computed, ref, useTemplateRef, watch} from "vue";
 import { generateRandomID } from "@/utils/helper";
 import UploadIcon from "@/assets/images/icons/upload.svg";
 
 const id = generateRandomID();
 
 const model = defineModel<AppMediaUploaderValueType>({
-  default: (props: AppMediaUploaderPropsType) => props.value,
+  default: "",
 });
 
 const props = withDefaults(defineProps<AppMediaUploaderPropsType>(), {
   height: 224,
+  loading: false
 });
 
 const computedHeight = computed(() => {
@@ -30,9 +31,7 @@ const emit = defineEmits<{
 }>();
 
 const inputFile = useTemplateRef<HTMLInputElement>("input-file");
-const mediaFile = ref<string | ArrayBuffer | null>(null);
 const fileType = ref<string>("");
-const isLoading = ref(false);
 
 const uploadImage = async (event: Event) => {
   const target = event.target as HTMLInputElement | null;
@@ -42,20 +41,15 @@ const uploadImage = async (event: Event) => {
   const file: File = target.files[0];
 
   fileType.value = file.type.split("/")[0];
-  isLoading.value = true;
 
   await readImage(file);
-
-  model.value = mediaFile.value;
-
-  setTimeout(() => isLoading.value = false, 500);
 };
 
 const readImage = async (file: File) => {
   if (file instanceof File) {
     const reader = new FileReader();
 
-    mediaFile.value = await new Promise<string | ArrayBuffer | null>((resolve, reject) => {
+    model.value = await new Promise<string | ArrayBuffer | null>((resolve, reject) => {
       reader.onload = () => resolve(reader.result);
       reader.onerror = () => reject(reader.error);
       reader.readAsDataURL(file);
@@ -64,12 +58,18 @@ const readImage = async (file: File) => {
 };
 
 const clear = () => {
-  mediaFile.value = null;
+  model.value = null;
   if (inputFile.value) {
     inputFile.value.value = "";
   }
   emit("clear");
 };
+
+watch(() => props.value, (newValue) => {
+  if(newValue) {
+    model.value = newValue;
+  }
+},{immediate: true});
 
 </script>
 
@@ -85,24 +85,25 @@ const clear = () => {
     />
     <label
       :for="id"
-      :class="['bg-white-blue rounded-2xl border-dashed border border-gray-300 overflow-y-hidden flex items-center justify-center', {'cursor-pointer': !mediaFile}]"
+      :class="['bg-white-blue rounded-2xl border-dashed border border-gray-300 overflow-y-hidden flex items-center justify-center', {'cursor-pointer': !model}]"
       :style="{'height': computedHeight}"
     >
       <ElProgress
-        v-if="isLoading"
-        :percentage="80"
+        v-if="loading"
+        type="circle"
         :stroke-width="5"
-        color="primary"
+        :percentage="30"
+        status="success"
         :show-text="false"
-        indeterminate
-        :duration="1.5"
+        :indeterminate="true"
+        :duration="1"
       />
       <span
-        v-if="mediaFile"
+        v-if="model"
         class="relative cursor-pointer z-1 group w-full"
       >
         <img
-          :src="mediaFile as string"
+          :src="model as string"
           alt="file img"
           :class="['w-full rounded-2xl object-contain h-full p-2']"
           :style="{'max-height': computedHeight}"
@@ -114,7 +115,7 @@ const clear = () => {
         </button>
       </span>
       <span
-        v-else
+        v-else-if="!model && !loading"
         class="flex flex-col items-center justify-center p-6"
       >
         <span class="bg-white rounded-2xl p-4">
