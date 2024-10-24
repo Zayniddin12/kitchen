@@ -2,7 +2,7 @@ import { defineStore } from "pinia";
 import $axios from "@/plugins/axios";
 import { ref } from "vue";
 import {
-    FoodFactoriesCreateFormType, FoodFactoryType
+    FoodFactoriesCreateFormType, FoodFactoriesParamsType, FoodFactoriesType, FoodFactoryType
 } from "@/modules/Settings/components/Reference/CombineNutrition/combine-nutrition.type";
 
 interface TypeDocument {
@@ -233,21 +233,39 @@ export const useSettingsStore = defineStore("settingsStore", () => {
 
     const foodFactoriesPrefix = "food-factories";
 
-    const createFoodFactory = async (data: FoodFactoriesCreateFormType) => {
-        return await $axios.post(foodFactoriesPrefix, data);
+    const createFoodFactory = (data: FoodFactoriesCreateFormType) => {
+        return $axios.post(foodFactoriesPrefix, data);
     };
 
-    const updateFoodFactory = async (id: number, data: FoodFactoriesCreateFormType) => {
-        return await $axios.put(`${foodFactoriesPrefix}/${id}`, data);
+    const updateFoodFactory = (id: number, data: FoodFactoriesCreateFormType) => {
+        return $axios.put(`${foodFactoriesPrefix}/${id}`, data);
     };
 
     const foodFactory = ref<null | FoodFactoryType>(null);
     const foodFactoryLoading = ref(false);
 
     const showFoodFactory = async (id: number) => {
-         await $axios.get(`${foodFactoriesPrefix}/${id}`).then(({data}) => {
+        foodFactoryLoading.value = true;
+        await $axios.get(`${foodFactoriesPrefix}/${id}`).then(({ data }) => {
+            if (data.data) {
+                foodFactory.value = data.data.food_factory;
+            }
+        }).finally(() => foodFactoryLoading.value = false);
+    };
 
-         }).finally(() => foodFactoryLoading.value = false);
+    const deleteFoodFactory = async (id: number) => {
+        return $axios.delete(`${foodFactoriesPrefix}/${id}`);
+    };
+
+    const foodFactories = ref<FoodFactoriesType | null>(null);
+    const foodFactoriesLoading = ref(false);
+
+    const fetchFoodFactories = async (params: FoodFactoriesParamsType) => {
+        foodFactoriesLoading.value = true;
+
+        await $axios.get(foodFactoriesPrefix, { params }).then(({ data }) => {
+            if (data.data) foodFactories.value = data.data;
+        }).finally(() => foodFactoriesLoading.value = false);
     };
 
     // abbos end
@@ -311,6 +329,12 @@ export const useSettingsStore = defineStore("settingsStore", () => {
         //     abbos start
         createFoodFactory,
         updateFoodFactory,
-        showFoodFactory
+        showFoodFactory,
+        foodFactory,
+        foodFactoryLoading,
+        deleteFoodFactory,
+        foodFactories,
+        foodFactoriesLoading,
+        fetchFoodFactories
     };
 });
