@@ -32,6 +32,7 @@ const emit = defineEmits<{
 
 const inputFile = useTemplateRef<HTMLInputElement>("input-file");
 const fileType = ref<string>("");
+const mediaFile = ref<string>("");
 
 const uploadImage = async (event: Event) => {
   const target = event.target as HTMLInputElement | null;
@@ -43,13 +44,14 @@ const uploadImage = async (event: Event) => {
   fileType.value = file.type.split("/")[0];
 
   await readImage(file);
+  model.value = file
 };
 
 const readImage = async (file: File) => {
   if (file instanceof File) {
     const reader = new FileReader();
 
-    model.value = await new Promise<string | ArrayBuffer | null>((resolve, reject) => {
+    mediaFile.value = await new Promise<string | ArrayBuffer | null>((resolve, reject) => {
       reader.onload = () => resolve(reader.result);
       reader.onerror = () => reject(reader.error);
       reader.readAsDataURL(file);
@@ -58,7 +60,8 @@ const readImage = async (file: File) => {
 };
 
 const clear = () => {
-  model.value = null;
+  mediaFile.value = "";
+  model.value = "";
   if (inputFile.value) {
     inputFile.value.value = "";
   }
@@ -67,7 +70,7 @@ const clear = () => {
 
 watch(() => props.value, (newValue) => {
   if(newValue) {
-    model.value = newValue;
+    mediaFile.value = newValue;
   }
 },{immediate: true});
 
@@ -85,7 +88,7 @@ watch(() => props.value, (newValue) => {
     />
     <label
       :for="id"
-      :class="['bg-white-blue rounded-2xl border-dashed border border-gray-300 overflow-y-hidden flex items-center justify-center', {'cursor-pointer': !model}]"
+      :class="['bg-white-blue rounded-2xl border-dashed border border-gray-300 overflow-y-hidden flex items-center justify-center', {'cursor-pointer': !mediaFile}]"
       :style="{'height': computedHeight}"
     >
       <ElProgress
@@ -99,11 +102,11 @@ watch(() => props.value, (newValue) => {
         :duration="1"
       />
       <span
-        v-if="model"
+        v-if="mediaFile"
         class="relative cursor-pointer z-1 group w-full"
       >
         <img
-          :src="model as string"
+          :src="mediaFile as string"
           alt="file img"
           :class="['w-full rounded-2xl object-contain h-full p-2']"
           :style="{'max-height': computedHeight}"
@@ -115,7 +118,7 @@ watch(() => props.value, (newValue) => {
         </button>
       </span>
       <span
-        v-else-if="!model && !loading"
+        v-else-if="!mediaFile && !loading"
         class="flex flex-col items-center justify-center p-6"
       >
         <span class="bg-white rounded-2xl p-4">

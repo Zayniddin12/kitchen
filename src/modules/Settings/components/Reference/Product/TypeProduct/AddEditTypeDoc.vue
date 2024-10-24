@@ -95,8 +95,8 @@ const handleSubmitProduct = async (): Promise<void> => {
       await store.UPDATE_TYPE_PRODUCT({
         id: route.params.id as string | number,
         data: {
+          is_active: +payload.is_active,
           name: payload.name,
-          is_active: payload.is_active,
         },
       });
     } else {

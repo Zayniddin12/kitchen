@@ -112,7 +112,11 @@ export const useSettingsStore = defineStore("settingsStore", () => {
   };
 
   const UPDATE_VID_PRODUCT = ({ id, data }: { id: string | number; data: any }) => {
-    return $axios.put(`/product-types/${id}/`, data);
+    return $axios.put(`/product-types/${id}/`, data, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
   };
 
   // Единицы измерения
@@ -155,7 +159,7 @@ export const useSettingsStore = defineStore("settingsStore", () => {
 
   const GET_REGIONAL = async (params: any) => {
     const { data } = await $axios.get("/managements", { params });
-    regional.value = data;
+    regional.value = data.data;
   };
 
   const GET_REGIONAL_DETAIL = async (id: number) => {

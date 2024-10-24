@@ -38,6 +38,7 @@ const dataValue = ref<DataValue>({
   measurement_unit_id: '',
   is_active: true
 })
+const existingImage = ref<string>('')
 
 onMounted(async () => {
   await store.GET_UNITS()
@@ -47,6 +48,7 @@ onMounted(async () => {
     const detail = await store.GET_TYPE_PRODUCT_DETAIL(route.params.id as string | number)
     if (detail && detail.data) {
       dataValue.value = detail.data.product_type
+      existingImage.value = dataValue.value.image;
     }
   }
 })
@@ -98,11 +100,13 @@ const handleSubmit = async () => {
     const formData = new FormData();
     formData.append('name[uz]', dataValue.value.name.uz);
     formData.append('name[ru]', dataValue.value.name.ru);
-    if (dataValue.value.image){
-      formData.append('image', dataValue.value.image);
-    }
     formData.append('parent_id', dataValue.value.parent_id);
     formData.append('measurement_unit_id', dataValue.value.measurement_unit_id);
+
+    if (dataValue.value.image && dataValue.value.image !== existingImage.value) {
+      formData.append('image', dataValue.value.image);
+    }
+
     if (dataValue.value.is_active) {
       formData.append('is_active', +dataValue.value.is_active);
     }
@@ -111,16 +115,17 @@ const handleSubmit = async () => {
       await store.UPDATE_VID_PRODUCT({
         id: route.params.id as string | number,
         data: formData
-      })
+      });
     } else {
-      await store.CREATE_VID_PRODUCT(formData)
+      await store.CREATE_VID_PRODUCT(formData);
     }
-    ElNotification({title: 'Success', type: 'success'});
-    await router.push('/reference-vid-product')
+
+    ElNotification({ title: 'Success', type: 'success' });
+    await router.push('/reference-vid-product');
   } catch (e) {
-    ElNotification({title: 'Error', type: 'error'});
+    ElNotification({ title: 'Error', type: 'error' });
   }
-}
+};
 
 const isDisabled = computed(() => {
   return route.name === 'reference-vid-view-id'
@@ -139,6 +144,7 @@ watchEffect(() => {
       <div class="border rounded-[24px] p-[24px] w-[70%]  min-h-[65vh]">
         <AppMediaUploader
             v-model="dataValue.image"
+            :value="existingImage"
         />
 
         <div class="grid grid-cols-2 gap-4 mt-[24px]">
