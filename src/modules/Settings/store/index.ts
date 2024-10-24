@@ -1,6 +1,9 @@
 import { defineStore } from "pinia";
 import $axios from "@/plugins/axios";
 import { ref } from "vue";
+import type {
+  FoodFactoriesCreateFormType, FoodFactoryType,
+} from "@/modules/Settings/components/Reference/CombineNutrition/combine-nutrition.type";
 
 interface TypeDocument {
   document_categories: Array<{ id: string | number, name: string }>;
@@ -289,6 +292,25 @@ export const useSettingsStore = defineStore("settingsStore", () => {
   };
   // dilshod end
 
+  const foodFactoriesPrefix = "food-factories";
+
+  const createFoodFactory = async (data: FoodFactoriesCreateFormType) => {
+    return await $axios.post(foodFactoriesPrefix, data);
+  };
+
+  const updateFoodFactory = async (id: number, data: FoodFactoriesCreateFormType) => {
+    return await $axios.put(`${foodFactoriesPrefix}/${id}`, data);
+  };
+
+  const foodFactory = ref<null | FoodFactoryType>(null);
+  const foodFactoryLoading = ref(false);
+
+  const showFoodFactory = async (id: number) => {
+    await $axios.get(`${foodFactoriesPrefix}/${id}`).then(({ data }) => {
+      foodFactory.value = data.data.food_factory;
+    }).finally(() => foodFactoryLoading.value = false);
+  };
+
 
   return {
     // begzod
@@ -297,6 +319,14 @@ export const useSettingsStore = defineStore("settingsStore", () => {
     GET_TYPE_DOCUMENT,
     GET_VID_DOCUMENT,
     // begzod end
+
+    // abbos
+    createFoodFactory,
+    updateFoodFactory,
+    showFoodFactory,
+    foodFactory,
+    foodFactoryLoading,
+    // abbos end
 
 
     // dilshod
@@ -347,7 +377,7 @@ export const useSettingsStore = defineStore("settingsStore", () => {
     GET_MEALS,
     CREATE_MEALS,
     GET_MEALS_DETAIL,
-    UPDATE_MEALS
+    UPDATE_MEALS,
     // dilshod end
   };
 });

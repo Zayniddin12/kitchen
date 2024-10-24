@@ -275,7 +275,8 @@ watch(() => route.name, () => {
 
                     <button
                         class="bg-[#E2E6F3] rounded-[8px] flex justify-center items-center h-[40px] w-[40px] ml-[16px] mt-2"
-                        @click="handleDelete(index)">
+                        @click="handleDelete(index)"
+                    >
                       <img src="@/assets/images/icons/delete.svg" alt="delete"/>
                     </button>
                   </div>
