@@ -84,9 +84,6 @@ const changeSearch = (): void => {
       </div>
     </div>
 
-    <button @click="router.push(`/reference-vid-view/${1}`)">1</button>
-    <pre>{{ store.vidProduct.product_types}}</pre>
-
     <el-table
         :data="store.vidProduct.product_types"
         v-loading="loading"
@@ -97,11 +94,11 @@ const changeSearch = (): void => {
       <el-table-column prop="id" label="№" width="80"/>
       <el-table-column prop="photo" label="Картинка вида продукта" sortable>
         <template #default="scope">
-          <img v-if="scope.row.image" :src="scope.row.image" alt="#" class="h-[32px] rounded-full"/>
+          <img v-if="scope.row.image" :src="scope.row.image" alt="#" class="h-[32px] w-[32px] rounded-full"/>
           <img
               v-else
               src="https://cdn.vectorstock.com/i/1000v/51/99/icon-of-user-avatar-for-web-site-or-mobile-app-vector-3125199.jpg"
-              alt="#" class="h-[32px] rounded-full"/>
+              alt="#" class="h-[32px] w-[32px] rounded-full"/>
         </template>
       </el-table-column>
       <el-table-column prop="name" label="Наименование вида продукта" sortable>

@@ -2,13 +2,16 @@
 import { onMounted, ref } from "vue";
 import { Search } from "@element-plus/icons-vue";
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
+import { useSettingsStore } from "@/modules/Settings/store";
+
+const settingsStore = useSettingsStore();
 
 interface TableData {
   id: number;
   name: string;
 }
 
-const input1 = ref<string>("");
+const search = ref<null | string>(null);
 const tableData = ref<TableData[]>([
   {
     id: 1,
@@ -54,7 +57,12 @@ const setBreadCrumbFn = () => {
   ]);
 };
 
-onMounted(() => {
+onMounted(async () => {
+  try {
+    await settingsStore.GET_TYPE_DOCUMENT({ search: search.value });
+  } catch (e) {
+
+  }
   setBreadCrumbFn();
 });
 </script>
@@ -62,10 +70,10 @@ onMounted(() => {
 <template>
   <div>
     <div class="flex items-center justify-between">
-      <h1 class="m-0 font-semibold text-[32px] leading-[48px]">Типы документов</h1>
+      <h1 class="m-0 font-semibold text-[32px] leading-[48px]">Типы документов {{ settingsStore.typeDocument }}</h1>
 
       <el-input
-        v-model="input1"
+        v-model="search"
         size="large"
         placeholder="Поиск"
         :prefix-icon="Search"

@@ -21,14 +21,12 @@ onMounted(() => {
   kitchenStore.fetchDepartments();
 });
 
-// watch(() => route.name, function(val) {
-//   if (val === "home") {
-//     localStorage.setItem("child-sidebar-pin", JSON.stringify(false));
-//     childSidebarPin.value = false;
-//   } else {
-//     margin.value = "ml-[396px]";
-//   }
-// }, { immediate: true });
+watch(() => route.name, function(val) {
+  if (val === "home") {
+    localStorage.setItem("child-sidebar", JSON.stringify(false));
+    childSidebar.value = false;
+  }
+}, { immediate: true });
 </script>
 
 <template>

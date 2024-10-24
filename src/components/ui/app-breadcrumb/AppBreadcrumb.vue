@@ -59,7 +59,7 @@ watch(() => route.name, () => {
           :is="itemComponentTag(breadcrumbItem)"
           :to="breadcrumbItem.to"
           @click="breadcrumbItem.click"
-          :class="['text-[#A8AAAE] font-medium text-sm', {'text-dark-gray dark:text-primary': breadcrumbItem.isActionable}]"
+          :class="['text-[#A8AAAE] !text-[12px] font-medium', {'text-dark-gray dark:text-primary': breadcrumbItem.isActionable}]"
         >
           {{ breadcrumbItem.label }}
         </component>

@@ -147,7 +147,7 @@ const cancel = () => {
         <app-input
           class="w-full"
           placeholder="8"
-          label="Название блюда"
+          label="Количество порции"
           label-class="text-[#A8AAAE] text-[12px] font-medium"
         />
       </div>

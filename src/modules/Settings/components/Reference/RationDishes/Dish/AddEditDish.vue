@@ -20,6 +20,8 @@ interface Repeater {
   value: number;
 }
 
+const file = ref("");
+
 const route = useRoute();
 const router = useRouter();
 const { confirm } = useConfirm();
@@ -52,6 +54,16 @@ const repeater = ref<Repeater[]>([{
   title: "",
   value: 0,
 }]);
+const dataValue = ref({
+  name: {
+    ru: '',
+    uz: ''
+  },
+  number: '',
+  quantity: '',
+  unit_id: '',
+  image: '',
+})
 
 const tableData = ref<TableData[]>([
   {
@@ -128,7 +140,8 @@ watch(() => route.name, () => {
     <div class="mt-[24px] flex items-start">
       <div class="w-[90%]">
         <div class="border rounded-[24px] p-[24px]">
-          <AppMediaUploader class="mt-4" />
+          {{file}}
+          <AppMediaUploader v-model="file" class="mt-4" />
 
           <div class="mt-[24px] grid grid-cols-2 gap-5">
             <app-input
@@ -148,6 +161,13 @@ watch(() => route.name, () => {
               label="Ед. измерения"
               placeholder="Выберите"
               label-class="text-[#A8AAAE] text-[12px]"
+            />
+
+            <app-input
+              label="Уникальный номер блюда"
+              placeholder="Введите"
+              label-class="text-[#A8AAAE] font-medium text-[12px]"
+              disabled
             />
           </div>
 

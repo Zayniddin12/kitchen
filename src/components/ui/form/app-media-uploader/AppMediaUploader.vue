@@ -1,23 +1,21 @@
-<script
-  setup
-  lang="ts"
->
+<script setup lang="ts">
 import {
   AppMediaUploaderPropsType,
   AppMediaUploaderValueType,
 } from "@/components/ui/form/app-media-uploader/app-media-uploader.type";
-import { computed, ref, useTemplateRef } from "vue";
+import { computed, ref, useTemplateRef, watch } from "vue";
 import { generateRandomID } from "@/utils/helper";
 import UploadIcon from "@/assets/images/icons/upload.svg";
 
 const id = generateRandomID();
 
 const model = defineModel<AppMediaUploaderValueType>({
-  default: (props: AppMediaUploaderPropsType) => props.value,
+  default: "",
 });
 
 const props = withDefaults(defineProps<AppMediaUploaderPropsType>(), {
   height: 224,
+  loading: false,
 });
 
 const computedHeight = computed(() => {
@@ -30,9 +28,7 @@ const emit = defineEmits<{
 }>();
 
 const inputFile = useTemplateRef<HTMLInputElement>("input-file");
-const mediaFile = ref<string | ArrayBuffer | null>(null);
 const fileType = ref<string>("");
-const isLoading = ref(false);
 
 const uploadImage = async (event: Event) => {
   const target = event.target as HTMLInputElement | null;
@@ -42,34 +38,41 @@ const uploadImage = async (event: Event) => {
   const file: File = target.files[0];
 
   fileType.value = file.type.split("/")[0];
-  isLoading.value = true;
 
   await readImage(file);
-
-
-  setTimeout(() => isLoading.value = false, 500);
 };
 
 const readImage = async (file: File) => {
   if (file instanceof File) {
     const reader = new FileReader();
 
-    mediaFile.value = await new Promise<string | ArrayBuffer | null>((resolve, reject) => {
-      reader.onload = () => resolve(reader.result);
-      reader.onerror = () => reject(reader.error);
-      reader.readAsDataURL(file);
-    });
+    model.value = await new Promise<string | ArrayBuffer | null>(
+      (resolve, reject) => {
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = () => reject(reader.error);
+        reader.readAsDataURL(file);
+      }
+    );
   }
 };
 
 const clear = () => {
-  mediaFile.value = null;
+  model.value = null;
   if (inputFile.value) {
     inputFile.value.value = "";
   }
   emit("clear");
 };
 
+watch(
+  () => props.value,
+  newValue => {
+    if (newValue) {
+      model.value = newValue;
+    }
+  },
+  { immediate: true }
+);
 </script>
 
 <template>
@@ -84,27 +87,31 @@ const clear = () => {
     />
     <label
       :for="id"
-      :class="['bg-white-blue rounded-2xl border-dashed border border-gray-300 overflow-y-hidden flex items-center justify-center', {'cursor-pointer': !mediaFile}]"
-      :style="{'height': computedHeight}"
+      :class="[
+        'bg-white-blue rounded-2xl border-dashed border border-gray-300 overflow-y-hidden flex items-center justify-center',
+        { 'cursor-pointer': !model },
+      ]"
+      :style="{ height: computedHeight }"
     >
       <ElProgress
-        v-if="isLoading"
-        :percentage="80"
+        v-if="loading"
+        type="circle"
         :stroke-width="5"
-        color="primary"
+        :percentage="30"
+        status="success"
         :show-text="false"
-        indeterminate
-        :duration="1.5"
+        :indeterminate="true"
+        :duration="1"
       />
       <span
-        v-if="mediaFile"
+        v-if="model"
         class="relative cursor-pointer z-1 group w-full"
       >
         <img
-          :src="mediaFile as string"
+          :src="model as string"
           alt="file img"
           :class="['w-full rounded-2xl object-contain h-full p-2']"
-          :style="{'max-height': computedHeight}"
+          :style="{ 'max-height': computedHeight }"
         />
         <button
           class="cursor-pointer pointer-events-none absolute top-1/2 right-1/2 translate-x-1/2 -translate-y-1/2 bg-blue-500 text-white px-4 py-2 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300"
@@ -113,7 +120,7 @@ const clear = () => {
         </button>
       </span>
       <span
-        v-else
+        v-else-if="!model && !loading"
         class="flex flex-col items-center justify-center p-6"
       >
         <span class="bg-white rounded-2xl p-4">
@@ -122,9 +129,15 @@ const clear = () => {
             class="size-6"
           />
         </span>
-        <span class="text-gray-700 text-sm mt-6">Перетащите фотографию для загрузки</span>
-        <span class="text-gray-400 text-xs mt-1">Максимальный размер фотографии 10 МБ</span>
-        <button class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 mt-6 pointer-events-none">
+        <span class="text-gray-700 text-sm mt-6">
+          Перетащите фотографию для загрузки
+        </span>
+        <span class="text-gray-400 text-xs mt-1">
+          Максимальный размер фотографии 10 МБ
+        </span>
+        <button
+          class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 mt-6 pointer-events-none"
+        >
           Выбрать фото
         </button>
       </span>

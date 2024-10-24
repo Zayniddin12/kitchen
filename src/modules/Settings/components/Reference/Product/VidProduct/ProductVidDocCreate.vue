@@ -16,8 +16,10 @@ interface Name {
 
 interface DataValue {
   name: Name;
-  is_active: boolean | string;
-  units: string
+  image: File | null;
+  parent_id: string | number | null;
+  measurement_unit_id: string | number | null;
+  is_active: boolean | number;
 }
 
 const store = useSettingsStore()
@@ -31,13 +33,22 @@ const dataValue = ref<DataValue>({
     uz: '',
     ru: ''
   },
-  units: '',
+  image: '',
+  parent_id: '',
+  measurement_unit_id: '',
   is_active: true
 })
 
-onMounted(() => {
-  store.GET_UNITS()
-  store.GET_TYPE_PRODUCT()
+onMounted(async () => {
+  await store.GET_UNITS()
+  await store.GET_TYPE_PRODUCT()
+
+  if (route.params.id) {
+    const detail = await store.GET_TYPE_PRODUCT_DETAIL(route.params.id as string | number)
+    if (detail && detail.data) {
+      dataValue.value = detail.data.product_type
+    }
+  }
 })
 
 
@@ -82,16 +93,27 @@ const switchChange = async (): Promise<boolean> => {
   }
 };
 
-const handleClick = async () => {
+const handleSubmit = async () => {
   try {
-    const payload = dataValue.value as DataValue;
+    const formData = new FormData();
+    formData.append('name[uz]', dataValue.value.name.uz);
+    formData.append('name[ru]', dataValue.value.name.ru);
+    if (dataValue.value.image){
+      formData.append('image', dataValue.value.image);
+    }
+    formData.append('parent_id', dataValue.value.parent_id);
+    formData.append('measurement_unit_id', dataValue.value.measurement_unit_id);
+    if (dataValue.value.is_active) {
+      formData.append('is_active', +dataValue.value.is_active);
+    }
+
     if (route.params.id) {
       await store.UPDATE_VID_PRODUCT({
         id: route.params.id as string | number,
-        data: payload
+        data: formData
       })
     } else {
-      await store.CREATE_VID_PRODUCT(payload)
+      await store.CREATE_VID_PRODUCT(formData)
     }
     ElNotification({title: 'Success', type: 'success'});
     await router.push('/reference-vid-product')
@@ -111,12 +133,13 @@ watchEffect(() => {
 
 <template>
   <div>
-    <pre>{{ dataValue }}</pre>
     <h1 class="m-0 font-semibold text-[32px] leading-[48px]">{{ route.meta.title }}</h1>
 
     <div class="flex items-start mt-[24px]">
       <div class="border rounded-[24px] p-[24px] w-[70%]  min-h-[65vh]">
-        <AppMediaUploader/>
+        <AppMediaUploader
+            v-model="dataValue.image"
+        />
 
         <div class="grid grid-cols-2 gap-4 mt-[24px]">
           <app-input
@@ -136,6 +159,7 @@ watchEffect(() => {
           />
 
           <app-select
+              v-model="dataValue.parent_id"
               :disabled="isDisabled"
               label="Тип продукта"
               label-class="text-[#A8AAAE] text-[12px]"
@@ -146,7 +170,7 @@ watchEffect(() => {
           />
 
           <app-select
-              v-model="dataValue.units"
+              v-model="dataValue.measurement_unit_id"
               :disabled="isDisabled"
               label="Единица измерения"
               label-class="text-[#A8AAAE] text-[12px]"
@@ -195,7 +219,7 @@ watchEffect(() => {
           Отменить
         </button>
 
-        <button class="custom-apply-btn ml-[8px]" @click="handleClick">
+        <button class="custom-apply-btn ml-[8px]" @click="handleSubmit">
           {{ route.name === "reference-vid-edit-id" ? "Сохранить" : "Добавить" }}
         </button>
       </div>
