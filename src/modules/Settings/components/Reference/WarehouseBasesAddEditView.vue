@@ -2,11 +2,17 @@
   setup
   lang="ts"
 >
-import { ref, watchEffect } from "vue";
+import { reactive, ref, watchEffect } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import AppInput from "@/components/ui/form/app-input/AppInput.vue";
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 import useConfirm from "@/components/ui/app-confirm/useConfirm";
+import AppForm from "@/components/ui/form/app-form/AppForm.vue";
+import { ValidationType } from "@/components/ui/form/app-form/app-form.type";
+import { useSettingsStore } from "@/modules/Settings/store";
+import { ElNotification } from "element-plus";
+
+const settingsStore = useSettingsStore();
 
 const route = useRoute();
 const router = useRouter();
@@ -18,36 +24,34 @@ interface TableData {
   type: string;
 }
 
-const input1 = ref<string>("");
-const tableData = ref<TableData[]>([
-  {
-    id: 1,
-    name: "Зарафшан",
-    type: "Начальник управления",
+interface Name {
+  uz: string;
+  ru: string;
+}
+
+interface WareHouseType {
+  id?: number;
+  name: Name;
+  address: string;
+  code: string;
+}
+
+const warehouseData = reactive<WareHouseType>({
+  name: {
+    ru: "",
+    uz: "",
   },
-  {
-    id: 2,
-    name: "Зафаробод",
-    type: "Начальник управления",
-  },
-  {
-    id: 3,
-    name: "Навои",
-    type: "Начальник управления",
-  },
-  {
-    id: 4,
-    name: "Нуробод",
-    type: "Начальник управления",
-  },
-  {
-    id: 5,
-    name: "Учкудук",
-    type: "Начальник управления",
-  },
-]);
+  address: "",
+  code: "",
+});
+
 
 const { setBreadCrumb } = useBreadcrumb();
+
+const v$ = ref<ValidationType | null>(null);
+const setValidation = (value: ValidationType) => {
+  v$.value = value;
+};
 
 const setBreadCrumbFn = () => {
   setBreadCrumb([
@@ -91,6 +95,29 @@ const deleteFn = () => {
   });
 };
 
+const handleSubmit = async () => {
+  if (!v$.value) return;
+
+  if ((await v$.value.validate())) {
+
+    try {
+
+      if (route.params.id) {
+        await settingsStore.UPDATE_WAREHOUSE_BASES({
+          id: route.params.id as string | number,
+          data: warehouseData,
+        });
+      } else {
+        await settingsStore.CRETE_WAREHOUSE_BASES(warehouseData);
+      }
+      ElNotification({ title: "Success", type: "success" });
+      await router.push("/reference-warehouse-bases");
+    } catch (e) {
+      ElNotification({ title: "Error", type: "error" });
+    }
+  }
+};
+
 const switchChange = async (): Promise<boolean> => {
   try {
     const response = await confirm.show();
@@ -111,44 +138,54 @@ const switchChange = async (): Promise<boolean> => {
 
     <div class="flex gap-6">
       <div class="w-[70%]">
-        <div class="border border-[#E2E6F3] rounded-[24px] p-[24px] h-[65vh] flex flex-col">
-          <div class="flex items-center gap-4">
-            <app-input
-              label="Наименование (RU)"
-              placeholder="Введите"
-              label-class="text-[#A8AAAE] font-medium text-[12px]"
-              class="w-full"
-            />
+        <AppForm
+          :value="warehouseData"
+          @validation="setValidation"
+          class="mt-6"
+        >
+          <div class="border border-[#E2E6F3] rounded-[24px] p-[24px] h-[65vh] flex flex-col">
+            <div class="flex items-center gap-4">
+              <app-input
+                v-model="warehouseData.name.ru"
+                label="Наименование (RU)"
+                placeholder="Введите"
+                label-class="text-[#A8AAAE] font-medium text-[12px]"
+                class="w-full"
+              />
 
-            <app-input
-              label="Наименование (UZ)"
-              placeholder="Введите"
-              label-class="text-[#A8AAAE] font-medium text-[12px]"
-              class="w-full"
+              <app-input
+                v-model="warehouseData.name.uz"
+                label="Наименование (UZ)"
+                placeholder="Введите"
+                label-class="text-[#A8AAAE] font-medium text-[12px]"
+                class="w-full"
+              />
+            </div>
+
+            <div class="flex items-center gap-4">
+              <app-input
+                v-model="warehouseData.address"
+                label="Юр. адрес базы"
+                placeholder="Введите"
+                label-class="text-[#A8AAAE] font-medium text-[12px]"
+                class="w-full"
+              />
+              <app-input
+                v-model="warehouseData.code"
+                label="Уникальный код базы"
+                placeholder="Введите"
+                label-class="text-[#A8AAAE] font-medium text-[12px]"
+                class="w-full"
+              />
+            </div>
+            <ElSwitch
+              v-if="route.params.id && !route.query.type"
+              active-text="Деактивация"
+              class="app-switch mt-auto"
+              :before-change="switchChange"
             />
           </div>
-
-          <div class="flex items-center gap-4">
-            <app-input
-              label="Юр. адрес базы"
-              placeholder="Введите"
-              label-class="text-[#A8AAAE] font-medium text-[12px]"
-              class="w-full"
-            />
-            <app-input
-              label="Уникальный код базы"
-              placeholder="Введите"
-              label-class="text-[#A8AAAE] font-medium text-[12px]"
-              class="w-full"
-            />
-          </div>
-          <ElSwitch
-            v-if="route.params.id && !route.query.type"
-            active-text="Деактивация"
-            class="app-switch mt-auto"
-            :before-change="switchChange"
-          />
-        </div>
+        </AppForm>
         <div
           v-if="!route.query.type"
           class="flex items-center mt-[24px] "
@@ -171,7 +208,7 @@ const switchChange = async (): Promise<boolean> => {
               Отменить
             </button>
 
-            <button class="custom-apply-btn">
+            <button class="custom-apply-btn" @click="handleSubmit">
               {{ $route.params.id ? "Сохранить" : "Добавить" }}
             </button>
           </div>

@@ -2,10 +2,15 @@
   setup
   lang="ts"
 >
-import { ref, watchEffect } from "vue";
+import { ref, watchEffect, onMounted } from "vue";
 import { Search } from "@element-plus/icons-vue";
 import { useRoute } from "vue-router";
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
+import { useSettingsStore } from "@/modules/Settings/store";
+import { ElNotification } from "element-plus";
+import { watchDebounced } from "@vueuse/core";
+
+const settingsStore = useSettingsStore();
 
 const route = useRoute();
 
@@ -15,34 +20,8 @@ interface TableData {
   type: string;
 }
 
-const input1 = ref<string>("");
-const tableData = ref<TableData[]>([
-  {
-    id: 1,
-    name: "Зарафшан",
-    type: "100052, Tashkent, st.Kichik Khalka Yuli 34-36",
-  },
-  {
-    id: 2,
-    name: "Зафаробод",
-    type: "100052, Tashkent, st.Kichik Khalka Yuli 34-36",
-  },
-  {
-    id: 3,
-    name: "Навои",
-    type: "100052, Tashkent, st.Kichik Khalka Yuli 34-36",
-  },
-  {
-    id: 4,
-    name: "Нуробод",
-    type: "100052, Tashkent, st.Kichik Khalka Yuli 34-36",
-  },
-  {
-    id: 5,
-    name: "Учкудук",
-    type: "100052, Tashkent, st.Kichik Khalka Yuli 34-36",
-  },
-]);
+const search = ref<string | null>(null);
+const loading = ref<boolean>(false);
 
 const { setBreadCrumb } = useBreadcrumb();
 
@@ -75,6 +54,26 @@ watchEffect(() => {
   setBreadCrumbFn();
 });
 
+
+const refresh = async () => {
+  loading.value = true;
+  try {
+    await settingsStore.GET_WAREHOUSE_BASES_LIST({ search: search.value });
+  } catch (e: any) {
+    ElNotification({ title: e, type: "error" });
+    loading.value = false;
+  } finally {
+    loading.value = false;
+  }
+};
+
+onMounted(() => {
+  refresh();
+});
+
+watchDebounced(search, () => {
+  refresh();
+}, { debounce: 1000, maxWait: 5000 });
 </script>
 
 <template>
@@ -84,7 +83,7 @@ watchEffect(() => {
 
       <div class="flex items-center">
         <el-input
-          v-model="input1"
+          v-model="search"
           size="large"
           placeholder="Поиск"
           :prefix-icon="Search"
@@ -117,8 +116,11 @@ watchEffect(() => {
     </div>
 
     <div class="mt-[24px]">
+      <!--      {{ settingsStore.wareHouseList }}-->
       <el-table
-        :data="tableData"
+        v-loading="loading"
+        :empty-text="'Нет доступных данных'"
+        :data="settingsStore.wareHouseList.kitchen_types"
         stripe
         class="custom-element-table"
       >
