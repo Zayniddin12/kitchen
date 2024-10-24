@@ -136,7 +136,7 @@ const changePage = () => {
             width="80"
         >
           <template #default="{$index}" v-if="settingsStore.foodFactories">
-            {{settingsStore.foodFactories.paginator.per_page*(form.page-1) + $index + 1 }}
+            {{form.page >1 ? settingsStore.foodFactories.paginator.per_page*(form.page-1) + $index + 1 : $index +1 }}
           </template>
         </el-table-column>
         <el-table-column
