@@ -10,6 +10,17 @@ interface VidDocument {
   documents: Array<{ id: string | number, name: string }>;
 }
 
+interface rationList {
+  rations: object[];
+  pagination: {
+    current_page: number | null
+    per_page: number | null
+    has_more: boolean
+    items_count: number | null
+    total_count: number | null
+    pages_count: number | null
+  };
+}
 
 export const useSettingsStore = defineStore("settingsStore", () => {
   // dilshod
@@ -53,6 +64,20 @@ export const useSettingsStore = defineStore("settingsStore", () => {
     documents: [],
   });
 
+  const rationList = ref<rationList>({
+    rations: [],
+    pagination: {
+      current_page: 0,
+      per_page: 0,
+      has_more: false,
+      items_count: 0,
+      total_count: 0,
+      pages_count: 0,
+    },
+  });
+
+  const rationItem = ref<object>({});
+
   // begzod end
 
 
@@ -68,6 +93,33 @@ export const useSettingsStore = defineStore("settingsStore", () => {
   const GET_VID_DOCUMENT = async (params?: { search: string | null }) => {
     const { data } = await $axios.get("/documents", { params });
     vidDocument.value = data.data;
+  };
+
+  // Рационы
+
+  const GET_RATION_LIST = async (params?: any) => {
+    const { data } = await $axios.get("/rations", { params });
+    rationList.value = data.data;
+  };
+
+  const GET_SHOW_ITEM = async (id: string | number) => {
+    const { data } = await $axios.get("/rations/" + id);
+    rationItem.value = data.data;
+  };
+
+  const CRETE_RATION = async (data) => {
+    return await $axios.post("/rations/", data);
+
+  };
+
+  const UPDATE_RATION = async ({ id, data }: { id: string, data: any }) => {
+    return await $axios.post("/rations/" + id, data);
+
+  };
+
+  const DELETE_RATION = async (id: string | number) => {
+    return await $axios.delete("/rations/" + id);
+
   };
 
 
