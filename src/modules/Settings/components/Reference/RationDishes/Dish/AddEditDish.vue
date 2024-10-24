@@ -88,7 +88,12 @@ onMounted(async () => {
       dataValue.value = meals.meal
       existingImage.value = meals.meal.image
 
-      // store.units.units
+      dataValue.value.compositions.forEach((composition, index) => {
+        const matchingUnit = store.units.units.find(e => e.id === composition.unit_id);
+        if (matchingUnit) {
+          dataValue.value.compositions[index].unit_id = matchingUnit.unit_id;
+        }
+      });
     }
   }
 })
@@ -144,6 +149,11 @@ const handleSubmit = async () => {
 }
 
 
+
+const changeInput = (event) => {
+  store.GET_MEALS_VID_PRO({parent_id: event})
+}
+
 watch(() => route.name, () => {
   setBreadCrumbFn();
 }, {immediate: true});
@@ -151,7 +161,7 @@ watch(() => route.name, () => {
 
 <template>
   <div>
-<!--    <pre>{{ dataValue }}</pre>-->
+    <pre>{{ dataValue }}</pre>
     <h1 class="m-0 font-semibold text-[32px] leading-[48px]">{{ route.meta.title }}</h1>
 
     <div class="mt-[24px] flex items-start">
@@ -247,13 +257,18 @@ watch(() => route.name, () => {
                       itemValue="id"
                       itemLabel="name"
                       :items="store.typeProduct.product_categories"
+                      @change="changeInput"
                   />
 
+                  <pre>{{store.parentProductType}}</pre>
                   <app-select
                       v-model="item.product_type_id"
                       label="Вид продукта"
                       label-class="text-[#A8AAAE] text-[12px]"
                       placeholder="Выберите"
+                      itemValue="id"
+                      itemLabel="name"
+                      :items="[]"
                   />
 
                   <app-input

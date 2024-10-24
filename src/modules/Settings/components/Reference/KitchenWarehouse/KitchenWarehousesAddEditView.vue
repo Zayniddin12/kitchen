@@ -1,55 +1,42 @@
-<script
-  setup
-  lang="ts"
->
-import { ref, watch } from "vue";
-import { useRoute, useRouter } from "vue-router";
+<script setup lang="ts">
+import {ref, watch} from "vue";
+import {useRoute, useRouter} from "vue-router";
+import {Name} from "@/utils/helper";
 import AppInput from "@/components/ui/form/app-input/AppInput.vue";
 import AppSelect from "@/components/ui/form/app-select/AppSelect.vue";
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 import useConfirm from "@/components/ui/app-confirm/useConfirm";
+import AppForm from "@/components/ui/form/app-form/AppForm.vue";
+import {ValidationType} from "@/components/ui/form/app-form/app-form.type";
+
+interface DataValue {
+  based_id: string;
+  capacity: string;
+  kitchen_capacity: string;
+  kitchen_type_id: string;
+  measure_id: string;
+  status: string;
+}
+
+const v$ = ref<ValidationType | null>(null);
+const setValidation = (value: ValidationType) => {
+  v$.value = value;
+};
 
 const route = useRoute();
 const router = useRouter();
-const { confirm } = useConfirm();
+const {confirm} = useConfirm();
+const {setBreadCrumb} = useBreadcrumb();
 
-
-interface TableData {
-  id: number;
-  name: string;
-  type: string;
-}
-
-const input1 = ref<string>("");
-const tableData = ref<TableData[]>([
-  {
-    id: 1,
-    name: "Зарафшан",
-    type: "Начальник управления",
-  },
-  {
-    id: 2,
-    name: "Зафаробод",
-    type: "Начальник управления",
-  },
-  {
-    id: 3,
-    name: "Навои",
-    type: "Начальник управления",
-  },
-  {
-    id: 4,
-    name: "Нуробод",
-    type: "Начальник управления",
-  },
-  {
-    id: 5,
-    name: "Учкудук",
-    type: "Начальник управления",
-  },
-]);
-
-const { setBreadCrumb } = useBreadcrumb();
+const dataValue = ref<DataValue>({
+  name: new Name(),
+  based_id: '',
+  capacity: '',
+  kitchen_capacity: '',
+  kitchen_type_id: '',
+  measure_id: '',
+  status: 'active'
+})
 
 const setBreadCrumbFn = () => {
   setBreadCrumb([
@@ -58,17 +45,17 @@ const setBreadCrumbFn = () => {
     },
     {
       label: "Справочники",
-      to: { name: "reference" },
+      to: {name: "reference"},
     },
 
     {
       label: "Управ, комбинаты и склады",
-      to: { name: "reference" },
+      to: {name: "reference"},
     },
 
     {
       label: "Склады кухни",
-      to: { name: "reference-kitchen-warehouse" },
+      to: {name: "reference-kitchen-warehouse"},
     },
     {
       label: String(route?.meta?.breadcrumbItemTitle ?? ""),
@@ -77,19 +64,24 @@ const setBreadCrumbFn = () => {
   ]);
 };
 
-watch(() => route.name, () => {
-  setBreadCrumbFn();
-}, { immediate: true });
+
+const handleSubmit = async () => {
+  if (!v$.value) return;
+
+  if ((await v$.value.validate())) {
+
+  }
+}
 
 const cancelFn = () => {
-  confirm.cancel().then(response => {
-    router.push({ name: "reference-kitchen-warehouse" });
+  confirm.cancel().then(() => {
+    router.push('/reference-kitchen-warehouse');
   });
 };
 
 const deleteFn = () => {
-  confirm.delete().then(response => {
-    router.push({ name: "reference-kitchen-warehouse" });
+  confirm.delete().then(() => {
+    router.push('/reference-kitchen-warehouse');
   });
 };
 
@@ -102,101 +94,128 @@ const switchChange = async (): Promise<boolean> => {
   }
 };
 
+watch(() => route.name, () => {
+  setBreadCrumbFn();
+}, {immediate: true});
 </script>
 
 <template>
   <div>
-    <div class="flex items-center justify-between mb-[24px]">
-      <h1 class="m-0 font-semibold text-[32px] leading-[48px]">{{ route.meta.title }}</h1>
-
-    </div>
+    <h1 class="m-0 font-semibold text-[32px] leading-[48px] mb-[24px]">{{ route.meta.title }}</h1>
 
     <div class="flex gap-6">
       <div class="w-[70%]">
         <div class="border border-[#E2E6F3] rounded-[24px] p-[24px] h-[65vh] flex flex-col">
+          <AppForm
+              :value="dataValue"
+              @validation="setValidation"
+              class="mt-6"
+          >
           <div class="grid grid-cols-3 gap-4">
             <app-input
-              label="Наименование (RU)"
-              placeholder="Введите"
-              label-class="text-[#A8AAAE] font-medium text-[12px]"
-              class="w-full"
+                v-model="dataValue.name.ru"
+                label="Наименование (RU)"
+                placeholder="Введите"
+                label-class="text-[#A8AAAE] font-medium text-[12px]"
+                class="w-full"
+                required
+                prop="name.ru"
+
             />
 
             <app-input
-              label="Наименование (UZ)"
-              placeholder="Введите"
-              label-class="text-[#A8AAAE] font-medium text-[12px]"
-              class="w-full"
+                v-model="dataValue.name.uz"
+                label="Наименование (UZ)"
+                placeholder="Введите"
+                label-class="text-[#A8AAAE] font-medium text-[12px]"
+                class="w-full"
+                required
+                prop="name.uz"
             />
 
             <app-select
-              label="База складов"
-              placeholder="Введите"
-              label-class="text-[#A8AAAE] font-medium text-[12px]"
-              class="w-full"
+                v-model="dataValue.based_id"
+                label="База складов"
+                placeholder="Введите"
+                label-class="text-[#A8AAAE] font-medium text-[12px]"
+                class="w-full"
+                required
+                prop="based_id"
             />
 
             <app-input
-              label="Вместимость склада"
-              placeholder="Введите"
-              label-class="text-[#A8AAAE] font-medium text-[12px]"
-              class="w-full"
+                v-model="dataValue.capacity"
+                label="Вместимость склада"
+                placeholder="Введите"
+                label-class="text-[#A8AAAE] font-medium text-[12px]"
+                class="w-full"
+                required
+                prop="capacity"
             />
 
             <app-input
-              label="Единица измерения"
-              placeholder="тонна"
-              label-class="text-[#A8AAAE] font-medium text-[12px]"
-              class="w-full"
+                v-model="dataValue.measure_id"
+                label="Единица измерения"
+                placeholder="тонна"
+                label-class="text-[#A8AAAE] font-medium text-[12px]"
+                class="w-full"
+                required
+                prop="measure_id"
             />
 
             <app-select
-              label="Тип кухни"
-              placeholder="Мясные"
-              label-class="text-[#A8AAAE] font-medium text-[12px]"
-              class="w-full"
+                v-model="dataValue.kitchen_type_id"
+                label="Тип кухни"
+                placeholder="Мясные"
+                label-class="text-[#A8AAAE] font-medium text-[12px]"
+                class="w-full"
+                required
+                prop="kitchen_type_id"
             />
 
             <app-input
-              label="Вместимость кухни"
-              placeholder="Введите"
-              label-class="text-[#A8AAAE] font-medium text-[12px]"
-              class="w-full"
+                v-model="dataValue.kitchen_capacity"
+                label="Вместимость кухни"
+                placeholder="Введите"
+                label-class="text-[#A8AAAE] font-medium text-[12px]"
+                class="w-full"
+                required
+                prop="kitchen_capacity"
             />
           </div>
-
+          </AppForm>
 
           <ElSwitch
-            v-if="route.params.id && !route.query.type"
-            active-text="Деактивация"
-            class="app-switch mt-auto"
-            :before-change="switchChange"
+              v-model="dataValue.status"
+              v-if="route.params.id && !route.query.type"
+              active-text="Деактивация"
+              class="app-switch mt-auto"
+              :before-change="switchChange"
           />
         </div>
 
         <div
-          v-if="!route.query.type"
-          class="flex items-center mt-[24px] "
-          :class="!route.params.id ? 'justify-end' : 'justify-between'"
+            v-if="!route.query.type"
+            class="flex items-center mt-[24px] "
+            :class="!route.params.id ? 'justify-end' : 'justify-between'"
         >
           <button
-            v-if="route.params.id"
-            class="custom-danger-btn"
-            @click="deleteFn"
+              v-if="route.params.id"
+              class="custom-danger-btn"
+              @click="deleteFn"
           >
             Удалить
           </button>
 
-
           <div class="flex items-center gap-4">
             <button
-              @click="cancelFn"
-              class="custom-cancel-btn"
+                @click="cancelFn"
+                class="custom-cancel-btn"
             >
               Отменить
             </button>
 
-            <button class="custom-apply-btn">
+            <button class="custom-apply-btn" @click="handleSubmit">
               {{ $route.params.id ? "Сохранить" : "Добавить" }}
             </button>
           </div>
@@ -205,22 +224,11 @@ const switchChange = async (): Promise<boolean> => {
 
       <div class="w-[30%]">
         <button
-          @click="router.push({name: 'reference-kitchen-warehouse-edit', params: {id: 1}})"
-          v-if="route.query.type == 'view'"
-          class="flex items-center gap-4 bg-[#F8F9FC] py-[10px] px-[20px] rounded-[8px]"
+            @click="router.push({name: 'reference-kitchen-warehouse-edit', params: {id: 1}})"
+            v-if="route.query.type == 'view'"
+            class="flex items-center gap-4 bg-[#F8F9FC] py-[10px] px-[20px] rounded-[8px]"
         >
-          <li
-            :style="{
-                  maskImage: 'url(/icons/edit.svg)',
-                  backgroundColor: '#8F9194',
-                  color: '#8F9194',
-                  width: '20px',
-                  height: '20px',
-                  maskSize: '20px',
-                  maskPosition: 'center',
-                  maskRepeat: 'no-repeat'
-                   }"
-          ></li>
+          <img src="@/assets/images/icons/edit.svg" alt="#">
           Редактировать
         </button>
       </div>
