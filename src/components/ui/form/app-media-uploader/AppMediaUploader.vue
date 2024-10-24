@@ -46,6 +46,7 @@ const uploadImage = async (event: Event) => {
 
   await readImage(file);
 
+
   setTimeout(() => isLoading.value = false, 500);
 };
 
