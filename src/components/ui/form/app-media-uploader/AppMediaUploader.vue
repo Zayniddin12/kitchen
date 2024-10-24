@@ -1,12 +1,9 @@
-<script
-  setup
-  lang="ts"
->
+<script setup lang="ts">
 import {
   AppMediaUploaderPropsType,
   AppMediaUploaderValueType,
 } from "@/components/ui/form/app-media-uploader/app-media-uploader.type";
-import {computed, ref, useTemplateRef, watch} from "vue";
+import { computed, ref, useTemplateRef, watch } from "vue";
 import { generateRandomID } from "@/utils/helper";
 import UploadIcon from "@/assets/images/icons/upload.svg";
 
@@ -18,7 +15,7 @@ const model = defineModel<AppMediaUploaderValueType>({
 
 const props = withDefaults(defineProps<AppMediaUploaderPropsType>(), {
   height: 224,
-  loading: false
+  loading: false,
 });
 
 const computedHeight = computed(() => {
@@ -32,7 +29,7 @@ const emit = defineEmits<{
 
 const inputFile = useTemplateRef<HTMLInputElement>("input-file");
 const fileType = ref<string>("");
-const mediaFile = ref<string>("");
+const mediaFile = ref<string | ArrayBuffer | null>("");
 
 const uploadImage = async (event: Event) => {
   const target = event.target as HTMLInputElement | null;
@@ -44,18 +41,20 @@ const uploadImage = async (event: Event) => {
   fileType.value = file.type.split("/")[0];
 
   await readImage(file);
-  model.value = file
+  model.value = file;
 };
 
 const readImage = async (file: File) => {
   if (file instanceof File) {
     const reader = new FileReader();
 
-    mediaFile.value = await new Promise<string | ArrayBuffer | null>((resolve, reject) => {
-      reader.onload = () => resolve(reader.result);
-      reader.onerror = () => reject(reader.error);
-      reader.readAsDataURL(file);
-    });
+    mediaFile.value = await new Promise<string | ArrayBuffer | null>(
+      (resolve, reject) => {
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = () => reject(reader.error);
+        reader.readAsDataURL(file);
+      }
+    );
   }
 };
 
@@ -68,12 +67,15 @@ const clear = () => {
   emit("clear");
 };
 
-watch(() => props.value, (newValue) => {
-  if(newValue) {
-    mediaFile.value = newValue;
-  }
-},{immediate: true});
-
+watch(
+  () => props.value,
+  newValue => {
+    if (newValue && typeof newValue === "string") {
+      mediaFile.value = newValue;
+    }
+  },
+  { immediate: true }
+);
 </script>
 
 <template>
@@ -88,8 +90,11 @@ watch(() => props.value, (newValue) => {
     />
     <label
       :for="id"
-      :class="['bg-white-blue rounded-2xl border-dashed border border-gray-300 overflow-y-hidden flex items-center justify-center', {'cursor-pointer': !mediaFile}]"
-      :style="{'height': computedHeight}"
+      :class="[
+        'bg-white-blue rounded-2xl border-dashed border border-gray-300 overflow-y-hidden flex items-center justify-center',
+        { 'cursor-pointer': !mediaFile },
+      ]"
+      :style="{ height: computedHeight }"
     >
       <ElProgress
         v-if="loading"
@@ -109,7 +114,7 @@ watch(() => props.value, (newValue) => {
           :src="mediaFile as string"
           alt="file img"
           :class="['w-full rounded-2xl object-contain h-full p-2']"
-          :style="{'max-height': computedHeight}"
+          :style="{ 'max-height': computedHeight }"
         />
         <button
           class="cursor-pointer pointer-events-none absolute top-1/2 right-1/2 translate-x-1/2 -translate-y-1/2 bg-blue-500 text-white px-4 py-2 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300"
@@ -127,9 +132,15 @@ watch(() => props.value, (newValue) => {
             class="size-6"
           />
         </span>
-        <span class="text-gray-700 text-sm mt-6">Перетащите фотографию для загрузки</span>
-        <span class="text-gray-400 text-xs mt-1">Максимальный размер фотографии 10 МБ</span>
-        <button class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 mt-6 pointer-events-none">
+        <span class="text-gray-700 text-sm mt-6">
+          Перетащите фотографию для загрузки
+        </span>
+        <span class="text-gray-400 text-xs mt-1">
+          Максимальный размер фотографии 10 МБ
+        </span>
+        <button
+          class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 mt-6 pointer-events-none"
+        >
           Выбрать фото
         </button>
       </span>
