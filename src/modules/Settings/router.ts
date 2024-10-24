@@ -177,7 +177,7 @@ export default [
   },
 
   {
-    path: "/reference-main-bases-detail/:id",
+    path: "/reference-main-bases-detail/:id(\\d+)",
     name: "reference-main-bases-edit",
     component: () => import("@/modules/Settings/components/Reference/MainBases/MainBasesAddEditView.vue"),
     meta: {
@@ -187,7 +187,7 @@ export default [
   },
 
   {
-    path: "/reference-main-bases-view/:id",
+    path: "/reference-main-bases-view/:id(\\d+)",
     name: "reference-main-bases-view",
     component: () => import("@/modules/Settings/components/Reference/MainBases/MainBasesAddEditView.vue"),
     meta: {

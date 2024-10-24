@@ -4,6 +4,11 @@ import { ref } from "vue";
 import {
     FoodFactoriesCreateFormType, FoodFactoriesParamsType, FoodFactoriesType, FoodFactoryType
 } from "@/modules/Settings/components/Reference/CombineNutrition/combine-nutrition.type";
+import {
+    BaseWarehouseDataType,
+    BaseWarehousesParamsType,
+    BaseWarehousesType, BaseWarehouseType
+} from "@/modules/Settings/components/Reference/MainBases/base-warehouses.type";
 
 interface TypeDocument {
     document_categories: Array<{ id: string | number, name: string }>;
@@ -268,6 +273,47 @@ export const useSettingsStore = defineStore("settingsStore", () => {
         }).finally(() => foodFactoriesLoading.value = false);
     };
 
+    // Комбинаты питания end
+
+    // Склады базы
+
+    const baseWareHousesPrefix = "base-warehouses";
+
+    const baseWarehouses = ref<null | BaseWarehousesType>(null);
+    const baseWarehousesLoading = ref(false);
+    const fetchBaseWarehouses = async (params: BaseWarehousesParamsType) => {
+        baseWarehousesLoading.value = true;
+        await $axios.get(baseWareHousesPrefix, { params }).then(({ data }) => {
+            if (data.data) foodFactories.value = data.data;
+        }).finally(() => baseWarehousesLoading.value = false);
+    };
+
+    const baseWarehouse = ref<null | BaseWarehouseType>(null);
+    const baseWarehouseLoading = ref(false);
+
+    const fetchBaseWarehouse = async (id: number) => {
+        baseWarehouseLoading.value = true;
+        await $axios.get(`${baseWareHousesPrefix}/${id}`).then(({ data }) => {
+            if (data.data) {
+                foodFactory.value = data.data.food_factory;
+            }
+        }).finally(() => baseWarehouseLoading.value = false);
+    };
+
+    const deleteBaseWarehouse = async (id: number) => {
+        return $axios.delete(`${baseWareHousesPrefix}/${id}`);
+    };
+
+    const createBaseWarehouse = (data: BaseWarehouseDataType) => {
+        return $axios.post(baseWareHousesPrefix, data);
+    };
+
+    const updateBaseWarehouse = (id: number, data: BaseWarehouseDataType) => {
+        return $axios.put(`${baseWareHousesPrefix}/${id}`, data);
+    };
+
+    // Склады базы end
+
     // abbos end
 
     return {
@@ -335,6 +381,16 @@ export const useSettingsStore = defineStore("settingsStore", () => {
         deleteFoodFactory,
         foodFactories,
         foodFactoriesLoading,
-        fetchFoodFactories
+        fetchFoodFactories,
+
+        baseWarehouses,
+        baseWarehousesLoading,
+        fetchBaseWarehouses,
+        baseWarehouse,
+        baseWarehouseLoading,
+        fetchBaseWarehouse,
+        deleteBaseWarehouse,
+        createBaseWarehouse,
+        updateBaseWarehouse
     };
 });
