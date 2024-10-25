@@ -82,10 +82,14 @@ const changePagination = (event: any) => {
   refresh();
 };
 
-watchDebounced(params.value.search, () => {
-  params.value.page = 1;
-  refresh();
-}, { debounce: 1000, maxWait: 5000 });
+watchDebounced(
+  () => params.value.search,
+  () => {
+    params.value.page = 1; // Reset page to 1 when search changes
+    refresh(); // Trigger refresh function
+  },
+  { debounce: 1000, maxWait: 5000 }, // Debounce settings
+);
 </script>
 
 <template>

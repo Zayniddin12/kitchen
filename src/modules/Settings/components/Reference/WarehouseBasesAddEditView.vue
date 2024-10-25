@@ -2,7 +2,7 @@
   setup
   lang="ts"
 >
-import { onMounted, reactive, ref, watchEffect } from "vue";
+import { computed, onMounted, reactive, ref, watchEffect } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import AppInput from "@/components/ui/form/app-input/AppInput.vue";
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
@@ -93,6 +93,7 @@ onMounted(async () => {
     if (data && data.base) {
       console.log(data.base);
       warehouseData.value = data.base;
+      status.value = data.base.status == "active";
     }
   }
 });
@@ -108,8 +109,9 @@ const cancelFn = () => {
 };
 
 const deleteFn = () => {
-  confirm.delete().then(response => {
-    router.push({ name: "reference-warehouse-bases" });
+  confirm.delete().then(async res => {
+    await settingsStore.DELETE_WAREHOUSE_BASES(route.params.id as string);
+    await router.push({ name: "reference-warehouse-bases" });
   });
 };
 
@@ -160,6 +162,10 @@ const switchChange2 = async (e): Promise<boolean> => {
   }
 };
 
+const isDisabled = computed<boolean>(() => {
+  return route.name == "reference-warehouse-bases-view";
+});
+
 </script>
 
 <template>
@@ -178,7 +184,7 @@ const switchChange2 = async (e): Promise<boolean> => {
         >
           <div class="border border-[#E2E6F3] rounded-[24px] p-[24px] h-[65vh] flex flex-col">
             <div class="flex items-center gap-4">
-              {{ warehouseData }}
+              <!--              {{ warehouseData }}-->
               <app-input
                 v-model="warehouseData.name.ru"
                 label="Наименование (RU)"
@@ -187,6 +193,7 @@ const switchChange2 = async (e): Promise<boolean> => {
                 class="w-full"
                 required
                 prop="name.ru"
+                :disabled="isDisabled"
               />
 
               <app-input
@@ -197,6 +204,7 @@ const switchChange2 = async (e): Promise<boolean> => {
                 class="w-full"
                 required
                 prop="name.uz"
+                :disabled="isDisabled"
               />
             </div>
 
@@ -209,6 +217,7 @@ const switchChange2 = async (e): Promise<boolean> => {
                 class="w-full"
                 required
                 prop="address"
+                :disabled="isDisabled"
               />
               <app-input
                 v-model="warehouseData.code"
@@ -218,14 +227,16 @@ const switchChange2 = async (e): Promise<boolean> => {
                 class="w-full"
                 required
                 prop="code"
+                :disabled="isDisabled"
               />
             </div>
             <ElSwitch
               v-model="status"
               v-if="route.params.id && !route.query.type"
-              active-text="Деактивация"
+              :active-text="status ? 'Активация' : 'Деактивация'"
               class="app-switch mt-auto"
               @change="switchChange2"
+              :disabled="isDisabled"
             />
           </div>
         </AppForm>
