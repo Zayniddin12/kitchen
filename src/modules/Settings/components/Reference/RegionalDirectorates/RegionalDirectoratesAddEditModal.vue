@@ -8,6 +8,7 @@ import AppForm from "@/components/ui/form/app-form/AppForm.vue";
 import {ValidationType} from "@/components/ui/form/app-form/app-form.type";
 import {useSettingsStore} from "@/modules/Settings/store";
 import {ElNotification} from "element-plus";
+import AppOverlay from "@/components/ui/app-overlay/AppOverlay.vue";
 
 interface Name {
   ru: string;
@@ -68,14 +69,21 @@ const dataValue = ref<DataValue>({
   responsible_position: '',
   status: 'active'
 })
+const loading = ref<boolean>(false)
 
 
 onMounted(async () => {
   if (route.params.id) {
-    const managements = await store.GET_REGIONAL_DETAIL(route.params.id as number | string)
-    if (managements && managements.management) {
-      dataValue.value = managements.management
+    loading.value = true
+    try {
+      const managements = await store.GET_REGIONAL_DETAIL(route.params.id as number | string)
+      if (managements && managements.data && managements.data.management) {
+        dataValue.value = managements.data.management
+      }
+    } catch (e) {
+      loading.value = false
     }
+    loading.value = false
   }
 })
 
@@ -155,6 +163,9 @@ watch(() => route.name, () => {
 
 <template>
   <div>
+    <AppOverlay
+        :loading="loading"
+    >
     <div class="flex items-center justify-between mb-[24px]">
       <h1 class="m-0 font-semibold text-[32px] leading-[48px]">{{ route.meta.title }}</h1>
     </div>
@@ -265,6 +276,7 @@ watch(() => route.name, () => {
         </button>
       </div>
     </div>
+    </AppOverlay>
   </div>
 </template>
 

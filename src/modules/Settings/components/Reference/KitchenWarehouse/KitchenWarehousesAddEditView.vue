@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {ref, watch} from "vue";
+import {onMounted, ref, watch} from "vue";
 import {useRoute, useRouter} from "vue-router";
 import {Name} from "@/utils/helper";
 import AppInput from "@/components/ui/form/app-input/AppInput.vue";
@@ -8,6 +8,9 @@ import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 import useConfirm from "@/components/ui/app-confirm/useConfirm";
 import AppForm from "@/components/ui/form/app-form/AppForm.vue";
 import {ValidationType} from "@/components/ui/form/app-form/app-form.type";
+import {useSettingsStore} from "@/modules/Settings/store";
+import {ElNotification} from "element-plus";
+import AppOverlay from "@/components/ui/app-overlay/AppOverlay.vue";
 
 interface DataValue {
   based_id: string;
@@ -23,14 +26,16 @@ const setValidation = (value: ValidationType) => {
   v$.value = value;
 };
 
+const store = useSettingsStore()
 const route = useRoute();
 const router = useRouter();
 const {confirm} = useConfirm();
 const {setBreadCrumb} = useBreadcrumb();
 
+const loading = ref<boolean>(false)
 const dataValue = ref<DataValue>({
   name: new Name(),
-  based_id: '',
+  based_id: 2,
   capacity: '',
   kitchen_capacity: '',
   kitchen_type_id: '',
@@ -64,12 +69,42 @@ const setBreadCrumbFn = () => {
   ]);
 };
 
+onMounted(async () => {
+  if (!route.params.id) {
+    loading.value = true
+    try {
+      const wr = await store.GET_KITCHEN_WAREHOUSE_DETAIL(route.params.id as string | number)
+      if (wr) {
+        console.log(wr)
+      }
+    } catch (e) {
+      loading.value = false
+    }
+    loading.value = false
+  }
+
+  await store.GET_WAREHOUSE_BASES_LIST()
+  await store.GET_KITCHEN_TYPE()
+})
 
 const handleSubmit = async () => {
   if (!v$.value) return;
 
   if ((await v$.value.validate())) {
-
+    try {
+      if (route.params.id) {
+        await store.UPDATE_KITCHEN_WAREHOUSE({
+          id: route.params.id as string | number,
+          data: dataValue.value as DataValue,
+        })
+      } else {
+        await store.CREATE_KITCHEN_WAREHOUSE(dataValue.value as DataValue);
+      }
+      ElNotification({title: 'Success', type: 'success'});
+      await router.push('/reference-kitchen-warehouse')
+    } catch (e) {
+      ElNotification({title: 'Error', type: 'error'});
+    }
   }
 }
 
@@ -81,7 +116,9 @@ const cancelFn = () => {
 
 const deleteFn = () => {
   confirm.delete().then(() => {
+    store.DELETE_KITCHEN_WAREHOUSE(route.params.id)
     router.push('/reference-kitchen-warehouse');
+    ElNotification({title: 'Success', type: 'success'});
   });
 };
 
@@ -100,89 +137,97 @@ watch(() => route.name, () => {
 </script>
 
 <template>
-  <div>
+  <AppOverlay
+      :loading="loading"
+  >
     <h1 class="m-0 font-semibold text-[32px] leading-[48px] mb-[24px]">{{ route.meta.title }}</h1>
 
     <div class="flex gap-6">
       <div class="w-[70%]">
-        <div class="border border-[#E2E6F3] rounded-[24px] p-[24px] h-[65vh] flex flex-col">
+        <div class="border border-[#E2E6F3] rounded-[24px] p-[24px] min-h-[65vh] flex flex-col">
           <AppForm
               :value="dataValue"
               @validation="setValidation"
               class="mt-6"
           >
-          <div class="grid grid-cols-3 gap-4">
-            <app-input
-                v-model="dataValue.name.ru"
-                label="Наименование (RU)"
-                placeholder="Введите"
-                label-class="text-[#A8AAAE] font-medium text-[12px]"
-                class="w-full"
-                required
-                prop="name.ru"
+            <div class="grid grid-cols-3 gap-4">
+              <app-input
+                  v-model="dataValue.name.ru"
+                  label="Наименование (RU)"
+                  placeholder="Введите"
+                  label-class="text-[#A8AAAE] font-medium text-[12px]"
+                  class="w-full"
+                  required
+                  prop="name.ru"
 
-            />
+              />
 
-            <app-input
-                v-model="dataValue.name.uz"
-                label="Наименование (UZ)"
-                placeholder="Введите"
-                label-class="text-[#A8AAAE] font-medium text-[12px]"
-                class="w-full"
-                required
-                prop="name.uz"
-            />
+              <app-input
+                  v-model="dataValue.name.uz"
+                  label="Наименование (UZ)"
+                  placeholder="Введите"
+                  label-class="text-[#A8AAAE] font-medium text-[12px]"
+                  class="w-full"
+                  required
+                  prop="name.uz"
+              />
 
-            <app-select
-                v-model="dataValue.based_id"
-                label="База складов"
-                placeholder="Введите"
-                label-class="text-[#A8AAAE] font-medium text-[12px]"
-                class="w-full"
-                required
-                prop="based_id"
-            />
+              <app-select
+                  v-model="dataValue.based_id"
+                  label="База складов"
+                  placeholder="Введите"
+                  label-class="text-[#A8AAAE] font-medium text-[12px]"
+                  class="w-full"
+                  required
+                  prop="based_id"
+                  item-value="id"
+                  item-label="name"
+                  :items="store.kitchenTypes.wareHouseList"
+              />
 
-            <app-input
-                v-model="dataValue.capacity"
-                label="Вместимость склада"
-                placeholder="Введите"
-                label-class="text-[#A8AAAE] font-medium text-[12px]"
-                class="w-full"
-                required
-                prop="capacity"
-            />
+              <app-input
+                  v-model="dataValue.capacity"
+                  label="Вместимость склада"
+                  placeholder="Введите"
+                  label-class="text-[#A8AAAE] font-medium text-[12px]"
+                  class="w-full"
+                  required
+                  prop="capacity"
+              />
 
-            <app-input
-                v-model="dataValue.measure_id"
-                label="Единица измерения"
-                placeholder="тонна"
-                label-class="text-[#A8AAAE] font-medium text-[12px]"
-                class="w-full"
-                required
-                prop="measure_id"
-            />
+              <app-input
+                  v-model="dataValue.measure_id"
+                  label="Единица измерения"
+                  placeholder="Введите"
+                  label-class="text-[#A8AAAE] font-medium text-[12px]"
+                  class="w-full"
+                  required
+                  prop="measure_id"
+              />
 
-            <app-select
-                v-model="dataValue.kitchen_type_id"
-                label="Тип кухни"
-                placeholder="Мясные"
-                label-class="text-[#A8AAAE] font-medium text-[12px]"
-                class="w-full"
-                required
-                prop="kitchen_type_id"
-            />
+              <app-select
+                  v-model="dataValue.kitchen_type_id"
+                  label="Тип кухни"
+                  placeholder="Введите"
+                  label-class="text-[#A8AAAE] font-medium text-[12px]"
+                  class="w-full"
+                  required
+                  prop="kitchen_type_id"
+                  item-value="id"
+                  item-label="name"
+                  :items="store.kitchenTypes.kitchen_types"
+              />
 
-            <app-input
-                v-model="dataValue.kitchen_capacity"
-                label="Вместимость кухни"
-                placeholder="Введите"
-                label-class="text-[#A8AAAE] font-medium text-[12px]"
-                class="w-full"
-                required
-                prop="kitchen_capacity"
-            />
-          </div>
+              <app-input
+                  v-model="dataValue.kitchen_capacity"
+                  label="Вместимость кухни"
+                  placeholder="Введите"
+                  label-class="text-[#A8AAAE] font-medium text-[12px]"
+                  class="w-full"
+                  required
+                  prop="kitchen_capacity"
+              />
+            </div>
           </AppForm>
 
           <ElSwitch
@@ -233,6 +278,6 @@ watch(() => route.name, () => {
         </button>
       </div>
     </div>
-  </div>
+  </AppOverlay>
 </template>
 

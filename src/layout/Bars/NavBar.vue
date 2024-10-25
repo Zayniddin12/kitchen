@@ -183,7 +183,7 @@ const openModals = (data: any) => {
         </template>
       </el-dropdown>
 
-      <ThemeToggler />
+      <ThemeToggler v-if="false"/>
 
       <el-badge
         value="18"

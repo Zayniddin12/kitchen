@@ -10,6 +10,7 @@ import {useSettingsStore} from "@/modules/Settings/store";
 import {ElNotification} from "element-plus";
 import AppForm from "@/components/ui/form/app-form/AppForm.vue";
 import {ValidationType} from "@/components/ui/form/app-form/app-form.type";
+import AppOverlay from "@/components/ui/app-overlay/AppOverlay.vue";
 
 interface Name {
   uz: string;
@@ -46,18 +47,25 @@ const dataValue = ref<DataValue>({
   is_active: true
 })
 const existingImage = ref<string>('')
+const loading = ref<boolean>(false)
 
 onMounted(async () => {
+  if (route.params.id) {
+    loading.value = true;
+    try {
+      const detail = await store.GET_TYPE_PRODUCT_DETAIL(route.params.id as string | number)
+      if (detail && detail.data) {
+        dataValue.value = detail.data.product_type
+        existingImage.value = dataValue.value.image;
+      }
+    } catch (e) {
+      loading.value = false
+    }
+    loading.value = false
+  }
+
   await store.GET_UNITS()
   await store.GET_TYPE_PRODUCT()
-
-  if (route.params.id) {
-    const detail = await store.GET_TYPE_PRODUCT_DETAIL(route.params.id as string | number)
-    if (detail && detail.data) {
-      dataValue.value = detail.data.product_type
-      existingImage.value = dataValue.value.image;
-    }
-  }
 })
 
 
@@ -133,8 +141,7 @@ const handleSubmit = async () => {
 
       ElNotification({title: 'Success', type: 'success'});
       await router.push('/reference-vid-product');
-    }
-    catch (e) {
+    } catch (e) {
       ElNotification({title: 'Error', type: 'error'});
     }
   }
@@ -151,111 +158,115 @@ watchEffect(() => {
 
 <template>
   <div>
-    <h1 class="m-0 font-semibold text-[32px] leading-[48px]">{{ route.meta.title }}</h1>
-
-    <div class="flex items-start mt-[24px]">
-      <div class="border rounded-[24px] p-[24px] w-[70%]  min-h-[65vh]">
-        <AppMediaUploader
-            v-model="dataValue.image"
-            :value="existingImage"
-        />
-        <AppForm
-            :value="dataValue"
-            @validation="setValidation"
-            class="mt-6"
-        >
-          <div class="grid grid-cols-2 gap-4 mt-[24px]">
-            <app-input
-                v-model="dataValue.name.ru"
-                :disabled="isDisabled"
-                label="Наименование (RU)"
-                label-class="text-[#A8AAAE] text-[12px]"
-                placeholder="Введите"
-                required
-                prop="name.ru"
-            />
-
-            <app-input
-                v-model="dataValue.name.uz"
-                :disabled="isDisabled"
-                label="Наименование (UZ)"
-                label-class="text-[#A8AAAE] text-[12px]"
-                placeholder="Введите"
-                required
-                prop="name.uz"
-            />
-
-            <app-select
-                v-model="dataValue.parent_id"
-                :disabled="isDisabled"
-                label="Тип продукта"
-                label-class="text-[#A8AAAE] text-[12px]"
-                placeholder="Введите"
-                itemValue="id"
-                itemLabel="name"
-                :items="store.typeProduct.product_categories"
-                required
-                prop="parent_id"
-            />
-
-            <app-select
-                v-model="dataValue.measurement_unit_id"
-                :disabled="isDisabled"
-                label="Единица измерения"
-                label-class="text-[#A8AAAE] text-[12px]"
-                placeholder="Введите"
-                itemValue="id"
-                itemLabel="name"
-                :items="store.units.units"
-                required
-                prop="measurement_unit_id"
-            />
-          </div>
-        </AppForm>
-
-        <el-switch
-            v-model="dataValue.is_active"
-            active-text="Деактивация"
-            v-if="route.name === 'reference-vid-edit-id'"
-            :before-change="switchChange"
-        />
-      </div>
-
-      <button
-          class="custom-light-btn flex items-center ml-[24px]"
-          @click="router.push(`/reference-vid-edit/${route.params.id}`)"
-          v-if="route.name === 'reference-vid-view-id'"
-      >
-        <img
-            src="@/assets/images/icons/edit.svg"
-            alt="edit"
-            class="mr-[12px]"
-        />
-        Редактировать
-      </button>
-    </div>
-
-    <div class="flex items-center justify-between mt-[24px] w-[70%]"
-         v-if="route.name === 'reference-vid-add' || route.name === 'reference-vid-edit-id'"
+    <AppOverlay
+        :loading="loading"
     >
-      <button
-          class="custom-danger-btn"
-          v-if="route.name === 'reference-vid-edit-id'"
-          @click="deleteFn"
-      >
-        Удалить
-      </button>
+      <h1 class="m-0 font-semibold text-[32px] leading-[48px]">{{ route.meta.title }}</h1>
 
-      <div class="flex items-center ml-auto">
-        <button class="custom-cancel-btn" @click="cancelFn">
-          Отменить
-        </button>
+      <div class="flex items-start mt-[24px]">
+        <div class="border rounded-[24px] p-[24px] w-[70%]  min-h-[65vh]">
+          <AppMediaUploader
+              v-model="dataValue.image"
+              :value="existingImage"
+          />
+          <AppForm
+              :value="dataValue"
+              @validation="setValidation"
+              class="mt-6"
+          >
+            <div class="grid grid-cols-2 gap-4 mt-[24px]">
+              <app-input
+                  v-model="dataValue.name.ru"
+                  :disabled="isDisabled"
+                  label="Наименование (RU)"
+                  label-class="text-[#A8AAAE] text-[12px]"
+                  placeholder="Введите"
+                  required
+                  prop="name.ru"
+              />
 
-        <button class="custom-apply-btn ml-[8px]" @click="handleSubmit">
-          {{ route.name === "reference-vid-edit-id" ? "Сохранить" : "Добавить" }}
+              <app-input
+                  v-model="dataValue.name.uz"
+                  :disabled="isDisabled"
+                  label="Наименование (UZ)"
+                  label-class="text-[#A8AAAE] text-[12px]"
+                  placeholder="Введите"
+                  required
+                  prop="name.uz"
+              />
+
+              <app-select
+                  v-model="dataValue.parent_id"
+                  :disabled="isDisabled"
+                  label="Тип продукта"
+                  label-class="text-[#A8AAAE] text-[12px]"
+                  placeholder="Введите"
+                  itemValue="id"
+                  itemLabel="name"
+                  :items="store.typeProduct.product_categories"
+                  required
+                  prop="parent_id"
+              />
+
+              <app-select
+                  v-model="dataValue.measurement_unit_id"
+                  :disabled="isDisabled"
+                  label="Единица измерения"
+                  label-class="text-[#A8AAAE] text-[12px]"
+                  placeholder="Введите"
+                  itemValue="id"
+                  itemLabel="name"
+                  :items="store.units.units"
+                  required
+                  prop="measurement_unit_id"
+              />
+            </div>
+          </AppForm>
+
+          <el-switch
+              v-model="dataValue.is_active"
+              active-text="Деактивация"
+              v-if="route.name === 'reference-vid-edit-id'"
+              :before-change="switchChange"
+          />
+        </div>
+
+        <button
+            class="custom-light-btn flex items-center ml-[24px]"
+            @click="router.push(`/reference-vid-edit/${route.params.id}`)"
+            v-if="route.name === 'reference-vid-view-id'"
+        >
+          <img
+              src="@/assets/images/icons/edit.svg"
+              alt="edit"
+              class="mr-[12px]"
+          />
+          Редактировать
         </button>
       </div>
-    </div>
+
+      <div class="flex items-center justify-between mt-[24px] w-[70%]"
+           v-if="route.name === 'reference-vid-add' || route.name === 'reference-vid-edit-id'"
+      >
+        <button
+            class="custom-danger-btn"
+            v-if="route.name === 'reference-vid-edit-id'"
+            @click="deleteFn"
+        >
+          Удалить
+        </button>
+
+        <div class="flex items-center ml-auto">
+          <button class="custom-cancel-btn" @click="cancelFn">
+            Отменить
+          </button>
+
+          <button class="custom-apply-btn ml-[8px]" @click="handleSubmit">
+            {{ route.name === "reference-vid-edit-id" ? "Сохранить" : "Добавить" }}
+          </button>
+        </div>
+      </div>
+    </AppOverlay>
   </div>
 </template>
 

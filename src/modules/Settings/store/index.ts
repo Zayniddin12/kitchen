@@ -347,7 +347,6 @@ export const useSettingsStore = defineStore("settingsStore", () => {
     return $axios.put(`/meals/${id}/`, data);
   };
 
-
   const parentProductType = ref()
   const GET_MEALS_VID_PRO = async (params: any) => {
     const { data } = await $axios.get("/product-types", { params });
@@ -362,6 +361,19 @@ export const useSettingsStore = defineStore("settingsStore", () => {
 
   const CREATE_KITCHEN_WAREHOUSE = (data: any) => {
     return $axios.post("/kitchen-warehouses", data);
+  };
+
+  const UPDATE_KITCHEN_WAREHOUSE = ({ id, data }: { id: string | number; data: any }) => {
+    return $axios.put(`/kitchen-warehouses/${id}/`, data);
+  };
+
+  const DELETE_KITCHEN_WAREHOUSE = async (id: number) => {
+    return $axios.delete(`/kitchen-warehouses/${id}`);
+  };
+
+  const GET_KITCHEN_WAREHOUSE_DETAIL = async (id: number) => {
+    const { data } = await $axios.get(`/kitchen-warehouses/${id}`);
+    return data.data;
   };
   // dilshod end
 
@@ -464,7 +476,10 @@ export const useSettingsStore = defineStore("settingsStore", () => {
 
     kitchenWarehouse,
     GET_KITCHEN_WAREHOUSE,
-    CREATE_KITCHEN_WAREHOUSE
+    CREATE_KITCHEN_WAREHOUSE,
+    UPDATE_KITCHEN_WAREHOUSE,
+    DELETE_KITCHEN_WAREHOUSE,
+    GET_KITCHEN_WAREHOUSE_DETAIL
     // dilshod end
   };
 });

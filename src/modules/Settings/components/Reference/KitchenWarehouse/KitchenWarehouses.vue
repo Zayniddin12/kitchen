@@ -32,7 +32,6 @@ onMounted(() => {
 
 const refresh = async () => {
   loading.value = true;
-
   try {
     await store.GET_KITCHEN_WAREHOUSE(params.value)
   } catch (e) {
