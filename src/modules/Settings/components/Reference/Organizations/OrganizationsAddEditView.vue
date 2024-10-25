@@ -14,6 +14,7 @@ interface DataValue {
   name: string;
   address: string;
   tin: string;
+  status: string
 }
 
 const v$ = ref<ValidationType | null>(null);
@@ -52,10 +53,12 @@ const setBreadCrumbFn = () => {
   ]);
 };
 
+const status = ref<boolean>(true)
 const dataValue = ref<DataValue>({
   name: '',
   address: '',
   tin: '',
+  status: "active"
 })
 const loading = ref<boolean>(false)
 
@@ -66,6 +69,8 @@ onMounted(async () => {
       const data = await store.GET_ORGANIZATION_DETAIL(route.params.id as string | number)
       if (data && data.organization) {
         dataValue.value = data.organization;
+
+        status.value = data.organization.status === 'active'
       }
     } catch (e) {
       loading.value = false
@@ -111,6 +116,7 @@ const handleSubmit = async () => {
             name: payload.name,
             address: payload.address,
             tin: payload.tin,
+            status: dataValue.value.status,
           }
         })
       } else {
@@ -121,6 +127,14 @@ const handleSubmit = async () => {
     } catch (e) {
       ElNotification({title: 'Error', type: 'error'});
     }
+  }
+}
+
+const changeStatus = () => {
+  if (status.value) {
+    dataValue.value.status = 'active'
+  } else {
+    dataValue.value.status = 'inactive'
   }
 }
 
@@ -178,6 +192,7 @@ watch(() => route.name, () => {
                 <app-input
                     v-model="dataValue.tin"
                     label="ИНН"
+                    maxlength="9"
                     placeholder="Выберите"
                     label-class="text-[#A8AAAE] font-medium text-[12px]"
                     class="w-full"
@@ -191,8 +206,10 @@ watch(() => route.name, () => {
                   v-if="route.params.id && !route.query.type"
                   active-text="Деактивация"
                   class="app-switch mt-auto"
-                  :before-change="switchChange"
+                  @change="changeStatus"
+                  v-model="status"
               />
+<!--              :before-change="switchChange"-->
             </div>
           </AppForm>
 

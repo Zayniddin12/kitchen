@@ -160,8 +160,8 @@ watch(route.name, () => {
             class="mt-auto"
             active-text="Деактивация"
             v-if="route.name === 'reference-type-product-edit-id'"
-            :before-change="switchChange"
         />
+<!--        :before-change="switchChange"-->
       </div>
 
       <button
