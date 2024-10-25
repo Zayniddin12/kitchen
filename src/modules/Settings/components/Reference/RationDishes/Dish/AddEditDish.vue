@@ -132,21 +132,41 @@ const handleSubmit = async () => {
 
   if ((await v$.value.validate())) {
     try {
+      const formData = new FormData();
+      formData.append('name[uz]', dataValue.value.name.uz);
+      formData.append('name[ru]', dataValue.value.name.ru);
+      formData.append('number', dataValue.value.number);
+      formData.append('quantity', dataValue.value.quantity);
+      formData.append('unit_id', dataValue.value.unit_id);
+
+      if (dataValue.value.image) {
+        formData.append('image', dataValue.value.image);
+      }
+
+      dataValue.value.compositions.forEach((composition, index) => {
+        formData.append(`compositions[${index}][typeProduct]`, composition.typeProduct);
+        formData.append(`compositions[${index}][product_type_id]`, composition.product_type_id);
+        formData.append(`compositions[${index}][quantity]`, composition.quantity);
+        formData.append(`compositions[${index}][unit_id]`, composition.unit_id);
+      });
+
       if (route.params.id) {
         await store.UPDATE_MEALS({
           id: route.params.id as string | number,
-          data: dataValue.value
-        })
+          data: formData
+        });
       } else {
-        await store.CREATE_MEALS(dataValue.value);
+        await store.CREATE_MEALS(formData);
       }
-      ElNotification({title: 'Success', type: 'success'});
+
+      ElNotification({ title: 'Success', type: 'success' });
       await router.push('/reference-dish');
     } catch (e) {
-      ElNotification({title: 'Error', type: 'error'});
+      ElNotification({ title: 'Error', type: 'error' });
     }
   }
-}
+};
+
 
 
 
@@ -221,20 +241,20 @@ watch(() => route.name, () => {
 
           <template v-if="route.name === 'reference-view-id'">
             <el-table
-              :data="[]"
+              :data="dataValue.compositions"
               stripe
               class="custom-element-table mt-[40px]"
             >
               <el-table-column
-                prop="id"
+                prop="product_type_name"
                 label="Состав"
               />
               <el-table-column
-                prop="count"
+                prop="quantity"
                 label="Количество"
               />
               <el-table-column
-                prop="count2"
+                prop="product_type_id"
                 label="Ед. измерения"
               />
             </el-table>
@@ -260,7 +280,6 @@ watch(() => route.name, () => {
                     @change="changeInput"
                   />
 
-                  <pre>{{store.parentProductType}}</pre>
                   <app-select
                     v-model="item.product_type_id"
                     label="Вид продукта"
@@ -268,7 +287,7 @@ watch(() => route.name, () => {
                     placeholder="Выберите"
                     itemValue="id"
                     itemLabel="name"
-                    :items="[]"
+                    :items="store.parentProductType?.product_types"
                   />
 
                   <app-input
@@ -284,7 +303,7 @@ watch(() => route.name, () => {
                       class="w-full"
                       label="Ед. измерения"
                       label-class="text-[#A8AAAE] text-[12px]"
-                      placeholder="кг"
+                      placeholder="Выберите"
                       itemValue="id"
                       itemLabel="name"
                       :items="store.units.units"
