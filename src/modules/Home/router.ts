@@ -1,3 +1,5 @@
+import { RouteRecordRaw } from "vue-router";
+
 export default [
   {
     path: "/home",
@@ -7,4 +9,4 @@ export default [
       title: 'Главная',
     },
   },
-];
+] as RouteRecordRaw[];

@@ -9,7 +9,7 @@ import KitchenWarehouse from "@/modules/KitchenWarehouse/router";
 import Kitchen from "@/modules/Kitchen/router";
 import Users from "@/modules/Users/router";
 
-const routes: Array<RouteRecordRaw> = [
+const routes: RouteRecordRaw[] = [
     ...home,
     ...Inbox,
     ...Monitoring,
@@ -58,17 +58,13 @@ const routes: Array<RouteRecordRaw> = [
         name: "notFound",
         component: () => import("@/components/errors/404.vue"),
         meta: {layout: "ErrorLayout"},
-    },
-    {
-        path: "/test",
-        component: () => import("@/views/Test.vue")
     }
 ];
 
 
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
-    routes,
+    routes
 });
 
 router.beforeEach(async (to: any, _, next) => {

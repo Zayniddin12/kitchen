@@ -152,6 +152,11 @@ onMounted(async () => {
   oldForm.value = JSON.parse(JSON.stringify(form));
 });
 
+
+const disabled = computed(() => {
+  return route.name === "reference-combine-nutrition-view";
+});
+
 </script>
 
 <template>
@@ -178,6 +183,7 @@ onMounted(async () => {
                 placeholder="Введите"
                 label-class="text-[#A8AAAE] font-medium text-[12px]"
                 required
+                :disabled
             />
             <AppInput
                 v-model="form.name.uz"
@@ -186,6 +192,7 @@ onMounted(async () => {
                 placeholder="Введите"
                 label-class="text-[#A8AAAE] font-medium text-[12px]"
                 required
+                :disabled
             />
             <AppSelect
                 v-model="form.management_id"
@@ -198,6 +205,7 @@ onMounted(async () => {
                 placeholder="Выберите"
                 label-class="text-[#A8AAAE] font-medium text-[12px]"
                 required
+                :disabled
             />
           </AppForm>
           <ElSwitch
@@ -246,25 +254,18 @@ onMounted(async () => {
       </div>
 
       <div class="w-[30%]">
-        <button
-            @click="router.push({name: 'reference-combine-nutrition-edit', params: {id: 1}})"
-            v-if="route.query.type == 'view'"
-            class="flex items-center gap-4 bg-[#F8F9FC] py-[10px] px-[20px] rounded-[8px]"
+        <RouterLink
+            v-if="route.name === 'reference-combine-nutrition-view'"
+            :to="{name: 'reference-combine-nutrition-edit', params: {id: routeID}}"
+            class="inline-flex items-center justify-center gap-4 bg-[#F8F9FC] py-[10px] px-[20px] rounded-[8px] min-w-[260px]"
         >
-          <li
-              :style="{
-                  maskImage: 'url(/icons/edit.svg)',
-                  backgroundColor: '#8F9194',
-                  color: '#8F9194',
-                  width: '20px',
-                  height: '20px',
-                  maskSize: '20px',
-                  maskPosition: 'center',
-                  maskRepeat: 'no-repeat'
-                   }"
-          ></li>
+          <img
+              src="/icons/edit.svg"
+              alt="edit icon"
+              class="size-5"
+          />
           Редактировать
-        </button>
+        </RouterLink>
       </div>
     </div>
   </div>

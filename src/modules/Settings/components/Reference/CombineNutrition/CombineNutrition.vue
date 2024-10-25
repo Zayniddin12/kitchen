@@ -92,7 +92,6 @@ const changePage = () => {
       <div class="flex items-center">
         <el-input
             v-model="form.search"
-            size="large"
             placeholder="Поиск"
             :prefix-icon="Search"
             class="w-[300px] mr-[16px]"

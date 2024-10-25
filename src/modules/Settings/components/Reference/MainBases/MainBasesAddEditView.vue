@@ -197,6 +197,7 @@ const disabledFormItems = computed<boolean>(() => {
                 placeholder="Введите"
                 label-class="text-[#A8AAAE] font-medium text-xs"
                 required
+                :disabled="disabledFormItems"
             />
 
             <app-input
@@ -206,6 +207,7 @@ const disabledFormItems = computed<boolean>(() => {
                 placeholder="Введите"
                 label-class="text-[#A8AAAE] font-medium text-xs"
                 required
+                :disabled="disabledFormItems"
             />
 
             <app-select
@@ -218,6 +220,7 @@ const disabledFormItems = computed<boolean>(() => {
                 placeholder="Введите"
                 label-class="text-[#A8AAAE] font-medium text-xs"
                 required
+                :disabled="disabledFormItems"
             >
             </app-select>
             <app-input
@@ -228,6 +231,7 @@ const disabledFormItems = computed<boolean>(() => {
                 placeholder="Выберите"
                 label-class="text-[#A8AAAE] font-medium text-xs"
                 required
+                :disabled="disabledFormItems"
             />
             <app-select
                 v-model="form.measure_id"
@@ -239,6 +243,7 @@ const disabledFormItems = computed<boolean>(() => {
                 placeholder="тонна"
                 label-class="text-[#A8AAAE] font-medium text-[12px]"
                 required
+                :disabled="disabledFormItems"
             >
 
             </app-select>
@@ -254,6 +259,7 @@ const disabledFormItems = computed<boolean>(() => {
                 placeholder="Мясные"
                 label-class="text-[#A8AAAE] font-medium text-[12px]"
                 required
+                :disabled="disabledFormItems"
             />
           </AppForm>
 
@@ -336,18 +342,6 @@ const disabledFormItems = computed<boolean>(() => {
               alt="edit icon"
               class="size-5"
           />
-          <!--          <span-->
-          <!--              :style="{-->
-          <!--                  maskImage: 'url(/icons/edit.svg)',-->
-          <!--                  backgroundColor: '#8F9194',-->
-          <!--                  color: '#8F9194',-->
-          <!--                  width: '20px',-->
-          <!--                  height: '20px',-->
-          <!--                  maskSize: '20px',-->
-          <!--                  maskPosition: 'center',-->
-          <!--                  maskRepeat: 'no-repeat'-->
-          <!--                   }"-->
-          <!--          ></span>-->
           Редактировать
         </RouterLink>
       </div>
