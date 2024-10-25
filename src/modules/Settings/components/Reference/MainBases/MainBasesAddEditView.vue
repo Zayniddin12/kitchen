@@ -32,7 +32,6 @@ const form = reactive<BaseWarehouseDataType>({
   base_id: null,
   capacity: null,
   measure_id: null,
-  status: false,
   product_ids: []
 });
 
@@ -139,7 +138,7 @@ const deleteFn = () => {
 
   confirm.delete().then(async () => {
     deleteLoading.value = true;
-    await settingsStore.deleteFoodFactory(routeID.value as number);
+    await settingsStore.deleteBaseWarehouse(routeID.value as number);
     commonStore.successToast({ name: "reference-main-bases" });
   }).finally(() => {
     deleteLoading.value = false;
@@ -147,21 +146,29 @@ const deleteFn = () => {
 };
 
 const setForm = async () => {
-  await settingsStore.showFoodFactory(routeID.value as number);
+  await settingsStore.fetchBaseWarehouse(routeID.value as number);
 
-  if (!settingsStore.foodFactory) return;
-  form.name = settingsStore.foodFactory.name;
-  form.measure_id = settingsStore.foodFactory.management.id;
-  form.status = getStatus(settingsStore.foodFactory.status);
+  if (!settingsStore.baseWarehouse) return;
+  form.name = settingsStore.baseWarehouse.name;
+  form.capacity = settingsStore.baseWarehouse.capacity;
+  form.base_id = settingsStore.baseWarehouse.base_id;
+  form.measure_id = settingsStore.baseWarehouse.measure_id;
+  form.status = getStatus(settingsStore.baseWarehouse.status);
+  form.product_ids = settingsStore.baseWarehouse.warehouseProducts.map(item => item.id);
 };
 
 onMounted(async () => {
   settingsStore.GET_UNITS();
   settingsStore.GET_TYPE_PRODUCT();
+  settingsStore.GET_WAREHOUSE_BASES_LIST({ per_page: 100 });
 
   if (routeID.value) await setForm();
 
   oldForm.value = JSON.parse(JSON.stringify(form));
+});
+
+const disabledFormItems = computed<boolean>(() => {
+  return route.name === "reference-main-bases-view";
 });
 
 </script>
@@ -170,9 +177,7 @@ onMounted(async () => {
   <div>
     <div class="flex items-center justify-between mb-[24px]">
       <h1 class="m-0 font-semibold text-[32px] leading-[48px]">{{ route.meta.title }}</h1>
-
     </div>
-
     <div class="flex gap-6">
       <div class="w-[70%]">
         <AppOverlay
@@ -205,14 +210,19 @@ onMounted(async () => {
 
             <app-select
                 v-model="form.base_id"
+                :items="settingsStore.wareHouseList.bases"
+                item-value="id"
+                item-label="name"
                 prop="base_id"
                 label="База складов"
                 placeholder="Введите"
                 label-class="text-[#A8AAAE] font-medium text-xs"
                 required
-            />
+            >
+            </app-select>
             <app-input
-                v-model="form.capacity"
+                v-model.number="form.capacity"
+                type="number"
                 prop="capacity"
                 label="Вместимость склада"
                 placeholder="Выберите"
@@ -229,7 +239,9 @@ onMounted(async () => {
                 placeholder="тонна"
                 label-class="text-[#A8AAAE] font-medium text-[12px]"
                 required
-            />
+            >
+
+            </app-select>
             <app-select
                 v-if="route.name !== 'reference-main-bases-view'"
                 v-model="form.product_ids"
@@ -247,29 +259,32 @@ onMounted(async () => {
 
           <div v-if="route.name === 'reference-main-bases-view'">
             <el-table
-                :data="tableData"
+                :data="settingsStore.baseWarehouse?.warehouseProducts ?? []"
                 class="custom-element-table"
                 stripe
             >
               <el-table-column
-                  prop="id"
+                  prop="idx"
                   label="№"
                   width="100"
-              />
+              >
+                <template #default="{$index}">
+                  {{ $index + 1 }}
+                </template>
+              </el-table-column>
               <el-table-column
                   prop="name"
                   label="Наименование базы"
               />
-
             </el-table>
           </div>
 
 
           <ElSwitch
               v-if="route.name === 'reference-main-bases-edit'"
+              v-model="form.status"
               active-text="Деактивация"
               class="app-switch mt-auto"
-              :before-change="switchChange"
           />
         </AppOverlay>
 
@@ -312,22 +327,27 @@ onMounted(async () => {
 
       <div class="w-[30%]">
         <RouterLink
+            v-if="route.name === 'reference-main-bases-view'"
             :to="{name: 'reference-main-bases-edit', params: {id: routeID}}"
-            v-if="route.query.type == 'view'"
-            class="flex items-center gap-4 bg-[#F8F9FC] py-[10px] px-[20px] rounded-[8px]"
+            class="inline-flex items-center justify-center gap-4 bg-[#F8F9FC] py-[10px] px-[20px] rounded-[8px] min-w-[260px]"
         >
-          <span
-              :style="{
-                  maskImage: 'url(/icons/edit.svg)',
-                  backgroundColor: '#8F9194',
-                  color: '#8F9194',
-                  width: '20px',
-                  height: '20px',
-                  maskSize: '20px',
-                  maskPosition: 'center',
-                  maskRepeat: 'no-repeat'
-                   }"
-          ></span>
+          <img
+              src="/icons/edit.svg"
+              alt="edit icon"
+              class="size-5"
+          />
+          <!--          <span-->
+          <!--              :style="{-->
+          <!--                  maskImage: 'url(/icons/edit.svg)',-->
+          <!--                  backgroundColor: '#8F9194',-->
+          <!--                  color: '#8F9194',-->
+          <!--                  width: '20px',-->
+          <!--                  height: '20px',-->
+          <!--                  maskSize: '20px',-->
+          <!--                  maskPosition: 'center',-->
+          <!--                  maskRepeat: 'no-repeat'-->
+          <!--                   }"-->
+          <!--          ></span>-->
           Редактировать
         </RouterLink>
       </div>
