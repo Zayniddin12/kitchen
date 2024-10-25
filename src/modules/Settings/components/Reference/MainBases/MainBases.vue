@@ -6,7 +6,10 @@ import { onMounted, reactive, ref, watch } from "vue";
 import { Search } from "@element-plus/icons-vue";
 import { useRoute, useRouter } from "vue-router";
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
-import { BaseWarehousesParamsType } from "@/modules/Settings/components/Reference/MainBases/base-warehouses.type";
+import {
+  BaseWarehouseListType,
+  BaseWarehousesParamsType
+} from "@/modules/Settings/components/Reference/MainBases/base-warehouses.type";
 import { watchDebounced } from "@vueuse/core";
 import { filterObjectValues } from "@/utils/helper";
 import { useSettingsStore } from "@/modules/Settings/store";
@@ -17,7 +20,8 @@ const settingsStore = useSettingsStore();
 
 const form = reactive<BaseWarehousesParamsType>({
   search: "",
-  page: null
+  page: null,
+  per_page: null
 });
 
 const { setBreadCrumb } = useBreadcrumb();
@@ -45,18 +49,18 @@ const setBreadCrumbFn = () => {
 };
 
 const fetchBaseWareHouses = async () => {
-  const perPage = parseInt(route.query.per_page);
-  const page = parseInt(route.query.page);
+  const perPage:number = parseInt(route.query.per_page as string);
+  const page:number = parseInt(route.query.page as string);
 
   if (!isNaN(perPage)) form.per_page = perPage;
   if (!isNaN(page)) form.page = page;
-  form.search = route.query.search ?? "";
+  form.search = route.query.search as string ?? "";
 
   await settingsStore.fetchBaseWarehouses(filterObjectValues(form));
 
   if (!settingsStore.baseWarehouses) return;
-  form.page = settingsStore.baseWarehouses.paginator.current_page;
-  form.per_page = settingsStore.baseWarehouses.paginator.per_page;
+  form.page = settingsStore.baseWarehouses.paginator.current_page as number;
+  form.per_page = settingsStore.baseWarehouses.paginator.per_page as number;
 };
 
 onMounted(() => {
@@ -109,10 +113,6 @@ const changePage = () => {
           ></span>
           Добавить
         </RouterLink>
-
-        <button>
-
-        </button>
       </div>
     </div>
 
@@ -154,10 +154,14 @@ const changePage = () => {
             sortable
         />
         <el-table-column
-            prop="storage_products"
+            prop="products"
             label="Продукты хранения"
             sortable
-        />
+        >
+          <template #default="{row}:{row:BaseWarehouseListType}">
+            {{row.products.map(item => item.name).join(", ")}}
+          </template>
+        </el-table-column>
         <el-table-column
             label="Действие"
             align="right"

@@ -11,7 +11,7 @@ export interface AppSelectPropsType extends ElFormItemType {
     maxCollapseTags?: number,
     loading?: boolean,
     loadingText?: string,
-    items?: Record<string, any>[],
+    items?: any[],
     itemValue?: string,
     itemLabel?: string,
     itemDisabled?: boolean,
