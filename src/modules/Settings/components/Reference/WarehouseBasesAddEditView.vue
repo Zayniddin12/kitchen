@@ -2,11 +2,17 @@
   setup
   lang="ts"
 >
-import { ref, watchEffect } from "vue";
+import { onMounted, reactive, ref, watchEffect } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import AppInput from "@/components/ui/form/app-input/AppInput.vue";
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 import useConfirm from "@/components/ui/app-confirm/useConfirm";
+import AppForm from "@/components/ui/form/app-form/AppForm.vue";
+import { ValidationType } from "@/components/ui/form/app-form/app-form.type";
+import { useSettingsStore } from "@/modules/Settings/store";
+import { ElNotification } from "element-plus";
+
+const settingsStore = useSettingsStore();
 
 const route = useRoute();
 const router = useRouter();
@@ -18,36 +24,41 @@ interface TableData {
   type: string;
 }
 
-const input1 = ref<string>("");
-const tableData = ref<TableData[]>([
-  {
-    id: 1,
-    name: "Зарафшан",
-    type: "Начальник управления",
+interface Name {
+  uz: string;
+  ru: string;
+}
+
+interface WareHouseType {
+  id?: number;
+  name: Name;
+  address: string;
+  code: string;
+  status: string;
+  created_at?: string;
+  updated_at?: string;
+  deleted_at?: null | string;
+}
+
+const status = ref<boolean>(true);
+
+const warehouseData = ref<WareHouseType>({
+  name: {
+    ru: "",
+    uz: "",
   },
-  {
-    id: 2,
-    name: "Зафаробод",
-    type: "Начальник управления",
-  },
-  {
-    id: 3,
-    name: "Навои",
-    type: "Начальник управления",
-  },
-  {
-    id: 4,
-    name: "Нуробод",
-    type: "Начальник управления",
-  },
-  {
-    id: 5,
-    name: "Учкудук",
-    type: "Начальник управления",
-  },
-]);
+  address: "",
+  code: "",
+  status: "active",
+});
+
 
 const { setBreadCrumb } = useBreadcrumb();
+
+const v$ = ref<ValidationType | null>(null);
+const setValidation = (value: ValidationType) => {
+  v$.value = value;
+};
 
 const setBreadCrumbFn = () => {
   setBreadCrumb([
@@ -75,6 +86,17 @@ const setBreadCrumbFn = () => {
   ]);
 };
 
+onMounted(async () => {
+  if (route.params.id) {
+    const data = await settingsStore.GET_WAREHOUSE_BASES_ITEM(route.params.id as string | number);
+
+    if (data && data.base) {
+      console.log(data.base);
+      warehouseData.value = data.base;
+    }
+  }
+});
+
 watchEffect(() => {
   setBreadCrumbFn();
 });
@@ -91,12 +113,50 @@ const deleteFn = () => {
   });
 };
 
-const switchChange = async (): Promise<boolean> => {
+const handleSubmit = async () => {
+  if (!v$.value) return;
+
+  if ((await v$.value.validate())) {
+
+    try {
+
+      if (route.params.id) {
+        await settingsStore.UPDATE_WAREHOUSE_BASES({
+          id: route.params.id as string | number,
+          data: warehouseData.value,
+        });
+      } else {
+        await settingsStore.CRETE_WAREHOUSE_BASES(warehouseData.value);
+      }
+      ElNotification({ title: "Success", type: "success" });
+      await router.push("/reference-warehouse-bases");
+    } catch (e) {
+      ElNotification({ title: "Error", type: "error" });
+    }
+  }
+};
+
+const switchChange = async (e): Promise<boolean> => {
   try {
-    const response = await confirm.show();
-    return true;
+    console.log(status.value);
+    // if (status.value) {
+    //   warehouseData.value.status = "inactive";
+    // } else {
+    //   warehouseData.value.status = "active";
+    // }
+    // const response = await confirm.show();
+
+    // return true;
   } catch (error) {
     return false;
+  }
+};
+
+const switchChange2 = async (e): Promise<boolean> => {
+  if (status.value) {
+    warehouseData.value.status = "active";
+  } else {
+    warehouseData.value.status = "inactive";
   }
 };
 
@@ -111,44 +171,64 @@ const switchChange = async (): Promise<boolean> => {
 
     <div class="flex gap-6">
       <div class="w-[70%]">
-        <div class="border border-[#E2E6F3] rounded-[24px] p-[24px] h-[65vh] flex flex-col">
-          <div class="flex items-center gap-4">
-            <app-input
-              label="Наименование (RU)"
-              placeholder="Введите"
-              label-class="text-[#A8AAAE] font-medium text-[12px]"
-              class="w-full"
-            />
+        <AppForm
+          :value="warehouseData"
+          @validation="setValidation"
+          class="mt-6"
+        >
+          <div class="border border-[#E2E6F3] rounded-[24px] p-[24px] h-[65vh] flex flex-col">
+            <div class="flex items-center gap-4">
+              {{ warehouseData }}
+              <app-input
+                v-model="warehouseData.name.ru"
+                label="Наименование (RU)"
+                placeholder="Введите"
+                label-class="text-[#A8AAAE] font-medium text-[12px]"
+                class="w-full"
+                required
+                prop="name.ru"
+              />
 
-            <app-input
-              label="Наименование (UZ)"
-              placeholder="Введите"
-              label-class="text-[#A8AAAE] font-medium text-[12px]"
-              class="w-full"
+              <app-input
+                v-model="warehouseData.name.uz"
+                label="Наименование (UZ)"
+                placeholder="Введите"
+                label-class="text-[#A8AAAE] font-medium text-[12px]"
+                class="w-full"
+                required
+                prop="name.uz"
+              />
+            </div>
+
+            <div class="flex items-center gap-4">
+              <app-input
+                v-model="warehouseData.address"
+                label="Юр. адрес базы"
+                placeholder="Введите"
+                label-class="text-[#A8AAAE] font-medium text-[12px]"
+                class="w-full"
+                required
+                prop="address"
+              />
+              <app-input
+                v-model="warehouseData.code"
+                label="Уникальный код базы"
+                placeholder="Введите"
+                label-class="text-[#A8AAAE] font-medium text-[12px]"
+                class="w-full"
+                required
+                prop="code"
+              />
+            </div>
+            <ElSwitch
+              v-model="status"
+              v-if="route.params.id && !route.query.type"
+              active-text="Деактивация"
+              class="app-switch mt-auto"
+              @change="switchChange2"
             />
           </div>
-
-          <div class="flex items-center gap-4">
-            <app-input
-              label="Юр. адрес базы"
-              placeholder="Введите"
-              label-class="text-[#A8AAAE] font-medium text-[12px]"
-              class="w-full"
-            />
-            <app-input
-              label="Уникальный код базы"
-              placeholder="Введите"
-              label-class="text-[#A8AAAE] font-medium text-[12px]"
-              class="w-full"
-            />
-          </div>
-          <ElSwitch
-            v-if="route.params.id && !route.query.type"
-            active-text="Деактивация"
-            class="app-switch mt-auto"
-            :before-change="switchChange"
-          />
-        </div>
+        </AppForm>
         <div
           v-if="!route.query.type"
           class="flex items-center mt-[24px] "
@@ -171,7 +251,7 @@ const switchChange = async (): Promise<boolean> => {
               Отменить
             </button>
 
-            <button class="custom-apply-btn">
+            <button class="custom-apply-btn" @click="handleSubmit">
               {{ $route.params.id ? "Сохранить" : "Добавить" }}
             </button>
           </div>
