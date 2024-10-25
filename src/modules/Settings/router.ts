@@ -344,7 +344,7 @@ export default [
     name: "reference-organization-edit",
     component: () => import("@/modules/Settings/components/Reference/Organizations/OrganizationsAddEditView.vue"),
     meta: {
-      title: "Редактировать рациона",
+      title: "Редактировать организации",
       breadcrumbItemTitle: "Редактировать",
     },
   },

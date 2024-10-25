@@ -70,6 +70,7 @@ const dataValue = ref<DataValue>({
   status: 'active'
 })
 const loading = ref<boolean>(false)
+const status = ref<boolean>(true)
 
 
 onMounted(async () => {
@@ -79,6 +80,8 @@ onMounted(async () => {
       const managements = await store.GET_REGIONAL_DETAIL(route.params.id as number | string)
       if (managements && managements.data && managements.data.management) {
         dataValue.value = managements.data.management
+
+        status.value = managements.data.management.status === 'active'
       }
     } catch (e) {
       loading.value = false
@@ -112,6 +115,14 @@ const switchChange = async (): Promise<boolean> => {
 };
 
 
+const changeStatus = () => {
+  if (status.value) {
+    dataValue.value.status = 'active'
+  } else {
+    dataValue.value.status = 'inactive'
+  }
+}
+
 const handleSubmit = async () => {
   if (!v$.value) return;
 
@@ -124,6 +135,7 @@ const handleSubmit = async () => {
           id: route.params.id as string | number,
           data: {
             name: payload.name,
+            status: payload.status,
             responsible_position: payload.responsible_position,
           },
         })
@@ -216,12 +228,13 @@ watch(() => route.name, () => {
             </div>
 
             <ElSwitch
-                v-model="dataValue.status"
+                v-model="status"
                 v-if="route.params.id && !route.query.type"
                 active-text="Деактивация"
+                @change="changeStatus"
                 class="app-switch mt-auto"
-                :before-change="switchChange"
             />
+<!--            :before-change="switchChange"-->
           </div>
         </AppForm>
 

@@ -181,7 +181,7 @@ watch(() => route.name, () => {
 
 <template>
   <div>
-    <pre>{{ dataValue }}</pre>
+<!--    <pre>{{ dataValue }}</pre>-->
     <h1 class="m-0 font-semibold text-[32px] leading-[48px]">{{ route.meta.title }}</h1>
 
     <div class="mt-[24px] flex items-start">

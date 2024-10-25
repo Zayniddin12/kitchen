@@ -14,7 +14,7 @@ import AppOverlay from "@/components/ui/app-overlay/AppOverlay.vue";
 interface DataValue {
   name?: string;
   address?: string;
-  oked?: string;
+  oked: string;
   tin?: string;
   license?: string;
   sertificate?: string;
@@ -71,7 +71,9 @@ const dataValue = ref<DataValue>({
   sert_end_date: '',
   director: '',
   phone: '',
+  status: "active"
 })
+const status = ref<boolean>(true)
 
 onMounted(async () => {
   if (route.params.id) {
@@ -80,6 +82,8 @@ onMounted(async () => {
       const providerData: DataValue = await store.GET_PROVIDERS_DETAIL(route.params.id as string | number);
       if (providerData && providerData.provider) {
         dataValue.value = providerData.provider;
+
+        status.value = providerData.provider.status === 'active'
       }
     } catch (e) {
       loading.value = false
@@ -93,6 +97,14 @@ const cancelFn = () => {
     router.push({name: "reference-suppliers"});
   });
 };
+
+const changeStatus = () => {
+  if (status.value) {
+    dataValue.value.status = 'active'
+  } else {
+    dataValue.value.status = 'inactive'
+  }
+}
 
 const deleteFn = () => {
   confirm.delete().then(() => {
@@ -150,162 +162,164 @@ watch(() => route.name, () => {
     <AppOverlay
         :loading="loading"
     >
-    <div class="flex items-center justify-between mb-[24px]">
-      <h1 class="m-0 font-semibold text-[32px] leading-[48px]">{{ route.meta.title }}</h1>
-    </div>
-    <div class="flex gap-6">
-      <div class="w-[70%]">
-        <AppForm
-            :value="dataValue"
-            @validation="setValidation"
-            class="mt-6"
-        >
-          <div class="border border-[#E2E6F3] rounded-[24px] p-[24px] h-[65vh] flex flex-col">
-            <div class="grid grid-cols-3 gap-4">
-              <app-input
-                  v-model="dataValue.name"
-                  label="Наименование"
-                  placeholder="Введите"
-                  label-class="text-[#A8AAAE] font-medium text-[12px]"
-                  class="w-full"
-                  required
-                  prop="name"
-                  :disabled="isDisabled"
-              />
-
-              <app-input
-                  v-model="dataValue.address"
-                  label="Юр. адрес"
-                  placeholder="Введите"
-                  label-class="text-[#A8AAAE] font-medium text-[12px]"
-                  class="w-full"
-                  required
-                  prop="address"
-                  :disabled="isDisabled"
-              />
-
-              <app-input
-                  v-model="dataValue.oked"
-                  label="ОКЭД"
-                  placeholder="Введите"
-                  label-class="text-[#A8AAAE] font-medium text-[12px]"
-                  class="w-full"
-                  required
-                  prop="oked"
-                  :disabled="isDisabled"
-              />
-
-              <app-input
-                  v-model="dataValue.tin"
-                  label="ИНН"
-                  placeholder="Введите"
-                  label-class="text-[#A8AAAE] font-medium text-[12px]"
-                  class="w-full"
-                  required
-                  prop="tin"
-                  :disabled="isDisabled"
-              />
-
-              <app-input
-                  v-model="dataValue.license"
-                  label="Номер лицензии"
-                  placeholder="Введите"
-                  label-class="text-[#A8AAAE] font-medium text-[12px]"
-                  class="w-full"
-                  required
-                  prop="license"
-                  :disabled="isDisabled"
-              />
-
-              <app-input
-                  v-model="dataValue.sertificate"
-                  label="Сертификат"
-                  placeholder="Введите"
-                  label-class="text-[#A8AAAE] font-medium text-[12px]"
-                  class="w-full"
-                  required
-                  prop="sertificate"
-                  :disabled="isDisabled"
-              />
-
-              <app-date-picker
-                  v-model="dataValue.sert_end_date"
-                  label="Срок сертификата"
-                  placeholder="Введите"
-                  label-class="text-[#A8AAAE] font-medium text-[12px]"
-                  class="w-full"
-                  format="DD.MM.YYYY"
-                  value-format="DD.MM.YYYY"
-                  required
-                  prop="sert_end_date"
-                  :disabled="isDisabled"
-              />
-
-              <app-input
-                  v-model="dataValue.director"
-                  label="Руководитель"
-                  placeholder="Введите"
-                  label-class="text-[#A8AAAE] font-medium text-[12px]"
-                  class="w-full"
-                  required
-                  prop="director"
-                  :disabled="isDisabled"
-              />
-
-              <app-input
-                  v-model="dataValue.phone"
-                  label="Контакты"
-                  placeholder="Введите"
-                  label-class="text-[#A8AAAE] font-medium text-[12px]"
-                  class="w-full"
-                  required
-                  prop="phone"
-                  :disabled="isDisabled"
-              />
-            </div>
-
-            <ElSwitch
-                v-if="route.params.id && !route.query.type"
-                active-text="Деактивация"
-                class="app-switch mt-auto"
-                v-model="dataValue.status"
-                :before-change="switchChange"
-            />
-          </div>
-        </AppForm>
-
-        <div v-if="!route.query.type" class="flex items-center mt-[24px] "
-             :class="!route.params.id ? 'justify-end' : 'justify-between'">
-          <button
-              v-if="route.params.id"
-              class="custom-danger-btn"
-              @click="deleteFn"
+      <div class="flex items-center justify-between mb-[24px]">
+        <h1 class="m-0 font-semibold text-[32px] leading-[48px]">{{ route.meta.title }}</h1>
+      </div>
+      <div class="flex gap-6">
+        <div class="w-[70%]">
+          <AppForm
+              :value="dataValue"
+              @validation="setValidation"
+              class="mt-6"
           >
-            Удалить
-          </button>
+            <div class="border border-[#E2E6F3] rounded-[24px] p-[24px] h-[65vh] flex flex-col">
+              <div class="grid grid-cols-3 gap-4">
+                <app-input
+                    v-model="dataValue.name"
+                    label="Наименование"
+                    placeholder="Введите"
+                    label-class="text-[#A8AAAE] font-medium text-[12px]"
+                    class="w-full"
+                    required
+                    prop="name"
+                    :disabled="isDisabled"
+                />
 
-          <div class="flex items-center gap-4">
+                <app-input
+                    v-model="dataValue.address"
+                    label="Юр. адрес"
+                    placeholder="Введите"
+                    label-class="text-[#A8AAAE] font-medium text-[12px]"
+                    class="w-full"
+                    required
+                    prop="address"
+                    :disabled="isDisabled"
+                />
+
+                <app-input
+                    v-model="dataValue.oked"
+                    label="ОКЭД"
+                    placeholder="Введите"
+                    label-class="text-[#A8AAAE] font-medium text-[12px]"
+                    class="w-full"
+                    required
+                    prop="oked"
+                    :disabled="isDisabled"
+                />
+
+                <app-input
+                    v-model="dataValue.tin"
+                    label="ИНН"
+                    maxlength="9"
+                    placeholder="Введите"
+                    label-class="text-[#A8AAAE] font-medium text-[12px]"
+                    class="w-full"
+                    required
+                    prop="tin"
+                    :disabled="isDisabled"
+                />
+
+                <app-input
+                    v-model="dataValue.license"
+                    label="Номер лицензии"
+                    placeholder="Введите"
+                    label-class="text-[#A8AAAE] font-medium text-[12px]"
+                    class="w-full"
+                    required
+                    prop="license"
+                    :disabled="isDisabled"
+                />
+
+                <app-input
+                    v-model="dataValue.sertificate"
+                    label="Сертификат"
+                    placeholder="Введите"
+                    label-class="text-[#A8AAAE] font-medium text-[12px]"
+                    class="w-full"
+                    required
+                    prop="sertificate"
+                    :disabled="isDisabled"
+                />
+
+                <app-date-picker
+                    v-model="dataValue.sert_end_date"
+                    label="Срок сертификата"
+                    placeholder="Введите"
+                    label-class="text-[#A8AAAE] font-medium text-[12px]"
+                    class="w-full"
+                    format="DD.MM.YYYY"
+                    value-format="DD.MM.YYYY"
+                    required
+                    prop="sert_end_date"
+                    :disabled="isDisabled"
+                />
+
+                <app-input
+                    v-model="dataValue.director"
+                    label="Руководитель"
+                    placeholder="Введите"
+                    label-class="text-[#A8AAAE] font-medium text-[12px]"
+                    class="w-full"
+                    required
+                    prop="director"
+                    :disabled="isDisabled"
+                />
+
+                <app-input
+                    v-model="dataValue.phone"
+                    label="Контакты"
+                    placeholder="Введите"
+                    label-class="text-[#A8AAAE] font-medium text-[12px]"
+                    class="w-full"
+                    required
+                    prop="phone"
+                    :disabled="isDisabled"
+                />
+              </div>
+
+              <ElSwitch
+                  v-if="route.params.id && !route.query.type"
+                  active-text="Деактивация"
+                  class="app-switch mt-auto"
+                  v-model="status"
+                  @change="changeStatus"
+              />
+              <!--            :before-change="switchChange"-->
+            </div>
+          </AppForm>
+
+          <div v-if="!route.query.type" class="flex items-center mt-[24px] "
+               :class="!route.params.id ? 'justify-end' : 'justify-between'">
             <button
-                @click="cancelFn"
-                class="custom-cancel-btn"
+                v-if="route.params.id"
+                class="custom-danger-btn"
+                @click="deleteFn"
             >
-              Отменить
+              Удалить
             </button>
 
-            <button class="custom-apply-btn" @click="handleSubmit">
-              {{ $route.params.id ? "Сохранить" : "Добавить" }}
-            </button>
+            <div class="flex items-center gap-4">
+              <button
+                  @click="cancelFn"
+                  class="custom-cancel-btn"
+              >
+                Отменить
+              </button>
+
+              <button class="custom-apply-btn" @click="handleSubmit">
+                {{ $route.params.id ? "Сохранить" : "Добавить" }}
+              </button>
+            </div>
           </div>
         </div>
-      </div>
 
-      <div class="w-[30%]">
-        <button
-            @click="router.push({name: 'reference-suppliers-edit', params: {id: 1}})"
-            v-if="route.query.type == 'view'"
-            class="flex items-center gap-4 bg-[#F8F9FC] py-[10px] px-[20px] rounded-[8px]"
-        >
-          <li :style="{
+        <div class="w-[30%]">
+          <button
+              @click="router.push({name: 'reference-suppliers-edit', params: {id: 1}})"
+              v-if="route.query.type == 'view'"
+              class="flex items-center gap-4 bg-[#F8F9FC] py-[10px] px-[20px] rounded-[8px]"
+          >
+            <li :style="{
                   maskImage: 'url(/icons/edit.svg)',
                   backgroundColor: '#8F9194',
                   color: '#8F9194',
@@ -315,11 +329,11 @@ watch(() => route.name, () => {
                   maskPosition: 'center',
                   maskRepeat: 'no-repeat'
                    }"
-          />
-          Редактировать
-        </button>
+            />
+            Редактировать
+          </button>
+        </div>
       </div>
-    </div>
     </AppOverlay>
   </div>
 </template>
