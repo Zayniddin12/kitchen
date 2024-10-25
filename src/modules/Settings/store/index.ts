@@ -380,6 +380,11 @@ export const useSettingsStore = defineStore("settingsStore", () => {
     return $axios.put(`/meals/${id}/`, data);
   };
 
+  const DELETE_MEALS = async (id: number) => {
+    return $axios.delete(`/meals/${id}`);
+  };
+  // Блюда end
+
   const parentProductType = ref();
   const GET_MEALS_VID_PRO = async (params: any) => {
     const { data } = await $axios.get("/product-types", { params });
@@ -582,6 +587,7 @@ export const useSettingsStore = defineStore("settingsStore", () => {
     GET_MEALS_DETAIL,
     UPDATE_MEALS,
     GET_MEALS_VID_PRO,
+    DELETE_MEALS,
 
     parentProductType,
 

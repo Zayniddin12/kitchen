@@ -123,7 +123,9 @@ const cancelFn = () => {
 
 const deleteFn = () => {
   confirm.delete().then(() => {
+    store.DELETE_MEALS(route.params.id as string | number)
     router.push('/reference-dish');
+    ElNotification({ title: 'Success', type: 'success' });
   });
 };
 
