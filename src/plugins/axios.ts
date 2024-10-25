@@ -10,6 +10,8 @@ import {i18n} from "@/localization";
 import {ElNotification} from "element-plus";
 
 import {refreshEndpoint} from "@/auth/jwt.config";
+import { useRouter } from "vue-router";
+import { useCommonStore } from "@/stores/common.store";
 
 const axiosIns: AxiosInstance = axios.create({
     baseURL: import.meta.env.VITE_BACKEND,
@@ -54,7 +56,17 @@ axiosIns.interceptors.request.use(
 
 // Handle responses for 404 or 401 pages
 axiosIns.interceptors.response.use(
-    (response: AxiosResponse) => response,
+    async (response: AxiosResponse) => {
+        if (response.data.success) return Promise.resolve(response);
+        const error = response.data.error;
+
+        if (error.code === 404){
+            const commonStore = useCommonStore();
+            commonStore.redirectNotFound(error.message);
+        }
+
+        return Promise.reject(error);
+    },
     async (error: AxiosError) => {
         if (error) {
             console.log('ERROR ', error);

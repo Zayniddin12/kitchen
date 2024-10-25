@@ -1,45 +1,28 @@
-<script setup lang="ts">
-import { onMounted, ref } from "vue";
+<script
+    setup
+    lang="ts"
+>
+import { onMounted, reactive, ref, watch } from "vue";
 import { Search } from "@element-plus/icons-vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
+import { useSettingsStore } from "@/modules/Settings/store";
+import {
+  FoodFactoriesParamsType
+} from "@/modules/Settings/components/Reference/CombineNutrition/combine-nutrition.type";
+import { filterObjectValues } from "@/utils/helper";
+import { watchDebounced } from "@vueuse/core";
 
 const route = useRoute();
+const router = useRouter();
 
-interface TableData {
-  id: number;
-  name: string;
-  type: string;
-}
+const form = reactive<FoodFactoriesParamsType>({
+  page: null,
+  per_page: null,
+  search: ""
+});
 
-const input1 = ref<string>("");
-const tableData = ref<TableData[]>([
-  {
-    id: 1,
-    name: "Зарафшан",
-    type: "Зарафшан",
-  },
-  {
-    id: 2,
-    name: "Зафаробод",
-    type: "Зафаробод",
-  },
-  {
-    id: 3,
-    name: "Навои",
-    type: "Навои",
-  },
-  {
-    id: 4,
-    name: "Нуробод",
-    type: "Нуробод",
-  },
-  {
-    id: 5,
-    name: "Учкудук",
-    type: "Учкудук",
-  },
-]);
+const settingsStore = useSettingsStore();
 
 const { setBreadCrumb } = useBreadcrumb();
 
@@ -47,30 +30,57 @@ const setBreadCrumbFn = () => {
   setBreadCrumb([
     {
       label: "Настройки",
-      isActionable: false,
+      isActionable: false
     },
     {
       label: "Справочники",
       isActionable: false,
-      to: { name: "reference" },
+      to: { name: "reference" }
     },
 
     {
       label: "Управ, комбинаты и склады",
       isActionable: false,
-      to: { name: "reference" },
+      to: { name: "reference" }
     },
 
     {
       label: "Комбинаты питания",
-      isActionable: true,
-    },
+      isActionable: true
+    }
   ]);
+};
+
+const fetchFoodFactories = async () => {
+  const perPage = parseInt(route.query.per_page);
+  const page = parseInt(route.query.page);
+
+  if (!isNaN(perPage)) form.per_page = perPage;
+  if (!isNaN(page)) form.page = page;
+  form.search = route.query.search ?? "";
+
+  await settingsStore.fetchFoodFactories(filterObjectValues(form));
+
+  if (!settingsStore.foodFactories) return;
+  form.page = settingsStore.foodFactories.paginator.current_page;
+  form.per_page = settingsStore.foodFactories.paginator.per_page;
 };
 
 onMounted(() => {
   setBreadCrumbFn();
 });
+
+watch(route, () => {
+  fetchFoodFactories();
+}, { immediate: true });
+
+watchDebounced(() => form.search, () => {
+  router.replace({ query: { search: form.search } });
+}, { debounce: 1000, maxWait: 5000 });
+
+const changePage = () => {
+  router.replace({ query: { ...route.query, page: form.page } });
+};
 
 </script>
 
@@ -81,18 +91,19 @@ onMounted(() => {
 
       <div class="flex items-center">
         <el-input
-          v-model="input1"
-          size="large"
-          placeholder="Поиск"
-          :prefix-icon="Search"
-          class="w-[300px] mr-[16px]"
+            v-model="form.search"
+            size="large"
+            placeholder="Поиск"
+            :prefix-icon="Search"
+            class="w-[300px] mr-[16px]"
         />
 
         <button
-          @click="$router.push({name: 'reference-combine-nutrition-add'})"
-          class="flex items-center justify-center gap-3 custom-apply-btn">
-          <li
-            :style="{
+            @click="$router.push({name: 'reference-combine-nutrition-add'})"
+            class="flex items-center justify-center gap-3 custom-apply-btn"
+        >
+          <span
+              :style="{
                   maskImage: 'url(/icons/plusIcon.svg)',
                   backgroundColor: '#fff',
                   color: '#fff',
@@ -102,7 +113,7 @@ onMounted(() => {
                   maskPosition: 'center',
                   maskRepeat: 'no-repeat'
                    }"
-          ></li>
+          ></span>
           Добавить
         </button>
 
@@ -112,25 +123,85 @@ onMounted(() => {
       </div>
     </div>
 
-    <div class="mt-[24px]">
-      <el-table :data="tableData" stripe class="custom-element-table">
-        <el-table-column prop="id" label="№" width="80" />
-        <el-table-column prop="name" label="Наименование" sortable width="400" />
-        <el-table-column prop="name" label="Региональное управление" sortable />
-        <el-table-column label="Действие" align="right">
-          <template #default="scope">
-            <button class="action-btn mr-[8px]"
-                    @click="$router.push({name: 'reference-combine-nutrition-view', query: {type: 'view'}, params: {id: 1}})">
-              <img src="../../../../../assets/images/eye.svg" alt="download" />
-            </button>
+    <div class="mt-6">
+      <el-table
+          v-loading="settingsStore.foodFactoriesLoading"
+          :data="settingsStore.foodFactories?.food_factories ?? []"
+          stripe
+          class="custom-element-table"
+      >
+        <el-table-column
+            prop="idx"
+            label="№"
+            width="80"
+        >
+          <template #default="{$index}" v-if="settingsStore.foodFactories">
+            {{form.page >1 ? settingsStore.foodFactories.paginator.per_page*(form.page-1) + $index + 1 : $index +1 }}
+          </template>
+        </el-table-column>
+        <el-table-column
+            prop="name"
+            label="Наименование"
+            sortable
+            width="400"
+        />
+        <el-table-column
+            prop="management"
+            label="Региональное управление"
+            sortable
+        >
+          <template #default="{row}">
+            {{ row.management.name }}
+          </template>
+        </el-table-column>
+        <el-table-column
+            label="Действие"
+            align="right"
+        >
+          <template #default="{row}">
+            <div class="inline-flex items-center">
+              <RouterLink
+                  class="action-btn mr-2"
+                  :to="{name: 'reference-combine-nutrition-view', params: {id: row.id}}"
+              >
+                <img
+                    src="@/assets/images/eye.svg"
+                    alt="download"
+                />
+              </RouterLink>
 
-            <button class="action-btn"
-                    @click="$router.push({name: 'reference-combine-nutrition-edit', params: {id: 1}})">
-              <img src="../../../../../assets/images/icons/edit.svg" alt="eye" />
-            </button>
+              <RouterLink
+                  class="action-btn"
+                  :to="{name: 'reference-combine-nutrition-edit', params: {id: row.id}}"
+              >
+                <img
+                    src="@/assets/images/icons/edit.svg"
+                    alt="eye"
+                />
+              </RouterLink>
+            </div>
           </template>
         </el-table-column>
       </el-table>
+      <div
+          v-if="settingsStore.foodFactories && settingsStore.foodFactories.paginator.pages_count>1"
+          class="mt-6 flex items-center justify-between"
+      >
+        <div class="text-cool-gray text-[14px]">
+          Показано {{ form.page }}–{{ form.per_page }} из {{ settingsStore.foodFactories.paginator.pages_count }}
+          результатов
+        </div>
+
+        <el-pagination
+            v-model:current-page="form.page"
+            @current-change="changePage"
+            :page-size="form.per_page"
+            class="float-right"
+            background
+            layout="prev, pager, next"
+            :total="settingsStore.foodFactories.paginator.total_count"
+        />
+      </div>
     </div>
   </div>
 </template>

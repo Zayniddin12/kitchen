@@ -60,9 +60,6 @@ const changeSearch = (): void => {
     await refresh();
   }, 500);
 }
-const setDefaultImage = (event) => {
-  event.target.src = 'https://www.landuse-ca.org/wp-content/uploads/2019/04/no-photo-available.png';
-};
 </script>
 
 <template>
@@ -97,7 +94,7 @@ const setDefaultImage = (event) => {
       <el-table-column prop="id" label="№" width="80"/>
       <el-table-column prop="photo" label="Картинка вида продукта" sortable>
         <template #default="scope">
-          <img @error="setDefaultImage" v-if="scope.row.image" :src="scope.row.image" alt="#" class="h-[32px] w-[32px] rounded-full"/>
+          <img v-if="scope.row.image" :src="scope.row.image" alt="#" class="h-[32px] w-[32px] rounded-full"/>
           <img
               v-else
               src="https://cdn.vectorstock.com/i/1000v/51/99/icon-of-user-avatar-for-web-site-or-mobile-app-vector-3125199.jpg"
