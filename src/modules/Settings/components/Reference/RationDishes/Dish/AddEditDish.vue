@@ -241,20 +241,20 @@ watch(() => route.name, () => {
 
           <template v-if="route.name === 'reference-view-id'">
             <el-table
-              :data="[]"
+              :data="dataValue.compositions"
               stripe
               class="custom-element-table mt-[40px]"
             >
               <el-table-column
-                prop="id"
+                prop="product_type_name"
                 label="Состав"
               />
               <el-table-column
-                prop="count"
+                prop="quantity"
                 label="Количество"
               />
               <el-table-column
-                prop="count2"
+                prop="product_type_id"
                 label="Ед. измерения"
               />
             </el-table>
@@ -303,7 +303,7 @@ watch(() => route.name, () => {
                       class="w-full"
                       label="Ед. измерения"
                       label-class="text-[#A8AAAE] text-[12px]"
-                      placeholder="кг"
+                      placeholder="Выберите"
                       itemValue="id"
                       itemLabel="name"
                       :items="store.units.units"
