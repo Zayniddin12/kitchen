@@ -34,8 +34,32 @@ interface rationList {
 }
 
 interface WarehouseBasesList {
-  kitchen_types: object[];
-  pagination: Pagination;
+  bases: object[];
+  paginator: Pagination;
+}
+
+interface Name {
+  uz: string;
+  ru: string;
+}
+
+interface WareHouseType {
+  id?: number;
+  name: Name;
+  address: string;
+  code: string;
+  status: string;
+}
+
+interface WareHouseItemType {
+  id: number;
+  name: Name;
+  address: string;
+  code: string;
+  status: string;
+  created_at?: string;
+  updated_at?: string;
+  deleted_at?: null | string;
 }
 
 export const useSettingsStore = defineStore("settingsStore", () => {
@@ -96,8 +120,8 @@ export const useSettingsStore = defineStore("settingsStore", () => {
 
 
   const wareHouseList = ref<WarehouseBasesList>({
-    kitchen_types: [],
-    pagination: {
+    bases: [],
+    paginator: {
       current_page: 0,
       per_page: 0,
       has_more: false,
@@ -107,7 +131,7 @@ export const useSettingsStore = defineStore("settingsStore", () => {
     },
   });
 
-  const wareHouseItem = ref<object>({});
+  const wareHouseItem = ref<WareHouseItemType | {}>({});
 
 
   // Документы Типы документов
@@ -159,16 +183,17 @@ export const useSettingsStore = defineStore("settingsStore", () => {
 
   const GET_WAREHOUSE_BASES_ITEM = async (id: string | number) => {
     const { data } = await $axios.get("/bases/" + id);
-    wareHouseItem.value = data.data;
+    wareHouseItem.value = data.data && data.data.base;
+    return data.data;
   };
 
-  const CRETE_WAREHOUSE_BASES = async (data) => {
+  const CRETE_WAREHOUSE_BASES = async (data: WareHouseType) => {
     return await $axios.post("/bases/", data);
 
   };
 
-  const UPDATE_WAREHOUSE_BASES = async ({ id, data }: { id: string, data: any }) => {
-    return await $axios.post("/bases/" + id, data);
+  const UPDATE_WAREHOUSE_BASES = async ({ id, data }: { id: string | number, data: WareHouseType }) => {
+    return await $axios.put("/bases/" + id, data);
 
   };
 

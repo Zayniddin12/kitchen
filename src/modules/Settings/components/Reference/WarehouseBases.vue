@@ -20,7 +20,12 @@ interface TableData {
   type: string;
 }
 
-const search = ref<string | null>(null);
+
+const params = ref<object>({
+  search: "",
+  page: 1,
+  per_page: 10,
+});
 const loading = ref<boolean>(false);
 
 const { setBreadCrumb } = useBreadcrumb();
@@ -58,7 +63,7 @@ watchEffect(() => {
 const refresh = async () => {
   loading.value = true;
   try {
-    await settingsStore.GET_WAREHOUSE_BASES_LIST({ search: search.value });
+    await settingsStore.GET_WAREHOUSE_BASES_LIST(params.value);
   } catch (e: any) {
     ElNotification({ title: e, type: "error" });
     loading.value = false;
@@ -71,7 +76,14 @@ onMounted(() => {
   refresh();
 });
 
-watchDebounced(search, () => {
+const changePagination = (event: any) => {
+  params.value.page = event;
+
+  refresh();
+};
+
+watchDebounced(params.value.search, () => {
+  params.value.page = 1;
   refresh();
 }, { debounce: 1000, maxWait: 5000 });
 </script>
@@ -83,7 +95,7 @@ watchDebounced(search, () => {
 
       <div class="flex items-center">
         <el-input
-          v-model="search"
+          v-model="params.search"
           size="large"
           placeholder="Поиск"
           :prefix-icon="Search"
@@ -120,7 +132,7 @@ watchDebounced(search, () => {
       <el-table
         v-loading="loading"
         :empty-text="'Нет доступных данных'"
-        :data="settingsStore.wareHouseList.kitchen_types"
+        :data="settingsStore.wareHouseList.bases"
         stripe
         class="custom-element-table"
       >
@@ -136,7 +148,7 @@ watchDebounced(search, () => {
           width="400"
         />
         <el-table-column
-          prop="type"
+          prop="address"
           label="Юр. адрес"
           sortable
         />
@@ -147,7 +159,7 @@ watchDebounced(search, () => {
           <template #default="scope">
             <button
               class="action-btn mr-[8px]"
-              @click="$router.push({name: 'reference-warehouse-bases-view', query: {type: 'view'}, params: {id: 1}})"
+              @click="$router.push({name: 'reference-warehouse-bases-view', query: {type: 'view'}, params: {id: scope.row.id}})"
             >
               <img
                 src="@/assets/images/eye.svg"
@@ -157,7 +169,7 @@ watchDebounced(search, () => {
 
             <button
               class="action-btn"
-              @click="$router.push({name: 'reference-warehouse-bases-edit', params: {id: 1}})"
+              @click="$router.push({name: 'reference-warehouse-bases-edit', params: {id: scope.row.id}})"
             >
               <img
                 src="@/assets/images/icons/edit.svg"
@@ -167,6 +179,22 @@ watchDebounced(search, () => {
           </template>
         </el-table-column>
       </el-table>
+
+      <div class="mt-[24px] flex items-center justify-between">
+        <div class="text-cool-gray text-[14px]">
+          Показано 1–10 из {{ settingsStore.wareHouseList.paginator.total_count }} результатов
+        </div>
+
+        <el-pagination
+          v-model:current-page="params.page"
+          :page-size="params.per_page"
+          class="float-right"
+          background
+          layout="prev, pager, next"
+          :total="settingsStore.wareHouseList.paginator.total_count"
+          @change="changePagination"
+        />
+      </div>
     </div>
   </div>
 </template>

@@ -2,7 +2,7 @@
   setup
   lang="ts"
 >
-import { reactive, ref, watchEffect } from "vue";
+import { onMounted, reactive, ref, watchEffect } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import AppInput from "@/components/ui/form/app-input/AppInput.vue";
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
@@ -34,15 +34,22 @@ interface WareHouseType {
   name: Name;
   address: string;
   code: string;
+  status: string;
+  created_at?: string;
+  updated_at?: string;
+  deleted_at?: null | string;
 }
 
-const warehouseData = reactive<WareHouseType>({
+const status = ref<boolean>(true);
+
+const warehouseData = ref<WareHouseType>({
   name: {
     ru: "",
     uz: "",
   },
   address: "",
   code: "",
+  status: "active",
 });
 
 
@@ -79,6 +86,17 @@ const setBreadCrumbFn = () => {
   ]);
 };
 
+onMounted(async () => {
+  if (route.params.id) {
+    const data = await settingsStore.GET_WAREHOUSE_BASES_ITEM(route.params.id as string | number);
+
+    if (data && data.base) {
+      console.log(data.base);
+      warehouseData.value = data.base;
+    }
+  }
+});
+
 watchEffect(() => {
   setBreadCrumbFn();
 });
@@ -105,10 +123,10 @@ const handleSubmit = async () => {
       if (route.params.id) {
         await settingsStore.UPDATE_WAREHOUSE_BASES({
           id: route.params.id as string | number,
-          data: warehouseData,
+          data: warehouseData.value,
         });
       } else {
-        await settingsStore.CRETE_WAREHOUSE_BASES(warehouseData);
+        await settingsStore.CRETE_WAREHOUSE_BASES(warehouseData.value);
       }
       ElNotification({ title: "Success", type: "success" });
       await router.push("/reference-warehouse-bases");
@@ -118,12 +136,27 @@ const handleSubmit = async () => {
   }
 };
 
-const switchChange = async (): Promise<boolean> => {
+const switchChange = async (e): Promise<boolean> => {
   try {
-    const response = await confirm.show();
-    return true;
+    console.log(status.value);
+    // if (status.value) {
+    //   warehouseData.value.status = "inactive";
+    // } else {
+    //   warehouseData.value.status = "active";
+    // }
+    // const response = await confirm.show();
+
+    // return true;
   } catch (error) {
     return false;
+  }
+};
+
+const switchChange2 = async (e): Promise<boolean> => {
+  if (status.value) {
+    warehouseData.value.status = "active";
+  } else {
+    warehouseData.value.status = "inactive";
   }
 };
 
@@ -145,12 +178,15 @@ const switchChange = async (): Promise<boolean> => {
         >
           <div class="border border-[#E2E6F3] rounded-[24px] p-[24px] h-[65vh] flex flex-col">
             <div class="flex items-center gap-4">
+              {{ warehouseData }}
               <app-input
                 v-model="warehouseData.name.ru"
                 label="Наименование (RU)"
                 placeholder="Введите"
                 label-class="text-[#A8AAAE] font-medium text-[12px]"
                 class="w-full"
+                required
+                prop="name.ru"
               />
 
               <app-input
@@ -159,6 +195,8 @@ const switchChange = async (): Promise<boolean> => {
                 placeholder="Введите"
                 label-class="text-[#A8AAAE] font-medium text-[12px]"
                 class="w-full"
+                required
+                prop="name.uz"
               />
             </div>
 
@@ -169,6 +207,8 @@ const switchChange = async (): Promise<boolean> => {
                 placeholder="Введите"
                 label-class="text-[#A8AAAE] font-medium text-[12px]"
                 class="w-full"
+                required
+                prop="address"
               />
               <app-input
                 v-model="warehouseData.code"
@@ -176,13 +216,16 @@ const switchChange = async (): Promise<boolean> => {
                 placeholder="Введите"
                 label-class="text-[#A8AAAE] font-medium text-[12px]"
                 class="w-full"
+                required
+                prop="code"
               />
             </div>
             <ElSwitch
+              v-model="status"
               v-if="route.params.id && !route.query.type"
               active-text="Деактивация"
               class="app-switch mt-auto"
-              :before-change="switchChange"
+              @change="switchChange2"
             />
           </div>
         </AppForm>
