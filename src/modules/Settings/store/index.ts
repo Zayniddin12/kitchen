@@ -364,7 +364,11 @@ export const useSettingsStore = defineStore("settingsStore", () => {
   };
 
   const CREATE_MEALS = (data: any) => {
-    return $axios.post("/meals", data);
+    return $axios.post("/meals", data, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
   };
 
   const GET_MEALS_DETAIL = async (id: number) => {

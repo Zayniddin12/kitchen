@@ -84,14 +84,14 @@ async function getKitchenWarehouseDetail(id) {
     if (wr && wr.kitchen_warehouse) {
       dataValue.value = wr.kitchen_warehouse;
 
-      const base = store.wareHouseList.bases.find(e => e.id === dataValue.value.base_id).name;
-      const kitchen = store.kitchenTypes.kitchen_types.find(e => e.id === dataValue.value.kitchen_type_id).name;
-      if (base) {
-        dataValue.value.base_id = base
-      }
-      if (kitchen) {
-        dataValue.value.kitchen_type_id = kitchen
-      }
+      // const base = store.wareHouseList.bases.find(e => e.id === dataValue.value.base_id).name;
+      // const kitchen = store.kitchenTypes.kitchen_types.find(e => e.id === dataValue.value.kitchen_type_id).name;
+      // if (base) {
+      //   dataValue.value.base_id = base
+      // }
+      // if (kitchen) {
+      //   dataValue.value.kitchen_type_id = kitchen
+      // }
     }
   } catch (e) {
     ElNotification({title: e, type: 'error'});
