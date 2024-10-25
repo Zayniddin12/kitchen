@@ -6,6 +6,7 @@ import {ElNotification} from 'element-plus';
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 import useConfirm from "@/components/ui/app-confirm/useConfirm";
 import AppInput from "@/components/ui/form/app-input/AppInput.vue";
+import AppOverlay from "@/components/ui/app-overlay/AppOverlay.vue";
 
 interface Name {
   uz: string;
@@ -31,13 +32,21 @@ const dataValue = ref<DataValue>({
   },
   is_active: true,
 });
+const loading = ref<boolean>(false)
 
 onMounted(async () => {
   if (route.params.id) {
-    const typeDoc = await store.GET_TYPE_PRODUCT_DETAIL(route.params.id as string | number)
-    if (typeDoc && typeDoc.data && typeDoc.data.product_type) {
-      dataValue.value = typeDoc.data.product_type;
+    loading.value = true
+    try {
+      const typeDoc = await store.GET_TYPE_PRODUCT_DETAIL(route.params.id as string | number)
+      if (typeDoc && typeDoc.data && typeDoc.data.product_type) {
+        dataValue.value = typeDoc.data.product_type;
+      }
+    } catch (e) {
+      ElNotification({title: e, type: 'error'});
+      loading.value = false
     }
+    loading.value = false
   }
 })
 
@@ -125,6 +134,9 @@ watch(route.name, () => {
 
 <template>
   <div>
+    <AppOverlay
+        :loading="loading"
+    >
     <h1 class="m-0 font-semibold text-[32px] leading-[48px]">{{ route.meta.title }}</h1>
 
     <div class="flex items-start mt-[24px]">
@@ -191,5 +203,6 @@ watch(route.name, () => {
         </button>
       </div>
     </div>
+    </AppOverlay>
   </div>
 </template>

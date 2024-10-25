@@ -8,6 +8,7 @@ import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 import useConfirm from "@/components/ui/app-confirm/useConfirm";
 import AppInput from "@/components/ui/form/app-input/AppInput.vue";
 import AppForm from "@/components/ui/form/app-form/AppForm.vue";
+import AppOverlay from "@/components/ui/app-overlay/AppOverlay.vue";
 
 interface Name {
   uz: string;
@@ -37,13 +38,20 @@ const dataValue = ref<DataValue>({
   },
   status: "active",
 });
+const loading = ref<boolean>(false)
 
 onMounted(async () => {
   if (route.params.id) {
-    const kitchen = await store.GET_KITCHEN_TYPE_DETAIL(route.params.id as string | number);
-    if (kitchen && kitchen.kitchen_type) {
-      dataValue.value = kitchen.kitchen_type;
-    }
+    loading.value = true
+   try {
+     const kitchen = await store.GET_KITCHEN_TYPE_DETAIL(route.params.id as string | number)
+     if(kitchen && kitchen.kitchen_type) {
+       dataValue.value = kitchen.kitchen_type;
+     }
+   } catch (e) {
+     loading.value = false
+   }
+    loading.value = false
   }
 });
 
@@ -132,6 +140,9 @@ watch(() => route.name, () => {
 
 <template>
   <div>
+    <AppOverlay
+        :loading="loading"
+    >
     <h1 class="m-0 font-semibold text-[32px] leading-[48px] mb-[24px]">{{ route.meta.title }}</h1>
 
     <div class="flex gap-6">
@@ -211,6 +222,7 @@ watch(() => route.name, () => {
         </button>
       </div>
     </div>
+    </AppOverlay>
   </div>
 </template>
 

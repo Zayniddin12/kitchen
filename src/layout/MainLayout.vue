@@ -57,7 +57,7 @@ watch(() => route.name, function(val) {
 
 <style lang="scss">
 .dark #app {
-  //background-color: #171D32;
+  background-color: #171D32;
 }
 
 .top-navbar {

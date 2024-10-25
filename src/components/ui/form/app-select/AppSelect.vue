@@ -8,7 +8,11 @@ import { getRules, setRules } from "@/components/ui/form/validate";
 
 const model = defineModel<AppSelectValueType>({
   default: "",
-});
+})
+
+const emit = defineEmits<{
+  change: [value: AppSelectValueType]
+}>()
 
 const props = withDefaults(defineProps<AppSelectPropsType>(), {
   labelPosition: "top",
@@ -29,6 +33,11 @@ const appSelectClasses = computed<string[]>(() => {
 
   return classes;
 });
+
+const change = (value: any) => {
+  emit("change", value);
+}
+
 </script>
 
 <template>
@@ -82,6 +91,7 @@ const appSelectClasses = computed<string[]>(() => {
       :automatic-dropdown
       :placement
       class="app-select__select"
+      @change="change"
     >
       <ElOption
         v-for="item in items"

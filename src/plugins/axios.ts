@@ -4,7 +4,7 @@ import {
     setAccessToken,
     refreshToken,
 } from "@/auth/jwtService";
-import router from "@/router";
+import router from "@/router/router";
 import axios, {AxiosInstance, AxiosRequestConfig, AxiosResponse, AxiosError} from "axios";
 import {i18n} from "@/localization";
 import {ElNotification} from "element-plus";

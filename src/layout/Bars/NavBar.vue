@@ -100,7 +100,8 @@ const openModals = (data: any) => {
           :key="index3"
           class="px-4 py-2 block"
           to="#"
-        >lorem ipsum dolor
+        >
+          lorem ipsum dolor
         </router-link>
       </div>
     </div>
@@ -183,7 +184,7 @@ const openModals = (data: any) => {
         </template>
       </el-dropdown>
 
-      <ThemeToggler />
+      <ThemeToggler v-if="false"/>
 
       <el-badge
         value="18"

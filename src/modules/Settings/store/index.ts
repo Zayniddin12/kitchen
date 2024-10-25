@@ -93,6 +93,10 @@ export const useSettingsStore = defineStore("settingsStore", () => {
     meals: [] as any,
     pagination: {} as any,
   });
+  const kitchenWarehouse = ref({
+    kitchen_warehouses: [] as any,
+    paginator: {} as any
+  })
   // dilshod
 
 
@@ -367,6 +371,35 @@ export const useSettingsStore = defineStore("settingsStore", () => {
   const UPDATE_MEALS = ({ id, data }: { id: string | number; data: any }) => {
     return $axios.put(`/meals/${id}/`, data);
   };
+
+  const parentProductType = ref()
+  const GET_MEALS_VID_PRO = async (params: any) => {
+    const { data } = await $axios.get("/product-types", { params });
+    parentProductType.value = data.data;
+  };
+
+  // Склады кухни
+  const GET_KITCHEN_WAREHOUSE = async (params: any) => {
+    const { data } = await $axios.get("/kitchen-warehouses", { params });
+    kitchenWarehouse.value = data.data;
+  };
+
+  const CREATE_KITCHEN_WAREHOUSE = (data: any) => {
+    return $axios.post("/kitchen-warehouses", data);
+  };
+
+  const UPDATE_KITCHEN_WAREHOUSE = ({ id, data }: { id: string | number; data: any }) => {
+    return $axios.put(`/kitchen-warehouses/${id}/`, data);
+  };
+
+  const DELETE_KITCHEN_WAREHOUSE = async (id: number) => {
+    return $axios.delete(`/kitchen-warehouses/${id}`);
+  };
+
+  const GET_KITCHEN_WAREHOUSE_DETAIL = async (id: number) => {
+    const { data } = await $axios.get(`/kitchen-warehouses/${id}`);
+    return data.data;
+  };
   // dilshod end
 
   const foodFactoriesPrefix = "food-factories";
@@ -462,6 +495,16 @@ export const useSettingsStore = defineStore("settingsStore", () => {
     CREATE_MEALS,
     GET_MEALS_DETAIL,
     UPDATE_MEALS,
+    GET_MEALS_VID_PRO,
+
+    parentProductType,
+
+    kitchenWarehouse,
+    GET_KITCHEN_WAREHOUSE,
+    CREATE_KITCHEN_WAREHOUSE,
+    UPDATE_KITCHEN_WAREHOUSE,
+    DELETE_KITCHEN_WAREHOUSE,
+    GET_KITCHEN_WAREHOUSE_DETAIL
     // dilshod end
   };
 });
