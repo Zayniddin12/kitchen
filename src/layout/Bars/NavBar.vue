@@ -106,6 +106,9 @@ const openModals = (data: any) => {
       </div>
     </div>
 
+    <MemoModal v-model:editModal="editModal" />
+
+    <!----------Создать modal---------->
     <div class="flex items-center gap-6">
       <el-dropdown
         trigger="click"
@@ -184,7 +187,7 @@ const openModals = (data: any) => {
         </template>
       </el-dropdown>
 
-      <ThemeToggler v-if="false"/>
+      <ThemeToggler v-if="false" />
 
       <el-badge
         value="18"
@@ -212,9 +215,6 @@ const openModals = (data: any) => {
         </div>
       </div>
     </div>
-
-    <!----------Создать modal---------->
-    <MemoModal v-model:editModal="editModal" />
     <ComingModal v-model:editModal="editModal2" />
     <ConsumptionModal v-model:editModal="editConsumptionModal" />
     <FreeModal v-model:editModal="freeModal" />

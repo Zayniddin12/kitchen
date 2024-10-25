@@ -168,74 +168,74 @@ watch(() => route.name, () => {
       <div class="w-[70%]">
         <div class="border rounded-[24px] p-[24px]">
           <AppMediaUploader
-              v-model="dataValue.image"
-              :value="existingImage"
-              class="mt-4"
+            v-model="dataValue.image"
+            :value="existingImage"
+            class="mt-4"
           />
 
           <AppForm
-              :value="dataValue"
-              @validation="setValidation"
-              class="mt-6"
+            :value="dataValue"
+            @validation="setValidation"
+            class="mt-6"
           >
             <div class="mt-[24px] grid grid-cols-2 gap-5">
               <app-input
-                  v-model="dataValue.name.ru"
-                  label="Наименование (RU)"
-                  placeholder="Введите"
-                  label-class="text-[#A8AAAE] text-[12px]"
-                  required
-                  prop="name.ru"
+                v-model="dataValue.name.ru"
+                label="Наименование (RU)"
+                placeholder="Введите"
+                label-class="text-[#A8AAAE] text-[12px]"
+                required
+                prop="name.ru"
               />
 
               <app-input
-                  v-model="dataValue.name.uz"
-                  label="Наименование (UZ)"
-                  placeholder="Введите"
-                  label-class="text-[#A8AAAE] text-[12px]"
-                  required
-                  prop="name.uz"
+                v-model="dataValue.name.uz"
+                label="Наименование (UZ)"
+                placeholder="Введите"
+                label-class="text-[#A8AAAE] text-[12px]"
+                required
+                prop="name.uz"
               />
 
               <app-input
-                  v-model="dataValue.number"
-                  label="Уникальный номер блюда"
-                  placeholder="Автоматически"
-                  label-class="text-[#A8AAAE] font-medium text-[12px]"
-                  disabled
+                v-model="dataValue.number"
+                label="Уникальный номер блюда"
+                placeholder="Автоматически"
+                label-class="text-[#A8AAAE] font-medium text-[12px]"
+                disabled
               />
 
               <app-select
-                  v-model="dataValue.unit_id"
-                  label="Ед. измерения"
-                  placeholder="Выберите"
-                  label-class="text-[#A8AAAE] text-[12px]"
-                  required
-                  prop="unit_id"
-                  itemValue="id"
-                  itemLabel="name"
-                  :items="store.units.units"
+                v-model="dataValue.unit_id"
+                label="Ед. измерения"
+                placeholder="Выберите"
+                label-class="text-[#A8AAAE] text-[12px]"
+                required
+                prop="unit_id"
+                itemValue="id"
+                itemLabel="name"
+                :items="store.units.units"
               />
             </div>
           </AppForm>
 
           <template v-if="route.name === 'reference-view-id'">
             <el-table
-                :data="[]"
-                stripe
-                class="custom-element-table mt-[40px]"
+              :data="[]"
+              stripe
+              class="custom-element-table mt-[40px]"
             >
               <el-table-column
-                  prop="id"
-                  label="Состав"
+                prop="id"
+                label="Состав"
               />
               <el-table-column
-                  prop="count"
-                  label="Количество"
+                prop="count"
+                label="Количество"
               />
               <el-table-column
-                  prop="count2"
-                  label="Ед. измерения"
+                prop="count2"
+                label="Ед. измерения"
               />
             </el-table>
           </template>
@@ -250,49 +250,49 @@ watch(() => route.name, () => {
                      :key="index"
                 >
                   <app-select
-                      v-model="item.typeProduct"
-                      label="Тип продукта"
-                      label-class="text-[#A8AAAE] text-[12px]"
-                      placeholder="Выберите"
-                      itemValue="id"
-                      itemLabel="name"
-                      :items="store.typeProduct.product_categories"
-                      @change="changeInput"
+                    v-model="item.typeProduct"
+                    label="Тип продукта"
+                    label-class="text-[#A8AAAE] text-[12px]"
+                    placeholder="Выберите"
+                    itemValue="id"
+                    itemLabel="name"
+                    :items="store.typeProduct.product_categories"
+                    @change="changeInput"
                   />
 
                   <pre>{{store.parentProductType}}</pre>
                   <app-select
-                      v-model="item.product_type_id"
-                      label="Вид продукта"
-                      label-class="text-[#A8AAAE] text-[12px]"
-                      placeholder="Выберите"
-                      itemValue="id"
-                      itemLabel="name"
-                      :items="[]"
+                    v-model="item.product_type_id"
+                    label="Вид продукта"
+                    label-class="text-[#A8AAAE] text-[12px]"
+                    placeholder="Выберите"
+                    itemValue="id"
+                    itemLabel="name"
+                    :items="[]"
                   />
 
                   <app-input
-                      v-model="item.quantity"
-                      label="Количество"
-                      label-class="text-[#A8AAAE] text-[12px]"
-                      placeholder="0.0"
+                    v-model="item.quantity"
+                    label="Количество"
+                    label-class="text-[#A8AAAE] text-[12px]"
+                    placeholder="0.0"
                   />
 
                   <div class="flex items-center">
                     <app-select
-                        v-model="item.unit_id"
-                        class="w-full"
-                        label="Ед. измерения"
-                        label-class="text-[#A8AAAE] text-[12px]"
-                        placeholder="кг"
-                        itemValue="id"
-                        itemLabel="name"
-                        :items="store.units.units"
+                      v-model="item.unit_id"
+                      class="w-full"
+                      label="Ед. измерения"
+                      label-class="text-[#A8AAAE] text-[12px]"
+                      placeholder="кг"
+                      itemValue="id"
+                      itemLabel="name"
+                      :items="store.units.units"
                     />
 
                     <button
-                        class="bg-[#E2E6F3] rounded-[8px] flex justify-center items-center h-[40px] w-[40px] ml-[16px] mt-2"
-                        @click="handleDelete(index)"
+                      class="bg-[#E2E6F3] rounded-[8px] flex justify-center items-center h-[40px] w-[40px] ml-[16px] mt-2"
+                      @click="handleDelete(index)"
                     >
                       <img src="@/assets/images/icons/delete.svg" alt="delete"/>
                     </button>
@@ -301,13 +301,13 @@ watch(() => route.name, () => {
               </div>
 
               <button
-                  class="text-[#2E90FA] flex items-center border px-[16px] py-[8px] border-[#2E90FA] rounded-lg text-[12px] font-medium mt-[12px]"
-                  @click="repeaterAgain"
+                class="text-[#2E90FA] flex items-center border px-[16px] py-[8px] border-[#2E90FA] rounded-lg text-[12px] font-medium mt-[12px]"
+                @click="repeaterAgain"
               >
                 <img
-                    src="@/assets/images/icons/plus2.svg"
-                    class="mr-[4px]"
-                    alt="plus"
+                  src="@/assets/images/icons/plus2.svg"
+                  class="mr-[4px]"
+                  alt="plus"
                 />
                 Добавить еще
               </button>
@@ -316,21 +316,21 @@ watch(() => route.name, () => {
         </div>
 
         <div
-            class="flex items-center justify-between mt-[24px]"
-            v-if="route.name === 'reference-dish-create' || route.name === 'reference-dish-id'"
+          class="flex items-center justify-between mt-[24px]"
+          v-if="route.name === 'reference-dish-create' || route.name === 'reference-dish-id'"
         >
           <button
-              class="custom-danger-btn"
-              v-if="route.name === 'reference-dish-id'"
-              @click="deleteFn"
+            class="custom-danger-btn"
+            v-if="route.name === 'reference-dish-id'"
+            @click="deleteFn"
           >
             Удалить
           </button>
 
           <div class="flex items-center justify-end ml-auto">
             <button
-                class="custom-cancel-btn"
-                @click="cancelFn"
+              class="custom-cancel-btn"
+              @click="cancelFn"
             >
               Отменить
             </button>
@@ -343,14 +343,14 @@ watch(() => route.name, () => {
       </div>
 
       <button
-          class="custom-light-btn flex items-center ml-[24px]"
-          v-if="route.name === 'reference-view-id'"
-          @click="router.push(`/reference-dish-edit/${route.params.id}`)"
+        class="custom-light-btn flex items-center ml-[24px]"
+        v-if="route.name === 'reference-view-id'"
+        @click="router.push(`/reference-dish-edit/${route.params.id}`)"
       >
         <img
-            src="@/assets/images/icons/edit.svg"
-            alt="edit"
-            class="mr-[12px]"
+          src="@/assets/images/icons/edit.svg"
+          alt="edit"
+          class="mr-[12px]"
         />
         Редактировать
       </button>
@@ -359,8 +359,8 @@ watch(() => route.name, () => {
 </template>
 
 <style
-    scoped
-    lang="scss"
+  scoped
+  lang="scss"
 >
 .edit__btn {
   @apply bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50
