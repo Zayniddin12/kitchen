@@ -70,22 +70,35 @@ const setBreadCrumbFn = () => {
 };
 
 onMounted(async () => {
-  if (route.params.id) {
-    loading.value = true
-    try {
-      const wr = await store.GET_KITCHEN_WAREHOUSE_DETAIL(route.params.id as string | number)
-      if (wr) {
-        console.log(wr)
-      }
-    } catch (e) {
-      loading.value = false
-    }
-    loading.value = false
-  }
-
   await store.GET_WAREHOUSE_BASES_LIST({per_page: 100})
   await store.GET_KITCHEN_TYPE()
+  if (route.params.id) {
+    await getKitchenWarehouseDetail(route.params.id);
+  }
 })
+
+async function getKitchenWarehouseDetail(id) {
+  loading.value = true;
+  try {
+    const wr = await store.GET_KITCHEN_WAREHOUSE_DETAIL(id);
+    if (wr && wr.kitchen_warehouse) {
+      dataValue.value = wr.kitchen_warehouse;
+
+      const base = store.wareHouseList.bases.find(e => e.id === dataValue.value.base_id).name;
+      const kitchen = store.kitchenTypes.kitchen_types.find(e => e.id === dataValue.value.kitchen_type_id).name;
+      if (base) {
+        dataValue.value.base_id = base
+      }
+      if (kitchen) {
+        dataValue.value.kitchen_type_id = kitchen
+      }
+    }
+  } catch (e) {
+    ElNotification({title: e, type: 'error'});
+  } finally {
+    loading.value = false;
+  }
+}
 
 const handleSubmit = async () => {
   if (!v$.value) return;
@@ -177,7 +190,6 @@ watch(() => route.name, () => {
                   :disabled="isDisabled"
               />
 
-
               <app-select
                   v-model="dataValue.base_id"
                   label="База складов"
@@ -210,6 +222,7 @@ watch(() => route.name, () => {
                   label-class="text-[#A8AAAE] font-medium text-[12px]"
                   class="w-full"
                   required
+                  type="number"
                   prop="measure_id"
                   :disabled="isDisabled"
               />
