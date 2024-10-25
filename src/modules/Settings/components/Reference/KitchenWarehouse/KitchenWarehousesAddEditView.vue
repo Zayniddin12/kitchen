@@ -154,9 +154,7 @@ watch(() => route.name, () => {
 </script>
 
 <template>
-  <AppOverlay
-      :loading="loading"
-  >
+  <AppOverlay :loading="loading">
     <h1 class="m-0 font-semibold text-[32px] leading-[48px] mb-[24px]">{{ route.meta.title }}</h1>
 
     <div class="flex gap-6">
