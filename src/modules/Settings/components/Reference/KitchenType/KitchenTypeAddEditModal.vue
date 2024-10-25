@@ -1,13 +1,14 @@
 <script setup lang="ts">
-import {computed, onMounted, ref, watch} from "vue";
-import {useRoute, useRouter} from "vue-router";
-import {ValidationType} from "@/components/ui/form/app-form/app-form.type";
-import {useSettingsStore} from "@/modules/Settings/store";
-import {ElNotification} from "element-plus";
+import { computed, onMounted, ref, watch } from "vue";
+import { useRoute, useRouter } from "vue-router";
+import { ValidationType } from "@/components/ui/form/app-form/app-form.type";
+import { useSettingsStore } from "@/modules/Settings/store";
+import { ElNotification } from "element-plus";
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 import useConfirm from "@/components/ui/app-confirm/useConfirm";
 import AppInput from "@/components/ui/form/app-input/AppInput.vue";
 import AppForm from "@/components/ui/form/app-form/AppForm.vue";
+import AppOverlay from "@/components/ui/app-overlay/AppOverlay.vue";
 
 interface Name {
   uz: string;
@@ -16,7 +17,7 @@ interface Name {
 
 interface DataValue {
   name: Name;
-  status: boolean | string
+  status: boolean | string;
 }
 
 const v$ = ref<ValidationType | null>(null);
@@ -27,23 +28,30 @@ const setValidation = (value: ValidationType) => {
 const store = useSettingsStore();
 const route = useRoute();
 const router = useRouter();
-const {confirm} = useConfirm();
-const {setBreadCrumb} = useBreadcrumb();
+const { confirm } = useConfirm();
+const { setBreadCrumb } = useBreadcrumb();
 
 const dataValue = ref<DataValue>({
   name: {
-    uz: '',
-    ru: '',
+    uz: "",
+    ru: "",
   },
-  status: 'active'
+  status: "active",
 });
+const loading = ref<boolean>(false)
 
 onMounted(async () => {
   if (route.params.id) {
-    const kitchen = await store.GET_KITCHEN_TYPE_DETAIL(route.params.id as string | number)
-    if(kitchen && kitchen.kitchen_type) {
-      dataValue.value = kitchen.kitchen_type;
-    }
+    loading.value = true
+   try {
+     const kitchen = await store.GET_KITCHEN_TYPE_DETAIL(route.params.id as string | number)
+     if(kitchen && kitchen.kitchen_type) {
+       dataValue.value = kitchen.kitchen_type;
+     }
+   } catch (e) {
+     loading.value = false
+   }
+    loading.value = false
   }
 });
 
@@ -55,17 +63,17 @@ const setBreadCrumbFn = () => {
     },
     {
       label: "Справочники",
-      to: {name: "reference"},
+      to: { name: "reference" },
     },
 
     {
       label: "Управ, комбинаты и склады",
-      to: {name: "reference"},
+      to: { name: "reference" },
     },
 
     {
       label: "Типы кухни",
-      to: {name: "reference-kitchen-type"},
+      to: { name: "reference-kitchen-type" },
     },
     {
       label: String(route?.meta?.breadcrumbItemTitle ?? ""),
@@ -76,15 +84,15 @@ const setBreadCrumbFn = () => {
 
 const cancelFn = () => {
   confirm.cancel().then(response => {
-    router.push('/reference-kitchen-type');
+    router.push("/reference-kitchen-type");
   });
 };
 
 const deleteFn = () => {
   confirm.delete().then((response: any) => {
-    store.DELETE_KITCHEN_TYPE(route.params.id)
-    router.push('/reference-kitchen-type');
-    ElNotification({title: 'Success', type: 'success'});
+    store.DELETE_KITCHEN_TYPE(route.params.id);
+    router.push("/reference-kitchen-type");
+    ElNotification({ title: "Success", type: "success" });
   });
 };
 
@@ -107,71 +115,74 @@ const handleSubmit = async () => {
       if (route.params.id) {
         await store.UPDATE_KITCHEN_TYPE({
           id: route.params.id as string | number,
-          data: payload
-        })
+          data: payload,
+        });
       } else {
-        await store.CREATE_KITCHEN_TYPE(payload)
+        await store.CREATE_KITCHEN_TYPE(payload);
       }
-      ElNotification({title: 'Success', type: 'success'});
-      await router.push('/reference-kitchen-type');
+      ElNotification({ title: "Success", type: "success" });
+      await router.push("/reference-kitchen-type");
     } catch (e) {
-      ElNotification({title: 'Error', type: 'error'});
+      ElNotification({ title: "Error", type: "error" });
     }
   }
 };
 
 
 const isDisabled = computed(() => {
-  return route.name === 'reference-kitchen-type-view'
+  return route.name === "reference-kitchen-type-view";
 });
 
 watch(() => route.name, () => {
   setBreadCrumbFn();
-}, {immediate: true});
+}, { immediate: true });
 </script>
 
 <template>
   <div>
+    <AppOverlay
+        :loading="loading"
+    >
     <h1 class="m-0 font-semibold text-[32px] leading-[48px] mb-[24px]">{{ route.meta.title }}</h1>
 
     <div class="flex gap-6">
       <div class="w-[70%]">
         <AppForm
-            :value="dataValue"
-            @validation="setValidation"
-            class="mt-6"
+          :value="dataValue"
+          @validation="setValidation"
+          class="mt-6"
         >
           <div class="border border-[#E2E6F3] rounded-[24px] p-[24px] h-[65vh] flex flex-col">
             <div class="flex items-center gap-4">
               <app-input
-                  v-model="dataValue.name.ru"
-                  label="Наименование (RU)"
-                  placeholder="Введите"
-                  label-class="text-[#A8AAAE] font-medium text-[12px]"
-                  class="w-full"
-                  :disabled="isDisabled"
-                  required
-                  prop="name.ru"
+                v-model="dataValue.name.ru"
+                label="Наименование (RU)"
+                placeholder="Введите"
+                label-class="text-[#A8AAAE] font-medium text-[12px]"
+                class="w-full"
+                :disabled="isDisabled"
+                required
+                prop="name.ru"
               />
 
               <app-input
-                  v-model="dataValue.name.uz"
-                  label="Наименование (UZ)"
-                  placeholder="Введите"
-                  label-class="text-[#A8AAAE] font-medium text-[12px]"
-                  class="w-full"
-                  :disabled="isDisabled"
-                  required
-                  prop="name.uz"
+                v-model="dataValue.name.uz"
+                label="Наименование (UZ)"
+                placeholder="Введите"
+                label-class="text-[#A8AAAE] font-medium text-[12px]"
+                class="w-full"
+                :disabled="isDisabled"
+                required
+                prop="name.uz"
               />
             </div>
 
             <ElSwitch
-                v-model="dataValue.status"
-                v-if="route.params.id && !route.query.type"
-                active-text="Деактивация"
-                class="app-switch mt-auto"
-                :before-change="switchChange"
+              v-model="dataValue.status"
+              v-if="route.params.id && !route.query.type"
+              active-text="Деактивация"
+              class="app-switch mt-auto"
+              :before-change="switchChange"
             />
           </div>
         </AppForm>
@@ -181,9 +192,9 @@ watch(() => route.name, () => {
              :class="!route.params.id ? 'justify-end' : 'justify-between'"
         >
           <button
-              @click="deleteFn"
-              v-if="route.params.id"
-              class="custom-danger-btn"
+            @click="deleteFn"
+            v-if="route.params.id"
+            class="custom-danger-btn"
           >
             Удалить
           </button>
@@ -202,15 +213,16 @@ watch(() => route.name, () => {
 
       <div class="w-[30%]">
         <button
-            @click="router.push({name: 'reference-kitchen-type-edit', params: {id: route.params.id}})"
-            v-if="route.query.type == 'view'"
-            class="flex items-center gap-4 bg-[#F8F9FC] py-[10px] px-[20px] rounded-[8px]"
+          @click="router.push({name: 'reference-kitchen-type-edit', params: {id: route.params.id}})"
+          v-if="route.query.type == 'view'"
+          class="flex items-center gap-4 bg-[#F8F9FC] py-[10px] px-[20px] rounded-[8px]"
         >
-          <img src="@/assets/images/icons/edit.svg" alt="#"/>
+          <img src="@/assets/images/icons/edit.svg" alt="#" />
           Редактировать
         </button>
       </div>
     </div>
+    </AppOverlay>
   </div>
 </template>
 

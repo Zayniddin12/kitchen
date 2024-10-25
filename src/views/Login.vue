@@ -38,6 +38,7 @@ const onSubmit = async () => {
       type: 'error',
     })
   } else {
+    // localStorage.setItem("accessToken", JSON.stringify('accessToken'));
     await router.push("/home");
     ElNotification({
       title: 'Успешно',

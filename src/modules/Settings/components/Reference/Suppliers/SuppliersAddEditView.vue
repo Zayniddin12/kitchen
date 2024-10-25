@@ -9,6 +9,7 @@ import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 import AppDatePicker from "@/components/ui/form/app-date-picker/AppDatePicker.vue";
 import AppForm from "@/components/ui/form/app-form/AppForm.vue";
 import {ValidationType} from "@/components/ui/form/app-form/app-form.type";
+import AppOverlay from "@/components/ui/app-overlay/AppOverlay.vue";
 
 interface DataValue {
   name?: string;
@@ -59,7 +60,7 @@ const setValidation = (value: ValidationType) => {
   v$.value = value;
 };
 
-const input1 = ref<string>("");
+const loading = ref<boolean>(false)
 const dataValue = ref<DataValue>({
   name: '',
   address: '',
@@ -74,10 +75,16 @@ const dataValue = ref<DataValue>({
 
 onMounted(async () => {
   if (route.params.id) {
-    const providerData: DataValue = await store.GET_PROVIDERS_DETAIL(route.params.id as string | number);
-    if (providerData && providerData.provider) {
-      dataValue.value = providerData.provider;
+    loading.value = true;
+    try {
+      const providerData: DataValue = await store.GET_PROVIDERS_DETAIL(route.params.id as string | number);
+      if (providerData && providerData.provider) {
+        dataValue.value = providerData.provider;
+      }
+    } catch (e) {
+      loading.value = false
     }
+    loading.value = false
   }
 });
 
@@ -140,6 +147,9 @@ watch(() => route.name, () => {
 
 <template>
   <div>
+    <AppOverlay
+        :loading="loading"
+    >
     <div class="flex items-center justify-between mb-[24px]">
       <h1 class="m-0 font-semibold text-[32px] leading-[48px]">{{ route.meta.title }}</h1>
     </div>
@@ -224,8 +234,8 @@ watch(() => route.name, () => {
                   placeholder="Введите"
                   label-class="text-[#A8AAAE] font-medium text-[12px]"
                   class="w-full"
-                  format="DD-MM-YYYY"
-                  value-format="DD-MM-YYYY"
+                  format="DD.MM.YYYY"
+                  value-format="DD.MM.YYYY"
                   required
                   prop="sert_end_date"
                   :disabled="isDisabled"
@@ -264,7 +274,8 @@ watch(() => route.name, () => {
           </div>
         </AppForm>
 
-        <div v-if="!route.query.type" class="flex items-center mt-[24px] " :class="!route.params.id ? 'justify-end' : 'justify-between'">
+        <div v-if="!route.query.type" class="flex items-center mt-[24px] "
+             :class="!route.params.id ? 'justify-end' : 'justify-between'">
           <button
               v-if="route.params.id"
               class="custom-danger-btn"
@@ -309,6 +320,7 @@ watch(() => route.name, () => {
         </button>
       </div>
     </div>
+    </AppOverlay>
   </div>
 </template>
 

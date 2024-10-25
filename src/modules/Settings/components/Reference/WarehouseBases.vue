@@ -2,10 +2,15 @@
   setup
   lang="ts"
 >
-import { ref, watchEffect } from "vue";
+import { ref, watchEffect, onMounted } from "vue";
 import { Search } from "@element-plus/icons-vue";
 import { useRoute } from "vue-router";
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
+import { useSettingsStore } from "@/modules/Settings/store";
+import { ElNotification } from "element-plus";
+import { watchDebounced } from "@vueuse/core";
+
+const settingsStore = useSettingsStore();
 
 const route = useRoute();
 
@@ -15,34 +20,13 @@ interface TableData {
   type: string;
 }
 
-const input1 = ref<string>("");
-const tableData = ref<TableData[]>([
-  {
-    id: 1,
-    name: "Зарафшан",
-    type: "100052, Tashkent, st.Kichik Khalka Yuli 34-36",
-  },
-  {
-    id: 2,
-    name: "Зафаробод",
-    type: "100052, Tashkent, st.Kichik Khalka Yuli 34-36",
-  },
-  {
-    id: 3,
-    name: "Навои",
-    type: "100052, Tashkent, st.Kichik Khalka Yuli 34-36",
-  },
-  {
-    id: 4,
-    name: "Нуробод",
-    type: "100052, Tashkent, st.Kichik Khalka Yuli 34-36",
-  },
-  {
-    id: 5,
-    name: "Учкудук",
-    type: "100052, Tashkent, st.Kichik Khalka Yuli 34-36",
-  },
-]);
+
+const params = ref<object>({
+  search: "",
+  page: 1,
+  per_page: 10,
+});
+const loading = ref<boolean>(false);
 
 const { setBreadCrumb } = useBreadcrumb();
 
@@ -75,6 +59,33 @@ watchEffect(() => {
   setBreadCrumbFn();
 });
 
+
+const refresh = async () => {
+  loading.value = true;
+  try {
+    await settingsStore.GET_WAREHOUSE_BASES_LIST(params.value);
+  } catch (e: any) {
+    ElNotification({ title: e, type: "error" });
+    loading.value = false;
+  } finally {
+    loading.value = false;
+  }
+};
+
+onMounted(() => {
+  refresh();
+});
+
+const changePagination = (event: any) => {
+  params.value.page = event;
+
+  refresh();
+};
+
+watchDebounced(params.value.search, () => {
+  params.value.page = 1;
+  refresh();
+}, { debounce: 1000, maxWait: 5000 });
 </script>
 
 <template>
@@ -84,7 +95,7 @@ watchEffect(() => {
 
       <div class="flex items-center">
         <el-input
-          v-model="input1"
+          v-model="params.search"
           size="large"
           placeholder="Поиск"
           :prefix-icon="Search"
@@ -117,8 +128,11 @@ watchEffect(() => {
     </div>
 
     <div class="mt-[24px]">
+      <!--      {{ settingsStore.wareHouseList }}-->
       <el-table
-        :data="tableData"
+        v-loading="loading"
+        :empty-text="'Нет доступных данных'"
+        :data="settingsStore.wareHouseList.bases"
         stripe
         class="custom-element-table"
       >
@@ -134,7 +148,7 @@ watchEffect(() => {
           width="400"
         />
         <el-table-column
-          prop="type"
+          prop="address"
           label="Юр. адрес"
           sortable
         />
@@ -145,7 +159,7 @@ watchEffect(() => {
           <template #default="scope">
             <button
               class="action-btn mr-[8px]"
-              @click="$router.push({name: 'reference-warehouse-bases-view', query: {type: 'view'}, params: {id: 1}})"
+              @click="$router.push({name: 'reference-warehouse-bases-view', query: {type: 'view'}, params: {id: scope.row.id}})"
             >
               <img
                 src="@/assets/images/eye.svg"
@@ -155,7 +169,7 @@ watchEffect(() => {
 
             <button
               class="action-btn"
-              @click="$router.push({name: 'reference-warehouse-bases-edit', params: {id: 1}})"
+              @click="$router.push({name: 'reference-warehouse-bases-edit', params: {id: scope.row.id}})"
             >
               <img
                 src="@/assets/images/icons/edit.svg"
@@ -165,6 +179,22 @@ watchEffect(() => {
           </template>
         </el-table-column>
       </el-table>
+
+      <div class="mt-[24px] flex items-center justify-between">
+        <div class="text-cool-gray text-[14px]">
+          Показано 1–10 из {{ settingsStore.wareHouseList.paginator.total_count }} результатов
+        </div>
+
+        <el-pagination
+          v-model:current-page="params.page"
+          :page-size="params.per_page"
+          class="float-right"
+          background
+          layout="prev, pager, next"
+          :total="settingsStore.wareHouseList.paginator.total_count"
+          @change="changePagination"
+        />
+      </div>
     </div>
   </div>
 </template>

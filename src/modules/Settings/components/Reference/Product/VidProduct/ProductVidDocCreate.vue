@@ -8,6 +8,9 @@ import AppMediaUploader from "@/components/ui/form/app-media-uploader/AppMediaUp
 import useConfirm from "@/components/ui/app-confirm/useConfirm";
 import {useSettingsStore} from "@/modules/Settings/store";
 import {ElNotification} from "element-plus";
+import AppForm from "@/components/ui/form/app-form/AppForm.vue";
+import {ValidationType} from "@/components/ui/form/app-form/app-form.type";
+import AppOverlay from "@/components/ui/app-overlay/AppOverlay.vue";
 
 interface Name {
   uz: string;
@@ -21,6 +24,11 @@ interface DataValue {
   measurement_unit_id: string | number | null;
   is_active: boolean | number;
 }
+
+const v$ = ref<ValidationType | null>(null);
+const setValidation = (value: ValidationType) => {
+  v$.value = value;
+};
 
 const store = useSettingsStore()
 const route = useRoute();
@@ -39,18 +47,25 @@ const dataValue = ref<DataValue>({
   is_active: true
 })
 const existingImage = ref<string>('')
+const loading = ref<boolean>(false)
 
 onMounted(async () => {
+  if (route.params.id) {
+    loading.value = true;
+    try {
+      const detail = await store.GET_TYPE_PRODUCT_DETAIL(route.params.id as string | number)
+      if (detail && detail.data) {
+        dataValue.value = detail.data.product_type
+        existingImage.value = dataValue.value.image;
+      }
+    } catch (e) {
+      loading.value = false
+    }
+    loading.value = false
+  }
+
   await store.GET_UNITS()
   await store.GET_TYPE_PRODUCT()
-
-  if (route.params.id) {
-    const detail = await store.GET_TYPE_PRODUCT_DETAIL(route.params.id as string | number)
-    if (detail && detail.data) {
-      dataValue.value = detail.data.product_type
-      existingImage.value = dataValue.value.image;
-    }
-  }
 })
 
 
@@ -96,34 +111,39 @@ const switchChange = async (): Promise<boolean> => {
 };
 
 const handleSubmit = async () => {
-  try {
-    const formData = new FormData();
-    formData.append('name[uz]', dataValue.value.name.uz);
-    formData.append('name[ru]', dataValue.value.name.ru);
-    formData.append('parent_id', dataValue.value.parent_id);
-    formData.append('measurement_unit_id', dataValue.value.measurement_unit_id);
+  if (!v$.value) return;
 
-    if (dataValue.value.image && dataValue.value.image !== existingImage.value) {
-      formData.append('image', dataValue.value.image);
+  if ((await v$.value.validate())) {
+    try {
+      const formData = new FormData();
+      formData.append('name[uz]', dataValue.value.name.uz);
+      formData.append('name[ru]', dataValue.value.name.ru);
+      formData.append('parent_id', dataValue.value.parent_id);
+      formData.append('measurement_unit_id', Number(dataValue.value.measurement_unit_id));
+      if (route.params.id) formData.append('_method', 'PUT')
+
+      if (dataValue.value.image && dataValue.value.image !== existingImage.value) {
+        formData.append('image', dataValue.value.image);
+      }
+
+      if (dataValue.value.is_active) {
+        formData.append('is_active', +dataValue.value.is_active);
+      }
+
+      if (route.params.id) {
+        await store.UPDATE_VID_PRODUCT({
+          id: route.params.id as string | number,
+          data: formData
+        });
+      } else {
+        await store.CREATE_VID_PRODUCT(formData);
+      }
+
+      ElNotification({title: 'Success', type: 'success'});
+      await router.push('/reference-vid-product');
+    } catch (e) {
+      ElNotification({title: 'Error', type: 'error'});
     }
-
-    if (dataValue.value.is_active) {
-      formData.append('is_active', +dataValue.value.is_active);
-    }
-
-    if (route.params.id) {
-      await store.UPDATE_VID_PRODUCT({
-        id: route.params.id as string | number,
-        data: formData
-      });
-    } else {
-      await store.CREATE_VID_PRODUCT(formData);
-    }
-
-    ElNotification({ title: 'Success', type: 'success' });
-    await router.push('/reference-vid-product');
-  } catch (e) {
-    ElNotification({ title: 'Error', type: 'error' });
   }
 };
 
@@ -138,98 +158,115 @@ watchEffect(() => {
 
 <template>
   <div>
-    <h1 class="m-0 font-semibold text-[32px] leading-[48px]">{{ route.meta.title }}</h1>
+    <AppOverlay
+      :loading="loading"
+    >
+      <h1 class="m-0 font-semibold text-[32px] leading-[48px]">{{ route.meta.title }}</h1>
 
-    <div class="flex items-start mt-[24px]">
-      <div class="border rounded-[24px] p-[24px] w-[70%]  min-h-[65vh]">
-        <AppMediaUploader
+      <div class="flex items-start mt-[24px]">
+        <div class="border rounded-[24px] p-[24px] w-[70%]  min-h-[65vh]">
+          <AppMediaUploader
             v-model="dataValue.image"
             :value="existingImage"
-        />
-
-        <div class="grid grid-cols-2 gap-4 mt-[24px]">
-          <app-input
-              v-model="dataValue.name.ru"
-              :disabled="isDisabled"
-              label="Наименование (RU)"
-              label-class="text-[#A8AAAE] text-[12px]"
-              placeholder="Введите"
           />
+          <AppForm
+            :value="dataValue"
+            @validation="setValidation"
+            class="mt-6"
+          >
+            <div class="grid grid-cols-2 gap-4 mt-[24px]">
+              <app-input
+                v-model="dataValue.name.ru"
+                :disabled="isDisabled"
+                label="Наименование (RU)"
+                label-class="text-[#A8AAAE] text-[12px]"
+                placeholder="Введите"
+                required
+                prop="name.ru"
+              />
 
-          <app-input
-              v-model="dataValue.name.uz"
-              :disabled="isDisabled"
-              label="Наименование (UZ)"
-              label-class="text-[#A8AAAE] text-[12px]"
-              placeholder="Введите"
-          />
+              <app-input
+                v-model="dataValue.name.uz"
+                :disabled="isDisabled"
+                label="Наименование (UZ)"
+                label-class="text-[#A8AAAE] text-[12px]"
+                placeholder="Введите"
+                required
+                prop="name.uz"
+              />
 
-          <app-select
-              v-model="dataValue.parent_id"
-              :disabled="isDisabled"
-              label="Тип продукта"
-              label-class="text-[#A8AAAE] text-[12px]"
-              placeholder="Введите"
-              itemValue="id"
-              itemLabel="name"
-              :items="store.typeProduct.product_categories"
-          />
+              <app-select
+                v-model="dataValue.parent_id"
+                :disabled="isDisabled"
+                label="Тип продукта"
+                label-class="text-[#A8AAAE] text-[12px]"
+                placeholder="Введите"
+                itemValue="id"
+                itemLabel="name"
+                :items="store.typeProduct.product_categories"
+                required
+                prop="parent_id"
+              />
 
-          <app-select
-              v-model="dataValue.measurement_unit_id"
-              :disabled="isDisabled"
-              label="Единица измерения"
-              label-class="text-[#A8AAAE] text-[12px]"
-              placeholder="Введите"
-              itemValue="id"
-              itemLabel="name"
-              :items="store.units.units"
-          />
-        </div>
+              <app-select
+                v-model="dataValue.measurement_unit_id"
+                :disabled="isDisabled"
+                label="Единица измерения"
+                label-class="text-[#A8AAAE] text-[12px]"
+                placeholder="Введите"
+                itemValue="id"
+                itemLabel="name"
+                :items="store.units.units"
+                required
+                prop="measurement_unit_id"
+              />
+            </div>
+          </AppForm>
 
-        <el-switch
+          <el-switch
             v-model="dataValue.is_active"
             active-text="Деактивация"
             v-if="route.name === 'reference-vid-edit-id'"
             :before-change="switchChange"
-        />
-      </div>
+          />
+        </div>
 
-      <button
+        <button
           class="custom-light-btn flex items-center ml-[24px]"
           @click="router.push(`/reference-vid-edit/${route.params.id}`)"
           v-if="route.name === 'reference-vid-view-id'"
-      >
-        <img
+        >
+          <img
             src="@/assets/images/icons/edit.svg"
             alt="edit"
             class="mr-[12px]"
-        />
-        Редактировать
-      </button>
-    </div>
+          />
+          Редактировать
+        </button>
+      </div>
 
-    <div class="flex items-center justify-between mt-[24px] w-[70%]"
-         v-if="route.name === 'reference-vid-add' || route.name === 'reference-vid-edit-id'"
-    >
-      <button
+      <div class="flex items-center justify-between mt-[24px] w-[70%]"
+           v-if="route.name === 'reference-vid-add' || route.name === 'reference-vid-edit-id'"
+      >
+        <button
           class="custom-danger-btn"
           v-if="route.name === 'reference-vid-edit-id'"
           @click="deleteFn"
-      >
-        Удалить
-      </button>
-
-      <div class="flex items-center ml-auto">
-        <button class="custom-cancel-btn" @click="cancelFn">
-          Отменить
+        >
+          Удалить
         </button>
 
-        <button class="custom-apply-btn ml-[8px]" @click="handleSubmit">
-          {{ route.name === "reference-vid-edit-id" ? "Сохранить" : "Добавить" }}
-        </button>
+        <div class="flex items-center ml-auto">
+          <button class="custom-cancel-btn" @click="cancelFn">
+            Отменить
+          </button>
+
+          <button class="custom-apply-btn ml-[8px]" @click="handleSubmit">
+            {{ route.name === "reference-vid-edit-id" ? "Сохранить" : "Добавить" }}
+          </button>
+        </div>
       </div>
-    </div>
+    </AppOverlay>
   </div>
 </template>
 

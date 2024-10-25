@@ -100,11 +100,15 @@ const openModals = (data: any) => {
           :key="index3"
           class="px-4 py-2 block"
           to="#"
-        >lorem ipsum dolor
+        >
+          lorem ipsum dolor
         </router-link>
       </div>
     </div>
 
+    <MemoModal v-model:editModal="editModal" />
+
+    <!----------Создать modal---------->
     <div class="flex items-center gap-6">
       <el-dropdown
         trigger="click"
@@ -211,9 +215,6 @@ const openModals = (data: any) => {
         </div>
       </div>
     </div>
-
-    <!----------Создать modal---------->
-    <MemoModal v-model:editModal="editModal" />
     <ComingModal v-model:editModal="editModal2" />
     <ConsumptionModal v-model:editModal="editConsumptionModal" />
     <FreeModal v-model:editModal="freeModal" />
