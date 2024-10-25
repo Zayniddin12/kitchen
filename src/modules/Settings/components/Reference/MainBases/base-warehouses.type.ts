@@ -14,9 +14,9 @@ export interface BaseWarehouseType {
     status: StatusType,
 }
 
-interface BaseWarehouseListType extends BaseWarehouseType {
+export type BaseWarehouseListType = Omit<BaseWarehouseType, 'name'> & {
     name: string;
-}
+};
 
 export interface BaseWarehousesType {
     base_warehouses: BaseWarehouseListType[],
@@ -28,6 +28,7 @@ export interface BaseWarehouseDataType{
     base_id: number | null,
     capacity: number | null,
     measure_id: number | null,
-    status?: StatusType | boolean
+    status?: StatusType | boolean,
+    product_ids: number[]
 }
 

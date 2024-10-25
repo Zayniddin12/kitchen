@@ -2,7 +2,7 @@
     setup
     lang="ts"
 >
-import { computed, markRaw, onMounted, reactive, ref, watch } from "vue";
+import { computed, onMounted, reactive, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import AppInput from "@/components/ui/form/app-input/AppInput.vue";
 import AppSelect from "@/components/ui/form/app-select/AppSelect.vue";
@@ -76,12 +76,13 @@ watch(() => route.name, () => {
 }, { immediate: true });
 
 const cancelFn = async () => {
-  if (oldForm.value && !deepEqual(form, oldForm.value)) await confirm.cancel().then(response => {
+  if (oldForm.value && !deepEqual(form, oldForm.value)) {
+    const response = await confirm.cancel();
     if (response === "save") {
-      sendForm();
-      return
+      await sendForm();
+      return;
     }
-  });
+  }
 
   router.push({ name: "reference-combine-nutrition" });
 };
@@ -89,9 +90,11 @@ const cancelFn = async () => {
 const deleteLoading = ref(false);
 
 const deleteFn = () => {
+  if (!routeID.value) return;
+
   confirm.delete().then(async () => {
     deleteLoading.value = true;
-    await settingsStore.deleteFoodFactory(+routeID.value);
+    await settingsStore.deleteFoodFactory(routeID.value as number);
     commonStore.successToast({ name: "reference-combine-nutrition" });
   }).finally(() => {
     deleteLoading.value = false;
@@ -116,10 +119,10 @@ const sendForm = async () => {
   try {
     if (route.name === "reference-combine-nutrition-add") {
       await settingsStore.createFoodFactory(form);
-    } else if (route.name === "reference-combine-nutrition-edit") {
+    } else if (route.name === "reference-combine-nutrition-edit" && routeID.value) {
       const newForm = { ...form };
       newForm.status = setStatus(form.status);
-      await settingsStore.updateFoodFactory(routeID.value, newForm);
+      await settingsStore.updateFoodFactory(routeID.value as number, newForm);
     }
 
     commonStore.successToast({ name: "reference-combine-nutrition" });
@@ -132,6 +135,7 @@ const sendForm = async () => {
 };
 
 const setForm = async () => {
+  if (!routeID.value) return;
   await settingsStore.showFoodFactory(routeID.value);
 
   if (!settingsStore.foodFactory) return;
@@ -143,7 +147,7 @@ const setForm = async () => {
 onMounted(async () => {
   settingsStore.GET_REGIONAL({ per_page: 100 });
 
-  if (routeID.value) await setForm();
+  await setForm();
 
   oldForm.value = JSON.parse(JSON.stringify(form));
 });

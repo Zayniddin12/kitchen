@@ -13,12 +13,15 @@ import { deepEqual, getStatus, Name, setStatus } from "@/utils/helper";
 import { ValidationType } from "@/components/ui/form/app-form/app-form.type";
 import { useSettingsStore } from "@/modules/Settings/store";
 import { useCommonStore } from "@/stores/common.store";
+import AppOverlay from "@/components/ui/app-overlay/AppOverlay.vue";
+import AppForm from "@/components/ui/form/app-form/AppForm.vue";
 
 const route = useRoute();
 const router = useRouter();
 const { confirm } = useConfirm();
 const settingsStore = useSettingsStore();
 const commonStore = useCommonStore();
+const loading = ref(false);
 
 const routeID = computed(() => {
   return route.params?.id ? +route.params.id : null;
@@ -29,7 +32,8 @@ const form = reactive<BaseWarehouseDataType>({
   base_id: null,
   capacity: null,
   measure_id: null,
-  status: false
+  status: false,
+  product_ids: []
 });
 
 const oldForm = ref<null | BaseWarehouseDataType>(null);
@@ -40,8 +44,6 @@ const setValidation = (validation: ValidationType) => {
   v$.value = validation;
 };
 
-
-const input1 = ref<string>("");
 const tableData = ref([
   {
     id: 1,
@@ -86,15 +88,17 @@ watch(() => route.name, () => {
 }, { immediate: true });
 
 const cancelFn = async () => {
-  if (oldForm.value && !deepEqual(form, oldForm.value)) await confirm.cancel().then(response => {
+  if (oldForm.value && !deepEqual(form, oldForm.value)) {
+    const response = await confirm.cancel();
     if (response === "save") {
-      sendForm();
+      await sendForm();
       return;
     }
-  });
+  }
 
-  router.push({ name: "reference-main-bases" });
+  await router.push({ name: "reference-main-bases" });
 };
+
 
 const switchChange = async (): Promise<boolean> => {
   try {
@@ -112,11 +116,11 @@ const sendForm = async () => {
 
   try {
     if (route.name === "reference-main-bases-add") {
-      await settingsStore.createFoodFactory(form);
-    } else if (route.name === "reference-main-bases-edit") {
+      await settingsStore.createBaseWarehouse(form);
+    } else if (route.name === "reference-main-bases-edit" && routeID.value) {
       const newForm = { ...form };
       newForm.status = setStatus(form.status);
-      await settingsStore.updateFoodFactory(routeID.value, newForm);
+      await settingsStore.updateBaseWarehouse(routeID.value as number, newForm);
     }
 
     commonStore.successToast({ name: "reference-main-bases" });
@@ -131,9 +135,11 @@ const sendForm = async () => {
 const deleteLoading = ref(false);
 
 const deleteFn = () => {
+  if (!routeID.value) return;
+
   confirm.delete().then(async () => {
     deleteLoading.value = true;
-    await settingsStore.deleteFoodFactory(+routeID.value);
+    await settingsStore.deleteFoodFactory(routeID.value as number);
     commonStore.successToast({ name: "reference-main-bases" });
   }).finally(() => {
     deleteLoading.value = false;
@@ -141,16 +147,15 @@ const deleteFn = () => {
 };
 
 const setForm = async () => {
-  await settingsStore.showFoodFactory(routeID.value);
+  await settingsStore.showFoodFactory(routeID.value as number);
 
   if (!settingsStore.foodFactory) return;
   form.name = settingsStore.foodFactory.name;
-  form.management_id = settingsStore.foodFactory.management.id;
+  form.measure_id = settingsStore.foodFactory.management.id;
   form.status = getStatus(settingsStore.foodFactory.status);
 };
 
 onMounted(async () => {
-  settingsStore.GET_REGIONAL({ per_page: 100 });
 
   if (routeID.value) await setForm();
 
@@ -168,61 +173,70 @@ onMounted(async () => {
 
     <div class="flex gap-6">
       <div class="w-[70%]">
-        <div class="border border-[#E2E6F3] rounded-[24px] p-[24px] h-[65vh] flex flex-col">
-          <div class="flex items-center gap-4">
+        <AppOverlay
+            :rounded="24"
+            class="border border-[#E2E6F3] p-[24px] min-h-[60vh]"
+        >
+          <AppForm
+              :value="form"
+              @validation="setValidation"
+              class="gap-x-4 gap-y-1 grid grid-cols-3"
+          >
             <app-input
+                v-model="form.name.ru"
+                prop="name.ru"
                 label="Наименование (RU)"
                 placeholder="Введите"
-                label-class="text-[#A8AAAE] font-medium text-[12px]"
-                class="w-full"
+                label-class="text-[#A8AAAE] font-medium text-xs"
+                required
             />
 
             <app-input
+                v-model="form.name.uz"
+                prop="name.uz"
                 label="Наименование (UZ)"
                 placeholder="Введите"
-                label-class="text-[#A8AAAE] font-medium text-[12px]"
-                class="w-full"
+                label-class="text-[#A8AAAE] font-medium text-xs"
+                required
             />
 
             <app-select
+                v-model="form.base_id"
+                prop="base_id"
                 label="База складов"
                 placeholder="Введите"
-                label-class="text-[#A8AAAE] font-medium text-[12px]"
-                class="w-full"
+                label-class="text-[#A8AAAE] font-medium text-xs"
+                required
             />
-          </div>
-
-          <div class="flex items-center gap-4">
-
             <app-input
+                v-model="form.capacity"
+                prop="capacity"
                 label="Вместимость склада"
                 placeholder="Выберите"
-                label-class="text-[#A8AAAE] font-medium text-[12px]"
-                class="w-full"
+                label-class="text-[#A8AAAE] font-medium text-xs"
+                required
             />
-
-            <app-input
+            <app-select
+                v-model="form.measure_id"
+                prop="measure_id"
                 label="Единица измерения"
                 placeholder="тонна"
                 label-class="text-[#A8AAAE] font-medium text-[12px]"
-                class="w-full"
+                required
             />
-
             <app-select
-                v-if="!route.query.type"
+                v-if="route.name !== 'reference-main-bases-view'"
+                v-model="form.product_ids"
+                prop="product_ids"
+                multiple
                 label="Типы продуктов хранения"
                 placeholder="Мясные"
                 label-class="text-[#A8AAAE] font-medium text-[12px]"
-                class="w-full"
+                required
             />
-            <div
-                v-if="route.query.type"
-                class="w-full"
-            ></div>
+          </AppForm>
 
-          </div>
-
-          <div v-if="route.query.type == 'view'">
+          <div v-if="route.name === 'reference-main-bases-view'">
             <el-table
                 :data="tableData"
                 class="custom-element-table"
@@ -248,7 +262,7 @@ onMounted(async () => {
               class="app-switch mt-auto"
               :before-change="switchChange"
           />
-        </div>
+        </AppOverlay>
 
         <div
             v-if="!route.query.type"
@@ -264,17 +278,22 @@ onMounted(async () => {
           </button>
 
 
-          <div class="flex items-center gap-4">
+          <div class="flex items-center gap-x-4">
             <button
                 @click="cancelFn"
-                class="custom-cancel-btn"
+                class="custom-cancel-btn flex items-center justify-center"
             >
               Отменить
             </button>
 
-            <button class="custom-apply-btn">
-              {{ $route.params.id ? "Сохранить" : "Добавить" }}
-            </button>
+            <ElButton
+                @click="sendForm"
+                type="primary"
+                size="large"
+                class="custom-apply-btn"
+            >
+              {{ route.params.id ? "Сохранить" : "Добавить" }}
+            </ElButton>
           </div>
         </div>
       </div>
@@ -285,7 +304,7 @@ onMounted(async () => {
             v-if="route.query.type == 'view'"
             class="flex items-center gap-4 bg-[#F8F9FC] py-[10px] px-[20px] rounded-[8px]"
         >
-          <li
+          <span
               :style="{
                   maskImage: 'url(/icons/edit.svg)',
                   backgroundColor: '#8F9194',
@@ -296,7 +315,7 @@ onMounted(async () => {
                   maskPosition: 'center',
                   maskRepeat: 'no-repeat'
                    }"
-          ></li>
+          ></span>
           Редактировать
         </button>
       </div>

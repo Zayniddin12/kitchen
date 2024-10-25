@@ -1,5 +1,6 @@
 import { NameType, StatusType } from "@/types/common.type";
 import { PaginationParamsType, PaginationType } from "@/types/pagination.type";
+import { BaseWarehouseType } from "@/modules/Settings/components/Reference/MainBases/base-warehouses.type";
 
 export interface FoodFactoriesCreateFormType {
     name: NameType,
@@ -14,9 +15,9 @@ export interface FoodFactoryType {
     status: StatusType,
 }
 
-export interface FoodFactoryListType extends FoodFactoryType {
+export type FoodFactoryListType = Omit<FoodFactoryType, 'name'> & {
     name: string;
-}
+};
 
 export interface FoodFactoriesType {
     food_factories: FoodFactoriesType[],
