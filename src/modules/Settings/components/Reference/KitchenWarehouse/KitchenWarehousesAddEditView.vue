@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {onMounted, ref, watch} from "vue";
+import {computed, onMounted, ref, watch} from "vue";
 import {useRoute, useRouter} from "vue-router";
 import {Name} from "@/utils/helper";
 import AppInput from "@/components/ui/form/app-input/AppInput.vue";
@@ -13,7 +13,7 @@ import {ElNotification} from "element-plus";
 import AppOverlay from "@/components/ui/app-overlay/AppOverlay.vue";
 
 interface DataValue {
-  based_id: string;
+  base_id: string;
   capacity: string;
   kitchen_capacity: string;
   kitchen_type_id: string;
@@ -35,7 +35,7 @@ const {setBreadCrumb} = useBreadcrumb();
 const loading = ref<boolean>(false)
 const dataValue = ref<DataValue>({
   name: new Name(),
-  based_id: 2,
+  base_id: "",
   capacity: '',
   kitchen_capacity: '',
   kitchen_type_id: '',
@@ -70,7 +70,7 @@ const setBreadCrumbFn = () => {
 };
 
 onMounted(async () => {
-  if (!route.params.id) {
+  if (route.params.id) {
     loading.value = true
     try {
       const wr = await store.GET_KITCHEN_WAREHOUSE_DETAIL(route.params.id as string | number)
@@ -83,7 +83,7 @@ onMounted(async () => {
     loading.value = false
   }
 
-  await store.GET_WAREHOUSE_BASES_LIST()
+  await store.GET_WAREHOUSE_BASES_LIST({per_page: 100})
   await store.GET_KITCHEN_TYPE()
 })
 
@@ -131,6 +131,10 @@ const switchChange = async (): Promise<boolean> => {
   }
 };
 
+const isDisabled = computed(() => {
+  return route.name === 'reference-kitchen-warehouse-view'
+})
+
 watch(() => route.name, () => {
   setBreadCrumbFn();
 }, {immediate: true});
@@ -159,7 +163,7 @@ watch(() => route.name, () => {
                   class="w-full"
                   required
                   prop="name.ru"
-
+                  :disabled="isDisabled"
               />
 
               <app-input
@@ -170,19 +174,22 @@ watch(() => route.name, () => {
                   class="w-full"
                   required
                   prop="name.uz"
+                  :disabled="isDisabled"
               />
 
+
               <app-select
-                  v-model="dataValue.based_id"
+                  v-model="dataValue.base_id"
                   label="База складов"
                   placeholder="Введите"
                   label-class="text-[#A8AAAE] font-medium text-[12px]"
                   class="w-full"
                   required
-                  prop="based_id"
+                  prop="base_id"
                   item-value="id"
                   item-label="name"
-                  :items="store.kitchenTypes.wareHouseList"
+                  :items="store.wareHouseList.bases"
+                  :disabled="isDisabled"
               />
 
               <app-input
@@ -193,6 +200,7 @@ watch(() => route.name, () => {
                   class="w-full"
                   required
                   prop="capacity"
+                  :disabled="isDisabled"
               />
 
               <app-input
@@ -203,6 +211,7 @@ watch(() => route.name, () => {
                   class="w-full"
                   required
                   prop="measure_id"
+                  :disabled="isDisabled"
               />
 
               <app-select
@@ -216,6 +225,7 @@ watch(() => route.name, () => {
                   item-value="id"
                   item-label="name"
                   :items="store.kitchenTypes.kitchen_types"
+                  :disabled="isDisabled"
               />
 
               <app-input
@@ -226,6 +236,7 @@ watch(() => route.name, () => {
                   class="w-full"
                   required
                   prop="kitchen_capacity"
+                  :disabled="isDisabled"
               />
             </div>
           </AppForm>

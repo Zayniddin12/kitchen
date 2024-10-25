@@ -234,8 +234,8 @@ watch(() => route.name, () => {
                   placeholder="Введите"
                   label-class="text-[#A8AAAE] font-medium text-[12px]"
                   class="w-full"
-                  format="DD-MM-YYYY"
-                  value-format="DD-MM-YYYY"
+                  format="DD.MM.YYYY"
+                  value-format="DD.MM.YYYY"
                   required
                   prop="sert_end_date"
                   :disabled="isDisabled"
