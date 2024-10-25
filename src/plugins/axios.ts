@@ -60,10 +60,10 @@ axiosIns.interceptors.response.use(
         if (response.data.success) return Promise.resolve(response);
         const error = response.data.error;
 
-        if (error.code === 404){
-            const commonStore = useCommonStore();
-            commonStore.redirectNotFound(error.message);
-        }
+        // if (error.code === 404){
+        //     const commonStore = useCommonStore();
+        //     commonStore.redirectNotFound(error.message);
+        // }
 
         return Promise.reject(error);
     },
