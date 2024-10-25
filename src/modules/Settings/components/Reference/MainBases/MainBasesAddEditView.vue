@@ -156,6 +156,8 @@ const setForm = async () => {
 };
 
 onMounted(async () => {
+  settingsStore.GET_UNITS();
+  settingsStore.GET_TYPE_PRODUCT();
 
   if (routeID.value) await setForm();
 
@@ -219,6 +221,9 @@ onMounted(async () => {
             <app-select
                 v-model="form.measure_id"
                 prop="measure_id"
+                :items="settingsStore.units.units"
+                item-value="id"
+                item-label="name"
                 label="Единица измерения"
                 placeholder="тонна"
                 label-class="text-[#A8AAAE] font-medium text-[12px]"
@@ -227,6 +232,9 @@ onMounted(async () => {
             <app-select
                 v-if="route.name !== 'reference-main-bases-view'"
                 v-model="form.product_ids"
+                :items="settingsStore.typeProduct.product_categories"
+                item-value="id"
+                item-label="name"
                 prop="product_ids"
                 multiple
                 label="Типы продуктов хранения"

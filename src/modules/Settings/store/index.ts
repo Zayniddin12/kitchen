@@ -372,6 +372,7 @@ export const useSettingsStore = defineStore("settingsStore", () => {
         meals,
         GET_MEALS,
         // dilshod end
+
         //     abbos start
         createFoodFactory,
         updateFoodFactory,
