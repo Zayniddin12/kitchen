@@ -3,7 +3,7 @@
   lang="ts"
 >
 import { AppSelectPropsType, AppSelectValueType } from "@/components/ui/form/app-select/app-select.type";
-import { computed, useSlots } from "vue";
+import { computed, onMounted, useSlots } from "vue";
 import { getRules, setRules } from "@/components/ui/form/validate";
 
 const model = defineModel<AppSelectValueType>({
@@ -20,6 +20,7 @@ const props = withDefaults(defineProps<AppSelectPropsType>(), {
   itemLabel: "",
   labelClass: "",
   placeholder: "Выбирать",
+  persistent: true
 });
 
 const slots = useSlots();
@@ -93,19 +94,22 @@ const change = (value: any) => {
       class="app-select__select"
       @change="change"
     >
-      <ElOption
-        v-for="item in items"
-        :key="item[itemValue]"
-        :label="item[itemLabel]"
-        :value="item[itemValue]"
-      >
-        <slot
-          v-if="slots.option"
-          name="option"
-          v-bind="item"
-        />
+      <template v-if="(items && items.length && itemLabel && itemValue) && !slots.default">
+        <ElOption
+            v-for="item in items"
+            :key="item[itemValue]"
+            :label="item[itemLabel]"
+            :value="item[itemValue]"
+        >
+          <slot
+              v-if="slots.option"
+              name="option"
+              v-bind="item"
+          />
 
-      </ElOption>
+        </ElOption>
+      </template>
+      <slot/>
       <template
         #footer
         v-if="slots.footer"

@@ -76,6 +76,10 @@ watch(
   },
   { immediate: true }
 );
+
+const setDefaultImage = (event) => {
+  event.target.src = 'https://www.landuse-ca.org/wp-content/uploads/2019/04/no-photo-available.png';
+};
 </script>
 
 <template>
@@ -111,6 +115,7 @@ watch(
         class="relative cursor-pointer z-1 group w-full"
       >
         <img
+            @error="setDefaultImage"
           :src="mediaFile as string"
           alt="file img"
           :class="['w-full rounded-2xl object-contain h-full p-2']"

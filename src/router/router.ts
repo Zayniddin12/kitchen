@@ -59,6 +59,10 @@ const routes: Array<RouteRecordRaw> = [
         component: () => import("@/components/errors/404.vue"),
         meta: {layout: "ErrorLayout"},
     },
+    {
+        path: "/test",
+        component: () => import("@/views/Test.vue")
+    }
 ];
 
 

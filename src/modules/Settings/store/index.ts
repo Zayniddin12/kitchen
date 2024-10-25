@@ -364,7 +364,11 @@ export const useSettingsStore = defineStore("settingsStore", () => {
   };
 
   const CREATE_MEALS = (data: any) => {
-    return $axios.post("/meals", data);
+    return $axios.post("/meals", data, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
   };
 
   const GET_MEALS_DETAIL = async (id: number) => {
@@ -458,7 +462,7 @@ export const useSettingsStore = defineStore("settingsStore", () => {
   const fetchBaseWarehouses = async (params: BaseWarehousesParamsType) => {
     baseWarehousesLoading.value = true;
     await $axios.get(baseWareHousesPrefix, { params }).then(({ data }) => {
-      if (data.data) foodFactories.value = data.data;
+      if (data.data) baseWarehouses.value = data.data;
     }).finally(() => baseWarehousesLoading.value = false);
   };
 
@@ -469,7 +473,7 @@ export const useSettingsStore = defineStore("settingsStore", () => {
     baseWarehouseLoading.value = true;
     await $axios.get(`${baseWareHousesPrefix}/${id}`).then(({ data }) => {
       if (data.data) {
-        foodFactory.value = data.data.food_factory;
+        baseWarehouse.value = data.data.base_warehouse;
       }
     }).finally(() => baseWarehouseLoading.value = false);
   };

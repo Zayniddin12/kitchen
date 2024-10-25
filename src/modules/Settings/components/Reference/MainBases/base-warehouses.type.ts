@@ -1,8 +1,13 @@
 import { NameType, StatusType } from "@/types/common.type";
-import { PaginationType } from "@/types/pagination.type";
+import { PaginationParamsType, PaginationType } from "@/types/pagination.type";
 
-export interface BaseWarehousesParamsType {
+export interface BaseWarehousesParamsType extends PaginationParamsType{
     search?: string;
+}
+
+export interface WarehouseProductType{
+    id: number;
+    name: string;
 }
 
 export interface BaseWarehouseType {
@@ -12,10 +17,12 @@ export interface BaseWarehouseType {
     capacity: number,
     measure_id: number,
     status: StatusType,
+    warehouseProducts: WarehouseProductType[],
 }
 
-export type BaseWarehouseListType = Omit<BaseWarehouseType, 'name'> & {
+export type BaseWarehouseListType = Omit<BaseWarehouseType, 'name' | 'warehouseProducts'> & {
     name: string;
+    products: WarehouseProductType[];
 };
 
 export interface BaseWarehousesType {
