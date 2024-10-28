@@ -163,7 +163,6 @@ watch(() => route.name, () => {
           <AppForm
               :value="dataValue"
               @validation="setValidation"
-              class="mt-6"
           >
             <div class="border border-[#E2E6F3] rounded-[24px] p-[24px] h-[65vh] flex flex-col">
               <div class="flex items-center gap-4">

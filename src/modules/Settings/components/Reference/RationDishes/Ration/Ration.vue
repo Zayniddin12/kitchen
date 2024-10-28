@@ -2,17 +2,9 @@
 import {Search} from "@element-plus/icons-vue";
 import {onMounted, ref} from "vue";
 import {useRouter} from "vue-router";
-import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 import {useSettingsStore} from "@/modules/Settings/store";
 import {ElNotification} from "element-plus";
-
-interface TableData {
-  id: number;
-  name: string;
-  unique: string;
-  type: string;
-  duration: string;
-}
+import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 
 interface Params {
   search: null | string;
@@ -24,48 +16,13 @@ const store = useSettingsStore()
 const router = useRouter();
 const {setBreadCrumb} = useBreadcrumb();
 
-const tableData = ref<TableData[]>([
-  {
-    id: 1,
-    name: "Рацион 1",
-    unique: "R-00000",
-    type: "ЛПП, Буфет, Кухня",
-    duration: "7 дней ",
-  },
-  {
-    id: 2,
-    name: "Рацион 2",
-    unique: "R-00000",
-    type: "ЛПП, Буфет, Кухня",
-    duration: "7 дней ",
-  },
-  {
-    id: 3,
-    name: "Рацион 3",
-    unique: "R-00000",
-    type: "ЛПП, Буфет, Кухня",
-    duration: "7 дней ",
-  },
-  {
-    id: 4,
-    name: "Рацион 4",
-    unique: "R-00000",
-    type: "ЛПП, Буфет, Кухня",
-    duration: "7 дней ",
-  },
-  {
-    id: 5,
-    name: "Рацион 5",
-    unique: "R-00000",
-    type: "ЛПП, Буфет, Кухня",
-    duration: "7 дней ",
-  },
-]);
 const params = ref<Params>({
   search: null,
   page: 1,
   page_size: 10
 })
+const loading = ref<boolean>(false)
+let debounceTimeout: ReturnType<typeof setTimeout>
 
 onMounted(() => {
   setBreadCrumbFn();
@@ -82,6 +39,23 @@ const refresh = async () => {
   } finally {
     loading.value = false
   }
+}
+
+const handleSearch = (): void => {
+  clearTimeout(debounceTimeout);
+  loading.value = true;
+
+  debounceTimeout = setTimeout(async () => {
+    params.value.page = 1;
+
+    await refresh();
+  }, 500);
+};
+
+const changePagination = (event: any) => {
+  params.value.page = event;
+
+  refresh()
 }
 
 const setBreadCrumbFn = () => {
@@ -108,6 +82,7 @@ const setBreadCrumbFn = () => {
 <template>
   <div>
     <pre>{{ store.rationList }}</pre>
+
     <div class="flex items-center justify-between">
       <h1 class="m-0 font-semibold text-[32px] leading-[48px]">Рационы</h1>
 
@@ -116,8 +91,9 @@ const setBreadCrumbFn = () => {
             v-model="params.search"
             size="large"
             placeholder="Поиск"
-            :prefix-icon="Search"
+            :prefix-icon="Search as string"
             class="w-[300px]"
+            @input="handleSearch"
         />
 
         <button class="custom-apply-btn ml-[16px]" @click="router.push('/reference-ration-create')">
@@ -145,5 +121,21 @@ const setBreadCrumbFn = () => {
         </template>
       </el-table-column>
     </el-table>
+
+    <div class="mt-[24px] flex items-center justify-between">
+      <div class="text-cool-gray text-[14px]">
+        Показано 1–10 из {{ store.rationList?.pagination?.total_count }} результатов
+      </div>
+
+      <el-pagination
+          v-model:current-page="params.page"
+          :page-size="params.per_page"
+          class="float-right"
+          background
+          layout="prev, pager, next"
+          :total="store.rationList?.pagination?.total_count"
+          @change="changePagination"
+      />
+    </div>
   </div>
 </template>

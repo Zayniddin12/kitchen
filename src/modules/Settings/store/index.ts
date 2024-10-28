@@ -359,7 +359,7 @@ export const useSettingsStore = defineStore("settingsStore", () => {
   };
 
   // Блюда
-  const GET_MEALS = async (params: any) => {
+  const GET_MEALS = async (params?: any) => {
     const { data } = await $axios.get("/meals", { params });
     meals.value = data.data;
   };
@@ -515,6 +515,7 @@ export const useSettingsStore = defineStore("settingsStore", () => {
     CRETE_WAREHOUSE_BASES,
     DELETE_WAREHOUSE_BASES,
 
+    rationList,
     GET_RATION_LIST,
     CRETE_RATION,
     DELETE_RATION,

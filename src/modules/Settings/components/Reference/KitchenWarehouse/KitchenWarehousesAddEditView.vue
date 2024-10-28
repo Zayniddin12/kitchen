@@ -163,7 +163,6 @@ watch(() => route.name, () => {
           <AppForm
               :value="dataValue"
               @validation="setValidation"
-              class="mt-6"
           >
             <div class="grid grid-cols-3 gap-4">
               <app-input
