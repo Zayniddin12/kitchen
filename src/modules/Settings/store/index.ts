@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import $axios from "@/plugins/axios";
+import $axios from "@/plugins/axios/axios";
 import { ref } from "vue";
 import type {
   FoodFactoriesCreateFormType, FoodFactoriesParamsType, FoodFactoriesType, FoodFactoryType,

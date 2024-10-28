@@ -1,23 +1,24 @@
-<script setup lang="ts">
-import {reactive, ref} from "vue";
-import {useI18n} from "vue-i18n";
-import {useRouter} from "vue-router";
-import {ValidationType} from "@/components/ui/form/app-form/app-form.type";
+<script
+    setup
+    lang="ts"
+>
+import { reactive, ref } from "vue";
+import { useI18n } from "vue-i18n";
+import { useRouter } from "vue-router";
+import { ValidationType } from "@/components/ui/form/app-form/app-form.type";
 import Language from "@/components/language/index.vue";
 import AppInput from "@/components/ui/form/app-input/AppInput.vue";
 import AppForm from "@/components/ui/form/app-form/AppForm.vue";
 import Footer from "@/components/ui/Footer.vue";
-import {ElNotification} from "element-plus";
+import { ElNotification } from "element-plus";
+import { SendCodeDataType } from "@/modules/Auth/auth.types";
+import { useCommonStore } from "@/stores/common.store";
 
-const {t} = useI18n();
 const router = useRouter();
+const commonStore = useCommonStore();
 
-interface UserData {
-  phone: string;
-}
-
-const userData = reactive<UserData>({
-  phone: "+998",
+const form = reactive<SendCodeDataType>({
+  phone: "",
 });
 
 const v$ = ref<ValidationType | null>(null);
@@ -29,12 +30,9 @@ const setValidation = (value: ValidationType) => {
 const onSubmit = async () => {
   if (!v$.value) return;
 
-  if (!(await v$.value.validate())) {
-    ElNotification({title: 'Error', message: 'Ошибка', type: 'error'})
-  } else {
-    await router.push("/income-password");
-    ElNotification({title: 'Success', message: 'Успешно', type: 'success'})
-  }
+  if (!(await v$.value.validate())) return;
+
+
 };
 </script>
 
@@ -63,18 +61,18 @@ const onSubmit = async () => {
       </p>
 
       <AppForm
-          :value="userData"
+          :value="form"
           @validation="setValidation"
           class="mt-[24px]"
       >
         <app-input
-            v-model="userData.phone"
+            v-model="form.phone"
+            prop="phone"
+            type="tel"
             placeholder="Введите номер телефона"
             label="Номер телефона"
             label-class="text-[#A8AAAE] text-sm"
             required
-            prop="phone"
-            maxlength="13"
         />
       </AppForm>
 
@@ -85,10 +83,16 @@ const onSubmit = async () => {
         Отправить код
       </button>
 
-      <div class="flex items-center justify-center mt-[22px] cursor-pointer" @click="router.go(-1)">
-        <img src="@/assets/images/icons/back.svg" alt="back"/>
-        <p class="text-[#2E90FA] text-[14px] font-medium ml-[8px]">Назад</p>
-      </div>
+      <button
+          class="flex mx-auto items-center justify-center mt-[22px] cursor-pointer"
+          @click="router.go(-1)"
+      >
+        <img
+            src="@/assets/images/icons/back.svg"
+            alt="back"
+        />
+        <span class="text-[#2E90FA] text-sm font-medium ml-[8px]">Назад</span>
+      </button>
     </div>
 
     <Footer/>

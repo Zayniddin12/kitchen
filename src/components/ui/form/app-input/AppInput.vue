@@ -6,12 +6,9 @@ import { AppInputPropsType, AppInputValueType } from "@/components/ui/form/app-i
 import { computed, useSlots } from "vue";
 import { vMaska } from "maska";
 import { getRules, setRules } from "@/components/ui/form/validate";
+import { applyMask } from "@/utils/helper";
 
 const [model, modifiers] = defineModel<AppInputValueType>();
-
-const updateModelValue = (value: any) => {
-  model.value = value;
-};
 
 const props = withDefaults(defineProps<AppInputPropsType>(), {
   type: "text",
@@ -19,8 +16,12 @@ const props = withDefaults(defineProps<AppInputPropsType>(), {
   labelClass: ""
 });
 
+const updateModelValue = (value: any) => {
+  model.value = value;
+};
+
 const appInputClasses = computed<string[]>(() => {
-  const classes = [`app-input app-form-item`];
+  const classes = ["app-input app-form-item"];
 
   if (props.size) {
     classes.push(`app-input--${props.size} app-form-item--${props.size}`);
@@ -32,13 +33,14 @@ const appInputClasses = computed<string[]>(() => {
 const slots = useSlots();
 
 const computedMask = computed(() =>
-    props.type === "tel" && !props.mask ? "+998 ## ###-##-##" : props.mask
+    props.type === "tel" && !props.mask ? "## ###-##-##" : props.mask
 );
 
 const inputMask = computed(() => {
   return { mask: computedMask.value };
 });
 </script>
+
 <template>
   <ElFormItem
       :label-position
@@ -91,10 +93,16 @@ const inputMask = computed(() => {
         class="app-input__input"
     >
       <template
-          v-if="slots.prepend"
+          v-if="slots.prepend || type === 'tel'"
           #prepend
       >
-        <slot name="prepend"/>
+        <slot
+            v-if="slots.prepend"
+            name="prepend"
+        />
+        <template v-else>
+          +998
+        </template>
       </template>
       <template
           v-if="slots.append"

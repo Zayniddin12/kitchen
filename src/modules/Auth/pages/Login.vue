@@ -12,23 +12,17 @@ import AppInput from "@/components/ui/form/app-input/AppInput.vue";
 import AppForm from "@/components/ui/form/app-form/AppForm.vue";
 import Footer from "@/components/ui/Footer.vue";
 import { AuthLoginDataType } from "@/modules/Auth/auth.types";
+import { useAuthStore } from "@/modules/Auth/auth.store";
+import { useCommonStore } from "@/stores/common.store";
 
 const { t } = useI18n();
 const router = useRouter();
+const authStore = useAuthStore();
+const commonStore = useCommonStore();
 
 const form = reactive<AuthLoginDataType>({
-  username: "",
+  phone: "",
   password: ""
-});
-
-interface UserData {
-  login: string;
-  password: string;
-}
-
-const userData = reactive<UserData>({
-  login: "+998990893954",
-  password: "1"
 });
 
 const v$ = ref<ValidationType | null>(null);
@@ -47,21 +41,25 @@ const onSubmit = async () => {
       type: "error"
     });
   } else {
-    // localStorage.setItem("accessToken", JSON.stringify('accessToken'));
-    await router.push({ name: "home" });
-    ElNotification({
-      title: "Успешно",
-      message: "Успешно",
-      type: "success"
+    const newForm = { ...form };
+    newForm.phone = `998${newForm.phone.replace(/\D/g, '')}`;
+    await authStore.login(newForm).then(() => {
+      commonStore.successToast({ name: "home" });
+      sessionStorage.setItem("current-menu", "0");
+    }).catch(err =>{
+      ElNotification({
+        title: err.message ?? err,
+        message: "Ошибка",
+        type: "error"
+      });
     });
-    sessionStorage.setItem("current-menu", "0");
   }
 };
 </script>
 
 <template>
   <div class="p-8 h-screen flex flex-col lg:flex-row items-center relative bg-[#ffffff]">
-    <Language class="fixed top-[32px] right-[32px]"/>
+    <Language class="fixed top-8 right-8"/>
 
     <!-- Background Image Section -->
     <img
@@ -92,19 +90,17 @@ const onSubmit = async () => {
           :value="form"
           @validation="setValidation"
           class="mt-6"
+          @submit.prevent="onSubmit"
       >
         <app-input
-            v-model="form.username"
+            v-model="form.phone"
+            type="tel"
             label="Номер телефона"
             label-class="text-[#A8AAAE] text-sm"
             required
-            prop="username"
+            prop="phone"
             trigger="change"
-            mask="###-##-##"
-        >
-          <template #prepend>+998</template>
-        </app-input>
-
+        />
         <app-input
             v-model="form.password"
             type="password"
@@ -126,12 +122,14 @@ const onSubmit = async () => {
       </AppForm>
 
       <div class="mt-6">
-        <button
+        <ElButton
+            :loading="authStore.loginLoading"
             @click="onSubmit"
-            class="w-full bg-[#2E90FA] py-2.5 text-white rounded-lg"
+            type="primary"
+            class="w-full bg-[#2E90FA] h-11 py-2.5 text-white rounded-lg text-sm"
         >
           Войти
-        </button>
+        </ElButton>
       </div>
 
       <div class="flex items-center justify-between text-[#7F7D83] text-sm mt-4">

@@ -1,9 +1,13 @@
-<script setup lang="ts">
+<script
+    setup
+    lang="ts"
+>
 import { onMounted, onUnmounted, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useLayoutStore } from "@/navigation";
 import ChildSidebar from "@/layout/Bars/ChildSidebar.vue";
 import { useSidebarStore } from "@/layout/Bars/sidebar.store";
+import { useAuthStore } from "@/modules/Auth/auth.store";
 
 const emit = defineEmits<{
   (e: "update:childSidebarPin", value: boolean): void;
@@ -34,7 +38,7 @@ watch(
     newValue => {
       sidebarStore.setChildSideBarOpen(newValue);
     },
-    { immediate: true },
+    { immediate: true }
 );
 
 onMounted(() => {
@@ -65,7 +69,7 @@ watch(
     () => {
       const storedMenu = sessionStorage.getItem("current-menu");
       currentMenu.value = storedMenu ? (JSON.parse(storedMenu) as number) : 0;
-    },
+    }
 );
 
 const activeMenu = (index: number, item: MenuItem) => {
@@ -127,19 +131,22 @@ const pinSidebar = () => {
   localStorage.setItem(
       "child-sidebar-pin",
       JSON.stringify(
-          !JSON.parse(localStorage.getItem("child-sidebar-pin") || "false"),
-      ),
+          !JSON.parse(localStorage.getItem("child-sidebar-pin") || "false")
+      )
   );
   childIsOpenPin.value = JSON.parse(
-      localStorage.getItem("child-sidebar-pin") || "false",
+      localStorage.getItem("child-sidebar-pin") || "false"
   );
   closeChildSidebar("toggle");
 };
 
+const authStore = useAuthStore();
+
 const logOut = () => {
   localStorage.removeItem("child-sidebar");
   sessionStorage.removeItem("current-menu");
-  router.push("/login");
+
+  authStore.logout();
 };
 </script>
 
@@ -205,16 +212,20 @@ const logOut = () => {
       </div>
 
       <!------------------------log out---------------------------->
-      <button
-          class="flex flex-col items-center cursor-pointer mb-[10px]"
+      <ElButton
+          :loading="authStore.userLoading"
+          class="mb-[10px] h-[45px]"
           @click.stop="logOut"
+          type="text"
       >
-        <img
-            src="@/assets/images/logout.svg"
-            alt="logout"
-        />
-        <span class="text-[#EA5455] text-[14px] font-medium block">Выход</span>
-      </button>
+        <div class="flex flex-col items-center">
+          <img
+              src="@/assets/images/logout.svg"
+              alt="logout"
+          />
+          <span class="text-[#EA5455] text-[14px] font-medium block">Выход</span>
+        </div>
+      </ElButton>
     </div>
   </div>
 </template>
