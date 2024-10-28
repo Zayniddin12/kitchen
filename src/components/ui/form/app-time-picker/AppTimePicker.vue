@@ -17,6 +17,7 @@ const props = withDefaults(defineProps<AppTimePickerPropsType>(), {
   placeholder: "— : —",
   prefixIcon: "ss",
   format: "HH:mm",
+  valueFormat: "HH:mm:ss",
   labelClass: "",
 });
 

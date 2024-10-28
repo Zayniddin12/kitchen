@@ -70,35 +70,27 @@ const setBreadCrumbFn = () => {
 };
 
 onMounted(async () => {
-  await store.GET_WAREHOUSE_BASES_LIST({per_page: 100})
-  await store.GET_KITCHEN_TYPE()
-  if (route.params.id) {
-    await getKitchenWarehouseDetail(route.params.id);
-  }
-})
-
-async function getKitchenWarehouseDetail(id) {
-  loading.value = true;
   try {
-    const wr = await store.GET_KITCHEN_WAREHOUSE_DETAIL(id);
-    if (wr && wr.kitchen_warehouse) {
-      dataValue.value = wr.kitchen_warehouse;
+    loading.value = true;
+    try {
+      await store.GET_WAREHOUSE_BASES_LIST({per_page: 100})
+      await store.GET_KITCHEN_TYPE()
 
-      // const base = store.wareHouseList.bases.find(e => e.id === dataValue.value.base_id).name;
-      // const kitchen = store.kitchenTypes.kitchen_types.find(e => e.id === dataValue.value.kitchen_type_id).name;
-      // if (base) {
-      //   dataValue.value.base_id = base
-      // }
-      // if (kitchen) {
-      //   dataValue.value.kitchen_type_id = kitchen
-      // }
+      if (route.params.id) {
+        const wr = await store.GET_KITCHEN_WAREHOUSE_DETAIL(route.params.id);
+        if (wr && wr.kitchen_warehouse) {
+          dataValue.value = wr.kitchen_warehouse;
+        }
+      }
+    } catch (e) {
+      ElNotification({title: e, type: 'error'});
+    } finally {
+      loading.value = false;
     }
   } catch (e) {
-    ElNotification({title: e, type: 'error'});
-  } finally {
-    loading.value = false;
+
   }
-}
+})
 
 const handleSubmit = async () => {
   if (!v$.value) return;

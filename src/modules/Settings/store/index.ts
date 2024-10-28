@@ -125,8 +125,6 @@ export const useSettingsStore = defineStore("settingsStore", () => {
     },
   });
 
-  const rationItem = ref<object>({});
-
 
   const wareHouseList = ref<WarehouseBasesList>({
     bases: [],
@@ -163,8 +161,8 @@ export const useSettingsStore = defineStore("settingsStore", () => {
   };
 
   const GET_SHOW_ITEM = async (id: string | number) => {
-    const { data } = await $axios.get("/rations/" + id);
-    rationItem.value = data.data;
+    const { data } = await $axios.get(`/rations/${id}`);
+    return data.data
   };
 
   const CRETE_RATION = async (data) => {
@@ -179,7 +177,6 @@ export const useSettingsStore = defineStore("settingsStore", () => {
 
   const DELETE_RATION = async (id: string | number) => {
     return await $axios.delete("/rations/" + id);
-
   };
 
 
@@ -386,7 +383,9 @@ export const useSettingsStore = defineStore("settingsStore", () => {
   };
   // Блюда end
 
-  const parentProductType = ref();
+  const parentProductType = ref({
+    product_types: [] as []
+  });
   const GET_MEALS_VID_PRO = async (params: any) => {
     const { data } = await $axios.get("/product-types", { params });
     parentProductType.value = data.data;

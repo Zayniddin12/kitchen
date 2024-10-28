@@ -3,17 +3,18 @@ import {useRoute, useRouter} from "vue-router";
 import {Name} from "@/utils/helper";
 import {onMounted, ref, watch} from "vue";
 import {useSettingsStore} from "@/modules/Settings/store";
+import {ElNotification} from "element-plus";
+import {ValidationType} from "@/components/ui/form/app-form/app-form.type";
 import AppInput from "@/components/ui/form/app-input/AppInput.vue";
 import AppSelect from "@/components/ui/form/app-select/AppSelect.vue";
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 import AppTimePicker from "@/components/ui/form/app-time-picker/AppTimePicker.vue";
 import useConfirm from "@/components/ui/app-confirm/useConfirm";
-import {ElNotification} from "element-plus";
 import AppForm from "@/components/ui/form/app-form/AppForm.vue";
-import {ValidationType} from "@/components/ui/form/app-form/app-form.type";
+import AppOverlay from "@/components/ui/app-overlay/AppOverlay.vue";
 
 interface DataValue {
-  kitchen_id: string;
+  kitchen_type_ids: string;
   start_time: string;
   end_time: string;
   duration_in_days: string;
@@ -21,10 +22,14 @@ interface DataValue {
 }
 
 interface Repeater {
-  quantity: string;
-  unit_id: number;
-  compositionable_id: number;
-  compositionable_type: number;
+  meal_id: null | string;
+  typeProduct: null | string;
+  product_type_id: null | string;
+  quantity: null | string;
+  unit_id: null | string;
+  number: string,
+  compositionable_id: number | null | string;
+  compositionable_type: number | null | string;
 }
 
 const v$ = ref<ValidationType | null>(null);
@@ -42,40 +47,53 @@ const {setBreadCrumb} = useBreadcrumb();
 const value = ref<boolean>(true);
 const dataValue = ref<DataValue>({
   name: new Name(),
-  kitchen_id: '',
+  kitchen_type_ids: [],
   start_time: '',
   end_time: '',
   duration_in_days: '',
+  number: '',
   compositions: [
     {
-      quantity: '',
-      unit_id: '',
-      compositionable_id: '',
-      compositionable_type: '',
+      meal_id: null,
+      typeProduct: null,
+      product_type_id: null,
+      quantity: null,
+      unit_id: null,
+      compositionable_id: null,
+      compositionable_type: null,
     }
   ]
 })
+const loading = ref<boolean>(false)
+const status = ref<boolean>(false)
 
 
 onMounted(async () => {
   let limit = {
     per_page: 100
   }
-  await store.GET_KITCHEN_TYPE(limit)
-  await store.GET_MEALS(limit)
-  await store.GET_UNITS()
-  await store.GET_TYPE_PRODUCT()
-  await store.GET_VID_PRODUCT(limit)
+  loading.value = true
+  try {
+    await store.GET_KITCHEN_TYPE(limit)
+    await store.GET_MEALS(limit)
+    await store.GET_UNITS()
+    await store.GET_TYPE_PRODUCT()
+    if (route.params.id) {
+      const ration = await store.GET_SHOW_ITEM(route.params.id)
+      if (ration && ration.ration) {
+        dataValue.value = ration.ration
+      }
+    }
+  } catch (e) {
+    loading.value = false
+  } finally {
+    loading.value = false
+  }
 })
 
 
 const repeaterAgain = () => {
-  dataValue.value.compositions.push({
-    quantity: '',
-    unit_id: '',
-    compositionable_id: '',
-    compositionable_type: '',
-  });
+  dataValue.value.compositions.push({});
 };
 
 const handleDelete = (index: number) => {
@@ -132,10 +150,14 @@ const handleSubmit = async () => {
       if (route.params.id) {
         await store.UPDATE_RATION({
           id: route.params.id,
-          data: dataValue.value
+          data: dataValue.value,
+          status: +status.value
         })
       } else {
-        await store.CRETE_RATION(dataValue.value)
+        await store.CRETE_RATION({
+          ...dataValue.value,
+          status: +status.value
+        })
       }
       ElNotification({title: 'Success', type: 'success'});
       await router.push('/reference-ration');
@@ -143,24 +165,44 @@ const handleSubmit = async () => {
       ElNotification({title: e, type: 'error'});
     }
   }
+};
+
+const changeInput = (event: any, type: string, index: number) => {
+  store.GET_MEALS_VID_PRO({parent_id: event})
+
+  if (type === 'product_type') {
+    dataValue.value.compositions[index].compositionable_id = 2
+    dataValue.value.compositions[index].compositionable_type = 'product_type'
+  }
 }
 
-// const switchChange = async (): Promise<boolean> => {
-//   try {
-//     const response = await confirm.show();
-//     return true;
-//   } catch (error) {
-//     return false;
-//   }
-// };
+const changeMeal = (type: string, index: number) => {
+  if (type === 'meal') {
+    dataValue.value.compositions[index].compositionable_id = 1
+    dataValue.value.compositions[index].compositionable_type = 'meal'
+  }
+}
+
+const clearableFunc = (type: string, index: number) => {
+  dataValue.value.compositions[index].compositionable_id = null
+  dataValue.value.compositions[index].compositionable_type = null
+}
+
+const getUnitId = (id: number) => {
+  if (id) {
+    return store.units.units.find((e) => e.id === id).name
+  }
+}
+
 watch(() => route.name, () => {
   setBreadCrumbFn();
 }, {immediate: true});
 </script>
 
 <template>
-  <div>
+  <AppOverlay :loading="loading">
     <h1 class="m-0 font-semibold text-[32px] leading-[48px]">{{ route.meta.title }}</h1>
+    <pre>{{ dataValue.compositions }}</pre>
 
     <div class="flex items-start mt-[24px]">
       <div class="w-[70%]">
@@ -189,6 +231,7 @@ watch(() => route.name, () => {
               />
 
               <app-input
+                  v-model="dataValue.number"
                   label="Уникальный номер рациона"
                   placeholder="Введите"
                   label-class="text-[#A8AAAE] font-medium text-[12px]"
@@ -198,12 +241,13 @@ watch(() => route.name, () => {
 
             <div class="grid grid-cols-3 gap-5">
               <app-select
-                  v-model="dataValue.kitchen_id"
+                  v-model="dataValue.kitchen_type_ids"
                   label="Тип кухни"
+                  multiple
                   placeholder="Выберите"
                   label-class="text-[#A8AAAE] font-medium text-[12px]"
                   required
-                  prop="kitchen_id"
+                  prop="kitchen_type_ids"
                   itemValue="id"
                   itemLabel="name"
                   :items="store.kitchenTypes.kitchen_types"
@@ -243,22 +287,24 @@ watch(() => route.name, () => {
 
           <template v-if="route.name === 'reference-ration-view-id'">
             <el-table
-                :data="[]"
+                :data="dataValue.compositions"
                 stripe
                 class="custom-element-table mt-[40px]"
+                :empty-text="'Нет доступных данных'"
             >
               <el-table-column
                   prop="id"
                   label="Состав"
               />
               <el-table-column
-                  prop="name"
+                  prop="quantity"
                   label="Количество"
               />
-              <el-table-column
-                  prop="unique"
-                  label="Ед. измерения"
-              />
+              <el-table-column prop="unit_id" label="Ед. измерения">
+                <template #default="scope">
+                  {{ scope.row.unit_id ? getUnitId(scope.row.unit_id) : '-' }}
+                </template>
+              </el-table-column>
             </el-table>
           </template>
 
@@ -271,32 +317,40 @@ watch(() => route.name, () => {
             >
               <div class="grid grid-cols-5 gap-5 border-b  py-[16px]">
                 <app-select
-                    v-model="item.meal"
+                    v-model="item.meal_id"
                     label="Блюдо"
                     placeholder="Выберите"
                     label-class="text-[#A8AAAE] font-medium text-[12px]"
+                    clearable
+                    :disabled="item.typeProduct"
                     itemValue="id"
                     itemLabel="name"
                     :items="store.meals.meals"
+                    @clear="clearableFunc('meal', index)"
+                    @change="changeMeal('meal', index)"
                 />
                 <app-select
-                    v-model="item.compositionable_type"
+                    v-model="item.typeProduct"
                     label="Тип продукта"
                     placeholder="Выберите"
                     label-class="text-[#A8AAAE] font-medium text-[12px]"
+                    clearable
+                    :disabled="item.meal_id"
                     itemValue="id"
                     itemLabel="name"
                     :items="store.typeProduct.product_categories"
+                    @clear="clearableFunc('product_type', index)"
+                    @change="changeInput($event, 'product_type', index)"
                 />
-
                 <app-select
-                    v-model="item.compositionable_id"
+                    v-model="item.product_type_id"
                     label="Вид продукта"
                     placeholder="Выберите"
                     label-class="text-[#A8AAAE] font-medium text-[12px]"
+                    :disabled="item.meal_id"
                     itemValue="id"
                     itemLabel="name"
-                    :items="store.vidProduct.product_types"
+                    :items="store.parentProductType.product_types"
                 />
                 <app-input
                     v-model="item.quantity"
@@ -304,18 +358,17 @@ watch(() => route.name, () => {
                     placeholder="0.0"
                     label-class="text-[#A8AAAE] font-medium text-[12px]"
                 />
-
-                <div class="flex items-center">
+                <div class="flex items-center w-full">
                   <app-select
                       v-model="item.unit_id"
                       label="Ед. измерения"
                       placeholder="Введите"
                       label-class="text-[#A8AAAE] font-medium text-[12px]"
+                      class="w-full"
                       itemValue="id"
                       itemLabel="name"
                       :items="store.units.units"
                   />
-
                   <button
                       class="bg-[#E2E6F3] rounded-[8px] flex justify-center items-center h-[40px] w-[60px] ml-[16px] mt-2"
                       @click="handleDelete(index as any)"
@@ -340,9 +393,9 @@ watch(() => route.name, () => {
 
             <el-switch
                 v-if="route.name === 'reference-ration-edit-id'"
+                v-model="status"
                 class="mt-[120px]"
-                v-model="value"
-                active-text="Деактивация"
+                :active-text="status ? 'Активация' : 'Деактивация'"
             />
             <!--            :before-change="switchChange"-->
           </template>
@@ -387,5 +440,5 @@ watch(() => route.name, () => {
         Редактировать
       </button>
     </div>
-  </div>
+  </AppOverlay>
 </template>
