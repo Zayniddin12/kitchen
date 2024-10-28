@@ -145,7 +145,7 @@ const handleSubmit = async () => {
       formData.append('name[uz]', dataValue.value.name.uz);
       formData.append('name[ru]', dataValue.value.name.ru);
       formData.append('number', dataValue.value.number);
-      formData.append('quantity', dataValue.value.quantity);
+      // formData.append('quantity', dataValue.value.quantity);
       formData.append('unit_id', dataValue.value.unit_id);
 
       if (dataValue.value.image) {
@@ -205,7 +205,6 @@ watch(() => route.name, () => {
           <AppForm
               :value="dataValue"
               @validation="setValidation"
-              class="mt-6"
           >
             <div class="mt-[24px] grid grid-cols-2 gap-5">
               <app-input

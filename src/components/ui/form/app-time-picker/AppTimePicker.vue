@@ -16,7 +16,7 @@ const props = withDefaults(defineProps<AppTimePickerPropsType>(), {
   labelPosition: "top",
   placeholder: "— : —",
   prefixIcon: "ss",
-  format: "HH:MM",
+  format: "HH:mm",
   labelClass: "",
 });
 
@@ -31,14 +31,6 @@ const appTimePickerClasses = computed<string[]>(() => {
 
   return classes;
 });
-
-const makeRange = (start: number, end: number) => {
-  const result: number[] = [];
-  for (let i = start; i <= end; i++) {
-    result.push(i);
-  }
-  return result;
-};
 
 </script>
 

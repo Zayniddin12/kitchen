@@ -172,7 +172,6 @@ watchEffect(() => {
           <AppForm
               :value="dataValue"
               @validation="setValidation"
-              class="mt-6"
           >
             <div class="grid grid-cols-2 gap-4 mt-[24px]">
               <app-input
