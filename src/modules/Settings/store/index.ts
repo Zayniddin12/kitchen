@@ -514,6 +514,12 @@ export const useSettingsStore = defineStore("settingsStore", () => {
     UPDATE_WAREHOUSE_BASES,
     CRETE_WAREHOUSE_BASES,
     DELETE_WAREHOUSE_BASES,
+
+    GET_RATION_LIST,
+    CRETE_RATION,
+    DELETE_RATION,
+    UPDATE_RATION,
+    GET_SHOW_ITEM,
     // begzod end
 
     //     abbos start
