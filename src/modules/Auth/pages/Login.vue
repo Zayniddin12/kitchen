@@ -42,19 +42,15 @@ const onSubmit = async () => {
     });
   } else {
     const newForm = { ...form };
-    newForm.phone = `998${newForm.phone.replace(/\D/g, '')}`;
+    newForm.phone = `998${newForm.phone.replace(/\D/g, "")}`;
     await authStore.login(newForm).then(() => {
       commonStore.successToast({ name: "home" });
       sessionStorage.setItem("current-menu", "0");
-    }).catch(err =>{
-      ElNotification({
-        title: err.message ?? err,
-        message: "Ошибка",
-        type: "error"
-      });
     });
   }
 };
+
+
 </script>
 
 <template>

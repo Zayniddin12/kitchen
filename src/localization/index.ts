@@ -51,9 +51,9 @@ watch(activeLocale, (newLocale) => {
 export const changeLocale = (locale: LOCALES) => {
   if (isValidLocale(locale)) {
     activeLocale.value = locale;
-    if (window.location.pathname !== '/login') {
-      window.location.reload();
-    }
+    // if (window.location.pathname !== '/login') {
+    //   window.location.reload();
+    // }
   }
 };
 

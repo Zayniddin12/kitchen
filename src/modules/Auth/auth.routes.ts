@@ -5,13 +5,20 @@ export default [
         path: "/login",
         name: "login",
         component: () => import("@/modules/Auth/pages/Login.vue"),
-        meta: { layout: "LoginLayout" }
+        meta: {
+            layout: "LoginLayout",
+            title: "Войти в аккаунт"
+        }
     },
     {
         path: "/reset-password",
         name: "reset-password",
         component: () => import("@/modules/Auth/pages/ResetPassword.vue"),
-        meta: { loginNotRequired: true, layout: "ResetPasswordLayout" }
+        meta: {
+            loginNotRequired: true,
+            layout: "ResetPasswordLayout",
+            title: "Сброс пароля"
+        }
     },
     {
         path: "/income-password",

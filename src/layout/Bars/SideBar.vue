@@ -213,9 +213,9 @@ const logOut = () => {
 
       <!------------------------log out---------------------------->
       <ElButton
-          :loading="authStore.userLoading"
-          class="mb-[10px] h-[45px]"
+          class="mb-[10px] h-[45px] "
           @click.stop="logOut"
+          plain
           type="text"
       >
         <div class="flex flex-col items-center">
