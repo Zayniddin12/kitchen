@@ -8,7 +8,7 @@ import Warehouse from "@/modules/WarehouseBases/router";
 import KitchenWarehouse from "@/modules/KitchenWarehouse/router";
 import Kitchen from "@/modules/Kitchen/router";
 import Users from "@/modules/Users/router";
-import AuthRoutes from "@/modules/Auth/routes";
+import AuthRoutes from "@/modules/Auth/auth.routes";
 
 const routes: RouteRecordRaw[] = [
     ...home,
