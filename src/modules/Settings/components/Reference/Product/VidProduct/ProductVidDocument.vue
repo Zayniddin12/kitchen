@@ -6,11 +6,21 @@ import {useSettingsStore} from "@/modules/Settings/store";
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 import {ElNotification} from "element-plus";
 
+interface Params {
+  search: string | null,
+  page: number,
+  per_page: number,
+}
+
 const store = useSettingsStore()
 const router = useRouter()
 const {setBreadCrumb} = useBreadcrumb();
 
-const input1 = ref<null | string>(null);
+const params = ref<Params>({
+  search: null,
+  page: 1,
+  per_page: 10,
+})
 const loading = ref<boolean>(false)
 let time: ReturnType<typeof setTimeout>
 
@@ -24,7 +34,7 @@ const refresh = async () => {
   loading.value = true
 
   try {
-    await store.GET_VID_PRODUCT({search: input1.value})
+    await store.GET_VID_PRODUCT(params.value)
   } catch (e: any) {
     ElNotification({title: e, type: 'error'})
     loading.value = false
@@ -57,8 +67,15 @@ const changeSearch = (): void => {
   clearTimeout(time);
 
   time = setTimeout(async () => {
+    params.value.page = 1
     await refresh();
   }, 500);
+}
+
+const changePagination = (event: any) => {
+  params.value.page = event;
+
+  refresh()
 }
 </script>
 
@@ -69,7 +86,7 @@ const changeSearch = (): void => {
 
       <div class="flex items-center">
         <el-input
-            v-model="input1"
+            v-model="params.search"
             size="large"
             placeholder="Поиск"
             :prefix-icon="Search"
@@ -84,6 +101,7 @@ const changeSearch = (): void => {
       </div>
     </div>
 
+
     <el-table
         :data="store.vidProduct.product_types"
         v-loading="loading"
@@ -92,13 +110,13 @@ const changeSearch = (): void => {
         empty-text="Нет доступных данных"
     >
       <el-table-column prop="id" label="№" width="80"/>
-      <el-table-column prop="photo" label="Картинка вида продукта" sortable>
+      <el-table-column prop="photo" label="Картинка вида продукта">
         <template #default="scope">
           <img v-if="scope.row.image" :src="scope.row.image" alt="#" class="h-[32px] w-[32px] rounded-full"/>
           <img
               v-else
-              src="https://cdn.vectorstock.com/i/1000v/51/99/icon-of-user-avatar-for-web-site-or-mobile-app-vector-3125199.jpg"
-              alt="#" class="h-[32px] w-[32px] rounded-full"/>
+              src="https://www.landuse-ca.org/wp-content/uploads/2019/04/no-photo-available.png"
+              alt="#" class="h-[32px] w-[32px] rounded-full object-cover"/>
         </template>
       </el-table-column>
       <el-table-column prop="name" label="Наименование вида продукта" sortable>
@@ -119,5 +137,21 @@ const changeSearch = (): void => {
         </template>
       </el-table-column>
     </el-table>
+
+    <div class="mt-[24px] flex items-center justify-between">
+      <div class="text-cool-gray text-[14px]">
+        Показано 1–10 из {{ store.vidProduct.pagination?.total_count }} результатов
+      </div>
+
+      <el-pagination
+          v-model:current-page="params.page"
+          :page-size="params.per_page"
+          class="float-right"
+          background
+          layout="prev, pager, next"
+          :total="store.vidProduct.pagination?.total_count"
+          @change="changePagination"
+      />
+    </div>
   </div>
 </template>

@@ -22,12 +22,12 @@ const routes: RouteRecordRaw[] = [
     {
         path: "/",
         name: 'login',
-        // redirect: () => {
-        //     if (isUserLoggedIn()) {
-        //         return {name: "reset-password"};
-        //     }
-        //     return {name: "login"};
-        // },
+        redirect: () => {
+            // if (isUserLoggedIn()) {
+            //     return {name: "reset-password"};
+            // }
+            return {name: "login"};
+        },
     },
     {
         path: "/login",

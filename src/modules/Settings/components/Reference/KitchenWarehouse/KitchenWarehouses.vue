@@ -106,8 +106,6 @@ const setBreadCrumbFn = () => {
       </div>
     </div>
 
-    <pre>{{ store.kitchenWarehouse }}</pre>
-
     <el-table
         :data="store.kitchenWarehouse.kitchen_warehouses"
         v-loading="loading"

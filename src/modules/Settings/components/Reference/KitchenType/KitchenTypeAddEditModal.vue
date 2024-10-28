@@ -18,7 +18,7 @@ interface Name {
 
 interface DataValue {
   name: Name;
-  // status: boolean | StatusType;
+  status: boolean | StatusType;
 }
 
 const v$ = ref<ValidationType | null>(null);
@@ -50,7 +50,7 @@ onMounted(async () => {
       if (kitchen && kitchen.kitchen_type) {
         dataValue.value = kitchen.kitchen_type;
 
-        status.value = kitchen.kitchen_type.status === 'active'
+        status.value = kitchen.kitchen_type.status == 'active'
       }
     } catch (e) {
       loading.value = false
@@ -100,14 +100,14 @@ const deleteFn = () => {
   });
 };
 
-const switchChange = async (): Promise<boolean> => {
-  try {
-    const response = await confirm.show();
-    return true;
-  } catch (error) {
-    return false;
-  }
-};
+// const switchChange = async (): Promise<boolean> => {
+//   try {
+//     const response = await confirm.show();
+//     return true;
+//   } catch (error) {
+//     return false;
+//   }
+// };
 
 const handleSubmit = async () => {
   if (!v$.value) return;
@@ -191,9 +191,10 @@ watch(() => route.name, () => {
               </div>
 
               <ElSwitch
-                  v-model="status"
                   v-if="route.params.id && !route.query.type"
                   active-text="Деактивация"
+                  v-model="status"
+                  :active-text="dataValue.is_active ? 'Активация' : 'Деактивация'"
                   class="app-switch mt-auto"
                   @change="changeStatus"
               />

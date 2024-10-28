@@ -199,7 +199,7 @@ const openModals = (data: any) => {
         />
       </el-badge>
 
-      <Language />
+      <Language v-if="false"/>
 
       <div class="flex items-center gap-3">
         <img

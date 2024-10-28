@@ -1,22 +1,23 @@
 <script setup lang="ts">
-import {onMounted, ref, watch} from "vue";
+import {computed, onMounted, ref, watch} from "vue";
 import {useRoute, useRouter} from "vue-router";
 import {ValidationType} from "@/components/ui/form/app-form/app-form.type";
 import {useSettingsStore} from "@/modules/Settings/store";
+import {Name} from "@/utils/helper";
+import {ElNotification} from "element-plus";
 import AppInput from "@/components/ui/form/app-input/AppInput.vue";
 import AppSelect from "@/components/ui/form/app-select/AppSelect.vue";
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 import AppMediaUploader from "@/components/ui/form/app-media-uploader/AppMediaUploader.vue";
 import useConfirm from "@/components/ui/app-confirm/useConfirm";
 import AppForm from "@/components/ui/form/app-form/AppForm.vue";
-import {Name} from "@/utils/helper";
-import {ElNotification} from "element-plus";
+import AppOverlay from "@/components/ui/app-overlay/AppOverlay.vue";
 
 interface Repeater {
-  typeProduct: string;
+  product_type_parent_id: string;
   product_type_id: string;
   quantity: number;
-  unit_id: string;
+  unit_id: string | number;
 }
 
 interface DataValue {
@@ -69,7 +70,7 @@ const dataValue = ref<DataValue>({
   image: '',
   compositions: [
     {
-      typeProduct: '',
+      product_type_parent_id: '',
       product_type_id: "",
       quantity: 0,
       unit_id: '',
@@ -77,30 +78,36 @@ const dataValue = ref<DataValue>({
   ]
 })
 const existingImage = ref<string>('')
+const loading = ref<boolean>(false)
 
 onMounted(async () => {
   await store.GET_UNITS()
   await store.GET_TYPE_PRODUCT()
 
   if (route.params.id) {
-    const meals = await store.GET_MEALS_DETAIL(route.params.id as string | number)
-    if (meals && meals.meal) {
-      dataValue.value = meals.meal
-      existingImage.value = meals.meal.image
+    loading.value = true;
+    try {
+      const meals = await store.GET_MEALS_DETAIL(route.params.id as string | number)
+      if (meals && meals.meal) {
+        dataValue.value = meals.meal
+        existingImage.value = meals.meal.image
 
-      dataValue.value.compositions.forEach((composition, index) => {
-        const matchingUnit = store.units.units.find(e => e.id === composition.unit_id);
-        if (matchingUnit) {
-          dataValue.value.compositions[index].unit_id = matchingUnit.unit_id;
-        }
-      });
+        meals.meal.compositions.map((e) => {
+          if (e.product_type_parent_id) {
+            return store.GET_MEALS_VID_PRO({parent_id: e.product_type_parent_id})
+          }
+        })
+      }
+    } catch (e) {
+      loading.value = false
     }
+    loading.value = false
   }
 })
 
 const repeaterAgain = () => {
   dataValue.value.compositions.push({
-    typeProduct: '',
+    product_type_parent_id: '',
     product_type_id: "",
     quantity: 0,
     unit_id: '',
@@ -125,7 +132,7 @@ const deleteFn = () => {
   confirm.delete().then(() => {
     store.DELETE_MEALS(route.params.id as string | number)
     router.push('/reference-dish');
-    ElNotification({ title: 'Success', type: 'success' });
+    ElNotification({title: 'Success', type: 'success'});
   });
 };
 
@@ -146,7 +153,7 @@ const handleSubmit = async () => {
       }
 
       dataValue.value.compositions.forEach((composition, index) => {
-        formData.append(`compositions[${index}][typeProduct]`, composition.typeProduct);
+        formData.append(`compositions[${index}][product_type_parent_id]`, composition.product_type_parent_id);
         formData.append(`compositions[${index}][product_type_id]`, composition.product_type_id);
         formData.append(`compositions[${index}][quantity]`, composition.quantity);
         formData.append(`compositions[${index}][unit_id]`, composition.unit_id);
@@ -161,20 +168,21 @@ const handleSubmit = async () => {
         await store.CREATE_MEALS(formData);
       }
 
-      ElNotification({ title: 'Success', type: 'success' });
+      ElNotification({title: 'Success', type: 'success'});
       await router.push('/reference-dish');
     } catch (e) {
-      ElNotification({ title: 'Error', type: 'error' });
+      ElNotification({title: 'Error', type: 'error'});
     }
   }
 };
 
-
-
-
 const changeInput = (event) => {
   store.GET_MEALS_VID_PRO({parent_id: event})
 }
+
+const isDisabled = computed(() => {
+  return route.name === 'reference-view-id'
+})
 
 watch(() => route.name, () => {
   setBreadCrumbFn();
@@ -182,82 +190,85 @@ watch(() => route.name, () => {
 </script>
 
 <template>
-  <div>
-<!--    <pre>{{ dataValue }}</pre>-->
+  <AppOverlay :loading="loading">
     <h1 class="m-0 font-semibold text-[32px] leading-[48px]">{{ route.meta.title }}</h1>
 
     <div class="mt-[24px] flex items-start">
       <div class="w-[70%]">
         <div class="border rounded-[24px] p-[24px]">
           <AppMediaUploader
-            v-model="dataValue.image"
-            :value="existingImage"
-            class="mt-4"
+              v-model="dataValue.image"
+              :value="existingImage"
+              class="mt-4"
           />
 
           <AppForm
-            :value="dataValue"
-            @validation="setValidation"
-            class="mt-6"
+              :value="dataValue"
+              @validation="setValidation"
+              class="mt-6"
           >
             <div class="mt-[24px] grid grid-cols-2 gap-5">
               <app-input
-                v-model="dataValue.name.ru"
-                label="Наименование (RU)"
-                placeholder="Введите"
-                label-class="text-[#A8AAAE] text-[12px]"
-                required
-                prop="name.ru"
+                  v-model="dataValue.name.ru"
+                  label="Наименование (RU)"
+                  placeholder="Введите"
+                  label-class="text-[#A8AAAE] text-[12px]"
+                  required
+                  prop="name.ru"
+                  :disabled="isDisabled"
               />
 
               <app-input
-                v-model="dataValue.name.uz"
-                label="Наименование (UZ)"
-                placeholder="Введите"
-                label-class="text-[#A8AAAE] text-[12px]"
-                required
-                prop="name.uz"
+                  v-model="dataValue.name.uz"
+                  label="Наименование (UZ)"
+                  placeholder="Введите"
+                  label-class="text-[#A8AAAE] text-[12px]"
+                  required
+                  prop="name.uz"
+                  :disabled="isDisabled"
               />
 
               <app-input
-                v-model="dataValue.number"
-                label="Уникальный номер блюда"
-                placeholder="Автоматически"
-                label-class="text-[#A8AAAE] font-medium text-[12px]"
-                disabled
+                  v-model="dataValue.number"
+                  label="Уникальный номер блюда"
+                  placeholder="Автоматически"
+                  label-class="text-[#A8AAAE] font-medium text-[12px]"
+                  disabled
+                  :disabled="isDisabled"
               />
 
               <app-select
-                v-model="dataValue.unit_id"
-                label="Ед. измерения"
-                placeholder="Выберите"
-                label-class="text-[#A8AAAE] text-[12px]"
-                required
-                prop="unit_id"
-                itemValue="id"
-                itemLabel="name"
-                :items="store.units.units"
+                  v-model="dataValue.unit_id"
+                  label="Ед. измерения"
+                  placeholder="Выберите"
+                  label-class="text-[#A8AAAE] text-[12px]"
+                  required
+                  prop="unit_id"
+                  itemValue="id"
+                  itemLabel="name"
+                  :items="store.units.units"
+                  :disabled="isDisabled"
               />
             </div>
           </AppForm>
 
           <template v-if="route.name === 'reference-view-id'">
             <el-table
-              :data="dataValue.compositions"
-              stripe
-              class="custom-element-table mt-[40px]"
+                :data="dataValue.compositions"
+                stripe
+                class="custom-element-table mt-[40px]"
             >
               <el-table-column
-                prop="product_type_name"
-                label="Состав"
+                  prop="product_type_name"
+                  label="Состав"
               />
               <el-table-column
-                prop="quantity"
-                label="Количество"
+                  prop="quantity"
+                  label="Количество"
               />
               <el-table-column
-                prop="product_type_id"
-                label="Ед. измерения"
+                  prop="product_type_id"
+                  label="Ед. измерения"
               />
             </el-table>
           </template>
@@ -272,48 +283,48 @@ watch(() => route.name, () => {
                      :key="index"
                 >
                   <app-select
-                    v-model="item.typeProduct"
-                    label="Тип продукта"
-                    label-class="text-[#A8AAAE] text-[12px]"
-                    placeholder="Выберите"
-                    itemValue="id"
-                    itemLabel="name"
-                    :items="store.typeProduct.product_categories"
-                    @change="changeInput"
-                  />
-
-                  <app-select
-                    v-model="item.product_type_id"
-                    label="Вид продукта"
-                    label-class="text-[#A8AAAE] text-[12px]"
-                    placeholder="Выберите"
-                    itemValue="id"
-                    itemLabel="name"
-                    :items="store.parentProductType?.product_types"
-                  />
-
-                  <app-input
-                    v-model="item.quantity"
-                    label="Количество"
-                    label-class="text-[#A8AAAE] text-[12px]"
-                    placeholder="0.0"
-                  />
-
-                  <div class="flex items-center">
-                    <app-select
-                      v-model="item.unit_id"
-                      class="w-full"
-                      label="Ед. измерения"
+                      v-model="item.product_type_parent_id"
+                      label="Тип продукта"
                       label-class="text-[#A8AAAE] text-[12px]"
                       placeholder="Выберите"
                       itemValue="id"
                       itemLabel="name"
-                      :items="store.units.units"
+                      :items="store.typeProduct.product_categories"
+                      @change="changeInput"
+                  />
+
+                  <app-select
+                      v-model="item.product_type_id"
+                      label="Вид продукта"
+                      label-class="text-[#A8AAAE] text-[12px]"
+                      placeholder="Выберите"
+                      itemValue="id"
+                      itemLabel="name"
+                      :items="store.parentProductType?.product_types"
+                  />
+
+                  <app-input
+                      v-model="item.quantity"
+                      label="Количество"
+                      label-class="text-[#A8AAAE] text-[12px]"
+                      placeholder="0.0"
+                  />
+
+                  <div class="flex items-center">
+                    <app-select
+                        v-model="item.unit_id"
+                        class="w-full"
+                        label="Ед. измерения"
+                        label-class="text-[#A8AAAE] text-[12px]"
+                        placeholder="Выберите"
+                        itemValue="id"
+                        itemLabel="name"
+                        :items="store.units.units"
                     />
 
                     <button
-                      class="bg-[#E2E6F3] rounded-[8px] flex justify-center items-center h-[40px] w-[40px] ml-[16px] mt-2"
-                      @click="handleDelete(index)"
+                        class="bg-[#E2E6F3] rounded-[8px] flex justify-center items-center h-[40px] w-[40px] ml-[16px] mt-2"
+                        @click="handleDelete(index)"
                     >
                       <img src="@/assets/images/icons/delete.svg" alt="delete"/>
                     </button>
@@ -322,13 +333,13 @@ watch(() => route.name, () => {
               </div>
 
               <button
-                class="text-[#2E90FA] flex items-center border px-[16px] py-[8px] border-[#2E90FA] rounded-lg text-[12px] font-medium mt-[12px]"
-                @click="repeaterAgain"
+                  class="text-[#2E90FA] flex items-center border px-[16px] py-[8px] border-[#2E90FA] rounded-lg text-[12px] font-medium mt-[12px]"
+                  @click="repeaterAgain"
               >
                 <img
-                  src="@/assets/images/icons/plus2.svg"
-                  class="mr-[4px]"
-                  alt="plus"
+                    src="@/assets/images/icons/plus2.svg"
+                    class="mr-[4px]"
+                    alt="plus"
                 />
                 Добавить еще
               </button>
@@ -337,21 +348,21 @@ watch(() => route.name, () => {
         </div>
 
         <div
-          class="flex items-center justify-between mt-[24px]"
-          v-if="route.name === 'reference-dish-create' || route.name === 'reference-dish-id'"
+            class="flex items-center justify-between mt-[24px]"
+            v-if="route.name === 'reference-dish-create' || route.name === 'reference-dish-id'"
         >
           <button
-            class="custom-danger-btn"
-            v-if="route.name === 'reference-dish-id'"
-            @click="deleteFn"
+              class="custom-danger-btn"
+              v-if="route.name === 'reference-dish-id'"
+              @click="deleteFn"
           >
             Удалить
           </button>
 
           <div class="flex items-center justify-end ml-auto">
             <button
-              class="custom-cancel-btn"
-              @click="cancelFn"
+                class="custom-cancel-btn"
+                @click="cancelFn"
             >
               Отменить
             </button>
@@ -364,25 +375,22 @@ watch(() => route.name, () => {
       </div>
 
       <button
-        class="custom-light-btn flex items-center ml-[24px]"
-        v-if="route.name === 'reference-view-id'"
-        @click="router.push(`/reference-dish-edit/${route.params.id}`)"
+          class="custom-light-btn flex items-center ml-[24px]"
+          v-if="route.name === 'reference-view-id'"
+          @click="router.push(`/reference-dish-edit/${route.params.id}`)"
       >
         <img
-          src="@/assets/images/icons/edit.svg"
-          alt="edit"
-          class="mr-[12px]"
+            src="@/assets/images/icons/edit.svg"
+            alt="edit"
+            class="mr-[12px]"
         />
         Редактировать
       </button>
     </div>
-  </div>
+  </AppOverlay>
 </template>
 
-<style
-  scoped
-  lang="scss"
->
+<style scoped lang="scss">
 .edit__btn {
   @apply bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50
 }

@@ -221,17 +221,18 @@ watch(() => route.name, () => {
                   placeholder="Начальник управления"
                   label-class="text-[#A8AAAE] font-medium text-[12px]"
                   class="w-[50%]"
-                  required
-                  prop="responsible_position"
+                  disabled
                   :disabled="isDisabled"
               />
+<!--              required-->
+<!--              prop="responsible_position"-->
             </div>
 
             <ElSwitch
                 v-model="status"
                 v-if="route.params.id && !route.query.type"
-                active-text="Деактивация"
                 @change="changeStatus"
+                :active-text="status ? 'Активация' : 'Деактивация'"
                 class="app-switch mt-auto"
             />
 <!--            :before-change="switchChange"-->
