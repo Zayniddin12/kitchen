@@ -23,6 +23,38 @@ export const formatNumber = (value: number, format = " ") => {
     return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, `${format}`);
 };
 
+export const phoneFormatter = (phoneNumberString: string) => {
+    const cleaned = ("" + phoneNumberString).replace(/\D/g, "");
+    const match = cleaned.match(/^(998|)?(\d{2})(\d{3})(\d{2})(\d{2})$/);
+
+    if (match) {
+        const intlCode = (match[1] ? "+998 " : "");
+        return [intlCode, "(", match[2], ") ", match[3], "-", match[4], "-", match[5]].join("");
+    }
+
+    return null;
+};
+
+export const applyMask = (value: string, mask: string): string => {
+    let maskedValue = '';
+    let valueIndex = 0;
+
+    for (const char of mask) {
+        if (char === '#') {
+            if (value[valueIndex]) {
+                maskedValue += value[valueIndex];
+                valueIndex++;
+            } else {
+                break;
+            }
+        } else {
+            maskedValue += char;
+        }
+    }
+
+    return maskedValue;
+}
+
 export const generateRandomID = (): string => {
     const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
     const charactersLength = characters.length;

@@ -14,8 +14,8 @@ export const useCommonStore = defineStore("commonStore", () => {
         router.replace({ name: "notFound" });
     };
 
-    const successToast = async (route: RouteLocationRaw) => {
-        await router.push(route);
+    const successToast = async (route?: RouteLocationRaw) => {
+        if (route) await router.push(route);
         ElNotification({
             title: "Успешно",
             message: "Успешно",
@@ -23,8 +23,18 @@ export const useCommonStore = defineStore("commonStore", () => {
         });
     };
 
+    const errorToast = async (message: string, route?: RouteLocationRaw) => {
+        if (route) await router.push(route);
+        ElNotification({
+            title: "Error",
+            message,
+            type: "error"
+        });
+    };
+
     return {
         redirectNotFound,
-        successToast
+        successToast,
+        errorToast
     };
 });
