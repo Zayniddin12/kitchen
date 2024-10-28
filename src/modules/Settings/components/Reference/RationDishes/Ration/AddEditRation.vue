@@ -117,8 +117,10 @@ const cancelFn = () => {
 };
 
 const deleteFn = () => {
-  confirm.delete().then(response => {
+  confirm.delete().then(() => {
+    store.DELETE_RATION(route.params.id);
     router.push({name: "reference-ration"});
+    ElNotification({title: "Success", type: "success"});
   });
 };
 
