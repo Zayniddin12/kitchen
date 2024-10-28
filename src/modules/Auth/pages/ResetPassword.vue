@@ -45,7 +45,7 @@ const onSubmit = async () => {
     <div class="w-full lg:w-1/4 md:w-1/2 m-auto">
       <header class="flex items-center justify-center mb-6">
         <img
-            src="../../../assets/images/logo.svg"
+            src="@/assets/images/logo.svg"
             alt="logo"
             class="h-[50px]"
         />
@@ -86,7 +86,7 @@ const onSubmit = async () => {
       </button>
 
       <div class="flex items-center justify-center mt-[22px] cursor-pointer" @click="router.go(-1)">
-        <img src="../../../assets/images/icons/back.svg" alt="back"/>
+        <img src="@/assets/images/icons/back.svg" alt="back"/>
         <p class="text-[#2E90FA] text-[14px] font-medium ml-[8px]">Назад</p>
       </div>
     </div>

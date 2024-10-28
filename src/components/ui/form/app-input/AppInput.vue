@@ -1,6 +1,6 @@
 <script
-  setup
-  lang="ts"
+    setup
+    lang="ts"
 >
 import { AppInputPropsType, AppInputValueType } from "@/components/ui/form/app-input/app-input.type";
 import { computed, useSlots } from "vue";
@@ -16,7 +16,7 @@ const updateModelValue = (value: any) => {
 const props = withDefaults(defineProps<AppInputPropsType>(), {
   type: "text",
   labelPosition: "top",
-  labelClass: "",
+  labelClass: ""
 });
 
 const appInputClasses = computed<string[]>(() => {
@@ -32,7 +32,7 @@ const appInputClasses = computed<string[]>(() => {
 const slots = useSlots();
 
 const computedMask = computed(() =>
-  props.type === "tel" && !props.mask ? "+998 ## ###-##-##" : props.mask,
+    props.type === "tel" && !props.mask ? "+998 ## ###-##-##" : props.mask
 );
 
 const inputMask = computed(() => {
@@ -41,22 +41,22 @@ const inputMask = computed(() => {
 </script>
 <template>
   <ElFormItem
-    :label-position
-    :required
-    :class="appInputClasses"
-    :size
-    :prop
-    :error
-    :rules="setRules(getRules(props))"
+      :label-position
+      :required
+      :class="appInputClasses"
+      :size
+      :prop
+      :error
+      :rules="setRules(getRules(props))"
   >
     <template
-      v-if="slots.label || label"
-      #label
+        v-if="slots.label || label"
+        #label
     >
       <span :class="labelClass">
       <slot
-        v-if="slots.label"
-        name="label"
+          v-if="slots.label"
+          name="label"
       />
         <template v-else>
           {{ label }}
@@ -64,31 +64,44 @@ const inputMask = computed(() => {
       </span>
     </template>
     <ElInput
-      v-bind="{
+        v-bind="{
         modelValue: model,
         'onUpdate:modelValue': updateModelValue,
         ...modifiers,
       }"
-      :type
-      :formatter
-      :parser
-      :show-password
-      v-maska:[inputMask]
-      :readonly
-      :disabled
-      :placeholder
-      :size
-      :clearable
-      :name
-      :suffix-icon
-      :prefix-icon
-      :rows
-      :autosize
-      :maxlength
-      :minlength
-      :showWordLimit
-      :inputStyle
-      class="app-input__input"
-    />
+        :type
+        :formatter
+        :parser
+        :show-password
+        v-maska:[inputMask]
+        :readonly
+        :disabled
+        :placeholder
+        :size
+        :clearable
+        :name
+        :suffix-icon
+        :prefix-icon
+        :rows
+        :autosize
+        :maxlength
+        :minlength
+        :showWordLimit
+        :inputStyle
+        class="app-input__input"
+    >
+      <template
+          v-if="slots.prepend"
+          #prepend
+      >
+        <slot name="prepend"/>
+      </template>
+      <template
+          v-if="slots.append"
+          #append
+      >
+        <slot name="append"/>
+      </template>
+    </ElInput>
   </ElFormItem>
 </template>
