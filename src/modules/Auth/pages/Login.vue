@@ -39,7 +39,7 @@ const onSubmit = async () => {
     })
   } else {
     // localStorage.setItem("accessToken", JSON.stringify('accessToken'));
-    await router.push("/home");
+    await router.push({name: "home"});
     ElNotification({
       title: 'Успешно',
       message: 'Успешно',
@@ -56,7 +56,7 @@ const onSubmit = async () => {
 
     <!-- Background Image Section -->
     <img
-      src="@/assets/images/loginBg.png"
+      src="../../../assets/images/loginBg.png"
       class="hidden lg:block h-full lg:w-1/2 object-cover rounded-lg"
       alt="login"
     />
@@ -64,7 +64,7 @@ const onSubmit = async () => {
     <div class="w-full lg:w-1/4 md:w-1/2 m-auto">
       <header class="flex items-center mb-6">
         <img
-          src="@/assets/images/logo.svg"
+          src="../../../assets/images/logo.svg"
           alt="logo"
           class="h-[50px]"
         />
@@ -123,13 +123,13 @@ const onSubmit = async () => {
 
         <div class="flex items-center justify-between text-[#7F7D83] text-sm mt-4">
           <img
-            src="@/assets/images/line.svg"
+            src="../../../assets/images/line.svg"
             class="ml-4 md:w-[40%] lg:w-[40%] w-[20%]"
             alt="line"
           />
           <span class="px-2">или</span>
           <img
-            src="@/assets/images/line.svg"
+            src="../../../assets/images/line.svg"
             class="mr-4 md:w-[40%] lg:w-[40%] w-[20%]"
             alt="line"
           />
@@ -139,7 +139,7 @@ const onSubmit = async () => {
           ONE
           <img
             class="ml-2"
-            src="@/assets/images/oneId.svg"
+            src="../../../assets/images/oneId.svg"
             alt="oneId"
           />
         </button>
