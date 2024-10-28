@@ -9,7 +9,7 @@ import AppSelect from "@/components/ui/form/app-select/AppSelect.vue";
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 import useConfirm from "@/components/ui/app-confirm/useConfirm";
 import { BaseWarehouseDataType } from "@/modules/Settings/components/Reference/MainBases/base-warehouses.type";
-import { deepEqual, getStatus, Name, setStatus } from "@/utils/helper";
+import { deepEqual, getStatus, getStatusText, Name, setStatus } from "@/utils/helper";
 import { ValidationType } from "@/components/ui/form/app-form/app-form.type";
 import { useSettingsStore } from "@/modules/Settings/store";
 import { useCommonStore } from "@/stores/common.store";
@@ -287,9 +287,9 @@ const disabledFormItems = computed<boolean>(() => {
 
 
           <ElSwitch
-              v-if="route.name === 'reference-main-bases-edit'"
+              v-if="route.name === 'reference-main-bases-edit' && form.status !== undefined"
               v-model="form.status"
-              active-text="Деактивация"
+              :active-text="getStatusText(form.status)"
               class="app-switch mt-auto"
           />
         </AppOverlay>
