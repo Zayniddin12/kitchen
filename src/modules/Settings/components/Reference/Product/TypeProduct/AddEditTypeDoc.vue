@@ -87,14 +87,14 @@ const cancelFn = () => {
   });
 };
 
-const switchChange = async (): Promise<boolean> => {
-  try {
-    const response = await confirm.show();
-    return true;
-  } catch (error) {
-    return false;
-  }
-};
+// const switchChange = async (): Promise<boolean> => {
+//   try {
+//     const response = await confirm.show();
+//     return true;
+//   } catch (error) {
+//     return false;
+//   }
+// };
 
 const handleSubmitProduct = async (): Promise<void> => {
   try {
@@ -158,7 +158,7 @@ watch(route.name, () => {
             :disabled="route.name === 'reference-type-product-view' as any"
             v-model="dataValue.is_active"
             class="mt-auto"
-            active-text="Деактивация"
+            :active-text="dataValue.is_active ? 'Активация' : 'Деактивация'"
             v-if="route.name === 'reference-type-product-edit-id'"
         />
 <!--        :before-change="switchChange"-->

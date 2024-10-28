@@ -91,7 +91,6 @@ onMounted(async () => {
     const data = await settingsStore.GET_WAREHOUSE_BASES_ITEM(route.params.id as string | number);
 
     if (data && data.base) {
-      console.log(data.base);
       warehouseData.value = data.base;
       status.value = data.base.status == "active";
     }
@@ -138,21 +137,21 @@ const handleSubmit = async () => {
   }
 };
 
-const switchChange = async (e): Promise<boolean> => {
-  try {
-    console.log(status.value);
-    // if (status.value) {
-    //   warehouseData.value.status = "inactive";
-    // } else {
-    //   warehouseData.value.status = "active";
-    // }
-    // const response = await confirm.show();
-
-    // return true;
-  } catch (error) {
-    return false;
-  }
-};
+// const switchChange = async (e): Promise<boolean> => {
+//   try {
+//     console.log(status.value);
+//     // if (status.value) {
+//     //   warehouseData.value.status = "inactive";
+//     // } else {
+//     //   warehouseData.value.status = "active";
+//     // }
+//     // const response = await confirm.show();
+//
+//     // return true;
+//   } catch (error) {
+//     return false;
+//   }
+// };
 
 const switchChange2 = async (e): Promise<boolean> => {
   if (status.value) {

@@ -73,6 +73,7 @@ export const useSettingsStore = defineStore("settingsStore", () => {
   });
   const vidProduct = ref({
     product_types: [] as any,
+    pagination: {} as any,
   });
   const units = ref({
     units: [] as any,
