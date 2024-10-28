@@ -22,7 +22,7 @@ const margin = ref("ml-[396px]");
 
 onMounted(async () => {
   if (getAccessToken()) await authStore.me();
-  else await router.replace({ name: "login" });
+  // else await router.replace({ name: "login" });
   childSidebarPin.value = JSON.parse(localStorage.getItem("child-sidebar-pin") || "false");
   kitchenStore.fetchDepartments();
 });
