@@ -20,10 +20,9 @@ const childSidebarPin = ref<boolean>(JSON.parse(localStorage.getItem("child-side
 const childSidebar = ref<boolean>(JSON.parse(localStorage.getItem("child-sidebar" as string) || "false"));
 const margin = ref("ml-[396px]");
 
-onMounted(() => {
+onMounted(async () => {
   if (getAccessToken()) authStore.me();
-  else router.replace({ name: "login" });
-  // else await router.replace({ name: "login" });
+  else await router.replace({ name: "login" });
   childSidebarPin.value = JSON.parse(localStorage.getItem("child-sidebar-pin") || "false");
   kitchenStore.fetchDepartments();
 });
@@ -47,7 +46,6 @@ watch(() => route.name, function (val) {
         class="main-layout min-h-screen p-6 pr-7 pt-28 dark:bg-darkLayoutMain dark:bg-body-dark bg-white ml-[128px] transition-all flex flex-col justify-between"
         :class="childSidebarPin && childSidebar ? margin : ''"
     >
-
       <div class="flex flex-col">
         <AppBreadcrumb/>
         <slot/>

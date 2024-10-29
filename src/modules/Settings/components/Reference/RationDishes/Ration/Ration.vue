@@ -1,9 +1,12 @@
-<script setup lang="ts">
-import {Search} from "@element-plus/icons-vue";
-import {onMounted, ref} from "vue";
-import {useRouter} from "vue-router";
-import {useSettingsStore} from "@/modules/Settings/store";
-import {ElNotification} from "element-plus";
+<script
+    setup
+    lang="ts"
+>
+import { Search } from "@element-plus/icons-vue";
+import { onMounted, ref } from "vue";
+import { useRouter } from "vue-router";
+import { useSettingsStore } from "@/modules/Settings/store";
+import { ElNotification } from "element-plus";
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 
 interface Params {
@@ -12,35 +15,38 @@ interface Params {
   per_page: number;
 }
 
-const store = useSettingsStore()
+const store = useSettingsStore();
 const router = useRouter();
-const {setBreadCrumb} = useBreadcrumb();
+const { setBreadCrumb } = useBreadcrumb();
 
 const params = ref<Params>({
   search: null,
   page: 1,
   per_page: 10
-})
-const loading = ref<boolean>(false)
-let debounceTimeout: ReturnType<typeof setTimeout>
+});
+const loading = ref<boolean>(false);
+let debounceTimeout: ReturnType<typeof setTimeout>;
 
 onMounted(() => {
   setBreadCrumbFn();
 
-  refresh()
+  refresh();
 });
 
 const refresh = async () => {
-  loading.value = true
+  loading.value = true;
   try {
-    await store.GET_RATION_LIST(params.value)
+    await store.GET_RATION_LIST(params.value);
   } catch (e) {
-    loading.value = false
-    ElNotification({title: e, type: 'error'})
+    loading.value = false;
+    ElNotification({
+      title: e as string,
+      type: "error"
+    });
   } finally {
-    loading.value = false
+    loading.value = false;
   }
-}
+};
 
 const handleSearch = (): void => {
   clearTimeout(debounceTimeout);
@@ -56,26 +62,26 @@ const handleSearch = (): void => {
 const changePagination = (event: any) => {
   params.value.page = event;
 
-  refresh()
-}
+  refresh();
+};
 
 const setBreadCrumbFn = () => {
   setBreadCrumb([
     {
-      label: "Настройки",
+      label: "Настройки"
     },
     {
       label: "Справочники",
-      to: {name: "reference"},
+      to: { name: "reference" }
     },
     {
       label: "Рационы и блюда",
-      to: {name: "reference"},
+      to: { name: "reference" }
     },
     {
       label: "Рационы",
-      isActionable: true,
-    },
+      isActionable: true
+    }
   ]);
 };
 </script>
@@ -90,13 +96,19 @@ const setBreadCrumbFn = () => {
             v-model="params.search"
             size="large"
             placeholder="Поиск"
-            :prefix-icon="Search as string"
+            :prefix-icon="Search as any"
             class="w-[300px]"
             @input="handleSearch"
         />
 
-        <button class="custom-apply-btn ml-[16px]" @click="router.push('/reference-ration-create')">
-          <img src="@/assets/images/icons/plus.svg" alt="plus"/>
+        <button
+            class="custom-apply-btn ml-[16px]"
+            @click="router.push('/reference-ration-create')"
+        >
+          <img
+              src="@/assets/images/icons/plus.svg"
+              alt="plus"
+          />
           Добавить
         </button>
       </div>
@@ -109,19 +121,54 @@ const setBreadCrumbFn = () => {
         v-loading="loading"
         :empty-text="'Нет доступных данных'"
     >
-      <el-table-column prop="id" label="№" width="80"/>
-      <el-table-column prop="name" label="Наименование рациона" sortable/>
-      <el-table-column prop="number" label="Уникальный номер" sortable/>
-      <el-table-column prop="kitchen_type_names" label="Тип кухни" sortable/>
-      <el-table-column prop="duration_in_days" label="Длительность" sortable/>
-      <el-table-column label="Действие" align="right">
+      <el-table-column
+          prop="id"
+          label="№"
+          width="80"
+      />
+      <el-table-column
+          prop="name"
+          label="Наименование рациона"
+          sortable
+      />
+      <el-table-column
+          prop="number"
+          label="Уникальный номер"
+          sortable
+      />
+      <el-table-column
+          prop="kitchen_type_names"
+          label="Тип кухни"
+          sortable
+      />
+      <el-table-column
+          prop="duration_in_days"
+          label="Длительность"
+          sortable
+      />
+      <el-table-column
+          label="Действие"
+          align="right"
+      >
         <template #default="scope">
-          <button class="action-btn" @click="router.push(`/reference-ration-view/${scope.row.id}`)">
-            <img src="@/assets/images/eye.svg" alt="eye"/>
+          <button
+              class="action-btn"
+              @click="router.push(`/reference-ration-view/${scope.row.id}`)"
+          >
+            <img
+                src="@/assets/images/eye.svg"
+                alt="eye"
+            />
           </button>
 
-          <button class="action-btn ml-[8px]" @click="router.push(`/reference-ration-edit/${scope.row.id}`)">
-            <img src="@/assets/images/icons/edit.svg" alt="edit"/>
+          <button
+              class="action-btn ml-[8px]"
+              @click="router.push(`/reference-ration-edit/${scope.row.id}`)"
+          >
+            <img
+                src="@/assets/images/icons/edit.svg"
+                alt="edit"
+            />
           </button>
         </template>
       </el-table-column>

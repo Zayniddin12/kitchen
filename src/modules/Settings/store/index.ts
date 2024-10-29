@@ -18,18 +18,18 @@ interface VidDocument {
 }
 
 interface Params {
-  search?: string | null;
-  page?: number | string;
-  per_page?: number | string;
+  search?: string;
+  page?: number;
+  per_page?: number;
 }
 
 interface Pagination {
   current_page: number | null;
   per_page: number | null;
   has_more: boolean;
-  items_count: number | null;
-  total_count: number | null;
-  pages_count: number | null;
+  items_count: number;
+  total_count: number;
+  pages_count: number;
 }
 
 interface rationList {
@@ -165,7 +165,7 @@ export const useSettingsStore = defineStore("settingsStore", () => {
     return data.data
   };
 
-  const CRETE_RATION = async (data) => {
+  const CRETE_RATION = async (data: Record<string, any>) => {
     return await $axios.post("/rations/", data);
 
   };

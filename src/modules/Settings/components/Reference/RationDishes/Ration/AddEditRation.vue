@@ -26,7 +26,7 @@ interface Repeater {
   typeProduct: null | string;
   product_type_id: null | string;
   quantity: null | string;
-  unit_id: null | string;
+  unit_id: string;
   number: string,
   compositionable_id: number | null | string;
   compositionable_type: number | null | string;
@@ -58,7 +58,7 @@ const dataValue = ref<DataValue>({
       typeProduct: null,
       product_type_id: null,
       quantity: null,
-      unit_id: null,
+      unit_id: "",
       compositionable_id: null,
       compositionable_type: null,
     }

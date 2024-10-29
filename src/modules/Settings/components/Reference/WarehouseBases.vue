@@ -1,6 +1,6 @@
 <script
-  setup
-  lang="ts"
+    setup
+    lang="ts"
 >
 import { ref, watchEffect, onMounted } from "vue";
 import { Search } from "@element-plus/icons-vue";
@@ -9,6 +9,8 @@ import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 import { useSettingsStore } from "@/modules/Settings/store";
 import { ElNotification } from "element-plus";
 import { watchDebounced } from "@vueuse/core";
+import { PaginationParamsType } from "@/types/pagination.type";
+import { filterObjectValues } from "@/utils/helper";
 
 const settingsStore = useSettingsStore();
 
@@ -20,11 +22,14 @@ interface TableData {
   type: string;
 }
 
+interface ParamsType extends PaginationParamsType {
+  search: string;
+}
 
-const params = ref<object>({
+const params = ref<ParamsType>({
   search: "",
   page: 1,
-  per_page: 10,
+  per_page: 10
 });
 const loading = ref<boolean>(false);
 
@@ -34,24 +39,24 @@ const setBreadCrumbFn = () => {
   setBreadCrumb([
     {
       label: "Настройки",
-      isActionable: false,
+      isActionable: false
     },
     {
       label: "Справочники",
       isActionable: false,
-      to: { name: "reference" },
+      to: { name: "reference" }
     },
 
     {
       label: "Управ, комбинаты и склады",
       isActionable: false,
-      to: { name: "reference" },
+      to: { name: "reference" }
     },
 
     {
       label: "Базы складов",
-      isActionable: true,
-    },
+      isActionable: true
+    }
   ]);
 };
 
@@ -63,7 +68,7 @@ watchEffect(() => {
 const refresh = async () => {
   loading.value = true;
   try {
-    await settingsStore.GET_WAREHOUSE_BASES_LIST(params.value);
+    await settingsStore.GET_WAREHOUSE_BASES_LIST(filterObjectValues(params.value));
   } catch (e: any) {
     ElNotification({ title: e, type: "error" });
     loading.value = false;
@@ -83,12 +88,12 @@ const changePagination = (event: any) => {
 };
 
 watchDebounced(
-  () => params.value.search,
-  () => {
-    params.value.page = 1; // Reset page to 1 when search changes
-    refresh(); // Trigger refresh function
-  },
-  { debounce: 1000, maxWait: 5000 }, // Debounce settings
+    () => params.value.search,
+    () => {
+      params.value.page = 1; // Reset page to 1 when search changes
+      refresh(); // Trigger refresh function
+    },
+    { debounce: 1000, maxWait: 5000 } // Debounce settings
 );
 </script>
 
@@ -99,19 +104,19 @@ watchDebounced(
 
       <div class="flex items-center">
         <el-input
-          v-model="params.search"
-          size="large"
-          placeholder="Поиск"
-          :prefix-icon="Search"
-          class="w-[300px] mr-[16px]"
+            v-model="params.search"
+            size="large"
+            placeholder="Поиск"
+            :prefix-icon="Search"
+            class="w-[300px] mr-[16px]"
         />
 
         <button
-          @click="$router.push({name: 'reference-warehouse-bases-add'})"
-          class="flex items-center justify-center gap-3 custom-apply-btn"
+            @click="$router.push({name: 'reference-warehouse-bases-add'})"
+            class="flex items-center justify-center gap-3 custom-apply-btn"
         >
           <li
-            :style="{
+              :style="{
                   maskImage: 'url(/icons/plusIcon.svg)',
                   backgroundColor: '#fff',
                   color: '#fff',
@@ -134,69 +139,72 @@ watchDebounced(
     <div class="mt-[24px]">
       <!--      {{ settingsStore.wareHouseList }}-->
       <el-table
-        v-loading="loading"
-        :empty-text="'Нет доступных данных'"
-        :data="settingsStore.wareHouseList.bases"
-        stripe
-        class="custom-element-table"
+          v-loading="loading"
+          :empty-text="'Нет доступных данных'"
+          :data="settingsStore.wareHouseList.bases"
+          stripe
+          class="custom-element-table"
       >
         <el-table-column
-          prop="id"
-          label="№"
-          width="80"
+            prop="id"
+            label="№"
+            width="80"
         />
         <el-table-column
-          prop="name"
-          label="Наименование базы"
-          sortable
-          width="400"
+            prop="name"
+            label="Наименование базы"
+            sortable
+            width="400"
         />
         <el-table-column
-          prop="address"
-          label="Юр. адрес"
-          sortable
+            prop="address"
+            label="Юр. адрес"
+            sortable
         />
         <el-table-column
-          label="Действие"
-          align="right"
+            label="Действие"
+            align="right"
         >
           <template #default="scope">
             <button
-              class="action-btn mr-[8px]"
-              @click="$router.push({name: 'reference-warehouse-bases-view', query: {type: 'view'}, params: {id: scope.row.id}})"
+                class="action-btn mr-[8px]"
+                @click="$router.push({name: 'reference-warehouse-bases-view', query: {type: 'view'}, params: {id: scope.row.id}})"
             >
               <img
-                src="@/assets/images/eye.svg"
-                alt="download"
+                  src="@/assets/images/eye.svg"
+                  alt="download"
               />
             </button>
 
             <button
-              class="action-btn"
-              @click="$router.push({name: 'reference-warehouse-bases-edit', params: {id: scope.row.id}})"
+                class="action-btn"
+                @click="$router.push({name: 'reference-warehouse-bases-edit', params: {id: scope.row.id}})"
             >
               <img
-                src="@/assets/images/icons/edit.svg"
-                alt="eye"
+                  src="@/assets/images/icons/edit.svg"
+                  alt="eye"
               />
             </button>
           </template>
         </el-table-column>
       </el-table>
 
-      <div class="mt-[24px] flex items-center justify-between">
+      <div
+          v-if="params.page && params.per_page"
+          class="mt-[24px] flex items-center justify-between"
+      >
         <div class="text-cool-gray text-[14px]">
           Показано 1–10 из {{ settingsStore.wareHouseList.paginator.total_count }} результатов
         </div>
 
         <el-pagination
-          v-model:current-page="params.page"
-          :page-size="params.per_page"
-          class="float-right"
-          background
-          layout="prev, pager, next"
-          :total="settingsStore.wareHouseList.paginator.total_count"
-          @change="changePagination"
+            v-model:current-page="params.page"
+            :page-size="params.per_page"
+            class="float-right"
+            background
+            layout="prev, pager, next"
+            :total="settingsStore.wareHouseList.paginator.total_count"
+            @change="changePagination"
         />
       </div>
     </div>

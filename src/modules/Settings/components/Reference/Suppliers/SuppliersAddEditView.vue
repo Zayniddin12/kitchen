@@ -1,14 +1,17 @@
-<script setup lang="ts">
-import {computed, onMounted, ref, watch} from "vue";
-import {useRoute, useRouter} from "vue-router";
+<script
+    setup
+    lang="ts"
+>
+import { computed, onMounted, ref, watch } from "vue";
+import { useRoute, useRouter } from "vue-router";
 import useConfirm from "@/components/ui/app-confirm/useConfirm";
-import {useSettingsStore} from "@/modules/Settings/store";
-import {ElNotification} from "element-plus";
+import { useSettingsStore } from "@/modules/Settings/store";
+import { ElNotification } from "element-plus";
 import AppInput from "@/components/ui/form/app-input/AppInput.vue";
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 import AppDatePicker from "@/components/ui/form/app-date-picker/AppDatePicker.vue";
 import AppForm from "@/components/ui/form/app-form/AppForm.vue";
-import {ValidationType} from "@/components/ui/form/app-form/app-form.type";
+import { ValidationType } from "@/components/ui/form/app-form/app-form.type";
 import AppOverlay from "@/components/ui/app-overlay/AppOverlay.vue";
 
 interface DataValue {
@@ -22,36 +25,37 @@ interface DataValue {
   director?: string;
   phone?: string;
   status?: string;
+  [key:string]: any
 }
 
-const store = useSettingsStore()
+const store = useSettingsStore();
 const route = useRoute();
 const router = useRouter();
-const {confirm} = useConfirm();
-const {setBreadCrumb} = useBreadcrumb();
+const { confirm } = useConfirm();
+const { setBreadCrumb } = useBreadcrumb();
 const setBreadCrumbFn = () => {
   setBreadCrumb([
     {
-      label: "Настройки",
+      label: "Настройки"
     },
     {
       label: "Справочники",
-      to: {name: "reference"},
+      to: { name: "reference" }
     },
 
     {
       label: "Поставщики и организации",
-      to: {name: "reference"},
+      to: { name: "reference" }
     },
 
     {
       label: "Поставщики",
-      to: {name: "reference-suppliers"},
+      to: { name: "reference-suppliers" }
     },
     {
       label: String(route?.meta?.breadcrumbItemTitle ?? ""),
-      isActionable: true,
-    },
+      isActionable: true
+    }
   ]);
 };
 
@@ -60,57 +64,57 @@ const setValidation = (value: ValidationType) => {
   v$.value = value;
 };
 
-const loading = ref<boolean>(false)
+const loading = ref<boolean>(false);
 const dataValue = ref<DataValue>({
-  name: '',
-  address: '',
-  oked: '',
-  tin: '',
-  license: '',
-  sertificate: '',
-  sert_end_date: '',
-  director: '',
-  phone: '',
+  name: "",
+  address: "",
+  oked: "",
+  tin: "",
+  license: "",
+  sertificate: "",
+  sert_end_date: "",
+  director: "",
+  phone: "",
   status: "active"
-})
-const status = ref<boolean>(true)
+});
+const status = ref<boolean>(true);
 
 onMounted(async () => {
   if (route.params.id) {
     loading.value = true;
     try {
-      const providerData: DataValue = await store.GET_PROVIDERS_DETAIL(route.params.id as string | number);
+      const providerData: DataValue = await store.GET_PROVIDERS_DETAIL(Number(route.params.id));
       if (providerData && providerData.provider) {
         dataValue.value = providerData.provider;
 
-        status.value = providerData.provider.status === 'active'
+        status.value = providerData.provider.status === "active";
       }
     } catch (e) {
-      loading.value = false
+      loading.value = false;
     }
-    loading.value = false
+    loading.value = false;
   }
 });
 
 const cancelFn = () => {
   confirm.cancel().then(() => {
-    router.push({name: "reference-suppliers"});
+    router.push({ name: "reference-suppliers" });
   });
 };
 
 const changeStatus = () => {
   if (status.value) {
-    dataValue.value.status = 'active'
+    dataValue.value.status = "active";
   } else {
-    dataValue.value.status = 'inactive'
+    dataValue.value.status = "inactive";
   }
-}
+};
 
 const deleteFn = () => {
   confirm.delete().then(() => {
-    store.DELETE_PROVIDERS(route.params.id as string | number)
-    router.push('/reference-suppliers');
-    ElNotification({title: 'Success', type: 'success'});
+    store.DELETE_PROVIDERS(Number(route.params.id));
+    router.push("/reference-suppliers");
+    ElNotification({ title: "Success", type: "success" });
   });
 };
 
@@ -128,33 +132,33 @@ const handleSubmit = async () => {
 
   if ((await v$.value.validate())) {
     try {
-      const payload = dataValue.value as any
+      const payload = dataValue.value as any;
 
       if (route.params.id) {
         await store.UPDATE_PROVIDERS({
           id: route.params.id as string | number,
-          data: payload,
-        })
+          data: payload
+        });
       } else {
-        await store.CREATE_PROVIDERS(payload)
+        await store.CREATE_PROVIDERS(payload);
       }
 
-      ElNotification({title: 'Success', type: 'success'});
-      await router.push('/reference-suppliers')
+      ElNotification({ title: "Success", type: "success" });
+      await router.push("/reference-suppliers");
     } catch (e) {
-      ElNotification({title: 'Error', type: 'error'});
+      ElNotification({ title: "Error", type: "error" });
     }
   }
-}
+};
 
 
 const isDisabled = computed(() => {
-  return route.name === 'reference-suppliers-view'
-})
+  return route.name === "reference-suppliers-view";
+});
 
 watch(() => route.name, () => {
   setBreadCrumbFn();
-}, {immediate: true});
+}, { immediate: true });
 </script>
 
 <template>
@@ -287,8 +291,11 @@ watch(() => route.name, () => {
             </div>
           </AppForm>
 
-          <div v-if="!route.query.type" class="flex items-center mt-[24px] "
-               :class="!route.params.id ? 'justify-end' : 'justify-between'">
+          <div
+              v-if="!route.query.type"
+              class="flex items-center mt-[24px] "
+              :class="!route.params.id ? 'justify-end' : 'justify-between'"
+          >
             <button
                 v-if="route.params.id"
                 class="custom-danger-btn"
@@ -305,7 +312,10 @@ watch(() => route.name, () => {
                 Отменить
               </button>
 
-              <button class="custom-apply-btn" @click="handleSubmit">
+              <button
+                  class="custom-apply-btn"
+                  @click="handleSubmit"
+              >
                 {{ $route.params.id ? "Сохранить" : "Добавить" }}
               </button>
             </div>
@@ -318,7 +328,8 @@ watch(() => route.name, () => {
               v-if="route.query.type == 'view'"
               class="flex items-center gap-4 bg-[#F8F9FC] py-[10px] px-[20px] rounded-[8px]"
           >
-            <li :style="{
+            <li
+                :style="{
                   maskImage: 'url(/icons/edit.svg)',
                   backgroundColor: '#8F9194',
                   color: '#8F9194',
