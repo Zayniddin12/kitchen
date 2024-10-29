@@ -143,29 +143,27 @@ const deleteFn = () => {
 };
 
 const handleSubmit = async () => {
-  if (!v$.value) return;
+  if (!v$.value || !(await v$.value.validate())) return;
 
-  if ((await v$.value.validate())) {
-    try {
-      if (route.params.id) {
-        await store.UPDATE_RATION({
-          id: route.params.id,
-          data: dataValue.value,
-          status: +status.value
-        })
-      } else {
-        await store.CRETE_RATION({
-          ...dataValue.value,
-          status: +status.value
-        })
-      }
-      ElNotification({title: 'Success', type: 'success'});
-      await router.push('/reference-ration');
-    } catch (e) {
-      ElNotification({title: e, type: 'error'});
+  const rationData = {
+    ...dataValue.value,
+    status: +status.value,
+    ...(route.params.id && { _method: 'PUT' })
+  };
+
+  try {
+    if (route.params.id) {
+      await store.UPDATE_RATION({ id: route.params.id, data: rationData });
+    } else {
+      await store.CREATE_RATION(rationData);
     }
+    ElNotification({ title: 'Success', type: 'success' });
+    await router.push('/reference-ration');
+  } catch (error) {
+    ElNotification({ title: error.message || 'An error occurred', type: 'error' });
   }
 };
+
 
 const changeInput = (event: any, type: string, index: number) => {
   store.GET_MEALS_VID_PRO({parent_id: event})

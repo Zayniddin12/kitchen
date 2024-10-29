@@ -171,8 +171,7 @@ export const useSettingsStore = defineStore("settingsStore", () => {
   };
 
   const UPDATE_RATION = async ({ id, data }: { id: string, data: any }) => {
-    return await $axios.post("/rations/" + id, data);
-
+    return await $axios.post(`/rations/${id}`, data);
   };
 
   const DELETE_RATION = async (id: string | number) => {
