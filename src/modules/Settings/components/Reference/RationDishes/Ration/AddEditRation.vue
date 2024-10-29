@@ -267,7 +267,6 @@ watch(() => route.name, () => {
                   required
                   prop="name.ru"
               />
-
               <app-input
                   v-model="dataValue.name.uz"
                   label="Наименование (UZ)"
@@ -276,7 +275,6 @@ watch(() => route.name, () => {
                   required
                   prop="name.uz"
               />
-
               <app-input
                   v-model="dataValue.number"
                   label="Уникальный номер рациона"
@@ -299,7 +297,6 @@ watch(() => route.name, () => {
                   itemLabel="name"
                   :items="store.kitchenTypes.kitchen_types"
               />
-
               <div class="grid grid-cols-2">
                 <app-time-picker
                     v-model="dataValue.start_time"
@@ -310,7 +307,6 @@ watch(() => route.name, () => {
                     required
                     prop="start_time"
                 />
-
                 <app-time-picker
                     v-model="dataValue.end_time"
                     label="Время окончания"
@@ -320,7 +316,6 @@ watch(() => route.name, () => {
                     prop="end_time"
                 />
               </div>
-
               <app-input
                   v-model="dataValue.duration_in_days"
                   label="Длительность"
@@ -333,8 +328,7 @@ watch(() => route.name, () => {
           </AppForm>
 
           <template v-if="route.name === 'reference-ration-view-id'">
-            <el-table :data="compositions" stripe class="custom-element-table mt-[40px]"
-                      :empty-text="'Нет доступных данных'">
+            <el-table :data="compositions" stripe class="custom-element-table mt-[40px]" :empty-text="'Нет доступных данных'">
               <el-table-column prop="typeProduct" label="Состав">
                 <template #default="scope">
                   {{ scope.row.typeProduct ? getTypeProduct(scope.row.typeProduct) : '-' }}
@@ -381,7 +375,6 @@ watch(() => route.name, () => {
                     :items="store.typeProduct.product_categories"
                     @change="changeInput($event, 'product_type', index)"
                 />
-                <!--                @clear="clearableFunc('meal', index)"-->
                 <app-select
                     v-model="item.product_type_id"
                     label="Вид продукта"
@@ -392,7 +385,6 @@ watch(() => route.name, () => {
                     itemLabel="name"
                     :items="store.dynamicVid.product_types[index]"
                 />
-                <!--                product_types-->
                 <app-input
                     v-model="item.quantity"
                     label="Количество"
@@ -438,7 +430,6 @@ watch(() => route.name, () => {
                 class="mt-[120px]"
                 :active-text="status ? 'Активация' : 'Деактивация'"
             />
-            <!--            :before-change="switchChange"-->
           </template>
         </div>
 
