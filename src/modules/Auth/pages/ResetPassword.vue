@@ -14,6 +14,7 @@ import { ElNotification } from "element-plus";
 import { ForgotPasswordDataType, SendCodeDataType, VerifyCodeDataType } from "@/modules/Auth/auth.types";
 import { useCommonStore } from "@/stores/common.store";
 import { useAuthStore } from "@/modules/Auth/auth.store";
+import { formatTime } from "../../../utils/helper";
 
 const router = useRouter();
 const authStore = useAuthStore();
@@ -33,6 +34,10 @@ const confirmForm = reactive<ForgotPasswordDataType>({
   otp_session_id: ""
 });
 
+const activeConfirmForm = computed<boolean>(() => {
+  return !!(authStore.otp && authStore.otp?.code);
+});
+
 const v$ = ref<ValidationType | null>(null);
 
 const setValidation = (value: ValidationType) => {
@@ -48,11 +53,21 @@ const sendForm = async () => {
 
   newForm.phone = `998${newForm.phone.replace(/\D/g, "")}`;
 
-  if (authStore.otp) {
+  if (activeConfirmForm.value && authStore.otp && authStore.otp?.code) {
+    confirmForm.phone = authStore.otp.phone;
+    confirmForm.code = authStore.otp.code;
+    confirmForm.otp_session_id = authStore.otp.session_id;
+    await authStore.forgotPassword(confirmForm).then(() => {
+      authStore.clearSessionOtp();
+      commonStore.successToast({ name: "login" });
+    });
+    return;
+  } else if (authStore.otp) {
     authStore.verifyCode({
       ...newForm,
       otp_session_id: authStore.otp.session_id
     });
+    return;
   } else {
     authStore.sendCode({
       phone: newForm.phone
@@ -94,12 +109,12 @@ onUnmounted(() => {
         код для сброса пароля.
       </p>
       <AppForm
-          :value="form"
+          :value="activeConfirmForm ? confirmForm : form"
           @validation="setValidation"
           class="mt-[24px] flex flex-col gap-y-1"
           @submit.prevent="sendForm"
       >
-        <template v-if="!authStore.otp || (authStore.otp && !authStore.otp.code)">
+        <template v-if="!activeConfirmForm">
           <AppInput
               v-model="form.phone"
               prop="phone"
@@ -109,22 +124,48 @@ onUnmounted(() => {
               label-class="text-[#A8AAAE] text-sm"
               required
           />
-          <AppInput
-              v-if="authStore.otp"
-              v-model="form.code"
-              type="number"
-              placeholder="Введите отправленный код"
-              label="Код"
-              label-class="text-[#A8AAAE] text-sm"
-              required
-              :min="authStore.otp.code_length"
-              :max="authStore.otp.code_length"
-              :mask="'#'.repeat(authStore.otp.code_length)"
-              prop="code"
-          />
+          <template v-if="authStore.otp">
+            <AppInput
+                v-model="form.code"
+                type="number"
+                placeholder="Введите отправленный код"
+                label="Код"
+                label-class="text-[#A8AAAE] text-sm"
+                required
+                :min="authStore.otp.code_length"
+                :max="authStore.otp.code_length"
+                :mask="'#'.repeat(authStore.otp.code_length)"
+                prop="code"
+            />
+            <div
+                v-if="authStore.remainingTime"
+                class="text-[#8F9194] text-[14px] text-center"
+            >
+              {{ formatTime(authStore.remainingTime) }}
+            </div>
+          </template>
         </template>
         <template v-else>
+          <AppInput
+              v-model="confirmForm.new_password"
+              placeholder="Введите"
+              label="Новый пароль"
+              label-class="text-[#A8AAAE] text-sm"
+              required
+              show-password
+              prop="new_password"
+              maxlength="13"
+          />
 
+          <AppInput
+              v-model="confirmForm.password_confirmation"
+              placeholder="Введите"
+              label="Подтвердите пароль"
+              label-class="text-[#A8AAAE] text-sm"
+              required
+              show-password
+              prop="password_confirmation"
+          />
         </template>
       </AppForm>
       <ElButton

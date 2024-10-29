@@ -35,26 +35,6 @@ export const phoneFormatter = (phoneNumberString: string) => {
     return null;
 };
 
-export const applyMask = (value: string, mask: string): string => {
-    let maskedValue = '';
-    let valueIndex = 0;
-
-    for (const char of mask) {
-        if (char === '#') {
-            if (value[valueIndex]) {
-                maskedValue += value[valueIndex];
-                valueIndex++;
-            } else {
-                break;
-            }
-        } else {
-            maskedValue += char;
-        }
-    }
-
-    return maskedValue;
-}
-
 export const generateRandomID = (): string => {
     const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
     const charactersLength = characters.length;
@@ -126,3 +106,8 @@ export const deepEqual = (obj1: Record<string, any>, obj2: Record<string, any>) 
     return true;
 };
 
+export const formatTime = (seconds: number): string => {
+    const minutes = Math.floor(seconds / 60).toString().padStart(2, '0');
+    const remainingSeconds = (seconds % 60).toString().padStart(2, '0');
+    return `${minutes}:${remainingSeconds}`;
+}
