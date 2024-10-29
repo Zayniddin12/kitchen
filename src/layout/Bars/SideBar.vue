@@ -146,7 +146,8 @@ const logOut = () => {
   localStorage.removeItem("child-sidebar");
   sessionStorage.removeItem("current-menu");
 
-  authStore.logout();
+  if (authStore.isAuth) authStore.logout();
+  else router.push({ name: "login" });
 };
 </script>
 

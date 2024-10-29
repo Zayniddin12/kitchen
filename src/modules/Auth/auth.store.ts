@@ -17,6 +17,8 @@ export const useAuthStore = defineStore("authStore", () => {
     const router = useRouter();
     const commonStore = useCommonStore();
 
+    const isAuth = ref(false);
+
     const createLoading = ref(false);
 
     const create = async (data: AuthCreateDataType) => {
@@ -32,6 +34,7 @@ export const useAuthStore = defineStore("authStore", () => {
         try {
             const response = await authApi.login(data);
             setAccessToken(response.token.access_token);
+            isAuth.value = true;
         } finally {
             loginLoading.value = false;
         }
@@ -41,6 +44,7 @@ export const useAuthStore = defineStore("authStore", () => {
     const user = ref<null | UserType>(null);
 
     const me = async () => {
+        isAuth.value = true;
         userLoading.value = true;
 
         await authApi.me()
@@ -55,6 +59,7 @@ export const useAuthStore = defineStore("authStore", () => {
     const clear = async () => {
         user.value = null;
         removeAccessToken();
+        isAuth.value = false;
         await router.push({ name: "login" });
     };
 
@@ -194,6 +199,7 @@ export const useAuthStore = defineStore("authStore", () => {
         clearSessionOtp,
         stopRemainingTimeInterval,
         verifyCode,
-        forgotPassword
+        forgotPassword,
+        isAuth
     };
 });

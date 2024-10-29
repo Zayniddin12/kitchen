@@ -6,7 +6,6 @@ import { AppInputPropsType, AppInputValueType } from "@/components/ui/form/app-i
 import { computed, useSlots } from "vue";
 import { vMaska } from "maska";
 import { getRules, setRules } from "@/components/ui/form/validate";
-import { applyMask } from "@/utils/helper";
 
 const [model, modifiers] = defineModel<AppInputValueType>();
 
