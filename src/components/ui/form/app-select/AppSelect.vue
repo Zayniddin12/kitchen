@@ -3,12 +3,17 @@
   lang="ts"
 >
 import { AppSelectPropsType, AppSelectValueType } from "@/components/ui/form/app-select/app-select.type";
-import { computed, useSlots } from "vue";
+import { computed, onMounted, useSlots } from "vue";
 import { getRules, setRules } from "@/components/ui/form/validate";
 
 const model = defineModel<AppSelectValueType>({
   default: "",
-});
+})
+
+const emit = defineEmits<{
+  change: [value: AppSelectValueType]
+  clear: [value: AppSelectValueType]
+}>()
 
 const props = withDefaults(defineProps<AppSelectPropsType>(), {
   labelPosition: "top",
@@ -16,6 +21,7 @@ const props = withDefaults(defineProps<AppSelectPropsType>(), {
   itemLabel: "",
   labelClass: "",
   placeholder: "Выбирать",
+  persistent: true
 });
 
 const slots = useSlots();
@@ -29,6 +35,13 @@ const appSelectClasses = computed<string[]>(() => {
 
   return classes;
 });
+
+const change = (value: any) => {
+  emit("change", value);
+}
+const clear = (value: any) => {
+  emit("clear", value);
+}
 </script>
 
 <template>
@@ -82,20 +95,25 @@ const appSelectClasses = computed<string[]>(() => {
       :automatic-dropdown
       :placement
       class="app-select__select"
+      @change="change"
+      @clear="clear"
     >
-      <ElOption
-        v-for="item in items"
-        :key="item[itemValue]"
-        :label="item[itemLabel]"
-        :value="item[itemValue]"
-      >
-        <slot
-          v-if="slots.option"
-          name="option"
-          v-bind="item"
-        />
+      <template v-if="(items && items.length && itemLabel && itemValue) && !slots.default">
+        <ElOption
+            v-for="item in items"
+            :key="item[itemValue]"
+            :label="item[itemLabel]"
+            :value="item[itemValue]"
+        >
+          <slot
+              v-if="slots.option"
+              name="option"
+              v-bind="item"
+          />
 
-      </ElOption>
+        </ElOption>
+      </template>
+      <slot/>
       <template
         #footer
         v-if="slots.footer"

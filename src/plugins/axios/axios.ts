@@ -1,14 +1,71 @@
+import axios, { AxiosError, AxiosInstance, AxiosResponse, InternalAxiosRequestConfig } from "axios";
+import { activeLocale } from "@/localization";
+import { getAccessToken } from "@/utils/token.manager";
+import { ElNotification } from "element-plus";
+import { useAuthStore } from "@/modules/Auth/auth.store";
+import { useCommonStore } from "@/stores/common.store";
+import { AxiosResponseDataType, ErrorType } from "@/plugins/axios/axios.types";
+
+const axiosInstance: AxiosInstance = axios.create({
+    baseURL: import.meta.env.VITE_BACKEND,
+    timeout: 60000,
+    headers: {
+        Accept: "application/json",
+        "x-app-lang": activeLocale.value,
+        "x-device-type": "web"
+    }
+});
+
+axiosInstance.interceptors.request.use(
+    async (config: InternalAxiosRequestConfig<any>) => {
+        const accessToken = getAccessToken();
+
+        if (accessToken) config.headers["Authorization"] = `Bearer ${accessToken}`;
+
+        return config;
+    },
+    (error: AxiosError) => {
+        return Promise.reject(error);
+    }
+);
+
+axiosInstance.interceptors.response.use(
+    (response: AxiosResponse<any, any>): Promise<AxiosResponse | ErrorType> => {
+        const data = response.data;
+        const error = data.error;
+
+        if (data.success) return Promise.resolve(response);
+        else if (!data.success && error) {
+            useCommonStore().errorToast(error.message);
+            return Promise.reject(error);
+        }
+    },
+
+    async (error) => {
+        const authStore = useAuthStore();
+        const commonStore = useCommonStore();
+        const message = error?.message ?? error.response?.data?.error?.message ?? "";
+        commonStore.errorToast(message);
+
+        if (error.status === 401) authStore.clear();
+
+        return Promise.reject(error);
+    }
+);
+
+export default axiosInstance;
+
+/*
 import {
     getAccessToken,
     logout,
     setAccessToken,
     refreshToken,
 } from "@/auth/jwtService";
-import router from "@/router";
+import router from "@/router/router";
 import axios, {AxiosInstance, AxiosRequestConfig, AxiosResponse, AxiosError} from "axios";
 import {i18n} from "@/localization";
 import {ElNotification} from "element-plus";
-
 import {refreshEndpoint} from "@/auth/jwt.config";
 
 const axiosIns: AxiosInstance = axios.create({
@@ -54,7 +111,12 @@ axiosIns.interceptors.request.use(
 
 // Handle responses for 404 or 401 pages
 axiosIns.interceptors.response.use(
-    (response: AxiosResponse) => response,
+    async (response: AxiosResponse) => {
+        if (response.data.success) return Promise.resolve(response);
+        const error = response.data.error;
+
+        return Promise.reject(error);
+    },
     async (error: AxiosError) => {
         if (error) {
             console.log('ERROR ', error);
@@ -101,3 +163,6 @@ axiosIns.interceptors.response.use(
 );
 
 export default axiosIns;
+
+ */
+

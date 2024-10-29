@@ -225,7 +225,7 @@ const switchChange = async (): Promise<boolean> => {
       >
         Удалить
       </button>
-      <div class="flex items-center">
+      <div class="flex items-center ml-auto">
         <button
           class="custom-cancel-btn"
           @click="cancelFn"

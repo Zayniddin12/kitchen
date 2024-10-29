@@ -1,21 +1,23 @@
 <script setup lang="ts">
-import {onMounted, ref, watch} from "vue";
+import {computed, onMounted, ref, watch} from "vue";
 import {useRoute, useRouter} from "vue-router";
 import {ValidationType} from "@/components/ui/form/app-form/app-form.type";
 import {useSettingsStore} from "@/modules/Settings/store";
+import {Name} from "@/utils/helper";
+import {ElNotification} from "element-plus";
 import AppInput from "@/components/ui/form/app-input/AppInput.vue";
 import AppSelect from "@/components/ui/form/app-select/AppSelect.vue";
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 import AppMediaUploader from "@/components/ui/form/app-media-uploader/AppMediaUploader.vue";
 import useConfirm from "@/components/ui/app-confirm/useConfirm";
 import AppForm from "@/components/ui/form/app-form/AppForm.vue";
-import {Name} from "@/utils/helper";
+import AppOverlay from "@/components/ui/app-overlay/AppOverlay.vue";
 
 interface Repeater {
-  typeProduct: string;
+  product_type_parent_id: string;
   product_type_id: string;
   quantity: number;
-  unit_id: string;
+  unit_id: string | number;
 }
 
 interface DataValue {
@@ -68,7 +70,7 @@ const dataValue = ref<DataValue>({
   image: '',
   compositions: [
     {
-      typeProduct: '',
+      product_type_parent_id: '',
       product_type_id: "",
       quantity: 0,
       unit_id: '',
@@ -76,23 +78,37 @@ const dataValue = ref<DataValue>({
   ]
 })
 const existingImage = ref<string>('')
+const loading = ref<boolean>(false)
 
 onMounted(async () => {
-  await store.GET_UNITS()
-  await store.GET_TYPE_PRODUCT()
+  loading.value = true;
+  try {
+    await store.GET_UNITS()
+    await store.GET_TYPE_PRODUCT()
 
-  if (route.params.id) {
-    const meals = await store.GET_MEALS_DETAIL(route.params.id as string | number)
-    if (meals && meals.meal) {
-      dataValue.value = meals.meal
-      existingImage.value = meals.meal.image
+    if (route.params.id) {
+      const meals = await store.GET_MEALS_DETAIL(route.params.id as string | number)
+      if (meals && meals.meal) {
+        dataValue.value = meals.meal
+        existingImage.value = meals.meal.image
+
+        meals.meal.compositions.map((e) => {
+          if (e.product_type_parent_id) {
+            return store.GET_MEALS_VID_PRO({parent_id: e.product_type_parent_id})
+          }
+        })
+      }
     }
+  } catch (e) {
+    loading.value = false
   }
+  loading.value = false
+
 })
 
 const repeaterAgain = () => {
   dataValue.value.compositions.push({
-    typeProduct: '',
+    product_type_parent_id: '',
     product_type_id: "",
     quantity: 0,
     unit_id: '',
@@ -115,7 +131,9 @@ const cancelFn = () => {
 
 const deleteFn = () => {
   confirm.delete().then(() => {
+    store.DELETE_MEALS(route.params.id as string | number)
     router.push('/reference-dish');
+    ElNotification({title: 'Success', type: 'success'});
   });
 };
 
@@ -123,14 +141,58 @@ const handleSubmit = async () => {
   if (!v$.value) return;
 
   if ((await v$.value.validate())) {
-    if (route.params.id) {
+    try {
+      const formData = new FormData();
+      formData.append('name[uz]', dataValue.value.name.uz);
+      formData.append('name[ru]', dataValue.value.name.ru);
+      formData.append('number', dataValue.value.number);
+      // formData.append('quantity', dataValue.value.quantity);
+      formData.append('unit_id', dataValue.value.unit_id);
 
-    } else {
-      await store.CREATE_MEALS(dataValue.value);
+      if (dataValue.value.image) {
+        formData.append('image', dataValue.value.image);
+      }
+
+      if (route.params.id) {
+        formData.append('_method', 'PUT');
+      }
+      dataValue.value.compositions.forEach((composition, index) => {
+        formData.append(`compositions[${index}][product_type_parent_id]`, composition.product_type_parent_id);
+        formData.append(`compositions[${index}][product_type_id]`, composition.product_type_id);
+        formData.append(`compositions[${index}][quantity]`, composition.quantity);
+        formData.append(`compositions[${index}][unit_id]`, composition.unit_id);
+      });
+
+      if (route.params.id) {
+        await store.UPDATE_MEALS({
+          id: route.params.id as string | number,
+          data: formData
+        });
+      } else {
+        await store.CREATE_MEALS(formData);
+      }
+
+      ElNotification({title: 'Success', type: 'success'});
+      await router.push('/reference-dish');
+    } catch (e) {
+      ElNotification({title: 'Error', type: 'error'});
     }
+  }
+};
+
+const changeInput = (event) => {
+  store.GET_MEALS_VID_PRO({parent_id: event})
+}
+
+const getUnitId = (id: number) => {
+  if (id) {
+    return store.units.units.find((unit) => unit.id === id).name;
   }
 }
 
+const isDisabled = computed(() => {
+  return route.name === 'reference-view-id'
+})
 
 watch(() => route.name, () => {
   setBreadCrumbFn();
@@ -138,8 +200,7 @@ watch(() => route.name, () => {
 </script>
 
 <template>
-  <div>
-<!--    <pre>{{ dataValue }}</pre>-->
+  <AppOverlay :loading="loading">
     <h1 class="m-0 font-semibold text-[32px] leading-[48px]">{{ route.meta.title }}</h1>
 
     <div class="mt-[24px] flex items-start">
@@ -154,7 +215,6 @@ watch(() => route.name, () => {
           <AppForm
               :value="dataValue"
               @validation="setValidation"
-              class="mt-6"
           >
             <div class="mt-[24px] grid grid-cols-2 gap-5">
               <app-input
@@ -164,6 +224,7 @@ watch(() => route.name, () => {
                   label-class="text-[#A8AAAE] text-[12px]"
                   required
                   prop="name.ru"
+                  :disabled="isDisabled"
               />
 
               <app-input
@@ -173,6 +234,7 @@ watch(() => route.name, () => {
                   label-class="text-[#A8AAAE] text-[12px]"
                   required
                   prop="name.uz"
+                  :disabled="isDisabled"
               />
 
               <app-input
@@ -181,6 +243,7 @@ watch(() => route.name, () => {
                   placeholder="Автоматически"
                   label-class="text-[#A8AAAE] font-medium text-[12px]"
                   disabled
+                  :disabled="isDisabled"
               />
 
               <app-select
@@ -193,28 +256,31 @@ watch(() => route.name, () => {
                   itemValue="id"
                   itemLabel="name"
                   :items="store.units.units"
+                  :disabled="isDisabled"
               />
             </div>
           </AppForm>
 
           <template v-if="route.name === 'reference-view-id'">
             <el-table
-                :data="[]"
+                :data="dataValue.compositions"
                 stripe
                 class="custom-element-table mt-[40px]"
+                :empty-text="'Нет доступных данных'"
             >
               <el-table-column
-                  prop="id"
+                  prop="product_type_name"
                   label="Состав"
               />
               <el-table-column
-                  prop="count"
+                  prop="quantity"
                   label="Количество"
               />
-              <el-table-column
-                  prop="count2"
-                  label="Ед. измерения"
-              />
+              <el-table-column prop="product_type_id" label="Ед. измерения">
+                <template #default="scope">
+                  {{ scope.row.unit_id ? getUnitId(scope.row.unit_id) : '-' }}
+                </template>
+              </el-table-column>
             </el-table>
           </template>
 
@@ -224,17 +290,18 @@ watch(() => route.name, () => {
 
               <div class="bg-[#F8F9FC] rounded-[16px] p-[16px] mt-[24px]">
                 <div class="grid grid-cols-4 gap-4 border-b mt-[16px]"
-                    v-for="(item, index) in dataValue.compositions"
-                    :key="index"
+                     v-for="(item, index) in dataValue.compositions"
+                     :key="index"
                 >
                   <app-select
-                      v-model="item.typeProduct"
+                      v-model="item.product_type_parent_id"
                       label="Тип продукта"
                       label-class="text-[#A8AAAE] text-[12px]"
                       placeholder="Выберите"
                       itemValue="id"
                       itemLabel="name"
                       :items="store.typeProduct.product_categories"
+                      @change="changeInput"
                   />
 
                   <app-select
@@ -242,6 +309,9 @@ watch(() => route.name, () => {
                       label="Вид продукта"
                       label-class="text-[#A8AAAE] text-[12px]"
                       placeholder="Выберите"
+                      itemValue="id"
+                      itemLabel="name"
+                      :items="store.parentProductType?.product_types"
                   />
 
                   <app-input
@@ -257,13 +327,16 @@ watch(() => route.name, () => {
                         class="w-full"
                         label="Ед. измерения"
                         label-class="text-[#A8AAAE] text-[12px]"
-                        placeholder="кг"
+                        placeholder="Выберите"
                         itemValue="id"
                         itemLabel="name"
                         :items="store.units.units"
                     />
 
-                    <button class="bg-[#E2E6F3] rounded-[8px] flex justify-center items-center h-[40px] w-[40px] ml-[16px] mt-2" @click="handleDelete(index)">
+                    <button
+                        class="bg-[#E2E6F3] rounded-[8px] flex justify-center items-center h-[40px] w-[40px] ml-[16px] mt-2"
+                        @click="handleDelete(index)"
+                    >
                       <img src="@/assets/images/icons/delete.svg" alt="delete"/>
                     </button>
                   </div>
@@ -325,13 +398,10 @@ watch(() => route.name, () => {
         Редактировать
       </button>
     </div>
-  </div>
+  </AppOverlay>
 </template>
 
-<style
-    scoped
-    lang="scss"
->
+<style scoped lang="scss">
 .edit__btn {
   @apply bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50
 }

@@ -41,7 +41,7 @@ const attrs = useAttrs();
       <div class="center">
         <div
             aria-hidden="true"
-            class="border-4 border-gray-300 border-t-4 border-t-blue-500 rounded-full animate-spin"
+            class="border-4 border-gray-300 border-t-4 border-t-blue-500 rounded-full animate-spin !duration-100"
             :style="{width: `${loadingSize}px`, height: `${loadingSize}px`}"
         ></div>
       </div>

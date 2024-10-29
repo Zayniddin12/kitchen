@@ -8,6 +8,7 @@ import AppForm from "@/components/ui/form/app-form/AppForm.vue";
 import {ValidationType} from "@/components/ui/form/app-form/app-form.type";
 import {useSettingsStore} from "@/modules/Settings/store";
 import {ElNotification} from "element-plus";
+import AppOverlay from "@/components/ui/app-overlay/AppOverlay.vue";
 
 interface Name {
   ru: string;
@@ -68,14 +69,24 @@ const dataValue = ref<DataValue>({
   responsible_position: '',
   status: 'active'
 })
+const loading = ref<boolean>(false)
+const status = ref<boolean>(true)
 
 
 onMounted(async () => {
   if (route.params.id) {
-    const managements = await store.GET_REGIONAL_DETAIL(route.params.id as number | string)
-    if (managements && managements.management) {
-      dataValue.value = managements.management
+    loading.value = true
+    try {
+      const managements = await store.GET_REGIONAL_DETAIL(route.params.id as number | string)
+      if (managements && managements.data && managements.data.management) {
+        dataValue.value = managements.data.management
+
+        status.value = managements.data.management.status === 'active'
+      }
+    } catch (e) {
+      loading.value = false
     }
+    loading.value = false
   }
 })
 
@@ -104,6 +115,14 @@ const switchChange = async (): Promise<boolean> => {
 };
 
 
+const changeStatus = () => {
+  if (status.value) {
+    dataValue.value.status = 'active'
+  } else {
+    dataValue.value.status = 'inactive'
+  }
+}
+
 const handleSubmit = async () => {
   if (!v$.value) return;
 
@@ -116,6 +135,7 @@ const handleSubmit = async () => {
           id: route.params.id as string | number,
           data: {
             name: payload.name,
+            status: payload.status,
             responsible_position: payload.responsible_position,
           },
         })
@@ -155,6 +175,9 @@ watch(() => route.name, () => {
 
 <template>
   <div>
+    <AppOverlay
+        :loading="loading"
+    >
     <div class="flex items-center justify-between mb-[24px]">
       <h1 class="m-0 font-semibold text-[32px] leading-[48px]">{{ route.meta.title }}</h1>
     </div>
@@ -164,7 +187,6 @@ watch(() => route.name, () => {
         <AppForm
             :value="dataValue"
             @validation="setValidation"
-            class="mt-6"
         >
           <div class="border border-[#E2E6F3] rounded-[24px] p-[24px] h-[65vh] flex flex-col">
             <div class="flex items-center gap-4">
@@ -198,19 +220,20 @@ watch(() => route.name, () => {
                   placeholder="Начальник управления"
                   label-class="text-[#A8AAAE] font-medium text-[12px]"
                   class="w-[50%]"
-                  required
-                  prop="responsible_position"
                   :disabled="isDisabled"
               />
+<!--              required-->
+<!--              prop="responsible_position"-->
             </div>
 
             <ElSwitch
-                v-model="dataValue.status"
+                v-model="status"
                 v-if="route.params.id && !route.query.type"
-                active-text="Деактивация"
+                @change="changeStatus"
+                :active-text="status ? 'Активация' : 'Деактивация'"
                 class="app-switch mt-auto"
-                :before-change="switchChange"
             />
+<!--            :before-change="switchChange"-->
           </div>
         </AppForm>
 
@@ -265,6 +288,7 @@ watch(() => route.name, () => {
         </button>
       </div>
     </div>
+    </AppOverlay>
   </div>
 </template>
 

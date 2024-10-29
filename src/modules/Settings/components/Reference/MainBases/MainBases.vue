@@ -1,88 +1,84 @@
-<script setup lang="ts">
-import { onMounted, ref } from "vue";
+<script
+    setup
+    lang="ts"
+>
+import { onMounted, reactive, ref, watch } from "vue";
 import { Search } from "@element-plus/icons-vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
+import {
+  BaseWarehouseListType,
+  BaseWarehousesParamsType
+} from "@/modules/Settings/components/Reference/MainBases/base-warehouses.type";
+import { watchDebounced } from "@vueuse/core";
+import { filterObjectValues } from "@/utils/helper";
+import { useSettingsStore } from "@/modules/Settings/store";
 
 const route = useRoute();
+const router = useRouter();
+const settingsStore = useSettingsStore();
 
-interface TableData {
-  id: number;
-  name: string;
-  bases: string;
-  warehouse_capacity: string;
-  storage_products: string;
-}
-
-const input1 = ref<string>("");
-const tableData = ref<TableData[]>([
-  {
-    id: 1,
-    name: "Мясной склад",
-    bases: "Зарафшан",
-    warehouse_capacity: "10 тонна",
-    storage_products: "Продукты хранения",
-  },
-  {
-    id: 2,
-    name: "Овощной склад",
-    bases: "Зарафшан",
-    warehouse_capacity: "10 тонна",
-    storage_products: "Помидоры, морковь, картофель",
-  },
-
-  {
-    id: 3,
-    name: "Рисовый склад",
-    bases: "Навои",
-    warehouse_capacity: "10 тонна",
-    storage_products: "Рис, горох",
-  },
-
-  {
-    id: 4,
-    name: "Мясной склад",
-    bases: "Нуробод",
-    warehouse_capacity: "10 тонна",
-    storage_products: "Мясные",
-  },
-
-  {
-    id: 5,
-    name: "Овощной склад",
-    bases: "Учкудук",
-    warehouse_capacity: "10 тонна",
-    storage_products: "Помидоры, морковь, картофель",
-  },
-]);
+const form = reactive<BaseWarehousesParamsType>({
+  search: "",
+  page: null,
+  per_page: null
+});
 
 const { setBreadCrumb } = useBreadcrumb();
 
 const setBreadCrumbFn = () => {
   setBreadCrumb([
     {
-      label: "Настройки",
+      label: "Настройки"
     },
     {
       label: "Справочники",
-      to: { name: "reference" },
+      to: { name: "reference" }
     },
 
     {
       label: "Управ, комбинаты и склады",
-      to: { name: "reference" },
+      to: { name: "reference" }
     },
 
     {
       label: "Склады базы",
-      isActionable: true,
-    },
+      isActionable: true
+    }
   ]);
+};
+
+const fetchBaseWareHouses = async () => {
+  const perPage:number = parseInt(route.query.per_page as string);
+  const page:number = parseInt(route.query.page as string);
+
+  if (!isNaN(perPage)) form.per_page = perPage;
+  if (!isNaN(page)) form.page = page;
+  form.search = route.query.search as string ?? "";
+
+  await settingsStore.fetchBaseWarehouses(filterObjectValues(form));
+
+  if (!settingsStore.baseWarehouses) return;
+  form.page = settingsStore.baseWarehouses.paginator.current_page as number;
+  form.per_page = settingsStore.baseWarehouses.paginator.per_page as number;
 };
 
 onMounted(() => {
   setBreadCrumbFn();
 });
+
+watch(route, () => {
+  fetchBaseWareHouses();
+}, { immediate: true });
+
+watchDebounced(() => form.search, () => {
+  router.replace({ query: { search: form.search } });
+}, { debounce: 1000, maxWait: 5000 });
+
+const changePage = () => {
+  router.replace({ query: { ...route.query, page: form.page } });
+};
+
 
 </script>
 
@@ -93,18 +89,18 @@ onMounted(() => {
 
       <div class="flex items-center">
         <el-input
-          v-model="input1"
-          size="large"
-          placeholder="Поиск"
-          :prefix-icon="Search"
-          class="w-[300px] mr-[16px]"
+            v-model="form.search"
+            placeholder="Поиск"
+            :prefix-icon="Search"
+            class="w-[300px] mr-4"
         />
 
-        <button
-          @click="$router.push({name: 'reference-main-bases-add'})"
-          class="flex items-center justify-center gap-3 custom-apply-btn">
-          <li
-            :style="{
+        <RouterLink
+            :to="{name: 'reference-main-bases-add'}"
+            class="flex items-center justify-center gap-3 custom-apply-btn"
+        >
+          <span
+              :style="{
                   maskImage: 'url(/icons/plusIcon.svg)',
                   backgroundColor: '#fff',
                   color: '#fff',
@@ -114,37 +110,106 @@ onMounted(() => {
                   maskPosition: 'center',
                   maskRepeat: 'no-repeat'
                    }"
-          ></li>
+          ></span>
           Добавить
-        </button>
-
-        <button>
-
-        </button>
+        </RouterLink>
       </div>
     </div>
 
     <div class="mt-[24px]">
-      <el-table :data="tableData" stripe class="custom-element-table">
-        <el-table-column prop="id" label="№" width="80" />
-        <el-table-column prop="name" label="Наименование склада" sortable width="400" />
-        <el-table-column prop="bases" label="База складов" sortable />
-        <el-table-column prop="warehouse_capacity" label="Вместимость склада" sortable />
-        <el-table-column prop="storage_products" label="Продукты хранения" sortable />
-        <el-table-column label="Действие" align="right">
-          <template #default="scope">
-            <button class="action-btn mr-[8px]"
-                    @click="$router.push({name: 'reference-main-bases-view', query: {type: 'view'}, params: {id: 1}})">
-              <img src="../../../../../assets/images/eye.svg" alt="download" />
-            </button>
+      <el-table
+          v-loading="settingsStore.baseWarehousesLoading"
+          :data="settingsStore.baseWarehouses?.base_warehouses ?? []"
+          stripe
+          class="custom-element-table"
+      >
+        <el-table-column
+            prop="idx"
+            label="№"
+            width="80"
+        >
+          <template
+              #default="{$index}"
+              v-if="settingsStore.baseWarehouses"
+          >
+            {{
+              form.page > 1 ? settingsStore.baseWarehouses.paginator.per_page * (form.page - 1) + $index + 1 : $index + 1
+            }}
+          </template>
+        </el-table-column>
+        <el-table-column
+            prop="name"
+            label="Наименование склада"
+            sortable
+            width="400"
+        />
+        <el-table-column
+            prop="base"
+            label="База складов"
+            sortable
+        />
+        <el-table-column
+            prop="capacity"
+            label="Вместимость склада"
+            sortable
+        />
+        <el-table-column
+            prop="products"
+            label="Продукты хранения"
+            sortable
+        >
+          <template #default="{row}:{row:BaseWarehouseListType}">
+            {{row.products.map(item => item.name).join(", ")}}
+          </template>
+        </el-table-column>
+        <el-table-column
+            label="Действие"
+            align="right"
+        >
+          <template #default="{row}">
+            <div class="inline-flex items-center gap-x-2">
+              <RouterLink
+                  class="action-btn"
+                  :to="{name: 'reference-main-bases-view', params: {id: row.id}}"
+              >
+                <img
+                    src="@/assets/images/eye.svg"
+                    alt="download"
+                />
+              </RouterLink>
 
-            <button class="action-btn"
-                    @click="$router.push({name: 'reference-main-bases-edit', params: {id: 1}})">
-              <img src="../../../../../assets/images/icons/edit.svg" alt="eye" />
-            </button>
+              <RouterLink
+                  :to="{name: 'reference-main-bases-edit', params: {id: row.id}}"
+                  class="action-btn"
+              >
+                <img
+                    src="@/assets/images/icons/edit.svg"
+                    alt="eye"
+                />
+              </RouterLink>
+            </div>
           </template>
         </el-table-column>
       </el-table>
+      <div
+          v-if="settingsStore.baseWarehouses && settingsStore.baseWarehouses.paginator.pages_count>1"
+          class="mt-6 flex items-center justify-between"
+      >
+        <div class="text-cool-gray text-[14px]">
+          Показано {{ form.page }}–{{ form.per_page }} из {{ settingsStore.baseWarehouses.paginator.pages_count }}
+          результатов
+        </div>
+
+        <el-pagination
+            v-model:current-page="form.page"
+            @current-change="changePage"
+            :page-size="form.per_page"
+            class="float-right"
+            background
+            layout="prev, pager, next"
+            :total="settingsStore.baseWarehouses.paginator.total_count"
+        />
+      </div>
     </div>
   </div>
 </template>

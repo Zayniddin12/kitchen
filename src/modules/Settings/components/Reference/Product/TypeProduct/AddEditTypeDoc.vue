@@ -6,6 +6,7 @@ import {ElNotification} from 'element-plus';
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 import useConfirm from "@/components/ui/app-confirm/useConfirm";
 import AppInput from "@/components/ui/form/app-input/AppInput.vue";
+import AppOverlay from "@/components/ui/app-overlay/AppOverlay.vue";
 
 interface Name {
   uz: string;
@@ -31,13 +32,21 @@ const dataValue = ref<DataValue>({
   },
   is_active: true,
 });
+const loading = ref<boolean>(false)
 
 onMounted(async () => {
   if (route.params.id) {
-    const typeDoc = await store.GET_TYPE_PRODUCT_DETAIL(route.params.id as string | number)
-    if (typeDoc && typeDoc.data && typeDoc.data.product_type) {
-      dataValue.value = typeDoc.data.product_type;
+    loading.value = true
+    try {
+      const typeDoc = await store.GET_TYPE_PRODUCT_DETAIL(route.params.id as string | number)
+      if (typeDoc && typeDoc.data && typeDoc.data.product_type) {
+        dataValue.value = typeDoc.data.product_type;
+      }
+    } catch (e) {
+      ElNotification({title: e, type: 'error'});
+      loading.value = false
     }
+    loading.value = false
   }
 })
 
@@ -78,14 +87,14 @@ const cancelFn = () => {
   });
 };
 
-const switchChange = async (): Promise<boolean> => {
-  try {
-    const response = await confirm.show();
-    return true;
-  } catch (error) {
-    return false;
-  }
-};
+// const switchChange = async (): Promise<boolean> => {
+//   try {
+//     const response = await confirm.show();
+//     return true;
+//   } catch (error) {
+//     return false;
+//   }
+// };
 
 const handleSubmitProduct = async (): Promise<void> => {
   try {
@@ -100,10 +109,7 @@ const handleSubmitProduct = async (): Promise<void> => {
         },
       });
     } else {
-      await store.CREATE_TYPE_PRODUCT({
-        is_active: +payload.is_active,
-        name: payload.name,
-      });
+      await store.CREATE_TYPE_PRODUCT(payload);
     }
 
     ElNotification({title: 'Success', type: 'success'});
@@ -125,6 +131,9 @@ watch(route.name, () => {
 
 <template>
   <div>
+    <AppOverlay
+        :loading="loading"
+    >
     <h1 class="m-0 font-semibold text-[32px] leading-[48px]">{{ route.meta.title }}</h1>
 
     <div class="flex items-start mt-[24px]">
@@ -149,10 +158,10 @@ watch(route.name, () => {
             :disabled="route.name === 'reference-type-product-view' as any"
             v-model="dataValue.is_active"
             class="mt-auto"
-            active-text="Деактивация"
+            :active-text="dataValue.is_active ? 'Активация' : 'Деактивация'"
             v-if="route.name === 'reference-type-product-edit-id'"
-            :before-change="switchChange"
         />
+<!--        :before-change="switchChange"-->
       </div>
 
       <button
@@ -191,5 +200,6 @@ watch(route.name, () => {
         </button>
       </div>
     </div>
+    </AppOverlay>
   </div>
 </template>
