@@ -148,19 +148,19 @@ const handleSubmit = async () => {
   const rationData = {
     ...dataValue.value,
     status: +status.value,
-    ...(route.params.id && { _method: 'PUT' })
+    ...(route.params.id && {_method: 'PUT'})
   };
 
   try {
     if (route.params.id) {
-      await store.UPDATE_RATION({ id: route.params.id, data: rationData });
+      await store.UPDATE_RATION({id: route.params.id, data: rationData});
     } else {
       await store.CREATE_RATION(rationData);
     }
-    ElNotification({ title: 'Success', type: 'success' });
+    ElNotification({title: 'Success', type: 'success'});
     await router.push('/reference-ration');
   } catch (error) {
-    ElNotification({ title: error.message || 'An error occurred', type: 'error' });
+    ElNotification({title: error.message || 'An error occurred', type: 'error'});
   }
 };
 
