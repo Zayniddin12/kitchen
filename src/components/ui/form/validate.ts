@@ -1,6 +1,6 @@
-import { RulesType, ValidateRulesType } from '@/components/ui/form/form.type';
-import { FormItemRule } from 'element-plus';
-import { Arrayable } from 'element-plus/es/utils';
+import { RulesType, ValidateRulesType } from "@/components/ui/form/form.type";
+import { FormItemRule } from "element-plus";
+import { Arrayable } from "element-plus/es/utils";
 
 export const getRules = (rules: RulesType) => {
     const { required, min, max, type, trigger } = rules;
@@ -10,28 +10,20 @@ export const getRules = (rules: RulesType) => {
         ...(min && { min }),
         ...(max && { max }),
         ...(type && { type }),
-        ...(trigger && { trigger }),
+        ...(trigger && { trigger })
     };
-}
+};
 
 export const setRules = (rules: RulesType): Arrayable<FormItemRule> | ValidateRulesType[] | any => {
     const formRules: ValidateRulesType[] = [];
 
-    const trigger = rules.trigger || 'change';
+    const trigger = rules.trigger || "change";
 
     if (rules.required) {
         formRules.push({
             required: true,
-            message: 'Обязательное поле',
-            trigger,
-        });
-    }
-
-    if (rules.type === 'email') {
-        formRules.push({
-            type: 'email',
-            message: 'Invalid email',
-            trigger,
+            message: "Обязательное поле",
+            trigger
         });
     }
 
@@ -51,6 +43,15 @@ export const setRules = (rules: RulesType): Arrayable<FormItemRule> | ValidateRu
         }
 
         formRules.push(rule);
+    }
+
+    switch (rules.type) {
+        case "email":
+            formRules.push({
+                type: "email",
+                message: "Invalid email",
+                trigger
+            });
     }
 
     return formRules;

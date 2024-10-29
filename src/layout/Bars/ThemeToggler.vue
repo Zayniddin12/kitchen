@@ -17,11 +17,6 @@ const currentTheme = ref(localStorage.getItem("currentTheme"));
 
 
 const toggleTheme = () => {
-  const darkCircle = document.querySelector(".darkCircle");
-  const lightCircle = document.querySelector(".lightCircle");
-
-  darkCircle.classList.toggle("grow");
-  lightCircle.classList.toggle("grow");
   currentTheme.value = currentTheme.value === "light" ? "dark" : "light";
   store.changeTheme(currentTheme.value);
 };

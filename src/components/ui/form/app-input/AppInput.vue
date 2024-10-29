@@ -1,6 +1,6 @@
 <script
-  setup
-  lang="ts"
+    setup
+    lang="ts"
 >
 import { AppInputPropsType, AppInputValueType } from "@/components/ui/form/app-input/app-input.type";
 import { computed, useSlots } from "vue";
@@ -9,18 +9,18 @@ import { getRules, setRules } from "@/components/ui/form/validate";
 
 const [model, modifiers] = defineModel<AppInputValueType>();
 
+const props = withDefaults(defineProps<AppInputPropsType>(), {
+  type: "text",
+  labelPosition: "top",
+  labelClass: ""
+});
+
 const updateModelValue = (value: any) => {
   model.value = value;
 };
 
-const props = withDefaults(defineProps<AppInputPropsType>(), {
-  type: "text",
-  labelPosition: "top",
-  labelClass: "",
-});
-
 const appInputClasses = computed<string[]>(() => {
-  const classes = [`app-input app-form-item`];
+  const classes = ["app-input app-form-item"];
 
   if (props.size) {
     classes.push(`app-input--${props.size} app-form-item--${props.size}`);
@@ -32,31 +32,32 @@ const appInputClasses = computed<string[]>(() => {
 const slots = useSlots();
 
 const computedMask = computed(() =>
-  props.type === "tel" && !props.mask ? "+998 ## ###-##-##" : props.mask,
+    props.type === "tel" && !props.mask ? "## ###-##-##" : props.mask
 );
 
 const inputMask = computed(() => {
   return { mask: computedMask.value };
 });
 </script>
+
 <template>
   <ElFormItem
-    :label-position
-    :required
-    :class="appInputClasses"
-    :size
-    :prop
-    :error
-    :rules="setRules(getRules(props))"
+      :label-position
+      :required
+      :class="appInputClasses"
+      :size
+      :prop
+      :error
+      :rules="setRules(getRules(props))"
   >
     <template
-      v-if="slots.label || label"
-      #label
+        v-if="slots.label || label"
+        #label
     >
       <span :class="labelClass">
       <slot
-        v-if="slots.label"
-        name="label"
+          v-if="slots.label"
+          name="label"
       />
         <template v-else>
           {{ label }}
@@ -64,31 +65,50 @@ const inputMask = computed(() => {
       </span>
     </template>
     <ElInput
-      v-bind="{
+        v-bind="{
         modelValue: model,
         'onUpdate:modelValue': updateModelValue,
         ...modifiers,
       }"
-      :type
-      :formatter
-      :parser
-      :show-password
-      v-maska:[inputMask]
-      :readonly
-      :disabled
-      :placeholder
-      :size
-      :clearable
-      :name
-      :suffix-icon
-      :prefix-icon
-      :rows
-      :autosize
-      :maxlength
-      :minlength
-      :showWordLimit
-      :inputStyle
-      class="app-input__input"
-    />
+        :type
+        :formatter
+        :parser
+        :show-password
+        v-maska:[inputMask]
+        :readonly
+        :disabled
+        :placeholder
+        :size
+        :clearable
+        :name
+        :suffix-icon
+        :prefix-icon
+        :rows
+        :autosize
+        :maxlength
+        :minlength
+        :showWordLimit
+        :inputStyle
+        class="app-input__input"
+    >
+      <template
+          v-if="slots.prepend || type === 'tel'"
+          #prepend
+      >
+        <slot
+            v-if="slots.prepend"
+            name="prepend"
+        />
+        <template v-else>
+          +998
+        </template>
+      </template>
+      <template
+          v-if="slots.append"
+          #append
+      >
+        <slot name="append"/>
+      </template>
+    </ElInput>
   </ElFormItem>
 </template>

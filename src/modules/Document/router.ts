@@ -1,3 +1,5 @@
+import { RouteRecordRaw } from "vue-router";
+
 export default [
   // -------------------------Служебные записки-------------------------------
   // Входящие
@@ -177,4 +179,4 @@ export default [
       title: "Просмотр",
     },
   },
-];
+] as RouteRecordRaw[];

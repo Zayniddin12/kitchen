@@ -8,11 +8,13 @@ import {useSettingsStore} from "@/modules/Settings/store";
 import {ElNotification} from "element-plus";
 import AppForm from "@/components/ui/form/app-form/AppForm.vue";
 import {ValidationType} from "@/components/ui/form/app-form/app-form.type";
+import AppOverlay from "@/components/ui/app-overlay/AppOverlay.vue";
 
 interface DataValue {
   name: string;
   address: string;
   tin: string;
+  status: string
 }
 
 const v$ = ref<ValidationType | null>(null);
@@ -51,18 +53,29 @@ const setBreadCrumbFn = () => {
   ]);
 };
 
+const status = ref<boolean>(true)
 const dataValue = ref<DataValue>({
   name: '',
   address: '',
   tin: '',
+  status: "active"
 })
+const loading = ref<boolean>(false)
 
 onMounted(async () => {
   if (route.params.id) {
-    const data = await store.GET_ORGANIZATION_DETAIL(route.params.id as string | number)
-    if (data && data.organization) {
-      dataValue.value = data.organization;
+    loading.value = true
+    try {
+      const data = await store.GET_ORGANIZATION_DETAIL(route.params.id as string | number)
+      if (data && data.organization) {
+        dataValue.value = data.organization;
+
+        status.value = data.organization.status === 'active'
+      }
+    } catch (e) {
+      loading.value = false
     }
+    loading.value = false
   }
 })
 
@@ -103,6 +116,7 @@ const handleSubmit = async () => {
             name: payload.name,
             address: payload.address,
             tin: payload.tin,
+            status: dataValue.value.status,
           }
         })
       } else {
@@ -113,6 +127,14 @@ const handleSubmit = async () => {
     } catch (e) {
       ElNotification({title: 'Error', type: 'error'});
     }
+  }
+}
+
+const changeStatus = () => {
+  if (status.value) {
+    dataValue.value.status = 'active'
+  } else {
+    dataValue.value.status = 'inactive'
   }
 }
 
@@ -127,93 +149,98 @@ watch(() => route.name, () => {
 
 <template>
   <div>
-    <div class="flex items-center justify-between mb-[24px]">
-      <h1 class="m-0 font-semibold text-[32px] leading-[48px]">{{ route.meta.title }}</h1>
-    </div>
-
-    <div class="flex gap-6">
-      <div class="w-[70%]">
-        <AppForm
-            :value="dataValue"
-            @validation="setValidation"
-            class="mt-6"
-        >
-          <div class="border border-[#E2E6F3] rounded-[24px] p-[24px] h-[65vh] flex flex-col">
-            <div class="grid grid-cols-2 gap-4">
-              <app-input
-                  v-model="dataValue.name"
-                  label="Наименование"
-                  placeholder="Введите"
-                  label-class="text-[#A8AAAE] font-medium text-[12px]"
-                  class="w-full"
-                  required
-                  prop="name"
-                  :disabled="isDisabled"
-              />
-
-              <app-input
-                  v-model="dataValue.address"
-                  label="Юр. адрес"
-                  placeholder="Введите"
-                  label-class="text-[#A8AAAE] font-medium text-[12px]"
-                  class="w-full"
-                  required
-                  prop="address"
-                  :disabled="isDisabled"
-              />
-            </div>
-
-            <div class="grid grid-cols-2 gap-4">
-              <app-input
-                  v-model="dataValue.tin"
-                  label="ИНН"
-                  placeholder="Выберите"
-                  label-class="text-[#A8AAAE] font-medium text-[12px]"
-                  class="w-full"
-                  required
-                  prop="tin"
-                  :disabled="isDisabled"
-              />
-            </div>
-
-            <ElSwitch
-                v-if="route.params.id && !route.query.type"
-                active-text="Деактивация"
-                class="app-switch mt-auto"
-                :before-change="switchChange"
-            />
-          </div>
-        </AppForm>
-
-        <div v-if="!route.query.type"
-            class="flex items-center mt-[24px] "
-            :class="!route.params.id ? 'justify-end' : 'justify-between'"
-        >
-          <button v-if="route.params.id" class="custom-danger-btn" @click="deleteFn">
-            Удалить
-          </button>
-
-
-          <div class="flex items-center gap-4">
-            <button @click="cancelFn" class="custom-cancel-btn">
-              Отменить
-            </button>
-
-            <button class="custom-apply-btn" @click="handleSubmit">
-              {{ $route.params.id ? "Сохранить" : "Добавить" }}
-            </button>
-          </div>
-        </div>
+    <AppOverlay
+        :loading="loading"
+    >
+      <div class="flex items-center justify-between mb-[24px]">
+        <h1 class="m-0 font-semibold text-[32px] leading-[48px]">{{ route.meta.title }}</h1>
       </div>
 
-      <div class="w-[30%]">
-        <button
-            @click="router.push({name: 'reference-organization-edit', params: {id: route.params.id}})"
-            v-if="route.query.type == 'view'"
-            class="flex items-center gap-4 bg-[#F8F9FC] py-[10px] px-[20px] rounded-[8px]"
-        >
-          <li
-              :style="{
+      <div class="flex gap-6">
+        <div class="w-[70%]">
+          <AppForm
+              :value="dataValue"
+              @validation="setValidation"
+          >
+            <div class="border border-[#E2E6F3] rounded-[24px] p-[24px] h-[65vh] flex flex-col">
+              <div class="grid grid-cols-2 gap-4">
+                <app-input
+                    v-model="dataValue.name"
+                    label="Наименование"
+                    placeholder="Введите"
+                    label-class="text-[#A8AAAE] font-medium text-[12px]"
+                    class="w-full"
+                    required
+                    prop="name"
+                    :disabled="isDisabled"
+                />
+
+                <app-input
+                    v-model="dataValue.address"
+                    label="Юр. адрес"
+                    placeholder="Введите"
+                    label-class="text-[#A8AAAE] font-medium text-[12px]"
+                    class="w-full"
+                    required
+                    prop="address"
+                    :disabled="isDisabled"
+                />
+              </div>
+
+              <div class="grid grid-cols-2 gap-4">
+                <app-input
+                    v-model="dataValue.tin"
+                    label="ИНН"
+                    maxlength="9"
+                    placeholder="Выберите"
+                    label-class="text-[#A8AAAE] font-medium text-[12px]"
+                    class="w-full"
+                    required
+                    prop="tin"
+                    :disabled="isDisabled"
+                />
+              </div>
+
+              <ElSwitch
+                  v-if="route.params.id && !route.query.type"
+                  active-text="Деактивация"
+                  class="app-switch mt-auto"
+                  @change="changeStatus"
+                  v-model="status"
+              />
+<!--              :before-change="switchChange"-->
+            </div>
+          </AppForm>
+
+          <div v-if="!route.query.type"
+               class="flex items-center mt-[24px] "
+               :class="!route.params.id ? 'justify-end' : 'justify-between'"
+          >
+            <button v-if="route.params.id" class="custom-danger-btn" @click="deleteFn">
+              Удалить
+            </button>
+
+
+            <div class="flex items-center gap-4">
+              <button @click="cancelFn" class="custom-cancel-btn">
+                Отменить
+              </button>
+
+              <button class="custom-apply-btn" @click="handleSubmit">
+                {{ $route.params.id ? "Сохранить" : "Добавить" }}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="w-[30%]">
+          <button
+              @click="router.push({name: 'reference-organization-edit', params: {id: route.params.id}})"
+              v-if="route.query.type == 'view'"
+              class="flex items-center gap-4 bg-[#F8F9FC] py-[10px] px-[20px] rounded-[8px]"
+          >
+            <li
+                :style="{
                   maskImage: 'url(/icons/edit.svg)',
                   backgroundColor: '#8F9194',
                   color: '#8F9194',
@@ -223,11 +250,12 @@ watch(() => route.name, () => {
                   maskPosition: 'center',
                   maskRepeat: 'no-repeat'
                    }"
-          ></li>
-          Редактировать
-        </button>
+            ></li>
+            Редактировать
+          </button>
+        </div>
       </div>
-    </div>
+    </AppOverlay>
   </div>
 </template>
 

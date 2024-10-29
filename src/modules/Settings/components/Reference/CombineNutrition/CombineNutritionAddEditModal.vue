@@ -2,7 +2,7 @@
     setup
     lang="ts"
 >
-import { onMounted, reactive, ref, watch } from "vue";
+import { computed, onMounted, reactive, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import AppInput from "@/components/ui/form/app-input/AppInput.vue";
 import AppSelect from "@/components/ui/form/app-select/AppSelect.vue";
@@ -11,22 +11,27 @@ import useConfirm from "@/components/ui/app-confirm/useConfirm";
 import {
   FoodFactoriesCreateFormType
 } from "@/modules/Settings/components/Reference/CombineNutrition/combine-nutrition.type";
-import { Name } from "@/utils/helper";
+import { deepEqual, getStatus, getStatusText, Name, setStatus } from "@/utils/helper";
 import AppOverlay from "@/components/ui/app-overlay/AppOverlay.vue";
 import AppForm from "@/components/ui/form/app-form/AppForm.vue";
 import { ValidationType } from "@/components/ui/form/app-form/app-form.type";
 import { useSettingsStore } from "@/modules/Settings/store";
-import { ElNotification } from "element-plus";
+import { useCommonStore } from "@/stores/common.store";
 
 const route = useRoute();
 const router = useRouter();
 const { confirm } = useConfirm();
 const settingsStore = useSettingsStore();
+const commonStore = useCommonStore();
+const loading = ref(false);
+
 
 const form = reactive<FoodFactoriesCreateFormType>({
   name: new Name(),
   management_id: ""
 });
+
+const oldForm = ref<FoodFactoriesCreateFormType | null>(null);
 
 const v$ = ref<ValidationType | null>(null);
 
@@ -35,6 +40,10 @@ const setValidation = (validation: ValidationType) => {
 };
 
 const { setBreadCrumb } = useBreadcrumb();
+
+const routeID = computed(() => {
+  return route.params?.id ? +route.params.id : null;
+});
 
 const setBreadCrumbFn = () => {
   setBreadCrumb([
@@ -48,12 +57,12 @@ const setBreadCrumbFn = () => {
 
     {
       label: "Управ, комбинаты и склады",
-      to: { name: "reference-combine-nutrition" }
+      to: { name: "reference" }
     },
 
     {
       label: "Комбинаты питания",
-      to: { name: "reference-regional-directorates" }
+      to: { name: "reference-combine-nutrition" }
     },
     {
       label: route?.meta?.breadcrumbItemTitle as string ?? "",
@@ -66,15 +75,29 @@ watch(() => route.name, () => {
   setBreadCrumbFn();
 }, { immediate: true });
 
-const cancelFn = () => {
-  confirm.cancel().then(() => {
-    router.push({ name: "reference-combine-nutrition" });
-  });
+const cancelFn = async () => {
+  if (oldForm.value && !deepEqual(form, oldForm.value)) {
+    const response = await confirm.cancel();
+    if (response === "save") {
+      await sendForm();
+      return;
+    }
+  }
+
+  router.push({ name: "reference-combine-nutrition" });
 };
 
+const deleteLoading = ref(false);
+
 const deleteFn = () => {
-  confirm.delete().then(() => {
-    router.push({ name: "reference-combine-nutrition" });
+  if (!routeID.value) return;
+
+  confirm.delete().then(async () => {
+    deleteLoading.value = true;
+    await settingsStore.deleteFoodFactory(routeID.value as number);
+    commonStore.successToast({ name: "reference-combine-nutrition" });
+  }).finally(() => {
+    deleteLoading.value = false;
   });
 };
 
@@ -87,7 +110,6 @@ const switchChange = async (): Promise<boolean> => {
   }
 };
 
-const loading = ref(false);
 
 const sendForm = async () => {
   if (!(v$.value && await v$.value.validate())) return;
@@ -97,16 +119,14 @@ const sendForm = async () => {
   try {
     if (route.name === "reference-combine-nutrition-add") {
       await settingsStore.createFoodFactory(form);
-    } else if (route.name === "reference-combine-nutrition-edit") {
-      await settingsStore.updateFoodFactory(+route.params.id, form);
+    } else if (route.name === "reference-combine-nutrition-edit" && routeID.value) {
+      const newForm = { ...form };
+      newForm.status = setStatus(form.status);
+      await settingsStore.updateFoodFactory(routeID.value as number, newForm);
     }
 
-    await router.push({ name: "reference-combine-nutrition" });
-    ElNotification({
-      title: "Успешно",
-      message: "Успешно",
-      type: "success"
-    });
+    commonStore.successToast({ name: "reference-combine-nutrition" });
+
   } catch (err) {
     console.log(err);
   } finally {
@@ -114,11 +134,27 @@ const sendForm = async () => {
   }
 };
 
-onMounted(() => {
-  if(route.params.id){
+const setForm = async () => {
+  if (!routeID.value) return;
+  await settingsStore.showFoodFactory(routeID.value);
 
-  }
-  settingsStore.GET_REGIONAL({ per_page: 500 });
+  if (!settingsStore.foodFactory) return;
+  form.name = settingsStore.foodFactory.name;
+  form.management_id = settingsStore.foodFactory.management.id;
+  form.status = getStatus(settingsStore.foodFactory.status);
+};
+
+onMounted(async () => {
+  settingsStore.GET_REGIONAL({ per_page: 100 });
+
+  await setForm();
+
+  oldForm.value = JSON.parse(JSON.stringify(form));
+});
+
+
+const disabled = computed(() => {
+  return route.name === "reference-combine-nutrition-view";
 });
 
 </script>
@@ -128,10 +164,10 @@ onMounted(() => {
     <div class="flex items-center justify-between mb-[24px]">
       <h1 class="m-0 font-semibold text-[32px] leading-[48px]">{{ route.meta.title }}</h1>
     </div>
-
     <div class="flex gap-6">
       <div class="w-[70%]">
         <AppOverlay
+            :loading="settingsStore.foodFactoryLoading"
             :rounded="24"
             class="border border-[#E2E6F3] p-[24px] min-h-[60vh] flex flex-col gap-y-6 justify-between"
         >
@@ -147,6 +183,7 @@ onMounted(() => {
                 placeholder="Введите"
                 label-class="text-[#A8AAAE] font-medium text-[12px]"
                 required
+                :disabled
             />
             <AppInput
                 v-model="form.name.uz"
@@ -155,6 +192,7 @@ onMounted(() => {
                 placeholder="Введите"
                 label-class="text-[#A8AAAE] font-medium text-[12px]"
                 required
+                :disabled
             />
             <AppSelect
                 v-model="form.management_id"
@@ -167,69 +205,67 @@ onMounted(() => {
                 placeholder="Выберите"
                 label-class="text-[#A8AAAE] font-medium text-[12px]"
                 required
+                :disabled
             />
           </AppForm>
           <ElSwitch
-              v-if="route.params.id && !route.query.type"
-              active-text="Деактивация"
+              v-if="route.name === 'reference-combine-nutrition-edit' && form.status !== undefined"
+              v-model="form.status"
+              :active-text="getStatusText(form.status)"
               class="app-switch"
-              :before-change="switchChange"
           />
         </AppOverlay>
 
         <div
-            v-if="!route.query.type"
-            class="flex items-center mt-[24px] "
-            :class="!route.params.id ? 'justify-end' : 'justify-between'"
+            v-if="route.name !== 'reference-combine-nutrition-view'"
+            class="flex items-center mt-[24px] justify-between"
         >
-          <button
-              v-if="route.params.id"
+          <ElButton
+              type="danger"
+              size="large"
+              :loading="deleteLoading"
+              v-if="route.name === 'reference-combine-nutrition-edit'"
               class="custom-danger-btn"
               @click="deleteFn"
           >
             Удалить
-          </button>
+          </ElButton>
 
 
-          <div class="flex items-center gap-4">
+          <div class="flex items-center gap-4 ml-auto">
             <button
                 @click="cancelFn"
-                class="custom-cancel-btn"
+                class="custom-cancel-btn h-10"
             >
               Отменить
             </button>
 
-            <button
-                type="submit"
+            <ElButton
+                :loading
+                type="primary"
+                size="large"
                 @click="sendForm"
                 class="custom-apply-btn"
             >
               {{ route.params.id ? "Сохранить" : "Добавить" }}
-            </button>
+            </ElButton>
           </div>
         </div>
       </div>
 
       <div class="w-[30%]">
-        <button
-            @click="router.push({name: 'reference-combine-nutrition-edit', params: {id: 1}})"
-            v-if="route.query.type == 'view'"
-            class="flex items-center gap-4 bg-[#F8F9FC] py-[10px] px-[20px] rounded-[8px]"
+        <RouterLink
+            v-if="route.name === 'reference-combine-nutrition-view'"
+            :to="{name: 'reference-combine-nutrition-edit', params: {id: routeID}}"
+            class="inline-flex items-center justify-center gap-4 bg-[#F8F9FC] py-[10px] px-[20px] rounded-[8px] min-w-[260px]"
         >
-          <li
-              :style="{
-                  maskImage: 'url(/icons/edit.svg)',
-                  backgroundColor: '#8F9194',
-                  color: '#8F9194',
-                  width: '20px',
-                  height: '20px',
-                  maskSize: '20px',
-                  maskPosition: 'center',
-                  maskRepeat: 'no-repeat'
-                   }"
-          ></li>
+          <img
+              src="/icons/edit.svg"
+              alt="edit icon"
+              class="size-5"
+          />
           Редактировать
-        </button>
+        </RouterLink>
       </div>
     </div>
   </div>

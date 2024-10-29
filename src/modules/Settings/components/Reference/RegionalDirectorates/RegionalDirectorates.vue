@@ -127,14 +127,12 @@ const setBreadCrumbFn = () => {
           stripe class="custom-element-table"
           :empty-text="'Нет доступных данных'"
       >
-        <el-table-column prop="id" label="№" width="80" />
-        <el-table-column prop="name" label="Наименование" sortable width="400">
-          <template #default="scope">
-           <span v-if="scope.row.name">
-             {{i18.locale === 'ru' ? scope.row.name.ru : scope.row.name.uz}}
-           </span>
+        <el-table-column prop="idx" label="№" width="80">
+          <template #default="{$index}" v-if="store.rationList.rations">
+            {{params.page >1 ? store.regional.paginator.per_page * (params.page - 1) + $index + 1 : $index +1 }}
           </template>
         </el-table-column>
+        <el-table-column prop="name" label="Наименование" sortable width="400"/>
         <el-table-column prop="responsible_position" label="Подчинение" sortable />
         <el-table-column label="Действие" align="right">
           <template #default="scope">

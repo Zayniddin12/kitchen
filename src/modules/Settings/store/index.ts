@@ -1,9 +1,13 @@
 import { defineStore } from "pinia";
-import $axios from "@/plugins/axios";
+import $axios from "@/plugins/axios/axios";
 import { ref } from "vue";
 import type {
-  FoodFactoriesCreateFormType, FoodFactoryType,
+  FoodFactoriesCreateFormType, FoodFactoriesParamsType, FoodFactoriesType, FoodFactoryType,
 } from "@/modules/Settings/components/Reference/CombineNutrition/combine-nutrition.type";
+import type {
+  BaseWarehouseDataType, BaseWarehousesParamsType, BaseWarehousesType,
+  BaseWarehouseType,
+} from "@/modules/Settings/components/Reference/MainBases/base-warehouses.type";
 
 interface TypeDocument {
   document_categories: Array<{ id: string | number, name: string }>;
@@ -13,16 +17,53 @@ interface VidDocument {
   documents: Array<{ id: string | number, name: string }>;
 }
 
+interface Params {
+  search?: string | null;
+  page?: number | string;
+  per_page?: number | string;
+}
+
+interface Pagination {
+  current_page: number | null;
+  per_page: number | null;
+  has_more: boolean;
+  items_count: number | null;
+  total_count: number | null;
+  pages_count: number | null;
+}
+
 interface rationList {
   rations: object[];
-  pagination: {
-    current_page: number | null
-    per_page: number | null
-    has_more: boolean
-    items_count: number | null
-    total_count: number | null
-    pages_count: number | null
-  };
+  pagination: Pagination;
+}
+
+interface WarehouseBasesList {
+  bases: object[];
+  paginator: Pagination;
+}
+
+interface Name {
+  uz: string;
+  ru: string;
+}
+
+interface WareHouseType {
+  id?: number;
+  name: Name;
+  address: string;
+  code: string;
+  status: string;
+}
+
+interface WareHouseItemType {
+  id: number;
+  name: Name;
+  address: string;
+  code: string;
+  status: string;
+  created_at?: string;
+  updated_at?: string;
+  deleted_at?: null | string;
 }
 
 export const useSettingsStore = defineStore("settingsStore", () => {
@@ -32,6 +73,7 @@ export const useSettingsStore = defineStore("settingsStore", () => {
   });
   const vidProduct = ref({
     product_types: [] as any,
+    pagination: {} as any,
   });
   const units = ref({
     units: [] as any,
@@ -56,6 +98,10 @@ export const useSettingsStore = defineStore("settingsStore", () => {
     meals: [] as any,
     pagination: {} as any,
   });
+  const kitchenWarehouse = ref({
+    kitchen_warehouses: [] as any,
+    paginator: {} as any,
+  });
   // dilshod
 
 
@@ -79,12 +125,21 @@ export const useSettingsStore = defineStore("settingsStore", () => {
     },
   });
 
-  const rationItem = ref<object>({});
 
-  // begzod end
+  const wareHouseList = ref<WarehouseBasesList>({
+    bases: [],
+    paginator: {
+      current_page: 0,
+      per_page: 0,
+      has_more: false,
+      items_count: 0,
+      total_count: 0,
+      pages_count: 0,
+    },
+  });
 
+  const wareHouseItem = ref<WareHouseItemType | {}>({});
 
-  // begzod
 
   // Документы Типы документов
   const GET_TYPE_DOCUMENT = async (params?: { search: string | null }) => {
@@ -106,8 +161,8 @@ export const useSettingsStore = defineStore("settingsStore", () => {
   };
 
   const GET_SHOW_ITEM = async (id: string | number) => {
-    const { data } = await $axios.get("/rations/" + id);
-    rationItem.value = data.data;
+    const { data } = await $axios.get(`/rations/${id}`);
+    return data.data
   };
 
   const CRETE_RATION = async (data) => {
@@ -116,12 +171,39 @@ export const useSettingsStore = defineStore("settingsStore", () => {
   };
 
   const UPDATE_RATION = async ({ id, data }: { id: string, data: any }) => {
-    return await $axios.post("/rations/" + id, data);
-
+    return await $axios.post(`/rations/${id}`, data);
   };
 
   const DELETE_RATION = async (id: string | number) => {
     return await $axios.delete("/rations/" + id);
+  };
+
+
+  // Базы складов
+
+  const GET_WAREHOUSE_BASES_LIST = async (params?: Params) => {
+    const { data } = await $axios.get("/bases", { params });
+    wareHouseList.value = data.data;
+  };
+
+  const GET_WAREHOUSE_BASES_ITEM = async (id: string | number) => {
+    const { data } = await $axios.get("/bases/" + id);
+    wareHouseItem.value = data.data && data.data.base;
+    return data.data;
+  };
+
+  const CRETE_WAREHOUSE_BASES = async (data: WareHouseType) => {
+    return await $axios.post("/bases/", data);
+
+  };
+
+  const UPDATE_WAREHOUSE_BASES = async ({ id, data }: { id: string | number, data: WareHouseType }) => {
+    return await $axios.put("/bases/" + id, data);
+
+  };
+
+  const DELETE_WAREHOUSE_BASES = async (id: string | number) => {
+    return await $axios.delete("/bases/" + id);
 
   };
 
@@ -273,13 +355,17 @@ export const useSettingsStore = defineStore("settingsStore", () => {
   };
 
   // Блюда
-  const GET_MEALS = async (params: any) => {
+  const GET_MEALS = async (params?: any) => {
     const { data } = await $axios.get("/meals", { params });
     meals.value = data.data;
   };
 
   const CREATE_MEALS = (data: any) => {
-    return $axios.post("/meals", data);
+    return $axios.post("/meals", data, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
   };
 
   const GET_MEALS_DETAIL = async (id: number) => {
@@ -290,47 +376,181 @@ export const useSettingsStore = defineStore("settingsStore", () => {
   const UPDATE_MEALS = ({ id, data }: { id: string | number; data: any }) => {
     return $axios.put(`/meals/${id}/`, data);
   };
+
+  const DELETE_MEALS = async (id: number) => {
+    return $axios.delete(`/meals/${id}`);
+  };
+  // Блюда end
+
+  const parentProductType = ref({
+    product_types: [] as []
+  });
+
+  const dynamicVid = ref({
+    product_types: [] as []
+  })
+  const GET_MEALS_VID_PRO = async (params: any) => {
+    const { data } = await $axios.get("/product-types", { params });
+    parentProductType.value = data.data;
+    return data.data
+  };
+
+  // Склады кухни
+  const GET_KITCHEN_WAREHOUSE = async (params: any) => {
+    const { data } = await $axios.get("/kitchen-warehouses", { params });
+    kitchenWarehouse.value = data.data;
+  };
+
+  const CREATE_KITCHEN_WAREHOUSE = (data: any) => {
+    return $axios.post("/kitchen-warehouses", data);
+  };
+
+  const UPDATE_KITCHEN_WAREHOUSE = ({ id, data }: { id: string | number; data: any }) => {
+    return $axios.put(`/kitchen-warehouses/${id}/`, data);
+  };
+
+  const DELETE_KITCHEN_WAREHOUSE = async (id: number) => {
+    return $axios.delete(`/kitchen-warehouses/${id}`);
+  };
+
+  const GET_KITCHEN_WAREHOUSE_DETAIL = async (id: number) => {
+    const { data } = await $axios.get(`/kitchen-warehouses/${id}`);
+    return data.data;
+  };
   // dilshod end
+
+  // abbos start
+
+  // Комбинаты питания
 
   const foodFactoriesPrefix = "food-factories";
 
-  const createFoodFactory = async (data: FoodFactoriesCreateFormType) => {
-    return await $axios.post(foodFactoriesPrefix, data);
+  const createFoodFactory = (data: FoodFactoriesCreateFormType) => {
+    return $axios.post(foodFactoriesPrefix, data);
   };
 
-  const updateFoodFactory = async (id: number, data: FoodFactoriesCreateFormType) => {
-    return await $axios.put(`${foodFactoriesPrefix}/${id}`, data);
+  const updateFoodFactory = (id: number, data: FoodFactoriesCreateFormType) => {
+    return $axios.put(`${foodFactoriesPrefix}/${id}`, data);
   };
 
   const foodFactory = ref<null | FoodFactoryType>(null);
   const foodFactoryLoading = ref(false);
 
   const showFoodFactory = async (id: number) => {
+    foodFactoryLoading.value = true;
     await $axios.get(`${foodFactoriesPrefix}/${id}`).then(({ data }) => {
-      foodFactory.value = data.data.food_factory;
+      if (data.data) {
+        foodFactory.value = data.data.food_factory;
+      }
     }).finally(() => foodFactoryLoading.value = false);
   };
+
+  const deleteFoodFactory = async (id: number) => {
+    return $axios.delete(`${foodFactoriesPrefix}/${id}`);
+  };
+
+  const foodFactories = ref<FoodFactoriesType | null>(null);
+  const foodFactoriesLoading = ref(false);
+
+  const fetchFoodFactories = async (params: FoodFactoriesParamsType) => {
+    foodFactoriesLoading.value = true;
+
+    await $axios.get(foodFactoriesPrefix, { params }).then(({ data }) => {
+      if (data.data) foodFactories.value = data.data;
+    }).finally(() => foodFactoriesLoading.value = false);
+  };
+
+  // Комбинаты питания end
+
+  // Склады базы
+
+  const baseWareHousesPrefix = "base-warehouses";
+
+  const baseWarehouses = ref<null | BaseWarehousesType>(null);
+  const baseWarehousesLoading = ref(false);
+  const fetchBaseWarehouses = async (params: BaseWarehousesParamsType) => {
+    baseWarehousesLoading.value = true;
+    await $axios.get(baseWareHousesPrefix, { params }).then(({ data }) => {
+      if (data.data) baseWarehouses.value = data.data;
+    }).finally(() => baseWarehousesLoading.value = false);
+  };
+
+  const baseWarehouse = ref<null | BaseWarehouseType>(null);
+  const baseWarehouseLoading = ref(false);
+
+  const fetchBaseWarehouse = async (id: number) => {
+    baseWarehouseLoading.value = true;
+    await $axios.get(`${baseWareHousesPrefix}/${id}`).then(({ data }) => {
+      if (data.data) {
+        baseWarehouse.value = data.data.base_warehouse;
+      }
+    }).finally(() => baseWarehouseLoading.value = false);
+  };
+
+  const deleteBaseWarehouse = async (id: number) => {
+    return $axios.delete(`${baseWareHousesPrefix}/${id}`);
+  };
+
+  const createBaseWarehouse = (data: BaseWarehouseDataType) => {
+    return $axios.post(baseWareHousesPrefix, data);
+  };
+
+  const updateBaseWarehouse = (id: number, data: BaseWarehouseDataType) => {
+    return $axios.put(`${baseWareHousesPrefix}/${id}`, data);
+  };
+
+  // Склады базы end
+
+  // abbos end
 
 
   return {
     // begzod
     vidDocument,
     typeDocument,
+    wareHouseList,
+    wareHouseItem,
     GET_TYPE_DOCUMENT,
     GET_VID_DOCUMENT,
+    GET_WAREHOUSE_BASES_LIST,
+    GET_WAREHOUSE_BASES_ITEM,
+    UPDATE_WAREHOUSE_BASES,
+    CRETE_WAREHOUSE_BASES,
+    DELETE_WAREHOUSE_BASES,
+
+    rationList,
+    GET_RATION_LIST,
+    CRETE_RATION,
+    DELETE_RATION,
+    UPDATE_RATION,
+    GET_SHOW_ITEM,
     // begzod end
 
-    // abbos
+    //     abbos start
     createFoodFactory,
     updateFoodFactory,
     showFoodFactory,
     foodFactory,
     foodFactoryLoading,
-    // abbos end
+    deleteFoodFactory,
+    foodFactories,
+    foodFactoriesLoading,
+    fetchFoodFactories,
+
+    baseWarehouses,
+    baseWarehousesLoading,
+    fetchBaseWarehouses,
+    baseWarehouse,
+    baseWarehouseLoading,
+    fetchBaseWarehouse,
+    deleteBaseWarehouse,
+    createBaseWarehouse,
+    updateBaseWarehouse,
 
 
     // dilshod
     typeProduct,
+    dynamicVid,
     GET_TYPE_PRODUCT,
     GET_TYPE_PRODUCT_DETAIL,
     CREATE_TYPE_PRODUCT,
@@ -378,6 +598,17 @@ export const useSettingsStore = defineStore("settingsStore", () => {
     CREATE_MEALS,
     GET_MEALS_DETAIL,
     UPDATE_MEALS,
+    GET_MEALS_VID_PRO,
+    DELETE_MEALS,
+
+    parentProductType,
+
+    kitchenWarehouse,
+    GET_KITCHEN_WAREHOUSE,
+    CREATE_KITCHEN_WAREHOUSE,
+    UPDATE_KITCHEN_WAREHOUSE,
+    DELETE_KITCHEN_WAREHOUSE,
+    GET_KITCHEN_WAREHOUSE_DETAIL,
     // dilshod end
   };
 });

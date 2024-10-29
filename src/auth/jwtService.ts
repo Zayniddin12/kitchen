@@ -1,4 +1,4 @@
-import $axios from "@/plugins/axios";
+import $axios from "@/plugins/axios/axios";
 import {
     loginEndpoint,
     logoutEndpoint,
@@ -7,7 +7,7 @@ import {
     registerEndpoint,
     tokenKeyName,
 } from "./jwt.config";
-import router from "@/router";
+import router from "@/router/router";
 import type { UserData } from "./types";
 
 export function login(

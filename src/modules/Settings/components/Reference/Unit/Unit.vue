@@ -70,7 +70,11 @@ const setBreadCrumbFn = () => {
     </div>
 
     <el-table :data="store.units.units" stripe class="custom-element-table mt-[24px]" v-loading="loading">
-      <el-table-column prop="id" label="№" width="80" :class-name="'tableHeadClass'"/>
+      <el-table-column prop="index" label="№" width="80">
+        <template #default="{ $index}" >
+          {{$index + 1}}
+        </template>
+      </el-table-column>
       <el-table-column prop="name" label="Наименование единиц измерения" sortable width="400" :class-name="'tableHeadClass'"/>
       <el-table-column prop="unit" label="Сокращение единиц" sortable :class-name="'tableHeadClass'"/>
     </el-table>

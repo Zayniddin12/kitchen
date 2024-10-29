@@ -14,9 +14,8 @@ export const useLayoutStore = defineStore("layoutStore", () => {
     return [
       {
         title: "Главная",
-        route: "/home",
+        route: "/",
         icon: "smart-home",
-        unique: "home",
       },
       {
         title: "Документы",
