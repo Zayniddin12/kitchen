@@ -213,11 +213,9 @@ const logOut = () => {
       </div>
 
       <!------------------------log out---------------------------->
-      <ElButton
-          class="mb-[10px] h-[45px] "
+      <button
+          class="mb-3 h-[45px"
           @click.stop="logOut"
-          plain
-          type="text"
       >
         <div class="flex flex-col items-center">
           <img
@@ -226,7 +224,7 @@ const logOut = () => {
           />
           <span class="text-[#EA5455] text-[14px] font-medium block">Выход</span>
         </div>
-      </ElButton>
+      </button>
     </div>
   </div>
 </template>

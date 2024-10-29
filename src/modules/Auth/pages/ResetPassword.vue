@@ -14,7 +14,7 @@ import { ElNotification } from "element-plus";
 import { ForgotPasswordDataType, SendCodeDataType, VerifyCodeDataType } from "@/modules/Auth/auth.types";
 import { useCommonStore } from "@/stores/common.store";
 import { useAuthStore } from "@/modules/Auth/auth.store";
-import { formatTime } from "../../../utils/helper";
+import { formatTime, normalizePhone } from "../../../utils/helper";
 
 const router = useRouter();
 const authStore = useAuthStore();
@@ -77,7 +77,7 @@ const sendForm = async () => {
 
 onMounted(() => {
   authStore.getSessionOtp();
-  form.phone = authStore.otp?.phone ?? "";
+  form.phone = normalizePhone(authStore.otp?.phone);
 });
 
 onUnmounted(() => {

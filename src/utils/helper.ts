@@ -107,7 +107,12 @@ export const deepEqual = (obj1: Record<string, any>, obj2: Record<string, any>) 
 };
 
 export const formatTime = (seconds: number): string => {
-    const minutes = Math.floor(seconds / 60).toString().padStart(2, '0');
-    const remainingSeconds = (seconds % 60).toString().padStart(2, '0');
+    const minutes = Math.floor(seconds / 60).toString().padStart(2, "0");
+    const remainingSeconds = (seconds % 60).toString().padStart(2, "0");
     return `${minutes}:${remainingSeconds}`;
-}
+};
+
+export const normalizePhone = (phone?: string) => {
+    if (!phone) return "";
+    return phone.startsWith("998") ? phone.slice(3) : phone;
+};

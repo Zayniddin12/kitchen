@@ -19,17 +19,5 @@ export default [
             layout: "ResetPasswordLayout",
             title: "Сброс пароля"
         }
-    },
-    {
-        path: "/income-password",
-        name: "income-password",
-        component: () => import("@/modules/Auth/pages/IncomePassword.vue"),
-        meta: { loginNotRequired: true, layout: "IncomePasswordLayout" }
-    },
-    {
-        path: "/new-password",
-        name: "new-password",
-        component: () => import("@/modules/Auth/pages/Password.vue"),
-        meta: { loginNotRequired: true, layout: "PasswordLayout" }
     }
 ] as RouteRecordRaw[];
