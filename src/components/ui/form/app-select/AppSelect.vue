@@ -12,6 +12,7 @@ const model = defineModel<AppSelectValueType>({
 
 const emit = defineEmits<{
   change: [value: AppSelectValueType]
+  clear: [value: AppSelectValueType]
 }>()
 
 const props = withDefaults(defineProps<AppSelectPropsType>(), {
@@ -38,7 +39,9 @@ const appSelectClasses = computed<string[]>(() => {
 const change = (value: any) => {
   emit("change", value);
 }
-
+const clear = (value: any) => {
+  emit("clear", value);
+}
 </script>
 
 <template>
@@ -93,6 +96,7 @@ const change = (value: any) => {
       :placement
       class="app-select__select"
       @change="change"
+      @clear="clear"
     >
       <template v-if="(items && items.length && itemLabel && itemValue) && !slots.default">
         <ElOption

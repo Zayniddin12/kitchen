@@ -9,7 +9,7 @@ import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 interface Params {
   search: null | string;
   page: number;
-  page_size: number;
+  per_page: number;
 }
 
 const store = useSettingsStore()
@@ -19,7 +19,7 @@ const {setBreadCrumb} = useBreadcrumb();
 const params = ref<Params>({
   search: null,
   page: 1,
-  page_size: 10
+  per_page: 10
 })
 const loading = ref<boolean>(false)
 let debounceTimeout: ReturnType<typeof setTimeout>
@@ -31,6 +31,7 @@ onMounted(() => {
 });
 
 const refresh = async () => {
+  loading.value = true
   try {
     await store.GET_RATION_LIST(params.value)
   } catch (e) {
@@ -81,8 +82,6 @@ const setBreadCrumbFn = () => {
 
 <template>
   <div>
-    <pre>{{ store.rationList }}</pre>
-
     <div class="flex items-center justify-between">
       <h1 class="m-0 font-semibold text-[32px] leading-[48px]">Рационы</h1>
 
@@ -103,12 +102,18 @@ const setBreadCrumbFn = () => {
       </div>
     </div>
 
-    <el-table stripe :data="[]" class="custom-element-table mt-[24px]">
+    <el-table
+        stripe
+        :data="store.rationList.rations"
+        class="custom-element-table mt-[24px]"
+        v-loading="loading"
+        :empty-text="'Нет доступных данных'"
+    >
       <el-table-column prop="id" label="№" width="80"/>
       <el-table-column prop="name" label="Наименование рациона" sortable/>
-      <el-table-column prop="unique" label="Уникальный номер" sortable/>
-      <el-table-column prop="type" label="Тип кухни" sortable/>
-      <el-table-column prop="duration" label="Длительность" sortable/>
+      <el-table-column prop="number" label="Уникальный номер" sortable/>
+      <el-table-column prop="kitchen_type_names" label="Тип кухни" sortable/>
+      <el-table-column prop="duration_in_days" label="Длительность" sortable/>
       <el-table-column label="Действие" align="right">
         <template #default="scope">
           <button class="action-btn" @click="router.push(`/reference-ration-view/${scope.row.id}`)">

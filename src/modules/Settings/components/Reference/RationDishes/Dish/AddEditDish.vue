@@ -81,12 +81,12 @@ const existingImage = ref<string>('')
 const loading = ref<boolean>(false)
 
 onMounted(async () => {
-  await store.GET_UNITS()
-  await store.GET_TYPE_PRODUCT()
+  loading.value = true;
+  try {
+    await store.GET_UNITS()
+    await store.GET_TYPE_PRODUCT()
 
-  if (route.params.id) {
-    loading.value = true;
-    try {
+    if (route.params.id) {
       const meals = await store.GET_MEALS_DETAIL(route.params.id as string | number)
       if (meals && meals.meal) {
         dataValue.value = meals.meal
@@ -98,11 +98,12 @@ onMounted(async () => {
           }
         })
       }
-    } catch (e) {
-      loading.value = false
     }
+  } catch (e) {
     loading.value = false
   }
+  loading.value = false
+
 })
 
 const repeaterAgain = () => {
@@ -152,6 +153,9 @@ const handleSubmit = async () => {
         formData.append('image', dataValue.value.image);
       }
 
+      if (route.params.id) {
+        formData.append('_method', 'PUT');
+      }
       dataValue.value.compositions.forEach((composition, index) => {
         formData.append(`compositions[${index}][product_type_parent_id]`, composition.product_type_parent_id);
         formData.append(`compositions[${index}][product_type_id]`, composition.product_type_id);
@@ -178,6 +182,12 @@ const handleSubmit = async () => {
 
 const changeInput = (event) => {
   store.GET_MEALS_VID_PRO({parent_id: event})
+}
+
+const getUnitId = (id: number) => {
+  if (id) {
+    return store.units.units.find((unit) => unit.id === id).name;
+  }
 }
 
 const isDisabled = computed(() => {
@@ -256,6 +266,7 @@ watch(() => route.name, () => {
                 :data="dataValue.compositions"
                 stripe
                 class="custom-element-table mt-[40px]"
+                :empty-text="'Нет доступных данных'"
             >
               <el-table-column
                   prop="product_type_name"
@@ -265,10 +276,11 @@ watch(() => route.name, () => {
                   prop="quantity"
                   label="Количество"
               />
-              <el-table-column
-                  prop="product_type_id"
-                  label="Ед. измерения"
-              />
+              <el-table-column prop="product_type_id" label="Ед. измерения">
+                <template #default="scope">
+                  {{ scope.row.unit_id ? getUnitId(scope.row.unit_id) : '-' }}
+                </template>
+              </el-table-column>
             </el-table>
           </template>
 
