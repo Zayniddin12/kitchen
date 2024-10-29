@@ -113,7 +113,11 @@ const setBreadCrumbFn = () => {
         stripe
         class="custom-element-table mt-[24px]"
     >
-      <el-table-column prop="id" label="№" width="80"/>
+      <el-table-column prop="idx" label="№" width="80">
+        <template #default="{$index}" v-if="store.rationList.rations">
+          {{params.page >1 ? store.kitchenWarehouse.paginator.per_page * (params.page - 1) + $index + 1 : $index +1 }}
+        </template>
+      </el-table-column>
       <el-table-column prop="name" label="Наименование" sortable/>
       <el-table-column prop="base" label="База складов" sortable/>
       <el-table-column prop="capacity" label="Вмес. склада" sortable/>

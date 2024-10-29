@@ -385,9 +385,14 @@ export const useSettingsStore = defineStore("settingsStore", () => {
   const parentProductType = ref({
     product_types: [] as []
   });
+
+  const dynamicVid = ref({
+    product_types: [] as []
+  })
   const GET_MEALS_VID_PRO = async (params: any) => {
     const { data } = await $axios.get("/product-types", { params });
     parentProductType.value = data.data;
+    return data.data
   };
 
   // Склады кухни
@@ -545,6 +550,7 @@ export const useSettingsStore = defineStore("settingsStore", () => {
 
     // dilshod
     typeProduct,
+    dynamicVid,
     GET_TYPE_PRODUCT,
     GET_TYPE_PRODUCT_DETAIL,
     CREATE_TYPE_PRODUCT,

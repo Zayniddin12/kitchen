@@ -109,7 +109,11 @@ const changePagination = (event: any) => {
         stripe
         empty-text="Нет доступных данных"
     >
-      <el-table-column prop="id" label="№" width="80"/>
+      <el-table-column prop="idx" label="№" width="80">
+        <template #default="{$index}" v-if="store.rationList.rations">
+          {{params.page >1 ? store.vidProduct.pagination.per_page * (params.page - 1) + $index + 1 : $index +1 }}
+        </template>
+      </el-table-column>
       <el-table-column prop="photo" label="Картинка вида продукта">
         <template #default="scope">
           <img v-if="scope.row.image" :src="scope.row.image" alt="#" class="h-[32px] w-[32px] rounded-full"/>

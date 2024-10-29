@@ -18,7 +18,7 @@ interface DataValue {
   start_time: string;
   end_time: string;
   duration_in_days: string;
-  compositions: Repeater;
+  number: string | number,
 }
 
 interface Repeater {
@@ -27,9 +27,6 @@ interface Repeater {
   product_type_id: null | string;
   quantity: null | string;
   unit_id: null | string;
-  number: string,
-  compositionable_id: number | null | string;
-  compositionable_type: number | null | string;
 }
 
 const v$ = ref<ValidationType | null>(null);
@@ -37,7 +34,7 @@ const setValidation = (value: ValidationType) => {
   v$.value = value;
 };
 
-const store = useSettingsStore()
+const store = useSettingsStore();
 const route = useRoute();
 const router = useRouter();
 const {confirm} = useConfirm();
@@ -45,25 +42,24 @@ const {setBreadCrumb} = useBreadcrumb();
 
 
 const value = ref<boolean>(true);
-const dataValue = ref<DataValue>({
+const dataValue = ref<DataValue[]>({
   name: new Name(),
   kitchen_type_ids: [],
   start_time: '',
   end_time: '',
   duration_in_days: '',
   number: '',
-  compositions: [
-    {
-      meal_id: null,
-      typeProduct: null,
-      product_type_id: null,
-      quantity: null,
-      unit_id: null,
-      compositionable_id: null,
-      compositionable_type: null,
-    }
-  ]
 })
+const compositions = ref<Repeater[]>([
+  {
+    meal_id: null,
+    typeProduct: null,
+    product_type_id: null,
+    parent_id: null,
+    quantity: null,
+    unit_id: null,
+  }
+])
 const loading = ref<boolean>(false)
 const status = ref<boolean>(false)
 
@@ -82,6 +78,37 @@ onMounted(async () => {
       const ration = await store.GET_SHOW_ITEM(route.params.id)
       if (ration && ration.ration) {
         dataValue.value = ration.ration
+        status.value = ration.ration.is_active
+
+        let product_types = ration.ration.product_types || [];
+        let meals = ration.ration.meals || [];
+
+        compositions.value = [
+          ...meals.map(meal => ({
+            meal_id: meal.id,
+            typeProduct: null,
+            product_type_id: null,
+            quantity: meal.quantity,
+            unit_id: meal.unit_id
+          })),
+          ...product_types.map(product => ({
+            meal_id: null,
+            typeProduct: product.parent_id,
+            product_type_id: product.id,
+            parent_id: product.parent_id,
+            quantity: product.quantity,
+            unit_id: product.unit_id
+          }))
+        ];
+
+
+        let arr = product_types
+        for (let i = 0; i < arr.length; i++) {
+          const data1 = await store.GET_MEALS_VID_PRO({parent_id: arr[i].parent_id})
+          if (data1 && data1.product_types) {
+            store.dynamicVid.product_types[i] = data1.product_types
+          }
+        }
       }
     }
   } catch (e) {
@@ -93,13 +120,13 @@ onMounted(async () => {
 
 
 const repeaterAgain = () => {
-  dataValue.value.compositions.push({});
+  compositions.value.push({});
 };
 
 const handleDelete = (index: number) => {
-  if (dataValue.value.compositions.length > 1) {
+  if (compositions.value.length > 1) {
     confirm.delete().then(() => {
-      dataValue.value.compositions.splice(index, 1);
+      compositions.value.splice(index, 1);
     });
   }
 };
@@ -147,15 +174,48 @@ const handleSubmit = async () => {
 
   const rationData = {
     ...dataValue.value,
-    status: +status.value,
+    is_active: +status.value,
     ...(route.params.id && {_method: 'PUT'})
   };
 
   try {
+    let arr = compositions.value;
+    let result = {
+      meals: [],
+      product_types: []
+    };
+
+    for (let i = 0; i < arr.length; i++) {
+      const item = arr[i];
+
+      if (item.meal_id) {
+        result.meals.push({
+          id: item.meal_id,
+          quantity: item.quantity,
+          unit_id: item.unit_id
+        });
+      } else {
+        result.product_types.push({
+          id: item.product_type_id,
+          quantity: item.quantity,
+          unit_id: item.unit_id
+        });
+      }
+    }
+
     if (route.params.id) {
-      await store.UPDATE_RATION({id: route.params.id, data: rationData});
+      await store.UPDATE_RATION({
+        id: route.params.id,
+        data: {
+          ...rationData,
+          ...result
+        }
+      });
     } else {
-      await store.CREATE_RATION(rationData);
+      await store.CRETE_RATION({
+        ...result,
+        ...dataValue.value
+      });
     }
     ElNotification({title: 'Success', type: 'success'});
     await router.push('/reference-ration');
@@ -165,30 +225,20 @@ const handleSubmit = async () => {
 };
 
 
-const changeInput = (event: any, type: string, index: number) => {
-  store.GET_MEALS_VID_PRO({parent_id: event})
-
-  if (type === 'product_type') {
-    dataValue.value.compositions[index].compositionable_id = 2
-    dataValue.value.compositions[index].compositionable_type = 'product_type'
+const changeInput = async (event: any, type: string, index: number) => {
+  const data = await store.GET_MEALS_VID_PRO({parent_id: event})
+  if (data && data.product_types) {
+    store.dynamicVid.product_types[index] = data.product_types
   }
 }
-
-const changeMeal = (type: string, index: number) => {
-  if (type === 'meal') {
-    dataValue.value.compositions[index].compositionable_id = 1
-    dataValue.value.compositions[index].compositionable_type = 'meal'
-  }
-}
-
-const clearableFunc = (type: string, index: number) => {
-  dataValue.value.compositions[index].compositionable_id = null
-  dataValue.value.compositions[index].compositionable_type = null
-}
-
 const getUnitId = (id: number) => {
   if (id) {
     return store.units.units.find((e) => e.id === id).name
+  }
+}
+const getTypeProduct = (id: number) => {
+  if (id) {
+    return store.typeProduct.product_categories.find((e) => e.id === id).name
   }
 }
 
@@ -200,7 +250,6 @@ watch(() => route.name, () => {
 <template>
   <AppOverlay :loading="loading">
     <h1 class="m-0 font-semibold text-[32px] leading-[48px]">{{ route.meta.title }}</h1>
-    <pre>{{ dataValue.compositions }}</pre>
 
     <div class="flex items-start mt-[24px]">
       <div class="w-[70%]">
@@ -284,20 +333,14 @@ watch(() => route.name, () => {
           </AppForm>
 
           <template v-if="route.name === 'reference-ration-view-id'">
-            <el-table
-                :data="dataValue.compositions"
-                stripe
-                class="custom-element-table mt-[40px]"
-                :empty-text="'Нет доступных данных'"
-            >
-              <el-table-column
-                  prop="id"
-                  label="Состав"
-              />
-              <el-table-column
-                  prop="quantity"
-                  label="Количество"
-              />
+            <el-table :data="compositions" stripe class="custom-element-table mt-[40px]"
+                      :empty-text="'Нет доступных данных'">
+              <el-table-column prop="typeProduct" label="Состав">
+                <template #default="scope">
+                  {{ scope.row.typeProduct ? getTypeProduct(scope.row.typeProduct) : '-' }}
+                </template>
+              </el-table-column>
+              <el-table-column prop="quantity" label="Количество"/>
               <el-table-column prop="unit_id" label="Ед. измерения">
                 <template #default="scope">
                   {{ scope.row.unit_id ? getUnitId(scope.row.unit_id) : '-' }}
@@ -310,7 +353,7 @@ watch(() => route.name, () => {
             <h1 class="text-[#000D24] text-[18px] font-medium mb-[12px]">Состав рациона</h1>
 
             <div class=" pb-3 bg-[#F8F9FC] rounded-[16px] px-[12px]"
-                 v-for="(item, index) in dataValue.compositions"
+                 v-for="(item, index) in compositions"
                  :key="index as any"
             >
               <div class="grid grid-cols-5 gap-5 border-b  py-[16px]">
@@ -324,8 +367,7 @@ watch(() => route.name, () => {
                     itemValue="id"
                     itemLabel="name"
                     :items="store.meals.meals"
-                    @clear="clearableFunc('meal', index)"
-                    @change="changeMeal('meal', index)"
+
                 />
                 <app-select
                     v-model="item.typeProduct"
@@ -337,9 +379,9 @@ watch(() => route.name, () => {
                     itemValue="id"
                     itemLabel="name"
                     :items="store.typeProduct.product_categories"
-                    @clear="clearableFunc('product_type', index)"
                     @change="changeInput($event, 'product_type', index)"
                 />
+                <!--                @clear="clearableFunc('meal', index)"-->
                 <app-select
                     v-model="item.product_type_id"
                     label="Вид продукта"
@@ -348,8 +390,9 @@ watch(() => route.name, () => {
                     :disabled="item.meal_id"
                     itemValue="id"
                     itemLabel="name"
-                    :items="store.parentProductType.product_types"
+                    :items="store.dynamicVid.product_types[index]"
                 />
+                <!--                product_types-->
                 <app-input
                     v-model="item.quantity"
                     label="Количество"
