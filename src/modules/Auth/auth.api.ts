@@ -1,9 +1,9 @@
 import {
     AuthCreateDataType,
     AuthLoginDataType,
-    AuthLoginResponseType,
+    AuthLoginResponseType, ForgotPasswordDataType,
     SendCodeDataType,
-    UserType
+    UserType, VerifyCodeDataType
 } from "@/modules/Auth/auth.types";
 import axios from "@/plugins/axios/axios";
 
@@ -33,5 +33,13 @@ export default {
     async sendCode(data: SendCodeDataType) {
         const { data: sendCodeData } = await axios.post("/otp/send-code", data);
         return sendCodeData.data;
+    },
+
+    verifyCode(data: VerifyCodeDataType) {
+        return axios.post(`${prefix}/verify-code`, data);
+    },
+
+    forgotPassword(data: ForgotPasswordDataType) {
+        return axios.post(`${prefix}/forgot-password`, data);
     }
 };

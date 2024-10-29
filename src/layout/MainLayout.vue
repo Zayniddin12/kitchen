@@ -20,8 +20,8 @@ const childSidebarPin = ref<boolean>(JSON.parse(localStorage.getItem("child-side
 const childSidebar = ref<boolean>(JSON.parse(localStorage.getItem("child-sidebar" as string) || "false"));
 const margin = ref("ml-[396px]");
 
-onMounted(async () => {
-  if (getAccessToken()) await authStore.me();
+onMounted(() => {
+  if (getAccessToken()) authStore.me();
   // else await router.replace({ name: "login" });
   childSidebarPin.value = JSON.parse(localStorage.getItem("child-sidebar-pin") || "false");
   kitchenStore.fetchDepartments();

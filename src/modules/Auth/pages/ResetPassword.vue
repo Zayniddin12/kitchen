@@ -2,7 +2,7 @@
     setup
     lang="ts"
 >
-import { reactive, ref } from "vue";
+import { computed, onMounted, onUnmounted, reactive, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { ValidationType } from "@/components/ui/form/app-form/app-form.type";
@@ -11,14 +11,26 @@ import AppInput from "@/components/ui/form/app-input/AppInput.vue";
 import AppForm from "@/components/ui/form/app-form/AppForm.vue";
 import Footer from "@/components/ui/Footer.vue";
 import { ElNotification } from "element-plus";
-import { SendCodeDataType } from "@/modules/Auth/auth.types";
+import { ForgotPasswordDataType, SendCodeDataType, VerifyCodeDataType } from "@/modules/Auth/auth.types";
 import { useCommonStore } from "@/stores/common.store";
+import { useAuthStore } from "@/modules/Auth/auth.store";
 
 const router = useRouter();
+const authStore = useAuthStore();
 const commonStore = useCommonStore();
 
-const form = reactive<SendCodeDataType>({
+const form = reactive<VerifyCodeDataType>({
   phone: "",
+  code: "",
+  otp_session_id: ""
+});
+
+const confirmForm = reactive<ForgotPasswordDataType>({
+  new_password: "",
+  password_confirmation: "",
+  phone: "",
+  code: "",
+  otp_session_id: ""
 });
 
 const v$ = ref<ValidationType | null>(null);
@@ -27,13 +39,36 @@ const setValidation = (value: ValidationType) => {
   v$.value = value;
 };
 
-const onSubmit = async () => {
+const sendForm = async () => {
   if (!v$.value) return;
 
   if (!(await v$.value.validate())) return;
 
+  const newForm = { ...form };
 
+  newForm.phone = `998${newForm.phone.replace(/\D/g, "")}`;
+
+  if (authStore.otp) {
+    authStore.verifyCode({
+      ...newForm,
+      otp_session_id: authStore.otp.session_id
+    });
+  } else {
+    authStore.sendCode({
+      phone: newForm.phone
+    });
+  }
 };
+
+onMounted(() => {
+  authStore.getSessionOtp();
+  form.phone = authStore.otp?.phone ?? "";
+});
+
+onUnmounted(() => {
+  authStore.clearSessionOtp();
+});
+
 </script>
 
 <template>
@@ -52,39 +87,56 @@ const onSubmit = async () => {
           <span class="text-[#CBCCCE]">Фонд</span>
         </div>
       </header>
-
       <h1 class="text-dark text-xl font-bold text-center">Сброс пароля</h1>
       <p class="text-[#A8AAAE] text-[14px] mt-[6px] w-[90%] text-center">
         На данной странице Вы можете восстановить доступ к своему аккаунту. Введите Ваш номер телефона и система
         автоматически отправит Вам временный
         код для сброса пароля.
       </p>
-
       <AppForm
           :value="form"
           @validation="setValidation"
-          class="mt-[24px]"
+          class="mt-[24px] flex flex-col gap-y-1"
+          @submit.prevent="sendForm"
       >
-        <app-input
-            v-model="form.phone"
-            prop="phone"
-            type="tel"
-            placeholder="Введите номер телефона"
-            label="Номер телефона"
-            label-class="text-[#A8AAAE] text-sm"
-            required
-        />
-      </AppForm>
+        <template v-if="!authStore.otp || (authStore.otp && !authStore.otp.code)">
+          <AppInput
+              v-model="form.phone"
+              prop="phone"
+              type="tel"
+              placeholder="Введите номер телефона"
+              label="Номер телефона"
+              label-class="text-[#A8AAAE] text-sm"
+              required
+          />
+          <AppInput
+              v-if="authStore.otp"
+              v-model="form.code"
+              type="number"
+              placeholder="Введите отправленный код"
+              label="Код"
+              label-class="text-[#A8AAAE] text-sm"
+              required
+              :min="authStore.otp.code_length"
+              :max="authStore.otp.code_length"
+              :mask="'#'.repeat(authStore.otp.code_length)"
+              prop="code"
+          />
+        </template>
+        <template v-else>
 
-      <button
-          @click="onSubmit"
-          class="w-full bg-[#2E90FA] py-2.5 text-white rounded-lg mt-[25px]"
+        </template>
+      </AppForm>
+      <ElButton
+          :loading="authStore.codeLoading"
+          type="primary"
+          @click="sendForm"
+          class="w-full bg-[#2E90FA] py-2.5 h-11 text-white rounded-lg mt-4"
       >
         Отправить код
-      </button>
-
+      </ElButton>
       <button
-          class="flex mx-auto items-center justify-center mt-[22px] cursor-pointer"
+          class="flex mx-auto items-center justify-center mt-5 cursor-pointer"
           @click="router.go(-1)"
       >
         <img
