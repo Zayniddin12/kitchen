@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
 // import {isUserLoggedIn} from "./utils";
 import home from "@/modules/Home/router";
-import Inbox from "@/modules/Document/router";
+import Inbox from "@/modules/Document/document.routes";
 import Monitoring from "@/modules/Monitoring/router";
 import Settings from "@/modules/Settings/router";
 import Warehouse from "@/modules/WarehouseBases/router";

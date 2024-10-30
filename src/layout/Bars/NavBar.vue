@@ -215,7 +215,7 @@ const openModals = (data: any) => {
         </div>
       </div>
     </div>
-    <ComingModal v-model:editModal="editModal2" />
+    <ComingModal v-model="editModal2" />
     <ConsumptionModal v-model:editModal="editConsumptionModal" />
     <FreeModal v-model:editModal="freeModal" />
     <MonthlyModal v-model:editModal="monthlyModal" />

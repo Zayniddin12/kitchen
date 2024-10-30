@@ -140,16 +140,15 @@ export const useSettingsStore = defineStore("settingsStore", () => {
 
     const wareHouseItem = ref<WareHouseItemType | {}>({});
 
-
     // Документы Типы документов
     const GET_TYPE_DOCUMENT = async (params?: { search: string | null }) => {
-        const {data} = await $axios.get("/documents/categories", {params});
+        const {data} = await $axios.get("/document-types/categories", {params});
         typeDocument.value = data.data;
     };
 
 
     const GET_VID_DOCUMENT = async (params?: { search: string | null }) => {
-        const {data} = await $axios.get("/documents", {params});
+        const {data} = await $axios.get("/document-types", {params});
         vidDocument.value = data.data;
     };
 
