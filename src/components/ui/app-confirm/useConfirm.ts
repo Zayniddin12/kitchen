@@ -90,5 +90,6 @@ export default function() {
     openConfirmModal,
     activeConfirm,
     sendAction,
+    init
   };
 }

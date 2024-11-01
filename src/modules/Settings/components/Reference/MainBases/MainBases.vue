@@ -13,6 +13,7 @@ import {
 import { watchDebounced } from "@vueuse/core";
 import { filterObjectValues } from "@/utils/helper";
 import { useSettingsStore } from "@/modules/Settings/store";
+import { FoodFactoryListType } from "@/modules/Settings/components/Reference/CombineNutrition/combine-nutrition.type";
 
 const route = useRoute();
 const router = useRouter();
@@ -49,8 +50,8 @@ const setBreadCrumbFn = () => {
 };
 
 const fetchBaseWareHouses = async () => {
-  const perPage:number = parseInt(route.query.per_page as string);
-  const page:number = parseInt(route.query.page as string);
+  const perPage: number = parseInt(route.query.per_page as string);
+  const page: number = parseInt(route.query.page as string);
 
   if (!isNaN(perPage)) form.per_page = perPage;
   if (!isNaN(page)) form.page = page;
@@ -79,6 +80,9 @@ const changePage = () => {
   router.replace({ query: { ...route.query, page: form.page } });
 };
 
+const tableCurrentChange = (value: Record<string, any>) => {
+  router.push({ name: "reference-main-bases-view", params: { id: value.id } });
+};
 
 </script>
 
@@ -121,6 +125,8 @@ const changePage = () => {
           v-loading="settingsStore.baseWarehousesLoading"
           :data="settingsStore.baseWarehouses?.base_warehouses ?? []"
           stripe
+          highlight-current-row
+          @current-change.self="tableCurrentChange"
           class="custom-element-table"
       >
         <el-table-column
@@ -159,7 +165,7 @@ const changePage = () => {
             sortable
         >
           <template #default="{row}:{row:BaseWarehouseListType}">
-            {{row.products.map(item => item.name).join(", ")}}
+            {{ row.products.map(item => item.name).join(", ") }}
           </template>
         </el-table-column>
         <el-table-column

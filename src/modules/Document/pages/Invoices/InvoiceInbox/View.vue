@@ -1,9 +1,12 @@
 <script
-  setup
-  lang="ts"
+    setup
+    lang="ts"
 >
 import { ref, watchEffect } from "vue";
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
+import useConfirm from "@/components/ui/app-confirm/useConfirm";
+
+const { init } = useConfirm();
 
 interface TableData {
   name: string;
@@ -19,29 +22,29 @@ const tableData = ref<TableData[]>([
     count: "80",
     count2: "кг",
     cost: "22 000 сум",
-    sum: "1 760 000 сум",
+    sum: "1 760 000 сум"
   },
   {
     name: "Говядина",
     count: "30",
     count2: "кг",
     cost: "86 000 сум",
-    sum: "1 700 000 сум",
+    sum: "1 700 000 сум"
   },
   {
     name: "Горох",
     count: "50",
     count2: "кг",
     cost: "34 000 сум",
-    sum: "1 000 000 сум",
+    sum: "1 000 000 сум"
   },
   {
     name: "Морковь",
     count: "50",
     count2: "кг",
     cost: "20 000 сум",
-    sum: "1 760 000 сум",
-  },
+    sum: "1 760 000 сум"
+  }
 ]);
 
 const { setBreadCrumb } = useBreadcrumb();
@@ -49,25 +52,44 @@ const { setBreadCrumb } = useBreadcrumb();
 const setBreadCrumbFn = () => {
   setBreadCrumb([
     {
-      label: "Документы",
+      label: "Документы"
     },
     {
-      label: "Накладные",
+      label: "Накладные"
     },
     {
       label: "Входящие",
-      to: { name: "invoice-inbox" },
+      to: { name: "invoice-inbox" }
     },
     {
       label: "Просмотр",
-      isActionable: true,
-    },
+      isActionable: true
+    }
   ]);
 };
 
 watchEffect(() => {
   setBreadCrumbFn();
 });
+
+const accepted = () => {
+  init({
+    title: "Title",
+    description: "description",
+    buttons: [
+      {
+        status: "secondary",
+        action: "cancel",
+        label: "No"
+      },
+      {
+        status: "primary",
+        action: "confirm",
+        label: "Yes"
+      }
+    ]
+  });
+};
 
 </script>
 
@@ -77,8 +99,8 @@ watchEffect(() => {
       <div class="px-[72px] pb-[70px]">
         <header class="flex items-center justify-center my-[24px] mb-6">
           <img
-            src="@/assets/images/logo.svg"
-            alt="logo"
+              src="@/assets/images/logo.svg"
+              alt="logo"
           >
           <div class="flex flex-col ml-3">
             <b class="text-[#000D24] text-lg">NKMK</b>
@@ -96,9 +118,9 @@ watchEffect(() => {
           <!--pdf-->
           <div class="border rounded-lg py-[8px] px-[12px] flex items-start cursor-pointer">
             <img
-              src="@/assets/images/icons/pdf2.svg"
-              class="mr-[8px] mt-1"
-              alt="pdf"
+                src="@/assets/images/icons/pdf2.svg"
+                class="mr-[8px] mt-1"
+                alt="pdf"
             >
 
             <div>
@@ -152,29 +174,29 @@ watchEffect(() => {
         </div>
 
         <el-table
-          :data="tableData"
-          stripe
-          class="custom-element-table"
+            :data="tableData"
+            stripe
+            class="custom-element-table custom-element-table--has-append"
         >
           <el-table-column
-            prop="name"
-            label="Название"
+              prop="name"
+              label="Название"
           />
           <el-table-column
-            prop="count"
-            label="Количество"
+              prop="count"
+              label="Количество"
           />
           <el-table-column
-            prop="count2"
-            label="Ед. измерения"
+              prop="count2"
+              label="Ед. измерения"
           />
           <el-table-column
-            prop="cost"
-            label="Цена"
+              prop="cost"
+              label="Цена"
           />
           <el-table-column
-            prop="sum"
-            label="Сумма"
+              prop="sum"
+              label="Сумма"
           />
           <template #append>
             <div class="flex items-center justify-end p-4">
@@ -183,14 +205,22 @@ watchEffect(() => {
             </div>
           </template>
         </el-table>
+        <ElButton
+            class="flex ml-auto mt-5 px-10"
+            type="primary"
+            size="large"
+            @click="accepted"
+        >
+          Принят
+        </ElButton>
       </div>
     </div>
 
     <button class="custom-white-btn ml-[24px] w-[260px]">
       <img
-        src="@/assets/images/icons/plane.svg"
-        alt="plane"
-        class="mr-[12px]"
+          src="@/assets/images/icons/plane.svg"
+          alt="plane"
+          class="mr-[12px]"
       />
       Отправить
     </button>

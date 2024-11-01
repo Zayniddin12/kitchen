@@ -8,7 +8,7 @@ import { useRoute, useRouter } from "vue-router";
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 import { useSettingsStore } from "@/modules/Settings/store";
 import {
-  FoodFactoriesParamsType
+  FoodFactoriesParamsType, FoodFactoryListType
 } from "@/modules/Settings/components/Reference/CombineNutrition/combine-nutrition.type";
 import { filterObjectValues } from "@/utils/helper";
 import { watchDebounced } from "@vueuse/core";
@@ -52,12 +52,12 @@ const setBreadCrumbFn = () => {
 };
 
 const fetchFoodFactories = async () => {
-  const perPage = parseInt(route.query.per_page);
-  const page = parseInt(route.query.page);
+  const perPage = parseInt(route.query.per_page as string);
+  const page = parseInt(route.query.page as string);
 
   if (!isNaN(perPage)) form.per_page = perPage;
   if (!isNaN(page)) form.page = page;
-  form.search = route.query.search ?? "";
+  form.search = String(route.query.search ?? "");
 
   await settingsStore.fetchFoodFactories(filterObjectValues(form));
 
@@ -80,6 +80,10 @@ watchDebounced(() => form.search, () => {
 
 const changePage = () => {
   router.replace({ query: { ...route.query, page: form.page } });
+};
+
+const tableCurrentChange = (value: FoodFactoryListType) => {
+  router.push({ name: "reference-combine-nutrition-view", params: { id: value.id } });
 };
 
 </script>
@@ -128,14 +132,21 @@ const changePage = () => {
           :data="settingsStore.foodFactories?.food_factories ?? []"
           stripe
           class="custom-element-table"
+          highlight-current-row
+          @current-change="tableCurrentChange"
       >
         <el-table-column
             prop="idx"
             label="№"
             width="80"
         >
-          <template #default="{$index}" v-if="settingsStore.foodFactories">
-            {{form.page >1 ? settingsStore.foodFactories.paginator.per_page*(form.page-1) + $index + 1 : $index +1 }}
+          <template
+              #default="{$index}"
+              v-if="settingsStore.foodFactories"
+          >
+            {{
+              form.page > 1 ? settingsStore.foodFactories.paginator.per_page * (form.page - 1) + $index + 1 : $index + 1
+            }}
           </template>
         </el-table-column>
         <el-table-column

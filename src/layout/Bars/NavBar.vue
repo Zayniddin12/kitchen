@@ -1,9 +1,9 @@
 <script
-  setup
-  lang="ts"
+    setup
+    lang="ts"
 >
 import { Search } from "@element-plus/icons-vue";
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 import Language from "@/components/language/index.vue";
 import MemoModal from "@/layout/Create/components/MemoModal.vue";
 import ComingModal from "@/layout/Create/components/ComingModal.vue";
@@ -12,6 +12,7 @@ import FreeModal from "@/layout/Create/components/FreeModal.vue";
 import MonthlyModal from "@/layout/Create/components/MonthlyModal.vue";
 import YearlyModal from "@/layout/Create/components/YearlyModal.vue";
 import ThemeToggler from "@/layout/Bars/ThemeToggler.vue";
+import { useSettingsStore } from "@/modules/Settings/store";
 
 const editModal = ref<boolean>(false);
 const editModal2 = ref<boolean>(false);
@@ -22,56 +23,40 @@ const yearlyModal = ref<boolean>(false);
 const dropdown = ref<any>(null);
 const input1 = ref<string>("");
 
-const navbarMenuList = [
-  {
-    id: 1,
-    title: "Служебная записка",
-  },
-  {
-    id: 2,
-    title: "Приход",
-  },
-  {
-    id: 3,
-    title: "Расход",
-  },
-  {
-    id: 4,
-    title: "Запрос",
-    children: [
-      {
-        id: 5,
-        title: "Свободный",
-      },
-      {
-        id: 6,
-        title: "Месячный",
-      },
-      {
-        id: 7,
-        title: "Годовой",
-      },
-    ],
-  },
-];
+const settingsStore = useSettingsStore();
 
-const openModals = (data: any) => {
-  if (data.id == 1) {
-    editModal.value = true;
-  } else if (data.id == 2) {
-    editModal2.value = true;
-  } else if (data.id == 3) {
-    editConsumptionModal.value = true;
-  } else if (data.id == 5) {
-    freeModal.value = true;
-  } else if (data.id == 6) {
-    monthlyModal.value = true;
-  } else if (data.id == 7) {
-    yearlyModal.value = true;
+const docTypeId = ref<number | null>(null);
+
+const openModal = (id: number) => {
+  switch (id) {
+    case 1:
+      editModal.value = true;
+      break;
+    case 7:
+      editModal2.value = true;
+      break;
+    case 11:
+      editConsumptionModal.value = true;
+      break;
+    case 3:
+      freeModal.value = true;
+      break;
+    case 4:
+      monthlyModal.value = true;
+      break;
+    case 5:
+      yearlyModal.value = true;
   }
+
+  docTypeId.value = id;
 
   dropdown.value.handleClose();
 };
+
+onMounted(() => {
+  settingsStore.getDocTypeList();
+});
+
 </script>
 
 <template>
@@ -79,49 +64,47 @@ const openModals = (data: any) => {
     <div class="relative">
       <div class="relative">
         <el-icon
-          class="absolute top-[50%] translate-y-[-50%] left-[19px]"
-          color="#8F9194"
+            class="absolute top-[50%] translate-y-[-50%] left-[19px]"
+            color="#8F9194"
         >
-          <Search />
+          <Search/>
         </el-icon>
         <input
-          v-model="input1"
-          class="bg-white-blue dark:bg-dark w-[552px] rounded-2xl text-black px-[16px] py-[12px] pl-[50px] outline-none"
-          placeholder="Поиск"
+            v-model="input1"
+            class="bg-white-blue dark:bg-dark w-[552px] rounded-2xl text-black px-[16px] py-[12px] pl-[50px] outline-none"
+            placeholder="Поиск"
         />
       </div>
 
       <div
-        class="bg-[#F8F9FC] text-gray-900 shadow-md border absolute w-full rounded-md mt-[5px]"
-        v-if="input1 && input1.length > 0"
+          class="bg-[#F8F9FC] text-gray-900 shadow-md border absolute w-full rounded-md mt-[5px]"
+          v-if="input1 && input1.length > 0"
       >
         <router-link
-          v-for="(index3) in 10"
-          :key="index3"
-          class="px-4 py-2 block"
-          to="#"
+            v-for="(index3) in 10"
+            :key="index3"
+            class="px-4 py-2 block"
+            to="#"
         >
           lorem ipsum dolor
         </router-link>
       </div>
     </div>
 
-    <MemoModal v-model:editModal="editModal" />
-
     <!----------Создать modal---------->
     <div class="flex items-center gap-6">
       <el-dropdown
-        trigger="click"
-        :hide-on-click="false"
-        ref="dropdown"
+          trigger="click"
+          :hide-on-click="false"
+          ref="dropdown"
       >
         <button
-          class="flex items-center bg-[#2E90FA] rounded-[8px] border-[1.5px] py-[10px] px-[20px] active:bg-[#175CD3] active:border-[#1849A9] active:border-[1.5px]"
+            class="flex items-center bg-[#2E90FA] rounded-[8px] border-[1.5px] py-[10px] px-[20px] active:bg-[#175CD3] active:border-[#1849A9] active:border-[1.5px]"
         >
           <img
-            src="@/assets/images/icons/plus.svg"
-            class="mr-[8px]"
-            alt="plus"
+              src="@/assets/images/icons/plus.svg"
+              class="mr-[8px]"
+              alt="plus"
           />
 
           <span class="text-white vertical-mid">Создать</span>
@@ -129,52 +112,52 @@ const openModals = (data: any) => {
         <template #dropdown>
           <el-dropdown-menu class="navbar-dropdown">
             <el-dropdown-item
-              class="item-drop"
-              v-for="(item, in1) in navbarMenuList"
-              :key="in1"
+                class="item-drop"
+                v-for="(item, in1) in settingsStore.docTypeList"
+                :key="in1"
             >
               <button
-                @click="openModals(item)"
-                v-if="!item.children"
-                class="flex items-center justify-between p-[10px] w-full"
+                  @click="openModal(item.id)"
+                  v-if="!item.childs.length"
+                  class="flex items-center justify-between p-[10px] h-[42px] w-full"
               >
-                <span class="text-[#4F5662] text-[14px] font-medium mr-[4px]">{{ item.title }}</span>
+                <span class="text-[#4F5662] text-[14px] font-medium mr-[4px]">{{ item.name }}</span>
                 <img
-                  v-if="in1 !== 0"
-                  src="@/assets/arrow-right.svg"
-                  alt="arrow icon"
+                    v-if="in1 !== 0"
+                    src="@/assets/arrow-right.svg"
+                    alt="arrow icon"
                 />
               </button>
               <el-dropdown
-                trigger="click"
-                class="w-full"
-                placement="right-start"
-                popper-class="custom-dropdown"
-                v-else
+                  trigger="click"
+                  class="w-full"
+                  placement="right-start"
+                  popper-class="custom-dropdown"
+                  v-else
               >
-                <button class="flex items-center justify-between p-[10px] w-full">
-                  <span class="text-[#4F5662] text-[14px] font-medium mr-[4px]">{{ item.title }}</span>
+                <button class="flex items-center justify-between h-[42px] p-[10px] w-full">
+                  <span class="text-[#4F5662] text-[14px] font-medium mr-[4px]">{{ item.name }}</span>
                   <img
-                    src="@/assets/arrow-right.svg"
-                    alt="arrow icon"
+                      src="@/assets/arrow-right.svg"
+                      alt="arrow icon"
                   />
                 </button>
 
                 <template #dropdown>
-                  <el-dropdown-menu class="navbar-dropdown right-[20px]">
+                  <el-dropdown-menu class="navbar-dropdown right-5">
                     <el-dropdown-item
-                      class="item-drop"
-                      v-for="(child, index) in item.children"
-                      :key="index"
+                        class="item-drop"
+                        v-for="(child, index) in item.childs"
+                        :key="index"
                     >
                       <button
-                        @click="openModals(child)"
-                        class="flex items-center justify-between p-[10px] w-full"
+                          @click="openModal(child.id)"
+                          class="flex items-center justify-between p-[10px] w-full"
                       >
-                        <span class="text-[#4F5662] text-[14px] font-medium mr-12">{{ child.title }}</span>
+                        <span class="text-[#4F5662] text-[14px] font-medium mr-12">{{ child.name }}</span>
                         <img
-                          src="@/assets/arrow-right.svg"
-                          alt="arrow icon"
+                            src="@/assets/arrow-right.svg"
+                            alt="arrow icon"
                         />
                       </button>
                     </el-dropdown-item>
@@ -186,16 +169,15 @@ const openModals = (data: any) => {
           </el-dropdown-menu>
         </template>
       </el-dropdown>
-
-      <ThemeToggler v-if="false" />
+      <ThemeToggler v-if="false"/>
 
       <el-badge
-        value="18"
-        class="item cursor-pointer"
+          value="18"
+          class="item cursor-pointer"
       >
         <img
-          src="@/assets/images/icons/bell.svg"
-          alt="bell"
+            src="@/assets/images/icons/bell.svg"
+            alt="bell"
         />
       </el-badge>
 
@@ -203,9 +185,9 @@ const openModals = (data: any) => {
 
       <div class="flex items-center gap-3">
         <img
-          src="@/assets/images/avatar.png"
-          class="h-[40px] w-[40px] object-contain rounded-full"
-          alt="avatar"
+            src="@/assets/images/avatar.png"
+            class="h-[40px] w-[40px] object-contain rounded-full"
+            alt="avatar"
         />
         <div class="flex flex-col">
           <h2 class="m-0 text-[14px] font-medium text-black dark:text-white">
@@ -215,11 +197,30 @@ const openModals = (data: any) => {
         </div>
       </div>
     </div>
-    <ComingModal v-model="editModal2" />
-    <ConsumptionModal v-model:editModal="editConsumptionModal" />
-    <FreeModal v-model:editModal="freeModal" />
-    <MonthlyModal v-model:editModal="monthlyModal" />
-    <YearlyModal v-model:editModal="yearlyModal" />
+    <MemoModal
+        v-model="editModal"
+        :id="docTypeId"
+    />
+    <ComingModal
+        v-model="editModal2"
+        :id="docTypeId"
+    />
+    <ConsumptionModal
+        v-model="editConsumptionModal"
+        :id="docTypeId"
+    />
+    <FreeModal
+        v-model="freeModal"
+        :id="docTypeId"
+    />
+    <MonthlyModal
+        v-model="monthlyModal"
+        :id="docTypeId"
+    />
+    <YearlyModal
+        v-model="yearlyModal"
+        :id="docTypeId"
+    />
     <!----------Создать modal---------->
   </div>
 </template>

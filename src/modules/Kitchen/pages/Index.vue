@@ -5,7 +5,7 @@
 
 import { computed, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { useKitchenStore } from "@/modules/Kitchen/store/kitchen.store";
+import { useKitchenStore } from "@/modules/Kitchen/kitchen.store";
 import medicalKitchenIcon from "@/assets/images/icons/kitchen/medical-kitchen.svg";
 import kitchenIcon from "@/assets/images/icons/kitchen/kitchen.svg";
 import cookieIcon from "@/assets/images/icons/kitchen/cookie.svg";

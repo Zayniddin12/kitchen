@@ -5,8 +5,11 @@
 import AppInput from "@/components/ui/form/app-input/AppInput.vue";
 import useConfirm from "@/components/ui/app-confirm/useConfirm";
 import { togglePageScrolling } from "@/utils/helper";
+import { ModalPropsType, ModalValueType } from "@/layout/Create/components/modal.types";
 
-const model = defineModel<boolean>();
+const model = defineModel<ModalValueType>();
+
+const props = defineProps<ModalPropsType>();
 
 const { confirm } = useConfirm();
 

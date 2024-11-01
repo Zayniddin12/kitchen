@@ -8,7 +8,7 @@ import AppSelect from "@/components/ui/form/app-select/AppSelect.vue";
 import AppInput from "@/components/ui/form/app-input/AppInput.vue";
 import { computed, onMounted, reactive, ref, watch, watchEffect } from "vue";
 import { formatDate } from "@/utils/helper";
-import { useKitchenStore } from "@/modules/Kitchen/store/kitchen.store";
+import { useKitchenStore } from "@/modules/Kitchen/kitchen.store";
 import PlusIcon from "@/assets/images/icons/plus.svg";
 import { TableColumnType } from "@/types/common.type";
 import { useRoute, useRouter } from "vue-router";

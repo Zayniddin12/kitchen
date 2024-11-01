@@ -10,9 +10,15 @@ import useConfirm from "@/components/ui/app-confirm/useConfirm";
 import { DocumentCreateDataType } from "@/modules/Document/document.types";
 import { ValidationType } from "@/components/ui/form/app-form/app-form.type";
 import AppForm from "@/components/ui/form/app-form/AppForm.vue";
-import { reactive, ref } from "vue";
+import { reactive, ref, watch } from "vue";
+import { ModalPropsType, ModalValueType } from "@/layout/Create/components/modal.types";
+import { useSettingsStore } from "@/modules/Settings/store";
 
-const model = defineModel<boolean>();
+const model = defineModel<ModalValueType>();
+
+const props = defineProps<ModalPropsType>();
+
+const settingsStore = useSettingsStore();
 
 const form = reactive<DocumentCreateDataType>({
   parent_id: 0,
@@ -92,6 +98,12 @@ const closeModal = () => {
 };
 
 const editModal = ref<boolean>(false);
+
+watch(model, (newValue) => {
+  if (newValue) {
+    settingsStore.fetchRespondents();
+  }
+});
 
 </script>
 
@@ -179,7 +191,7 @@ const editModal = ref<boolean>(false);
             <el-table
                 :data="tableData"
                 stripe
-                class="custom-element-table"
+                class="custom-element-table custom-element-table--has-append"
                 header-cell-class-name="custom-cell-header"
                 cell-class-name="custom-cell-header"
             >
@@ -254,11 +266,20 @@ const editModal = ref<boolean>(false);
             <AppSelect
                 placeholder="От кого"
                 label="От кого"
+                :items="settingsStore.respondents"
+                item-label="name"
+                :loading="settingsStore.respondentsLoading"
                 label-class="text-[#A8AAAE] text-xs font-medium"
             >
+              <ElOption
+                  v-for="item in settingsStore.respondents"
+                  :key="`${item.id}_${item.model_type}`"
+                  :value="`${item.id}_${item.model_type}`"
+                  :label="item.name"
+              />
               <template #footer>
                 <button
-                    @click.self="editModal = true"
+                    @click.stop="editModal = true"
                     class="flex items-center justify-center gap-3 border-[1px] border-[#2E90FA] rounded-[8px] w-full text-[#2E90FA] text-sm font-medium py-[10px]"
                 >
                 <span
@@ -277,11 +298,41 @@ const editModal = ref<boolean>(false);
                 </button>
               </template>
             </AppSelect>
-            <AppInput
-                placeholder="Руководитель группы отдела координации..."
+            <AppSelect
+                placeholder="Кому"
                 label="Кому"
+                :items="settingsStore.respondents"
+                item-label="name"
+                :loading="settingsStore.respondentsLoading"
                 label-class="text-[#A8AAAE] text-xs font-medium"
-            />
+            >
+              <ElOption
+                  v-for="item in settingsStore.respondents"
+                  :key="`${item.id}_${item.model_type}`"
+                  :value="`${item.id}_${item.model_type}`"
+                  :label="item.name"
+              />
+              <template #footer>
+                <button
+                    @click.stop="editModal = true"
+                    class="flex items-center justify-center gap-3 border-[1px] border-[#2E90FA] rounded-[8px] w-full text-[#2E90FA] text-sm font-medium py-[10px]"
+                >
+                <span
+                    :style="{
+                  maskImage: 'url(/icons/plusIcon.svg)',
+                  backgroundColor: '#2E90FA',
+                  color: '#2E90FA',
+                  width: '20px',
+                  height: '20px',
+                  maskSize: '20px',
+                  maskPosition: 'center',
+                  maskRepeat: 'no-repeat'
+                   }"
+                ></span>
+                  Добавить
+                </button>
+              </template>
+            </AppSelect>
             <AppInput
                 placeholder="Через кого"
                 label="Через кого"
@@ -576,38 +627,13 @@ const editModal = ref<boolean>(false);
             <span class="block text-[#4F5662] text-sm font-medium mb-[16px]">
                 Состав комиссии приема продуктов
             </span>
-
-              <AppSelect
-                  placeholder="Кладовщик  Эргашева Л."
-                  label="Кладовщик"
-                  label-class="text-[#A8AAAE] text-xs font-medium"
-              />
-              <AppSelect
-                  placeholder="Товаровед  Жалилов М."
-                  label="Товаровед"
-                  label-class="text-[#A8AAAE] text-xs font-medium"
-              />
-              <AppSelect
-                  placeholder="Экспедитор  Акромов О."
-                  label="Экспедитор"
-                  label-class="text-[#A8AAAE] text-xs font-medium"
-              />
-              <AppSelect
-                  placeholder="Зав. склад  Каххоров А."
-                  label="Зав. склад"
-                  label-class="text-[#A8AAAE] text-xs font-medium"
-              />
               <AppSelect
                   placeholder="Начальник базы  Маликов Б."
                   label="Начальник базы"
                   label-class="text-[#A8AAAE] text-xs font-medium"
               />
-
             </div>
-
           </div>
-
-
         </div>
       </div>
     </AppForm>
@@ -615,7 +641,8 @@ const editModal = ref<boolean>(false);
       <button
           class="custom-cancel-btn"
           @click="closeModal"
-      >Отменить
+      >
+        Отменить
       </button>
       <button class="custom-send-btn">Отправить</button>
     </div>

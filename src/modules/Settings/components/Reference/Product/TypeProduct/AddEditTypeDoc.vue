@@ -124,7 +124,7 @@ const setDisabled = computed(() => {
   return route.name === 'reference-type-product-view-id';
 })
 
-watch(route.name, () => {
+watch(() =>route.name, () => {
   setBreadCrumbFn()
 }, {immediate: true});
 </script>
