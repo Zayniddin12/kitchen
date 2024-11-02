@@ -213,20 +213,19 @@ const logOut = () => {
       </div>
 
       <!------------------------log out---------------------------->
-      <ElButton
+      <button
           class="mb-[10px] h-[45px] "
           @click.stop="logOut"
           plain
-          type="text"
       >
-        <div class="flex flex-col items-center">
+        <span class="flex flex-col items-center">
           <img
               src="@/assets/images/logout.svg"
               alt="logout"
           />
           <span class="text-[#EA5455] text-[14px] font-medium block">Выход</span>
-        </div>
-      </ElButton>
+        </span>
+      </button>
     </div>
   </div>
 </template>

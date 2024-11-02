@@ -107,7 +107,14 @@ export const deepEqual = (obj1: Record<string, any>, obj2: Record<string, any>) 
 };
 
 export const formatTime = (seconds: number): string => {
-    const minutes = Math.floor(seconds / 60).toString().padStart(2, '0');
-    const remainingSeconds = (seconds % 60).toString().padStart(2, '0');
+    const minutes = Math.floor(seconds / 60).toString().padStart(2, "0");
+    const remainingSeconds = (seconds % 60).toString().padStart(2, "0");
     return `${minutes}:${remainingSeconds}`;
-}
+};
+
+export const formatDate2 = (date: Date) => {
+    const day = String(date.getDate()).padStart(2, "0");
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const year = date.getFullYear();
+    return `${day}.${month}.${year}`;
+};

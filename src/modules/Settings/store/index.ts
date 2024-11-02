@@ -292,8 +292,14 @@ export const useSettingsStore = defineStore("settingsStore", () => {
     };
 
     // поставщика
+    const createProviderLoading = ref(false);
     const CREATE_PROVIDERS = (data: any) => {
-        return $axios.post("/providers", data);
+        createProviderLoading.value = true;
+        try {
+            $axios.post("/providers", data);
+        } finally {
+            createProviderLoading.value = false;
+        }
     };
 
     const UPDATE_PROVIDERS = ({ id, data }: { id: string | number; data: any }) => {
@@ -581,6 +587,7 @@ export const useSettingsStore = defineStore("settingsStore", () => {
         respondents,
         respondentsLoading,
         fetchRespondents,
+        createProviderLoading,
 
 
         // dilshod

@@ -97,6 +97,9 @@ const clear = (value: any) => {
       class="app-select__select"
       @change="change"
       @clear="clear"
+      :remote-method
+      :remote-show-suffix
+      :remote
     >
       <template v-if="(items && items.length && itemLabel && itemValue) && !slots.default">
         <ElOption

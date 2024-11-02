@@ -13,6 +13,7 @@ import MonthlyModal from "@/layout/Create/components/MonthlyModal.vue";
 import YearlyModal from "@/layout/Create/components/YearlyModal.vue";
 import ThemeToggler from "@/layout/Bars/ThemeToggler.vue";
 import { useSettingsStore } from "@/modules/Settings/store";
+import { DocTypeListType } from "@/modules/Settings/settings.types";
 
 const editModal = ref<boolean>(false);
 const editModal2 = ref<boolean>(false);
@@ -26,9 +27,10 @@ const input1 = ref<string>("");
 const settingsStore = useSettingsStore();
 
 const docTypeId = ref<number | null>(null);
+const docTypeName = ref<string>("");
 
-const openModal = (id: number) => {
-  switch (id) {
+const openModal = (item: DocTypeListType) => {
+  switch (item.id) {
     case 1:
       editModal.value = true;
       break;
@@ -48,7 +50,8 @@ const openModal = (id: number) => {
       yearlyModal.value = true;
   }
 
-  docTypeId.value = id;
+  docTypeId.value = item.id;
+  docTypeName.value = item.name;
 
   dropdown.value.handleClose();
 };
@@ -117,7 +120,7 @@ onMounted(() => {
                 :key="in1"
             >
               <button
-                  @click="openModal(item.id)"
+                  @click="openModal(item)"
                   v-if="!item.childs.length"
                   class="flex items-center justify-between p-[10px] h-[42px] w-full"
               >
@@ -151,7 +154,7 @@ onMounted(() => {
                         :key="index"
                     >
                       <button
-                          @click="openModal(child.id)"
+                          @click="openModal(child)"
                           class="flex items-center justify-between p-[10px] w-full"
                       >
                         <span class="text-[#4F5662] text-[14px] font-medium mr-12">{{ child.name }}</span>
@@ -200,26 +203,32 @@ onMounted(() => {
     <MemoModal
         v-model="editModal"
         :id="docTypeId"
+        :name="docTypeName"
     />
     <ComingModal
         v-model="editModal2"
         :id="docTypeId"
+        :name="docTypeName"
     />
     <ConsumptionModal
         v-model="editConsumptionModal"
         :id="docTypeId"
+        :name="docTypeName"
     />
     <FreeModal
         v-model="freeModal"
         :id="docTypeId"
+        :name="docTypeName"
     />
     <MonthlyModal
         v-model="monthlyModal"
         :id="docTypeId"
+        :name="docTypeName"
     />
     <YearlyModal
         v-model="yearlyModal"
         :id="docTypeId"
+        :name="docTypeName"
     />
     <!----------Создать modal---------->
   </div>

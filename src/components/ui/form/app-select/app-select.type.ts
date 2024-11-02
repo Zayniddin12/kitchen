@@ -23,5 +23,8 @@ export interface AppSelectPropsType extends ElFormItemType {
     teleported?: boolean,
     persistent?: boolean,
     automaticDropdown?: boolean,
-    placement?: Placement
+    placement?: Placement,
+    remoteMethod?: () => void,
+    remote?: boolean,
+    remoteShowSuffix?: boolean
 }

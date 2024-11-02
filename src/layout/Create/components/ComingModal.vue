@@ -5,14 +5,30 @@
 import AppInput from "@/components/ui/form/app-input/AppInput.vue";
 import AppSelect from "@/components/ui/form/app-select/AppSelect.vue";
 import AppDatePicker from "@/components/ui/form/app-date-picker/AppDatePicker.vue";
-import FromWhoModal from "@/layout/Create/components/FromWhoModal.vue";
 import useConfirm from "@/components/ui/app-confirm/useConfirm";
-import { DocumentCreateDataType } from "@/modules/Document/document.types";
+import { DocumentCreateDataType, DocumentProductType } from "@/modules/Document/document.types";
 import { ValidationType } from "@/components/ui/form/app-form/app-form.type";
 import AppForm from "@/components/ui/form/app-form/AppForm.vue";
-import { reactive, ref, watch } from "vue";
+import { computed, reactive, ref, watch } from "vue";
 import { ModalPropsType, ModalValueType } from "@/layout/Create/components/modal.types";
 import { useSettingsStore } from "@/modules/Settings/store";
+import { deepEqual, formatDate2, formatNumber, togglePageScrolling } from "@/utils/helper";
+import { useCommonStore } from "@/stores/common.store";
+import deleteIcon from "@/assets/images/icons/delete-danger-icon.svg";
+
+interface ProviderFormType {
+  name: string,
+  oked: number | null,
+  address: string,
+  tin: number | null,
+  license: string,
+  sertificate: string,
+  sert_end_date: string,
+  director: string,
+  phone: string,
+}
+
+const commonStore = useCommonStore();
 
 const model = defineModel<ModalValueType>();
 
@@ -20,18 +36,48 @@ const props = defineProps<ModalPropsType>();
 
 const settingsStore = useSettingsStore();
 
+const date = ref(formatDate2(new Date()));
+
 const form = reactive<DocumentCreateDataType>({
-  parent_id: 0,
-  doc_type_id: 0,
+  doc_type_id: null,
   date: "",
   number: "",
-  to_provider_id: 0,
+  from_id: null,
+  from_type: "",
+  to_id: null,
+  to_type: "",
+  subject: "",
   through_whom: "",
   content: "",
   basis: "",
   shipping_method: "",
   status: "",
-  products: []
+  products: [
+    {
+      product_type_id: "",
+      quantity: null,
+      unit_id: "",
+      price: null
+    }
+  ]
+});
+
+const from = computed<string>(() => {
+  if (!form.from_id || !form.from_type) return "";
+  const activeEl = settingsStore.respondents.find(el => el.model_type === form.from_type && el.id === form.from_id);
+
+  if (!activeEl) return "";
+
+  return activeEl.name;
+});
+
+const to = computed<string>(() => {
+  if (!form.to_id || !form.to_type) return "";
+  const activeEl = settingsStore.respondents.find(el => el.model_type === form.to_type && el.id === form.to_id);
+
+  if (!activeEl) return "";
+
+  return activeEl.name;
 });
 
 const v$ = ref<ValidationType | null>(null);
@@ -88,22 +134,135 @@ const tableData = ref<TableData[]>([
   }
 ]);
 
+const getProductTypeTitle = (id: number) => {
+  return settingsStore.vidProduct.product_types.find((el: Record<string, any>) => el.id === id)?.name ?? "";
+};
+
+const getProductMeasurement = (id: number) => {
+  return settingsStore.units.units.find((el: Record<string, any>) => el.id === id)?.name ?? "";
+};
+
+const productsTotalSum = computed(() => {
+  return form.products.reduce((sum: number, product: DocumentProductType) => {
+    return sum + Number(product.price && product.quantity ? (product.price * product.quantity) : 0);
+  }, 0);
+});
+
+const createProduct = () => {
+  form.products.push({
+    product_type_id: "",
+    quantity: null,
+    unit_id: "",
+    price: null
+  });
+};
+
+const deleteProduct = (index: number) => {
+  form.products.splice(index, 1);
+};
+
+const fetchRespondents = (search = "") => {
+  settingsStore.fetchRespondents();
+};
+
 const { confirm } = useConfirm();
 
 const closeModal = () => {
   // Let it come out when the form changes
   confirm.cancel({ disabledBody: true }).then((response) => {
     model.value = false;
+
+    if (v$.value) {
+      v$.value.clearValidate();
+      v$.value.resetForm();
+    }
   });
 };
 
-const editModal = ref<boolean>(false);
+const openModal = () => {
+  form.doc_type_id = props.id;
+  fetchRespondents();
+  settingsStore.GET_TYPE_PRODUCT();
+  settingsStore.GET_UNITS();
+};
 
 watch(model, (newValue) => {
-  if (newValue) {
-    settingsStore.fetchRespondents();
-  }
+  if (newValue) openModal();
 });
+
+const respondentChange = (value: string, type: "from" | "to") => {
+  const values = value.split("_");
+  form[`${type}_id`] = Number(values[0]);
+  form[`${type}_type`] = values[1];
+
+};
+
+const providerForm = reactive<ProviderFormType>({
+  name: "",
+  oked: null,
+  address: "",
+  tin: null,
+  license: "",
+  sertificate: "",
+  sert_end_date: "",
+  director: "",
+  phone: ""
+});
+
+const oldProviderForm = ref<null | ProviderFormType>(null);
+
+const providerV$ = ref<null | ValidationType>(null);
+
+const clearProviderV$ = () => {
+  if (!providerV$.value) return;
+
+  providerV$.value.clearValidate();
+  providerV$.value.resetForm();
+};
+
+const sendProviderForm = async () => {
+  if (!providerV$.value) return;
+
+  if (!(await providerV$.value.validate())) return;
+
+  const newForm = { ...providerForm };
+  newForm.phone = `998${newForm.phone}`;
+
+  await settingsStore.CREATE_PROVIDERS(newForm);
+  providerCreateModal.value = false;
+  clearProviderV$();
+  commonStore.successToast();
+  fetchRespondents();
+};
+
+const providerCreateModal = ref<boolean>(false);
+
+const providerCreateModalClose = async () => {
+  if (oldProviderForm.value && !deepEqual(providerForm, oldProviderForm.value)) {
+    const response = await confirm.cancel();
+    if (response === "save") {
+      await sendProviderForm();
+    } else {
+      clearProviderV$();
+    }
+
+    togglePageScrolling(true);
+
+    return;
+  }
+
+  providerCreateModal.value = false;
+};
+
+const providerCreateModalOpen = () => {
+  oldProviderForm.value = { ...providerForm };
+};
+
+
+watch(providerCreateModal, (newMProviderModal) => {
+  if (newMProviderModal) providerCreateModalOpen();
+});
+
 
 </script>
 
@@ -140,7 +299,7 @@ watch(model, (newValue) => {
 
             <div class="flex mb-[8px]">
               <h1 class="text-[#4F5662] text-sm font-medium">Дата создания в системе:</h1>
-              <span class="ml-2 text-[#A8AAAE] text-sm font-medium block">24.08.2024</span>
+              <span class="ml-2 text-[#A8AAAE] text-sm font-medium block">{{ date }}</span>
             </div>
 
             <div class="flex mb-[24px]">
@@ -150,46 +309,46 @@ watch(model, (newValue) => {
 
             <div class="flex mb-[8px]">
               <h1 class="text-[#4F5662] text-sm font-medium">Дата накладной:</h1>
-              <span class="ml-2 text-[#A8AAAE] text-sm font-medium block">24.08.2024</span>
+              <span class="ml-2 text-[#A8AAAE] text-sm font-medium block">{{ form.date ?? "Нет" }}</span>
             </div>
 
             <div class="flex mb-[24px]">
               <h1 class="text-[#4F5662] text-sm font-medium">№ накладной:</h1>
-              <span class="ml-2 text-[#A8AAAE] text-sm font-medium block">247</span>
+              <span class="ml-2 text-[#A8AAAE] text-sm font-medium block">{{ form.number }}</span>
             </div>
 
             <div class="flex mb-[24px]">
               <h1 class="text-[#4F5662] text-sm font-medium">Вид документа:</h1>
-              <span class="ml-2 text-[#A8AAAE] text-sm font-medium block">Входящий накладной</span>
+              <span class="ml-2 text-[#A8AAAE] text-sm font-medium block">{{ name }}</span>
             </div>
 
             <div class="flex items-center mb-[8px]">
               <h1 class="text-[#4F5662] text-sm font-medium">От кого:</h1>
-              <span class="ml-2 text-[#A8AAAE] text-sm font-medium block">Руководитель группы отдела координации общественного питания</span>
+              <span class="ml-2 text-[#A8AAAE] text-sm font-medium block">{{ from }}</span>
             </div>
 
             <div class="flex mb-[8px]">
               <h1 class="text-[#4F5662] text-sm font-medium">Кому:</h1>
-              <span class="ml-2 text-[#A8AAAE] text-sm font-medium block">«Фонд НКМК» ДМ «Навоийской» областной администрации, руководитель комплекса общественного питания Баракаеву Д.</span>
+              <span class="ml-2 text-[#A8AAAE] text-sm font-medium block">{{ to }}</span>
             </div>
 
             <div class="flex mb-[24px]">
               <h1 class="text-[#4F5662] text-sm font-medium whitespace-nowrap">Через кого:</h1>
-              <span class="ml-2 text-[#A8AAAE] text-sm font-medium block">«Фонд НКМК» ДМ «Навоийской» областной администрации, руководитель комплекса общественного питания Баракаеву Д.</span>
+              <span class="ml-2 text-[#A8AAAE] text-sm font-medium block">{{ form.through_whom }}</span>
             </div>
 
             <div class="flex mb-[8px]">
               <h1 class="text-[#4F5662] text-sm font-medium">Основание: </h1>
-              <span class="ml-2 text-[#A8AAAE] text-sm font-medium block">Назначение №2392</span>
+              <span class="ml-2 text-[#A8AAAE] text-sm font-medium block">{{ form.basis }}</span>
             </div>
 
             <div class="flex mb-[24px]">
               <h1 class="text-[#4F5662] text-sm font-medium">Способ отправления:</h1>
-              <span class="ml-2 text-[#A8AAAE] text-sm font-medium block">85 897 VAA</span>
+              <span class="ml-2 text-[#A8AAAE] text-sm font-medium block">{{ form.shipping_method }}</span>
             </div>
 
             <el-table
-                :data="tableData"
+                :data="form.products"
                 stripe
                 class="custom-element-table custom-element-table--has-append"
                 header-cell-class-name="custom-cell-header"
@@ -199,34 +358,56 @@ watch(model, (newValue) => {
                   prop="title"
                   label="Название"
                   class="!p-0"
-              />
+              >
+                <template #default="{row}:{row:DocumentProductType}">
+                  {{ row.product_type_id ? getProductTypeTitle(row.product_type_id as number) : "-" }}
+                </template>
+              </el-table-column>
               <el-table-column
-                  prop="total_count"
+                  prop="quantity"
                   label="Количество"
-              />
+              >
+                <template #default="{row}:{row:DocumentProductType}">
+                  {{ row.quantity ?? "-" }}
+                </template>
+              </el-table-column>
               <el-table-column
                   prop="measurement"
                   label="Ед. измерения"
-              />
+              >
+                <template #default="{row}:{row:DocumentProductType}">
+                  {{ row.unit_id ? getProductMeasurement(row.unit_id as number) : "-" }}
+                </template>
+              </el-table-column>
               <el-table-column
                   prop="price"
                   label="Цена"
-              />
+              >
+                <template #default="{row}:{row:DocumentProductType}">
+                  {{ row.price ? `${formatNumber(row.price as number)} сум` : "-" }}
+                </template>
+              </el-table-column>
               <el-table-column
-                  prop="sum"
+                  prop="total_price"
                   label="Сумма"
-              />
+              >
+                <template #default="{row}:{row:DocumentProductType}">
+                  {{
+                    row.price && row.quantity ? `${formatNumber(row.price * row.quantity as number)} сум` : "-"
+                  }}
+                </template>
+              </el-table-column>
 
-              <template #append>
+              <template
+                  v-if="productsTotalSum"
+                  #append
+              >
                 <div class="flex items-center justify-end p-4">
                   <h1 class="text-[#8F9194] text-sm font-bold mr-[5px]">Общая сумма: </h1>
-                  <h1 class="text-[#000D24] text-sm font-bold mr-5">7 040 000 сум</h1>
+                  <h1 class="text-[#000D24] text-sm font-bold mr-5">{{ formatNumber(productsTotalSum) }} сум</h1>
                 </div>
               </template>
-
             </el-table>
-
-
           </div>
         </div>
         <div class="w-[40%] ml-[24px] flex flex-col justify-between">
@@ -238,7 +419,7 @@ watch(model, (newValue) => {
                 disabled
             />
             <AppDatePicker
-                placeholder="24.08.2024"
+                :placeholder="date"
                 label="Дата создания документа"
                 label-class="text-[#A8AAAE] text-xs font-medium"
                 disabled
@@ -261,15 +442,20 @@ watch(model, (newValue) => {
                 placeholder="Дата накладной"
                 label="Дата накладной"
                 label-class="text-[#A8AAAE] text-xs font-medium"
+                format="DD.MM.YYYY"
+                value-format="DD.MM.YYYY"
                 required
             />
             <AppSelect
+                prop="from_id"
                 placeholder="От кого"
                 label="От кого"
                 :items="settingsStore.respondents"
                 item-label="name"
                 :loading="settingsStore.respondentsLoading"
                 label-class="text-[#A8AAAE] text-xs font-medium"
+                @change="(value) => respondentChange(value as string, 'from')"
+                required
             >
               <ElOption
                   v-for="item in settingsStore.respondents"
@@ -279,7 +465,7 @@ watch(model, (newValue) => {
               />
               <template #footer>
                 <button
-                    @click.stop="editModal = true"
+                    @click.stop="providerCreateModal = true"
                     class="flex items-center justify-center gap-3 border-[1px] border-[#2E90FA] rounded-[8px] w-full text-[#2E90FA] text-sm font-medium py-[10px]"
                 >
                 <span
@@ -299,12 +485,15 @@ watch(model, (newValue) => {
               </template>
             </AppSelect>
             <AppSelect
+                prop="to_id"
                 placeholder="Кому"
                 label="Кому"
                 :items="settingsStore.respondents"
                 item-label="name"
                 :loading="settingsStore.respondentsLoading"
                 label-class="text-[#A8AAAE] text-xs font-medium"
+                @change="(value) => respondentChange(value as string, 'to')"
+                required
             >
               <ElOption
                   v-for="item in settingsStore.respondents"
@@ -314,7 +503,7 @@ watch(model, (newValue) => {
               />
               <template #footer>
                 <button
-                    @click.stop="editModal = true"
+                    @click.stop="providerCreateModal = true"
                     class="flex items-center justify-center gap-3 border-[1px] border-[#2E90FA] rounded-[8px] w-full text-[#2E90FA] text-sm font-medium py-[10px]"
                 >
                 <span
@@ -334,57 +523,109 @@ watch(model, (newValue) => {
               </template>
             </AppSelect>
             <AppInput
+                v-model="form.through_whom"
+                prop="through_whom"
                 placeholder="Через кого"
                 label="Через кого"
                 label-class="text-[#A8AAAE] text-xs font-medium"
+                required
             />
             <AppInput
+                v-model="form.basis"
+                prop="basis"
                 placeholder="Основание"
                 label="Основание"
                 label-class="text-[#A8AAAE] text-xs font-medium"
+                required
             />
             <AppInput
+                v-model="form.shipping_method"
+                prop="shipping_method"
                 class="mb-[32px]"
                 placeholder="Способ отправления"
                 label="Способ отправления"
                 label-class="text-[#A8AAAE] text-xs font-medium"
+                required
             />
             <div class="bg-[#FFFFFF] rounded-[8px] p-[12px]">
-            <span class="block text-[#4F5662] text-sm font-medium mb-[16px]">
-                Таблица получаемых продуктов
-            </span>
-              <AppSelect
-                  placeholder="Тип продукта"
-                  label="Тип продукта"
-                  label-class="text-[#A8AAAE] text-xs font-medium"
-              />
-              <AppSelect
-                  placeholder="Вид продукта"
-                  label="Вид продукта"
-                  label-class="text-[#A8AAAE] text-xs font-medium"
-              />
-              <AppInput
-                  placeholder="Количество"
-                  label="Количество"
-                  label-class="text-[#A8AAAE] text-xs font-medium"
-              />
-              <AppInput
-                  placeholder="Ед. измерения"
-                  label="Ед. измерения"
-                  label-class="text-[#A8AAAE] text-xs font-medium"
-              />
-              <AppInput
-                  placeholder="Цена"
-                  label="Цена"
-                  label-class="text-[#A8AAAE] text-xs font-medium"
-              />
-              <AppInput
-                  placeholder="Сумма"
-                  label="Способ отправления"
-                  label-class="text-[#A8AAAE] text-xs font-medium"
-              />
+              <template
+                  v-for="(product,index) in form.products"
+                  :key="index+1"
+              >
+                <div class="flex items-center justify-between mb-[16px] text-sm font-medium">
+                  <strong class="text-[#4F5662]">
+                    <template v-if="form.products.length>1">{{ index + 1 }}.</template>
+                    Таблица получаемых продуктов
+                  </strong>
+                  <button
+                      v-if="form.products.length>1"
+                      @click.stop="deleteProduct(index)"
+                      class="flex items-center gap-x-1"
+                  >
+                    <svg
+                        :data-src="deleteIcon"
+                        class="size-5"
+                    />
+                    <span class="text-[#EA5455]">
+                      Удалить
+                    </span>
+                  </button>
+                </div>
+                <AppSelect
+                    placeholder="Тип продукта"
+                    :prop="`products[${index}].product_type_id`"
+                    :items="settingsStore.typeProduct.product_categories"
+                    item-value="id"
+                    item-label="name"
+                    label="Тип продукта"
+                    label-class="text-[#A8AAAE] text-xs font-medium"
+                    @change="(value) => settingsStore.GET_VID_PRODUCT({parent_id: value, per_page: 100})"
+                    required
+                    trigger="blur"
+                />
+                <AppSelect
+                    v-model="product.product_type_id"
+                    :prop="`products[${index}].product_type_id`"
+                    :items="settingsStore.vidProduct.product_types"
+                    item-label="name"
+                    item-value="id"
+                    placeholder="Вид продукта"
+                    label="Вид продукта"
+                    label-class="text-[#A8AAAE] text-xs font-medium"
+                    required
+                />
+                <AppInput
+                    v-model="product.quantity"
+                    :prop="`products[${index}].quantity`"
+                    placeholder="Количество"
+                    label="Количество"
+                    label-class="text-[#A8AAAE] text-xs font-medium"
+                    required
+                />
+                <AppSelect
+                    v-model="product.unit_id"
+                    :prop="`products[${index}].unit_id`"
+                    :items="settingsStore.units.units"
+                    item-label="name"
+                    item-value="id"
+                    placeholder="Ед. измерения"
+                    label="Ед. измерения"
+                    label-class="text-[#A8AAAE] text-xs font-medium"
+                    required
+                />
+                <AppInput
+                    v-model.number="product.price"
+                    type="number"
+                    :prop="`products[${index}].price`"
+                    placeholder="Цена"
+                    label="Цена"
+                    label-class="text-[#A8AAAE] text-xs font-medium"
+                    required
+                />
+              </template>
               <button
-                  class="flex items-center justify-center gap-3 border-[1px] border-[#2E90FA] rounded-[8px] w-full text-[#2E90FA] text-sm font-medium py-[10px]"
+                  @click.stop="createProduct"
+                  class="mt-6 flex items-center justify-center gap-3 border-[1px] border-[#2E90FA] rounded-[8px] w-full text-[#2E90FA] text-sm font-medium py-[10px]"
               >
               <span
                   :style="{
@@ -647,7 +888,125 @@ watch(model, (newValue) => {
       <button class="custom-send-btn">Отправить</button>
     </div>
 
-    <FromWhoModal v-model="editModal"/>
+    <ElDialog
+        v-model="providerCreateModal"
+        :show-close="false"
+        class="w-[65%]"
+        align-center
+        :before-close="providerCreateModalClose"
+    >
+      <template #header>
+        <div class="text-center text-[#000000] font-bold text-[18px]">Добавить нового поставщика</div>
+      </template>
+
+      <AppForm
+          :value="providerForm"
+          @validation="(value) => providerV$ = value"
+          class="bg-[#F8F9FC] p-6 rounded-[24px] border border-[#E2E6F3]"
+      >
+        <div class="grid grid-cols-3 gap-x-6 gap-y-1">
+          <AppInput
+              v-model="providerForm.name"
+              prop="name"
+              label="Наименование"
+              label-class="text-[#A8AAAE] text-[12px] font-medium"
+              placeholder="Введите"
+              required
+          />
+          <AppInput
+              v-model="providerForm.address"
+              prop="address"
+              placeholder="Введите"
+              label-class="text-[#A8AAAE] text-[12px] font-medium"
+              label="Юр. адрес"
+              required
+          />
+          <AppInput
+              v-model="providerForm.oked"
+              type="number"
+              prop="oked"
+              placeholder="Введите"
+              label="ОКЭД"
+              label-class="text-[#A8AAAE] text-[12px] font-medium"
+              required
+          />
+          <AppInput
+              v-model="providerForm.tin"
+              prop="tin"
+              type="number"
+              :mask="'#'.repeat(9)"
+              placeholder="Введите"
+              label="ИНН"
+              label-class="text-[#A8AAAE] text-[12px] font-medium"
+              required
+              :min="9"
+              :max="9"
+          />
+          <AppInput
+              v-model="providerForm.license"
+              prop="license"
+              placeholder="Введите"
+              label-class="text-[#A8AAAE] text-[12px] font-medium"
+              label="Номер лицензии"
+              required
+
+          />
+          <AppInput
+              v-model="providerForm.sertificate"
+              prop="sertificate"
+              placeholder="Введите"
+              label-class="text-[#A8AAAE] text-[12px] font-medium"
+              label="Сертификат"
+              required
+          />
+          <AppDatePicker
+              v-model="providerForm.sert_end_date"
+              prop="sert_end_date"
+              placeholder="Введите"
+              label-class="text-[#A8AAAE] text-[12px] font-medium"
+              label="Срок сертификата"
+              format="DD.MM.YYYY"
+              value-format="DD.MM.YYYY"
+              required
+          />
+          <AppInput
+              v-model="providerForm.director"
+              prop="director"
+              placeholder="Введите"
+              label-class="text-[#A8AAAE] text-[12px] font-medium"
+              label="Руководитель"
+              required
+          />
+          <AppInput
+              v-model="providerForm.phone"
+              prop="phone"
+              type="tel"
+              placeholder="Введите"
+              label-class="text-[#A8AAAE] text-[12px] font-medium"
+              label="Контакты"
+              required
+          />
+        </div>
+      </AppForm>
+
+      <div class="flex items-center justify-end gap-2 mt-[24px]">
+        <button
+            class="custom-cancel-btn h-10"
+            @click="providerCreateModalClose"
+        >
+          Отменить
+        </button>
+        <ElButton
+            :loading="settingsStore.createProviderLoading"
+            size="large"
+            type="primary"
+            class="custom-apply-btn"
+            @click="sendProviderForm"
+        >
+          Добавить
+        </ElButton>
+      </div>
+    </ElDialog>
   </el-dialog>
 </template>
 
