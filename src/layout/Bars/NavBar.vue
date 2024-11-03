@@ -1,7 +1,4 @@
-<script
-    setup
-    lang="ts"
->
+<script setup lang="ts">
 import { Search } from "@element-plus/icons-vue";
 import { onMounted, ref } from "vue";
 import Language from "@/components/language/index.vue";
@@ -35,10 +32,11 @@ const openModal = (item: DocTypeListType) => {
       editModal.value = true;
       break;
     case 7:
+    case 11:
       editModal2.value = true;
       break;
-    case 11:
-      editConsumptionModal.value = true;
+      // case 11:
+      // editConsumptionModal.value = true;
       break;
     case 3:
       freeModal.value = true;
@@ -59,7 +57,6 @@ const openModal = (item: DocTypeListType) => {
 onMounted(() => {
   settingsStore.getDocTypeList();
 });
-
 </script>
 
 <template>
@@ -67,27 +64,27 @@ onMounted(() => {
     <div class="relative">
       <div class="relative">
         <el-icon
-            class="absolute top-[50%] translate-y-[-50%] left-[19px]"
-            color="#8F9194"
+          class="absolute top-[50%] translate-y-[-50%] left-[19px]"
+          color="#8F9194"
         >
-          <Search/>
+          <Search />
         </el-icon>
         <input
-            v-model="input1"
-            class="bg-white-blue dark:bg-dark w-[552px] rounded-2xl text-black px-[16px] py-[12px] pl-[50px] outline-none"
-            placeholder="Поиск"
+          v-model="input1"
+          class="bg-white-blue dark:bg-dark w-[552px] rounded-2xl text-black px-[16px] py-[12px] pl-[50px] outline-none"
+          placeholder="Поиск"
         />
       </div>
 
       <div
-          class="bg-[#F8F9FC] text-gray-900 shadow-md border absolute w-full rounded-md mt-[5px]"
-          v-if="input1 && input1.length > 0"
+        class="bg-[#F8F9FC] text-gray-900 shadow-md border absolute w-full rounded-md mt-[5px]"
+        v-if="input1 && input1.length > 0"
       >
         <router-link
-            v-for="(index3) in 10"
-            :key="index3"
-            class="px-4 py-2 block"
-            to="#"
+          v-for="index3 in 10"
+          :key="index3"
+          class="px-4 py-2 block"
+          to="#"
         >
           lorem ipsum dolor
         </router-link>
@@ -97,17 +94,17 @@ onMounted(() => {
     <!----------Создать modal---------->
     <div class="flex items-center gap-6">
       <el-dropdown
-          trigger="click"
-          :hide-on-click="false"
-          ref="dropdown"
+        trigger="click"
+        :hide-on-click="false"
+        ref="dropdown"
       >
         <button
-            class="flex items-center bg-[#2E90FA] rounded-[8px] border-[1.5px] py-[10px] px-[20px] active:bg-[#175CD3] active:border-[#1849A9] active:border-[1.5px]"
+          class="flex items-center bg-[#2E90FA] rounded-[8px] border-[1.5px] py-[10px] px-[20px] active:bg-[#175CD3] active:border-[#1849A9] active:border-[1.5px]"
         >
           <img
-              src="@/assets/images/icons/plus.svg"
-              class="mr-[8px]"
-              alt="plus"
+            src="@/assets/images/icons/plus.svg"
+            class="mr-[8px]"
+            alt="plus"
           />
 
           <span class="text-white vertical-mid">Создать</span>
@@ -115,52 +112,62 @@ onMounted(() => {
         <template #dropdown>
           <el-dropdown-menu class="navbar-dropdown">
             <el-dropdown-item
-                class="item-drop"
-                v-for="(item, in1) in settingsStore.docTypeList"
-                :key="in1"
+              class="item-drop"
+              v-for="(item, in1) in settingsStore.docTypeList"
+              :key="in1"
             >
               <button
-                  @click="openModal(item)"
-                  v-if="!item.childs.length"
-                  class="flex items-center justify-between p-[10px] h-[42px] w-full"
+                @click="openModal(item)"
+                v-if="!item.childs.length"
+                class="flex items-center justify-between p-[10px] h-[42px] w-full"
               >
-                <span class="text-[#4F5662] text-[14px] font-medium mr-[4px]">{{ item.name }}</span>
+                <span class="text-[#4F5662] text-[14px] font-medium mr-[4px]">
+                  {{ item.name }}
+                </span>
                 <img
-                    v-if="in1 !== 0"
-                    src="@/assets/arrow-right.svg"
-                    alt="arrow icon"
+                  v-if="in1 !== 0"
+                  src="@/assets/arrow-right.svg"
+                  alt="arrow icon"
                 />
               </button>
               <el-dropdown
-                  trigger="click"
-                  class="w-full"
-                  placement="right-start"
-                  popper-class="custom-dropdown"
-                  v-else
+                trigger="click"
+                class="w-full"
+                placement="right-start"
+                popper-class="custom-dropdown"
+                v-else
               >
-                <button class="flex items-center justify-between h-[42px] p-[10px] w-full">
-                  <span class="text-[#4F5662] text-[14px] font-medium mr-[4px]">{{ item.name }}</span>
+                <button
+                  class="flex items-center justify-between h-[42px] p-[10px] w-full"
+                >
+                  <span class="text-[#4F5662] text-[14px] font-medium mr-[4px]">
+                    {{ item.name }}
+                  </span>
                   <img
-                      src="@/assets/arrow-right.svg"
-                      alt="arrow icon"
+                    src="@/assets/arrow-right.svg"
+                    alt="arrow icon"
                   />
                 </button>
 
                 <template #dropdown>
                   <el-dropdown-menu class="navbar-dropdown right-5">
                     <el-dropdown-item
-                        class="item-drop"
-                        v-for="(child, index) in item.childs"
-                        :key="index"
+                      class="item-drop"
+                      v-for="(child, index) in item.childs"
+                      :key="index"
                     >
                       <button
-                          @click="openModal(child)"
-                          class="flex items-center justify-between p-[10px] w-full"
+                        @click="openModal(child)"
+                        class="flex items-center justify-between p-[10px] w-full"
                       >
-                        <span class="text-[#4F5662] text-[14px] font-medium mr-12">{{ child.name }}</span>
+                        <span
+                          class="text-[#4F5662] text-[14px] font-medium mr-12"
+                        >
+                          {{ child.name }}
+                        </span>
                         <img
-                            src="@/assets/arrow-right.svg"
-                            alt="arrow icon"
+                          src="@/assets/arrow-right.svg"
+                          alt="arrow icon"
                         />
                       </button>
                     </el-dropdown-item>
@@ -168,29 +175,28 @@ onMounted(() => {
                 </template>
               </el-dropdown>
             </el-dropdown-item>
-
           </el-dropdown-menu>
         </template>
       </el-dropdown>
-      <ThemeToggler v-if="false"/>
+      <ThemeToggler v-if="false" />
 
       <el-badge
-          value="18"
-          class="item cursor-pointer"
+        value="18"
+        class="item cursor-pointer"
       >
         <img
-            src="@/assets/images/icons/bell.svg"
-            alt="bell"
+          src="@/assets/images/icons/bell.svg"
+          alt="bell"
         />
       </el-badge>
 
-      <Language v-if="false"/>
+      <Language v-if="false" />
 
       <div class="flex items-center gap-3">
         <img
-            src="@/assets/images/avatar.png"
-            class="h-[40px] w-[40px] object-contain rounded-full"
-            alt="avatar"
+          src="@/assets/images/avatar.png"
+          class="h-[40px] w-[40px] object-contain rounded-full"
+          alt="avatar"
         />
         <div class="flex flex-col">
           <h2 class="m-0 text-[14px] font-medium text-black dark:text-white">
@@ -201,34 +207,34 @@ onMounted(() => {
       </div>
     </div>
     <MemoModal
-        v-model="editModal"
-        :id="docTypeId"
-        :name="docTypeName"
+      v-model="editModal"
+      :id="docTypeId"
+      :name="docTypeName"
     />
     <ComingModal
-        v-model="editModal2"
-        :id="docTypeId"
-        :name="docTypeName"
+      v-model="editModal2"
+      :id="docTypeId"
+      :name="docTypeName"
     />
     <ConsumptionModal
-        v-model="editConsumptionModal"
-        :id="docTypeId"
-        :name="docTypeName"
+      v-model="editConsumptionModal"
+      :id="docTypeId"
+      :name="docTypeName"
     />
     <FreeModal
-        v-model="freeModal"
-        :id="docTypeId"
-        :name="docTypeName"
+      v-model="freeModal"
+      :id="docTypeId"
+      :name="docTypeName"
     />
     <MonthlyModal
-        v-model="monthlyModal"
-        :id="docTypeId"
-        :name="docTypeName"
+      v-model="monthlyModal"
+      :id="docTypeId"
+      :name="docTypeName"
     />
     <YearlyModal
-        v-model="yearlyModal"
-        :id="docTypeId"
-        :name="docTypeName"
+      v-model="yearlyModal"
+      :id="docTypeId"
+      :name="docTypeName"
     />
     <!----------Создать modal---------->
   </div>
@@ -241,9 +247,9 @@ onMounted(() => {
 
 .navbar-dropdown {
   padding: 12px !important;
-  background-color: #F8F9FC !important;
+  background-color: #f8f9fc !important;
   border-radius: 16px !important;
-  border: 1px solid #E2E6F3;
+  border: 1px solid #e2e6f3;
 }
 
 .el-scrollbar {
@@ -256,14 +262,13 @@ onMounted(() => {
 
 .item-drop:focus {
   background-color: initial !important;
-
 }
 
 .item-drop:hover {
-  background-color: #FFFFFF !important;
+  background-color: #ffffff !important;
   border-radius: 8px;
-  color: #000D24 !important;
-  box-shadow: 0 1.9px 7px -1px #0A090B12;
+  color: #000d24 !important;
+  box-shadow: 0 1.9px 7px -1px #0a090b12;
 }
 
 .custom-dropdown {
@@ -273,7 +278,7 @@ onMounted(() => {
 }
 
 .el-badge__content.is-fixed {
-  background-color: #EA5455;
+  background-color: #ea5455;
   font-size: 9px;
   position: absolute;
   right: calc(3px + var(--el-badge-size) / 2);

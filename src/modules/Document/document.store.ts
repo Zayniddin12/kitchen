@@ -4,21 +4,20 @@ import { DocumentCreateDataType } from "@/modules/Document/document.types";
 import documentApi from "@/modules/Document/document.api";
 
 export const useDocumentStore = defineStore("documentStore", () => {
+  const createLoading = ref(false);
 
-    const createLoading = ref(false);
+  const create = async (data: DocumentCreateDataType) => {
+    createLoading.value = true;
 
-    const create = (data: DocumentCreateDataType) => {
-        createLoading.value = true;
+    try {
+      await documentApi.create(data);
+    } finally {
+      createLoading.value = false;
+    }
+  };
 
-        try {
-            documentApi.create(data);
-        } finally {
-            createLoading.value = false;
-        }
-    };
-
-    return {
-        createLoading,
-        create
-    };
+  return {
+    createLoading,
+    create,
+  };
 });
