@@ -7,6 +7,9 @@ export default [
     component: () => import("@/modules/Home/views/Home.vue"),
     meta: {
       title: 'Главная',
+      uniqueKeys: {
+        home: true
+      }
     },
   },
 ] as RouteRecordRaw[];
