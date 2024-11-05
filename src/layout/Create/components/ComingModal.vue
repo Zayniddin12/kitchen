@@ -119,6 +119,7 @@ const sendForm = async () => {
   }
 
   await documentStore.create(form).then(() => {
+    commonStore.successToast();
     model.value = false;
     clearV$();
   });
