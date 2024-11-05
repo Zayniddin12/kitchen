@@ -32,6 +32,7 @@ const closeDialog = () => {
     width="480"
     align-center
     :show-close="false"
+    append-to-body
     class="p-7 !rounded-3xl confirm-dialog"
     :before-close="closeDialog"
   >

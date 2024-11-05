@@ -1,25 +1,28 @@
-<script setup lang="ts">
+<script
+    setup
+    lang="ts"
+>
 import AppInput from "@/components/ui/form/app-input/AppInput.vue";
 import AppSelect from "@/components/ui/form/app-select/AppSelect.vue";
 import AppDatePicker from "@/components/ui/form/app-date-picker/AppDatePicker.vue";
 import useConfirm from "@/components/ui/app-confirm/useConfirm";
 import {
   DocumentCreateDataType,
-  DocumentProductType,
+  DocumentProductType
 } from "@/modules/Document/document.types";
 import { ValidationType } from "@/components/ui/form/app-form/app-form.type";
 import AppForm from "@/components/ui/form/app-form/AppForm.vue";
 import { computed, reactive, ref, watch } from "vue";
 import {
   ModalPropsType,
-  ModalValueType,
+  ModalValueType
 } from "@/layout/Create/components/modal.types";
 import { useSettingsStore } from "@/modules/Settings/store";
 import {
   deepEqual,
   formatDate2,
   formatNumber,
-  togglePageScrolling,
+  togglePageScrolling
 } from "@/utils/helper";
 import { useCommonStore } from "@/stores/common.store";
 import deleteIcon from "@/assets/images/icons/delete-danger-icon.svg";
@@ -58,7 +61,6 @@ const form = reactive<DocumentCreateDataType>({
   to_type: "",
   subject: "",
   through_whom: "",
-  content: "",
   basis: "",
   shipping_method: "",
   status: "",
@@ -67,9 +69,9 @@ const form = reactive<DocumentCreateDataType>({
       product_type_id: "",
       quantity: null,
       unit_id: "",
-      price: null,
-    },
-  ],
+      price: null
+    }
+  ]
 });
 
 const oldForm = ref<null | DocumentCreateDataType>(null);
@@ -77,7 +79,7 @@ const oldForm = ref<null | DocumentCreateDataType>(null);
 const from = computed<string>(() => {
   if (!form.from_id || !form.from_type) return "";
   const activeEl = settingsStore.respondents.find(
-    el => el.model_type === form.from_type && el.id === form.from_id
+      el => el.model_type === form.from_type && el.id === form.from_id
   );
 
   if (!activeEl) return "";
@@ -88,7 +90,7 @@ const from = computed<string>(() => {
 const to = computed<string>(() => {
   if (!form.to_id || !form.to_type) return "";
   const activeEl = settingsStore.respondents.find(
-    el => el.model_type === form.to_type && el.id === form.to_id
+      el => el.model_type === form.to_type && el.id === form.to_id
   );
 
   if (!activeEl) return "";
@@ -124,26 +126,26 @@ const sendForm = async () => {
 
 const getProductTypeTitle = (id: number) => {
   return (
-    settingsStore.vidProduct.product_types.find(
-      (el: Record<string, any>) => el.id === id
-    )?.name ?? ""
+      settingsStore.vidProduct.product_types.find(
+          (el: Record<string, any>) => el.id === id
+      )?.name ?? ""
   );
 };
 
 const getProductMeasurement = (id: number) => {
   return (
-    settingsStore.units.units.find((el: Record<string, any>) => el.id === id)
-      ?.name ?? ""
+      settingsStore.units.units.find((el: Record<string, any>) => el.id === id)
+          ?.name ?? ""
   );
 };
 
 const productsTotalSum = computed(() => {
   return form.products.reduce((sum: number, product: DocumentProductType) => {
     return (
-      sum +
-      Number(
-        product.price && product.quantity ? product.price * product.quantity : 0
-      )
+        sum +
+        Number(
+            product.price && product.quantity ? product.price * product.quantity : 0
+        )
     );
   }, 0);
 });
@@ -153,7 +155,7 @@ const createProduct = () => {
     product_type_id: "",
     quantity: null,
     unit_id: "",
-    price: null,
+    price: null
   });
 };
 
@@ -210,7 +212,7 @@ const providerForm = reactive<ProviderFormType>({
   sertificate: "",
   sert_end_date: "",
   director: "",
-  phone: "",
+  phone: ""
 });
 
 const oldProviderForm = ref<null | ProviderFormType>(null);
@@ -243,8 +245,8 @@ const providerCreateModal = ref<boolean>(false);
 
 const providerCreateModalClose = async () => {
   if (
-    oldProviderForm.value &&
-    !deepEqual(providerForm, oldProviderForm.value)
+      oldProviderForm.value &&
+      !deepEqual(providerForm, oldProviderForm.value)
   ) {
     const response = await confirm.cancel();
 
@@ -272,11 +274,12 @@ watch(providerCreateModal, newMProviderModal => {
 
 <template>
   <el-dialog
-    v-model="model"
-    :show-close="false"
-    class="w-[75%]"
-    align-center
-    :before-close="closeModal"
+      v-model="model"
+      :show-close="false"
+      class="w-[75%]"
+      align-center
+      append-to-body
+      :before-close="closeModal"
   >
     <template #header>
       <div class="text-center text-[#000000] font-bold text-[18px]">
@@ -284,19 +287,19 @@ watch(providerCreateModal, newMProviderModal => {
       </div>
     </template>
     <AppForm
-      :value="form"
-      @validation="setValidation"
-      @submit.prevent
+        :value="form"
+        @validation="setValidation"
+        @submit.prevent
     >
       <div class="flex">
         <div
-          class="border-[#E2E6F3] bg-[#fff] border rounded-[15px] w-[60%] mr-0"
+            class="border-[#E2E6F3] bg-[#fff] border rounded-[15px] w-[60%] mr-0"
         >
           <div class="px-[72px] pb-[150px]">
             <header class="flex items-center justify-center my-[24px] mb-6">
               <img
-                src="@/assets/images/logo.svg"
-                alt="logo"
+                  src="@/assets/images/logo.svg"
+                  alt="logo"
               />
               <div class="flex flex-col ml-3">
                 <b class="text-[#000D24] text-lg">NKMK</b>
@@ -304,7 +307,7 @@ watch(providerCreateModal, newMProviderModal => {
               </div>
             </header>
             <h1
-              class="text-[#000D24] font-bold text-[20px] text-center mb-[24px]"
+                class="text-[#000D24] font-bold text-[20px] text-center mb-[24px]"
             >
               НАКЛАДНОЙ
             </h1>
@@ -390,48 +393,48 @@ watch(providerCreateModal, newMProviderModal => {
             </div>
 
             <el-table
-              :data="form.products"
-              stripe
-              class="custom-element-table custom-element-table--has-append"
-              header-cell-class-name="custom-cell-header"
-              cell-class-name="custom-cell-header"
+                :data="form.products"
+                stripe
+                class="custom-element-table custom-element-table--has-append"
+                header-cell-class-name="custom-cell-header"
+                cell-class-name="custom-cell-header"
             >
               <el-table-column
-                prop="title"
-                label="Название"
-                class="!p-0"
+                  prop="title"
+                  label="Название"
+                  class="!p-0"
               >
                 <template #default="{ row }: { row: DocumentProductType }">
                   {{
                     row.product_type_id
-                      ? getProductTypeTitle(row.product_type_id as number)
-                      : "-"
+                        ? getProductTypeTitle(row.product_type_id as number)
+                        : "-"
                   }}
                 </template>
               </el-table-column>
               <el-table-column
-                prop="quantity"
-                label="Количество"
+                  prop="quantity"
+                  label="Количество"
               >
                 <template #default="{ row }: { row: DocumentProductType }">
                   {{ row.quantity ?? "-" }}
                 </template>
               </el-table-column>
               <el-table-column
-                prop="measurement"
-                label="Ед. измерения"
+                  prop="measurement"
+                  label="Ед. измерения"
               >
                 <template #default="{ row }: { row: DocumentProductType }">
                   {{
                     row.unit_id
-                      ? getProductMeasurement(row.unit_id as number)
-                      : "-"
+                        ? getProductMeasurement(row.unit_id as number)
+                        : "-"
                   }}
                 </template>
               </el-table-column>
               <el-table-column
-                prop="price"
-                label="Цена"
+                  prop="price"
+                  label="Цена"
               >
                 <template #default="{ row }: { row: DocumentProductType }">
                   {{
@@ -440,23 +443,23 @@ watch(providerCreateModal, newMProviderModal => {
                 </template>
               </el-table-column>
               <el-table-column
-                prop="total_price"
-                label="Сумма"
+                  prop="total_price"
+                  label="Сумма"
               >
                 <template #default="{ row }: { row: DocumentProductType }">
                   {{
                     row.price && row.quantity
-                      ? `${formatNumber(
-                          (row.price * row.quantity) as number
+                        ? `${formatNumber(
+                            (row.price * row.quantity) as number
                         )} сум`
-                      : "-"
+                        : "-"
                   }}
                 </template>
               </el-table-column>
 
               <template
-                v-if="productsTotalSum"
-                #append
+                  v-if="productsTotalSum"
+                  #append
               >
                 <div class="flex items-center justify-end p-4">
                   <h1 class="text-[#8F9194] text-sm font-bold mr-[5px]">
@@ -473,65 +476,65 @@ watch(providerCreateModal, newMProviderModal => {
         <div class="w-[40%] ml-[24px] flex flex-col justify-between">
           <div>
             <AppInput
-              placeholder="Входящий накладной"
-              label="Название документа"
-              label-class="text-[#A8AAAE] text-xs font-medium"
-              disabled
+                placeholder="Входящий накладной"
+                label="Название документа"
+                label-class="text-[#A8AAAE] text-xs font-medium"
+                disabled
             />
             <AppDatePicker
-              :placeholder="date"
-              label="Дата создания документа"
-              label-class="text-[#A8AAAE] text-xs font-medium"
-              disabled
+                :placeholder="date"
+                label="Дата создания документа"
+                label-class="text-[#A8AAAE] text-xs font-medium"
+                disabled
             />
             <AppInput
-              placeholder="Автоматически"
-              label="NK-00000"
-              label-class="text-[#A8AAAE] text-xs font-medium"
-              disabled
+                placeholder="Автоматически"
+                label="NK-00000"
+                label-class="text-[#A8AAAE] text-xs font-medium"
+                disabled
             />
             <AppInput
-              v-model="form.number"
-              prop="number"
-              placeholder="№ накладной"
-              label="№ накладной"
-              label-class="text-[#A8AAAE] text-xs font-medium"
-              required
+                v-model="form.number"
+                prop="number"
+                placeholder="№ накладной"
+                label="№ накладной"
+                label-class="text-[#A8AAAE] text-xs font-medium"
+                required
             />
             <AppDatePicker
-              v-model="form.date"
-              prop="date"
-              placeholder="Дата накладной"
-              label="Дата накладной"
-              label-class="text-[#A8AAAE] text-xs font-medium"
-              format="DD.MM.YYYY"
-              value-format="DD.MM.YYYY"
-              required
+                v-model="form.date"
+                prop="date"
+                placeholder="Дата накладной"
+                label="Дата накладной"
+                label-class="text-[#A8AAAE] text-xs font-medium"
+                format="DD.MM.YYYY"
+                value-format="DD.MM.YYYY"
+                required
             />
             <AppSelect
-              prop="from_id"
-              placeholder="От кого"
-              label="От кого"
-              :items="settingsStore.respondents"
-              item-label="name"
-              :loading="settingsStore.respondentsLoading"
-              label-class="text-[#A8AAAE] text-xs font-medium"
-              @change="(value) => respondentChange(value as string, 'from')"
-              required
+                prop="from_id"
+                placeholder="От кого"
+                label="От кого"
+                :items="settingsStore.respondents"
+                item-label="name"
+                :loading="settingsStore.respondentsLoading"
+                label-class="text-[#A8AAAE] text-xs font-medium"
+                @change="(value) => respondentChange(value as string, 'from')"
+                required
             >
               <ElOption
-                v-for="item in settingsStore.respondents"
-                :key="`${item.id}_${item.model_type}`"
-                :value="`${item.id}_${item.model_type}`"
-                :label="item.name"
+                  v-for="item in settingsStore.respondents"
+                  :key="`${item.id}_${item.model_type}`"
+                  :value="`${item.id}_${item.model_type}`"
+                  :label="item.name"
               />
               <template #footer>
                 <button
-                  @click.stop="providerCreateModal = true"
-                  class="flex items-center justify-center gap-3 border-[1px] border-[#2E90FA] rounded-[8px] w-full text-[#2E90FA] text-sm font-medium py-[10px]"
+                    @click.stop="providerCreateModal = true"
+                    class="flex items-center justify-center gap-3 border-[1px] border-[#2E90FA] rounded-[8px] w-full text-[#2E90FA] text-sm font-medium py-[10px]"
                 >
                   <span
-                    :style="{
+                      :style="{
                       maskImage: 'url(/icons/plusIcon.svg)',
                       backgroundColor: '#2E90FA',
                       color: '#2E90FA',
@@ -547,29 +550,29 @@ watch(providerCreateModal, newMProviderModal => {
               </template>
             </AppSelect>
             <AppSelect
-              prop="to_id"
-              placeholder="Кому"
-              label="Кому"
-              :items="settingsStore.respondents"
-              item-label="name"
-              :loading="settingsStore.respondentsLoading"
-              label-class="text-[#A8AAAE] text-xs font-medium"
-              @change="(value) => respondentChange(value as string, 'to')"
-              required
+                prop="to_id"
+                placeholder="Кому"
+                label="Кому"
+                :items="settingsStore.respondents"
+                item-label="name"
+                :loading="settingsStore.respondentsLoading"
+                label-class="text-[#A8AAAE] text-xs font-medium"
+                @change="(value) => respondentChange(value as string, 'to')"
+                required
             >
               <ElOption
-                v-for="item in settingsStore.respondents"
-                :key="`${item.id}_${item.model_type}`"
-                :value="`${item.id}_${item.model_type}`"
-                :label="item.name"
+                  v-for="item in settingsStore.respondents"
+                  :key="`${item.id}_${item.model_type}`"
+                  :value="`${item.id}_${item.model_type}`"
+                  :label="item.name"
               />
               <template #footer>
                 <button
-                  @click.stop="providerCreateModal = true"
-                  class="flex items-center justify-center gap-3 border-[1px] border-[#2E90FA] rounded-[8px] w-full text-[#2E90FA] text-sm font-medium py-[10px]"
+                    @click.stop="providerCreateModal = true"
+                    class="flex items-center justify-center gap-3 border-[1px] border-[#2E90FA] rounded-[8px] w-full text-[#2E90FA] text-sm font-medium py-[10px]"
                 >
                   <span
-                    :style="{
+                      :style="{
                       maskImage: 'url(/icons/plusIcon.svg)',
                       backgroundColor: '#2E90FA',
                       color: '#2E90FA',
@@ -585,37 +588,36 @@ watch(providerCreateModal, newMProviderModal => {
               </template>
             </AppSelect>
             <AppInput
-              v-model="form.through_whom"
-              prop="through_whom"
-              placeholder="Через кого"
-              label="Через кого"
-              label-class="text-[#A8AAAE] text-xs font-medium"
-              required
+                v-model="form.through_whom"
+                prop="through_whom"
+                placeholder="Через кого"
+                label="Через кого"
+                label-class="text-[#A8AAAE] text-xs font-medium"
             />
             <AppInput
-              v-model="form.basis"
-              prop="basis"
-              placeholder="Основание"
-              label="Основание"
-              label-class="text-[#A8AAAE] text-xs font-medium"
-              required
+                v-model="form.basis"
+                prop="basis"
+                placeholder="Основание"
+                label="Основание"
+                label-class="text-[#A8AAAE] text-xs font-medium"
+                required
             />
             <AppInput
-              v-model="form.shipping_method"
-              prop="shipping_method"
-              class="mb-[32px]"
-              placeholder="Способ отправления"
-              label="Способ отправления"
-              label-class="text-[#A8AAAE] text-xs font-medium"
-              required
+                v-model="form.shipping_method"
+                prop="shipping_method"
+                class="mb-[32px]"
+                placeholder="Способ отправления"
+                label="Способ отправления"
+                label-class="text-[#A8AAAE] text-xs font-medium"
+                required
             />
             <div class="bg-[#FFFFFF] rounded-[8px] p-[12px]">
               <template
-                v-for="(product, index) in form.products"
-                :key="index + 1"
+                  v-for="(product, index) in form.products"
+                  :key="index + 1"
               >
                 <div
-                  class="flex items-center justify-between mb-[16px] text-sm font-medium"
+                    class="flex items-center justify-between mb-[16px] text-sm font-medium"
                 >
                   <strong class="text-[#4F5662]">
                     <template v-if="form.products.length > 1">
@@ -624,82 +626,82 @@ watch(providerCreateModal, newMProviderModal => {
                     Таблица получаемых продуктов
                   </strong>
                   <button
-                    v-if="form.products.length > 1"
-                    @click.stop="deleteProduct(index)"
-                    class="flex items-center gap-x-1"
+                      v-if="form.products.length > 1"
+                      @click.stop="deleteProduct(index)"
+                      class="flex items-center gap-x-1"
                   >
                     <svg
-                      :data-src="deleteIcon"
-                      class="size-5"
+                        :data-src="deleteIcon"
+                        class="size-5"
                     />
                     <span class="text-[#EA5455]">Удалить</span>
                   </button>
                 </div>
                 <AppSelect
-                  placeholder="Тип продукта"
-                  :prop="`products[${index}].product_type_id`"
-                  :items="settingsStore.typeProduct.product_categories"
-                  item-value="id"
-                  item-label="name"
-                  label="Тип продукта"
-                  label-class="text-[#A8AAAE] text-xs font-medium"
-                  @change="
+                    placeholder="Тип продукта"
+                    :prop="`products[${index}].product_type_id`"
+                    :items="settingsStore.typeProduct.product_categories"
+                    item-value="id"
+                    item-label="name"
+                    label="Тип продукта"
+                    label-class="text-[#A8AAAE] text-xs font-medium"
+                    @change="
                     value =>
                       settingsStore.GET_VID_PRODUCT({
                         parent_id: value,
                         per_page: 100,
                       })
                   "
-                  required
-                  trigger="blur"
+                    required
+                    trigger="blur"
                 />
                 <AppSelect
-                  v-model="product.product_type_id"
-                  :prop="`products[${index}].product_type_id`"
-                  :items="settingsStore.vidProduct.product_types"
-                  item-label="name"
-                  item-value="id"
-                  placeholder="Вид продукта"
-                  label="Вид продукта"
-                  label-class="text-[#A8AAAE] text-xs font-medium"
-                  required
+                    v-model="product.product_type_id"
+                    :prop="`products[${index}].product_type_id`"
+                    :items="settingsStore.vidProduct.product_types"
+                    item-label="name"
+                    item-value="id"
+                    placeholder="Вид продукта"
+                    label="Вид продукта"
+                    label-class="text-[#A8AAAE] text-xs font-medium"
+                    required
                 />
                 <AppInput
-                  v-model.number="product.quantity"
-                  :prop="`products[${index}].quantity`"
-                  type="number"
-                  placeholder="Количество"
-                  label="Количество"
-                  label-class="text-[#A8AAAE] text-xs font-medium"
-                  required
+                    v-model.number="product.quantity"
+                    :prop="`products[${index}].quantity`"
+                    type="number"
+                    placeholder="Количество"
+                    label="Количество"
+                    label-class="text-[#A8AAAE] text-xs font-medium"
+                    required
                 />
                 <AppSelect
-                  v-model="product.unit_id"
-                  :prop="`products[${index}].unit_id`"
-                  :items="settingsStore.units.units"
-                  item-label="name"
-                  item-value="id"
-                  placeholder="Ед. измерения"
-                  label="Ед. измерения"
-                  label-class="text-[#A8AAAE] text-xs font-medium"
-                  required
+                    v-model="product.unit_id"
+                    :prop="`products[${index}].unit_id`"
+                    :items="settingsStore.units.units"
+                    item-label="name"
+                    item-value="id"
+                    placeholder="Ед. измерения"
+                    label="Ед. измерения"
+                    label-class="text-[#A8AAAE] text-xs font-medium"
+                    required
                 />
                 <AppInput
-                  v-model.number="product.price"
-                  type="number"
-                  :prop="`products[${index}].price`"
-                  placeholder="Цена"
-                  label="Цена"
-                  label-class="text-[#A8AAAE] text-xs font-medium"
-                  required
+                    v-model.number="product.price"
+                    type="number"
+                    :prop="`products[${index}].price`"
+                    placeholder="Цена"
+                    label="Цена"
+                    label-class="text-[#A8AAAE] text-xs font-medium"
+                    required
                 />
               </template>
               <button
-                @click.stop="createProduct"
-                class="mt-6 flex items-center justify-center gap-3 border-[1px] border-[#2E90FA] rounded-[8px] w-full text-[#2E90FA] text-sm font-medium py-[10px]"
+                  @click.stop="createProduct"
+                  class="mt-6 flex items-center justify-center gap-3 border-[1px] border-[#2E90FA] rounded-[8px] w-full text-[#2E90FA] text-sm font-medium py-[10px]"
               >
                 <span
-                  :style="{
+                    :style="{
                     maskImage: 'url(/icons/plusIcon.svg)',
                     backgroundColor: '#2E90FA',
                     color: '#2E90FA',
@@ -722,17 +724,17 @@ watch(providerCreateModal, newMProviderModal => {
         </div>
       </div>
       <div
-        v-if="id === 7"
-        class="flex mt-10"
+          v-if="id === 7"
+          class="flex mt-10"
       >
         <div
-          class="border-[#E2E6F3] bg-[#fff] border rounded-[15px] w-[60%] mr-0"
+            class="border-[#E2E6F3] bg-[#fff] border rounded-[15px] w-[60%] mr-0"
         >
           <div class="px-[72px] pb-[150px]">
             <header class="flex items-center justify-center my-[24px] mb-6">
               <img
-                src="@/assets/images/logo.svg"
-                alt="logo"
+                  src="@/assets/images/logo.svg"
+                  alt="logo"
               />
               <div class="flex flex-col ml-3">
                 <b class="text-[#000D24] text-lg">NKMK</b>
@@ -740,7 +742,7 @@ watch(providerCreateModal, newMProviderModal => {
               </div>
             </header>
             <h1
-              class="text-[#000D24] font-bold text-[20px] text-center mb-[24px]"
+                class="text-[#000D24] font-bold text-[20px] text-center mb-[24px]"
             >
               АКТ
             </h1>
@@ -759,7 +761,7 @@ watch(providerCreateModal, newMProviderModal => {
               </div>
             </div>
             <span
-              class="block text-[#4F5662] text-sm font-normal leading-[20px] mb-[24px]"
+                class="block text-[#4F5662] text-sm font-normal leading-[20px] mb-[24px]"
             >
               На основании данного документа мы подтверждаем, что следующая
               продукция принята в соответствии с правилами приемки продукции по
@@ -767,110 +769,110 @@ watch(providerCreateModal, newMProviderModal => {
             </span>
             <div class="overflow-x-auto mb-[24px]">
               <table
-                class="min-w-full border border-gray-300 bg-white text-left text-sm text-gray-900 rounded-[8px] border-separate table-my border-spacing-0"
+                  class="min-w-full border border-gray-300 bg-white text-left text-sm text-gray-900 rounded-[8px] border-separate table-my border-spacing-0"
               >
                 <tbody>
-                  <tr class="border-gray-300">
-                    <td class="border-r border-b p-2 font-medium">
-                      Название продукта
-                    </td>
-                    <td class="p-2 border-b border-gray-300">Картофель</td>
-                  </tr>
+                <tr class="border-gray-300">
+                  <td class="border-r border-b p-2 font-medium">
+                    Название продукта
+                  </td>
+                  <td class="p-2 border-b border-gray-300">Картофель</td>
+                </tr>
 
-                  <tr class="border-gray-300">
-                    <td class="border-r border-b p-2 font-medium">
-                      Количество продукта
-                    </td>
-                    <td class="p-2 border-b border-gray-300">265</td>
-                  </tr>
+                <tr class="border-gray-300">
+                  <td class="border-r border-b p-2 font-medium">
+                    Количество продукта
+                  </td>
+                  <td class="p-2 border-b border-gray-300">265</td>
+                </tr>
 
-                  <tr class="border-gray-300">
-                    <td class="border-r border-b p-2 font-medium">
-                      Единица измерения
-                    </td>
-                    <td class="p-2 border-b border-gray-300">кг</td>
-                  </tr>
+                <tr class="border-gray-300">
+                  <td class="border-r border-b p-2 font-medium">
+                    Единица измерения
+                  </td>
+                  <td class="p-2 border-b border-gray-300">кг</td>
+                </tr>
 
-                  <tr class="border-gray-300">
-                    <td class="border-r border-b p-2 font-medium">
-                      Номер и дата договора о поставке
-                    </td>
-                    <td class="p-2 border-b border-gray-300">
-                      K1029745 от 25.07.2024
-                    </td>
-                  </tr>
+                <tr class="border-gray-300">
+                  <td class="border-r border-b p-2 font-medium">
+                    Номер и дата договора о поставке
+                  </td>
+                  <td class="p-2 border-b border-gray-300">
+                    K1029745 от 25.07.2024
+                  </td>
+                </tr>
 
-                  <tr class="border-gray-300">
-                    <td class="border-r border-b p-2 font-medium">
-                      Номер и дата накладной
-                    </td>
-                    <td class="p-2 border-b border-gray-300">
-                      № 365 26.08.2024
-                    </td>
-                  </tr>
+                <tr class="border-gray-300">
+                  <td class="border-r border-b p-2 font-medium">
+                    Номер и дата накладной
+                  </td>
+                  <td class="p-2 border-b border-gray-300">
+                    № 365 26.08.2024
+                  </td>
+                </tr>
 
-                  <tr class="border-gray-300">
-                    <td class="border-r border-b p-2 font-medium">
-                      Производитель продукта
-                    </td>
-                    <td class="p-2 border-b border-gray-300">OOO “Brend”</td>
-                  </tr>
+                <tr class="border-gray-300">
+                  <td class="border-r border-b p-2 font-medium">
+                    Производитель продукта
+                  </td>
+                  <td class="p-2 border-b border-gray-300">OOO “Brend”</td>
+                </tr>
 
-                  <tr class="border-gray-300">
-                    <td class="border-r border-b p-2 font-medium">Поставщик</td>
-                    <td class="p-2 border-b border-gray-300">
-                      OOO “Yuksalish”
-                    </td>
-                  </tr>
+                <tr class="border-gray-300">
+                  <td class="border-r border-b p-2 font-medium">Поставщик</td>
+                  <td class="p-2 border-b border-gray-300">
+                    OOO “Yuksalish”
+                  </td>
+                </tr>
 
-                  <tr class="border-gray-300">
-                    <td class="border-r border-b p-2 font-medium">
-                      Получатель
-                    </td>
-                    <td class="p-2 border-b border-gray-300">РУ "Зарафшан"</td>
-                  </tr>
+                <tr class="border-gray-300">
+                  <td class="border-r border-b p-2 font-medium">
+                    Получатель
+                  </td>
+                  <td class="p-2 border-b border-gray-300">РУ "Зарафшан"</td>
+                </tr>
 
-                  <tr class="border-gray-300">
-                    <td class="border-r border-b p-2 font-medium">Транспорт</td>
-                    <td class="p-2 border-b border-gray-300">85 085 RRR</td>
-                  </tr>
+                <tr class="border-gray-300">
+                  <td class="border-r border-b p-2 font-medium">Транспорт</td>
+                  <td class="p-2 border-b border-gray-300">85 085 RRR</td>
+                </tr>
 
-                  <tr class="border-gray-300">
-                    <td class="border-r border-b p-2 font-medium">
-                      Номер и дата лицензии
-                    </td>
-                    <td class="p-2 border-b border-gray-300">
-                      № L-86978576 от 05.02.2022
-                    </td>
-                  </tr>
+                <tr class="border-gray-300">
+                  <td class="border-r border-b p-2 font-medium">
+                    Номер и дата лицензии
+                  </td>
+                  <td class="p-2 border-b border-gray-300">
+                    № L-86978576 от 05.02.2022
+                  </td>
+                </tr>
 
-                  <tr class="border-gray-300">
-                    <td class="border-r border-b p-2 font-medium">
-                      Номер и дата заключение Санитарно-эпидемиологического
-                      центра
-                    </td>
-                    <td class="p-2 border-b border-gray-300">
-                      № SM-069788 от 05.01.2024
-                    </td>
-                  </tr>
+                <tr class="border-gray-300">
+                  <td class="border-r border-b p-2 font-medium">
+                    Номер и дата заключение Санитарно-эпидемиологического
+                    центра
+                  </td>
+                  <td class="p-2 border-b border-gray-300">
+                    № SM-069788 от 05.01.2024
+                  </td>
+                </tr>
 
-                  <tr class="border-gray-300">
-                    <td class="border-r border-b p-2 font-medium">
-                      Номер и дата удостоверения ветеринарии
-                    </td>
-                    <td class="p-2 border-b border-gray-300">
-                      № ВТ-0365 от 10.01.2024
-                    </td>
-                  </tr>
+                <tr class="border-gray-300">
+                  <td class="border-r border-b p-2 font-medium">
+                    Номер и дата удостоверения ветеринарии
+                  </td>
+                  <td class="p-2 border-b border-gray-300">
+                    № ВТ-0365 от 10.01.2024
+                  </td>
+                </tr>
 
-                  <tr class="border-gray-300">
-                    <td class="border-r border-b p-2 font-medium">
-                      Номер и дата удостоверения качества
-                    </td>
-                    <td class="p-2 border-b border-gray-300">
-                      № УК-0614 от 07.02.2024
-                    </td>
-                  </tr>
+                <tr class="border-gray-300">
+                  <td class="border-r border-b p-2 font-medium">
+                    Номер и дата удостоверения качества
+                  </td>
+                  <td class="p-2 border-b border-gray-300">
+                    № УК-0614 от 07.02.2024
+                  </td>
+                </tr>
                 </tbody>
               </table>
             </div>
@@ -917,21 +919,21 @@ watch(providerCreateModal, newMProviderModal => {
         <div class="w-[40%] ml-[24px] flex flex-col justify-between">
           <div>
             <AppInput
-              placeholder="АКТ"
-              label="АКТ"
-              label-class="text-[#A8AAAE] text-xs font-medium"
+                placeholder="АКТ"
+                label="АКТ"
+                label-class="text-[#A8AAAE] text-xs font-medium"
             />
 
             <AppInput
-              placeholder="NK-00000"
-              label="NK-00000"
-              label-class="text-[#A8AAAE] text-xs font-medium"
+                placeholder="NK-00000"
+                label="NK-00000"
+                label-class="text-[#A8AAAE] text-xs font-medium"
             />
 
             <AppInput
-              placeholder="АКТ-00000"
-              label="АКТ-00000"
-              label-class="text-[#A8AAAE] text-xs font-medium"
+                placeholder="АКТ-00000"
+                label="АКТ-00000"
+                label-class="text-[#A8AAAE] text-xs font-medium"
             />
 
             <div class="bg-[#FFFFFF] rounded-[8px] p-[12px] mb-[24px]">
@@ -940,58 +942,58 @@ watch(providerCreateModal, newMProviderModal => {
               </span>
 
               <AppInput
-                placeholder="Поле ввода текст содержания акта с выводом шаблонного заданного текста"
-                type="textarea"
-                :rows="5"
+                  placeholder="Поле ввода текст содержания акта с выводом шаблонного заданного текста"
+                  type="textarea"
+                  :rows="5"
               />
 
               <AppInput
-                placeholder="Картофель"
-                label="Картофель"
-                label-class="text-[#A8AAAE] text-xs font-medium"
+                  placeholder="Картофель"
+                  label="Картофель"
+                  label-class="text-[#A8AAAE] text-xs font-medium"
               />
-              <AppInput placeholder="50" />
-              <AppInput placeholder="кг" />
+              <AppInput placeholder="50"/>
+              <AppInput placeholder="кг"/>
               <AppInput
-                placeholder="Номер и дата договора о поставке"
-                label="Номер и дата договора о поставке"
-                label-class="text-[#A8AAAE] text-xs font-medium"
-              />
-              <AppInput
-                placeholder="Номер и дата накладной"
-                label="Номер и дата накладной"
-                label-class="text-[#A8AAAE] text-xs font-medium"
+                  placeholder="Номер и дата договора о поставке"
+                  label="Номер и дата договора о поставке"
+                  label-class="text-[#A8AAAE] text-xs font-medium"
               />
               <AppInput
-                placeholder="Производитель продукта"
-                label="Производитель продукта"
-                label-class="text-[#A8AAAE] text-xs font-medium"
+                  placeholder="Номер и дата накладной"
+                  label="Номер и дата накладной"
+                  label-class="text-[#A8AAAE] text-xs font-medium"
               />
-              <AppInput placeholder="OOO “Yuksalish”" />
               <AppInput
-                placeholder="Транспорт"
-                label="Транспорт"
-                label-class="text-[#A8AAAE] text-xs font-medium"
+                  placeholder="Производитель продукта"
+                  label="Производитель продукта"
+                  label-class="text-[#A8AAAE] text-xs font-medium"
+              />
+              <AppInput placeholder="OOO “Yuksalish”"/>
+              <AppInput
+                  placeholder="Транспорт"
+                  label="Транспорт"
+                  label-class="text-[#A8AAAE] text-xs font-medium"
               />
               <AppDatePicker
-                placeholder="Номер и дата лицензии"
-                label="Номер и дата лицензии"
-                label-class="text-[#A8AAAE] text-xs font-medium"
+                  placeholder="Номер и дата лицензии"
+                  label="Номер и дата лицензии"
+                  label-class="text-[#A8AAAE] text-xs font-medium"
               />
               <AppDatePicker
-                placeholder="Номер и дата заключения Санитарно..."
-                label="Номер и дата заключения Санитарно..."
-                label-class="text-[#A8AAAE] text-xs font-medium"
+                  placeholder="Номер и дата заключения Санитарно..."
+                  label="Номер и дата заключения Санитарно..."
+                  label-class="text-[#A8AAAE] text-xs font-medium"
               />
               <AppDatePicker
-                placeholder="Номер и дата удостоверения ветеринарии"
-                label="Номер и дата удостоверения ветеринарии"
-                label-class="text-[#A8AAAE] text-xs font-medium"
+                  placeholder="Номер и дата удостоверения ветеринарии"
+                  label="Номер и дата удостоверения ветеринарии"
+                  label-class="text-[#A8AAAE] text-xs font-medium"
               />
               <AppDatePicker
-                placeholder="Номер и дата удостоверения качества"
-                label="Номер и дата удостоверения качества"
-                label-class="text-[#A8AAAE] text-xs font-medium"
+                  placeholder="Номер и дата удостоверения качества"
+                  label="Номер и дата удостоверения качества"
+                  label-class="text-[#A8AAAE] text-xs font-medium"
               />
             </div>
 
@@ -1000,9 +1002,9 @@ watch(providerCreateModal, newMProviderModal => {
                 Состав комиссии приема продуктов
               </span>
               <AppSelect
-                placeholder="Начальник базы  Маликов Б."
-                label="Начальник базы"
-                label-class="text-[#A8AAAE] text-xs font-medium"
+                  placeholder="Начальник базы  Маликов Б."
+                  label="Начальник базы"
+                  label-class="text-[#A8AAAE] text-xs font-medium"
               />
             </div>
           </div>
@@ -1011,28 +1013,29 @@ watch(providerCreateModal, newMProviderModal => {
     </AppForm>
     <div class="flex items-start justify-end gap-2 mt-[24px]">
       <button
-        class="custom-cancel-btn"
-        @click="closeModal"
+          class="custom-cancel-btn"
+          @click="closeModal"
       >
         Отменить
       </button>
       <ElButton
-        :loading="documentStore.createLoading"
-        type="success"
-        size="large"
-        @click="sendForm"
-        class="custom-send-btn"
+          :loading="documentStore.createLoading"
+          type="success"
+          size="large"
+          @click="sendForm"
+          class="custom-send-btn"
       >
         Отправить
       </ElButton>
     </div>
 
     <ElDialog
-      v-model="providerCreateModal"
-      :show-close="false"
-      class="w-[65%]"
-      align-center
-      :before-close="providerCreateModalClose"
+        v-model="providerCreateModal"
+        :show-close="false"
+        class="w-[65%]"
+        align-center
+        append-to-body
+        :before-close="providerCreateModalClose"
     >
       <template #header>
         <div class="text-center text-[#000000] font-bold text-[18px]">
@@ -1041,107 +1044,107 @@ watch(providerCreateModal, newMProviderModal => {
       </template>
 
       <AppForm
-        :value="providerForm"
-        @validation="value => (providerV$ = value)"
-        class="bg-[#F8F9FC] p-6 rounded-[24px] border border-[#E2E6F3]"
+          :value="providerForm"
+          @validation="value => (providerV$ = value)"
+          class="bg-[#F8F9FC] p-6 rounded-[24px] border border-[#E2E6F3]"
       >
         <div class="grid grid-cols-3 gap-x-6 gap-y-1">
           <AppInput
-            v-model="providerForm.name"
-            prop="name"
-            label="Наименование"
-            label-class="text-[#A8AAAE] text-[12px] font-medium"
-            placeholder="Введите"
-            required
+              v-model="providerForm.name"
+              prop="name"
+              label="Наименование"
+              label-class="text-[#A8AAAE] text-[12px] font-medium"
+              placeholder="Введите"
+              required
           />
           <AppInput
-            v-model="providerForm.address"
-            prop="address"
-            placeholder="Введите"
-            label-class="text-[#A8AAAE] text-[12px] font-medium"
-            label="Юр. адрес"
-            required
+              v-model="providerForm.address"
+              prop="address"
+              placeholder="Введите"
+              label-class="text-[#A8AAAE] text-[12px] font-medium"
+              label="Юр. адрес"
+              required
           />
           <AppInput
-            v-model="providerForm.oked"
-            type="number"
-            prop="oked"
-            placeholder="Введите"
-            label="ОКЭД"
-            label-class="text-[#A8AAAE] text-[12px] font-medium"
-            required
+              v-model="providerForm.oked"
+              type="number"
+              prop="oked"
+              placeholder="Введите"
+              label="ОКЭД"
+              label-class="text-[#A8AAAE] text-[12px] font-medium"
+              required
           />
           <AppInput
-            v-model="providerForm.tin"
-            prop="tin"
-            type="number"
-            :mask="'#'.repeat(9)"
-            placeholder="Введите"
-            label="ИНН"
-            label-class="text-[#A8AAAE] text-[12px] font-medium"
-            required
-            :min="9"
-            :max="9"
+              v-model="providerForm.tin"
+              prop="tin"
+              type="number"
+              :mask="'#'.repeat(9)"
+              placeholder="Введите"
+              label="ИНН"
+              label-class="text-[#A8AAAE] text-[12px] font-medium"
+              required
+              :min="9"
+              :max="9"
           />
           <AppInput
-            v-model="providerForm.license"
-            prop="license"
-            placeholder="Введите"
-            label-class="text-[#A8AAAE] text-[12px] font-medium"
-            label="Номер лицензии"
-            required
+              v-model="providerForm.license"
+              prop="license"
+              placeholder="Введите"
+              label-class="text-[#A8AAAE] text-[12px] font-medium"
+              label="Номер лицензии"
+              required
           />
           <AppInput
-            v-model="providerForm.sertificate"
-            prop="sertificate"
-            placeholder="Введите"
-            label-class="text-[#A8AAAE] text-[12px] font-medium"
-            label="Сертификат"
-            required
+              v-model="providerForm.sertificate"
+              prop="sertificate"
+              placeholder="Введите"
+              label-class="text-[#A8AAAE] text-[12px] font-medium"
+              label="Сертификат"
+              required
           />
           <AppDatePicker
-            v-model="providerForm.sert_end_date"
-            prop="sert_end_date"
-            placeholder="Введите"
-            label-class="text-[#A8AAAE] text-[12px] font-medium"
-            label="Срок сертификата"
-            format="DD.MM.YYYY"
-            value-format="DD.MM.YYYY"
-            required
+              v-model="providerForm.sert_end_date"
+              prop="sert_end_date"
+              placeholder="Введите"
+              label-class="text-[#A8AAAE] text-[12px] font-medium"
+              label="Срок сертификата"
+              format="DD.MM.YYYY"
+              value-format="DD.MM.YYYY"
+              required
           />
           <AppInput
-            v-model="providerForm.director"
-            prop="director"
-            placeholder="Введите"
-            label-class="text-[#A8AAAE] text-[12px] font-medium"
-            label="Руководитель"
-            required
+              v-model="providerForm.director"
+              prop="director"
+              placeholder="Введите"
+              label-class="text-[#A8AAAE] text-[12px] font-medium"
+              label="Руководитель"
+              required
           />
           <AppInput
-            v-model="providerForm.phone"
-            prop="phone"
-            type="tel"
-            placeholder="Введите"
-            label-class="text-[#A8AAAE] text-[12px] font-medium"
-            label="Контакты"
-            required
+              v-model="providerForm.phone"
+              prop="phone"
+              type="tel"
+              placeholder="Введите"
+              label-class="text-[#A8AAAE] text-[12px] font-medium"
+              label="Контакты"
+              required
           />
         </div>
       </AppForm>
 
       <div class="flex items-center justify-end gap-2 mt-[24px]">
         <button
-          class="custom-cancel-btn h-10"
-          @click="providerCreateModalClose"
+            class="custom-cancel-btn h-10"
+            @click="providerCreateModalClose"
         >
           Отменить
         </button>
         <ElButton
-          :loading="settingsStore.createProviderLoading"
-          size="large"
-          type="primary"
-          class="custom-apply-btn"
-          @click="sendProviderForm"
+            :loading="settingsStore.createProviderLoading"
+            size="large"
+            type="primary"
+            class="custom-apply-btn"
+            @click="sendProviderForm"
         >
           Добавить
         </ElButton>

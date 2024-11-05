@@ -18,7 +18,6 @@ export interface DocumentCreateDataType {
     to_type: string,
     through_whom: string,
     subject: string,
-    content: string,
     basis: string,
     shipping_method: string,
     status: string,

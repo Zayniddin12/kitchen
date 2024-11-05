@@ -4,10 +4,14 @@
 >
 import { AppNavDrawerItemType, NavDrawerPropsType } from "@/components/layouts/nav/nav-drawer/nav-drawer.types";
 import { useRoute } from "vue-router";
-import { ref, watchEffect } from "vue";
+import { computed, ref, useTemplateRef, watch, watchEffect } from "vue";
 import NavList from "@/components/layouts/nav/nav-list/NavList.vue";
 
 const props = defineProps<NavDrawerPropsType>();
+
+const emit = defineEmits<{
+  changeWidth: [value: number]
+}>();
 
 const appItems = ref<AppNavDrawerItemType[]>([]);
 
@@ -22,10 +26,28 @@ const navDrawerItemClick = (item: AppNavDrawerItemType) => {
   item.itemsOpen = !item.itemsOpen;
 };
 
+const navDrawer = useTemplateRef("nav-drawer");
+
+const navDrawerWidth = computed<number>(() => {
+  if (!navDrawer.value) return 0;
+  return navDrawer.value.offsetWidth + 24;
+});
+
+const navListWidth = ref<number>(0);
+
+const navDrawerContentWidth = computed<number>(() => navListWidth.value + navDrawerWidth.value);
+
+watch(navDrawerContentWidth, (newWidth) => {
+  emit("changeWidth", newWidth);
+});
+
 </script>
 
 <template>
-  <div class="nav-drawer fixed z-10 h-[calc(100%-32px)] rounded-2xl bg-[#F8F9FC] px-3">
+  <div
+      ref="nav-drawer"
+      class="nav-drawer nav-wrap px-3 ml-4"
+  >
     <RouterLink
         :to="{name: 'home'}"
         class="nav-drawer__logo mx-3 my-4 flex items-center justify-center"
@@ -36,38 +58,50 @@ const navDrawerItemClick = (item: AppNavDrawerItemType) => {
           class="size-10"
       >
     </RouterLink>
-    <div
-        v-for="item in appItems"
-        :key="item.title"
-        class="nav-drawer__item mt-10 flex flex-col gap-y-2"
-    >
-      <component
-          :is="item.to ? 'RouterLink' :  'button'"
-          :to="item.to"
-          :class="['nav-drawer__item-link', {'nav-drawer__item-link--active': item.key && route.meta?.uniqueKeys?.[item.key]}]"
-          @click="navDrawerItemClick(item)"
+    <div class="nav-drawer__items mt-10 flex flex-col gap-y-2">
+      <div
+          v-for="item in appItems"
+          :key="item.title"
+          class="nav-drawer__item"
       >
-        <svg
-            v-if="item.icon"
-            :data-src="item.icon"
-            class="nav-drawer__item-link-icon"
-        />
-        <span
-            v-if="item.title"
-            class="nav-drawer__item-link-title"
+        <component
+            :is="item.to ? 'RouterLink' :  'button'"
+            :to="item.to"
+            :class="['nav-drawer__item-link', {'nav-drawer__item-link--active': item.key && route.meta?.uniqueKeys?.[item.key]}]"
+            @click="navDrawerItemClick(item)"
         >
+          <svg
+              v-if="item.icon"
+              :data-src="item.icon"
+              class="nav-drawer__item-link-icon"
+          />
+          <span
+              v-if="item.title"
+              class="nav-drawer__item-link-title"
+          >
           {{ item.title }}
         </span>
-      </component>
-      <NavList
-          :title="item.title"
-          :items="item.items"
-      />
+        </component>
+        {{navListWidth}}
+        <NavList
+            v-show="item.itemsOpen"
+            ref="nav-list"
+            :title="item.title"
+            :items="item.items"
+            class="nav-wrap"
+            :style="{left: `${navDrawerWidth}px`}"
+            @changeWidth="(value:number) => navListWidth=value"
+        />
+      </div>
     </div>
   </div>
 </template>
 
 <style lang="scss">
+.nav-wrap {
+  @apply fixed z-10 h-[calc(100%-32px)] rounded-2xl bg-[#F8F9FC] top-0 my-4;
+}
+
 .nav-drawer {
 
   &__item {

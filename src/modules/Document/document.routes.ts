@@ -8,7 +8,11 @@ export default [
         name: "inbox",
         component: () => import("@/modules/Document/pages/OfficeNotes/Inbox/Inbox.vue"),
         meta: {
-            title: "Входящие"
+            title: "Входящие",
+            uniqueKeys: {
+                documents: true,
+                documentInbox: true
+            }
         }
     },
     {

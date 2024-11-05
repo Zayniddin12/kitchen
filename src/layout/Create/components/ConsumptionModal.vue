@@ -73,6 +73,7 @@ const closeModal = () => {
     :show-close="false"
     class="w-[75%]"
     align-center
+    append-to-body
     :before-close="closeModal"
   >
     <template #header>

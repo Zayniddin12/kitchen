@@ -166,7 +166,7 @@ const logOut = () => {
         <div
             v-for="(item, index) in store.menuItems"
             :key="index"
-            class="px-[11px]"
+            class="px-[11px] mt-2 last:mt-0"
             @click.stop="activeMenu(index, item)"
         >
           <div
