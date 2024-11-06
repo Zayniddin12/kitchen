@@ -11,7 +11,7 @@ import useConfirm from "@/components/ui/app-confirm/useConfirm";
 import {
   FoodFactoriesCreateFormType
 } from "@/modules/Settings/components/Reference/CombineNutrition/combine-nutrition.type";
-import { deepEqual, getStatus, Name, setStatus } from "@/utils/helper";
+import { deepEqual, getStatus, getStatusText, Name, setStatus } from "@/utils/helper";
 import AppOverlay from "@/components/ui/app-overlay/AppOverlay.vue";
 import AppForm from "@/components/ui/form/app-form/AppForm.vue";
 import { ValidationType } from "@/components/ui/form/app-form/app-form.type";
@@ -209,9 +209,9 @@ const disabled = computed(() => {
             />
           </AppForm>
           <ElSwitch
+              v-if="route.name === 'reference-combine-nutrition-edit' && form.status !== undefined"
               v-model="form.status"
-              v-if="route.name === 'reference-combine-nutrition-edit'"
-              active-text="Деактивация"
+              :active-text="getStatusText(form.status)"
               class="app-switch"
           />
         </AppOverlay>

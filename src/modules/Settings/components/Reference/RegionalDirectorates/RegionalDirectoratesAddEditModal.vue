@@ -105,16 +105,6 @@ const deleteFn = () => {
   });
 };
 
-const switchChange = async (): Promise<boolean> => {
-  try {
-    const response = await confirm.show();
-    return true;
-  } catch (error) {
-    return false;
-  }
-};
-
-
 const changeStatus = () => {
   if (status.value) {
     dataValue.value.status = 'active'
@@ -187,7 +177,6 @@ watch(() => route.name, () => {
         <AppForm
             :value="dataValue"
             @validation="setValidation"
-            class="mt-6"
         >
           <div class="border border-[#E2E6F3] rounded-[24px] p-[24px] h-[65vh] flex flex-col">
             <div class="flex items-center gap-4">
@@ -221,8 +210,6 @@ watch(() => route.name, () => {
                   placeholder="Начальник управления"
                   label-class="text-[#A8AAAE] font-medium text-[12px]"
                   class="w-[50%]"
-                  required
-                  prop="responsible_position"
                   :disabled="isDisabled"
               />
             </div>
@@ -230,11 +217,10 @@ watch(() => route.name, () => {
             <ElSwitch
                 v-model="status"
                 v-if="route.params.id && !route.query.type"
-                active-text="Деактивация"
                 @change="changeStatus"
+                :active-text="status ? 'Активация' : 'Деактивация'"
                 class="app-switch mt-auto"
             />
-<!--            :before-change="switchChange"-->
           </div>
         </AppForm>
 
@@ -273,18 +259,7 @@ watch(() => route.name, () => {
             v-if="route.query.type == 'view'"
             class="flex items-center gap-4 bg-[#F8F9FC] py-[10px] px-[20px] rounded-[8px]"
         >
-          <li
-              :style="{
-                  maskImage: 'url(/icons/edit.svg)',
-                  backgroundColor: '#8F9194',
-                  color: '#8F9194',
-                  width: '20px',
-                  height: '20px',
-                  maskSize: '20px',
-                  maskPosition: 'center',
-                  maskRepeat: 'no-repeat'
-                   }"
-          ></li>
+          <img src="@/assets/images/icons/edit.svg" alt="edit">
           Редактировать
         </button>
       </div>

@@ -1,15 +1,19 @@
 <script
-  setup
-  lang="ts"
+    setup
+    lang="ts"
 >
 import { onMounted, ref, watch } from "vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { useKitchenStore } from "@/modules/Kitchen/store/kitchen.store";
 import NavBar from "@/layout/Bars/NavBar.vue";
 import SideBar from "@/layout/Bars/SideBar.vue";
 import AppBreadcrumb from "@/components/ui/app-breadcrumb/AppBreadcrumb.vue";
+import { useAuthStore } from "@/modules/Auth/auth.store";
+import { getAccessToken } from "@/utils/token.manager";
 
+const authStore = useAuthStore();
 const route = useRoute();
+const router = useRouter();
 const kitchenStore = useKitchenStore();
 
 const childSidebarPin = ref<boolean>(JSON.parse(localStorage.getItem("child-sidebar-pin" as string) || "false"));
@@ -17,11 +21,13 @@ const childSidebar = ref<boolean>(JSON.parse(localStorage.getItem("child-sidebar
 const margin = ref("ml-[396px]");
 
 onMounted(() => {
+  if (getAccessToken()) authStore.me();
+  // else await router.replace({ name: "login" });
   childSidebarPin.value = JSON.parse(localStorage.getItem("child-sidebar-pin") || "false");
   kitchenStore.fetchDepartments();
 });
 
-watch(() => route.name, function(val) {
+watch(() => route.name, function (val) {
   if (val === "home") {
     localStorage.setItem("child-sidebar", JSON.stringify(false));
     childSidebar.value = false;
@@ -31,26 +37,29 @@ watch(() => route.name, function(val) {
 
 <template>
   <div>
-    <SideBar v-model:childSidebarPin="childSidebarPin" v-model:childSidebar="childSidebar" />
+    <SideBar
+        v-model:childSidebarPin="childSidebarPin"
+        v-model:childSidebar="childSidebar"
+    />
 
     <div
-      class="main-layout min-h-screen p-6 pr-7 pt-28 dark:bg-darkLayoutMain dark:bg-body-dark bg-white ml-[128px] transition-all flex flex-col justify-between"
-      :class="childSidebarPin && childSidebar ? margin : ''"
+        class="main-layout min-h-screen p-6 pr-7 pt-28 dark:bg-darkLayoutMain dark:bg-body-dark bg-white ml-[128px] transition-all flex flex-col justify-between"
+        :class="childSidebarPin && childSidebar ? margin : ''"
     >
 
       <div class="flex flex-col">
-        <AppBreadcrumb />
-        <slot />
+        <AppBreadcrumb/>
+        <slot/>
       </div>
 
       <span class="mt-[28px] bg-transparent !dark:body-dark w-full text-[#8F9194] text-[12px] select-none">Made by “Anysoft” software & solutions company</span>
     </div>
 
     <div
-      :class="childSidebarPin && childSidebar ? 'top-navbar-margin' : ''"
-      class="top-navbar bg-lightLayoutStorm dark:bg-body-dark text-white transition-all bg-[#fff]"
+        :class="childSidebarPin && childSidebar ? 'top-navbar-margin' : ''"
+        class="top-navbar bg-lightLayoutStorm dark:bg-body-dark text-white transition-all bg-[#fff]"
     >
-      <NavBar />
+      <NavBar/>
     </div>
   </div>
 </template>

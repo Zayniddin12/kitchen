@@ -91,7 +91,6 @@ onMounted(async () => {
     const data = await settingsStore.GET_WAREHOUSE_BASES_ITEM(route.params.id as string | number);
 
     if (data && data.base) {
-      console.log(data.base);
       warehouseData.value = data.base;
       status.value = data.base.status == "active";
     }
@@ -103,7 +102,7 @@ watchEffect(() => {
 });
 
 const cancelFn = () => {
-  confirm.cancel().then(response => {
+  confirm.cancel().then(() => {
     router.push({ name: "reference-warehouse-bases" });
   });
 };
@@ -138,23 +137,7 @@ const handleSubmit = async () => {
   }
 };
 
-const switchChange = async (e): Promise<boolean> => {
-  try {
-    console.log(status.value);
-    // if (status.value) {
-    //   warehouseData.value.status = "inactive";
-    // } else {
-    //   warehouseData.value.status = "active";
-    // }
-    // const response = await confirm.show();
-
-    // return true;
-  } catch (error) {
-    return false;
-  }
-};
-
-const switchChange2 = async (e): Promise<boolean> => {
+const switchChange2 = async (e: any): Promise<boolean> => {
   if (status.value) {
     warehouseData.value.status = "active";
   } else {
@@ -184,7 +167,6 @@ const isDisabled = computed<boolean>(() => {
         >
           <div class="border border-[#E2E6F3] rounded-[24px] p-[24px] h-[65vh] flex flex-col">
             <div class="flex items-center gap-4">
-              <!--              {{ warehouseData }}-->
               <app-input
                 v-model="warehouseData.name.ru"
                 label="Наименование (RU)"
@@ -275,18 +257,7 @@ const isDisabled = computed<boolean>(() => {
           v-if="route.query.type == 'view'"
           class="flex items-center gap-4 bg-[#F8F9FC] py-[10px] px-[20px] rounded-[8px]"
         >
-          <li
-            :style="{
-                  maskImage: 'url(/icons/edit.svg)',
-                  backgroundColor: '#8F9194',
-                  color: '#8F9194',
-                  width: '20px',
-                  height: '20px',
-                  maskSize: '20px',
-                  maskPosition: 'center',
-                  maskRepeat: 'no-repeat'
-                   }"
-          ></li>
+          <img src="@/assets/images/icons/edit.svg" alt="edit"/>
           Редактировать
         </button>
       </div>

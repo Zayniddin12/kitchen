@@ -1,7 +1,7 @@
-import { StatusType } from "@/types/common.type";
+import { StatusTextType, StatusType } from "@/types/common.type";
 import { RouteLocationRaw } from "vue-router";
 import { ElNotification } from "element-plus";
-import {useRouter} from "vue-router";
+import { useRouter } from "vue-router";
 
 export const formatDate = (date: Date) => {
     const daysOfWeek = ["Воскресенье", "Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота"];
@@ -21,6 +21,18 @@ export const formatDate = (date: Date) => {
 export const formatNumber = (value: number, format = " ") => {
     if (!value) return 0;
     return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, `${format}`);
+};
+
+export const phoneFormatter = (phoneNumberString: string) => {
+    const cleaned = ("" + phoneNumberString).replace(/\D/g, "");
+    const match = cleaned.match(/^(998|)?(\d{2})(\d{3})(\d{2})(\d{2})$/);
+
+    if (match) {
+        const intlCode = (match[1] ? "+998 " : "");
+        return [intlCode, "(", match[2], ") ", match[3], "-", match[4], "-", match[5]].join("");
+    }
+
+    return null;
 };
 
 export const generateRandomID = (): string => {
@@ -66,10 +78,17 @@ export const setStatus = (status: boolean): StatusType => {
     return status ? "active" : "inactive";
 };
 
-export const deepEqual = (obj1:Record<string, any>, obj2: Record<string, any>) => {
+export const getStatusText = (status: boolean | StatusType): StatusTextType => {
+    if (typeof status === "string") {
+        status = getStatus(status as StatusType);
+    }
+    return status ? "Активация" : "Деактивация";
+};
+
+export const deepEqual = (obj1: Record<string, any>, obj2: Record<string, any>) => {
     if (obj1 === obj2) return true;
 
-    if (typeof obj1 !== 'object' || obj1 === null || typeof obj2 !== 'object' || obj2 === null) {
+    if (typeof obj1 !== "object" || obj1 === null || typeof obj2 !== "object" || obj2 === null) {
         return false;
     }
 
@@ -85,5 +104,10 @@ export const deepEqual = (obj1:Record<string, any>, obj2: Record<string, any>) =
     }
 
     return true;
-}
+};
 
+export const formatTime = (seconds: number): string => {
+    const minutes = Math.floor(seconds / 60).toString().padStart(2, '0');
+    const remainingSeconds = (seconds % 60).toString().padStart(2, '0');
+    return `${minutes}:${remainingSeconds}`;
+}

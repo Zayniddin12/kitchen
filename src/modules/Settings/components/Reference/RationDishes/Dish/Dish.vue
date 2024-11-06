@@ -114,11 +114,15 @@ const setDefaultImage = (event) => {
         v-loading="loading"
         :empty-text="'Нет доступных данных'"
     >
-      <el-table-column prop="id" label="№" width="80"/>
+      <el-table-column prop="idx" label="№" width="80">
+        <template #default="{$index}" v-if="store.rationList.rations">
+          {{params.page >1 ? store.meals.pagination.per_page * (params.page - 1) + $index + 1 : $index +1 }}
+        </template>
+      </el-table-column>
       <el-table-column prop="image" label="Картинка блюды" sortable>
         <template #default="scope">
-          <img @error="setDefaultImage" :src="scope.row.image" class="h-[32px] w-[32px] object-cover rounded-full"
-               alt="photo"/>
+          <img @error="setDefaultImage" :src="scope.row.image" v-if="scope.row.image" class="h-[32px] w-[32px] object-cover rounded-full" alt="photo"/>
+          <img v-else src="https://www.landuse-ca.org/wp-content/uploads/2019/04/no-photo-available.png" class="h-[32px] w-[32px] object-cover rounded-full" alt="photo"/>
         </template>
       </el-table-column>
       <el-table-column prop="name" label="Наименование блюда" sortable/>

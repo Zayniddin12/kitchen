@@ -1,4 +1,4 @@
-import {createRouter, createWebHistory, RouteRecordRaw} from "vue-router";
+import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
 // import {isUserLoggedIn} from "./utils";
 import home from "@/modules/Home/router";
 import Inbox from "@/modules/Document/router";
@@ -8,9 +8,11 @@ import Warehouse from "@/modules/WarehouseBases/router";
 import KitchenWarehouse from "@/modules/KitchenWarehouse/router";
 import Kitchen from "@/modules/Kitchen/router";
 import Users from "@/modules/Users/router";
+import AuthRoutes from "@/modules/Auth/auth.routes";
 
 const routes: RouteRecordRaw[] = [
     ...home,
+    ...AuthRoutes,
     ...Inbox,
     ...Monitoring,
     ...Settings,
@@ -19,45 +21,22 @@ const routes: RouteRecordRaw[] = [
     ...Kitchen,
     ...Users,
 
-    {
-        path: "/",
-        name: 'login',
-        // redirect: () => {
-        //     if (isUserLoggedIn()) {
-        //         return {name: "reset-password"};
-        //     }
-        //     return {name: "login"};
-        // },
-    },
-    {
-        path: "/login",
-        name: "login",
-        component: () => import("@/views/Login.vue"),
-        meta: {layout: "LoginLayout"},
-    },
-    {
-        path: "/reset-password",
-        name: "reset-password",
-        component: () => import("@/views/ResetPassword.vue"),
-        meta: {loginNotRequired: true, layout: "ResetPasswordLayout"},
-    },
-    {
-        path: "/income-password",
-        name: "income-password",
-        component: () => import("@/views/IncomePassword.vue"),
-        meta: {loginNotRequired: true, layout: "IncomePasswordLayout"},
-    },
-    {
-        path: "/new-password",
-        name: "new-password",
-        component: () => import("@/views/Password.vue"),
-        meta: {loginNotRequired: true, layout: "PasswordLayout"},
-    },
+    // {
+    //     path: "/",
+    //     name: 'login',
+    //     redirect: () => {
+    //         // if (isUserLoggedIn()) {
+    //         //     return {name: "reset-password"};
+    //         // }
+    //         return {name: "login"};
+    //     },
+    // },
+
     {
         path: "/:pathMatch(.*)*",
         name: "notFound",
         component: () => import("@/components/errors/404.vue"),
-        meta: {layout: "ErrorLayout"},
+        meta: { layout: "ErrorLayout" }
     }
 ];
 
@@ -69,7 +48,7 @@ const router = createRouter({
 
 router.beforeEach(async (to: any, _, next) => {
     if (!to.meta.layout) to.meta.layout = "MainLayout";
-    next()
+    next();
 
     // const isLoggedIn = isUserLoggedIn()
     //

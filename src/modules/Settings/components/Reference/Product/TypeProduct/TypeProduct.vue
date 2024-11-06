@@ -99,7 +99,11 @@ watchEffect(() => {
       class="custom-element-table mt-[24px]"
       :empty-text="'Нет доступных данных'"
     >
-      <el-table-column prop="id" label="№" width="80" />
+      <el-table-column prop="index" label="№" width="80">
+        <template #default="{ $index}" >
+          {{$index + 1}}
+        </template>
+      </el-table-column>
       <el-table-column prop="name" label="Наименование типа продукта" sortable>
         <template #default="scope">
           {{ scope.row.name }}

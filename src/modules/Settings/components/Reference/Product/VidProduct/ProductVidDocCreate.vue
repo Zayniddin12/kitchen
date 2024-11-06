@@ -101,14 +101,14 @@ const deleteFn = () => {
   });
 };
 
-const switchChange = async (): Promise<boolean> => {
-  try {
-    const response = await confirm.show();
-    return true;
-  } catch (error) {
-    return false;
-  }
-};
+// const switchChange = async (): Promise<boolean> => {
+//   try {
+//     const response = await confirm.show();
+//     return true;
+//   } catch (error) {
+//     return false;
+//   }
+// };
 
 const handleSubmit = async () => {
   if (!v$.value) return;
@@ -159,87 +159,86 @@ watchEffect(() => {
 <template>
   <div>
     <AppOverlay
-      :loading="loading"
+        :loading="loading"
     >
       <h1 class="m-0 font-semibold text-[32px] leading-[48px]">{{ route.meta.title }}</h1>
 
       <div class="flex items-start mt-[24px]">
         <div class="border rounded-[24px] p-[24px] w-[70%]  min-h-[65vh]">
           <AppMediaUploader
-            v-model="dataValue.image"
-            :value="existingImage"
+              v-model="dataValue.image"
+              :value="existingImage"
           />
           <AppForm
-            :value="dataValue"
-            @validation="setValidation"
-            class="mt-6"
+              :value="dataValue"
+              @validation="setValidation"
           >
             <div class="grid grid-cols-2 gap-4 mt-[24px]">
               <app-input
-                v-model="dataValue.name.ru"
-                :disabled="isDisabled"
-                label="Наименование (RU)"
-                label-class="text-[#A8AAAE] text-[12px]"
-                placeholder="Введите"
-                required
-                prop="name.ru"
+                  v-model="dataValue.name.ru"
+                  :disabled="isDisabled"
+                  label="Наименование (RU)"
+                  label-class="text-[#A8AAAE] text-[12px]"
+                  placeholder="Введите"
+                  required
+                  prop="name.ru"
               />
 
               <app-input
-                v-model="dataValue.name.uz"
-                :disabled="isDisabled"
-                label="Наименование (UZ)"
-                label-class="text-[#A8AAAE] text-[12px]"
-                placeholder="Введите"
-                required
-                prop="name.uz"
+                  v-model="dataValue.name.uz"
+                  :disabled="isDisabled"
+                  label="Наименование (UZ)"
+                  label-class="text-[#A8AAAE] text-[12px]"
+                  placeholder="Введите"
+                  required
+                  prop="name.uz"
               />
 
               <app-select
-                v-model="dataValue.parent_id"
-                :disabled="isDisabled"
-                label="Тип продукта"
-                label-class="text-[#A8AAAE] text-[12px]"
-                placeholder="Введите"
-                itemValue="id"
-                itemLabel="name"
-                :items="store.typeProduct.product_categories"
-                required
-                prop="parent_id"
+                  v-model="dataValue.parent_id"
+                  :disabled="isDisabled"
+                  label="Тип продукта"
+                  label-class="text-[#A8AAAE] text-[12px]"
+                  placeholder="Введите"
+                  itemValue="id"
+                  itemLabel="name"
+                  :items="store.typeProduct.product_categories"
+                  required
+                  prop="parent_id"
               />
 
               <app-select
-                v-model="dataValue.measurement_unit_id"
-                :disabled="isDisabled"
-                label="Единица измерения"
-                label-class="text-[#A8AAAE] text-[12px]"
-                placeholder="Введите"
-                itemValue="id"
-                itemLabel="name"
-                :items="store.units.units"
-                required
-                prop="measurement_unit_id"
+                  v-model="dataValue.measurement_unit_id"
+                  :disabled="isDisabled"
+                  label="Единица измерения"
+                  label-class="text-[#A8AAAE] text-[12px]"
+                  placeholder="Введите"
+                  itemValue="id"
+                  itemLabel="name"
+                  :items="store.units.units"
+                  required
+                  prop="measurement_unit_id"
               />
             </div>
           </AppForm>
 
           <el-switch
-            v-model="dataValue.is_active"
-            active-text="Деактивация"
-            v-if="route.name === 'reference-vid-edit-id'"
-            :before-change="switchChange"
+              v-model="dataValue.is_active"
+              v-if="route.name === 'reference-vid-edit-id'"
+              :active-text="dataValue.is_active ? 'Активация' : 'Деактивация'"
           />
+          <!--          :before-change="switchChange"-->
         </div>
 
         <button
-          class="custom-light-btn flex items-center ml-[24px]"
-          @click="router.push(`/reference-vid-edit/${route.params.id}`)"
-          v-if="route.name === 'reference-vid-view-id'"
+            class="custom-light-btn flex items-center ml-[24px]"
+            @click="router.push(`/reference-vid-edit/${route.params.id}`)"
+            v-if="route.name === 'reference-vid-view-id'"
         >
           <img
-            src="@/assets/images/icons/edit.svg"
-            alt="edit"
-            class="mr-[12px]"
+              src="@/assets/images/icons/edit.svg"
+              alt="edit"
+              class="mr-[12px]"
           />
           Редактировать
         </button>
@@ -249,9 +248,9 @@ watchEffect(() => {
            v-if="route.name === 'reference-vid-add' || route.name === 'reference-vid-edit-id'"
       >
         <button
-          class="custom-danger-btn"
-          v-if="route.name === 'reference-vid-edit-id'"
-          @click="deleteFn"
+            class="custom-danger-btn"
+            v-if="route.name === 'reference-vid-edit-id'"
+            @click="deleteFn"
         >
           Удалить
         </button>

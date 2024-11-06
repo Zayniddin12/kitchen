@@ -85,10 +85,10 @@ const changePagination = (event: any) => {
 watchDebounced(
   () => params.value.search,
   () => {
-    params.value.page = 1; // Reset page to 1 when search changes
-    refresh(); // Trigger refresh function
+    params.value.page = 1;
+    refresh();
   },
-  { debounce: 1000, maxWait: 5000 }, // Debounce settings
+  { debounce: 1000, maxWait: 5000 },
 );
 </script>
 
@@ -110,18 +110,7 @@ watchDebounced(
           @click="$router.push({name: 'reference-warehouse-bases-add'})"
           class="flex items-center justify-center gap-3 custom-apply-btn"
         >
-          <li
-            :style="{
-                  maskImage: 'url(/icons/plusIcon.svg)',
-                  backgroundColor: '#fff',
-                  color: '#fff',
-                  width: '20px',
-                  height: '20px',
-                  maskSize: '20px',
-                  maskPosition: 'center',
-                  maskRepeat: 'no-repeat'
-                   }"
-          ></li>
+          <img src="@/assets/images/icons/plus.svg" alt="plus">
           Добавить
         </button>
 
@@ -132,7 +121,6 @@ watchDebounced(
     </div>
 
     <div class="mt-[24px]">
-      <!--      {{ settingsStore.wareHouseList }}-->
       <el-table
         v-loading="loading"
         :empty-text="'Нет доступных данных'"

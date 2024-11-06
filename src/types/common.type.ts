@@ -13,4 +13,6 @@ export interface NameType {
     ru: string,
 }
 
-export type StatusType = "active" | "inactive"
+export type StatusType = "active" | "inactive";
+
+export type StatusTextType = "Активация" | "Деактивация"
