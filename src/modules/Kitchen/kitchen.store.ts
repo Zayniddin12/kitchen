@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
 import { computed, ref } from "vue";
+import $axios from "@/plugins/axios/axios";
 
 enum PARTS {
   MENU = "menu",
@@ -28,6 +29,11 @@ interface DepartmentType {
 
 export const useKitchenStore = defineStore("kitchenStore", () => {
   const departments = ref<DepartmentType[]>([]);
+
+  const GET_KITCHEN_LIST = async (params?: { search: string | null }) => {
+    const { data } = await $axios.get("/bases", { params });
+    departments.value = data.data && data.data.bases;
+  };
 
   const fetchDepartments = () => {
     departments.value = [
@@ -105,6 +111,7 @@ export const useKitchenStore = defineStore("kitchenStore", () => {
   };
 
   const kitchenMenu = computed(() => {
+    fetchDepartments();
     if (!departments.value.length) return [];
 
     return departments.value.map(item => {
@@ -156,6 +163,7 @@ export const useKitchenStore = defineStore("kitchenStore", () => {
   };
 
   return {
+    GET_KITCHEN_LIST,
     departments,
     fetchDepartments,
     kitchenMenu,
