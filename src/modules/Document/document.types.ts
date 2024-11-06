@@ -1,10 +1,13 @@
+import { PaginationParamsType, PaginationType } from "@/types/pagination.type";
+
 export interface DocumentProductType {
     product_type_id: number | "",
     quantity: number | null,
     unit_id: number | "",
     price: number | null,
     total_price?: number | null,
-    [key:string]: any,
+
+    [key: string]: any,
 }
 
 export interface DocumentCreateDataType {
@@ -22,4 +25,28 @@ export interface DocumentCreateDataType {
     shipping_method: string,
     status: string,
     products: DocumentProductType[]
+}
+
+export interface DraftsParamsType extends PaginationParamsType {
+    search?: string,
+    from_date?: string,
+    to_date?: string,
+    number?: string,
+    subject?: string,
+    to_id?: number | "",
+    from_id?: number | "",
+}
+
+export interface DraftType {
+    id: string,
+    date: string,
+    subject: null | string,
+    status: string,
+    from_name: string,
+    to_name: string,
+}
+
+export interface DraftsResponseType {
+    documents: DraftType[];
+    paginator: PaginationType;
 }

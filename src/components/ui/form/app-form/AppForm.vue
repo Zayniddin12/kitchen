@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, reactive, useTemplateRef } from "vue";
+import { inject, onMounted, provide, reactive, useTemplateRef, watch, watchEffect } from "vue";
 import {
   AppFormPropsType,
   ValidationType,
@@ -7,6 +7,7 @@ import {
 
 const props = withDefaults(defineProps<AppFormPropsType>(), {
   labelPosition: "top",
+  validationErrors: null
 });
 
 const emit = defineEmits<{
@@ -39,9 +40,17 @@ const validation = reactive<ValidationType>({
   },
 });
 
+// provide("validation-errors", props.validationErrors);
+
 onMounted(() => {
   emit("validation", validation);
 });
+
+watchEffect(() =>{
+  const  value = inject("validation-errors");
+  console.log("ssss",value);
+})
+
 </script>
 <template>
   <ElForm

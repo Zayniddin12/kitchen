@@ -118,3 +118,8 @@ export const formatDate2 = (date: Date) => {
     const year = date.getFullYear();
     return `${day}.${month}.${year}`;
 };
+
+export const setTableColumnIndex = (index: number, page: number | null, per_page: number) => {
+    if (!page) page = 1;
+    return index + 1 + (page - 1) * per_page;
+};

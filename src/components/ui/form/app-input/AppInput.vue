@@ -3,9 +3,10 @@
     lang="ts"
 >
 import { AppInputPropsType, AppInputValueType } from "@/components/ui/form/app-input/app-input.type";
-import { computed, useSlots } from "vue";
+import { computed, inject, toRefs, useSlots, watch, watchEffect } from "vue";
 import { vMaska } from "maska";
 import { getRules, setRules } from "@/components/ui/form/validate";
+import { ValidationErrorsType } from "@/components/ui/form/form.type";
 
 const [model, modifiers] = defineModel<AppInputValueType>();
 
@@ -18,6 +19,18 @@ const props = withDefaults(defineProps<AppInputPropsType>(), {
 const updateModelValue = (value: any) => {
   model.value = value;
 };
+
+const validationErrors = toRefs(inject<ValidationErrorsType>("validation-errors"));
+
+const computedError = computed(() => {
+  if (props.error) return props.error;
+
+  else if (validationErrors && props.prop && typeof (props.prop) === "string" && validationErrors[props.prop]) {
+    return validationErrors[props.prop];
+  }
+
+  return "";
+});
 
 const appInputClasses = computed<string[]>(() => {
   const classes = ["app-input app-form-item"];
@@ -38,6 +51,11 @@ const computedMask = computed(() =>
 const inputMask = computed(() => {
   return { mask: computedMask.value };
 });
+
+watch(validationErrors, (newValue) => {
+  console.log(newValue);
+});
+
 </script>
 
 <template>
@@ -47,7 +65,7 @@ const inputMask = computed(() => {
       :class="appInputClasses"
       :size
       :prop
-      :error
+      :error="computedError"
       :rules="setRules(getRules(props))"
   >
     <template

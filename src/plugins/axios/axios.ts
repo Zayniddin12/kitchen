@@ -37,7 +37,7 @@ axiosInstance.interceptors.response.use(
         if (data.success) return Promise.resolve(response);
         else if (!data.success && error) {
             useCommonStore().errorToast(error.message);
-            return Promise.reject(error);
+            return Promise.reject(data);
         }
     },
 

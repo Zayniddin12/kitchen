@@ -32,3 +32,5 @@ export interface ElFormItemType extends FormItemType, RulesType {
   error?: string,
   labelClass?: string | string[] | {},
 }
+
+export type ValidationErrorsType = Record<string, any> | null;

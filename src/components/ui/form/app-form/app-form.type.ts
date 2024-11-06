@@ -1,10 +1,11 @@
-import { ElFormItemLabelPosition, ElFormItemSize } from "@/components/ui/form/form.type";
+import { ElFormItemLabelPosition, ElFormItemSize, ValidationErrorsType } from "@/components/ui/form/form.type";
 
 export interface AppFormPropsType {
     value?: Record<string, any>,
     size?: ElFormItemSize,
     labelPosition?: ElFormItemLabelPosition,
-    statusIcon?: boolean
+    statusIcon?: boolean,
+    validationErrors?: ValidationErrorsType,
 }
 
 export interface ValidationType {
