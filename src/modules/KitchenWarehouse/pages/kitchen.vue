@@ -5,7 +5,7 @@
 import { useRoute, useRouter } from "vue-router";
 import { ref, watchEffect } from "vue";
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
-import { useKitchenWarehouseStore } from "@/modules/KitchenWarehouse/store";
+import { useKitchenWarehouseStore } from "@/modules/KitchenWarehouse/kitchen-warehouse.store";
 
 const router = useRouter();
 const route = useRoute();

@@ -1,4 +1,5 @@
 import { useDistrictStore } from "@/modules/Monitoring/store/district.store";
+import { RouteRecordRaw } from "vue-router";
 
 export default [
   {
@@ -39,4 +40,4 @@ export default [
       },
     ],
   },
-];
+] as RouteRecordRaw[];

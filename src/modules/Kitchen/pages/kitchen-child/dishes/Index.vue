@@ -6,7 +6,7 @@
 import { computed, watchEffect } from "vue";
 import DishesImg from "@/assets/images/kitchen/test/dishes.png";
 import { useRoute } from "vue-router";
-import { useKitchenStore } from "@/modules/Kitchen/store/kitchen.store";
+import { useKitchenStore } from "@/modules/Kitchen/kitchen.store";
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 
 const route = useRoute();

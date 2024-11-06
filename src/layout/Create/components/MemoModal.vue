@@ -1,40 +1,36 @@
 <script
-  setup
-  lang="ts"
+    setup
+    lang="ts"
 >
 
 import AppInput from "@/components/ui/form/app-input/AppInput.vue";
 import AppSelect from "@/components/ui/form/app-select/AppSelect.vue";
 import AppDatePicker from "@/components/ui/form/app-date-picker/AppDatePicker.vue";
 import useConfirm from "@/components/ui/app-confirm/useConfirm";
+import { ModalPropsType, ModalValueType } from "@/layout/Create/components/modal.types";
 
-const model = defineModel<boolean>();
+const model = defineModel<ModalValueType>();
 
-const emit = defineEmits(["update:editModal"]);
-const props = defineProps({
-  editModal: {
-    type: Boolean,
-    default: false,
-  },
-});
+const props = defineProps<ModalPropsType>();
 
 const { confirm } = useConfirm();
 
 const closeModal = () => {
   // Let it come out when the form changes
   confirm.cancel({ disabledBody: true }).then((response) => {
-    emit("update:editModal", false);
+    model.value = false;
   });
 };
 </script>
 
 <template>
   <el-dialog
-    v-model="props.editModal"
-    :show-close="false"
-    class="w-[70%]"
-    align-center
-    :before-close="closeModal"
+      v-model="model"
+      :show-close="false"
+      class="w-[70%]"
+      align-center
+      append-to-body
+      :before-close="closeModal"
   >
     <template #header>
       <div class="text-center text-[#000000] font-bold text-[18px]">Создать служебную записку</div>
@@ -45,8 +41,8 @@ const closeModal = () => {
         <div class="px-[72px] pb-[150px]">
           <header class="flex items-center justify-center my-[24px] mb-6">
             <img
-              src="@/assets/images/logo.svg"
-              alt="logo"
+                src="@/assets/images/logo.svg"
+                alt="logo"
             >
             <div class="flex flex-col ml-3">
               <b class="text-[#000D24] text-lg">NKMK</b>
@@ -95,8 +91,8 @@ const closeModal = () => {
             </div>
 
             <img
-              src="@/assets/images/icons/qr.svg"
-              alt="qr"
+                src="@/assets/images/icons/qr.svg"
+                alt="qr"
             />
 
             <h1 class="text-[#A8AAAE] text-[14px] mr-[100px]">Эргашева Л.</h1>
@@ -107,50 +103,50 @@ const closeModal = () => {
       <div class="w-[35%] ml-[24px] flex flex-col justify-between">
         <div>
           <app-input
-            placeholder="Служебная записка"
-            label="Название документа"
-            label-class="text-[#A8AAAE] text-[12px] font-medium"
+              placeholder="Служебная записка"
+              label="Название документа"
+              label-class="text-[#A8AAAE] text-[12px] font-medium"
           />
 
           <app-date-picker
-            placeholder="24.08.2024"
-            label="Дата создания документа"
-            label-class="text-[#A8AAAE] text-[12px] font-medium"
+              placeholder="24.08.2024"
+              label="Дата создания документа"
+              label-class="text-[#A8AAAE] text-[12px] font-medium"
           />
 
-          <app-input placeholder="№ документа" />
+          <app-input placeholder="№ документа"/>
 
           <app-select
-            placeholder="Выберите"
-            label="Кому"
-            label-class="text-[#A8AAAE] text-[12px] font-medium"
+              placeholder="Выберите"
+              label="Кому"
+              label-class="text-[#A8AAAE] text-[12px] font-medium"
           />
 
           <app-input
-            placeholder="Введите"
-            label="Тема"
-            label-class="text-[#A8AAAE] text-[12px] font-medium"
+              placeholder="Введите"
+              label="Тема"
+              label-class="text-[#A8AAAE] text-[12px] font-medium"
           />
 
           <app-input
-            label="Сообщения"
-            label-class="text-[#A8AAAE] text-[12px] font-medium"
-            placeholder="Отображение сообщения служебки"
-            type="textarea"
-            :rows="5"
+              label="Сообщения"
+              label-class="text-[#A8AAAE] text-[12px] font-medium"
+              placeholder="Отображение сообщения служебки"
+              type="textarea"
+              :rows="5"
           />
 
           <app-select
-            placeholder="Выберите"
-            label="Отправитель"
-            label-class="text-[#A8AAAE] text-[12px] font-medium"
+              placeholder="Выберите"
+              label="Отправитель"
+              label-class="text-[#A8AAAE] text-[12px] font-medium"
           />
         </div>
 
         <div class="flex items-start justify-between">
           <button
-            class="custom-cancel-btn"
-            @click="closeModal"
+              class="custom-cancel-btn"
+              @click="closeModal"
           >Отменить
           </button>
           <button class="custom-apply-btn">Сохранить как черновик</button>

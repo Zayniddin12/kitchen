@@ -1,12 +1,11 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
-// import {isUserLoggedIn} from "./utils";
 import home from "@/modules/Home/router";
-import Inbox from "@/modules/Document/router";
-import Monitoring from "@/modules/Monitoring/router";
+import Inbox from "@/modules/Document/document.routes";
+import Monitoring from "@/modules/Monitoring/monitoring.routes";
 import Settings from "@/modules/Settings/router";
 import Warehouse from "@/modules/WarehouseBases/router";
-import KitchenWarehouse from "@/modules/KitchenWarehouse/router";
-import Kitchen from "@/modules/Kitchen/router";
+import KitchenWarehouse from "@/modules/KitchenWarehouse/kitchen-warehouse.routes";
+import Kitchen from "@/modules/Kitchen/kitchen.routes";
 import Users from "@/modules/Users/router";
 import AuthRoutes from "@/modules/Auth/auth.routes";
 

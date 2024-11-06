@@ -1,71 +1,65 @@
 <script
-  setup
-  lang="ts"
+    setup
+    lang="ts"
 >
-import { ref, watchEffect } from "vue";
-import { useRouter } from "vue-router";
+import { onMounted, provide, reactive, ref, watch, watchEffect } from "vue";
+import { useRoute, useRouter } from "vue-router";
 import CollapseFilter from "@/components/collapseFilter/index.vue";
 import appInput from "@/components/ui/form/app-input/AppInput.vue";
-import appSelect from "@/components/ui/form/app-select/AppSelect.vue";
+import AppSelect from "@/components/ui/form/app-select/AppSelect.vue";
 import white from "@/assets/images/filter2.svg";
 import filter from "@/assets/images/filter.svg";
 import AppDatePicker from "@/components/ui/form/app-date-picker/AppDatePicker.vue";
 import EditModal from "./EditModal.vue";
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
+import { useDocumentStore } from "@/modules/Document/document.store";
+import { filterObjectValues, setTableColumnIndex } from "@/utils/helper";
+import { DraftsParamsType, DraftType } from "@/modules/Document/document.types";
+import AppPagination from "@/components/ui/app-pagination/AppPagination.vue";
+import AppForm from "@/components/ui/form/app-form/AppForm.vue";
+import { ValidationType } from "@/components/ui/form/app-form/app-form.type";
+import { useSettingsStore } from "@/modules/Settings/store";
 
-interface TableData {
-  id: number;
-  num: string;
-  date: string;
-  doc: string;
-  theme: string;
-  send: string;
-  receive: string;
-}
+const documentStore = useDocumentStore();
+const settingsStore = useSettingsStore();
 
 const router = useRouter();
+const route = useRoute();
+
+const form = reactive<DraftsParamsType>({
+  page: null,
+  search: "",
+  from_date: "",
+  to_date: "",
+  number: "",
+  subject: "",
+  to_id: "",
+  from_id: ""
+});
+
+const validationErrors = ref<Record<string, any> | null>(null);
+
+const v$ = ref<ValidationType | null>(null);
+
+const setValidation = (value: ValidationType) => {
+  v$.value = value;
+};
+
+const filterForm = () => {
+  const query = { ...filterObjectValues(form) };
+  delete query.page;
+
+  router.push({ query });
+};
+
+const clearForm = () => {
+  router.push({ query: {} });
+  isOpenFilter.value = false;
+};
+
 const isOpenFilter = ref<boolean>(false);
 const editModal = ref<boolean>(false);
 const isView = ref<boolean>(false);
-
-const tableData = ref<TableData[]>([
-  {
-    id: 1,
-    num: "1",
-    date: "23.08.2024",
-    doc: "852369",
-    theme: "Доставка мяса",
-    send: "Зарафшан",
-    receive: "Фонд",
-  },
-  {
-    id: 2,
-    num: "2",
-    date: "22.08.2024",
-    doc: "556261",
-    theme: "Доставка картофеля",
-    send: "Учкудук",
-    receive: "Фонд",
-  },
-  {
-    id: 3,
-    num: "3",
-    date: "21.08.2024",
-    doc: "584534",
-    theme: "Доставка лука",
-    send: "Навои",
-    receive: "Фонд",
-  },
-  {
-    id: 4,
-    num: "4",
-    date: "22.08.2024",
-    doc: "556261",
-    theme: "Доставка картофеля",
-    send: "Учкудук",
-    receive: "Фонд",
-  },
-]);
 
 const viewDraft = () => {
   editModal.value = true;
@@ -82,21 +76,57 @@ const { setBreadCrumb } = useBreadcrumb();
 const setBreadCrumbFn = () => {
   setBreadCrumb([
     {
-      label: "Документы",
+      label: "Документы"
     },
     {
-      label: "Служебные записки",
+      label: "Служебные записки"
     },
     {
       label: "Черновики",
-      isActionable: true,
-    },
+      isActionable: true
+    }
   ]);
 };
 
-watchEffect(() => {
+
+const fetchDrafts = async () => {
+  const query = route.query as Record<string, any>;
+
+  const page = parseInt(query.page as string);
+  const fromId = parseInt(query.from_id as string);
+  const toId = parseInt(query.to_id as string);
+
+  form.page = !isNaN(page) ? page : null;
+  form.from_id = !isNaN(fromId) ? fromId : "";
+  form.to_id = !isNaN(toId) ? toId : "";
+  form.to_date = String(query.to_date ?? "");
+  form.from_date = String(query.from_date ?? "");
+  form.number = String(query.number ?? "");
+  form.subject = String(query.subject ?? "");
+
+  try {
+    await documentStore.fetchDrafts(filterObjectValues(form));
+  } catch (error: any) {
+    if (error.error.code === 422) {
+      validationErrors.value = error.meta.validation_errors;
+      provide("validation-errors", error.meta.validation_errors);
+      console.log(error.meta.validation_errors.to_date);
+    }
+  }
+};
+
+onMounted(() => {
   setBreadCrumbFn();
+  settingsStore.fetchRespondents();
 });
+
+watch(route, () => {
+  fetchDrafts();
+}, { immediate: true });
+
+const changePage = (value: number) => {
+  router.push({ query: { ...route.query, page: value } });
+};
 
 </script>
 
@@ -106,14 +136,14 @@ watchEffect(() => {
       <h1 class="m-0 font-semibold text-[32px]">Черновики</h1>
 
       <button
-        class="custom-filter-btn font-medium"
-        :class="isOpenFilter ? '!bg-blue !text-white' : ''"
-        @click="isOpenFilter = !isOpenFilter"
+          class="custom-filter-btn font-medium"
+          :class="isOpenFilter ? '!bg-blue !text-white' : ''"
+          @click="isOpenFilter = !isOpenFilter"
       >
         <img
-          :src="isOpenFilter ? white : filter"
-          alt="filter"
-          class="mr-[12px]"
+            :src="isOpenFilter ? white : filter"
+            alt="filter"
+            class="mr-[12px]"
         />
         Фильтр
       </button>
@@ -122,124 +152,170 @@ watchEffect(() => {
 
     <CollapseFilter v-model="isOpenFilter">
       <template #body>
-        <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          <app-date-picker
-            placeholder="С этой даты"
-            label="С этой даты"
-            label-class="text-[#7F7D83]"
+        <AppForm
+            :value="form"
+            :validation-errors="validationErrors"
+            @validation="setValidation"
+            class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-1"
+        >
+          <AppDatePicker
+              v-model="form.from_date"
+              prop="from_date"
+              placeholder="С этой даты"
+              label="С этой даты"
+              label-class="text-[#7F7D83]"
           />
-          <app-date-picker
-            placeholder="по эту дату"
-            label="по эту дату"
-            label-class="text-[#7F7D83]"
+          <AppDatePicker
+              v-model="form.to_date"
+              prop="to_date"
+              placeholder="по эту дату"
+              label="по эту дату"
+              label-class="text-[#7F7D83]"
           />
 
           <appInput
-            placeholder="Номер документа"
-            label="Номер документа"
-            label-class="text-[#7F7D83]"
+              v-model="form.number"
+              prop="number"
+              placeholder="Номер документа"
+              label="Номер документа"
+              label-class="text-[#7F7D83]"
           />
           <appInput
-            placeholder="Доставка картофеля"
-            label="Доставка картофеля"
-            label-class="text-[#7F7D83]"
+              v-model="form.subject"
+              prop="subject"
+              placeholder="Доставка картофеля"
+              label="Доставка картофеля"
+              label-class="text-[#7F7D83]"
           />
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-2 gap-4">
-          <appSelect
-            placeholder="Кому"
-            label="Кому"
-            label-class="text-[#7F7D83]"
+          <AppSelect
+              v-model="form.to_id"
+              prop="to_id"
+              :items="settingsStore.respondents"
+              item-label="name"
+              item-value="id"
+              :loading="settingsStore.respondentsLoading"
+              class="col-span-2"
+              placeholder="Кому"
+              label="Кому"
+              label-class="text-[#7F7D83]"
           />
-          <appSelect
-            placeholder="Отправитель"
-            label="Отправитель"
-            label-class="text-[#7F7D83]"
+          <AppSelect
+              v-model="form.from_id"
+              :items="settingsStore.respondents"
+              item-label="name"
+              item-value="id"
+              :loading="settingsStore.respondentsLoading"
+              class="col-span-2"
+              placeholder="Отправитель"
+              label="Отправитель"
+              label-class="text-[#7F7D83]"
           />
-        </div>
+        </AppForm>
 
         <div class="flex items-center mt-[10px] justify-between">
-          <div class="text-[#8F9194] text-[14px]">Найдено: 56</div>
+          <div class="text-[#8F9194] text-[14px]">Найдено: {{ documentStore.drafts?.paginator.total_count }}</div>
           <div class="flex items-center">
-            <button class="custom-reset-btn">Сбросить</button>
-            <button class="custom-apply-btn ml-[16px]">Применить</button>
+            <button
+                @click="clearForm"
+                class="custom-reset-btn"
+            >Сбросить
+            </button>
+            <ElButton
+                :loading="documentStore.draftsLoading"
+                type="primary"
+                size="large"
+                class="custom-apply-btn ml-4"
+                @click="filterForm"
+            >
+              Применить
+            </ElButton>
           </div>
         </div>
       </template>
     </CollapseFilter>
-
     <el-table
-      :data="tableData"
-      class="custom-element-table"
-      stripe
+        v-loading="documentStore.draftsLoading"
+        :data="documentStore.drafts?.documents"
+        class="custom-element-table"
+        stripe
     >
       <el-table-column
-        prop="num"
-        label="№"
-        width="80"
+          prop="num"
+          label="№"
+          width="80"
+      >
+        <template #default="{$index}">
+          {{ setTableColumnIndex($index, form.page as number, documentStore.drafts?.paginator.per_page ?? 0) }}
+        </template>
+      </el-table-column>
+      <el-table-column
+          prop="date"
+          label="Дата"
       />
       <el-table-column
-        prop="date"
-        label="Дата"
+          prop="number"
+          label="№ документа"
       />
       <el-table-column
-        prop="doc"
-        label="№ документа"
-      />
+          prop="subject"
+          label="Тема"
+      >
+        <template #default="{row}:{row: DraftType}">
+          {{ row.subject ?? "-" }}
+        </template>
+      </el-table-column>
       <el-table-column
-        prop="theme"
-        label="Тема"
-      />
+          prop="from_name"
+          label="Отправитель"
+      >
+        <template #default="{row}:{row: DraftType}">
+          {{ row.from_name || "-" }}
+        </template>
+      </el-table-column>
       <el-table-column
-        prop="send"
-        label="Отправитель"
-      />
-      <el-table-column
-        prop="receive"
-        label="Получатель"
-      />
+          prop="to_name"
+          label="Получатель"
+      >
+        <template #default="{row}:{row: DraftType}">
+          {{ row.to_name || "-" }}
+        </template>
+      </el-table-column>
       <el-table-column label="Действие">
         <template #default="scope">
-<!--          <button-->
-<!--            class="action-btn"-->
-<!--            @click="viewDraft"-->
-<!--          >-->
-<!--            <img-->
-<!--              src="@/assets/images/eye.svg"-->
-<!--              alt="eye"-->
-<!--            />-->
-<!--          </button>-->
+          <!--          <button-->
+          <!--            class="action-btn"-->
+          <!--            @click="viewDraft"-->
+          <!--          >-->
+          <!--            <img-->
+          <!--              src="@/assets/images/eye.svg"-->
+          <!--              alt="eye"-->
+          <!--            />-->
+          <!--          </button>-->
 
           <button
-            class="action-btn ml-[20px]"
-            @click="handleEdit"
+              class="action-btn ml-[20px]"
+              @click="handleEdit"
           >
             <img
-              src="@/assets/images/icons/edit.svg"
-              alt="edit"
+                src="@/assets/images/icons/edit.svg"
+                alt="edit"
             />
           </button>
         </template>
       </el-table-column>
     </el-table>
 
-    <div class="mt-[24px] flex items-center justify-between">
-      <div class="text-cool-gray text-[14px]">
-        Показано 1–12 из 100 результатов
-      </div>
-
-      <el-pagination
-        class="float-right"
-        background
-        layout="prev, pager, next"
-        :total="1000"
-      />
-    </div>
+    <AppPagination
+        v-if="documentStore.drafts"
+        v-model="form.page"
+        :pagination="documentStore.drafts.paginator"
+        class="mt-6"
+        @current-change="changePage"
+    />
 
     <EditModal
-      v-model:editModal="editModal"
-      :isView="isView"
+        v-model:editModal="editModal"
+        :isView="isView"
     />
   </div>
 </template>

@@ -1,10 +1,13 @@
-<script setup lang="ts">
-import {onMounted, ref} from "vue";
-import {Search} from "@element-plus/icons-vue";
-import {useRoute} from "vue-router";
+<script
+    setup
+    lang="ts"
+>
+import { onMounted, ref } from "vue";
+import { Search } from "@element-plus/icons-vue";
+import { useRoute, useRouter } from "vue-router";
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
-import {ElNotification} from "element-plus";
-import {useSettingsStore} from "@/modules/Settings/store";
+import { ElNotification } from "element-plus";
+import { useSettingsStore } from "@/modules/Settings/store";
 
 interface Params {
   search: string | null;
@@ -13,27 +16,28 @@ interface Params {
 }
 
 const route = useRoute();
+const router = useRouter();
 const store = useSettingsStore();
-const {setBreadCrumb} = useBreadcrumb();
+const { setBreadCrumb } = useBreadcrumb();
 const setBreadCrumbFn = () => {
   setBreadCrumb([
     {
-      label: "Настройки",
+      label: "Настройки"
     },
     {
       label: "Справочники",
-      to: {name: "reference"},
+      to: { name: "reference" }
     },
 
     {
       label: "Поставщики и организации",
-      to: {name: "reference"},
+      to: { name: "reference" }
     },
 
     {
       label: "Организации",
-      isActionable: true,
-    },
+      isActionable: true
+    }
   ]);
 };
 
@@ -41,27 +45,27 @@ const params = ref<Params>({
   search: null,
   page: 1,
   per_page: 10
-})
-const loading = ref<boolean>(false)
-let debounceTimeout: ReturnType<typeof setTimeout>
+});
+const loading = ref<boolean>(false);
+let debounceTimeout: ReturnType<typeof setTimeout>;
 
 onMounted(() => {
   setBreadCrumbFn();
 
-  refresh()
+  refresh();
 });
 
 const refresh = async () => {
-  loading.value = true
+  loading.value = true;
   try {
-    await store.GET_ORGANIZATION(params.value)
+    await store.GET_ORGANIZATION(params.value);
   } catch (e: any) {
-    loading.value = false
-    ElNotification({title: e, type: 'error'})
+    loading.value = false;
+    ElNotification({ title: e, type: "error" });
   } finally {
-    loading.value = false
+    loading.value = false;
   }
-}
+};
 
 const handleSearch = (): void => {
   clearTimeout(debounceTimeout);
@@ -77,8 +81,13 @@ const handleSearch = (): void => {
 const changePagination = (event: any) => {
   params.value.page = event;
 
-  refresh()
-}
+  refresh();
+};
+
+const tableCurrentChange = (value: Record<string, any>) => {
+  router.push({ name: "reference-organization-view", query: { type: "view" }, params: { id: value.id } });
+};
+
 </script>
 
 <template>
@@ -100,7 +109,10 @@ const changePagination = (event: any) => {
             @click="$router.push({name: 'reference-organization-add'})"
             class="flex items-center justify-center gap-3 custom-apply-btn"
         >
-          <img src="@/assets/images/icons/plus.svg" alt="plus">
+          <img
+              src="@/assets/images/icons/plus.svg"
+              alt="plus"
+          >
           Добавить
         </button>
       </div>
@@ -113,25 +125,60 @@ const changePagination = (event: any) => {
           class="custom-element-table"
           v-loading="loading"
           :empty-text="'Нет доступных данных'"
+          highlight-current-row
+          @current-change="tableCurrentChange"
       >
-        <el-table-column prop="idx" label="№" width="80">
-          <template #default="{$index}" v-if="store.rationList.rations">
-            {{params.page >1 ? store.organization.paginator.per_page * (params.page - 1) + $index + 1 : $index +1 }}
+        <el-table-column
+            prop="idx"
+            label="№"
+            width="80"
+        >
+          <template
+              #default="{$index}"
+              v-if="store.rationList.rations"
+          >
+            {{ params.page > 1 ? store.organization.paginator.per_page * (params.page - 1) + $index + 1 : $index + 1 }}
           </template>
         </el-table-column>
-        <el-table-column prop="name" label="Наименование" sortable width="400"/>
-        <el-table-column prop="tin" label="ИНН" sortable/>
-        <el-table-column prop="address" label="Юр. адрес" sortable/>
-        <el-table-column label="Действие" align="right">
+        <el-table-column
+            prop="name"
+            label="Наименование"
+            sortable
+            width="400"
+        />
+        <el-table-column
+            prop="tin"
+            label="ИНН"
+            sortable
+        />
+        <el-table-column
+            prop="address"
+            label="Юр. адрес"
+            sortable
+        />
+        <el-table-column
+            label="Действие"
+            align="right"
+        >
           <template #default="scope">
-            <button class="action-btn mr-[8px]"
-                    @click="$router.push({name: 'reference-organization-view', query: {type: 'view'}, params: {id: scope.row.id}})">
-              <img src="../../../../../assets/images/eye.svg" alt="download"/>
+            <button
+                class="action-btn mr-[8px]"
+                @click.stop="router.push({name: 'reference-organization-view', query: {type: 'view'}, params: {id: scope.row.id}})"
+            >
+              <img
+                  src="@/assets/images/eye.svg"
+                  alt="eye"
+              />
             </button>
 
-            <button class="action-btn"
-                    @click="$router.push({name: 'reference-organization-edit', params: {id: scope.row.id}})">
-              <img src="../../../../../assets/images/icons/edit.svg" alt="eye"/>
+            <button
+                class="action-btn"
+                @click.stop="router.push({name: 'reference-organization-edit', params: {id: scope.row.id}})"
+            >
+              <img
+                  src="@/assets/images/icons/edit.svg"
+                  alt="edit"
+              />
             </button>
           </template>
         </el-table-column>

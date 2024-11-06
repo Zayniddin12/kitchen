@@ -1,3 +1,4 @@
+import { RouteRecordRaw } from "vue-router";
 
 export default [
     {
@@ -5,7 +6,7 @@ export default [
         name: "warehouse",
         component: () => import("@/modules/WarehouseBases/pages/Index.vue"),
         meta: {
-            title: "Базы складов",
-        },
+            title: "Базы складов"
+        }
     }
-]
+] as RouteRecordRaw[];

@@ -1,6 +1,6 @@
 <script
-  setup
-  lang="ts"
+    setup
+    lang="ts"
 >
 import { ref, watchEffect } from "vue";
 import { Search } from "@element-plus/icons-vue";
@@ -33,16 +33,16 @@ const activeTab = ref<number>(0);
 const tabs = ref<Tabs[]>([
   {
     title: "Все",
-    value: 0,
+    value: 0
   },
   {
     title: "Кадровый резерв",
-    value: 1,
+    value: 1
   },
   {
     title: "Сотрудники",
-    value: 2,
-  },
+    value: 2
+  }
 ]);
 const tableData = ref<TableData[]>([
   {
@@ -52,8 +52,8 @@ const tableData = ref<TableData[]>([
     phone: "8 часов",
     status: {
       title: "Активный",
-      status: true,
-    },
+      status: true
+    }
   },
   {
     id: 1,
@@ -62,8 +62,8 @@ const tableData = ref<TableData[]>([
     phone: "8 часов",
     status: {
       title: "Завершено",
-      status: false,
-    },
+      status: false
+    }
   },
   {
     id: 1,
@@ -72,8 +72,8 @@ const tableData = ref<TableData[]>([
     phone: "8 часов",
     status: {
       title: "Активный",
-      status: true,
-    },
+      status: true
+    }
   },
   {
     id: 1,
@@ -82,8 +82,8 @@ const tableData = ref<TableData[]>([
     phone: "8 часов",
     status: {
       title: "Завершено",
-      status: false,
-    },
+      status: false
+    }
   },
   {
     id: 1,
@@ -92,9 +92,9 @@ const tableData = ref<TableData[]>([
     phone: "8 часов",
     status: {
       title: "Активный",
-      status: true,
-    },
-  },
+      status: true
+    }
+  }
 ]);
 const input1 = ref<string>("");
 
@@ -105,18 +105,23 @@ const setActiveTab = (item: any) => {
 const setBreadCrumbFn = () => {
   setBreadCrumb([
     {
-      label: "Кадры",
+      label: "Кадры"
     },
     {
       label: "Посетители",
-      isActionable: true,
-    },
+      isActionable: true
+    }
   ]);
 };
 
 watchEffect(() => {
   setBreadCrumbFn();
 });
+
+const tableCurrentChange = (value: Record<string, any>) => {
+  router.push(`/visitors-view/${value.id}`);
+};
+
 </script>
 
 <template>
@@ -125,15 +130,15 @@ watchEffect(() => {
 
     <div class="flex items-center justify-end my-[24px]">
       <div
-        class="app-tabs"
-        v-show="false"
+          class="app-tabs"
+          v-show="false"
       >
         <div
-          v-for="item in tabs"
-          :key="item.value"
-          class="cursor-pointer"
-          :class="['app-tab', {'app-tab--active': activeTab === item.value}]"
-          @click="setActiveTab(item)"
+            v-for="item in tabs"
+            :key="item.value"
+            class="cursor-pointer"
+            :class="['app-tab', {'app-tab--active': activeTab === item.value}]"
+            @click="setActiveTab(item)"
         >
           {{ item.title }}
         </div>
@@ -141,19 +146,19 @@ watchEffect(() => {
 
       <div class="flex items-center">
         <el-input
-          v-model="input1"
-          size="large"
-          placeholder="Поиск"
-          :prefix-icon="Search"
+            v-model="input1"
+            size="large"
+            placeholder="Поиск"
+            :prefix-icon="Search"
         />
 
         <button
-          @click="router.push('/visitors-create')"
-          class="custom-apply-btn ml-[16px] !px-[30px]"
+            @click="router.push('/visitors-create')"
+            class="custom-apply-btn ml-[16px] !px-[30px]"
         >
           <img
-            src="@/assets/images/icons/plus.svg"
-            alt="add"
+              src="@/assets/images/icons/plus.svg"
+              alt="add"
           >
           Добавить
         </button>
@@ -161,52 +166,54 @@ watchEffect(() => {
     </div>
 
     <el-table
-      :data="tableData"
-      class="custom-element-table"
-      stripe
+        :data="tableData"
+        class="custom-element-table"
+        stripe
+        highlight-current-row
+        @current-change="tableCurrentChange"
     >
       <el-table-column
-        prop="id"
-        label="№"
-        width="80"
+          prop="id"
+          label="№"
+          width="80"
       />
       <el-table-column
-        prop="sureName"
-        label="Фамилия И.О."
-        sortable
-        width="400"
+          prop="sureName"
+          label="Фамилия И.О."
+          sortable
+          width="400"
       >
         <template #default="scope">
           <div class="flex items-center">
             <img
-              src="@/assets/images/avatar.png"
-              class="h-[32px] w-[32px]"
-              alt="avatar"
+                src="@/assets/images/avatar.png"
+                class="h-[32px] w-[32px]"
+                alt="avatar"
             />
             <p class="text-[#4F5662] text-[14px] ml-[12px]">{{ scope.row.sureName }}</p>
           </div>
         </template>
       </el-table-column>
       <el-table-column
-        prop="position"
-        label="Место работы"
-        sortable
+          prop="position"
+          label="Место работы"
+          sortable
       />
       <el-table-column
-        prop="phone"
-        label="График работы"
-        sortable
+          prop="phone"
+          label="График работы"
+          sortable
       />
       <el-table-column
-        prop="status"
-        sortable
-        label="Статус"
-        width="200"
+          prop="status"
+          sortable
+          label="Статус"
+          width="200"
       >
         <template #default="scope">
           <div
-            :class="scope.row.status.status ? 'text-[#22A95E] bg-[#D4F4E2]' : 'text-[#8F9194] bg-[#EEEEEF]'"
-            class="py-[8px] px-[16px] rounded-full text-center text-[123x] font-medium w-[85%]"
+              :class="scope.row.status.status ? 'text-[#22A95E] bg-[#D4F4E2]' : 'text-[#8F9194] bg-[#EEEEEF]'"
+              class="py-[8px] px-[16px] rounded-full text-center text-[123x] font-medium w-[85%]"
           >
             {{ scope.row.status.title }}
           </div>
@@ -215,22 +222,22 @@ watchEffect(() => {
       <el-table-column label="Действие">
         <template #default="scope">
           <button
-            class="action-btn"
-            @click="router.push(`/visitors-view/${scope.row.id}`)"
+              class="action-btn"
+              @click.stop="router.push(`/visitors-view/${scope.row.id}`)"
           >
             <img
-              src="@/assets/images/eye.svg"
-              alt="eye"
+                src="@/assets/images/eye.svg"
+                alt="eye"
             />
           </button>
 
           <button
-            class="action-btn ml-[8px]"
-            @click="router.push(`/visitors-edit-form/${scope.row.id}`)"
+              class="action-btn ml-[8px]"
+              @click.stop="router.push(`/visitors-edit-form/${scope.row.id}`)"
           >
             <img
-              src="@/assets/images/icons/edit.svg"
-              alt="edit"
+                src="@/assets/images/icons/edit.svg"
+                alt="edit"
             />
           </button>
         </template>
@@ -243,10 +250,10 @@ watchEffect(() => {
       </div>
 
       <el-pagination
-        class="float-right"
-        background
-        layout="prev, pager, next"
-        :total="1000"
+          class="float-right"
+          background
+          layout="prev, pager, next"
+          :total="1000"
       />
     </div>
   </div>
