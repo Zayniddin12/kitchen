@@ -1,8 +1,11 @@
-<script setup lang="ts">
-import { inject, onMounted, provide, reactive, useTemplateRef, watch, watchEffect } from "vue";
+<script
+    setup
+    lang="ts"
+>
+import { computed, inject, onMounted, provide, reactive, useTemplateRef, watch, watchEffect } from "vue";
 import {
   AppFormPropsType,
-  ValidationType,
+  ValidationType
 } from "@/components/ui/form/app-form/app-form.type";
 
 const props = withDefaults(defineProps<AppFormPropsType>(), {
@@ -38,29 +41,31 @@ const validation = reactive<ValidationType>({
 
     appForm.value.resetFields();
   },
+
+  clear: function (): void {
+    this.resetForm();
+    this.clearValidate();
+  }
 });
 
-// provide("validation-errors", props.validationErrors);
+const appValidationErrors = computed(() => props.validationErrors);
+
+provide("validation-errors", appValidationErrors);
 
 onMounted(() => {
   emit("validation", validation);
 });
 
-watchEffect(() =>{
-  const  value = inject("validation-errors");
-  console.log("ssss",value);
-})
-
 </script>
 <template>
   <ElForm
-    ref="app-form"
-    class="app-form"
-    :model="props.value"
-    :label-position
-    :size
-    :status-icon
+      ref="app-form"
+      class="app-form"
+      :model="props.value"
+      :label-position
+      :size
+      :status-icon
   >
-    <slot />
+    <slot/>
   </ElForm>
 </template>

@@ -19,6 +19,7 @@ import AppPagination from "@/components/ui/app-pagination/AppPagination.vue";
 import AppForm from "@/components/ui/form/app-form/AppForm.vue";
 import { ValidationType } from "@/components/ui/form/app-form/app-form.type";
 import { useSettingsStore } from "@/modules/Settings/store";
+import MemoModal from "@/layout/Create/components/MemoModal.vue";
 
 const documentStore = useDocumentStore();
 const settingsStore = useSettingsStore();
@@ -105,12 +106,11 @@ const fetchDrafts = async () => {
   form.subject = String(query.subject ?? "");
 
   try {
-    await documentStore.fetchDrafts(filterObjectValues(form));
+    await documentStore.fetchDrafts(route.meta?.apiUrl ?? "", filterObjectValues(form));
+    validationErrors.value = null;
   } catch (error: any) {
     if (error.error.code === 422) {
       validationErrors.value = error.meta.validation_errors;
-      provide("validation-errors", error.meta.validation_errors);
-      console.log(error.meta.validation_errors.to_date);
     }
   }
 };
@@ -120,12 +120,24 @@ onMounted(() => {
   settingsStore.fetchRespondents();
 });
 
-watch(route, () => {
+watch(() => route.query, () => {
   fetchDrafts();
 }, { immediate: true });
 
+watch(() => route.name, () => {
+  isOpenFilter.value = false;
+  validationErrors.value = null;
+  if (v$.value) v$.value.clear();
+});
+
 const changePage = (value: number) => {
   router.push({ query: { ...route.query, page: value } });
+};
+
+const tableCurrentChange = (value: DraftType) => {
+  if (route.name === "drafts") return;
+
+  router.push({ name: `${route.name as string}-id`, params: { id: value.id } });
 };
 
 </script>
@@ -133,7 +145,10 @@ const changePage = (value: number) => {
 <template>
   <div>
     <div class="flex items-center justify-between">
-      <h1 class="m-0 font-semibold text-[32px]">Черновики</h1>
+      <h1
+          v-if="route.meta.title"
+          class="m-0 font-semibold text-[32px]"
+      >{{ route.meta.title }}</h1>
 
       <button
           class="custom-filter-btn font-medium"
@@ -238,6 +253,8 @@ const changePage = (value: number) => {
         :data="documentStore.drafts?.documents"
         class="custom-element-table"
         stripe
+        :highlight-current-row="route.name !== 'drafts'"
+        @current-change="tableCurrentChange"
     >
       <el-table-column
           prop="num"
@@ -281,26 +298,39 @@ const changePage = (value: number) => {
         </template>
       </el-table-column>
       <el-table-column label="Действие">
-        <template #default="scope">
-          <!--          <button-->
-          <!--            class="action-btn"-->
-          <!--            @click="viewDraft"-->
-          <!--          >-->
-          <!--            <img-->
-          <!--              src="@/assets/images/eye.svg"-->
-          <!--              alt="eye"-->
-          <!--            />-->
-          <!--          </button>-->
-
-          <button
-              class="action-btn ml-[20px]"
-              @click="handleEdit"
-          >
-            <img
-                src="@/assets/images/icons/edit.svg"
-                alt="edit"
-            />
-          </button>
+        <template #default="{row}:{row: DraftType}">
+          <div class="flex items-center gap-x-2.5">
+            <button
+                v-if="route.name === 'drafts'"
+                class="action-btn ml-[20px]"
+                @click="handleEdit"
+            >
+              <img
+                  src="@/assets/images/icons/edit.svg"
+                  alt="edit"
+              />
+            </button>
+            <template v-else>
+              <RouterLink
+                  class="action-btn"
+                  :to="{name: `${route.name as string}-id`, params: {id:row.id}}"
+              >
+                <img
+                    src="@/assets/images/eye.svg"
+                    alt="eye"
+                />
+              </RouterLink>
+              <button
+                  @click.stop
+                  class="action-btn"
+              >
+                <img
+                    src="@/assets/images/download.svg"
+                    alt="download"
+                />
+              </button>
+            </template>
+          </div>
         </template>
       </el-table-column>
     </el-table>

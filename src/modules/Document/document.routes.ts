@@ -6,9 +6,10 @@ export default [
     {
         path: "/inbox",
         name: "inbox",
-        component: () => import("@/modules/Document/pages/OfficeNotes/Inbox/Inbox.vue"),
+        component: () => import("@/modules/Document/pages/OfficeNotes/Drafts/Index.vue"),
         meta: {
             title: "Входящие",
+            apiUrl: "received",
             uniqueKeys: {
                 documents: true,
                 documentInbox: true
@@ -28,9 +29,10 @@ export default [
     {
         path: "/outgoing",
         name: "outgoing",
-        component: () => import("@/modules/Document/pages/OfficeNotes/Outgoing/Index.vue"),
+        component: () => import("@/modules/Document/pages/OfficeNotes/Drafts/Index.vue"),
         meta: {
-            title: "Исходящие"
+            title: "Исходящие",
+            apiUrl: "sent"
         }
     },
     {
@@ -48,7 +50,8 @@ export default [
         name: "drafts",
         component: () => import("@/modules/Document/pages/OfficeNotes/Drafts/Index.vue"),
         meta: {
-            title: "Черновики"
+            title: "Черновики",
+            apiUrl: "drafts"
         }
     },
     // -------------------------Служебные записки-------------------------------
@@ -127,7 +130,7 @@ export default [
         name: "invoice-outgoing",
         component: () => import("@/modules/Document/pages/Invoices/InvoiceOutgoing/Index.vue"),
         meta: {
-            title: "Исходящие"
+            title: "Исходящие",
         }
     },
     {

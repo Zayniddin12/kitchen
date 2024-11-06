@@ -11,5 +11,6 @@ export interface AppFormPropsType {
 export interface ValidationType {
     validate: () => Promise<boolean>,
     clearValidate: () => void,
-    resetForm: () => void
+    resetForm: () => void,
+    clear: () => void
 }

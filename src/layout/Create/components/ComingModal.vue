@@ -7,7 +7,8 @@ import AppSelect from "@/components/ui/form/app-select/AppSelect.vue";
 import AppDatePicker from "@/components/ui/form/app-date-picker/AppDatePicker.vue";
 import useConfirm from "@/components/ui/app-confirm/useConfirm";
 import {
-  DocumentCreateDataType,
+  DocumentCreateDataActType,
+  DocumentCreateDataDocumentType,
   DocumentProductType
 } from "@/modules/Document/document.types";
 import { ValidationType } from "@/components/ui/form/app-form/app-form.type";
@@ -51,7 +52,7 @@ const documentStore = useDocumentStore();
 
 const date = ref(formatDate2(new Date()));
 
-const form = reactive<DocumentCreateDataType>({
+const form = reactive<DocumentCreateDataDocumentType>({
   doc_type_id: null,
   date: "",
   number: "",
@@ -74,7 +75,11 @@ const form = reactive<DocumentCreateDataType>({
   ]
 });
 
-const oldForm = ref<null | DocumentCreateDataType>(null);
+const oldForm = ref<null | DocumentCreateDataDocumentType>(null);
+
+const actForm = reactive<DocumentCreateDataActType>({});
+
+const oldActForm = ref<DocumentCreateDataActType | null>(null);
 
 const from = computed<string>(() => {
   if (!form.from_id || !form.from_type) return "";
@@ -757,7 +762,7 @@ watch(providerCreateModal, newMProviderModal => {
               <div class="flex items-center mb-[8px]">
                 <h1 class="text-[#4F5662] text-sm font-semibold">Дата:</h1>
                 <span class="ml-2 text-[#A8AAAE] text-sm font-medium block">
-                  24.08.2024
+                  {{ date }}
                 </span>
               </div>
             </div>
@@ -923,12 +928,14 @@ watch(providerCreateModal, newMProviderModal => {
                 placeholder="АКТ"
                 label="АКТ"
                 label-class="text-[#A8AAAE] text-xs font-medium"
+                disabled
             />
 
             <AppInput
-                placeholder="NK-00000"
+                placeholder="Автоматически"
                 label="NK-00000"
                 label-class="text-[#A8AAAE] text-xs font-medium"
+                disabled
             />
 
             <AppInput

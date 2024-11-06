@@ -9,9 +9,13 @@ import AppDatePicker from "@/components/ui/form/app-date-picker/AppDatePicker.vu
 import useConfirm from "@/components/ui/app-confirm/useConfirm";
 import { ModalPropsType, ModalValueType } from "@/layout/Create/components/modal.types";
 
+interface PropsType extends  ModalPropsType{
+  title: string,
+}
+
 const model = defineModel<ModalValueType>();
 
-const props = defineProps<ModalPropsType>();
+const props = defineProps<PropsType>();
 
 const { confirm } = useConfirm();
 
@@ -33,7 +37,7 @@ const closeModal = () => {
       :before-close="closeModal"
   >
     <template #header>
-      <div class="text-center text-[#000000] font-bold text-[18px]">Создать служебную записку</div>
+      <div v-if="title" class="text-center text-[#000000] font-bold text-[18px]">{{title}}</div>
     </template>
 
     <div class="flex">

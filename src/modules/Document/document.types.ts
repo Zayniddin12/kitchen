@@ -10,7 +10,7 @@ export interface DocumentProductType {
     [key: string]: any,
 }
 
-export interface DocumentCreateDataType {
+export interface DocumentCreateDataDocumentType {
     parent_id?: number | null,
     doc_type_id: number | null,
     date: string,
@@ -25,6 +25,15 @@ export interface DocumentCreateDataType {
     shipping_method: string,
     status: string,
     products: DocumentProductType[]
+}
+
+export interface DocumentCreateDataActType{
+
+}
+
+export interface DocumentCreateDataType {
+    Document: DocumentCreateDataDocumentType,
+    Act?: DocumentCreateDataActType
 }
 
 export interface DraftsParamsType extends PaginationParamsType {

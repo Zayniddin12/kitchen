@@ -3,7 +3,7 @@
     lang="ts"
 >
 import { AppInputPropsType, AppInputValueType } from "@/components/ui/form/app-input/app-input.type";
-import { computed, inject, toRefs, useSlots, watch, watchEffect } from "vue";
+import { computed, inject, ref, Ref, useSlots, watch } from "vue";
 import { vMaska } from "maska";
 import { getRules, setRules } from "@/components/ui/form/validate";
 import { ValidationErrorsType } from "@/components/ui/form/form.type";
@@ -20,13 +20,20 @@ const updateModelValue = (value: any) => {
   model.value = value;
 };
 
-const validationErrors = toRefs(inject<ValidationErrorsType>("validation-errors"));
+const emit = defineEmits<{
+  change: [value: AppInputValueType]
+}>();
+
+const validationErrors = inject<Ref<ValidationErrorsType>>("validation-errors", ref(null));
+const ignoreValidationError = ref(false);
 
 const computedError = computed(() => {
   if (props.error) return props.error;
 
-  else if (validationErrors && props.prop && typeof (props.prop) === "string" && validationErrors[props.prop]) {
-    return validationErrors[props.prop];
+  else if (ignoreValidationError.value) return "";
+
+  else if (validationErrors.value && props.prop && typeof (props.prop) === "string" && validationErrors.value[props.prop]) {
+    return validationErrors.value[props.prop];
   }
 
   return "";
@@ -52,8 +59,15 @@ const inputMask = computed(() => {
   return { mask: computedMask.value };
 });
 
-watch(validationErrors, (newValue) => {
-  console.log(newValue);
+const change = (value: AppInputValueType) => {
+  ignoreValidationError.value = !!validationErrors.value;
+  emit("change", value);
+};
+
+watch(validationErrors, (newErrors) => {
+  ignoreValidationError.value = false;
+}, {
+  deep: true
 });
 
 </script>
@@ -108,6 +122,7 @@ watch(validationErrors, (newValue) => {
         :showWordLimit
         :inputStyle
         class="app-input__input"
+        @change="change"
     >
       <template
           v-if="slots.prepend || type === 'tel'"

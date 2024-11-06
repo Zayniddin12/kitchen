@@ -5,6 +5,7 @@ declare module "vue-router" {
     layout?: string;
     title?: string;
     breadcrumbItemTitle?: string;
-    uniqueKeys?: Record<string, boolean>
+    uniqueKeys?: Record<string, boolean>,
+    apiUrl?: string;
   }
 }

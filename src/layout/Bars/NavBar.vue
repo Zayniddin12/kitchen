@@ -210,6 +210,7 @@ onMounted(() => {
       v-model="editModal"
       :id="docTypeId"
       :name="docTypeName"
+      title="Создать служебную записку"
     />
     <ComingModal
       v-model="editModal2"

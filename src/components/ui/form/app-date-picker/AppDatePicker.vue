@@ -2,7 +2,7 @@
     setup
     lang="ts"
 >
-import { computed, h, inject, shallowRef, useSlots } from "vue";
+import { computed, h, inject, ref, Ref, shallowRef, useSlots, watch } from "vue";
 import {
   AppDatePickerPropsType,
   AppDatePickerValueType
@@ -23,15 +23,22 @@ const props = withDefaults(defineProps<AppDatePickerPropsType>(), {
   iconPosition: "end"
 });
 
+const emit = defineEmits<{
+  change: [value: AppDatePickerValueType]
+}>();
+
 const slots = useSlots();
 
-const validationErrors = inject<ValidationErrorsType>("validation-errors");
+const validationErrors = inject<Ref<ValidationErrorsType>>("validation-errors", ref(null));
+const ignoreValidationError = ref(false);
 
 const computedError = computed(() => {
   if (props.error) return props.error;
 
-  else if (validationErrors && props.prop && typeof (props.prop) === "string" && validationErrors[props.prop]) {
-    return validationErrors[props.prop];
+  else if (ignoreValidationError.value) return "";
+
+  else if (validationErrors.value && props.prop && typeof (props.prop) === "string" && validationErrors.value[props.prop]) {
+    return validationErrors.value[props.prop];
   }
 
   return "";
@@ -55,6 +62,18 @@ const icon = shallowRef<any>({
     });
   }
 });
+
+const change = (value: AppDatePickerValueType) => {
+  ignoreValidationError.value = !!validationErrors.value;
+  emit("change", value);
+};
+
+watch(validationErrors, (newErrors) => {
+  ignoreValidationError.value = false;
+}, {
+  deep: true
+});
+
 </script>
 <template>
   <ElFormItem
@@ -106,6 +125,7 @@ const icon = shallowRef<any>({
         :teleported
         :empty-values
         :class="['app-date-picker__date-picker', `app-date-picker__date-picker-icon--${iconPosition}`]"
+        @change="change"
     />
   </ElFormItem>
 </template>
