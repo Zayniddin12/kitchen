@@ -1,6 +1,8 @@
 import { defineStore } from "pinia";
 import { computed, ref } from "vue";
 import $axios from "@/plugins/axios/axios";
+import { useLayoutStore } from "@/navigation/index";
+
 
 enum PARTS {
   MENU = "menu",
@@ -12,6 +14,12 @@ type PartsType = PARTS.MENU | PARTS.SALES;
 interface PartType {
   id: PartsType;
   name: string;
+}
+
+interface Params {
+  search?: string | null;
+  page?: number;
+  per_page?: number;
 }
 
 interface Part2Type {
@@ -29,107 +37,77 @@ interface DepartmentType {
 
 export const useKitchenStore = defineStore("kitchenStore", () => {
   const departments = ref<DepartmentType[]>([]);
+  const kitchenType = ref<any>([]);
+  const layoutStore = useLayoutStore();
 
-  const GET_KITCHEN_LIST = async (params?: { search: string | null }) => {
+  const GET_KITCHEN_TYPE = async (params: Params) => {
+    const { data } = await $axios.get("/", { params });
+
+    kitchenType.value = data.data;
+  };
+
+  const GET_KITCHEN_LIST = async (params?: Params) => {
     const { data } = await $axios.get("/bases", { params });
-    departments.value = data.data && data.data.bases;
-  };
 
-  const fetchDepartments = () => {
-    departments.value = [
-      {
-        id: 1,
-        name: "Зарафшан",
-        parts: [
-          {
-            id: PARTS.MENU,
-            name: "Меню",
-          },
-          {
-            id: PARTS.SALES,
-            name: "Продажи",
-          },
-        ],
-      },
-      {
-        id: 2,
-        name: "Навои",
-        parts: [
-          {
-            id: PARTS.MENU,
-            name: "Меню",
-          },
-          {
-            id: PARTS.SALES,
-            name: "Продажи",
-          },
-        ],
-      },
-      {
-        id: 3,
-        name: "Учкудук",
-        parts: [
-          {
-            id: PARTS.MENU,
-            name: "Меню",
-          },
-          {
-            id: PARTS.SALES,
-            name: "Продажи",
-          },
-        ],
-      },
-      {
-        id: 4,
-        name: "Нуробод",
-        parts: [
-          {
-            id: PARTS.MENU,
-            name: "Меню",
-          },
-          {
-            id: PARTS.SALES,
-            name: "Продажи",
-          },
-        ],
-      },
-      {
-        id: 5,
-        name: "Зафаробод",
-        parts: [
-          {
-            id: PARTS.MENU,
-            name: "Меню",
-          },
-          {
-            id: PARTS.SALES,
-            name: "Продажи",
-          },
-        ],
-      },
-    ];
-  };
+    if (data.data && data.data.bases) {
+      // departments.value = data.data && data.data.bases;
+      departments.value = data.data.bases.map(item => {
+        const newItem = {} as Record<string, any>;
+        newItem.title = item.name;
+        newItem.icon = "building-warehouse";
+        newItem.id = item.id;
 
-  const kitchenMenu = computed(() => {
-    fetchDepartments();
-    if (!departments.value.length) return [];
+        newItem.children = [
+          {
+            id: "menu",
+            title: "Меню",
+            route: `/kitchen/${item.id}/menu`,
+          },
+          {
+            id: "sales",
+            title: "Продажи",
+            route: `/kitchen/${item.id}/sales`,
+          },
+        ];
+        console.log(newItem, "newItem");
 
-    return departments.value.map(item => {
-      const newItem = {} as Record<string, any>;
-      newItem.title = item.name;
-      newItem.icon = "building-warehouse";
-
-      newItem.children = item.parts.map(part => {
-        const newPart = {} as Record<string, any>;
-        newPart.title = part.name;
-        newPart.route = `/kitchen/${item.id}/${part.id}`;
-
-        return newPart;
+        return newItem;
       });
 
-      return newItem;
-    });
-  });
+      layoutStore.menuItems.forEach(el => {
+        if (el.unique == "kitchen") {
+          el.children = departments.value;
+        }
+      });
+    }
+
+
+  };
+
+  // const kitchenMenu = computed(() => {
+  //   if (!departments.value.length) return [];
+  //
+  //   return departments.value.map(item => {
+  //     const newItem = {} as Record<string, any>;
+  //     newItem.title = item.name;
+  //     newItem.icon = "building-warehouse";
+  //     newItem.id = item.id;
+  //
+  //     newItem.children = [
+  //       {
+  //         id: "menu",
+  //         title: "Меню",
+  //       },
+  //       {
+  //         id: "sales",
+  //         title: "Продажи",
+  //       },
+  //     ];
+  //     console.log(newItem, "newItem");
+  //
+  //     return newItem;
+  //   });
+  // });
 
   const part = ref<Part2Type | null>(null);
 
@@ -145,28 +123,29 @@ export const useKitchenStore = defineStore("kitchenStore", () => {
     if (!departments.value.length) return;
 
     const department =
-      departments.value.find(el => el.id === department_id) ?? null;
+      departments.value.find(el => el.id == department_id) ?? null;
 
     if (!department) return;
 
-    const activePart = department.parts.find(el => el.id === part_name) ?? null;
-
+    const activePart = department.children.find(el => el.id === part_name) ?? null;
     if (!activePart) return;
+    ``;
 
     part.value = {
       ...activePart,
       ...{
         department_id: department.id,
-        department_name: department.name,
+        department_name: department.title,
       },
     };
   };
-
   return {
     GET_KITCHEN_LIST,
+    GET_KITCHEN_TYPE,
     departments,
-    fetchDepartments,
-    kitchenMenu,
+    kitchenType,
+    // fetchDepartments,
+    // kitchenMenu,
     fetchPart,
     part,
     activeMenuPart,

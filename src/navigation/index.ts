@@ -207,7 +207,7 @@ export const useLayoutStore = defineStore("layoutStore", () => {
       title: "Кухня",
       icon: "kitchen",
       unique: "kitchen",
-      children: kitchenStore.kitchenMenu,
+      children: [],
     },
     {
       title: "Кадры",
