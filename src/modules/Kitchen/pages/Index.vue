@@ -71,7 +71,7 @@ const setBreadcrumbFn = () => {
       label: "Кухня",
     },
     {
-      label: kitchenStore.part.name,
+      label: kitchenStore.part.title,
     },
     {
       label: kitchenStore.part.department_name,
@@ -80,7 +80,7 @@ const setBreadcrumbFn = () => {
   ]);
 };
 
-watch(() => route.params, () => {
+watch(() => [route.params, kitchenStore.departments], () => {
   setBreadcrumbFn();
 }, { immediate: true });
 

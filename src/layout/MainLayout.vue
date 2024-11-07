@@ -1,6 +1,6 @@
 <script
-    setup
-    lang="ts"
+  setup
+  lang="ts"
 >
 import { computed, onMounted, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
@@ -23,14 +23,15 @@ const childSidebarPin = ref<boolean>(JSON.parse(localStorage.getItem("child-side
 const childSidebar = ref<boolean>(JSON.parse(localStorage.getItem("child-sidebar" as string) || "false"));
 const margin = ref("ml-[396px]");
 
-onMounted(() => {
+onMounted(async () => {
   if (getAccessToken()) authStore.me();
   // else await router.replace({ name: "login" });
   childSidebarPin.value = JSON.parse(localStorage.getItem("child-sidebar-pin") || "false");
-  kitchenStore.fetchDepartments();
+  await kitchenStore.GET_KITCHEN_LIST({ per_page: 100 });
+
 });
 
-watch(() => route.name, function (val) {
+watch(() => route.name, function(val) {
   if (val === "home") {
     localStorage.setItem("child-sidebar", JSON.stringify(false));
     childSidebar.value = false;
@@ -43,7 +44,7 @@ const navDrawerItems = computed(() => {
       title: "Главная",
       to: { name: "home" },
       key: "home",
-      icon: HomeIcon
+      icon: HomeIcon,
     },
     {
       title: "Документы",
@@ -57,12 +58,12 @@ const navDrawerItems = computed(() => {
             {
               title: "Входящие",
               key: "documentInbox",
-              to: { name: "inbox" }
-            }
-          ]
-        }
-      ]
-    }
+              to: { name: "inbox" },
+            },
+          ],
+        },
+      ],
+    },
   ];
 });
 
@@ -72,29 +73,29 @@ const navDrawerWidth = ref<number>(0);
 
 <template>
   <div>
-            <SideBar
-                v-model:childSidebarPin="childSidebarPin"
-                v-model:childSidebar="childSidebar"
-            />
-<!--    <NavDrawer :items="navDrawerItems"  @changeWidth="(value:number) => navDrawerWidth = value" />-->
+    <SideBar
+      v-model:childSidebarPin="childSidebarPin"
+      v-model:childSidebar="childSidebar"
+    />
+    <!--    <NavDrawer :items="navDrawerItems"  @changeWidth="(value:number) => navDrawerWidth = value" />-->
     <div
-        class="main-layout min-h-screen p-6 pr-7 pt-28 dark:bg-darkLayoutMain dark:bg-body-dark bg-white ml-[128px] transition-all flex flex-col justify-between"
-        :class="childSidebarPin && childSidebar ? margin : ''"
+      class="main-layout min-h-screen p-6 pr-7 pt-28 dark:bg-darkLayoutMain dark:bg-body-dark bg-white ml-[128px] transition-all flex flex-col justify-between"
+      :class="childSidebarPin && childSidebar ? margin : ''"
     >
 
       <div class="flex flex-col">
-        <AppBreadcrumb/>
-        <slot/>
+        <AppBreadcrumb />
+        <slot />
       </div>
 
       <span class="mt-[28px] bg-transparent !dark:body-dark w-full text-[#8F9194] text-[12px] select-none">Made by “Anysoft” software & solutions company</span>
     </div>
 
     <div
-        :class="childSidebarPin && childSidebar ? 'top-navbar-margin' : ''"
-        class="top-navbar bg-lightLayoutStorm dark:bg-body-dark text-white transition-all bg-[#fff]"
+      :class="childSidebarPin && childSidebar ? 'top-navbar-margin' : ''"
+      class="top-navbar bg-lightLayoutStorm dark:bg-body-dark text-white transition-all bg-[#fff]"
     >
-      <NavBar/>
+      <NavBar />
     </div>
   </div>
 </template>

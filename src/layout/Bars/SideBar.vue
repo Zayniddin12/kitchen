@@ -44,7 +44,7 @@ watch(
 onMounted(() => {
   const storedMenu: number = sessionStorage.getItem("current-menu") | 0;
   const storedSidebar = localStorage.getItem("child-sidebar");
-
+  console.log(store.menuItems);
   if (childIsOpenPin.value) {
     currentIndex.value = Number(storedMenu);
   } else {
