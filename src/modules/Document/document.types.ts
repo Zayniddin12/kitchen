@@ -12,20 +12,19 @@ export interface DocumentProductType {
 }
 
 export interface DocumentCreateDataDocumentType {
-    parent_id?: number | null,
     doc_type_id: number | null,
-    date: string,
-    number: string,
-    from_id: number | null,
-    from_type: string,
-    to_id: number | null,
-    to_type: string,
-    through_whom: string,
-    subject: string,
-    basis: string,
-    shipping_method: string,
-    status: string,
-    products: DocumentProductType[]
+    date?: string,
+    number?: string,
+    from_id?: number | null,
+    from_type?: string,
+    to_id?: number | null,
+    to_type?: string,
+    through_whom?: string,
+    subject?: string,
+    basis?: string,
+    shipping_method?: string,
+    status?: "sent" | "draft" | "",
+    products?: DocumentProductType[]
 }
 
 export interface DocDetailsType {
@@ -33,6 +32,8 @@ export interface DocDetailsType {
     sanitary: string,
     vetirinary: string,
     quality: string,
+    contract_details: string,
+    manufacturer: string,
 }
 
 export interface DocSignerType {
@@ -47,7 +48,7 @@ export interface DocumentCreateDataActType {
     products: DocumentProductType[],
     doc_details: DocDetailsType,
     doc_signers: DocSignerType[],
-    doc_signer_obj?: {
+    doc_signer_obj: {
         signer_id_1: number | "",
         signer_id_2: number | "",
         signer_id_3: number | "",

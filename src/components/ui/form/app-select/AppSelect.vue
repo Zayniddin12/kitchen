@@ -125,7 +125,7 @@ watch(validationErrors, (newErrors) => {
         :remote-show-suffix
         :remote
     >
-      <template v-if="(items && items.length && itemLabel && itemValue) && !slots.default">
+      <template v-if="!slots.default">
         <ElOption
             v-for="item in items"
             :key="item[itemValue]"
@@ -137,7 +137,6 @@ watch(validationErrors, (newErrors) => {
               name="option"
               v-bind="item"
           />
-
         </ElOption>
       </template>
       <slot/>

@@ -29,6 +29,8 @@ import { useCommonStore } from "@/stores/common.store";
 import deleteIcon from "@/assets/images/icons/delete-danger-icon.svg";
 import { useDocumentStore } from "@/modules/Document/document.store";
 import { AppSelectValueType } from "@/components/ui/form/app-select/app-select.type";
+import { useUsersStore } from "@/modules/Users/users.store";
+import { UserType } from "@/modules/Users/users.types";
 
 interface ProviderFormType {
   name: string;
@@ -50,6 +52,7 @@ const props = defineProps<ModalPropsType>();
 
 const settingsStore = useSettingsStore();
 const documentStore = useDocumentStore();
+const usersStore = useUsersStore();
 
 const date = ref(formatDate2(new Date()));
 
@@ -77,6 +80,11 @@ const form = reactive<DocumentCreateDataDocumentType>({
   ]
 });
 
+const formNumberAndDate = computed(() => {
+  if (!form.number && !form.date) return "";
+  return `${form.number} ${form.date}`;
+});
+
 const validationErrors = ref<Record<string, any> | null>({
   Document: {},
   Act: {}
@@ -94,7 +102,9 @@ const actForm = reactive<DocumentCreateDataActType>({
     licence: "",
     sanitary: "",
     vetirinary: "",
-    quality: ""
+    quality: "",
+    contract_details: "",
+    manufacturer: ""
   },
   doc_signers: [],
   doc_signer_obj: {
@@ -204,12 +214,16 @@ const fetchVidProductsList = async (value: AppSelectValueType) => {
   vidProducts.value.set(value, settingsStore.vidProduct.product_types);
 };
 
-const getProductTypeTitle = (id: number) => {
-  return (
-      settingsStore.vidProduct.product_types.find(
-          (el: Record<string, any>) => el.id === id
-      )?.name ?? ""
-  );
+const getProductTypeTitle = (category_id: number, product_type_id: number) => {
+  const vidProduct = vidProducts.value.get(category_id);
+
+  if (!vidProduct) return "";
+
+  const product_type = vidProduct.find(el => el.id === product_type_id);
+
+  if (!product_type) return "";
+
+  return product_type.name;
 };
 
 const getProductMeasurement = (id: number) => {
@@ -251,8 +265,54 @@ const fetchRespondents = (search = "") => {
 };
 
 const selectedProductTypes = computed(() => {
+  const appSelectedProductTypes: Record<string, any>[] = [];
 
+  form.products.forEach(el => {
+        if (el.category_id && el.product_type_id) {
+          const vidProduct = vidProducts.value.get(el.category_id);
+          if (vidProduct) {
+            const childProduct = vidProduct.find(element => element.id === el.product_type_id);
+            if (childProduct) appSelectedProductTypes.push(childProduct);
+          }
+        }
+      }
+  );
+
+  return appSelectedProductTypes;
 });
+
+const activeProductType = ref<null | Record<string, any>>(null);
+
+const actProductTypeChange = (value: AppSelectValueType) => {
+  if (typeof value !== "number") return;
+
+  const selectedProductType = selectedProductTypes.value.find(el => el.id === value);
+
+  activeProductType.value = selectedProductType ?? null;
+
+  if (selectedProductType) {
+    const product = form.products.find(el => el.product_type_id === value);
+    if (product) {
+      actForm.products[0] = product;
+    }
+  }
+};
+
+const selectedUsers = ref<Map<number, UserType>>(new Map());
+
+const getUser = (id: number): UserType | null => {
+  if (!usersStore.users?.users) return null;
+
+  if (selectedUsers.value.has(id)) return selectedUsers.value.get(id) as UserType;
+
+  const user: UserType | undefined = usersStore.users.users.find(user => user.id === id);
+
+  if (!user) return null;
+
+  selectedUsers.value.set(id, user);
+
+  return user;
+};
 
 const { confirm } = useConfirm();
 
@@ -283,6 +343,9 @@ const openModal = () => {
   oldForm.value = JSON.parse(JSON.stringify(form));
   if (activeComingModal.value) {
     oldActForm.value = JSON.parse(JSON.stringify(actForm));
+    usersStore.fetchUsers({
+      per_page: 100
+    });
   }
 };
 
@@ -366,6 +429,8 @@ const providerCreateModalOpen = () => {
 watch(providerCreateModal, newMProviderModal => {
   if (newMProviderModal) providerCreateModalOpen();
 });
+
+
 </script>
 
 <template>
@@ -499,7 +564,7 @@ watch(providerCreateModal, newMProviderModal => {
                 <template #default="{ row }: { row: DocumentProductType }">
                   {{
                     row.product_type_id
-                        ? getProductTypeTitle(row.product_type_id as number)
+                        ? getProductTypeTitle(row.category_id as number, row.product_type_id as number)
                         : "-"
                   }}
                 </template>
@@ -613,7 +678,6 @@ watch(providerCreateModal, newMProviderModal => {
               placeholder="От кого"
               label="От кого"
               :items="settingsStore.respondents"
-              item-label="name"
               :loading="settingsStore.respondentsLoading"
               label-class="text-[#A8AAAE] text-xs font-medium"
               @change="(value) => respondentChange(value as string, 'from')"
@@ -842,7 +906,7 @@ watch(providerCreateModal, newMProviderModal => {
               <div class="flex items-center mb-[8px]">
                 <h1 class="text-[#4F5662] text-sm font-semibold">№:</h1>
                 <span class="ml-2 text-[#A8AAAE] text-sm font-medium block">
-                  04-04-01/463
+                  {{ actForm.number }}
                 </span>
               </div>
               <div class="flex items-center mb-[8px]">
@@ -855,34 +919,39 @@ watch(providerCreateModal, newMProviderModal => {
             <span
                 class="block text-[#4F5662] text-sm font-normal leading-[20px] mb-[24px]"
             >
-              На основании данного документа мы подтверждаем, что следующая
-              продукция принята в соответствии с правилами приемки продукции по
-              количеству и качеству.
+              {{ actForm.content }}
             </span>
             <div class="overflow-x-auto mb-[24px]">
               <table
                   class="min-w-full border border-gray-300 bg-white text-left text-sm text-gray-900 rounded-[8px] border-separate table-my border-spacing-0"
               >
+                <colgroup>
+                  <col class="w-[60%]">
+                </colgroup>
                 <tbody>
                 <tr class="border-gray-300">
                   <td class="border-r border-b p-2 font-medium">
                     Название продукта
                   </td>
-                  <td class="p-2 border-b border-gray-300">Картофель</td>
+                  <td class="p-2 border-b border-gray-300">{{ activeProductType?.name }}</td>
                 </tr>
 
                 <tr class="border-gray-300">
                   <td class="border-r border-b p-2 font-medium">
                     Количество продукта
                   </td>
-                  <td class="p-2 border-b border-gray-300">265</td>
+                  <td class="p-2 border-b border-gray-300">
+                    {{ actForm.products[0]?.quantity ? formatNumber(actForm.products[0].quantity) : "" }}
+                  </td>
                 </tr>
 
                 <tr class="border-gray-300">
                   <td class="border-r border-b p-2 font-medium">
                     Единица измерения
                   </td>
-                  <td class="p-2 border-b border-gray-300">кг</td>
+                  <td class="p-2 border-b border-gray-300">
+                    {{ actForm.products[0]?.unit_id ? getProductMeasurement(actForm.products[0].unit_id) : "" }}
+                  </td>
                 </tr>
 
                 <tr class="border-gray-300">
@@ -890,7 +959,7 @@ watch(providerCreateModal, newMProviderModal => {
                     Номер и дата договора о поставке
                   </td>
                   <td class="p-2 border-b border-gray-300">
-                    K1029745 от 25.07.2024
+                    {{ actForm.doc_details.contract_details }}
                   </td>
                 </tr>
 
@@ -899,7 +968,7 @@ watch(providerCreateModal, newMProviderModal => {
                     Номер и дата накладной
                   </td>
                   <td class="p-2 border-b border-gray-300">
-                    № 365 26.08.2024
+                    {{ formNumberAndDate }}
                   </td>
                 </tr>
 
@@ -907,13 +976,13 @@ watch(providerCreateModal, newMProviderModal => {
                   <td class="border-r border-b p-2 font-medium">
                     Производитель продукта
                   </td>
-                  <td class="p-2 border-b border-gray-300">OOO “Brend”</td>
+                  <td class="p-2 border-b border-gray-300">{{ actForm.doc_details.manufacturer }}</td>
                 </tr>
 
                 <tr class="border-gray-300">
                   <td class="border-r border-b p-2 font-medium">Поставщик</td>
                   <td class="p-2 border-b border-gray-300">
-                    OOO “Yuksalish”
+                    {{ from }}
                   </td>
                 </tr>
 
@@ -921,12 +990,12 @@ watch(providerCreateModal, newMProviderModal => {
                   <td class="border-r border-b p-2 font-medium">
                     Получатель
                   </td>
-                  <td class="p-2 border-b border-gray-300">РУ "Зарафшан"</td>
+                  <td class="p-2 border-b border-gray-300">{{ to }}</td>
                 </tr>
 
                 <tr class="border-gray-300">
                   <td class="border-r border-b p-2 font-medium">Транспорт</td>
-                  <td class="p-2 border-b border-gray-300">85 085 RRR</td>
+                  <td class="p-2 border-b border-gray-300">{{ actForm.shipping_method }}</td>
                 </tr>
 
                 <tr class="border-gray-300">
@@ -934,7 +1003,7 @@ watch(providerCreateModal, newMProviderModal => {
                     Номер и дата лицензии
                   </td>
                   <td class="p-2 border-b border-gray-300">
-                    № L-86978576 от 05.02.2022
+                    {{ actForm.doc_details.licence }}
                   </td>
                 </tr>
 
@@ -944,7 +1013,7 @@ watch(providerCreateModal, newMProviderModal => {
                     центра
                   </td>
                   <td class="p-2 border-b border-gray-300">
-                    № SM-069788 от 05.01.2024
+                    {{ actForm.doc_details.sanitary }}
                   </td>
                 </tr>
 
@@ -953,7 +1022,7 @@ watch(providerCreateModal, newMProviderModal => {
                     Номер и дата удостоверения ветеринарии
                   </td>
                   <td class="p-2 border-b border-gray-300">
-                    № ВТ-0365 от 10.01.2024
+                    {{ actForm.doc_details.vetirinary }}
                   </td>
                 </tr>
 
@@ -962,7 +1031,7 @@ watch(providerCreateModal, newMProviderModal => {
                     Номер и дата удостоверения качества
                   </td>
                   <td class="p-2 border-b border-gray-300">
-                    № УК-0614 от 07.02.2024
+                    {{ actForm.doc_details.quality }}
                   </td>
                 </tr>
                 </tbody>
@@ -972,28 +1041,36 @@ watch(providerCreateModal, newMProviderModal => {
             <div class="flex items-center justify-between mb-[24px]">
               <h1 class="text-[#4F5662] text-sm font-semibold">Кладовщик:</h1>
               <span class="ml-2 text-[#A8AAAE] text-sm font-medium block">
-                Эргашева Л.
+                {{
+                  actForm.doc_signer_obj.signer_id_1 && typeof (actForm.doc_signer_obj.signer_id_1) === "number" ? usersStore.getUserFullName(getUser(actForm.doc_signer_obj.signer_id_1)) : ""
+                }}
               </span>
             </div>
 
             <div class="flex items-center justify-between mb-[24px]">
               <h1 class="text-[#4F5662] text-sm font-semibold">Товаровед:</h1>
               <span class="ml-2 text-[#A8AAAE] text-sm font-medium block">
-                Жалилов М.
+                {{
+                  actForm.doc_signer_obj.signer_id_2 && typeof (actForm.doc_signer_obj.signer_id_2) === "number" ? usersStore.getUserFullName(getUser(actForm.doc_signer_obj.signer_id_2)) : ""
+                }}
               </span>
             </div>
 
             <div class="flex items-center justify-between mb-[24px]">
               <h1 class="text-[#4F5662] text-sm font-semibold">Экспедитор:</h1>
               <span class="ml-2 text-[#A8AAAE] text-sm font-medium block">
-                Акромов О.
+               {{
+                  actForm.doc_signer_obj.signer_id_3 && typeof (actForm.doc_signer_obj.signer_id_3) === "number" ? usersStore.getUserFullName(getUser(actForm.doc_signer_obj.signer_id_3)) : ""
+                }}
               </span>
             </div>
 
             <div class="flex items-center justify-between mb-[24px]">
               <h1 class="text-[#4F5662] text-sm font-semibold">Зав. склад</h1>
               <span class="ml-2 text-[#A8AAAE] text-sm font-medium block">
-                Каххоров А.
+               {{
+                  actForm.doc_signer_obj.signer_id_4 && typeof (actForm.doc_signer_obj.signer_id_4) === "number" ? usersStore.getUserFullName(getUser(actForm.doc_signer_obj.signer_id_4)) : ""
+                }}
               </span>
             </div>
 
@@ -1002,7 +1079,9 @@ watch(providerCreateModal, newMProviderModal => {
                 Начальник базы
               </h1>
               <span class="ml-2 text-[#A8AAAE] text-sm font-medium block">
-                Маликов Б.
+                {{
+                  actForm.doc_signer_obj.signer_id_5 && typeof (actForm.doc_signer_obj.signer_id_5) === "number" ? usersStore.getUserFullName(getUser(actForm.doc_signer_obj.signer_id_5)) : ""
+                }}
               </span>
             </div>
           </div>
@@ -1053,67 +1132,196 @@ watch(providerCreateModal, newMProviderModal => {
             />
 
             <AppSelect
+                :items="selectedProductTypes"
+                item-label="name"
+                item-value="id"
                 prop="products"
-                placeholder="Картофель"
-                label="Картофель"
+                placeholder="Название продукта"
+                label="Название продукта"
                 label-class="text-[#A8AAAE] text-xs font-medium"
+                @change="actProductTypeChange"
+                required
+                trigger="blur"
             >
-
             </AppSelect>
-            <AppInput placeholder="50"/>
-            <AppInput placeholder="кг"/>
             <AppInput
+                :modelValue="actForm.products[0]?.quantity ?? ''"
+                label="Количество продукта"
+                label-class="text-[#A8AAAE] text-xs font-medium"
+                placeholder="Количество продукта"
+                disabled
+            />
+            <AppInput
+                :model-value="actForm.products[0]?.unit_id ? getProductMeasurement(actForm.products[0].unit_id) : ''"
+                label="Единица измерения"
+                label-class="text-[#A8AAAE] text-xs font-medium"
+                placeholder="Единица измерения"
+                disabled
+            />
+            <AppInput
+                v-model="actForm.doc_details.contract_details"
+                prop="doc_details.contract_details"
                 placeholder="Номер и дата договора о поставке"
                 label="Номер и дата договора о поставке"
                 label-class="text-[#A8AAAE] text-xs font-medium"
+                required
             />
             <AppInput
+                v-model="formNumberAndDate"
                 placeholder="Номер и дата накладной"
                 label="Номер и дата накладной"
                 label-class="text-[#A8AAAE] text-xs font-medium"
+                disabled
             />
             <AppInput
+                v-model="actForm.doc_details.manufacturer"
+                prop="doc_details.manufacturer"
                 placeholder="Производитель продукта"
                 label="Производитель продукта"
                 label-class="text-[#A8AAAE] text-xs font-medium"
+                required
             />
-            <AppInput placeholder="OOO “Yuksalish”"/>
             <AppInput
+                :model-value="from"
+                label="Поставщик"
+                placeholder="Поставщик"
+                label-class="text-[#A8AAAE] text-xs font-medium"
+                disabled
+            />
+
+            <AppInput
+                v-model="actForm.shipping_method"
+                prop="shipping_method"
                 placeholder="Транспорт"
                 label="Транспорт"
                 label-class="text-[#A8AAAE] text-xs font-medium"
+                required
             />
             <AppDatePicker
+                v-model="actForm.doc_details.licence"
+                prop="doc_details.licence"
                 placeholder="Номер и дата лицензии"
                 label="Номер и дата лицензии"
                 label-class="text-[#A8AAAE] text-xs font-medium"
+                required
             />
             <AppDatePicker
+                v-model="actForm.doc_details.sanitary"
+                prop="doc_details.sanitary"
                 placeholder="Номер и дата заключения Санитарно..."
                 label="Номер и дата заключения Санитарно..."
                 label-class="text-[#A8AAAE] text-xs font-medium"
+                required
             />
             <AppDatePicker
+                v-model="actForm.doc_details.vetirinary"
+                prop="doc_details.vetirinary"
                 placeholder="Номер и дата удостоверения ветеринарии"
                 label="Номер и дата удостоверения ветеринарии"
                 label-class="text-[#A8AAAE] text-xs font-medium"
+                required
             />
             <AppDatePicker
+                v-model="actForm.doc_details.quality"
+                prop="doc_details.quality"
                 placeholder="Номер и дата удостоверения качества"
                 label="Номер и дата удостоверения качества"
                 label-class="text-[#A8AAAE] text-xs font-medium"
+                required
             />
           </div>
 
           <div class="bg-[#FFFFFF] rounded-[8px] p-[12px]">
-              <span class="block text-[#4F5662] text-sm font-medium mb-[16px]">
-                Состав комиссии приема продуктов
-              </span>
-            <AppSelect
-                placeholder="Начальник базы  Маликов Б."
-                label="Начальник базы"
-                label-class="text-[#A8AAAE] text-xs font-medium"
-            />
+            <strong class="block text-[#4F5662] text-sm font-medium mb-4">
+              Состав комиссии приема продуктов
+            </strong>
+            <div class="flex flex-col">
+              <AppSelect
+                  v-model="actForm.doc_signer_obj.signer_id_1"
+                  prop="doc_signer_obj.signer_id_1"
+                  placeholder="Кладовщик"
+                  label="Кладовщик"
+                  label-class="text-[#A8AAAE] text-xs font-medium"
+                  required
+              >
+                <template v-if="usersStore.users">
+                  <ElOption
+                      v-for="item in usersStore.users.users"
+                      :key="item.id"
+                      :label="usersStore.getUserFullName(item)"
+                      :value="item.id"
+                  />
+                </template>
+              </AppSelect>
+              <AppSelect
+                  v-model="actForm.doc_signer_obj.signer_id_2"
+                  prop="doc_signer_obj.signer_id_2"
+                  placeholder="Товаровед"
+                  label="Товаровед"
+                  label-class="text-[#A8AAAE] text-xs font-medium"
+                  required
+              >
+                <template v-if="usersStore.users">
+                  <ElOption
+                      v-for="item in usersStore.users.users"
+                      :key="item.id"
+                      :label="usersStore.getUserFullName(item)"
+                      :value="item.id"
+                  />
+                </template>
+              </AppSelect>
+              <AppSelect
+                  v-model="actForm.doc_signer_obj.signer_id_3"
+                  prop="doc_signer_obj.signer_id_3"
+                  placeholder="Экспедитор"
+                  label="Экспедитор"
+                  label-class="text-[#A8AAAE] text-xs font-medium"
+                  required
+              >
+                <template v-if="usersStore.users">
+                  <ElOption
+                      v-for="item in usersStore.users.users"
+                      :key="item.id"
+                      :label="usersStore.getUserFullName(item)"
+                      :value="item.id"
+                  />
+                </template>
+              </AppSelect>
+              <AppSelect
+                  v-model="actForm.doc_signer_obj.signer_id_4"
+                  prop="doc_signer_obj.signer_id_4"
+                  placeholder="Зав. склад"
+                  label="Зав. склад"
+                  label-class="text-[#A8AAAE] text-xs font-medium"
+                  required
+              >
+                <template v-if="usersStore.users">
+                  <ElOption
+                      v-for="item in usersStore.users.users"
+                      :key="item.id"
+                      :label="usersStore.getUserFullName(item)"
+                      :value="item.id"
+                  />
+                </template>
+              </AppSelect>
+              <AppSelect
+                  v-model="actForm.doc_signer_obj.signer_id_5"
+                  prop="doc_signer_obj.signer_id_5"
+                  placeholder="Начальник базы"
+                  label="Начальник базы"
+                  label-class="text-[#A8AAAE] text-xs font-medium"
+                  required
+              >
+                <template v-if="usersStore.users">
+                  <ElOption
+                      v-for="item in usersStore.users.users"
+                      :key="item.id"
+                      :label="usersStore.getUserFullName(item)"
+                      :value="item.id"
+                  />
+                </template>
+              </AppSelect>
+            </div>
           </div>
         </AppForm>
       </div>

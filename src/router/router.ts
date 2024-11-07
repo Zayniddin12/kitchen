@@ -6,7 +6,7 @@ import Settings from "@/modules/Settings/router";
 import Warehouse from "@/modules/WarehouseBases/router";
 import KitchenWarehouse from "@/modules/KitchenWarehouse/kitchen-warehouse.routes";
 import Kitchen from "@/modules/Kitchen/kitchen.routes";
-import Users from "@/modules/Users/router";
+import Users from "@/modules/Users/users.routes";
 import AuthRoutes from "@/modules/Auth/auth.routes";
 
 const routes: RouteRecordRaw[] = [

@@ -8,14 +8,27 @@ import AppSelect from "@/components/ui/form/app-select/AppSelect.vue";
 import AppDatePicker from "@/components/ui/form/app-date-picker/AppDatePicker.vue";
 import useConfirm from "@/components/ui/app-confirm/useConfirm";
 import { ModalPropsType, ModalValueType } from "@/layout/Create/components/modal.types";
+import { DocumentCreateDataDocumentType, DraftType } from "@/modules/Document/document.types";
+import { reactive, watch } from "vue";
 
-interface PropsType extends  ModalPropsType{
+interface PropsType extends ModalPropsType {
   title: string,
 }
 
 const model = defineModel<ModalValueType>();
 
+const draft = defineModel<DraftType>("draft");
+
 const props = defineProps<PropsType>();
+
+const form = reactive<DocumentCreateDataDocumentType>({
+  doc_type_id: null,
+  date: "",
+  to_id: null,
+  subject: "",
+  number: "",
+  status: ""
+});
 
 const { confirm } = useConfirm();
 
@@ -25,6 +38,18 @@ const closeModal = () => {
     model.value = false;
   });
 };
+
+const openModal = () => {
+  if(draft.value){
+    form.date = draft.value.date;
+    // form.to_id = draft.value.to;
+  }
+}
+
+watch(model, (newModel) => {
+  if (newModel) openModal();
+})
+
 </script>
 
 <template>
@@ -37,7 +62,12 @@ const closeModal = () => {
       :before-close="closeModal"
   >
     <template #header>
-      <div v-if="title" class="text-center text-[#000000] font-bold text-[18px]">{{title}}</div>
+      <div
+          v-if="title"
+          class="text-center text-[#000000] font-bold text-[18px]"
+      >
+        {{ title }}
+      </div>
     </template>
 
     <div class="flex">

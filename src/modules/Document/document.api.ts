@@ -2,13 +2,13 @@ import axios from "@/plugins/axios/axios";
 import {
     DraftsResponseType,
     DraftsParamsType,
-    DocumentCreateDataType, DocumentType
+    DocumentCreateDataType, DocumentType, DocumentCreateDataDocumentType
 } from "@/modules/Document/document.types";
 
 const prefix = "documents";
 
 export default {
-    create(data: DocumentCreateDataType) {
+    create(data: DocumentCreateDataType | DocumentCreateDataDocumentType) {
         return axios.post(prefix, data);
     },
 

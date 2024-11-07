@@ -140,6 +140,13 @@ const tableCurrentChange = (value: DraftType) => {
   router.push({ name: `${route.name as string}-id`, params: { id: value.id } });
 };
 
+const activeDraft = ref<DraftType | null>(null);
+
+const editModalHandler = (value: DraftType) => {
+  activeDraft.value = value;
+  editModal.value = true;
+}
+
 </script>
 
 <template>
@@ -303,7 +310,7 @@ const tableCurrentChange = (value: DraftType) => {
             <button
                 v-if="route.name === 'drafts'"
                 class="action-btn ml-[20px]"
-                @click="handleEdit"
+                @click="editModalHandler(row)"
             >
               <img
                   src="@/assets/images/icons/edit.svg"
@@ -343,9 +350,11 @@ const tableCurrentChange = (value: DraftType) => {
         @current-change="changePage"
     />
 
-    <EditModal
-        v-model:editModal="editModal"
-        :isView="isView"
+    <MemoModal
+        v-model="editModal"
+        :id="null"
+        title="Редактировать служебную записку"
+        :name="activeDraft?.subject ?? ''"
     />
   </div>
 </template>

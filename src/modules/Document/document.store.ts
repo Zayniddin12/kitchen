@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
 import {
+    DocumentCreateDataDocumentType,
     DocumentCreateDataType, DocumentType,
     DraftsParamsType,
     DraftsResponseType
@@ -10,7 +11,7 @@ import documentApi from "@/modules/Document/document.api";
 export const useDocumentStore = defineStore("documentStore", () => {
     const createLoading = ref(false);
 
-    const create = async (data: DocumentCreateDataType) => {
+    const create = async (data: DocumentCreateDataType | DocumentCreateDataDocumentType) => {
         createLoading.value = true;
 
         try {
