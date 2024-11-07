@@ -1,6 +1,7 @@
 import { PaginationParamsType, PaginationType } from "@/types/pagination.type";
 
 export interface DocumentProductType {
+    category_id: number | "";
     product_type_id: number | "",
     quantity: number | null,
     unit_id: number | "",
@@ -27,8 +28,32 @@ export interface DocumentCreateDataDocumentType {
     products: DocumentProductType[]
 }
 
-export interface DocumentCreateDataActType{
+export interface DocDetailsType {
+    licence: string,
+    sanitary: string,
+    vetirinary: string,
+    quality: string,
+}
 
+export interface DocSignerType {
+    signer_id: number,
+}
+
+export interface DocumentCreateDataActType {
+    number: string,
+    subject: string,
+    content: string,
+    shipping_method: string,
+    products: DocumentProductType[],
+    doc_details: DocDetailsType,
+    doc_signers: DocSignerType[],
+    doc_signer_obj?: {
+        signer_id_1: number | "",
+        signer_id_2: number | "",
+        signer_id_3: number | "",
+        signer_id_4: number | "",
+        signer_id_5: number | "",
+    }
 }
 
 export interface DocumentCreateDataType {
@@ -58,4 +83,15 @@ export interface DraftType {
 export interface DraftsResponseType {
     documents: DraftType[];
     paginator: PaginationType;
+}
+
+export interface DocumentType {
+    id: string,
+    type: string,
+    date: string,
+    number: string,
+    to_name: string,
+    subject: string | null,
+    content: string | null,
+    from_name: string,
 }

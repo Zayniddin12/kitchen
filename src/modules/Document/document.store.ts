@@ -1,8 +1,7 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
 import {
-    DocumentCreateDataActType,
-    DocumentCreateDataDocumentType, DocumentCreateDataType,
+    DocumentCreateDataType, DocumentType,
     DraftsParamsType,
     DraftsResponseType
 } from "@/modules/Document/document.types";
@@ -11,14 +10,8 @@ import documentApi from "@/modules/Document/document.api";
 export const useDocumentStore = defineStore("documentStore", () => {
     const createLoading = ref(false);
 
-    const create = async (documentData: DocumentCreateDataDocumentType, actData?: DocumentCreateDataActType) => {
+    const create = async (data: DocumentCreateDataType) => {
         createLoading.value = true;
-
-        const data: DocumentCreateDataType = {
-            Document: documentData
-        };
-
-        if (actData) data.Act = actData;
 
         try {
             await documentApi.create(data);
@@ -38,11 +31,26 @@ export const useDocumentStore = defineStore("documentStore", () => {
         }
     };
 
+    const documentLoading = ref(false);
+    const document = ref<DocumentType | null>(null);
+
+    const fetchDocument = async (uuid: string) => {
+        documentLoading.value = true;
+        try {
+            document.value = await documentApi.fetchDocument(uuid);
+        } finally {
+            documentLoading.value = false;
+        }
+    };
+
     return {
         createLoading,
         create,
         draftsLoading,
         drafts,
-        fetchDrafts
+        fetchDrafts,
+        documentLoading,
+        document,
+        fetchDocument
     };
 });

@@ -27,7 +27,10 @@ const emit = defineEmits<{
 </script>
 
 <template>
-  <div class="app-pagination flex items-center justify-between">
+  <div
+      v-show="pagination.pages_count>1"
+      class="app-pagination flex items-center justify-between"
+  >
     <p class="text-cool-gray text-sm">
       Показано {{ computedPage }}–{{ pagination.per_page }} из {{ pagination.total_count }}
       результатов

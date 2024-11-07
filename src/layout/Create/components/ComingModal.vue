@@ -8,7 +8,7 @@ import AppDatePicker from "@/components/ui/form/app-date-picker/AppDatePicker.vu
 import useConfirm from "@/components/ui/app-confirm/useConfirm";
 import {
   DocumentCreateDataActType,
-  DocumentCreateDataDocumentType,
+  DocumentCreateDataDocumentType, DocumentCreateDataType,
   DocumentProductType
 } from "@/modules/Document/document.types";
 import { ValidationType } from "@/components/ui/form/app-form/app-form.type";
@@ -28,6 +28,7 @@ import {
 import { useCommonStore } from "@/stores/common.store";
 import deleteIcon from "@/assets/images/icons/delete-danger-icon.svg";
 import { useDocumentStore } from "@/modules/Document/document.store";
+import { AppSelectValueType } from "@/components/ui/form/app-select/app-select.type";
 
 interface ProviderFormType {
   name: string;
@@ -67,6 +68,7 @@ const form = reactive<DocumentCreateDataDocumentType>({
   status: "",
   products: [
     {
+      category_id: "",
       product_type_id: "",
       quantity: null,
       unit_id: "",
@@ -75,9 +77,34 @@ const form = reactive<DocumentCreateDataDocumentType>({
   ]
 });
 
+const validationErrors = ref<Record<string, any> | null>({
+  Document: {},
+  Act: {}
+});
+
 const oldForm = ref<null | DocumentCreateDataDocumentType>(null);
 
-const actForm = reactive<DocumentCreateDataActType>({});
+const actForm = reactive<DocumentCreateDataActType>({
+  number: "",
+  subject: "",
+  content: "",
+  shipping_method: "",
+  products: [],
+  doc_details: {
+    licence: "",
+    sanitary: "",
+    vetirinary: "",
+    quality: ""
+  },
+  doc_signers: [],
+  doc_signer_obj: {
+    signer_id_1: "",
+    signer_id_2: "",
+    signer_id_3: "",
+    signer_id_4: "",
+    signer_id_5: ""
+  }
+});
 
 const oldActForm = ref<DocumentCreateDataActType | null>(null);
 
@@ -109,25 +136,72 @@ const setValidation = (validation: ValidationType) => {
   v$.value = validation;
 };
 
-const clearV$ = () => {
-  if (!v$.value) return;
-  v$.value.clearValidate();
-  v$.value.resetForm();
+const actV$ = ref<ValidationType | null>(null);
+
+const setActValidation = (validation: ValidationType) => {
+  actV$.value = validation;
+};
+
+const clearValidations = () => {
+  v$.value?.clear();
+  if (activeComingModal.value && actV$.value) actV$.value.clear();
 };
 
 const sendForm = async () => {
-  if (!v$.value) return;
+  if (!v$.value || (activeComingModal.value && !actV$.value)) return;
 
-  if (!(await v$.value.validate())) {
+  const isMainValid = await v$.value.validate();
+  const isModalValid = activeComingModal.value ? await actV$.value?.validate() : true;
+
+  if (!isMainValid || !isModalValid) {
     commonStore.errorToast("Validation Error");
     return;
   }
 
-  await documentStore.create(form).then(() => {
+  const newForm: DocumentCreateDataType = {
+    Document: JSON.parse(JSON.stringify(form))
+  };
+
+  if (activeComingModal.value) {
+    newForm.Act = JSON.parse(JSON.stringify(actForm));
+
+    if (newForm.Act && newForm.Act.doc_signer_obj) {
+      const signerKeys = ["signer_id_1", "signer_id_2", "signer_id_3", "signer_id_4", "signer_id_5"] as const;
+
+      newForm.Act.doc_signers = signerKeys
+          .map((key) => ({
+            signer_id: newForm.Act!.doc_signer_obj![key] as number
+          }));
+    }
+  }
+
+  await documentStore.create(newForm).then(() => {
     commonStore.successToast();
     model.value = false;
-    clearV$();
+    clearValidations();
+    validationErrors.value = {
+      Document: {},
+      Act: {}
+    };
+  }).catch((error: any) => {
+    if (error.error.code === 422) {
+      validationErrors.value = error.meta.validation_errors;
+    }
   });
+};
+
+const vidProducts = ref<Map<number, Record<string, any>[]>>(new Map);
+
+const fetchVidProductsList = async (value: AppSelectValueType) => {
+
+  if (typeof value !== "number") return;
+
+  await settingsStore.GET_VID_PRODUCT({
+    parent_id: value,
+    per_page: 100
+  });
+
+  vidProducts.value.set(value, settingsStore.vidProduct.product_types);
 };
 
 const getProductTypeTitle = (id: number) => {
@@ -158,12 +232,15 @@ const productsTotalSum = computed(() => {
 
 const createProduct = () => {
   form.products.push({
+    category_id: "",
     product_type_id: "",
     quantity: null,
     unit_id: "",
     price: null
   });
 };
+
+const activeComingModal = computed(() => props.id === 7);
 
 const deleteProduct = (index: number) => {
   form.products.splice(index, 1);
@@ -173,17 +250,24 @@ const fetchRespondents = (search = "") => {
   settingsStore.fetchRespondents();
 };
 
+const selectedProductTypes = computed(() => {
+
+});
+
 const { confirm } = useConfirm();
 
 const closeModal = async () => {
-  if (oldForm.value && !deepEqual(form, oldForm.value)) {
+  const documentFormIsChange = oldForm.value && !deepEqual(form, oldForm.value);
+  const actFormIsChange = oldActForm.value && !deepEqual(actForm, oldActForm.value);
+
+  if (documentFormIsChange || (activeComingModal.value && actFormIsChange)) {
     const response = await confirm.cancel({ disabledBody: true });
 
     if (response === "save") {
       await sendForm();
       return;
     } else {
-      clearV$();
+      clearValidations();
     }
   }
 
@@ -197,6 +281,9 @@ const openModal = () => {
   settingsStore.GET_UNITS();
 
   oldForm.value = JSON.parse(JSON.stringify(form));
+  if (activeComingModal.value) {
+    oldActForm.value = JSON.parse(JSON.stringify(actForm));
+  }
 };
 
 watch(model, newValue => {
@@ -235,7 +322,10 @@ const clearProviderV$ = () => {
 const sendProviderForm = async () => {
   if (!providerV$.value) return;
 
-  if (!(await providerV$.value.validate())) return;
+  if (!(await providerV$.value.validate())) {
+    commonStore.errorToast("Validation Error");
+    return;
+  }
 
   const newForm = { ...providerForm };
   newForm.phone = `998${newForm.phone}`;
@@ -289,14 +379,10 @@ watch(providerCreateModal, newMProviderModal => {
   >
     <template #header>
       <div class="text-center text-[#000000] font-bold text-[18px]">
-        Создать {{ id === 7 ? "приход" : " расход" }}
+        Создать {{ activeComingModal ? "приход" : " расход" }}
       </div>
     </template>
-    <AppForm
-        :value="form"
-        @validation="setValidation"
-        @submit.prevent
-    >
+    <div>
       <div class="flex">
         <div
             class="border-[#E2E6F3] bg-[#fff] border rounded-[15px] w-[60%] mr-0"
@@ -479,233 +565,234 @@ watch(providerCreateModal, newMProviderModal => {
             </el-table>
           </div>
         </div>
-        <div class="w-[40%] ml-[24px] flex flex-col justify-between">
-          <div>
-            <AppInput
-                placeholder="Входящий накладной"
-                label="Название документа"
-                label-class="text-[#A8AAAE] text-xs font-medium"
-                disabled
+        <AppForm
+            :value="form"
+            @validation="setActValidation"
+            @submit.prevent
+            class="w-[40%] ml-6"
+            :validation-errors="validationErrors?.Document ?? null"
+        >
+          <AppInput
+              placeholder="Входящий накладной"
+              label="Название документа"
+              label-class="text-[#A8AAAE] text-xs font-medium"
+              disabled
+          />
+          <AppDatePicker
+              :placeholder="date"
+              label="Дата создания документа"
+              label-class="text-[#A8AAAE] text-xs font-medium"
+              disabled
+          />
+          <AppInput
+              placeholder="Автоматически"
+              label="NK-00000"
+              label-class="text-[#A8AAAE] text-xs font-medium"
+              disabled
+          />
+          <AppInput
+              v-model="form.number"
+              prop="number"
+              placeholder="№ накладной"
+              label="№ накладной"
+              label-class="text-[#A8AAAE] text-xs font-medium"
+              required
+          />
+          <AppDatePicker
+              v-model="form.date"
+              prop="date"
+              placeholder="Дата накладной"
+              label="Дата накладной"
+              label-class="text-[#A8AAAE] text-xs font-medium"
+              format="DD.MM.YYYY"
+              value-format="DD.MM.YYYY"
+              required
+          />
+          <AppSelect
+              prop="from_id"
+              placeholder="От кого"
+              label="От кого"
+              :items="settingsStore.respondents"
+              item-label="name"
+              :loading="settingsStore.respondentsLoading"
+              label-class="text-[#A8AAAE] text-xs font-medium"
+              @change="(value) => respondentChange(value as string, 'from')"
+              required
+          >
+            <ElOption
+                v-for="item in settingsStore.respondents"
+                :key="`${item.id}_${item.model_type}`"
+                :value="`${item.id}_${item.model_type}`"
+                :label="item.name"
             />
-            <AppDatePicker
-                :placeholder="date"
-                label="Дата создания документа"
-                label-class="text-[#A8AAAE] text-xs font-medium"
-                disabled
-            />
-            <AppInput
-                placeholder="Автоматически"
-                label="NK-00000"
-                label-class="text-[#A8AAAE] text-xs font-medium"
-                disabled
-            />
-            <AppInput
-                v-model="form.number"
-                prop="number"
-                placeholder="№ накладной"
-                label="№ накладной"
-                label-class="text-[#A8AAAE] text-xs font-medium"
-                required
-            />
-            <AppDatePicker
-                v-model="form.date"
-                prop="date"
-                placeholder="Дата накладной"
-                label="Дата накладной"
-                label-class="text-[#A8AAAE] text-xs font-medium"
-                format="DD.MM.YYYY"
-                value-format="DD.MM.YYYY"
-                required
-            />
-            <AppSelect
-                prop="from_id"
-                placeholder="От кого"
-                label="От кого"
-                :items="settingsStore.respondents"
-                item-label="name"
-                :loading="settingsStore.respondentsLoading"
-                label-class="text-[#A8AAAE] text-xs font-medium"
-                @change="(value) => respondentChange(value as string, 'from')"
-                required
-            >
-              <ElOption
-                  v-for="item in settingsStore.respondents"
-                  :key="`${item.id}_${item.model_type}`"
-                  :value="`${item.id}_${item.model_type}`"
-                  :label="item.name"
-              />
-              <template #footer>
-                <button
-                    @click.stop="providerCreateModal = true"
-                    class="flex items-center justify-center gap-3 border-[1px] border-[#2E90FA] rounded-[8px] w-full text-[#2E90FA] text-sm font-medium py-[10px]"
-                >
-                  <span
-                      :style="{
-                      maskImage: 'url(/icons/plusIcon.svg)',
-                      backgroundColor: '#2E90FA',
-                      color: '#2E90FA',
-                      width: '20px',
-                      height: '20px',
-                      maskSize: '20px',
-                      maskPosition: 'center',
-                      maskRepeat: 'no-repeat',
-                    }"
-                  ></span>
-                  Добавить
-                </button>
-              </template>
-            </AppSelect>
-            <AppSelect
-                prop="to_id"
-                placeholder="Кому"
-                label="Кому"
-                :items="settingsStore.respondents"
-                item-label="name"
-                :loading="settingsStore.respondentsLoading"
-                label-class="text-[#A8AAAE] text-xs font-medium"
-                @change="(value) => respondentChange(value as string, 'to')"
-                required
-            >
-              <ElOption
-                  v-for="item in settingsStore.respondents"
-                  :key="`${item.id}_${item.model_type}`"
-                  :value="`${item.id}_${item.model_type}`"
-                  :label="item.name"
-              />
-              <template #footer>
-                <button
-                    @click.stop="providerCreateModal = true"
-                    class="flex items-center justify-center gap-3 border-[1px] border-[#2E90FA] rounded-[8px] w-full text-[#2E90FA] text-sm font-medium py-[10px]"
-                >
-                  <span
-                      :style="{
-                      maskImage: 'url(/icons/plusIcon.svg)',
-                      backgroundColor: '#2E90FA',
-                      color: '#2E90FA',
-                      width: '20px',
-                      height: '20px',
-                      maskSize: '20px',
-                      maskPosition: 'center',
-                      maskRepeat: 'no-repeat',
-                    }"
-                  ></span>
-                  Добавить
-                </button>
-              </template>
-            </AppSelect>
-            <AppInput
-                v-model="form.through_whom"
-                prop="through_whom"
-                placeholder="Через кого"
-                label="Через кого"
-                label-class="text-[#A8AAAE] text-xs font-medium"
-            />
-            <AppInput
-                v-model="form.basis"
-                prop="basis"
-                placeholder="Основание"
-                label="Основание"
-                label-class="text-[#A8AAAE] text-xs font-medium"
-                required
-            />
-            <AppInput
-                v-model="form.shipping_method"
-                prop="shipping_method"
-                class="mb-[32px]"
-                placeholder="Способ отправления"
-                label="Способ отправления"
-                label-class="text-[#A8AAAE] text-xs font-medium"
-                required
-            />
-            <div class="bg-[#FFFFFF] rounded-[8px] p-[12px]">
-              <template
-                  v-for="(product, index) in form.products"
-                  :key="index + 1"
-              >
-                <div
-                    class="flex items-center justify-between mb-[16px] text-sm font-medium"
-                >
-                  <strong class="text-[#4F5662]">
-                    <template v-if="form.products.length > 1">
-                      {{ index + 1 }}.
-                    </template>
-                    Таблица получаемых продуктов
-                  </strong>
-                  <button
-                      v-if="form.products.length > 1"
-                      @click.stop="deleteProduct(index)"
-                      class="flex items-center gap-x-1"
-                  >
-                    <svg
-                        :data-src="deleteIcon"
-                        class="size-5"
-                    />
-                    <span class="text-[#EA5455]">Удалить</span>
-                  </button>
-                </div>
-                <AppSelect
-                    placeholder="Тип продукта"
-                    :prop="`products[${index}].product_type_id`"
-                    :items="settingsStore.typeProduct.product_categories"
-                    item-value="id"
-                    item-label="name"
-                    label="Тип продукта"
-                    label-class="text-[#A8AAAE] text-xs font-medium"
-                    @change="
-                    value =>
-                      settingsStore.GET_VID_PRODUCT({
-                        parent_id: value,
-                        per_page: 100,
-                      })
-                  "
-                    required
-                    trigger="blur"
-                />
-                <AppSelect
-                    v-model="product.product_type_id"
-                    :prop="`products[${index}].product_type_id`"
-                    :items="settingsStore.vidProduct.product_types"
-                    item-label="name"
-                    item-value="id"
-                    placeholder="Вид продукта"
-                    label="Вид продукта"
-                    label-class="text-[#A8AAAE] text-xs font-medium"
-                    required
-                />
-                <AppInput
-                    v-model.number="product.quantity"
-                    :prop="`products[${index}].quantity`"
-                    type="number"
-                    placeholder="Количество"
-                    label="Количество"
-                    label-class="text-[#A8AAAE] text-xs font-medium"
-                    required
-                />
-                <AppSelect
-                    v-model="product.unit_id"
-                    :prop="`products[${index}].unit_id`"
-                    :items="settingsStore.units.units"
-                    item-label="name"
-                    item-value="id"
-                    placeholder="Ед. измерения"
-                    label="Ед. измерения"
-                    label-class="text-[#A8AAAE] text-xs font-medium"
-                    required
-                />
-                <AppInput
-                    v-model.number="product.price"
-                    type="number"
-                    :prop="`products[${index}].price`"
-                    placeholder="Цена"
-                    label="Цена"
-                    label-class="text-[#A8AAAE] text-xs font-medium"
-                    required
-                />
-              </template>
+            <template #footer>
               <button
-                  @click.stop="createProduct"
-                  class="mt-6 flex items-center justify-center gap-3 border-[1px] border-[#2E90FA] rounded-[8px] w-full text-[#2E90FA] text-sm font-medium py-[10px]"
+                  @click.stop="providerCreateModal = true"
+                  class="flex items-center justify-center gap-3 border-[1px] border-[#2E90FA] rounded-[8px] w-full text-[#2E90FA] text-sm font-medium py-[10px]"
               >
+                  <span
+                      :style="{
+                      maskImage: 'url(/icons/plusIcon.svg)',
+                      backgroundColor: '#2E90FA',
+                      color: '#2E90FA',
+                      width: '20px',
+                      height: '20px',
+                      maskSize: '20px',
+                      maskPosition: 'center',
+                      maskRepeat: 'no-repeat',
+                    }"
+                  ></span>
+                Добавить
+              </button>
+            </template>
+          </AppSelect>
+          <AppSelect
+              prop="to_id"
+              placeholder="Кому"
+              label="Кому"
+              :items="settingsStore.respondents"
+              item-label="name"
+              :loading="settingsStore.respondentsLoading"
+              label-class="text-[#A8AAAE] text-xs font-medium"
+              @change="(value) => respondentChange(value as string, 'to')"
+              required
+          >
+            <ElOption
+                v-for="item in settingsStore.respondents"
+                :key="`${item.id}_${item.model_type}`"
+                :value="`${item.id}_${item.model_type}`"
+                :label="item.name"
+            />
+            <template #footer>
+              <button
+                  @click.stop="providerCreateModal = true"
+                  class="flex items-center justify-center gap-3 border-[1px] border-[#2E90FA] rounded-[8px] w-full text-[#2E90FA] text-sm font-medium py-[10px]"
+              >
+                  <span
+                      :style="{
+                      maskImage: 'url(/icons/plusIcon.svg)',
+                      backgroundColor: '#2E90FA',
+                      color: '#2E90FA',
+                      width: '20px',
+                      height: '20px',
+                      maskSize: '20px',
+                      maskPosition: 'center',
+                      maskRepeat: 'no-repeat',
+                    }"
+                  ></span>
+                Добавить
+              </button>
+            </template>
+          </AppSelect>
+          <AppInput
+              v-model="form.through_whom"
+              prop="through_whom"
+              placeholder="Через кого"
+              label="Через кого"
+              label-class="text-[#A8AAAE] text-xs font-medium"
+          />
+          <AppInput
+              v-model="form.basis"
+              prop="basis"
+              placeholder="Основание"
+              label="Основание"
+              label-class="text-[#A8AAAE] text-xs font-medium"
+              required
+          />
+          <AppInput
+              v-model="form.shipping_method"
+              prop="shipping_method"
+              class="mb-[32px]"
+              placeholder="Способ отправления"
+              label="Способ отправления"
+              label-class="text-[#A8AAAE] text-xs font-medium"
+              required
+          />
+          <div class="bg-[#FFFFFF] rounded-[8px] p-[12px]">
+            <template
+                v-for="(product, index) in form.products"
+                :key="index + 1"
+            >
+              <div
+                  class="flex items-center justify-between mb-[16px] text-sm font-medium"
+              >
+                <strong class="text-[#4F5662]">
+                  <template v-if="form.products.length > 1">
+                    {{ index + 1 }}.
+                  </template>
+                  Таблица получаемых продуктов
+                </strong>
+                <button
+                    v-if="form.products.length > 1"
+                    @click.stop="deleteProduct(index)"
+                    class="flex items-center gap-x-1"
+                >
+                  <svg
+                      :data-src="deleteIcon"
+                      class="size-5"
+                  />
+                  <span class="text-[#EA5455]">Удалить</span>
+                </button>
+              </div>
+              <AppSelect
+                  v-model="product.category_id"
+                  placeholder="Тип продукта"
+                  :prop="`products[${index}].category_id`"
+                  :items="settingsStore.typeProduct.product_categories"
+                  item-value="id"
+                  item-label="name"
+                  label="Тип продукта"
+                  label-class="text-[#A8AAAE] text-xs font-medium"
+                  @change="fetchVidProductsList"
+                  required
+                  trigger="blur"
+              />
+              <AppSelect
+                  v-model="product.product_type_id"
+                  :prop="`products[${index}].product_type_id`"
+                  :items="vidProducts.get(product.category_id as number)"
+                  item-label="name"
+                  item-value="id"
+                  placeholder="Вид продукта"
+                  label="Вид продукта"
+                  label-class="text-[#A8AAAE] text-xs font-medium"
+                  required
+                  :disabled="!product.category_id"
+              />
+              <AppInput
+                  v-model.number="product.quantity"
+                  :prop="`products[${index}].quantity`"
+                  type="number"
+                  placeholder="Количество"
+                  label="Количество"
+                  label-class="text-[#A8AAAE] text-xs font-medium"
+                  required
+              />
+              <AppSelect
+                  v-model="product.unit_id"
+                  :prop="`products[${index}].unit_id`"
+                  :items="settingsStore.units.units"
+                  item-label="name"
+                  item-value="id"
+                  placeholder="Ед. измерения"
+                  label="Ед. измерения"
+                  label-class="text-[#A8AAAE] text-xs font-medium"
+                  required
+              />
+              <AppInput
+                  v-model.number="product.price"
+                  type="number"
+                  :prop="`products[${index}].price`"
+                  placeholder="Цена"
+                  label="Цена"
+                  label-class="text-[#A8AAAE] text-xs font-medium"
+                  required
+              />
+            </template>
+            <button
+                @click.stop="createProduct"
+                class="mt-6 flex items-center justify-center gap-3 border-[1px] border-[#2E90FA] rounded-[8px] w-full text-[#2E90FA] text-sm font-medium py-[10px]"
+            >
                 <span
                     :style="{
                     maskImage: 'url(/icons/plusIcon.svg)',
@@ -718,19 +805,18 @@ watch(providerCreateModal, newMProviderModal => {
                     maskRepeat: 'no-repeat',
                   }"
                 ></span>
-                Добавить
-              </button>
-            </div>
+              Добавить
+            </button>
           </div>
-          <!--        <div class="flex items-start justify-between">-->
-          <!--          <button class="custom-cancel-btn" @click="closeModal">Отменить</button>-->
-          <!--          <button class="custom-apply-btn">Сохранить как черновик</button>-->
-          <!--          <button class="custom-send-btn">Отправить</button>-->
-          <!--        </div>-->
-        </div>
+        </AppForm>
+        <!--        <div class="flex items-start justify-between">-->
+        <!--          <button class="custom-cancel-btn" @click="closeModal">Отменить</button>-->
+        <!--          <button class="custom-apply-btn">Сохранить как черновик</button>-->
+        <!--          <button class="custom-send-btn">Отправить</button>-->
+        <!--        </div>-->
       </div>
       <div
-          v-if="id === 7"
+          v-if="activeComingModal"
           class="flex mt-10"
       >
         <div
@@ -922,103 +1008,116 @@ watch(providerCreateModal, newMProviderModal => {
           </div>
         </div>
 
-        <div class="w-[40%] ml-[24px] flex flex-col justify-between">
-          <div>
-            <AppInput
-                placeholder="АКТ"
-                label="АКТ"
-                label-class="text-[#A8AAAE] text-xs font-medium"
-                disabled
-            />
+        <AppForm
+            :value="actForm"
+            @validation="setValidation"
+            @submit.prevent
+            :validation-errors="validationErrors?.Act ?? null"
+            class="w-[40%] ml-6"
+        >
+          <AppInput
+              placeholder="АКТ"
+              label="АКТ"
+              label-class="text-[#A8AAAE] text-xs font-medium"
+              disabled
+          />
 
-            <AppInput
-                placeholder="Автоматически"
-                label="NK-00000"
-                label-class="text-[#A8AAAE] text-xs font-medium"
-                disabled
-            />
+          <AppInput
+              placeholder="Автоматически"
+              label="NK-00000"
+              label-class="text-[#A8AAAE] text-xs font-medium"
+              disabled
+          />
 
-            <AppInput
-                placeholder="АКТ-00000"
-                label="АКТ-00000"
-                label-class="text-[#A8AAAE] text-xs font-medium"
-            />
+          <AppInput
+              v-model="actForm.number"
+              prop="number"
+              placeholder="АКТ-00000"
+              label="АКТ-00000"
+              label-class="text-[#A8AAAE] text-xs font-medium"
+              required
+          />
 
-            <div class="bg-[#FFFFFF] rounded-[8px] p-[12px] mb-[24px]">
+          <div class="bg-[#FFFFFF] rounded-[8px] p-[12px] mb-[24px]">
               <span class="block text-[#4F5662] text-sm font-medium mb-[16px]">
                 Содержание акта
               </span>
 
-              <AppInput
-                  placeholder="Поле ввода текст содержания акта с выводом шаблонного заданного текста"
-                  type="textarea"
-                  :rows="5"
-              />
+            <AppInput
+                v-model="actForm.content"
+                prop="content"
+                placeholder="Поле ввода текст содержания акта с выводом шаблонного заданного текста"
+                type="textarea"
+                :rows="5"
+                required
+            />
 
-              <AppInput
-                  placeholder="Картофель"
-                  label="Картофель"
-                  label-class="text-[#A8AAAE] text-xs font-medium"
-              />
-              <AppInput placeholder="50"/>
-              <AppInput placeholder="кг"/>
-              <AppInput
-                  placeholder="Номер и дата договора о поставке"
-                  label="Номер и дата договора о поставке"
-                  label-class="text-[#A8AAAE] text-xs font-medium"
-              />
-              <AppInput
-                  placeholder="Номер и дата накладной"
-                  label="Номер и дата накладной"
-                  label-class="text-[#A8AAAE] text-xs font-medium"
-              />
-              <AppInput
-                  placeholder="Производитель продукта"
-                  label="Производитель продукта"
-                  label-class="text-[#A8AAAE] text-xs font-medium"
-              />
-              <AppInput placeholder="OOO “Yuksalish”"/>
-              <AppInput
-                  placeholder="Транспорт"
-                  label="Транспорт"
-                  label-class="text-[#A8AAAE] text-xs font-medium"
-              />
-              <AppDatePicker
-                  placeholder="Номер и дата лицензии"
-                  label="Номер и дата лицензии"
-                  label-class="text-[#A8AAAE] text-xs font-medium"
-              />
-              <AppDatePicker
-                  placeholder="Номер и дата заключения Санитарно..."
-                  label="Номер и дата заключения Санитарно..."
-                  label-class="text-[#A8AAAE] text-xs font-medium"
-              />
-              <AppDatePicker
-                  placeholder="Номер и дата удостоверения ветеринарии"
-                  label="Номер и дата удостоверения ветеринарии"
-                  label-class="text-[#A8AAAE] text-xs font-medium"
-              />
-              <AppDatePicker
-                  placeholder="Номер и дата удостоверения качества"
-                  label="Номер и дата удостоверения качества"
-                  label-class="text-[#A8AAAE] text-xs font-medium"
-              />
-            </div>
+            <AppSelect
+                prop="products"
+                placeholder="Картофель"
+                label="Картофель"
+                label-class="text-[#A8AAAE] text-xs font-medium"
+            >
 
-            <div class="bg-[#FFFFFF] rounded-[8px] p-[12px]">
+            </AppSelect>
+            <AppInput placeholder="50"/>
+            <AppInput placeholder="кг"/>
+            <AppInput
+                placeholder="Номер и дата договора о поставке"
+                label="Номер и дата договора о поставке"
+                label-class="text-[#A8AAAE] text-xs font-medium"
+            />
+            <AppInput
+                placeholder="Номер и дата накладной"
+                label="Номер и дата накладной"
+                label-class="text-[#A8AAAE] text-xs font-medium"
+            />
+            <AppInput
+                placeholder="Производитель продукта"
+                label="Производитель продукта"
+                label-class="text-[#A8AAAE] text-xs font-medium"
+            />
+            <AppInput placeholder="OOO “Yuksalish”"/>
+            <AppInput
+                placeholder="Транспорт"
+                label="Транспорт"
+                label-class="text-[#A8AAAE] text-xs font-medium"
+            />
+            <AppDatePicker
+                placeholder="Номер и дата лицензии"
+                label="Номер и дата лицензии"
+                label-class="text-[#A8AAAE] text-xs font-medium"
+            />
+            <AppDatePicker
+                placeholder="Номер и дата заключения Санитарно..."
+                label="Номер и дата заключения Санитарно..."
+                label-class="text-[#A8AAAE] text-xs font-medium"
+            />
+            <AppDatePicker
+                placeholder="Номер и дата удостоверения ветеринарии"
+                label="Номер и дата удостоверения ветеринарии"
+                label-class="text-[#A8AAAE] text-xs font-medium"
+            />
+            <AppDatePicker
+                placeholder="Номер и дата удостоверения качества"
+                label="Номер и дата удостоверения качества"
+                label-class="text-[#A8AAAE] text-xs font-medium"
+            />
+          </div>
+
+          <div class="bg-[#FFFFFF] rounded-[8px] p-[12px]">
               <span class="block text-[#4F5662] text-sm font-medium mb-[16px]">
                 Состав комиссии приема продуктов
               </span>
-              <AppSelect
-                  placeholder="Начальник базы  Маликов Б."
-                  label="Начальник базы"
-                  label-class="text-[#A8AAAE] text-xs font-medium"
-              />
-            </div>
+            <AppSelect
+                placeholder="Начальник базы  Маликов Б."
+                label="Начальник базы"
+                label-class="text-[#A8AAAE] text-xs font-medium"
+            />
           </div>
-        </div>
+        </AppForm>
       </div>
-    </AppForm>
+    </div>
     <div class="flex items-start justify-end gap-2 mt-[24px]">
       <button
           class="custom-cancel-btn"
