@@ -11,8 +11,10 @@ export interface DocumentProductType {
     [key: string]: any,
 }
 
+export type DocumentStatusType = "sent" | "draft" | "";
+
 export interface DocumentCreateDataDocumentType {
-    doc_type_id: number | null,
+    doc_type_id?: number | null,
     date?: string,
     number?: string,
     from_id?: number | null,
@@ -23,16 +25,22 @@ export interface DocumentCreateDataDocumentType {
     subject?: string,
     basis?: string,
     shipping_method?: string,
-    status?: "sent" | "draft" | "",
-    products?: DocumentProductType[]
+    status?: DocumentStatusType,
+    products?: DocumentProductType[],
+    content?: string
 }
 
 export interface DocDetailsType {
     licence: string,
+    licence_date: string,
     sanitary: string,
+    sanitary_date: string,
     vetirinary: string,
+    vetirinary_date: string,
     quality: string,
+    quality_date: string,
     contract_details: string,
+    contract_details_date: string,
     manufacturer: string,
 }
 
@@ -79,6 +87,8 @@ export interface DraftType {
     status: string,
     from_name: string,
     to_name: string,
+    number: string,
+    content: ""
 }
 
 export interface DraftsResponseType {

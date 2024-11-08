@@ -44,6 +44,17 @@ export const useDocumentStore = defineStore("documentStore", () => {
         }
     };
 
+    const updateLoading = ref(false);
+    const update = async (uuid: string, data: DocumentCreateDataDocumentType) => {
+        updateLoading.value = true;
+
+        try {
+            await documentApi.update(uuid, data);
+        } finally {
+            updateLoading.value = false;
+        }
+    };
+
     return {
         createLoading,
         create,
@@ -52,6 +63,8 @@ export const useDocumentStore = defineStore("documentStore", () => {
         fetchDrafts,
         documentLoading,
         document,
-        fetchDocument
+        fetchDocument,
+        updateLoading,
+        update
     };
 });
