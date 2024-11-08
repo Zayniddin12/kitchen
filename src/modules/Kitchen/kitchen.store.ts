@@ -20,6 +20,8 @@ interface Params {
   search?: string | null;
   page?: number;
   per_page?: number;
+  is_paid: number | string;
+  base_id: number | string;
 }
 
 interface Part2Type {
@@ -35,23 +37,29 @@ interface DepartmentType {
   parts: PartType[];
 }
 
+interface KitchenType {
+  id: number;
+  name: string;
+  kitchen_count: number;
+}
+
 export const useKitchenStore = defineStore("kitchenStore", () => {
   const departments = ref<DepartmentType[]>([]);
-  const kitchenType = ref<any>([]);
+  const kitchenType = ref<KitchenType[] | []>([]);
   const layoutStore = useLayoutStore();
 
   const GET_KITCHEN_TYPE = async (params: Params) => {
-    const { data } = await $axios.get("/", { params });
+    const { data } = await $axios.get("/kitchen-types/list-by-base", { params });
 
-    kitchenType.value = data.data;
+    kitchenType.value = data.data && data.data.kitchen_types;
   };
 
   const GET_KITCHEN_LIST = async (params?: Params) => {
-    const { data } = await $axios.get("/bases", { params });
+    const { data } = await $axios.get("/managements", { params });
 
-    if (data.data && data.data.bases) {
+    if (data.data && data.data.managements) {
       // departments.value = data.data && data.data.bases;
-      departments.value = data.data.bases.map(item => {
+      departments.value = data.data.managements.map(item => {
         const newItem = {} as Record<string, any>;
         newItem.title = item.name;
         newItem.icon = "building-warehouse";
@@ -69,7 +77,6 @@ export const useKitchenStore = defineStore("kitchenStore", () => {
             route: `/kitchen/${item.id}/sales`,
           },
         ];
-        console.log(newItem, "newItem");
 
         return newItem;
       });
