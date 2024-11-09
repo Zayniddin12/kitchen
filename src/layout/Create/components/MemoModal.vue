@@ -17,6 +17,7 @@ import { useSettingsStore } from "@/modules/Settings/store";
 import { useCommonStore } from "@/stores/common.store";
 import { useDocumentStore } from "@/modules/Document/document.store";
 import AppOverlay from "@/components/ui/app-overlay/AppOverlay.vue";
+import { useAuthStore } from "@/modules/Auth/auth.store";
 
 interface PropsType extends ModalPropsType {
   title: string,
@@ -31,6 +32,7 @@ const props = defineProps<PropsType>();
 const settingsStore = useSettingsStore();
 const commonStore = useCommonStore();
 const documentStore = useDocumentStore();
+const authStore = useAuthStore();
 
 const form = reactive<DocumentCreateDataDocumentType>({
   doc_type_id: null,
@@ -153,7 +155,6 @@ const loading = computed(() => documentStore.createLoading || documentStore.upda
         {{ title }}
       </div>
     </template>
-
     <AppOverlay
         :loading
         class="flex"
@@ -205,7 +206,7 @@ const loading = computed(() => documentStore.createLoading || documentStore.upda
             <div class="flex items-baseline mb-[24px] w-[200px]">
               <h1 class=" text-[14px] font-medium">
                 <span class="text-[#4F5662]">Отправитель:</span>
-                <span class="text-[#A8AAAE] ml-2">Руководитель группы отдела координации общественного питания</span>
+                <span class="text-[#A8AAAE] ml-2">{{ authStore.user?.position }}</span>
               </h1>
             </div>
 
@@ -214,7 +215,7 @@ const loading = computed(() => documentStore.createLoading || documentStore.upda
                 alt="qr"
             />
 
-            <h1 class="text-[#A8AAAE] text-[14px] mr-[100px]">Эргашева Л.</h1>
+            <h1 class="text-[#A8AAAE] text-[14px] mr-[100px]">{{ authStore.userFullName }}</h1>
           </div>
         </div>
       </div>
@@ -284,7 +285,7 @@ const loading = computed(() => documentStore.createLoading || documentStore.upda
           />
 
           <AppInput
-              placeholder="Выберите"
+              :placeholder="authStore.userFullName"
               label="Отправитель"
               label-class="text-[#A8AAAE] text-[12px] font-medium"
               disabled

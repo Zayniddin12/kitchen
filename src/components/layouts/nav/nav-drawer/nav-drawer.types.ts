@@ -6,11 +6,8 @@ export interface NavDrawerItemType {
     to?: RouteLocationRaw,
     key: string,
     title: string,
-    items?: NavListItemType[]
-}
-
-export interface AppNavDrawerItemType extends NavDrawerItemType {
-    itemsOpen?: boolean;
+    items?: NavListItemType[],
+    itemsOpen?: boolean,
 }
 
 export interface NavDrawerPropsType {

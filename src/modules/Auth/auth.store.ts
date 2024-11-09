@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { ref, onMounted, onUnmounted } from "vue";
+import { ref, onMounted, onUnmounted, computed } from "vue";
 import {
     AuthCreateDataType,
     AuthLoginDataType, ForgotPasswordDataType,
@@ -42,6 +42,12 @@ export const useAuthStore = defineStore("authStore", () => {
 
     const userLoading = ref(false);
     const user = ref<null | UserType>(null);
+
+    const userFullName = computed(() => {
+        if (!user.value) return "";
+
+        return `${user.value.firstname} ${user.value.lastname}`;
+    });
 
     const me = async () => {
         isAuth.value = true;
@@ -200,6 +206,7 @@ export const useAuthStore = defineStore("authStore", () => {
         stopRemainingTimeInterval,
         verifyCode,
         forgotPassword,
-        isAuth
+        isAuth,
+        userFullName
     };
 });

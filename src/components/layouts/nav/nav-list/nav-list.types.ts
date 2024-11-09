@@ -1,5 +1,7 @@
 import { RouteLocationRaw } from "vue-router";
 
+export type ModelValueType = boolean;
+
 export interface NavListItemType {
     icon?: string;
     to?: RouteLocationRaw,
