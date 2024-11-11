@@ -1,6 +1,6 @@
 <script
-  setup
-  lang="ts"
+    setup
+    lang="ts"
 >
 import { computed, onMounted, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
@@ -14,9 +14,11 @@ import NavDrawer from "@/components/layouts/nav/nav-drawer/NavDrawer.vue";
 import HomeIcon from "@/assets/images/icons/nav/nav-drawer/home.svg";
 import DocumentsIcon from "@/assets/images/icons/nav/nav-drawer/documents.svg";
 import NotebookIcon from "@/assets/images/icons/nav/nav-list/notebook.svg";
+import MonitoringIcon from "@/assets/images/icons/nav/nav-drawer/monitoring.svg";
 
 const authStore = useAuthStore();
 const route = useRoute();
+const router = useRouter();
 const kitchenStore = useKitchenStore();
 
 const childSidebarPin = ref<boolean>(JSON.parse(localStorage.getItem("child-sidebar-pin" as string) || "false"));
@@ -31,7 +33,7 @@ onMounted(async () => {
 
 });
 
-watch(() => route.name, function(val) {
+watch(() => route.name, function (val) {
   if (val === "home") {
     localStorage.setItem("child-sidebar", JSON.stringify(false));
     childSidebar.value = false;
@@ -44,7 +46,7 @@ const navDrawerItems = computed(() => {
       title: "Главная",
       to: { name: "home" },
       key: "home",
-      icon: HomeIcon,
+      icon: HomeIcon
     },
     {
       title: "Документы",
@@ -53,17 +55,23 @@ const navDrawerItems = computed(() => {
       items: [
         {
           title: "Служебные записки",
+          key: "memos",
           icon: NotebookIcon,
           items: [
             {
               title: "Входящие",
               key: "documentInbox",
-              to: { name: "inbox" },
-            },
-          ],
-        },
-      ],
+              to: { name: "inbox" }
+            }
+          ]
+        }
+      ]
     },
+    {
+      title: "Мониторинг",
+      key: "monitoring",
+      icon: MonitoringIcon
+    }
   ];
 });
 
@@ -74,28 +82,31 @@ const navDrawerWidth = ref<number>(0);
 <template>
   <div>
     <SideBar
-      v-model:childSidebarPin="childSidebarPin"
-      v-model:childSidebar="childSidebar"
+        v-model:childSidebarPin="childSidebarPin"
+        v-model:childSidebar="childSidebar"
     />
-    <!--    <NavDrawer :items="navDrawerItems"  @changeWidth="(value:number) => navDrawerWidth = value" />-->
+    <!--    <NavDrawer-->
+    <!--        :items="navDrawerItems"-->
+    <!--        @changeWidth="(value:number) => navDrawerWidth = value"-->
+    <!--    />-->
     <div
-      class="main-layout min-h-screen p-6 pr-7 pt-28 dark:bg-darkLayoutMain dark:bg-body-dark bg-white ml-[128px] transition-all flex flex-col justify-between"
-      :class="childSidebarPin && childSidebar ? margin : ''"
+        class="main-layout min-h-screen p-6 pr-7 pt-28 dark:bg-darkLayoutMain dark:bg-body-dark bg-white ml-[128px] transition-all flex flex-col justify-between"
+        :class="childSidebarPin && childSidebar ? margin : ''"
     >
 
       <div class="flex flex-col">
-        <AppBreadcrumb />
-        <slot />
+        <AppBreadcrumb/>
+        <slot/>
       </div>
 
       <span class="mt-[28px] bg-transparent !dark:body-dark w-full text-[#8F9194] text-[12px] select-none">Made by “Anysoft” software & solutions company</span>
     </div>
 
     <div
-      :class="childSidebarPin && childSidebar ? 'top-navbar-margin' : ''"
-      class="top-navbar bg-lightLayoutStorm dark:bg-body-dark text-white transition-all bg-[#fff]"
+        :class="childSidebarPin && childSidebar ? 'top-navbar-margin' : ''"
+        class="top-navbar bg-lightLayoutStorm dark:bg-body-dark text-white transition-all bg-[#fff]"
     >
-      <NavBar />
+      <NavBar/>
     </div>
   </div>
 </template>

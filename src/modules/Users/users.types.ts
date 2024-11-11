@@ -13,6 +13,19 @@ export interface UserType {
     status: string
 }
 
+export interface UserShowType extends UserType {
+    birthday: null | string,
+    nationality: null | string,
+    gender: null | string,
+    pass_number: null | string,
+    pass_given_by: null | string,
+    pass_given_at: null | string,
+    pass_valid_until: null | string,
+    pinfl: null | string,
+    position_id: number,
+    dining_locations: null | string
+}
+
 export interface UsersType {
     users: UserType[];
     pagination: PaginationType;

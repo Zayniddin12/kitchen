@@ -14,6 +14,10 @@ import YearlyModal from "@/layout/Create/components/YearlyModal.vue";
 import ThemeToggler from "@/layout/Bars/ThemeToggler.vue";
 import { useSettingsStore } from "@/modules/Settings/store";
 import { DocTypeListType } from "@/modules/Settings/settings.types";
+import { useAuthStore } from "@/modules/Auth/auth.store";
+import AvatarIcon from "@/assets/images/avatar.png";
+
+const authStore = useAuthStore();
 
 const editModal = ref<boolean>(false);
 const editModal2 = ref<boolean>(false);
@@ -203,15 +207,15 @@ onMounted(() => {
 
       <div class="flex items-center gap-3">
         <img
-            src="@/assets/images/avatar.png"
-            class="h-[40px] w-[40px] object-contain rounded-full"
+            :src="authStore.user?.image ?? AvatarIcon"
+            class="size-10 object-contain rounded-full"
             alt="avatar"
         />
         <div class="flex flex-col">
           <h2 class="m-0 text-[14px] font-medium text-black dark:text-white">
-            Мухаммадамин Нурматов
+            {{ authStore.userFullName ?? "-" }}
           </h2>
-          <span class="text-[#A8AAAE] text-sm">Директор</span>
+          <span class="text-[#A8AAAE] text-sm">{{ authStore.user?.position || "-" }}</span>
         </div>
       </div>
     </div>

@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: wms
+  name: wms
+  namespace: nkmk
+spec:
+  selector:
+    matchLabels:
+      app: wms
+  template:
+    metadata:
+      labels:
+        app: wms
+    spec:
+      containers:
+        - image: git.gettest.uz:5050/nkmk/frontend/kitchen:latest
+          name: wms
+          ports:
+            - containerPort: 3000
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "250m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 3000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 3000
+            initialDelaySeconds: 10
+            periodSeconds: 30
+      imagePullSecrets:
+        - name: gitlab-registry

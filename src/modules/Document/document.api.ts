@@ -12,6 +12,10 @@ export default {
         return axios.post(prefix, data);
     },
 
+    update(uuid: string, data: DocumentCreateDataDocumentType) {
+        return axios.put(`${prefix}/${uuid}`, data);
+    },
+
     async fetchDrafts(url: string, params: DraftsParamsType = {}): Promise<DraftsResponseType> {
         const { data }: { data: Record<string, any> } = await axios.get(`${prefix}/${url}`, { params });
         return data.data as DraftsResponseType;

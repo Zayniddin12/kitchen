@@ -100,10 +100,15 @@ const actForm = reactive<DocumentCreateDataActType>({
   products: [],
   doc_details: {
     licence: "",
+    licence_date: "",
     sanitary: "",
+    sanitary_date: "",
     vetirinary: "",
+    vetirinary_date: "",
     quality: "",
+    quality_date: "",
     contract_details: "",
+    contract_details_date: "",
     manufacturer: ""
   },
   doc_signers: [],
@@ -143,6 +148,7 @@ const to = computed<string>(() => {
 const v$ = ref<ValidationType | null>(null);
 
 const setValidation = (validation: ValidationType) => {
+  console.log(validation);
   v$.value = validation;
 };
 
@@ -153,6 +159,7 @@ const setActValidation = (validation: ValidationType) => {
 };
 
 const clearValidations = () => {
+  console.log("aa");
   v$.value?.clear();
   if (activeComingModal.value && actV$.value) actV$.value.clear();
 };
@@ -234,7 +241,7 @@ const getProductMeasurement = (id: number) => {
 };
 
 const productsTotalSum = computed(() => {
-  return form.products.reduce((sum: number, product: DocumentProductType) => {
+  return form.products?.reduce((sum: number, product: DocumentProductType) => {
     return (
         sum +
         Number(
@@ -245,7 +252,7 @@ const productsTotalSum = computed(() => {
 });
 
 const createProduct = () => {
-  form.products.push({
+  form.products?.push({
     category_id: "",
     product_type_id: "",
     quantity: null,
@@ -257,7 +264,7 @@ const createProduct = () => {
 const activeComingModal = computed(() => props.id === 7);
 
 const deleteProduct = (index: number) => {
-  form.products.splice(index, 1);
+  form.products?.splice(index, 1);
 };
 
 const fetchRespondents = (search = "") => {
@@ -267,7 +274,7 @@ const fetchRespondents = (search = "") => {
 const selectedProductTypes = computed(() => {
   const appSelectedProductTypes: Record<string, any>[] = [];
 
-  form.products.forEach(el => {
+  form.products?.forEach(el => {
         if (el.category_id && el.product_type_id) {
           const vidProduct = vidProducts.value.get(el.category_id);
           if (vidProduct) {
@@ -291,7 +298,7 @@ const actProductTypeChange = (value: AppSelectValueType) => {
   activeProductType.value = selectedProductType ?? null;
 
   if (selectedProductType) {
-    const product = form.products.find(el => el.product_type_id === value);
+    const product = form.products?.find(el => el.product_type_id === value);
     if (product) {
       actForm.products[0] = product;
     }
@@ -326,11 +333,9 @@ const closeModal = async () => {
     if (response === "save") {
       await sendForm();
       return;
-    } else {
-      clearValidations();
     }
   }
-
+  clearValidations();
   model.value = false;
 };
 
@@ -632,7 +637,7 @@ watch(providerCreateModal, newMProviderModal => {
         </div>
         <AppForm
             :value="form"
-            @validation="setActValidation"
+            @validation="setValidation"
             @submit.prevent
             class="w-[40%] ml-6"
             :validation-errors="validationErrors?.Document ?? null"
@@ -781,13 +786,13 @@ watch(providerCreateModal, newMProviderModal => {
                   class="flex items-center justify-between mb-[16px] text-sm font-medium"
               >
                 <strong class="text-[#4F5662]">
-                  <template v-if="form.products.length > 1">
+                  <template v-if="form.products && form.products.length > 1">
                     {{ index + 1 }}.
                   </template>
                   Таблица получаемых продуктов
                 </strong>
                 <button
-                    v-if="form.products.length > 1"
+                    v-if="form.products && form.products.length > 1"
                     @click.stop="deleteProduct(index)"
                     class="flex items-center gap-x-1"
                 >
@@ -1086,10 +1091,9 @@ watch(providerCreateModal, newMProviderModal => {
             </div>
           </div>
         </div>
-
         <AppForm
             :value="actForm"
-            @validation="setValidation"
+            @validation="setActValidation"
             @submit.prevent
             :validation-errors="validationErrors?.Act ?? null"
             class="w-[40%] ml-6"
@@ -1161,8 +1165,16 @@ watch(providerCreateModal, newMProviderModal => {
             <AppInput
                 v-model="actForm.doc_details.contract_details"
                 prop="doc_details.contract_details"
-                placeholder="Номер и дата договора о поставке"
-                label="Номер и дата договора о поставке"
+                placeholder="Номер договора о поставке"
+                label="Номер договора о поставке"
+                label-class="text-[#A8AAAE] text-xs font-medium"
+                required
+            />
+            <AppDatePicker
+                v-model="actForm.doc_details.contract_details_date"
+                prop="doc_details.contract_details_date"
+                placeholder="Дата договора о поставке"
+                label="Дата договора о поставке"
                 label-class="text-[#A8AAAE] text-xs font-medium"
                 required
             />
@@ -1197,35 +1209,67 @@ watch(providerCreateModal, newMProviderModal => {
                 label-class="text-[#A8AAAE] text-xs font-medium"
                 required
             />
-            <AppDatePicker
+            <AppInput
                 v-model="actForm.doc_details.licence"
                 prop="doc_details.licence"
-                placeholder="Номер и дата лицензии"
-                label="Номер и дата лицензии"
+                placeholder="Номер лицензии"
+                label="Номер лицензии"
                 label-class="text-[#A8AAAE] text-xs font-medium"
                 required
             />
             <AppDatePicker
+                v-model="actForm.doc_details.licence_date"
+                prop="doc_details.licence_date"
+                placeholder="Дата лицензии"
+                label="Дата лицензии"
+                label-class="text-[#A8AAAE] text-xs font-medium"
+                required
+            />
+            <AppInput
                 v-model="actForm.doc_details.sanitary"
                 prop="doc_details.sanitary"
-                placeholder="Номер и дата заключения Санитарно..."
-                label="Номер и дата заключения Санитарно..."
+                placeholder="Номер заключения Санитарно..."
+                label="Номер заключения Санитарно..."
                 label-class="text-[#A8AAAE] text-xs font-medium"
                 required
             />
             <AppDatePicker
+                v-model="actForm.doc_details.sanitary_date"
+                prop="doc_details.sanitary_date"
+                placeholder="Дата заключения Санитарно..."
+                label="Дата заключения Санитарно..."
+                label-class="text-[#A8AAAE] text-xs font-medium"
+                required
+            />
+            <AppInput
                 v-model="actForm.doc_details.vetirinary"
                 prop="doc_details.vetirinary"
-                placeholder="Номер и дата удостоверения ветеринарии"
-                label="Номер и дата удостоверения ветеринарии"
+                placeholder="Номер удостоверения ветеринарии"
+                label="Номер удостоверения ветеринарии"
                 label-class="text-[#A8AAAE] text-xs font-medium"
                 required
             />
             <AppDatePicker
+                v-model="actForm.doc_details.vetirinary_date"
+                prop="doc_details.vetirinary_date"
+                placeholder="Дата удостоверения ветеринарии"
+                label="Дата удостоверения ветеринарии"
+                label-class="text-[#A8AAAE] text-xs font-medium"
+                required
+            />
+            <AppInput
                 v-model="actForm.doc_details.quality"
                 prop="doc_details.quality"
-                placeholder="Номер и дата удостоверения качества"
-                label="Номер и дата удостоверения качества"
+                placeholder="Номер удостоверения качества"
+                label="Номер удостоверения качества"
+                label-class="text-[#A8AAAE] text-xs font-medium"
+                required
+            />
+            <AppDatePicker
+                v-model="actForm.doc_details.quality_date"
+                prop="doc_details.quality_date"
+                placeholder="Дата удостоверения качества"
+                label="Дата удостоверения качества"
                 label-class="text-[#A8AAAE] text-xs font-medium"
                 required
             />

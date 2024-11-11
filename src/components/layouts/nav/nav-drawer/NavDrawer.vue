@@ -2,7 +2,11 @@
     setup
     lang="ts"
 >
-import { AppNavDrawerItemType, NavDrawerPropsType } from "@/components/layouts/nav/nav-drawer/nav-drawer.types";
+import {
+  AppNavDrawerItemType,
+  NavDrawerItemType,
+  NavDrawerPropsType
+} from "@/components/layouts/nav/nav-drawer/nav-drawer.types";
 import { useRoute } from "vue-router";
 import { computed, ref, useTemplateRef, watch, watchEffect } from "vue";
 import NavList from "@/components/layouts/nav/nav-list/NavList.vue";
@@ -13,24 +17,21 @@ const emit = defineEmits<{
   changeWidth: [value: number]
 }>();
 
-const appItems = ref<AppNavDrawerItemType[]>([]);
-
 const route = useRoute();
 
-watchEffect(() => {
-  appItems.value = props.items ?? [];
-});
+const appItems = ref<NavDrawerItemType[]>([]);
 
-const navDrawerItemClick = (item: AppNavDrawerItemType) => {
+const navDrawerItemClick = (item: NavDrawerItemType) => {
   if (item.to) return;
   item.itemsOpen = !item.itemsOpen;
+  console.log(item.itemsOpen);
 };
 
-const navDrawer = useTemplateRef("nav-drawer");
+const navDrawer = useTemplateRef<HTMLDivElement>("nav-drawer");
 
 const navDrawerWidth = computed<number>(() => {
   if (!navDrawer.value) return 0;
-  return navDrawer.value.offsetWidth + 24;
+  return (navDrawer.value.offsetWidth as number) + 24;
 });
 
 const navListWidth = ref<number>(0);
@@ -40,6 +41,15 @@ const navDrawerContentWidth = computed<number>(() => navListWidth.value + navDra
 watch(navDrawerContentWidth, (newWidth) => {
   emit("changeWidth", newWidth);
 });
+
+watch(() => props.items, (newItems) => {
+  if (newItems) {
+    appItems.value = newItems.map(el => {
+      el.itemsOpen = false;
+      return el;
+    });
+  }
+}, { immediate: true });
 
 </script>
 
@@ -82,16 +92,16 @@ watch(navDrawerContentWidth, (newWidth) => {
           {{ item.title }}
         </span>
         </component>
-        {{navListWidth}}
-        <NavList
-            v-show="item.itemsOpen"
-            ref="nav-list"
-            :title="item.title"
-            :items="item.items"
-            class="nav-wrap"
-            :style="{left: `${navDrawerWidth}px`}"
-            @changeWidth="(value:number) => navListWidth=value"
-        />
+          <NavList
+              v-if="item.items"
+              ref="nav-list"
+              v-model="item.itemsOpen"
+              :title="item.title"
+              :items="item.items"
+              class="nav-wrap"
+              :style="{left: `${navDrawerWidth}px`}"
+              @changeWidth="(value:number) => navListWidth=value"
+          />
       </div>
     </div>
   </div>
