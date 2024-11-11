@@ -83,7 +83,7 @@ const setBreadCrumbFn = () => {
       label: "Служебные записки"
     },
     {
-      label: "Черновики",
+      label: String(route.meta.breadcrumbItemTitle ?? ""),
       isActionable: true
     }
   ]);
@@ -118,7 +118,6 @@ const fetchDrafts = async () => {
 };
 
 onMounted(() => {
-  setBreadCrumbFn();
   settingsStore.fetchRespondents();
 });
 
@@ -133,10 +132,11 @@ watch(
 watch(
     () => route.name,
     () => {
+      setBreadCrumbFn();
       isOpenFilter.value = false;
       validationErrors.value = null;
       if (v$.value) v$.value.clear();
-    }
+    },{immediate: true}
 );
 
 const changePage = (value: number) => {

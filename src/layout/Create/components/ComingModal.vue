@@ -148,7 +148,6 @@ const to = computed<string>(() => {
 const v$ = ref<ValidationType | null>(null);
 
 const setValidation = (validation: ValidationType) => {
-  console.log(validation);
   v$.value = validation;
 };
 
@@ -159,7 +158,6 @@ const setActValidation = (validation: ValidationType) => {
 };
 
 const clearValidations = () => {
-  console.log("aa");
   v$.value?.clear();
   if (activeComingModal.value && actV$.value) actV$.value.clear();
 };

@@ -1,5 +1,5 @@
-import { defineStore } from "pinia";
-import { ref, onMounted, onUnmounted, computed } from "vue";
+import {defineStore} from "pinia";
+import {ref, onMounted, onUnmounted, computed} from "vue";
 import {
     AuthCreateDataType,
     AuthLoginDataType, ForgotPasswordDataType,
@@ -8,10 +8,10 @@ import {
     UserType, VerifyCodeDataType
 } from "@/modules/Auth/auth.types";
 import authApi from "@/modules/Auth/auth.api";
-import { removeAccessToken, setAccessToken } from "@/utils/token.manager";
-import { useRouter } from "vue-router";
-import { useCommonStore } from "@/stores/common.store";
-import { getSessionItem, removeSessionItem, setSessionItem } from "@/utils/sessionStorage";
+import {removeAccessToken, setAccessToken} from "@/utils/token.manager";
+import {useRouter} from "vue-router";
+import {useCommonStore} from "@/stores/common.store";
+import {getSessionItem, removeSessionItem, setSessionItem} from "@/utils/sessionStorage";
 
 export const useAuthStore = defineStore("authStore", () => {
     const router = useRouter();
@@ -46,8 +46,14 @@ export const useAuthStore = defineStore("authStore", () => {
     const userFullName = computed(() => {
         if (!user.value) return "";
 
-        return `${user.value.firstname} ${user.value.lastname}`;
+        const {firstname, lastname} = user.value;
+
+        if (!firstname) return lastname || "";
+        if (!lastname) return firstname;
+
+        return `${firstname} ${lastname}`;
     });
+
 
     const me = async () => {
         isAuth.value = true;
@@ -66,7 +72,7 @@ export const useAuthStore = defineStore("authStore", () => {
         user.value = null;
         removeAccessToken();
         isAuth.value = false;
-        await router.push({ name: "login" });
+        await router.push({name: "login"});
     };
 
     const logout = async () => {
@@ -123,7 +129,7 @@ export const useAuthStore = defineStore("authStore", () => {
 
         try {
             const response = await authApi.sendCode(data);
-            const { otp: responseOtp }: { otp: SendCodeOtpType } = response;
+            const {otp: responseOtp}: { otp: SendCodeOtpType } = response;
             setOtp({
                 ...responseOtp,
                 phone: data.phone
@@ -170,7 +176,7 @@ export const useAuthStore = defineStore("authStore", () => {
 
         try {
             await authApi.verifyCode(data);
-            if (otp.value) setOtp({ ...otp.value, code: data.code });
+            if (otp.value) setOtp({...otp.value, code: data.code});
         } finally {
             codeLoading.value = false;
         }

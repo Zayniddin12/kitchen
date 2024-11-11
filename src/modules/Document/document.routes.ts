@@ -1,4 +1,4 @@
-import { RouteRecordRaw } from "vue-router";
+import {RouteRecordRaw} from "vue-router";
 
 export default [
     // -------------------------Служебные записки-------------------------------
@@ -13,7 +13,8 @@ export default [
             uniqueKeys: {
                 documents: true,
                 documentInbox: true
-            }
+            },
+            breadcrumbItemTitle: "Входящие"
         }
     },
     {
@@ -21,7 +22,9 @@ export default [
         name: "inbox-id",
         component: () => import("@/modules/Document/pages/OfficeNotes/Inbox/View.vue"),
         meta: {
-            title: "Просмотр"
+            title: "Просмотр",
+            parentRouteTitle: "Входящие",
+            parentRouteUrl: {name: "inbox"}
         }
     },
 
@@ -32,15 +35,18 @@ export default [
         component: () => import("@/modules/Document/pages/OfficeNotes/Drafts/Index.vue"),
         meta: {
             title: "Исходящие",
-            apiUrl: "sent"
-        }
+            apiUrl: "sent",
+            breadcrumbItemTitle: "Исходящие"
+        },
     },
     {
         path: "/outgoing/:id",
         name: "outgoing-id",
-        component: () => import("@/modules/Document/pages/OfficeNotes/Outgoing/View.vue"),
+        component: () => import("@/modules/Document/pages/OfficeNotes/Inbox/View.vue"),
         meta: {
-            title: "Просмотр"
+            title: "Исходящие",
+            parentRouteTitle: "Исходящие",
+            parentRouteUrl: {name: "outgoing"}
         }
     },
 
@@ -51,8 +57,9 @@ export default [
         component: () => import("@/modules/Document/pages/OfficeNotes/Drafts/Index.vue"),
         meta: {
             title: "Черновики",
-            apiUrl: "drafts"
-        }
+            apiUrl: "drafts",
+            breadcrumbItemTitle: "Черновики"
+        },
     },
     // -------------------------Служебные записки-------------------------------
 

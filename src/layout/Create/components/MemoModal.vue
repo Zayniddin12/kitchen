@@ -7,17 +7,17 @@ import AppInput from "@/components/ui/form/app-input/AppInput.vue";
 import AppSelect from "@/components/ui/form/app-select/AppSelect.vue";
 import AppDatePicker from "@/components/ui/form/app-date-picker/AppDatePicker.vue";
 import useConfirm from "@/components/ui/app-confirm/useConfirm";
-import { ModalPropsType, ModalValueType } from "@/layout/Create/components/modal.types";
-import { DocumentCreateDataDocumentType, DocumentStatusType, DraftType } from "@/modules/Document/document.types";
-import { computed, reactive, ref, watch } from "vue";
+import {ModalPropsType, ModalValueType} from "@/layout/Create/components/modal.types";
+import {DocumentCreateDataDocumentType, DocumentStatusType, DraftType} from "@/modules/Document/document.types";
+import {computed, reactive, ref, watch} from "vue";
 import AppForm from "@/components/ui/form/app-form/AppForm.vue";
-import { ValidationType } from "@/components/ui/form/app-form/app-form.type";
-import { deepEqual, formatDate2 } from "@/utils/helper";
-import { useSettingsStore } from "@/modules/Settings/store";
-import { useCommonStore } from "@/stores/common.store";
-import { useDocumentStore } from "@/modules/Document/document.store";
+import {ValidationType} from "@/components/ui/form/app-form/app-form.type";
+import {deepEqual, formatDate2} from "@/utils/helper";
+import {useSettingsStore} from "@/modules/Settings/store";
+import {useCommonStore} from "@/stores/common.store";
+import {useDocumentStore} from "@/modules/Document/document.store";
 import AppOverlay from "@/components/ui/app-overlay/AppOverlay.vue";
-import { useAuthStore } from "@/modules/Auth/auth.store";
+import {useAuthStore} from "@/modules/Auth/auth.store";
 
 interface PropsType extends ModalPropsType {
   title: string,
@@ -49,7 +49,7 @@ const oldForm = ref<null | DocumentCreateDataDocumentType>(null);
 
 const v$ = ref<ValidationType | null>(null);
 
-const { confirm } = useConfirm();
+const {confirm} = useConfirm();
 
 const validationErrors = ref<Record<string, any> | null>(null);
 
@@ -63,7 +63,7 @@ const sendForm = async (status: DocumentStatusType) => {
     return;
   }
 
-  const newForm = { ...form };
+  const newForm = {...form};
 
   try {
     if (draft.value) {
@@ -107,7 +107,7 @@ const openModal = () => {
     form.number = draft.value.number;
     form.subject = draft.value.subject ?? "";
     form.content = draft.value.content ?? "";
-    // form.to_id = draft.value.to;
+    // form.to_id = draft.value?.to_id ?? "";
   }
 
   oldForm.value = JSON.parse(JSON.stringify(form));
