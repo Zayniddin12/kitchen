@@ -3,7 +3,7 @@
   lang="ts"
 >
 
-import { computed, watchEffect } from "vue";
+import { computed, watch, watchEffect } from "vue";
 import kitchenIcon from "@/assets/images/icons/kitchen/kitchen.svg";
 import { useKitchenStore } from "@/modules/Kitchen/kitchen.store";
 import { useRoute } from "vue-router";
@@ -56,6 +56,8 @@ const boxes = computed(() => {
 
 const setBreadcrumbFn = () => {
   kitchenStore.fetchPart(+route.params.department_id, route.params.part_name as string);
+  kitchenStore.fetchPart2(+route.params.kitchen_id);
+
 
   if (!kitchenStore.part) return;
 
@@ -64,18 +66,31 @@ const setBreadcrumbFn = () => {
       label: "Кухня",
     },
     {
-      label: kitchenStore.part.name,
+      label: kitchenStore.part.title,
     },
     {
       label: kitchenStore.part.department_name,
       to: { name: "KitchenIndex" },
     },
     {
-      label: "Лагерь",
+      label: kitchenStore.part.kitchen_vid as string,
       isActionable: true,
     },
   ]);
 };
+
+watch(() => route.params, async () => {
+  await kitchenStore.GET_KITCHEN_VID({
+    management_id: route.params.department_id as string,
+    is_paid: route.params.part_name == "menu" ? 0 : route.params.part_name == "sales" ? 1 : null,
+  });
+  await kitchenStore.GET_KITCHEN_TYPE({
+    management_id: route.params.department_id as string,
+    is_paid: route.params.part_name == "menu" ? 0 : route.params.part_name == "sales" ? 1 : null,
+    kitchen_type_id: route.params.kitchen_id as string,
+  });
+  setBreadcrumbFn();
+}, { immediate: true });
 
 watchEffect(() => {
   setBreadcrumbFn();
@@ -87,24 +102,26 @@ watchEffect(() => {
   <section class="kitchen-show">
     <div>
       <div class="boxes">
-        <RouterLink
-          v-for="box in boxes"
-          :key="box.id"
-          class="box"
-          :to="{name: 'KitchenShowChild', params: {child_id: box.id}}"
-        >
-          <img
-            :src="box.icon"
-            :alt="box.title"
-            class="box__img"
-          />
-          <strong class="box__title">
-            {{ box.title }}
-          </strong>
-          <span class="box__description">
-          {{ box.description }}
+        <!--        {{ kitchenStore.kitchenType}}-->
+        <template v-if="kitchenStore.kitchenType.length">
+          <RouterLink
+            v-for="box in kitchenStore.kitchenType"
+            :key="box.id"
+            class="box"
+            :to="{name: 'KitchenShowChild', params: {child_id: box.id}}"
+          >
+            <img
+              :src="kitchenIcon"
+              :alt="box.name"
+            />
+            <strong class="box__title">
+              {{ box.name }}
+            </strong>
+            <span class="box__description">
+          {{ box.kitchen_capacity }}
         </span>
-        </RouterLink>
+          </RouterLink>
+        </template>
       </div>
     </div>
   </section>
