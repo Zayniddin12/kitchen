@@ -1,4 +1,7 @@
-<script setup lang="ts">
+<script
+    setup
+    lang="ts"
+>
 import MainLayout from "@/layout/MainLayout.vue";
 import LoginLayout from "@/layout/LoginLayout.vue";
 import ErrorLayout from "@/layout/ErrorLayout.vue";
@@ -22,16 +25,16 @@ const layouts = {
   ErrorLayout,
   ResetPasswordLayout,
   IncomePasswordLayout,
-  PasswordLayout,
+  PasswordLayout
 };
 </script>
 
 <template>
-  <AppConfirm />
+  <AppConfirm/>
   <component
-    v-if="layout"
-    :is="layouts[layout]"
+      v-if="layout"
+      :is="layouts[layout]"
   >
-    <RouterView />
+    <RouterView/>
   </component>
 </template>

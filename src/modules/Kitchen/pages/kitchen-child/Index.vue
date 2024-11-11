@@ -6,7 +6,7 @@ import { computed, watchEffect } from "vue";
 import kitchenIcon from "@/assets/images/icons/kitchen/kitchen.svg";
 import menuIcon from "@/assets/images/icons/kitchen/menu-icon.svg";
 import calculatorIcon from "@/assets/images/icons/kitchen/calculator-icon.svg";
-import { useKitchenStore } from "@/modules/Kitchen/store/kitchen.store";
+import { useKitchenStore } from "@/modules/Kitchen/kitchen.store";
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 import { useRoute } from "vue-router";
 

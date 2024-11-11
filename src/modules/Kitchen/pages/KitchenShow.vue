@@ -5,7 +5,7 @@
 
 import { computed, watchEffect } from "vue";
 import kitchenIcon from "@/assets/images/icons/kitchen/kitchen.svg";
-import { useKitchenStore } from "@/modules/Kitchen/store/kitchen.store";
+import { useKitchenStore } from "@/modules/Kitchen/kitchen.store";
 import { useRoute } from "vue-router";
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 

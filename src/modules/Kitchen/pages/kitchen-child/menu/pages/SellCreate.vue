@@ -4,7 +4,7 @@
 >
 import { useRoute } from "vue-router";
 import { ref, watchEffect } from "vue";
-import { useKitchenStore } from "@/modules/Kitchen/store/kitchen.store";
+import { useKitchenStore } from "@/modules/Kitchen/kitchen.store";
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 
 const kitchenStore = useKitchenStore();

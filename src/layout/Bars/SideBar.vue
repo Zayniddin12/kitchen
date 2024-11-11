@@ -44,7 +44,7 @@ watch(
 onMounted(() => {
   const storedMenu: number = sessionStorage.getItem("current-menu") | 0;
   const storedSidebar = localStorage.getItem("child-sidebar");
-
+  console.log(store.menuItems);
   if (childIsOpenPin.value) {
     currentIndex.value = Number(storedMenu);
   } else {
@@ -166,7 +166,7 @@ const logOut = () => {
         <div
             v-for="(item, index) in store.menuItems"
             :key="index"
-            class="px-[11px]"
+            class="px-[11px] mt-2 last:mt-0"
             @click.stop="activeMenu(index, item)"
         >
           <div
@@ -213,20 +213,19 @@ const logOut = () => {
       </div>
 
       <!------------------------log out---------------------------->
-      <ElButton
+      <button
           class="mb-[10px] h-[45px] "
           @click.stop="logOut"
           plain
-          type="text"
       >
-        <div class="flex flex-col items-center">
+        <span class="flex flex-col items-center">
           <img
               src="@/assets/images/logout.svg"
               alt="logout"
           />
           <span class="text-[#EA5455] text-[14px] font-medium block">Выход</span>
-        </div>
-      </ElButton>
+        </span>
+      </button>
     </div>
   </div>
 </template>

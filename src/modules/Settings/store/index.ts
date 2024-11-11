@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 import $axios from "@/plugins/axios/axios";
-import { ref } from "vue";
+import { reactive, ref } from "vue";
 import type {
   FoodFactoriesCreateFormType, FoodFactoriesParamsType, FoodFactoriesType, FoodFactoryType,
 } from "@/modules/Settings/components/Reference/CombineNutrition/combine-nutrition.type";
@@ -8,6 +8,7 @@ import type {
   BaseWarehouseDataType, BaseWarehousesParamsType, BaseWarehousesType,
   BaseWarehouseType,
 } from "@/modules/Settings/components/Reference/MainBases/base-warehouses.type";
+import { DocTypeListType, RespondentParamsType, RespondentType } from "@/modules/Settings/settings.types";
 
 interface TypeDocument {
   document_categories: Array<{ id: string | number, name: string }>;
@@ -140,17 +141,45 @@ export const useSettingsStore = defineStore("settingsStore", () => {
 
   const wareHouseItem = ref<WareHouseItemType | {}>({});
 
-
   // Документы Типы документов
   const GET_TYPE_DOCUMENT = async (params?: { search: string | null }) => {
-    const { data } = await $axios.get("/documents/categories", { params });
+    const { data } = await $axios.get("/document-types/categories", { params });
     typeDocument.value = data.data;
   };
 
 
   const GET_VID_DOCUMENT = async (params?: { search: string | null }) => {
-    const { data } = await $axios.get("/documents", { params });
+    const { data } = await $axios.get("/document-types", { params });
     vidDocument.value = data.data;
+  };
+
+
+  const docTypeList = ref<DocTypeListType[]>([]);
+  const docTypeListLoading = ref<boolean>(false);
+
+  const getDocTypeList = async () => {
+    docTypeListLoading.value = true;
+
+    try {
+      const { data }: { data: Record<string, any> } = await $axios.get("/document-types/list");
+      docTypeList.value = data.data.doc_types;
+    } finally {
+      docTypeListLoading.value = false;
+    }
+  };
+
+  const respondents = ref<RespondentType[]>([]);
+  const respondentsLoading = ref<boolean>(false);
+
+  const fetchRespondents = async (params: RespondentParamsType = {}) => {
+    respondentsLoading.value = true;
+
+    try {
+      const { data }: { data: Record<string, any> } = await $axios.get("documents/respondents-list", { params });
+      respondents.value = data.data.respondents;
+    } finally {
+      respondentsLoading.value = false;
+    }
   };
 
   // Рационы
@@ -162,10 +191,10 @@ export const useSettingsStore = defineStore("settingsStore", () => {
 
   const GET_SHOW_ITEM = async (id: string | number) => {
     const { data } = await $axios.get(`/rations/${id}`);
-    return data.data
+    return data.data;
   };
 
-  const CRETE_RATION = async (data) => {
+  const CRETE_RATION = async (data: any) => {
     return await $axios.post("/rations/", data);
 
   };
@@ -263,8 +292,14 @@ export const useSettingsStore = defineStore("settingsStore", () => {
   };
 
   // поставщика
+  const createProviderLoading = ref(false);
   const CREATE_PROVIDERS = (data: any) => {
-    return $axios.post("/providers", data);
+    createProviderLoading.value = true;
+    try {
+      $axios.post("/providers", data);
+    } finally {
+      createProviderLoading.value = false;
+    }
   };
 
   const UPDATE_PROVIDERS = ({ id, data }: { id: string | number; data: any }) => {
@@ -383,16 +418,16 @@ export const useSettingsStore = defineStore("settingsStore", () => {
   // Блюда end
 
   const parentProductType = ref({
-    product_types: [] as []
+    product_types: [] as [],
   });
 
   const dynamicVid = ref({
-    product_types: [] as []
-  })
+    product_types: [] as [],
+  });
   const GET_MEALS_VID_PRO = async (params: any) => {
     const { data } = await $axios.get("/product-types", { params });
     parentProductType.value = data.data;
-    return data.data
+    return data.data;
   };
 
   // Склады кухни
@@ -536,6 +571,9 @@ export const useSettingsStore = defineStore("settingsStore", () => {
     foodFactories,
     foodFactoriesLoading,
     fetchFoodFactories,
+    docTypeList,
+    docTypeListLoading,
+    getDocTypeList,
 
     baseWarehouses,
     baseWarehousesLoading,
@@ -546,6 +584,10 @@ export const useSettingsStore = defineStore("settingsStore", () => {
     deleteBaseWarehouse,
     createBaseWarehouse,
     updateBaseWarehouse,
+    respondents,
+    respondentsLoading,
+    fetchRespondents,
+    createProviderLoading,
 
 
     // dilshod

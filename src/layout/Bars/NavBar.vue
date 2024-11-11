@@ -1,9 +1,9 @@
 <script
-  setup
-  lang="ts"
+    setup
+    lang="ts"
 >
 import { Search } from "@element-plus/icons-vue";
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 import Language from "@/components/language/index.vue";
 import MemoModal from "@/layout/Create/components/MemoModal.vue";
 import ComingModal from "@/layout/Create/components/ComingModal.vue";
@@ -12,6 +12,12 @@ import FreeModal from "@/layout/Create/components/FreeModal.vue";
 import MonthlyModal from "@/layout/Create/components/MonthlyModal.vue";
 import YearlyModal from "@/layout/Create/components/YearlyModal.vue";
 import ThemeToggler from "@/layout/Bars/ThemeToggler.vue";
+import { useSettingsStore } from "@/modules/Settings/store";
+import { DocTypeListType } from "@/modules/Settings/settings.types";
+import { useAuthStore } from "@/modules/Auth/auth.store";
+import AvatarIcon from "@/assets/images/avatar.png";
+
+const authStore = useAuthStore();
 
 const editModal = ref<boolean>(false);
 const editModal2 = ref<boolean>(false);
@@ -22,56 +28,42 @@ const yearlyModal = ref<boolean>(false);
 const dropdown = ref<any>(null);
 const input1 = ref<string>("");
 
-const navbarMenuList = [
-  {
-    id: 1,
-    title: "Служебная записка",
-  },
-  {
-    id: 2,
-    title: "Приход",
-  },
-  {
-    id: 3,
-    title: "Расход",
-  },
-  {
-    id: 4,
-    title: "Запрос",
-    children: [
-      {
-        id: 5,
-        title: "Свободный",
-      },
-      {
-        id: 6,
-        title: "Месячный",
-      },
-      {
-        id: 7,
-        title: "Годовой",
-      },
-    ],
-  },
-];
+const settingsStore = useSettingsStore();
 
-const openModals = (data: any) => {
-  if (data.id == 1) {
-    editModal.value = true;
-  } else if (data.id == 2) {
-    editModal2.value = true;
-  } else if (data.id == 3) {
-    editConsumptionModal.value = true;
-  } else if (data.id == 5) {
-    freeModal.value = true;
-  } else if (data.id == 6) {
-    monthlyModal.value = true;
-  } else if (data.id == 7) {
-    yearlyModal.value = true;
+const docTypeId = ref<number | null>(null);
+const docTypeName = ref<string>("");
+
+const openModal = (item: DocTypeListType) => {
+  switch (item.id) {
+    case 1:
+      editModal.value = true;
+      break;
+    case 7:
+    case 11:
+      editModal2.value = true;
+      break;
+      // case 11:
+      // editConsumptionModal.value = true;
+      break;
+    case 3:
+      freeModal.value = true;
+      break;
+    case 4:
+      monthlyModal.value = true;
+      break;
+    case 5:
+      yearlyModal.value = true;
   }
+
+  docTypeId.value = item.id;
+  docTypeName.value = item.name;
 
   dropdown.value.handleClose();
 };
+
+onMounted(() => {
+  settingsStore.getDocTypeList();
+});
 </script>
 
 <template>
@@ -79,102 +71,116 @@ const openModals = (data: any) => {
     <div class="relative">
       <div class="relative">
         <el-icon
-          class="absolute top-[50%] translate-y-[-50%] left-[19px]"
-          color="#8F9194"
+            class="absolute top-[50%] translate-y-[-50%] left-[19px]"
+            color="#8F9194"
         >
-          <Search />
+          <Search/>
         </el-icon>
         <input
-          v-model="input1"
-          class="bg-white-blue dark:bg-dark w-[552px] rounded-2xl text-black px-[16px] py-[12px] pl-[50px] outline-none"
-          placeholder="Поиск"
+            v-model="input1"
+            class="bg-white-blue dark:bg-dark w-[552px] rounded-2xl text-black px-[16px] py-[12px] pl-[50px] outline-none"
+            placeholder="Поиск"
         />
       </div>
 
       <div
-        class="bg-[#F8F9FC] text-gray-900 shadow-md border absolute w-full rounded-md mt-[5px]"
-        v-if="input1 && input1.length > 0"
+          class="bg-[#F8F9FC] text-gray-900 shadow-md border absolute w-full rounded-md mt-[5px]"
+          v-if="input1 && input1.length > 0"
       >
         <router-link
-          v-for="(index3) in 10"
-          :key="index3"
-          class="px-4 py-2 block"
-          to="#"
+            v-for="index3 in 10"
+            :key="index3"
+            class="px-4 py-2 block"
+            to="#"
         >
           lorem ipsum dolor
         </router-link>
       </div>
     </div>
 
-    <MemoModal v-model:editModal="editModal" />
-
     <!----------Создать modal---------->
     <div class="flex items-center gap-6">
       <el-dropdown
-        trigger="click"
-        :hide-on-click="false"
-        ref="dropdown"
+          trigger="click"
+          :hide-on-click="false"
+          ref="dropdown"
       >
-        <button
-          class="flex items-center bg-[#2E90FA] rounded-[8px] border-[1.5px] py-[10px] px-[20px] active:bg-[#175CD3] active:border-[#1849A9] active:border-[1.5px]"
+        <ElButton
+            :loading="settingsStore.docTypeListLoading"
+            type="primary"
+            size="large"
+            class="flex items-center bg-[#2E90FA] rounded-[8px] border-[1.5px] py-[10px] px-[20px] active:bg-[#175CD3] active:border-[#1849A9] active:border-[1.5px] h-[46px]"
         >
           <img
-            src="@/assets/images/icons/plus.svg"
-            class="mr-[8px]"
-            alt="plus"
+              src="@/assets/images/icons/plus.svg"
+              class="mr-[8px]"
+              alt="plus"
           />
 
           <span class="text-white vertical-mid">Создать</span>
-        </button>
-        <template #dropdown>
+        </ElButton>
+        <template
+            #dropdown
+            v-if="settingsStore.docTypeList.length"
+        >
           <el-dropdown-menu class="navbar-dropdown">
             <el-dropdown-item
-              class="item-drop"
-              v-for="(item, in1) in navbarMenuList"
-              :key="in1"
+                class="item-drop"
+                v-for="(item, in1) in settingsStore.docTypeList"
+                :key="in1"
             >
               <button
-                @click="openModals(item)"
-                v-if="!item.children"
-                class="flex items-center justify-between p-[10px] w-full"
+                  @click="openModal(item)"
+                  v-if="!item.childs.length"
+                  class="flex items-center justify-between p-[10px] h-[42px] w-full"
               >
-                <span class="text-[#4F5662] text-[14px] font-medium mr-[4px]">{{ item.title }}</span>
+                <span class="text-[#4F5662] text-[14px] font-medium mr-[4px]">
+                  {{ item.name }}
+                </span>
                 <img
-                  v-if="in1 !== 0"
-                  src="@/assets/arrow-right.svg"
-                  alt="arrow icon"
+                    v-if="in1 !== 0"
+                    src="@/assets/arrow-right.svg"
+                    alt="arrow icon"
                 />
               </button>
               <el-dropdown
-                trigger="click"
-                class="w-full"
-                placement="right-start"
-                popper-class="custom-dropdown"
-                v-else
+                  trigger="click"
+                  class="w-full"
+                  placement="right-start"
+                  popper-class="custom-dropdown"
+                  v-else
               >
-                <button class="flex items-center justify-between p-[10px] w-full">
-                  <span class="text-[#4F5662] text-[14px] font-medium mr-[4px]">{{ item.title }}</span>
+                <button
+                    class="flex items-center justify-between h-[42px] p-[10px] w-full"
+                >
+                  <span class="text-[#4F5662] text-[14px] font-medium mr-[4px]">
+                    {{ item.name }}
+                  </span>
                   <img
-                    src="@/assets/arrow-right.svg"
-                    alt="arrow icon"
+                      src="@/assets/arrow-right.svg"
+                      alt="arrow icon"
                   />
                 </button>
 
                 <template #dropdown>
-                  <el-dropdown-menu class="navbar-dropdown right-[20px]">
+                  <el-dropdown-menu class="navbar-dropdown right-5">
                     <el-dropdown-item
-                      class="item-drop"
-                      v-for="(child, index) in item.children"
-                      :key="index"
+                        class="item-drop"
+                        v-for="(child, index) in item.childs"
+                        :key="index"
                     >
                       <button
-                        @click="openModals(child)"
-                        class="flex items-center justify-between p-[10px] w-full"
+                          @click="openModal(child)"
+                          class="flex items-center justify-between p-[10px] w-full"
                       >
-                        <span class="text-[#4F5662] text-[14px] font-medium mr-12">{{ child.title }}</span>
+                        <span
+                            class="text-[#4F5662] text-[14px] font-medium mr-12"
+                        >
+                          {{ child.name }}
+                        </span>
                         <img
-                          src="@/assets/arrow-right.svg"
-                          alt="arrow icon"
+                            src="@/assets/arrow-right.svg"
+                            alt="arrow icon"
                         />
                       </button>
                     </el-dropdown-item>
@@ -182,20 +188,18 @@ const openModals = (data: any) => {
                 </template>
               </el-dropdown>
             </el-dropdown-item>
-
           </el-dropdown-menu>
         </template>
       </el-dropdown>
-
-      <ThemeToggler v-if="false" />
+      <ThemeToggler v-if="false"/>
 
       <el-badge
-        value="18"
-        class="item cursor-pointer"
+          value="18"
+          class="item cursor-pointer"
       >
         <img
-          src="@/assets/images/icons/bell.svg"
-          alt="bell"
+            src="@/assets/images/icons/bell.svg"
+            alt="bell"
         />
       </el-badge>
 
@@ -203,23 +207,49 @@ const openModals = (data: any) => {
 
       <div class="flex items-center gap-3">
         <img
-          src="@/assets/images/avatar.png"
-          class="h-[40px] w-[40px] object-contain rounded-full"
-          alt="avatar"
+            :src="authStore.user?.image ?? AvatarIcon"
+            class="size-10 object-contain rounded-full"
+            alt="avatar"
         />
         <div class="flex flex-col">
           <h2 class="m-0 text-[14px] font-medium text-black dark:text-white">
-            Мухаммадамин Нурматов
+            {{ authStore.userFullName ?? "-" }}
           </h2>
-          <span class="text-[#A8AAAE] text-sm">Директор</span>
+          <span class="text-[#A8AAAE] text-sm">{{ authStore.user?.position || "-" }}</span>
         </div>
       </div>
     </div>
-    <ComingModal v-model:editModal="editModal2" />
-    <ConsumptionModal v-model:editModal="editConsumptionModal" />
-    <FreeModal v-model:editModal="freeModal" />
-    <MonthlyModal v-model:editModal="monthlyModal" />
-    <YearlyModal v-model:editModal="yearlyModal" />
+    <MemoModal
+        v-model="editModal"
+        :id="docTypeId"
+        :name="docTypeName"
+        title="Создать служебную записку"
+    />
+    <ComingModal
+        v-model="editModal2"
+        :id="docTypeId"
+        :name="docTypeName"
+    />
+    <ConsumptionModal
+        v-model="editConsumptionModal"
+        :id="docTypeId"
+        :name="docTypeName"
+    />
+    <FreeModal
+        v-model="freeModal"
+        :id="docTypeId"
+        :name="docTypeName"
+    />
+    <MonthlyModal
+        v-model="monthlyModal"
+        :id="docTypeId"
+        :name="docTypeName"
+    />
+    <YearlyModal
+        v-model="yearlyModal"
+        :id="docTypeId"
+        :name="docTypeName"
+    />
     <!----------Создать modal---------->
   </div>
 </template>
@@ -231,9 +261,9 @@ const openModals = (data: any) => {
 
 .navbar-dropdown {
   padding: 12px !important;
-  background-color: #F8F9FC !important;
+  background-color: #f8f9fc !important;
   border-radius: 16px !important;
-  border: 1px solid #E2E6F3;
+  border: 1px solid #e2e6f3;
 }
 
 .el-scrollbar {
@@ -246,14 +276,13 @@ const openModals = (data: any) => {
 
 .item-drop:focus {
   background-color: initial !important;
-
 }
 
 .item-drop:hover {
-  background-color: #FFFFFF !important;
+  background-color: #ffffff !important;
   border-radius: 8px;
-  color: #000D24 !important;
-  box-shadow: 0 1.9px 7px -1px #0A090B12;
+  color: #000d24 !important;
+  box-shadow: 0 1.9px 7px -1px #0a090b12;
 }
 
 .custom-dropdown {
@@ -263,7 +292,7 @@ const openModals = (data: any) => {
 }
 
 .el-badge__content.is-fixed {
-  background-color: #EA5455;
+  background-color: #ea5455;
   font-size: 9px;
   position: absolute;
   right: calc(3px + var(--el-badge-size) / 2);

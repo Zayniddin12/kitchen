@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "allowJs": false,
     "target": "ESNext",
     "module": "ESNext",
     "moduleResolution": "node",
@@ -35,6 +36,7 @@
     "src/**/*.vue"
   ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "**/*.js"
   ]
 }

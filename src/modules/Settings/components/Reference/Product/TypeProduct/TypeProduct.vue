@@ -1,4 +1,7 @@
-<script setup lang="ts">
+<script
+    setup
+    lang="ts"
+>
 import { Search } from "@element-plus/icons-vue";
 import { onMounted, ref, watchEffect } from "vue";
 import { useRouter } from "vue-router";
@@ -18,20 +21,20 @@ const { setBreadCrumb } = useBreadcrumb();
 const setBreadCrumbFn = () => {
   setBreadCrumb([
     {
-      label: "Настройки",
+      label: "Настройки"
     },
     {
       label: "Справочники",
-      to: { name: "reference" },
+      to: { name: "reference" }
     },
     {
       label: "Продукты",
-      to: { name: "reference" },
+      to: { name: "reference" }
     },
     {
       label: "Типы продуктов",
-      isActionable: true,
-    },
+      isActionable: true
+    }
   ]);
 };
 
@@ -62,6 +65,11 @@ const changeInput = (): void => {
 watchEffect(() => {
   setBreadCrumbFn();
 });
+
+const tableCurrentChange = (value: Record<string, any>) => {
+  router.push(`/reference-type-product-view/${value.id}`);
+};
+
 </script>
 
 <template>
@@ -71,21 +79,21 @@ watchEffect(() => {
 
       <div class="flex items-center">
         <el-input
-          size="large"
-          placeholder="Поиск"
-          :prefix-icon="Search as any"
-          class="w-[300px]"
-          v-model="search"
-          @input="changeInput"
+            size="large"
+            placeholder="Поиск"
+            :prefix-icon="Search as any"
+            class="w-[300px]"
+            v-model="search"
+            @input="changeInput"
         />
 
         <button
-          class="custom-apply-btn ml-[16px]"
-          @click="router.push('/reference-type-product-create')"
+            class="custom-apply-btn ml-[16px]"
+            @click="router.push('/reference-type-product-create')"
         >
           <img
-            src="@/assets/images/icons/plus.svg"
-            alt="plus"
+              src="@/assets/images/icons/plus.svg"
+              alt="plus"
           />
           Добавить
         </button>
@@ -93,41 +101,54 @@ watchEffect(() => {
     </div>
 
     <el-table
-      v-loading="loading"
-      :data="store.typeProduct.product_categories"
-      stripe
-      class="custom-element-table mt-[24px]"
-      :empty-text="'Нет доступных данных'"
+        v-loading="loading"
+        :data="store.typeProduct.product_categories"
+        stripe
+        class="custom-element-table mt-[24px]"
+        :empty-text="'Нет доступных данных'"
+        highlight-current-row
+        @current-change="tableCurrentChange"
     >
-      <el-table-column prop="index" label="№" width="80">
-        <template #default="{ $index}" >
-          {{$index + 1}}
+      <el-table-column
+          prop="index"
+          label="№"
+          width="80"
+      >
+        <template #default="{ $index}">
+          {{ $index + 1 }}
         </template>
       </el-table-column>
-      <el-table-column prop="name" label="Наименование типа продукта" sortable>
+      <el-table-column
+          prop="name"
+          label="Наименование типа продукта"
+          sortable
+      >
         <template #default="scope">
           {{ scope.row.name }}
         </template>
       </el-table-column>
-      <el-table-column label="Действие" align="right">
+      <el-table-column
+          label="Действие"
+          align="right"
+      >
         <template #default="scope">
           <button
-            class="action-btn"
-            @click="router.push(`/reference-type-product-view/${scope.row.id}`)"
+              class="action-btn"
+              @click.stop="router.push(`/reference-type-product-view/${scope.row.id}`)"
           >
             <img
-              src="../../../../../../assets/images/eye.svg"
-              alt="eye"
+                src="@/assets/images/eye.svg"
+                alt="eye"
             />
           </button>
 
           <button
-            class="action-btn ml-[8px]"
-            @click="router.push(`/reference-type-product-edit/${scope.row.id}`)"
+              class="action-btn ml-[8px]"
+              @click.stop="router.push(`/reference-type-product-edit/${scope.row.id}`)"
           >
             <img
-              src="../../../../../../assets/images/icons/edit.svg"
-              alt="edit"
+                src="@/assets/images/icons/edit.svg"
+                alt="edit"
             />
           </button>
         </template>

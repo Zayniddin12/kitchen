@@ -11,7 +11,7 @@ import CollapseFilter from "@/components/collapseFilter/index.vue";
 import ByProducts from '../components/Products.vue'
 import ByInvoices from '../components/Invoices.vue'
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
-import { useKitchenWarehouseStore } from "@/modules/KitchenWarehouse/store";
+import { useKitchenWarehouseStore } from "@/modules/KitchenWarehouse/kitchen-warehouse.store";
 
 interface Tabs {
   title: string;

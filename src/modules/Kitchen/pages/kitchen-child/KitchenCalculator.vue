@@ -7,7 +7,7 @@ import { computed, ref, watchEffect } from "vue";
 import AppSelect from "@/components/ui/form/app-select/AppSelect.vue";
 import AppInput from "@/components/ui/form/app-input/AppInput.vue";
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
-import { useKitchenStore } from "@/modules/Kitchen/store/kitchen.store";
+import { useKitchenStore } from "@/modules/Kitchen/kitchen.store";
 
 const route = useRoute();
 

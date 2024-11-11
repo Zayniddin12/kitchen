@@ -20,7 +20,7 @@ export type FoodFactoryListType = Omit<FoodFactoryType, 'name'> & {
 };
 
 export interface FoodFactoriesType {
-    food_factories: FoodFactoriesType[],
+    food_factories: FoodFactoryListType[],
     paginator: PaginationType;
 }
 

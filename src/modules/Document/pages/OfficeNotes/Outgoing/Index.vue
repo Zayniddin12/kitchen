@@ -1,6 +1,6 @@
 <script
-  setup
-  lang="ts"
+    setup
+    lang="ts"
 >
 import { ref, watchEffect } from "vue";
 import { useRouter } from "vue-router";
@@ -33,7 +33,7 @@ const tableData = ref<TableData[]>([
     doc: "852369",
     theme: "Доставка мяса",
     send: "Зарафшан",
-    receive: "Фонд",
+    receive: "Фонд"
   },
   {
     id: 2,
@@ -42,7 +42,7 @@ const tableData = ref<TableData[]>([
     doc: "556261",
     theme: "Доставка картофеля",
     send: "Учкудук",
-    receive: "Фонд",
+    receive: "Фонд"
   },
   {
     id: 3,
@@ -51,7 +51,7 @@ const tableData = ref<TableData[]>([
     doc: "584534",
     theme: "Доставка лука",
     send: "Навои",
-    receive: "Фонд",
+    receive: "Фонд"
   },
   {
     id: 4,
@@ -60,8 +60,8 @@ const tableData = ref<TableData[]>([
     doc: "556261",
     theme: "Доставка картофеля",
     send: "Учкудук",
-    receive: "Фонд",
-  },
+    receive: "Фонд"
+  }
 ]);
 
 const actionButton = (value: TableData): void => {
@@ -73,21 +73,25 @@ const { setBreadCrumb } = useBreadcrumb();
 const setBreadCrumbFn = () => {
   setBreadCrumb([
     {
-      label: "Документы",
+      label: "Документы"
     },
     {
-      label: "Служебные записки",
+      label: "Служебные записки"
     },
     {
       label: "Исходящие",
-      isActionable: true,
-    },
+      isActionable: true
+    }
   ]);
 };
 
 watchEffect(() => {
   setBreadCrumbFn();
 });
+
+const tableCurrentChange = (value: TableData) => {
+  router.push({ name: "outgoing-id", params: { id: value.id } });
+};
 
 </script>
 
@@ -97,14 +101,14 @@ watchEffect(() => {
       <h1 class="m-0 font-semibold text-[32px]">Исходящие</h1>
 
       <button
-        class="custom-filter-btn font-medium"
-        :class="isOpenFilter ? '!bg-blue !text-white' : ''"
-        @click="isOpenFilter = !isOpenFilter"
+          class="custom-filter-btn font-medium"
+          :class="isOpenFilter ? '!bg-blue !text-white' : ''"
+          @click="isOpenFilter = !isOpenFilter"
       >
         <img
-          :src="isOpenFilter ? white : filter"
-          alt="filter"
-          class="mr-[12px]"
+            :src="isOpenFilter ? white : filter"
+            alt="filter"
+            class="mr-[12px]"
         />
         Фильтр
       </button>
@@ -115,38 +119,38 @@ watchEffect(() => {
       <template #body>
         <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
           <app-date-picker
-            placeholder="С этой даты"
-            label="С этой даты"
-            label-class="text-[#7F7D83]"
+              placeholder="С этой даты"
+              label="С этой даты"
+              label-class="text-[#7F7D83]"
           />
           <app-date-picker
-            placeholder="по эту дату"
-            label="С этой даты"
-            label-class="text-[#7F7D83]"
+              placeholder="по эту дату"
+              label="С этой даты"
+              label-class="text-[#7F7D83]"
           />
 
           <appInput
-            placeholder="Номер документа"
-            label="Номер документа"
-            label-class="text-[#7F7D83]"
+              placeholder="Номер документа"
+              label="Номер документа"
+              label-class="text-[#7F7D83]"
           />
           <appInput
-            placeholder="Доставка картофеля"
-            label="Доставка картофеля"
-            label-class="text-[#7F7D83]"
+              placeholder="Доставка картофеля"
+              label="Доставка картофеля"
+              label-class="text-[#7F7D83]"
           />
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-2 gap-4">
           <appSelect
-            placeholder="Кому"
-            label="Кому"
-            label-class="text-[#7F7D83]"
+              placeholder="Кому"
+              label="Кому"
+              label-class="text-[#7F7D83]"
           />
           <appSelect
-            placeholder="Отправитель"
-            label="Отправитель"
-            label-class="text-[#7F7D83]"
+              placeholder="Отправитель"
+              label="Отправитель"
+              label-class="text-[#7F7D83]"
           />
         </div>
 
@@ -161,54 +165,56 @@ watchEffect(() => {
     </CollapseFilter>
 
     <el-table
-      :data="tableData"
-      class="custom-element-table"
-      stripe
+        :data="tableData"
+        class="custom-element-table"
+        stripe
+        highlight-current-row
+        @current-change="tableCurrentChange"
     >
       <el-table-column
-        prop="num"
-        label="№"
-        width="80"
+          prop="num"
+          label="№"
+          width="80"
       />
       <el-table-column
-        prop="date"
-        label="Дата"
+          prop="date"
+          label="Дата"
       />
       <el-table-column
-        prop="doc"
-        label="№ документа"
+          prop="doc"
+          label="№ документа"
       />
       <el-table-column
-        prop="theme"
-        label="Тема"
+          prop="theme"
+          label="Тема"
       />
       <el-table-column
-        prop="send"
-        label="Отправитель"
+          prop="send"
+          label="Отправитель"
       />
       <el-table-column
-        prop="receive"
-        label="Получатель"
+          prop="receive"
+          label="Получатель"
       />
       <el-table-column label="Действие">
         <template #default="scope">
           <button
-            class="action-btn"
-            @click="router.push(`/outgoing/${scope.row.id}`)"
+              class="action-btn"
+              @click.stop="router.push(`/outgoing/${scope.row.id}`)"
           >
             <img
-              src="@/assets/images/eye.svg"
-              alt="eye"
+                src="@/assets/images/eye.svg"
+                alt="eye"
             />
           </button>
 
           <button
-            class="action-btn ml-[8px]"
-            @click="actionButton(scope.row)"
+              class="action-btn ml-[8px]"
+              @click.stop="actionButton(scope.row)"
           >
             <img
-              src="@/assets/images/download.svg"
-              alt="download"
+                src="@/assets/images/download.svg"
+                alt="download"
             />
           </button>
         </template>
@@ -221,10 +227,10 @@ watchEffect(() => {
       </div>
 
       <el-pagination
-        class="float-right"
-        background
-        layout="prev, pager, next"
-        :total="1000"
+          class="float-right"
+          background
+          layout="prev, pager, next"
+          :total="1000"
       />
     </div>
   </div>

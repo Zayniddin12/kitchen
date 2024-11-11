@@ -1,3 +1,5 @@
+import { NameType } from "@/types/common.type";
+
 export interface AuthTokenType {
     access_token: string;
     token_type: string;
@@ -20,6 +22,11 @@ export interface AuthCreateDataType extends AuthLoginDataType {
 export interface UserType {
     id: number;
     phone: string;
+    image: null | string;
+    firstname: string;
+    lastname: string;
+    patronymic: null | string;
+    position: any;
 }
 
 export interface SendCodeDataType {

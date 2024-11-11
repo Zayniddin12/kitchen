@@ -1,6 +1,6 @@
 <script
-  setup
-  lang="ts"
+    setup
+    lang="ts"
 >
 import { ref, watchEffect } from "vue";
 import { useRouter } from "vue-router";
@@ -38,7 +38,7 @@ const tableData = ref<TableData[]>([
     main: "04-04-01/463",
     whom: "Зарафшан",
     toWhom: "Фонд",
-    payType: "85 897 VAA",
+    payType: "85 897 VAA"
   },
   {
     id: 2,
@@ -50,7 +50,7 @@ const tableData = ref<TableData[]>([
     main: "04-04-01/463",
     whom: "Зарафшан",
     toWhom: "Фонд",
-    payType: "85 897 VAA",
+    payType: "85 897 VAA"
   },
   {
     id: 3,
@@ -62,7 +62,7 @@ const tableData = ref<TableData[]>([
     main: "04-04-01/463",
     whom: "Зарафшан",
     toWhom: "Фонд",
-    payType: "85 897 VAA",
+    payType: "85 897 VAA"
   },
   {
     id: 4,
@@ -74,8 +74,8 @@ const tableData = ref<TableData[]>([
     main: "04-04-01/463",
     whom: "Зарафшан",
     toWhom: "Фонд",
-    payType: "85 897 VAA",
-  },
+    payType: "85 897 VAA"
+  }
 ]);
 
 const actionButton = (value: TableData): void => {
@@ -87,21 +87,25 @@ const { setBreadCrumb } = useBreadcrumb();
 const setBreadCrumbFn = () => {
   setBreadCrumb([
     {
-      label: "Документы",
+      label: "Документы"
     },
     {
-      label: "Накладные",
+      label: "Накладные"
     },
     {
       label: "Входящие",
-      isActionable: true,
-    },
+      isActionable: true
+    }
   ]);
 };
 
 watchEffect(() => {
   setBreadCrumbFn();
 });
+
+const tableCurrentChange = (value: TableData) => {
+  router.push({ name: "invoice-inbox-id", params: { id: value.id } });
+};
 
 </script>
 
@@ -111,14 +115,14 @@ watchEffect(() => {
       <h1 class="m-0 font-semibold text-[32px]">Входящие</h1>
 
       <button
-        class="custom-filter-btn font-medium"
-        :class="isOpenFilter ? '!bg-blue !text-white' : ''"
-        @click="isOpenFilter = !isOpenFilter"
+          class="custom-filter-btn font-medium"
+          :class="isOpenFilter ? '!bg-blue !text-white' : ''"
+          @click="isOpenFilter = !isOpenFilter"
       >
         <img
-          :src="isOpenFilter ? white : filter"
-          alt="filter"
-          class="mr-[12px]"
+            :src="isOpenFilter ? white : filter"
+            alt="filter"
+            class="mr-[12px]"
         />
         Фильтр
       </button>
@@ -128,49 +132,49 @@ watchEffect(() => {
       <template #body>
         <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
           <appInput
-            placeholder="№ накладной в системе"
-            label="№ накладной в системе"
-            label-class="text-[#7F7D83]"
+              placeholder="№ накладной в системе"
+              label="№ накладной в системе"
+              label-class="text-[#7F7D83]"
           />
           <appInput
-            placeholder="Дата создания в системе"
-            label="Дата создания в системе"
-            label-class="text-[#7F7D83]"
+              placeholder="Дата создания в системе"
+              label="Дата создания в системе"
+              label-class="text-[#7F7D83]"
           />
 
           <appInput
-            placeholder="№ накладной"
-            label="№ накладной"
-            label-class="text-[#7F7D83]"
+              placeholder="№ накладной"
+              label="№ накладной"
+              label-class="text-[#7F7D83]"
           />
           <appInput
-            placeholder="Дата накладной"
-            label="Дата накладной"
-            label-class="text-[#7F7D83]"
+              placeholder="Дата накладной"
+              label="Дата накладной"
+              label-class="text-[#7F7D83]"
           />
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
           <appSelect
-            placeholder="От кого"
-            label="От кого"
-            label-class="text-[#7F7D83]"
+              placeholder="От кого"
+              label="От кого"
+              label-class="text-[#7F7D83]"
           />
           <appSelect
-            placeholder="Кому"
-            label="Кому"
-            label-class="text-[#7F7D83]"
+              placeholder="Кому"
+              label="Кому"
+              label-class="text-[#7F7D83]"
           />
 
           <appInput
-            placeholder="Основание"
-            label="Основание"
-            label-class="text-[#7F7D83]"
+              placeholder="Основание"
+              label="Основание"
+              label-class="text-[#7F7D83]"
           />
           <appInput
-            placeholder="Способ отправления"
-            label="Способ отправления"
-            label-class="text-[#7F7D83]"
+              placeholder="Способ отправления"
+              label="Способ отправления"
+              label-class="text-[#7F7D83]"
           />
         </div>
 
@@ -185,66 +189,68 @@ watchEffect(() => {
     </CollapseFilter>
 
     <el-table
-      :data="tableData"
-      stripe
-      class="custom-element-table"
+        :data="tableData"
+        stripe
+        class="custom-element-table"
+        highlight-current-row
+        @current-change="tableCurrentChange"
     >
       <el-table-column
-        prop="num"
-        label="№"
-        width="80"
+          prop="num"
+          label="№"
+          width="80"
       />
       <el-table-column
-        prop="system"
-        label="№ в системе"
+          prop="system"
+          label="№ в системе"
       />
       <el-table-column
-        prop="dateSystem"
-        label="Дата в системе"
+          prop="dateSystem"
+          label="Дата в системе"
       />
       <el-table-column
-        prop="doc"
-        label="№ док..."
+          prop="doc"
+          label="№ док..."
       />
       <el-table-column
-        prop="nak"
-        label="Дата нак..."
+          prop="nak"
+          label="Дата нак..."
       />
       <el-table-column
-        prop="main"
-        label="Основание"
+          prop="main"
+          label="Основание"
       />
       <el-table-column
-        prop="whom"
-        label="От кого"
+          prop="whom"
+          label="От кого"
       />
       <el-table-column
-        prop="toWhom"
-        label="Кому"
+          prop="toWhom"
+          label="Кому"
       />
       <el-table-column
-        prop="payType"
-        label="Способ отп..."
+          prop="payType"
+          label="Способ отп..."
       />
       <el-table-column label="Действие">
         <template #default="scope">
           <button
-            class="action-btn"
-            @click="router.push(`/invoice-inbox/${scope.row.id}`)"
+              class="action-btn"
+              @click.stop="router.push(`/invoice-inbox/${scope.row.id}`)"
           >
             <img
-              src="@/assets/images/eye.svg"
-              alt="eye"
+                src="@/assets/images/eye.svg"
+                alt="eye"
             />
           </button>
 
           <button
-            class="action-btn ml-[8px]"
-            @click="actionButton(scope.row)"
+              class="action-btn ml-[8px]"
+              @click.stop="actionButton(scope.row)"
           >
             <img
-              src="@/assets/images/download.svg"
-              alt="download"
+                src="@/assets/images/download.svg"
+                alt="download"
             />
           </button>
         </template>
@@ -257,10 +263,10 @@ watchEffect(() => {
       </div>
 
       <el-pagination
-        class="float-right"
-        background
-        layout="prev, pager, next"
-        :total="1000"
+          class="float-right"
+          background
+          layout="prev, pager, next"
+          :total="1000"
       />
     </div>
   </div>

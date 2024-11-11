@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {useRoute, useRouter} from "vue-router";
 import {Name} from "@/utils/helper";
-import {onMounted, ref, watch} from "vue";
+import {computed, onMounted, ref, watch} from "vue";
 import {useSettingsStore} from "@/modules/Settings/store";
 import {ElNotification} from "element-plus";
 import {ValidationType} from "@/components/ui/form/app-form/app-form.type";
@@ -242,6 +242,10 @@ const getTypeProduct = (id: number) => {
   }
 }
 
+const isDisabled = computed(() => {
+  return route.name === 'reference-ration-view-id'
+})
+
 watch(() => route.name, () => {
   setBreadCrumbFn();
 }, {immediate: true});
@@ -266,6 +270,7 @@ watch(() => route.name, () => {
                   label-class="text-[#A8AAAE] font-medium text-[12px]"
                   required
                   prop="name.ru"
+                  :disabled="isDisabled"
               />
               <app-input
                   v-model="dataValue.name.uz"
@@ -274,6 +279,7 @@ watch(() => route.name, () => {
                   label-class="text-[#A8AAAE] font-medium text-[12px]"
                   required
                   prop="name.uz"
+                  :disabled="isDisabled"
               />
               <app-input
                   v-model="dataValue.number"
@@ -296,6 +302,7 @@ watch(() => route.name, () => {
                   itemValue="id"
                   itemLabel="name"
                   :items="store.kitchenTypes.kitchen_types"
+                  :disabled="isDisabled"
               />
               <div class="grid grid-cols-2">
                 <app-time-picker
@@ -306,6 +313,7 @@ watch(() => route.name, () => {
                     label-class="text-[#A8AAAE] font-medium text-[12px]"
                     required
                     prop="start_time"
+                    :disabled="isDisabled"
                 />
                 <app-time-picker
                     v-model="dataValue.end_time"
@@ -314,6 +322,7 @@ watch(() => route.name, () => {
                     label-class="text-[#A8AAAE] font-medium text-[12px]"
                     required
                     prop="end_time"
+                    :disabled="isDisabled"
                 />
               </div>
               <app-input
@@ -323,6 +332,7 @@ watch(() => route.name, () => {
                   label-class="text-[#A8AAAE] font-medium text-[12px]"
                   required
                   prop="duration_in_days"
+                  :disabled="isDisabled"
               />
             </div>
           </AppForm>
@@ -357,7 +367,7 @@ watch(() => route.name, () => {
                     placeholder="Выберите"
                     label-class="text-[#A8AAAE] font-medium text-[12px]"
                     clearable
-                    :disabled="item.typeProduct"
+                    :disabled="item.typeProduct || isDisabled"
                     itemValue="id"
                     itemLabel="name"
                     :items="store.meals.meals"
@@ -369,7 +379,7 @@ watch(() => route.name, () => {
                     placeholder="Выберите"
                     label-class="text-[#A8AAAE] font-medium text-[12px]"
                     clearable
-                    :disabled="item.meal_id"
+                    :disabled="item.meal_id || isDisabled"
                     itemValue="id"
                     itemLabel="name"
                     :items="store.typeProduct.product_categories"
@@ -380,7 +390,7 @@ watch(() => route.name, () => {
                     label="Вид продукта"
                     placeholder="Выберите"
                     label-class="text-[#A8AAAE] font-medium text-[12px]"
-                    :disabled="item.meal_id"
+                    :disabled="item.meal_id || isDisabled"
                     itemValue="id"
                     itemLabel="name"
                     :items="store.dynamicVid.product_types[index]"
@@ -389,6 +399,7 @@ watch(() => route.name, () => {
                     v-model="item.quantity"
                     label="Количество"
                     placeholder="0.0"
+                    :disabled="isDisabled"
                     label-class="text-[#A8AAAE] font-medium text-[12px]"
                 />
                 <div class="flex items-center w-full">
@@ -400,6 +411,7 @@ watch(() => route.name, () => {
                       class="w-full"
                       itemValue="id"
                       itemLabel="name"
+                      :disabled="isDisabled"
                       :items="store.units.units"
                   />
                   <button

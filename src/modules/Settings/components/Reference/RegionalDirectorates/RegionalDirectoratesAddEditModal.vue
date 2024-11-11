@@ -105,16 +105,6 @@ const deleteFn = () => {
   });
 };
 
-const switchChange = async (): Promise<boolean> => {
-  try {
-    const response = await confirm.show();
-    return true;
-  } catch (error) {
-    return false;
-  }
-};
-
-
 const changeStatus = () => {
   if (status.value) {
     dataValue.value.status = 'active'
@@ -222,8 +212,6 @@ watch(() => route.name, () => {
                   class="w-[50%]"
                   :disabled="isDisabled"
               />
-<!--              required-->
-<!--              prop="responsible_position"-->
             </div>
 
             <ElSwitch
@@ -233,7 +221,6 @@ watch(() => route.name, () => {
                 :active-text="status ? 'Активация' : 'Деактивация'"
                 class="app-switch mt-auto"
             />
-<!--            :before-change="switchChange"-->
           </div>
         </AppForm>
 
@@ -272,18 +259,7 @@ watch(() => route.name, () => {
             v-if="route.query.type == 'view'"
             class="flex items-center gap-4 bg-[#F8F9FC] py-[10px] px-[20px] rounded-[8px]"
         >
-          <li
-              :style="{
-                  maskImage: 'url(/icons/edit.svg)',
-                  backgroundColor: '#8F9194',
-                  color: '#8F9194',
-                  width: '20px',
-                  height: '20px',
-                  maskSize: '20px',
-                  maskPosition: 'center',
-                  maskRepeat: 'no-repeat'
-                   }"
-          ></li>
+          <img src="@/assets/images/icons/edit.svg" alt="edit">
           Редактировать
         </button>
       </div>

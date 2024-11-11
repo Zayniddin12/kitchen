@@ -1,9 +1,12 @@
-<script setup lang="ts">
-import {onMounted, ref} from "vue";
-import {Search} from "@element-plus/icons-vue";
-import {useRoute} from "vue-router";
-import {useSettingsStore} from "@/modules/Settings/store";
-import {ElNotification} from "element-plus";
+<script
+    setup
+    lang="ts"
+>
+import { onMounted, ref } from "vue";
+import { Search } from "@element-plus/icons-vue";
+import { useRoute, useRouter } from "vue-router";
+import { useSettingsStore } from "@/modules/Settings/store";
+import { ElNotification } from "element-plus";
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 
 interface Params {
@@ -14,54 +17,55 @@ interface Params {
 
 const store = useSettingsStore();
 const route = useRoute();
-const {setBreadCrumb} = useBreadcrumb();
+const router = useRouter();
+const { setBreadCrumb } = useBreadcrumb();
 
 const params = ref<Params>({
   search: null,
   page: 1,
-  per_page: 10,
+  per_page: 10
 });
 const loading = ref<boolean>(false);
-let debounceTimeout: ReturnType<typeof setTimeout>
+let debounceTimeout: ReturnType<typeof setTimeout>;
 
 onMounted(() => {
   setBreadCrumbFn();
 
-  refresh()
+  refresh();
 });
 
 
 const refresh = async () => {
-  loading.value = true
+  loading.value = true;
   try {
-    await store.GET_KITCHEN_TYPE(params.value)
+    await store.GET_KITCHEN_TYPE(params.value);
   } catch (e: any) {
-    ElNotification({title: e, type: 'error'})
-    loading.value = false
+    ElNotification({ title: e, type: "error" });
+    loading.value = false;
   } finally {
-    loading.value = false
+    loading.value = false;
   }
 };
 
 const setBreadCrumbFn = () => {
   setBreadCrumb([
     {
-      label: "Настройки",
+      label: "Настройки"
     },
     {
       label: "Справочники",
-      to: {name: "reference"},
+      to: { name: "reference" }
     },
 
     {
       label: "Управ, комбинаты и склады",
-      to: {name: "reference"},
+      to: { name: "reference" }
     },
 
     {
       label: "Типы кухни",
-      isActionable: true,
-    },
+      isActionable: true
+    }
   ]);
 };
 
@@ -75,6 +79,11 @@ const handleSearch = (): void => {
     await refresh();
   }, 500);
 };
+
+const currentTableChange = (value: Record<string, any>) => {
+  router.push({name: 'reference-kitchen-type-view', query: {type: 'view'}, params: {id: value.id}})
+};
+
 </script>
 
 <template>
@@ -96,7 +105,10 @@ const handleSearch = (): void => {
             @click="$router.push({name: 'reference-kitchen-type-add'})"
             class="flex items-center justify-center gap-3 custom-apply-btn"
         >
-          <img src="@/assets/images/icons/plus.svg" alt="#"/>
+          <img
+              src="@/assets/images/icons/plus.svg"
+              alt="#"
+          />
           Добавить
         </button>
       </div>
@@ -104,32 +116,60 @@ const handleSearch = (): void => {
 
     <el-table
         :data="store.kitchenTypes.kitchen_types"
-        stripe class="custom-element-table mt-[24px]"
+        stripe
+        class="custom-element-table mt-[24px]"
         v-loading="loading"
         :empty-text="'Нет доступных данных'"
+        highlight-current-row
+        @current-change="currentTableChange"
     >
-      <el-table-column prop="idx" label="№" width="80">
-        <template #default="{$index}" v-if="store.rationList.rations">
-          {{params.page >1 ? store.kitchenTypes.paginator.per_page * (params.page - 1) + $index + 1 : $index +1 }}
+      <el-table-column
+          prop="idx"
+          label="№"
+          width="80"
+      >
+        <template
+            #default="{$index}"
+            v-if="store.rationList.rations"
+        >
+          {{ params.page > 1 ? store.kitchenTypes.paginator.per_page * (params.page - 1) + $index + 1 : $index + 1 }}
         </template>
       </el-table-column>
-      <el-table-column prop="name" label="Наименование кухни" sortable width="400">
+      <el-table-column
+          prop="name"
+          label="Наименование кухни"
+          sortable
+          width="400"
+      >
         <template #default="scope">
            <span v-if="scope.row.name">
              {{ scope.row.name }}
            </span>
         </template>
       </el-table-column>
-      <el-table-column label="Действие" align="right">
+      <el-table-column
+          label="Действие"
+          align="right"
+      >
         <template #default="scope">
-          <button class="action-btn mr-[8px]"
-                  @click="$router.push({name: 'reference-kitchen-type-view', query: {type: 'view'}, params: {id: scope.row.id}})">
-            <img src="../../../../../assets/images/eye.svg" alt="download"/>
+          <button
+              class="action-btn mr-[8px]"
+              @click.stop="$router.push({name: 'reference-kitchen-type-view', query: {type: 'view'}, params: {id: scope.row.id}})"
+          >
+            <img
+                src="@/assets/images/eye.svg"
+                alt="download"
+            />
           </button>
 
-          <button class="action-btn"
-                  @click="$router.push({name: 'reference-kitchen-type-edit', params: {id: scope.row.id}})">
-            <img src="../../../../../assets/images/icons/edit.svg" alt="eye"/>
+          <button
+              class="action-btn"
+              @click.stop="$router.push({name: 'reference-kitchen-type-edit', params: {id: scope.row.id}})"
+          >
+            <img
+                src="@/assets/images/icons/edit.svg"
+                alt="eye"
+            />
           </button>
         </template>
       </el-table-column>

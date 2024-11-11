@@ -35,6 +35,7 @@ const closeModal = () => {
     :show-close="false"
     :class="isView ? 'h-[90%]' : 'w-[70%]'"
     align-center
+    append-to-body
     :before-close="closeModal"
   >
     <template #header>

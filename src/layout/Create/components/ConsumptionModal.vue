@@ -1,21 +1,17 @@
-<script
-  setup
-  lang="ts"
->
+<script setup lang="ts">
 import AppInput from "@/components/ui/form/app-input/AppInput.vue";
 import AppSelect from "@/components/ui/form/app-select/AppSelect.vue";
 import AppDatePicker from "@/components/ui/form/app-date-picker/AppDatePicker.vue";
 import { ref } from "vue";
 import useConfirm from "@/components/ui/app-confirm/useConfirm";
+import {
+  ModalPropsType,
+  ModalValueType,
+} from "@/layout/Create/components/modal.types";
 
-const emit = defineEmits(["update:editModal"]);
-const props = defineProps({
-  editModal: {
-    type: Boolean,
-    default: false,
-  },
-});
-const editModal = ref<boolean>(false);
+const model = defineModel<ModalValueType>();
+
+const props = defineProps<ModalPropsType>();
 
 interface TableData {
   id: number;
@@ -65,87 +61,132 @@ const { confirm } = useConfirm();
 
 const closeModal = () => {
   // Let it come out when the form changes
-  confirm.cancel({ disabledBody: true }).then((response) => {
-    emit("update:editModal", false);
+  confirm.cancel({ disabledBody: true }).then(response => {
+    model.value = false;
   });
 };
 </script>
 
 <template>
   <el-dialog
-    v-model="props.editModal"
+    v-model="model"
     :show-close="false"
     class="w-[75%]"
     align-center
+    append-to-body
     :before-close="closeModal"
   >
     <template #header>
-      <div class="text-center text-[#000000] font-bold text-[18px]">Создать расход</div>
+      <div class="text-center text-[#000000] font-bold text-[18px]">
+        Создать расход
+      </div>
     </template>
 
     <div class="flex mb-[40px]">
-      <div class="border-[#E2E6F3] bg-[#fff] border rounded-[15px] w-[65%] mr-0">
+      <div
+        class="border-[#E2E6F3] bg-[#fff] border rounded-[15px] w-[65%] mr-0"
+      >
         <div class="px-[72px] pb-[150px]">
           <header class="flex items-center justify-center my-[24px] mb-6">
             <img
               src="@/assets/images/logo.svg"
               alt="logo"
-            >
+            />
             <div class="flex flex-col ml-3">
               <b class="text-[#000D24] text-lg">NKMK</b>
               <span class="text-[#CBCCCE]">Jamg‘armasi</span>
             </div>
           </header>
-          <h1 class="text-[#000D24] font-bold text-[20px] text-center mb-[24px]">НАКЛАДНОЙ</h1>
+          <h1
+            class="text-[#000D24] font-bold text-[20px] text-center mb-[24px]"
+          >
+            НАКЛАДНОЙ
+          </h1>
 
           <div class="flex items-center mb-[8px]">
-            <h1 class="text-[#4F5662] text-[14px] font-medium">Дата создания в системе:</h1>
-            <span class="ml-2 text-[#A8AAAE] text-[14px] font-medium block">24.08.2024</span>
+            <h1 class="text-[#4F5662] text-[14px] font-medium">
+              Дата создания в системе:
+            </h1>
+            <span class="ml-2 text-[#A8AAAE] text-[14px] font-medium block">
+              24.08.2024
+            </span>
           </div>
 
           <div class="flex items-center mb-[24px]">
-            <h1 class="text-[#4F5662] text-[14px] font-medium">№ накладной в системе:</h1>
-            <span class="ml-2 text-[#A8AAAE] text-[14px] font-medium block">NK-00000</span>
+            <h1 class="text-[#4F5662] text-[14px] font-medium">
+              № накладной в системе:
+            </h1>
+            <span class="ml-2 text-[#A8AAAE] text-[14px] font-medium block">
+              NK-00000
+            </span>
           </div>
 
           <div class="flex items-center mb-[8px]">
-            <h1 class="text-[#4F5662] text-[14px] font-medium">Дата накладной:</h1>
-            <span class="ml-2 text-[#A8AAAE] text-[14px] font-medium block">24.08.2024</span>
+            <h1 class="text-[#4F5662] text-[14px] font-medium">
+              Дата накладной:
+            </h1>
+            <span class="ml-2 text-[#A8AAAE] text-[14px] font-medium block">
+              24.08.2024
+            </span>
           </div>
 
           <div class="flex items-center mb-[24px]">
             <h1 class="text-[#4F5662] text-[14px] font-medium">№ накладной:</h1>
-            <span class="ml-2 text-[#A8AAAE] text-[14px] font-medium block">247</span>
+            <span class="ml-2 text-[#A8AAAE] text-[14px] font-medium block">
+              247
+            </span>
           </div>
 
           <div class="flex items-center mb-[24px]">
-            <h1 class="text-[#4F5662] text-[14px] font-medium">Вид документа:</h1>
-            <span class="ml-2 text-[#A8AAAE] text-[14px] font-medium block">Входящий накладной</span>
+            <h1 class="text-[#4F5662] text-[14px] font-medium">
+              Вид документа:
+            </h1>
+            <span class="ml-2 text-[#A8AAAE] text-[14px] font-medium block">
+              Входящий накладной
+            </span>
           </div>
 
           <div class="flex items-center mb-[8px]">
             <h1 class="text-[#4F5662] text-[14px] font-medium">От кого:</h1>
-            <span class="ml-2 text-[#A8AAAE] text-[14px] font-medium block">Руководитель группы отдела координации общественного питания</span>
+            <span class="ml-2 text-[#A8AAAE] text-[14px] font-medium block">
+              Руководитель группы отдела координации общественного питания
+            </span>
           </div>
 
           <div class="flex items-center mb-[8px]">
             <h1 class="text-[#4F5662] text-[14px] font-medium">Кому:</h1>
-            <span class="ml-2 text-[#A8AAAE] text-[14px] font-medium block">«Фонд НКМК» ДМ «Навоийской» областной администрации, руководитель комплекса общественного питания Баракаеву Д.</span>
+            <span class="ml-2 text-[#A8AAAE] text-[14px] font-medium block">
+              «Фонд НКМК» ДМ «Навоийской» областной администрации, руководитель
+              комплекса общественного питания Баракаеву Д.
+            </span>
           </div>
 
           <div class="flex items-center mb-[24px]">
-            <h1 class="text-[#4F5662] text-[14px] font-medium whitespace-nowrap">Через кого:</h1>
-            <span class="ml-2 text-[#A8AAAE] text-[14px] font-medium block">«Фонд НКМК» ДМ «Навоийской» областной администрации, руководитель комплекса общественного питания Баракаеву Д.</span>
+            <h1
+              class="text-[#4F5662] text-[14px] font-medium whitespace-nowrap"
+            >
+              Через кого:
+            </h1>
+            <span class="ml-2 text-[#A8AAAE] text-[14px] font-medium block">
+              «Фонд НКМК» ДМ «Навоийской» областной администрации, руководитель
+              комплекса общественного питания Баракаеву Д.
+            </span>
           </div>
 
           <div class="flex items-center mb-[8px]">
-            <h1 class="text-[#4F5662] text-[14px] font-medium">Основание: </h1>
-            <span class="ml-2 text-[#A8AAAE] text-[14px] font-medium block">Назначение №2392</span>
+            <h1 class="text-[#4F5662] text-[14px] font-medium">Основание:</h1>
+            <span class="ml-2 text-[#A8AAAE] text-[14px] font-medium block">
+              Назначение №2392
+            </span>
           </div>
 
           <div class="flex items-center mb-[24px]">
-            <h1 class="text-[#4F5662] text-[14px] font-medium">Способ отправления:</h1>
-            <span class="ml-2 text-[#A8AAAE] text-[14px] font-medium block">85 897 VAA</span>
+            <h1 class="text-[#4F5662] text-[14px] font-medium">
+              Способ отправления:
+            </h1>
+            <span class="ml-2 text-[#A8AAAE] text-[14px] font-medium block">
+              85 897 VAA
+            </span>
           </div>
 
           <el-table
@@ -179,44 +220,61 @@ const closeModal = () => {
 
             <template #append>
               <div class="flex items-center justify-end p-4">
-                <h1 class="text-[#8F9194] text-[14px] font-bold mr-[5px]">Общая сумма: </h1>
-                <h1 class="text-[#000D24] text-[14px] font-bold mr-5">7 040 000 сум</h1>
+                <h1 class="text-[#8F9194] text-[14px] font-bold mr-[5px]">
+                  Общая сумма:
+                </h1>
+                <h1 class="text-[#000D24] text-[14px] font-bold mr-5">
+                  7 040 000 сум
+                </h1>
               </div>
             </template>
-
           </el-table>
 
           <div class="flex items-center justify-between mb-[24px] mt-[40px]">
             <h1 class="text-[#4F5662] text-[14px] font-semibold">Бухгалтер:</h1>
-            <span class="ml-2 text-[#A8AAAE] text-[14px] font-medium block"> Жалилов М.</span>
+            <span class="ml-2 text-[#A8AAAE] text-[14px] font-medium block">
+              Жалилов М.
+            </span>
           </div>
 
           <div class="flex items-center justify-between mb-[24px]">
             <h1 class="text-[#4F5662] text-[14px] font-semibold">Кладовщик:</h1>
-            <span class="ml-2 text-[#A8AAAE] text-[14px] font-medium block"> Эргашева Л.</span>
+            <span class="ml-2 text-[#A8AAAE] text-[14px] font-medium block">
+              Эргашева Л.
+            </span>
           </div>
 
           <div class="flex items-center justify-between mb-[24px]">
             <h1 class="text-[#4F5662] text-[14px] font-semibold">Товаровед:</h1>
-            <span class="ml-2 text-[#A8AAAE] text-[14px] font-medium block"> Жалилов М.</span>
+            <span class="ml-2 text-[#A8AAAE] text-[14px] font-medium block">
+              Жалилов М.
+            </span>
           </div>
 
           <div class="flex items-center justify-between mb-[24px]">
-            <h1 class="text-[#4F5662] text-[14px] font-semibold">Экспедитор:</h1>
-            <span class="ml-2 text-[#A8AAAE] text-[14px] font-medium block">Акромов О.</span>
+            <h1 class="text-[#4F5662] text-[14px] font-semibold">
+              Экспедитор:
+            </h1>
+            <span class="ml-2 text-[#A8AAAE] text-[14px] font-medium block">
+              Акромов О.
+            </span>
           </div>
 
           <div class="flex items-center justify-between mb-[24px]">
             <h1 class="text-[#4F5662] text-[14px] font-semibold">Зав. склад</h1>
-            <span class="ml-2 text-[#A8AAAE] text-[14px] font-medium block">Каххоров А.</span>
+            <span class="ml-2 text-[#A8AAAE] text-[14px] font-medium block">
+              Каххоров А.
+            </span>
           </div>
 
           <div class="flex items-center justify-between mb-[24px]">
-            <h1 class="text-[#4F5662] text-[14px] font-semibold">Начальник базы</h1>
-            <span class="ml-2 text-[#A8AAAE] text-[14px] font-medium block">Маликов Б.</span>
+            <h1 class="text-[#4F5662] text-[14px] font-semibold">
+              Начальник базы
+            </h1>
+            <span class="ml-2 text-[#A8AAAE] text-[14px] font-medium block">
+              Маликов Б.
+            </span>
           </div>
-
-
         </div>
       </div>
 
@@ -266,10 +324,11 @@ const closeModal = () => {
             label-class="text-[#A8AAAE] text-[12px] font-medium"
           />
 
-
           <div class="bg-[#FFFFFF] rounded-[8px] p-[12px] mb-[24px]">
-            <span class="block text-[#4F5662] text-[14px] font-medium mb-[16px]">
-                Таблица получаемых продуктов
+            <span
+              class="block text-[#4F5662] text-[14px] font-medium mb-[16px]"
+            >
+              Таблица получаемых продуктов
             </span>
 
             <app-select
@@ -325,18 +384,18 @@ const closeModal = () => {
                   height: '20px',
                   maskSize: '20px',
                   maskPosition: 'center',
-                  maskRepeat: 'no-repeat'
-                   }"
+                  maskRepeat: 'no-repeat',
+                }"
               ></li>
               Добавить
             </button>
-
-
           </div>
 
           <div class="bg-[#FFFFFF] rounded-[8px] p-[12px]">
-            <span class="block text-[#4F5662] text-[14px] font-medium mb-[16px]">
-                Состав комиссии приема продуктов
+            <span
+              class="block text-[#4F5662] text-[14px] font-medium mb-[16px]"
+            >
+              Состав комиссии приема продуктов
             </span>
 
             <app-select
@@ -369,10 +428,8 @@ const closeModal = () => {
               label="Начальник"
               label-class="text-[#A8AAAE] text-[12px] font-medium"
             />
-
           </div>
         </div>
-
 
         <!--        <div class="flex items-start justify-between">-->
         <!--          <button class="custom-cancel-btn" @click="closeModal">Отменить</button>-->
@@ -386,12 +443,11 @@ const closeModal = () => {
       <button
         class="custom-cancel-btn font-medium"
         @click="closeModal"
-      >Отменить
+      >
+        Отменить
       </button>
       <button class="custom-send-btn font-medium">Отправить</button>
     </div>
-
-
   </el-dialog>
 </template>
 
@@ -405,5 +461,4 @@ const closeModal = () => {
 .table-my tr:last-child td {
   border-bottom: 0;
 }
-
 </style>

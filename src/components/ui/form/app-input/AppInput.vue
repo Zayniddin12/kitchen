@@ -3,9 +3,10 @@
     lang="ts"
 >
 import { AppInputPropsType, AppInputValueType } from "@/components/ui/form/app-input/app-input.type";
-import { computed, useSlots } from "vue";
+import { computed, inject, ref, Ref, useSlots, watch } from "vue";
 import { vMaska } from "maska";
 import { getRules, setRules } from "@/components/ui/form/validate";
+import { ValidationErrorsType } from "@/components/ui/form/form.type";
 
 const [model, modifiers] = defineModel<AppInputValueType>();
 
@@ -18,6 +19,25 @@ const props = withDefaults(defineProps<AppInputPropsType>(), {
 const updateModelValue = (value: any) => {
   model.value = value;
 };
+
+const emit = defineEmits<{
+  change: [value: AppInputValueType]
+}>();
+
+const validationErrors = inject<Ref<ValidationErrorsType>>("validation-errors", ref(null));
+const ignoreValidationError = ref(false);
+
+const computedError = computed(() => {
+  if (props.error) return props.error;
+
+  else if (ignoreValidationError.value) return "";
+
+  else if (validationErrors.value && props.prop && typeof (props.prop) === "string" && validationErrors.value[props.prop]) {
+    return validationErrors.value[props.prop];
+  }
+
+  return "";
+});
 
 const appInputClasses = computed<string[]>(() => {
   const classes = ["app-input app-form-item"];
@@ -38,6 +58,18 @@ const computedMask = computed(() =>
 const inputMask = computed(() => {
   return { mask: computedMask.value };
 });
+
+const change = (value: AppInputValueType) => {
+  ignoreValidationError.value = !!validationErrors.value;
+  emit("change", value);
+};
+
+watch(validationErrors, (newErrors) => {
+  ignoreValidationError.value = false;
+}, {
+  deep: true
+});
+
 </script>
 
 <template>
@@ -47,7 +79,7 @@ const inputMask = computed(() => {
       :class="appInputClasses"
       :size
       :prop
-      :error
+      :error="computedError"
       :rules="setRules(getRules(props))"
   >
     <template
@@ -90,6 +122,7 @@ const inputMask = computed(() => {
         :showWordLimit
         :inputStyle
         class="app-input__input"
+        @change="change"
     >
       <template
           v-if="slots.prepend || type === 'tel'"
