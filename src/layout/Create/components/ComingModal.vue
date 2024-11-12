@@ -504,7 +504,7 @@ watch(providerCreateModal, newMProviderModal => {
                 Дата накладной:
               </h1>
               <span class="ml-2 text-[#A8AAAE] text-sm font-medium block">
-                {{ form.date ?? "Нет" }}
+                {{ form.date }}
               </span>
             </div>
 

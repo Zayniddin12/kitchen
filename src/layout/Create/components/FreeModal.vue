@@ -45,6 +45,8 @@ const required = ref(false);
 
 const validationErrors = ref<Record<string, any> | null>(null);
 
+const loading = computed(() => documentStore.createLoading || documentStore.updateLoading);
+
 const sendForm = async (status: DocumentStatusType) => {
   form.status = status;
 
@@ -127,6 +129,7 @@ const openModal = () => {
 watch(model, (newModel) => {
   if (newModel) openModal();
   else {
+    required.value = false;
     clear();
   }
 });
@@ -217,6 +220,7 @@ watch(model, (newModel) => {
             :value="form"
             :validation-errors
             @validation="setValidation"
+            @submit.prevent
         >
           <AppInput
               label="Накладние"
@@ -299,7 +303,7 @@ watch(model, (newModel) => {
             Отменить
           </button>
           <ElButton
-              :loading="form.status ==='draft' ? documentStore.createLoading : false"
+              :loading="form.status ==='draft' ? loading : false"
               type="primary"
               size="large"
               @click="sendForm('draft')"
@@ -308,7 +312,7 @@ watch(model, (newModel) => {
             Сохранить как черновик
           </ElButton>
           <ElButton
-              :loading="form.status ==='sent' ? documentStore.createLoading : false"
+              :loading="form.status ==='sent' ? loading : false"
               type="success"
               size="large"
               @click="sendForm('sent')"
