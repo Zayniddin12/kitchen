@@ -9,6 +9,7 @@ import {useRoute} from "vue-router";
 import {useDocumentStore} from "@/modules/Document/document.store";
 import AppOverlay from "@/components/ui/app-overlay/AppOverlay.vue";
 import {useAuthStore} from "@/modules/Auth/auth.store";
+import QrCode from "@/components/workplaces/qr-code/QrCode.vue";
 
 const route = useRoute();
 
@@ -96,10 +97,7 @@ watch(() => route.params.id, (newId) => {
             </h1>
           </div>
 
-          <img
-              src="@/assets/images/icons/qr.svg"
-              alt="qr"
-          />
+          <QrCode/>
 
           <h1 class="text-[#A8AAAE] text-[14px] mr-[100px]">{{ authStore.userFullName}}</h1>
         </div>

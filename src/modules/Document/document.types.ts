@@ -17,8 +17,10 @@ export interface DocumentCreateDataDocumentType {
     doc_type_id?: number | null,
     date?: string,
     number?: string,
+    from?: string,
     from_id?: number | null,
     from_type?: string,
+    to?: string,
     to_id?: number | null,
     to_type?: string,
     through_whom?: string,
@@ -78,6 +80,7 @@ export interface DraftsParamsType extends PaginationParamsType {
     subject?: string,
     to_id?: number | "",
     from_id?: number | "",
+    doc_type_id?: number,
 }
 
 export interface DraftType {
@@ -101,8 +104,12 @@ export interface DocumentType {
     type: string,
     date: string,
     number: string,
+    to_id?: number | null,
+    to_type?: string,
     to_name: string,
     subject: string | null,
     content: string | null,
+    from_id?: null | number,
+    from_type?: string,
     from_name: string,
 }

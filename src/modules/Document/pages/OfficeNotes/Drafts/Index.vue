@@ -104,14 +104,16 @@ const fetchDrafts = async () => {
   form.number = String(query.number ?? "");
   form.subject = String(query.subject ?? "");
 
+  const newForm = { doc_type_id: 3, ...form };
+
   try {
     await documentStore.fetchDrafts(
         route.meta?.apiUrl ?? "",
-        filterObjectValues(form)
+        filterObjectValues(newForm)
     );
     validationErrors.value = null;
   } catch (error: any) {
-    if (error.error.code === 422) {
+    if (error?.error?.code === 422) {
       validationErrors.value = error.meta.validation_errors;
     }
   }
@@ -136,7 +138,7 @@ watch(
       isOpenFilter.value = false;
       validationErrors.value = null;
       if (v$.value) v$.value.clear();
-    },{immediate: true}
+    }, { immediate: true }
 );
 
 const changePage = (value: number) => {
@@ -149,10 +151,10 @@ const tableCurrentChange = (value: DraftType) => {
   router.push({ name: `${route.name as string}-id`, params: { id: value.id } });
 };
 
-const activeDraft = ref<DraftType | null>(null);
+const draftID = ref("");
 
-const editModalHandler = (value: DraftType) => {
-  activeDraft.value = value;
+const editModalHandler = (id: string) => {
+  draftID.value = id;
   editModal.value = true;
 };
 </script>
@@ -328,7 +330,7 @@ const editModalHandler = (value: DraftType) => {
             <button
                 v-if="route.name === 'drafts'"
                 class="action-btn ml-[20px]"
-                @click="editModalHandler(row)"
+                @click="editModalHandler(row.id)"
             >
               <img
                   src="@/assets/images/icons/edit.svg"
@@ -345,15 +347,19 @@ const editModalHandler = (value: DraftType) => {
                     alt="eye"
                 />
               </RouterLink>
-              <button
-                  @click.stop
+              <ElButton
+                  :loading="documentStore.pdfLoading"
+                  plain
+                  @click.stop="documentStore.getPdf(row.id)"
                   class="action-btn"
+                  text
+                  bg
               >
                 <img
                     src="@/assets/images/download.svg"
                     alt="download"
                 />
-              </button>
+              </ElButton>
             </template>
           </div>
         </template>
@@ -370,10 +376,8 @@ const editModalHandler = (value: DraftType) => {
 
     <MemoModal
         v-model="editModal"
-        v-model:draft="activeDraft"
-        :id="null"
+        :uuid="draftID"
         title="Редактировать служебную записку"
-        :name="activeDraft?.subject ?? ''"
     />
   </div>
 </template>

@@ -7,19 +7,129 @@ import AppSelect from "@/components/ui/form/app-select/AppSelect.vue";
 import AppDatePicker from "@/components/ui/form/app-date-picker/AppDatePicker.vue";
 import useConfirm from "@/components/ui/app-confirm/useConfirm";
 import { ModalPropsType, ModalValueType } from "@/layout/Create/components/modal.types";
+import { computed, reactive, ref, watch } from "vue";
+import { DocumentCreateDataDocumentType, DocumentStatusType } from "@/modules/Document/document.types";
+import { deepEqual, formatDate2 } from "@/utils/helper";
+import { ValidationType } from "@/components/ui/form/app-form/app-form.type";
+import AppForm from "@/components/ui/form/app-form/AppForm.vue";
+import { useAuthStore } from "@/modules/Auth/auth.store";
+import { useDocumentStore } from "@/modules/Document/document.store";
+import { useCommonStore } from "@/stores/common.store";
+import { useSettingsStore } from "@/modules/Settings/store";
+
+const authStore = useAuthStore();
+const documentStore = useDocumentStore();
+const commonStore = useCommonStore();
+const settingsStore = useSettingsStore();
+
+const form = reactive<DocumentCreateDataDocumentType>({
+  doc_type_id: null,
+  date: formatDate2(new Date()),
+  to: "",
+  to_id: null,
+  to_type: "",
+  number: "",
+  subject: "",
+  content: ""
+});
+
+const oldForm = ref<null | DocumentCreateDataDocumentType>(null);
+
+const v$ = ref<ValidationType | null>(null);
+
+const setValidation = (validation: ValidationType) => {
+  v$.value = validation;
+};
+
+const required = ref(false);
+
+const validationErrors = ref<Record<string, any> | null>(null);
+
+const sendForm = async (status: DocumentStatusType) => {
+  form.status = status;
+
+  if (status === "sent") required.value = true;
+
+  if (!v$.value) return;
+
+  if (!(await v$.value.validate())) {
+    commonStore.errorToast("Validation Error");
+    return;
+  }
+
+  const newForm = { ...form };
+  delete newForm.to;
+
+  try {
+    await documentStore.create(newForm);
+
+    commonStore.successToast();
+    model.value = false;
+    validationErrors.value = null;
+    model.value = false;
+
+  } catch (error: any) {
+    if (error?.error?.code === 422) {
+      validationErrors.value = error.meta.validation_errors;
+    }
+  }
+};
 
 const model = defineModel<ModalValueType>();
 
 const props = defineProps<ModalPropsType>();
 
+const respondentChange = (value: string, type: "from" | "to") => {
+  const values = value.split("_");
+  form[`${type}_id`] = Number(values[0]);
+  form[`${type}_type`] = values[1];
+};
+
+const to = computed<string>(() => {
+  if (!form.to_id || !form.to_type) return "";
+  const activeEl = settingsStore.respondents.find(
+      el => el.model_type === form.to_type && el.id === form.to_id
+  );
+
+  if (!activeEl) return "";
+
+  return activeEl.name;
+});
+
+const clear = () => {
+  v$.value?.clear();
+  form.to_id = null;
+  form.to_type = "";
+};
+
 const { confirm } = useConfirm();
 
-const closeModal = () => {
-  // Let it come out when the form changes
-  confirm.cancel({ disabledBody: true }).then((response) => {
-    model.value = false;
-  });
+const closeModal = async () => {
+  if (oldForm.value && !deepEqual(form, oldForm.value)) {
+    const response = await confirm.cancel();
+
+    if (response === "save") {
+      await sendForm("sent");
+      return;
+    }
+  }
+
+  model.value = false;
 };
+
+const openModal = () => {
+  form.doc_type_id = props.id;
+  required.value = false;
+  oldForm.value = JSON.parse(JSON.stringify(form));
+  settingsStore.fetchRespondents();
+};
+
+watch(model, (newModel) => {
+  if (newModel) openModal();
+  else {
+    clear();
+  }
+});
 
 </script>
 
@@ -53,47 +163,42 @@ const closeModal = () => {
 
           <div class="flex items-center mb-[8px]">
             <h1 class="text-[#4F5662] text-[14px] font-semibold">Дата:</h1>
-            <span class="ml-2 text-[#A8AAAE] text-[14px] font-medium block">24.08.2024</span>
+            <span class="ml-2 text-[#A8AAAE] text-[14px] font-medium block">{{ form.date }}</span>
           </div>
 
           <div class="flex items-center mb-[24px]">
             <h1 class="text-[#4F5662] text-[14px] font-semibold">№:</h1>
-            <span class="ml-2 text-[#A8AAAE] text-[14px] font-medium block">04-04-01/463</span>
+            <span class="ml-2 text-[#A8AAAE] text-[14px] font-medium block">{{ form.number || "NK-00000" }}</span>
           </div>
 
           <div class="flex items-baseline mb-[24px]">
             <h1 class=" text-[14px] font-medium">
               <span class="text-[#4F5662] font-semibold">Получатель: </span>
-              <span class="text-[#A8AAAE] ml-2">«Фонд НКМК» ДМ «Навоийской» областной администрации, руководитель комплекса общественного питания Баракаеву Д.</span>
+              <span class="text-[#A8AAAE] ml-2">{{ to }}</span>
             </h1>
           </div>
 
-          <div class="flex items-baseline mb-[24px]">
-            <h1 class=" text-[14px] font-medium">
+          <div class="flex items-baseline mb-6">
+            <h1 class=" text-sm font-medium">
               <span class="text-[#4F5662] font-semibold">Тип запроса:</span>
-              <span class="text-[#A8AAAE] ml-2">Полученные</span>
+              <span class="text-[#A8AAAE] ml-2">Свободный запрос</span>
             </h1>
           </div>
 
           <div class="flex items-center mb-[24px]">
             <h1 class="text-[#4F5662] text-[14px] font-semibold">Тема:</h1>
-            <span class="ml-2 text-[#A8AAAE] text-[14px] font-medium block">О получении товара</span>
+            <span class="ml-2 text-[#A8AAAE] text-[14px] font-medium block">{{ form.subject }}</span>
           </div>
 
           <div class="text-[#4F5662] text-[14px]">
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 1000 кг перца сладкого свеженарезанного, выделенного у Вас в
-            соответствии
-            с договором № 3259031.1.1 от 31 июля
-            2024 года, проведенным посредством электронных аукционов в августе текущего года, в целях обеспечения
-            непрерывного питания продуктами лечебно-профилактического назначения. кормления и медико-санитарных больных
-            просим получить до 23 августа доверенность от отдела ДМ «Фонд НКМК» на продукцию.
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ form.content }}
           </div>
 
           <div class="mt-[40px] flex items-center justify-between">
             <div class="flex items-baseline mb-[24px] w-[200px]">
               <h1 class=" text-[14px] font-medium">
                 <span class="text-[#4F5662] font-semibold">Отправитель:</span>
-                <span class="text-[#A8AAAE] ml-2">Руководитель группы отдела координации общественного питания</span>
+                <span class="text-[#A8AAAE] ml-2">{{ authStore.user?.position }}</span>
               </h1>
             </div>
 
@@ -102,64 +207,115 @@ const closeModal = () => {
                 alt="qr"
             />
 
-            <h1 class="text-[#A8AAAE] text-[14px] mr-[100px]">Эргашева Л.</h1>
+            <h1 class="text-[#A8AAAE] text-[14px] mr-[100px]">{{ authStore.userFullName }}</h1>
           </div>
         </div>
       </div>
 
-      <div class="w-[35%] ml-[24px] flex flex-col justify-between">
-        <div>
-          <app-input
-              placeholder="Накладние"
+      <div class="w-[35%] ml-6 flex flex-col justify-between">
+        <AppForm
+            :value="form"
+            :validation-errors
+            @validation="setValidation"
+        >
+          <AppInput
               label="Накладние"
-              label-class="text-[#A8AAAE] text-[12px] font-medium"
+              placeholder="Запрос"
+              label-class="text-[#A8AAAE] text-xs font-medium"
+              disabled
           />
-
-          <app-input placeholder="Z 04-04-01/463"/>
-
-          <app-date-picker placeholder="24.08.2024"/>
-
-          <app-select
-              placeholder="Получатель"
+          <AppInput
+              label="Тип запроса"
+              placeholder="Свободный запрос"
+              label-class="text-[#A8AAAE] text-xs font-medium"
+              disabled
+          />
+          <AppDatePicker
+              label="Дата создания документа"
+              :placeholder="form.date"
+              label-class="text-[#A8AAAE] text-xs font-medium"
+              disabled
+          />
+          <AppInput
+              v-model="form.number"
+              prop="number"
+              label="№ документа"
+              placeholder="Автоматически"
+              label-class="text-[#A8AAAE] text-xs font-medium"
+              disabled
+          />
+          <AppSelect
+              v-model="form.to"
+              prop="to"
+              placeholder="Выберите"
               label="Получатель"
               label-class="text-[#A8AAAE] text-[12px] font-medium"
-          />
+              :loading="settingsStore.respondentsLoading"
+              @change="(value) => respondentChange(value as string, 'to')"
+              :required
+              trigger="blur"
+          >
+            <ElOption
+                v-for="item in settingsStore.respondents"
+                :key="`${item.id}_${item.model_type}`"
+                :value="`${item.id}_${item.model_type}`"
+                :label="item.name"
+            />
+          </AppSelect>
 
-          <app-input
-              placeholder="Полученные"
-              label="Полученные"
-              label-class="text-[#A8AAAE] text-[12px] font-medium"
-          />
-
-          <app-input
+          <AppInput
+              v-model="form.subject"
+              prop="subject"
               placeholder="Тема"
               label="Тема"
-              label-class="text-[#A8AAAE] text-[12px] font-medium"
+              label-class="text-[#A8AAAE] text-xs font-medium"
+              :required
           />
 
-          <app-input
+          <AppInput
+              v-model="form.content"
+              prop="content"
               placeholder="Содержание запроса"
               type="textarea"
               :rows="5"
               label="Содержание запроса"
-              label-class="text-[#A8AAAE] text-[12px] font-medium"
+              label-class="text-[#A8AAAE] text-xs font-medium"
+              :required
           />
 
-          <app-input
-              placeholder="Отправитель"
+          <AppInput
+              :placeholder="authStore.userFullName"
               label="Отправитель"
-              label-class="text-[#A8AAAE] text-[12px] font-medium"
+              label-class="text-[#A8AAAE] text-xs font-medium"
+              disabled
           />
-        </div>
+        </AppForm>
 
-        <div class="flex items-start justify-between">
+        <div class="flex items-start justify-between gap-x-2">
           <button
               class="custom-cancel-btn"
               @click="closeModal"
-          >Отменить
+          >
+            Отменить
           </button>
-          <button class="custom-apply-btn">Сохранить как черновик</button>
-          <button class="custom-send-btn">Отправить</button>
+          <ElButton
+              :loading="form.status ==='draft' ? documentStore.createLoading : false"
+              type="primary"
+              size="large"
+              @click="sendForm('draft')"
+              class="custom-apply-btn h-[41px] w-[212px]"
+          >
+            Сохранить как черновик
+          </ElButton>
+          <ElButton
+              :loading="form.status ==='sent' ? documentStore.createLoading : false"
+              type="success"
+              size="large"
+              @click="sendForm('sent')"
+              class="custom-send-btn h-[41px] w-[116px] !ml-0"
+          >
+            Отправить
+          </ElButton>
         </div>
       </div>
     </div>

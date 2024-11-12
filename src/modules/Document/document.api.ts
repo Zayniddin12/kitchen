@@ -24,5 +24,9 @@ export default {
     async fetchDocument(uuid: string): Promise<DocumentType> {
         const { data }: { data: Record<string, any> } = await axios.get(`${prefix}/${uuid}`);
         return data.data.document as DocumentType;
+    },
+
+    getPdf(uuid: string) {
+        return axios.get(`${prefix}/get-pdf/${uuid}`);
     }
 };

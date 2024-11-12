@@ -55,6 +55,18 @@ export const useDocumentStore = defineStore("documentStore", () => {
         }
     };
 
+    const pdfLoading = ref(false);
+
+    const getPdf = async (uuid: string) => {
+        pdfLoading.value = true;
+
+        try {
+            await documentApi.getPdf(uuid);
+        } finally {
+            pdfLoading.value = false;
+        }
+    };
+
     return {
         createLoading,
         create,
@@ -65,6 +77,8 @@ export const useDocumentStore = defineStore("documentStore", () => {
         document,
         fetchDocument,
         updateLoading,
-        update
+        update,
+        pdfLoading,
+        getPdf
     };
 });

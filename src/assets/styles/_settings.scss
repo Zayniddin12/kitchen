@@ -93,6 +93,10 @@ input[type="number"] {
   }
 }
 
+.el-loading-mask{
+  z-index: 5;
+}
+
 .app-filter-btn {
 
   &__icon {

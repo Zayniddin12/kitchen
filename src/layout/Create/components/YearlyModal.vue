@@ -77,7 +77,7 @@ const closeModal = () => {
       :before-close="closeModal"
   >
     <template #header>
-      <div class="text-center text-[#000000] font-bold text-[18px]">Создать запрос годовой запрос</div>
+      <div class="text-center text-[#000000] font-bold text-[18px]">Создать годовой запрос</div>
     </template>
 
     <div class="flex">
