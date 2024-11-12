@@ -3,7 +3,7 @@
   lang="ts"
 >
 
-import { computed, watch } from "vue";
+import { computed, onMounted, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useKitchenStore } from "@/modules/Kitchen/kitchen.store";
 import medicalKitchenIcon from "@/assets/images/icons/kitchen/medical-kitchen.svg";
@@ -61,6 +61,14 @@ const boxes = computed(() => {
   ];
 });
 
+// onMounted(async () => {
+//   console.log(route.params);
+//   await kitchenStore.GET_KITCHEN_TYPE({
+//     base_id: route.params.department_id,
+//     is_paid: route.params.part_name == "menu" ? 0 : route.params.part_name == "sale" ? 1 : null,
+//   });
+// });
+
 const setBreadcrumbFn = () => {
   kitchenStore.fetchPart(+route.params.department_id, route.params.part_name as string);
 
@@ -80,7 +88,16 @@ const setBreadcrumbFn = () => {
   ]);
 };
 
-watch(() => [route.params, kitchenStore.departments], () => {
+watch(() => route.params, async () => {
+  await kitchenStore.GET_KITCHEN_TYPE({
+    base_id: route.params.department_id,
+    is_paid: route.params.part_name == "menu" ? 0 : route.params.part_name == "sales" ? 1 : null,
+  });
+  setBreadcrumbFn();
+}, { immediate: true });
+
+watch(() => kitchenStore.departments, async () => {
+
   setBreadcrumbFn();
 }, { immediate: true });
 
