@@ -1,4 +1,4 @@
-import {RouteRecordRaw} from "vue-router";
+import { RouteRecordRaw } from "vue-router";
 
 export default [
     // -------------------------Служебные записки-------------------------------
@@ -10,6 +10,8 @@ export default [
         meta: {
             title: "Входящие",
             apiUrl: "received",
+            doc_type_id: 1,
+            permissionView: true,
             uniqueKeys: {
                 documents: true,
                 documentInbox: true
@@ -24,7 +26,7 @@ export default [
         meta: {
             title: "Просмотр",
             parentRouteTitle: "Входящие",
-            parentRouteUrl: {name: "inbox"}
+            parentRouteUrl: { name: "inbox" }
         }
     },
 
@@ -36,8 +38,10 @@ export default [
         meta: {
             title: "Исходящие",
             apiUrl: "sent",
+            doc_type_id: 1,
+            permissionView: true,
             breadcrumbItemTitle: "Исходящие"
-        },
+        }
     },
     {
         path: "/outgoing/:id",
@@ -46,7 +50,7 @@ export default [
         meta: {
             title: "Исходящие",
             parentRouteTitle: "Исходящие",
-            parentRouteUrl: {name: "outgoing"}
+            parentRouteUrl: { name: "outgoing" }
         }
     },
 
@@ -57,9 +61,11 @@ export default [
         component: () => import("@/modules/Document/pages/OfficeNotes/Drafts/Index.vue"),
         meta: {
             title: "Черновики",
+            doc_type_id: 1,
+            permissionEdit: true,
             apiUrl: "drafts",
             breadcrumbItemTitle: "Черновики"
-        },
+        }
     },
     // -------------------------Служебные записки-------------------------------
 
@@ -69,9 +75,14 @@ export default [
     {
         path: "/received",
         name: "received",
-        component: () => import("@/modules/Document/pages/Requests/Received/Index.vue"),
+        component: () => import("@/modules/Document/pages/OfficeNotes/Drafts/Index.vue"),
         meta: {
-            title: "Полученные"
+            title: "Полученные",
+            breadcrumbItemTitle: "Полученные",
+            permissionView: true,
+            apiUrl: "received",
+            hasTabs: true,
+            doc_type_id: 2
         }
     },
     {
@@ -79,7 +90,9 @@ export default [
         name: "received-id",
         component: () => import("@/modules/Document/pages/Requests/Received/View.vue"),
         meta: {
-            title: "Просмотр"
+            title: "Просмотр",
+            parentRouteTitle: "Полученные",
+            parentRouteUrl: { name: "received" }
         }
     },
 
@@ -87,9 +100,14 @@ export default [
     {
         path: "/sent",
         name: "sent",
-        component: () => import("@/modules/Document/pages/Requests/Sent/Index.vue"),
+        component: () => import("@/modules/Document/pages/OfficeNotes/Drafts/Index.vue"),
         meta: {
-            title: "Отправленные"
+            title: "Отправленные",
+            breadcrumbItemTitle: "Отправленные",
+            permissionView: true,
+            apiUrl: "received",
+            hasTabs: true,
+            doc_type_id: 2
         }
     },
     {
@@ -105,9 +123,13 @@ export default [
     {
         path: "/draft",
         name: "draft",
-        component: () => import("@/modules/Document/pages/Requests/Drafts/Index.vue"),
+        component: () => import("@/modules/Document/pages/OfficeNotes/Drafts/Index.vue"),
         meta: {
-            title: "Черновики"
+            title: "Черновики",
+            doc_type_id: 2,
+            permissionEdit: true,
+            apiUrl: "drafts",
+            breadcrumbItemTitle: "Черновики"
         }
     },
 
@@ -137,7 +159,7 @@ export default [
         name: "invoice-outgoing",
         component: () => import("@/modules/Document/pages/Invoices/InvoiceOutgoing/Index.vue"),
         meta: {
-            title: "Исходящие",
+            title: "Исходящие"
         }
     },
     {

@@ -1,6 +1,6 @@
 <script
-  setup
-  lang="ts"
+    setup
+    lang="ts"
 >
 import { ref, watchEffect } from "vue";
 import CollapseFilter from "@/components/collapseFilter/index.vue";
@@ -31,7 +31,7 @@ const tableData = ref<TableData[]>([
     date: "23.08.2024",
     request: "Z-45896",
     recipient: "РУ “Зарафшан”",
-    theme: "Доставка мяса",
+    theme: "Доставка мяса"
   },
   {
     id: 2,
@@ -39,7 +39,7 @@ const tableData = ref<TableData[]>([
     date: "23.08.2024",
     request: "Z-45896",
     recipient: "РУ “Нуробод”",
-    theme: "Доставка мяса",
+    theme: "Доставка мяса"
   },
   {
     id: 3,
@@ -47,7 +47,7 @@ const tableData = ref<TableData[]>([
     date: "23.08.2024",
     request: "Z-45896",
     recipient: "РУ “Навои”",
-    theme: "Доставка мяса",
+    theme: "Доставка мяса"
   },
   {
     id: 4,
@@ -55,8 +55,8 @@ const tableData = ref<TableData[]>([
     date: "23.08.2024",
     request: "Z-45896",
     recipient: "РУ “Зарафшан”",
-    theme: "Доставка мяса",
-  },
+    theme: "Доставка мяса"
+  }
 ]);
 
 const actionButton = (value: TableData): void => {
@@ -68,15 +68,15 @@ const { setBreadCrumb } = useBreadcrumb();
 const setBreadCrumbFn = () => {
   setBreadCrumb([
     {
-      label: "Документы",
+      label: "Документы"
     },
     {
-      label: "Запросы",
+      label: "Запросы"
     },
     {
       label: "Черновики",
-      isActionable: true,
-    },
+      isActionable: true
+    }
   ]);
 };
 
@@ -92,14 +92,14 @@ watchEffect(() => {
       <h1 class="mb-0 font-semibold text-[32px]">Черновики</h1>
 
       <button
-        class="custom-filter-btn font-medium"
-        :class="isOpenFilter ? '!bg-blue !text-white' : ''"
-        @click="isOpenFilter =! isOpenFilter"
+          class="custom-filter-btn font-medium"
+          :class="isOpenFilter ? '!bg-blue !text-white' : ''"
+          @click="isOpenFilter =! isOpenFilter"
       >
         <img
-          :src="isOpenFilter ? white : filter"
-          alt="filter"
-          class="mr-[12px]"
+            :src="isOpenFilter ? white : filter"
+            alt="filter"
+            class="mr-[12px]"
         />
         Фильтр
       </button>
@@ -108,39 +108,39 @@ watchEffect(() => {
     <CollapseFilter v-model="isOpenFilter">
       <template #body>
         <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
-          <app-date-picker
-            placeholder="С этой даты"
-            label="С этой даты"
-            label-class="text-[#7F7D83]"
+          <AppDatePicker
+              placeholder="С этой даты"
+              label="С этой даты"
+              label-class="text-[#7F7D83]"
           />
-          <app-date-picker
-            placeholder="По эту дату"
-            label="По эту дату"
-            label-class="text-[#7F7D83]"
+          <AppDatePicker
+              placeholder="По эту дату"
+              label="По эту дату"
+              label-class="text-[#7F7D83]"
           />
 
-          <appInput
-            placeholder="№ запроса"
-            label="№ запроса"
-            label-class="text-[#7F7D83]"
+          <AppInput
+              placeholder="№ запроса"
+              label="№ запроса"
+              label-class="text-[#7F7D83]"
           />
-          <appInput
-            placeholder="Тема"
-            label="Тема"
-            label-class="text-[#7F7D83]"
+          <AppInput
+              placeholder="Тема"
+              label="Тема"
+              label-class="text-[#7F7D83]"
           />
-          <app-select
-            placeholder="Отправитель"
-            label="Отправитель"
-            label-class="text-[#7F7D83]"
+          <AppSelect
+              placeholder="Отправитель"
+              label="Отправитель"
+              label-class="text-[#7F7D83]"
           />
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-2 gap-4">
-          <app-input
-            placeholder="Тема"
-            label="Тема"
-            label-class="text-[#7F7D83]"
+          <AppInput
+              placeholder="Тема"
+              label="Тема"
+              label-class="text-[#7F7D83]"
           />
         </div>
 
@@ -155,50 +155,50 @@ watchEffect(() => {
     </CollapseFilter>
 
     <el-table
-      :data="tableData"
-      class="custom-element-table"
-      stripe
+        :data="tableData"
+        class="custom-element-table"
+        stripe
     >
       <el-table-column
-        prop="id"
-        label="№"
-        width="80"
+          prop="id"
+          label="№"
+          width="80"
       />
       <el-table-column
-        prop="date"
-        label="Дата"
+          prop="date"
+          label="Дата"
       />
       <el-table-column
-        prop="request"
-        label="№ запроса"
+          prop="request"
+          label="№ запроса"
       />
       <el-table-column
-        prop="recipient"
-        label="Получатель"
+          prop="recipient"
+          label="Получатель"
       />
       <el-table-column
-        prop="theme"
-        label="Тема"
+          prop="theme"
+          label="Тема"
       />
       <el-table-column label="Действие">
         <template #default="scope">
           <button
-            class="action-btn"
-            @click="isOpenModal = true"
+              class="action-btn"
+              @click="isOpenModal = true"
           >
             <img
-              src="@/assets/images/icons/edit.svg"
-              alt="eye"
+                src="@/assets/images/icons/edit.svg"
+                alt="eye"
             />
           </button>
 
           <button
-            class="action-btn ml-[8px]"
-            @click="actionButton(scope.row)"
+              class="action-btn ml-[8px]"
+              @click="actionButton(scope.row)"
           >
             <img
-              src="@/assets/images/download.svg"
-              alt="download"
+                src="@/assets/images/download.svg"
+                alt="download"
             />
           </button>
         </template>
@@ -211,13 +211,13 @@ watchEffect(() => {
       </div>
 
       <el-pagination
-        class="float-right"
-        background
-        layout="prev, pager, next"
-        :total="1000"
+          class="float-right"
+          background
+          layout="prev, pager, next"
+          :total="1000"
       />
     </div>
 
-    <EditModal v-model:editModal="isOpenModal" />
+    <EditModal v-model:editModal="isOpenModal"/>
   </div>
 </template>

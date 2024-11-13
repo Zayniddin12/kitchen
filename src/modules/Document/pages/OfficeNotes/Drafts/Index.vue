@@ -2,15 +2,14 @@
     setup
     lang="ts"
 >
-import { onMounted, provide, reactive, ref, watch, watchEffect } from "vue";
+import { onMounted, reactive, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import CollapseFilter from "@/components/collapseFilter/index.vue";
-import appInput from "@/components/ui/form/app-input/AppInput.vue";
+import AppInput from "@/components/ui/form/app-input/AppInput.vue";
 import AppSelect from "@/components/ui/form/app-select/AppSelect.vue";
 import white from "@/assets/images/filter2.svg";
 import filter from "@/assets/images/filter.svg";
 import AppDatePicker from "@/components/ui/form/app-date-picker/AppDatePicker.vue";
-import EditModal from "./EditModal.vue";
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 import { useDocumentStore } from "@/modules/Document/document.store";
 import { filterObjectValues, setTableColumnIndex } from "@/utils/helper";
@@ -62,16 +61,6 @@ const isOpenFilter = ref<boolean>(false);
 const editModal = ref<boolean>(false);
 const isView = ref<boolean>(false);
 
-const viewDraft = () => {
-  editModal.value = true;
-  isView.value = true;
-};
-
-const handleEdit = () => {
-  editModal.value = true;
-  isView.value = false;
-};
-
 const { setBreadCrumb } = useBreadcrumb();
 
 const setBreadCrumbFn = () => {
@@ -104,7 +93,11 @@ const fetchDrafts = async () => {
   form.number = String(query.number ?? "");
   form.subject = String(query.subject ?? "");
 
-  const newForm = { doc_type_id: 3, ...form };
+  const newForm = { ...form };
+
+  const doc_type_id: number | undefined = route.meta?.doc_type_id;
+
+  if (doc_type_id) newForm.doc_type_id = doc_type_id;
 
   try {
     await documentStore.fetchDrafts(
@@ -123,10 +116,38 @@ onMounted(() => {
   settingsStore.fetchRespondents();
 });
 
+interface Tab {
+  title: string;
+  value: number;
+}
+
+const activeTab = ref(1);
+
+const tabItems = ref<Tab[]>([
+  {
+    title: "Единоразовый",
+    value: 1
+  },
+  {
+    title: "Месячный",
+    value: 2
+  },
+  {
+    title: "Годовой",
+    value: 3
+  }
+]);
+
+const changeTab = async () => {
+  const tab = Number(route.query.tab);
+  activeTab.value = tab === 1 || tab === 2 || tab === 3 ? tab : 1;
+};
+
 watch(
     () => route.query,
     () => {
       fetchDrafts();
+      changeTab();
     },
     { immediate: true }
 );
@@ -157,18 +178,36 @@ const editModalHandler = (id: string) => {
   draftID.value = id;
   editModal.value = true;
 };
+
 </script>
 
 <template>
   <div>
-    <div class="flex items-center justify-between">
-      <h1
-          v-if="route.meta.title"
-          class="m-0 font-semibold text-[32px]"
-      >
-        {{ route.meta.title }}
-      </h1>
-
+    <div class="flex justify-between items-end">
+      <div class="flex flex-col gap-y-6">
+        <h1
+            v-if="route.meta.title"
+            class="m-0 font-semibold text-[32px]"
+        >
+          {{ route.meta.title }}
+        </h1>
+        <div
+            v-if="route.meta?.hasTabs"
+            class="app-tabs !inline-flex"
+        >
+          <RouterLink
+              v-for="item in tabItems"
+              :key="item.value"
+              :class="[
+              'app-tab',
+              { 'app-tab--active': activeTab === item.value },
+            ]"
+              :to="{ query: { ...route.query, ...{ tab: item.value } } }"
+          >
+            {{ item.title }}
+          </RouterLink>
+        </div>
+      </div>
       <button
           class="custom-filter-btn font-medium"
           :class="isOpenFilter ? '!bg-blue !text-white' : ''"
@@ -182,12 +221,11 @@ const editModalHandler = (id: string) => {
         Фильтр
       </button>
     </div>
-
     <CollapseFilter v-model="isOpenFilter">
       <template #body>
         <AppForm
             :value="form"
-            :validation-errors="validationErrors"
+            :validation-errors
             @validation="setValidation"
             class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-1"
         >
@@ -206,14 +244,14 @@ const editModalHandler = (id: string) => {
               label-class="text-[#7F7D83]"
           />
 
-          <appInput
+          <AppInput
               v-model="form.number"
               prop="number"
               placeholder="Номер документа"
               label="Номер документа"
               label-class="text-[#7F7D83]"
           />
-          <appInput
+          <AppInput
               v-model="form.subject"
               prop="subject"
               placeholder="Доставка картофеля"
@@ -328,7 +366,7 @@ const editModalHandler = (id: string) => {
         <template #default="{ row }: { row: DraftType }">
           <div class="flex items-center gap-x-2.5">
             <button
-                v-if="route.name === 'drafts'"
+                v-if="route.meta.permissionEdit"
                 class="action-btn ml-[20px]"
                 @click="editModalHandler(row.id)"
             >
@@ -337,30 +375,29 @@ const editModalHandler = (id: string) => {
                   alt="edit"
               />
             </button>
-            <template v-else>
-              <RouterLink
-                  class="action-btn"
-                  :to="{name: `${route.name as string}-id`, params: {id:row.id}}"
-              >
-                <img
-                    src="@/assets/images/eye.svg"
-                    alt="eye"
-                />
-              </RouterLink>
-              <ElButton
-                  :loading="documentStore.pdfLoading"
-                  plain
-                  @click.stop="documentStore.getPdf(row.id)"
-                  class="action-btn"
-                  text
-                  bg
-              >
-                <img
-                    src="@/assets/images/download.svg"
-                    alt="download"
-                />
-              </ElButton>
-            </template>
+            <RouterLink
+                v-if="route.meta.permissionView"
+                class="action-btn"
+                :to="{name: `${route.name as string}-id`, params: {id:row.id}}"
+            >
+              <img
+                  src="@/assets/images/eye.svg"
+                  alt="eye"
+              />
+            </RouterLink>
+            <ElButton
+                :loading="documentStore.pdfLoading"
+                plain
+                @click.stop="documentStore.getPdf(row.id)"
+                class="action-btn"
+                text
+                bg
+            >
+              <img
+                  src="@/assets/images/download.svg"
+                  alt="download"
+              />
+            </ElButton>
           </div>
         </template>
       </el-table-column>

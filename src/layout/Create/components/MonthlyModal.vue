@@ -5,21 +5,21 @@
 import AppInput from "@/components/ui/form/app-input/AppInput.vue";
 import AppSelect from "@/components/ui/form/app-select/AppSelect.vue";
 import AppDatePicker from "@/components/ui/form/app-date-picker/AppDatePicker.vue";
-import {computed, reactive, ref, watch} from "vue";
+import { computed, reactive, ref, watch } from "vue";
 import useConfirm from "@/components/ui/app-confirm/useConfirm";
-import {ModalPropsType, ModalValueType} from "@/layout/Create/components/modal.types";
+import { ModalPropsType, ModalValueType } from "@/layout/Create/components/modal.types";
 import {
   DocumentCreateDataDocumentType,
   DocumentProductType,
   DocumentStatusType
 } from "@/modules/Document/document.types";
-import {useSettingsStore} from "@/modules/Settings/store";
-import {useCommonStore} from "@/stores/common.store";
-import {useDocumentStore} from "@/modules/Document/document.store";
-import {useAuthStore} from "@/modules/Auth/auth.store";
-import {deepEqual, formatDate2, formatNumber} from "@/utils/helper";
-import {ValidationType} from "@/components/ui/form/app-form/app-form.type";
-import {AppSelectValueType} from "@/components/ui/form/app-select/app-select.type";
+import { useSettingsStore } from "@/modules/Settings/store";
+import { useCommonStore } from "@/stores/common.store";
+import { useDocumentStore } from "@/modules/Document/document.store";
+import { useAuthStore } from "@/modules/Auth/auth.store";
+import { deepEqual, formatDate2, formatNumber } from "@/utils/helper";
+import { ValidationType } from "@/components/ui/form/app-form/app-form.type";
+import { AppSelectValueType } from "@/components/ui/form/app-select/app-select.type";
 import AppForm from "@/components/ui/form/app-form/AppForm.vue";
 import deleteIcon from "@/assets/images/icons/delete-danger-icon.svg";
 import AppOverlay from "@/components/ui/app-overlay/AppOverlay.vue";
@@ -40,7 +40,7 @@ const defaultProduct: DocumentProductType = {
   quantity: null,
   unit_id: "",
   price: null
-}
+};
 
 
 const form = reactive<DocumentCreateDataDocumentType>({
@@ -55,8 +55,13 @@ const form = reactive<DocumentCreateDataDocumentType>({
   content: "",
   status: "",
   products: [
-    {...defaultProduct}
+    { ...defaultProduct }
   ]
+});
+
+const requestType = computed(() => {
+  if (props.id === 4) return "Месячный запрос";
+  else return "Годовой запрос";
 });
 
 const required = ref(false);
@@ -79,7 +84,7 @@ const sendForm = async (status: DocumentStatusType) => {
     return;
   }
 
-  const newForm = {...form};
+  const newForm = { ...form };
   delete newForm.to;
 
   try {
@@ -106,7 +111,7 @@ const clear = () => {
   form.to_id = null;
   form.to_type = "";
   form.to = "";
-  form.products = [{...defaultProduct}]
+  form.products = [{ ...defaultProduct }];
 };
 
 const respondentChange = (value: string, type: "from" | "to") => {
@@ -182,7 +187,7 @@ const deleteProduct = (index: number) => {
   form.products?.splice(index, 1);
 };
 
-const {confirm} = useConfirm();
+const { confirm } = useConfirm();
 
 const closeModal = async () => {
   if (oldForm.value && !deepEqual(form, oldForm.value)) {
@@ -224,7 +229,7 @@ const openModal = async () => {
   await setForm();
 
   oldForm.value = JSON.parse(JSON.stringify(form));
-}
+};
 
 watch(model, (newModel) => {
   if (newModel) openModal();
@@ -232,7 +237,7 @@ watch(model, (newModel) => {
     required.value = false;
     clear();
   }
-})
+});
 
 </script>
 
@@ -246,12 +251,15 @@ watch(model, (newModel) => {
       :before-close="closeModal"
   >
     <template #header>
-      <div class="text-center text-[#000000] font-bold text-[18px]">Создать месячный запрос</div>
+      <div class="text-center text-[#000000] font-bold text-[18px]">{{ title }}</div>
     </template>
 
     <div class="flex">
       <div class="border-[#E2E6F3] bg-[#fff] border rounded-[15px] w-[65%] mr-0">
-        <AppOverlay :loading="documentStore.documentLoading" class="px-[72px] pb-[150px]">
+        <AppOverlay
+            :loading="documentStore.documentLoading"
+            class="px-[72px] pb-[150px]"
+        >
           <header class="flex items-center justify-center my-[24px] mb-6">
             <img
                 src="@/assets/images/logo.svg"
@@ -284,7 +292,7 @@ watch(model, (newModel) => {
           <div class="flex items-baseline mb-[24px]">
             <h1 class=" text-[14px] font-medium">
               <span class="text-[#4F5662] font-semibold">Тип запроса:</span>
-              <span class="text-[#A8AAAE] ml-2">Месячный запрос</span>
+              <span class="text-[#A8AAAE] ml-2">{{ requestType }}</span>
             </h1>
           </div>
 
@@ -376,7 +384,6 @@ watch(model, (newModel) => {
               </div>
             </template>
           </el-table>
-
           <div class="mt-[40px] flex items-center justify-between">
             <div class="flex items-baseline mb-[24px] w-[200px]">
               <h1 class=" text-[14px] font-medium">
@@ -384,12 +391,10 @@ watch(model, (newModel) => {
                 <span class="text-[#A8AAAE] ml-2">{{ authStore.user?.position }}</span>
               </h1>
             </div>
-
             <img
                 src="@/assets/images/icons/qr.svg"
                 alt="qr"
             />
-
             <h1 class="text-[#A8AAAE] text-sm mr-[100px]">{{ authStore.userFullName }}</h1>
           </div>
         </AppOverlay>
@@ -410,7 +415,7 @@ watch(model, (newModel) => {
           />
           <AppInput
               label="Тип запроса"
-              placeholder="Месячный запрос"
+              :placeholder="requestType"
               label-class="text-[#A8AAAE] text-xs font-medium"
               disabled
           />

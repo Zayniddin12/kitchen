@@ -499,7 +499,6 @@ const salesTableCurrentChange = (value: Record<string, any>) => {
       },
       { immediate: true }
   );
-  ;;
 </script>
 
 <template>

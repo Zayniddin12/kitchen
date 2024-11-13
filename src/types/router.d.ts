@@ -10,5 +10,6 @@ declare module "vue-router" {
         apiUrl?: string;
         parentRouteTitle?: string;
         parentRouteUrl?: RouteLocationRaw,
+        [key:string]: any,
     }
 }
