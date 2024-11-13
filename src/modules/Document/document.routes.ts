@@ -82,7 +82,7 @@ export default [
             permissionView: true,
             apiUrl: "received",
             hasTabs: true,
-            doc_type_id: 2
+            doc_type_id: 3
         }
     },
     {
@@ -107,7 +107,7 @@ export default [
             permissionView: true,
             apiUrl: "received",
             hasTabs: true,
-            doc_type_id: 2
+            doc_type_id: 3
         }
     },
     {
@@ -126,7 +126,7 @@ export default [
         component: () => import("@/modules/Document/pages/OfficeNotes/Drafts/Index.vue"),
         meta: {
             title: "Черновики",
-            doc_type_id: 2,
+            doc_type_id: 3,
             permissionEdit: true,
             apiUrl: "drafts",
             breadcrumbItemTitle: "Черновики"

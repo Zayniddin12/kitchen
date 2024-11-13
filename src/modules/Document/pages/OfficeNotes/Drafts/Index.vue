@@ -59,7 +59,6 @@ const clearForm = () => {
 
 const isOpenFilter = ref<boolean>(false);
 const editModal = ref<boolean>(false);
-const isView = ref<boolean>(false);
 
 const { setBreadCrumb } = useBreadcrumb();
 
@@ -167,7 +166,7 @@ const changePage = (value: number) => {
 };
 
 const tableCurrentChange = (value: DraftType) => {
-  if (route.name === "drafts") return;
+  if (!route.meta.permissionView) return;
 
   router.push({ name: `${route.name as string}-id`, params: { id: value.id } });
 };
@@ -309,10 +308,10 @@ const editModalHandler = (id: string) => {
     </CollapseFilter>
     <el-table
         v-loading="documentStore.draftsLoading"
-        :data="documentStore.drafts?.documents"
+        :data="documentStore.draftsLoading ? [] : documentStore.drafts?.documents"
         class="custom-element-table"
         stripe
-        :highlight-current-row="route.name !== 'drafts'"
+        :highlight-current-row="!!route.meta.permissionView"
         @current-change="tableCurrentChange"
     >
       <el-table-column
