@@ -104,9 +104,9 @@ watchEffect(() => {
         </div>
       </div>
 
-      <div class="flex items-center justify-end mt-[24px]">
+      <div class="flex items-center justify-end mt-6 gap-x-4">
         <button class="custom-cancel-btn">Отклонить</button>
-        <button class="custom-send-btn ml-[16px]">Принять</button>
+        <button class="custom-send-btn">Принять</button>
       </div>
     </div>
 

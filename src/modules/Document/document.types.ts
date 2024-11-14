@@ -104,13 +104,14 @@ export interface DocumentType {
     type: string,
     date: string,
     number: string,
-    to_id?: number | null,
-    to_type?: string,
+    status: string,
+    to_id: number | null,
+    to_type: string,
     to_name: string,
     subject: string | null,
     content: string | null,
-    from_id?: null | number,
-    from_type?: string,
+    from_id: null | number,
+    from_type: string,
     from_name: string,
 }
 

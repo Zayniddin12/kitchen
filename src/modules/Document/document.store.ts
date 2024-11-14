@@ -1,5 +1,5 @@
-import { defineStore } from "pinia";
-import { ref } from "vue";
+import {defineStore} from "pinia";
+import {ref} from "vue";
 import {
     ActsParamsType,
     ActsType, ContractsParamsType, ContractsType,
@@ -72,12 +72,12 @@ export const useDocumentStore = defineStore("documentStore", () => {
     const acts = ref<ActsType | null>(null);
     const actsLoading = ref(false);
 
-    const fetchActs = async (params:ActsParamsType = {}) => {
+    const fetchActs = async (params: ActsParamsType = {}) => {
         actsLoading.value = true;
 
         try {
             acts.value = await documentApi.fetchActs(params);
-        }finally {
+        } finally {
             actsLoading.value = false;
         }
     }
@@ -85,13 +85,49 @@ export const useDocumentStore = defineStore("documentStore", () => {
     const contracts = ref<ContractsType | null>(null);
     const contractsLoading = ref(false);
 
-    const fetchContracts = async (params:ContractsParamsType = {}) => {
+    const fetchContracts = async (params: ContractsParamsType = {}) => {
         contractsLoading.value = true;
 
         try {
             contracts.value = await documentApi.fetchContracts(params);
-        }finally {
+        } finally {
             contractsLoading.value = false;
+        }
+    }
+
+    const approveLoading = ref(false);
+
+    const approve = async (uuid: string) => {
+        approveLoading.value = true;
+
+        try {
+            await documentApi.approve(uuid);
+        } finally {
+            approveLoading.value = false;
+        }
+    }
+
+    const cancelLoading = ref(false);
+
+    const cancel = async (uuid: string) => {
+        cancelLoading.value = true;
+
+        try {
+            await documentApi.cancel(uuid);
+        } finally {
+            cancelLoading.value = false;
+        }
+    }
+
+    const rejectLoading = ref(false);
+
+    const reject = async (uuid: string) => {
+        rejectLoading.value = true;
+
+        try {
+            await documentApi.reject(uuid);
+        } finally {
+            rejectLoading.value = false;
         }
     }
 
@@ -113,6 +149,12 @@ export const useDocumentStore = defineStore("documentStore", () => {
         fetchActs,
         contracts,
         contractsLoading,
-        fetchContracts
+        fetchContracts,
+        approveLoading,
+        approve,
+        rejectLoading,
+        reject,
+        cancelLoading,
+        cancel
     };
 });

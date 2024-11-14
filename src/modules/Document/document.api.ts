@@ -23,12 +23,12 @@ export default {
     },
 
     async fetchDrafts(url: string, params: DraftsParamsType = {}): Promise<DraftsResponseType> {
-        const { data }: { data: Record<string, any> } = await axios.get(`${prefix}/${url}`, { params });
+        const {data}: { data: Record<string, any> } = await axios.get(`${prefix}/${url}`, {params});
         return data.data as DraftsResponseType;
     },
 
     async fetchDocument(uuid: string): Promise<DocumentType> {
-        const { data }: { data: Record<string, any> } = await axios.get(`${prefix}/${uuid}`);
+        const {data}: { data: Record<string, any> } = await axios.get(`${prefix}/${uuid}`);
         return data.data.document as DocumentType;
     },
 
@@ -36,13 +36,25 @@ export default {
         return axios.get(`${prefix}/get-pdf/${uuid}`);
     },
 
-    async fetchActs(params: ActsParamsType = {}):Promise<ActsType>{
-        const { data }: { data: Record<string, any> } = await axios.get(`${prefix}/acts`, {params});
+    async fetchActs(params: ActsParamsType = {}): Promise<ActsType> {
+        const {data}: { data: Record<string, any> } = await axios.get(`${prefix}/acts`, {params});
         return data.data as ActsType;
     },
 
-    async fetchContracts(params:ContractsParamsType = {}):Promise<ContractsType>{
-        const { data }: { data: Record<string, any> } = await axios.get(`${prefix}/contracts`, {params});
+    async fetchContracts(params: ContractsParamsType = {}): Promise<ContractsType> {
+        const {data}: { data: Record<string, any> } = await axios.get(`${prefix}/contracts`, {params});
         return data.data as ContractsType;
+    },
+
+    approve(uuid: string) {
+        return axios.post(`${prefix}/approve/${uuid}`);
+    },
+
+    reject(uuid: string) {
+        return axios.post(`${prefix}/reject/${uuid}`);
+    },
+
+    cancel(uuid: string) {
+        return axios.post(`${prefix}/cancel/${uuid}`);
     }
 };

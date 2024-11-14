@@ -62,6 +62,7 @@ export default [
         meta: {
             title: "Черновики",
             doc_type: "memo",
+            doc_type_id: 1,
             permissionEdit: true,
             apiUrl: "drafts",
             breadcrumbItemTitle: "Черновики"
@@ -87,11 +88,14 @@ export default [
     {
         path: "/received/:id",
         name: "received-id",
-        component: () => import("@/modules/Document/pages/Requests/Received/View.vue"),
+        component: () => import("@/modules/Document/pages/OfficeNotes/Inbox/View.vue"),
+        // component: () => import("@/modules/Document/pages/Requests/Received/View.vue"),
         meta: {
             title: "Просмотр",
             parentRouteTitle: "Полученные",
-            parentRouteUrl: { name: "received" }
+            parentRouteUrl: { name: "received" },
+            hasRejectBtn: true,
+            hasAcceptBtn: true,
         }
     },
 
@@ -111,9 +115,13 @@ export default [
     {
         path: "/sent/:id",
         name: "sent-id",
-        component: () => import("@/modules/Document/pages/Requests/Sent/View.vue"),
+        component: () => import("@/modules/Document/pages/OfficeNotes/Inbox/View.vue"),
+        // component: () => import("@/modules/Document/pages/Requests/Sent/View.vue"),
         meta: {
-            title: "Просмотр"
+            title: "Просмотр",
+            parentRouteTitle: "Отправленные",
+            parentRouteUrl: { name: "sent" },
+            hasCancelBtn: true,
         }
     },
 
@@ -124,6 +132,7 @@ export default [
         component: () => import("@/modules/Document/pages/OfficeNotes/Drafts/Index.vue"),
         meta: {
             title: "Черновики",
+            doc_type_id: 2,
             permissionEdit: true,
             apiUrl: "drafts",
             breadcrumbItemTitle: "Черновики"

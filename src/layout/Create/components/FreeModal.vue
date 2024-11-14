@@ -6,16 +6,17 @@ import AppInput from "@/components/ui/form/app-input/AppInput.vue";
 import AppSelect from "@/components/ui/form/app-select/AppSelect.vue";
 import AppDatePicker from "@/components/ui/form/app-date-picker/AppDatePicker.vue";
 import useConfirm from "@/components/ui/app-confirm/useConfirm";
-import { ModalPropsType, ModalValueType } from "@/layout/Create/components/modal.types";
-import { computed, reactive, ref, watch } from "vue";
-import { DocumentCreateDataDocumentType, DocumentStatusType } from "@/modules/Document/document.types";
-import { deepEqual, formatDate2 } from "@/utils/helper";
-import { ValidationType } from "@/components/ui/form/app-form/app-form.type";
+import {ModalPropsType, ModalValueType} from "@/layout/Create/components/modal.types";
+import {computed, reactive, ref, watch} from "vue";
+import {DocumentCreateDataDocumentType, DocumentStatusType} from "@/modules/Document/document.types";
+import {deepEqual, formatDate2} from "@/utils/helper";
+import {ValidationType} from "@/components/ui/form/app-form/app-form.type";
 import AppForm from "@/components/ui/form/app-form/AppForm.vue";
-import { useAuthStore } from "@/modules/Auth/auth.store";
-import { useDocumentStore } from "@/modules/Document/document.store";
-import { useCommonStore } from "@/stores/common.store";
-import { useSettingsStore } from "@/modules/Settings/store";
+import {useAuthStore} from "@/modules/Auth/auth.store";
+import {useDocumentStore} from "@/modules/Document/document.store";
+import {useCommonStore} from "@/stores/common.store";
+import {useSettingsStore} from "@/modules/Settings/store";
+import AppOverlay from "@/components/ui/app-overlay/AppOverlay.vue";
 
 const authStore = useAuthStore();
 const documentStore = useDocumentStore();
@@ -59,11 +60,12 @@ const sendForm = async (status: DocumentStatusType) => {
     return;
   }
 
-  const newForm = { ...form };
+  const newForm = {...form};
   delete newForm.to;
 
   try {
-    await documentStore.create(newForm);
+    if (props.uuid) await documentStore.update(props.uuid, newForm);
+    else await documentStore.create(newForm);
 
     commonStore.successToast();
     model.value = false;
@@ -104,7 +106,7 @@ const clear = () => {
   form.to_type = "";
 };
 
-const { confirm } = useConfirm();
+const {confirm} = useConfirm();
 
 const closeModal = async () => {
   if (oldForm.value && !deepEqual(form, oldForm.value)) {
@@ -119,11 +121,29 @@ const closeModal = async () => {
   model.value = false;
 };
 
-const openModal = () => {
-  form.doc_type_id = props.id;
+const setForm = async () => {
+  form.doc_type_id = props.id ?? null;
+
+  if (!props.uuid) return;
+  await documentStore.fetchDocument(props.uuid);
+
+  if (!documentStore.document) return;
+  form.date = documentStore.document.date;
+  form.number = documentStore.document.number;
+  form.to_id = documentStore.document.to_id ?? null;
+  form.to_type = documentStore.document.to_type ?? "";
+  form.subject = documentStore.document.subject ?? "";
+  form.content = documentStore.document.content ?? "";
+
+  if (form.to_id && form.to_type) form.to = `${form.to_id}_${form.to_type}`;
+}
+
+const openModal = async () => {
   required.value = false;
+  if (!settingsStore.respondents.length) settingsStore.fetchRespondents();
+
+  await setForm();
   oldForm.value = JSON.parse(JSON.stringify(form));
-  settingsStore.fetchRespondents();
 };
 
 watch(model, (newModel) => {
@@ -146,74 +166,74 @@ watch(model, (newModel) => {
       :before-close="closeModal"
   >
     <template #header>
-      <div class="text-center text-[#000000] font-bold text-[18px]">Создать свободный запрос</div>
+      <div class="text-center text-[#000000] font-bold text-[18px]">{{ title }}</div>
     </template>
 
     <div class="flex">
-      <div class="border-[#E2E6F3] bg-[#fff] border rounded-[15px] w-[65%] mr-0">
-        <div class="px-[72px] pb-[150px]">
-          <header class="flex items-center justify-center my-[24px] mb-6">
-            <img
-                src="@/assets/images/logo.svg"
-                alt="logo"
-            >
-            <div class="flex flex-col ml-3">
-              <b class="text-[#000D24] text-lg">NKMK</b>
-              <span class="text-[#CBCCCE]">Jamg‘armasi</span>
-            </div>
-          </header>
-          <h1 class="text-[#000D24] font-bold text-[20px] text-center mb-[24px]">ЗАПРОС</h1>
-
-          <div class="flex items-center mb-[8px]">
-            <h1 class="text-[#4F5662] text-[14px] font-semibold">Дата:</h1>
-            <span class="ml-2 text-[#A8AAAE] text-[14px] font-medium block">{{ form.date }}</span>
+      <AppOverlay :loading="documentStore.documentLoading"
+                  parent-class-name="w-[65%] border-[#E2E6F3] bg-[#fff] border rounded-[15px]"
+                  class="px-[72px] pb-[150px]">
+        <header class="flex items-center justify-center my-[24px] mb-6">
+          <img
+              src="@/assets/images/logo.svg"
+              alt="logo"
+          >
+          <div class="flex flex-col ml-3">
+            <b class="text-[#000D24] text-lg">NKMK</b>
+            <span class="text-[#CBCCCE]">Jamg‘armasi</span>
           </div>
+        </header>
+        <h1 class="text-[#000D24] font-bold text-[20px] text-center mb-[24px]">ЗАПРОС</h1>
 
-          <div class="flex items-center mb-[24px]">
-            <h1 class="text-[#4F5662] text-[14px] font-semibold">№:</h1>
-            <span class="ml-2 text-[#A8AAAE] text-[14px] font-medium block">{{ form.number || "NK-00000" }}</span>
-          </div>
-
-          <div class="flex items-baseline mb-[24px]">
-            <h1 class=" text-[14px] font-medium">
-              <span class="text-[#4F5662] font-semibold">Получатель: </span>
-              <span class="text-[#A8AAAE] ml-2">{{ to }}</span>
-            </h1>
-          </div>
-
-          <div class="flex items-baseline mb-6">
-            <h1 class=" text-sm font-medium">
-              <span class="text-[#4F5662] font-semibold">Тип запроса:</span>
-              <span class="text-[#A8AAAE] ml-2">Свободный запрос</span>
-            </h1>
-          </div>
-
-          <div class="flex items-center mb-[24px]">
-            <h1 class="text-[#4F5662] text-[14px] font-semibold">Тема:</h1>
-            <span class="ml-2 text-[#A8AAAE] text-[14px] font-medium block">{{ form.subject }}</span>
-          </div>
-
-          <div class="text-[#4F5662] text-[14px]">
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ form.content }}
-          </div>
-
-          <div class="mt-[40px] flex items-center justify-between">
-            <div class="flex items-baseline mb-[24px] w-[200px]">
-              <h1 class=" text-[14px] font-medium">
-                <span class="text-[#4F5662] font-semibold">Отправитель:</span>
-                <span class="text-[#A8AAAE] ml-2">{{ authStore.user?.position }}</span>
-              </h1>
-            </div>
-
-            <img
-                src="@/assets/images/icons/qr.svg"
-                alt="qr"
-            />
-
-            <h1 class="text-[#A8AAAE] text-[14px] mr-[100px]">{{ authStore.userFullName }}</h1>
-          </div>
+        <div class="flex items-center mb-[8px]">
+          <h1 class="text-[#4F5662] text-[14px] font-semibold">Дата:</h1>
+          <span class="ml-2 text-[#A8AAAE] text-[14px] font-medium block">{{ form.date }}</span>
         </div>
-      </div>
+
+        <div class="flex items-center mb-[24px]">
+          <h1 class="text-[#4F5662] text-[14px] font-semibold">№:</h1>
+          <span class="ml-2 text-[#A8AAAE] text-[14px] font-medium block">{{ form.number || "NK-00000" }}</span>
+        </div>
+
+        <div class="flex items-baseline mb-[24px]">
+          <h1 class=" text-[14px] font-medium">
+            <span class="text-[#4F5662] font-semibold">Получатель: </span>
+            <span class="text-[#A8AAAE] ml-2">{{ to }}</span>
+          </h1>
+        </div>
+
+        <div class="flex items-baseline mb-6">
+          <h1 class=" text-sm font-medium">
+            <span class="text-[#4F5662] font-semibold">Тип запроса:</span>
+            <span class="text-[#A8AAAE] ml-2">Свободный запрос</span>
+          </h1>
+        </div>
+
+        <div class="flex items-center mb-[24px]">
+          <h1 class="text-[#4F5662] text-[14px] font-semibold">Тема:</h1>
+          <span class="ml-2 text-[#A8AAAE] text-[14px] font-medium block">{{ form.subject }}</span>
+        </div>
+
+        <div class="text-[#4F5662] text-[14px]">
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ form.content }}
+        </div>
+
+        <div class="mt-[40px] flex items-center justify-between">
+          <div class="flex items-baseline mb-[24px] w-[200px]">
+            <h1 class=" text-[14px] font-medium">
+              <span class="text-[#4F5662] font-semibold">Отправитель:</span>
+              <span class="text-[#A8AAAE] ml-2">{{ authStore.user?.position }}</span>
+            </h1>
+          </div>
+
+          <img
+              src="@/assets/images/icons/qr.svg"
+              alt="qr"
+          />
+
+          <h1 class="text-[#A8AAAE] text-[14px] mr-[100px]">{{ authStore.userFullName }}</h1>
+        </div>
+      </AppOverlay>
 
       <div class="w-[35%] ml-6 flex flex-col justify-between">
         <AppForm
