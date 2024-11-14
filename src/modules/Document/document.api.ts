@@ -2,7 +2,13 @@ import axios from "@/plugins/axios/axios";
 import {
     DraftsResponseType,
     DraftsParamsType,
-    DocumentCreateDataType, DocumentType, DocumentCreateDataDocumentType
+    DocumentCreateDataType,
+    DocumentType,
+    DocumentCreateDataDocumentType,
+    ActsParamsType,
+    ActsType,
+    ContractsParamsType,
+    ContractsType
 } from "@/modules/Document/document.types";
 
 const prefix = "documents";
@@ -28,5 +34,15 @@ export default {
 
     getPdf(uuid: string) {
         return axios.get(`${prefix}/get-pdf/${uuid}`);
+    },
+
+    async fetchActs(params: ActsParamsType = {}):Promise<ActsType>{
+        const { data }: { data: Record<string, any> } = await axios.get(`${prefix}/acts`, {params});
+        return data.data as ActsType;
+    },
+
+    async fetchContracts(params:ContractsParamsType = {}):Promise<ContractsType>{
+        const { data }: { data: Record<string, any> } = await axios.get(`${prefix}/contracts`, {params});
+        return data.data as ContractsType;
     }
 };

@@ -113,3 +113,40 @@ export interface DocumentType {
     from_type?: string,
     from_name: string,
 }
+
+export interface ActsParamsType extends DraftsParamsType{}
+
+export interface ActType{
+    id:string,
+    date: string,
+    number: null | string,
+    status: DocumentStatusType,
+    product_parent_name: string,
+    product_name: string,
+    warehouse: ""
+}
+
+export interface ActsType{
+    acts: ActType[],
+    paginator: PaginationType
+}
+
+export interface ContractsParamsType{}
+
+export interface ContractType{
+    id: string,
+    date: string,
+    number: string | null,
+    subject: string,
+    status: string,
+    product_parent_name: string,
+    product_name: string,
+    quantity: number,
+    unit_name: string,
+    total_price: number,
+}
+
+export interface ContractsType{
+    contracts: ContractType[],
+    paginator: PaginationType
+}

@@ -124,7 +124,7 @@ const tableCurrentChange = (value: TableData) => {
               label-class="text-[#7F7D83]"
           />
           <app-date-picker
-              placeholder="по эту дату"
+              placeholder="По эту дату"
               label="С этой даты"
               label-class="text-[#7F7D83]"
           />

@@ -26,6 +26,14 @@ const settingsStore = useSettingsStore();
 const router = useRouter();
 const route = useRoute();
 
+enum DOCTYPES {
+  SIMPLEDEMAND = "simple_demand",
+  MONTHLYDEMAND = "monthly_demand",
+  YEARLYDEMAND = "yearly_demand"
+}
+
+const defaultDocType = DOCTYPES.SIMPLEDEMAND;
+
 const form = reactive<DraftsParamsType>({
   page: null,
   search: "",
@@ -34,7 +42,8 @@ const form = reactive<DraftsParamsType>({
   number: "",
   subject: "",
   to_id: "",
-  from_id: ""
+  from_id: "",
+  doc_type: defaultDocType
 });
 
 const validationErrors = ref<Record<string, any> | null>(null);
@@ -91,17 +100,12 @@ const fetchDrafts = async () => {
   form.from_date = String(query.from_date ?? "");
   form.number = String(query.number ?? "");
   form.subject = String(query.subject ?? "");
-
-  const newForm = { ...form };
-
-  const doc_type: string | undefined = route.meta?.doc_type;
-
-  if (doc_type) newForm.doc_type = doc_type;
+  form.doc_type = !!route.meta?.hasTabs ? String(query.doc_type ?? defaultDocType) : String(route.meta?.doc_type ?? "");
 
   try {
     await documentStore.fetchDrafts(
         route.meta?.apiUrl ?? "",
-        filterObjectValues(newForm)
+        filterObjectValues(form)
     );
     validationErrors.value = null;
   } catch (error: any) {
@@ -117,36 +121,42 @@ onMounted(() => {
 
 interface Tab {
   title: string;
-  value: number;
+  value: string;
 }
-
-const activeTab = ref(1);
 
 const tabItems = ref<Tab[]>([
   {
     title: "Единоразовый",
-    value: 1
+    value: DOCTYPES.SIMPLEDEMAND
   },
   {
     title: "Месячный",
-    value: 2
+    value: DOCTYPES.MONTHLYDEMAND
   },
   {
     title: "Годовой",
-    value: 3
+    value: DOCTYPES.YEARLYDEMAND
   }
 ]);
 
-const changeTab = async () => {
-  const tab = Number(route.query.tab);
-  activeTab.value = tab === 1 || tab === 2 || tab === 3 ? tab : 1;
+const changeDocType = async () => {
+  const doc_type = route.query.doc_type as string || defaultDocType;
+
+  const isValidDocType = [
+    DOCTYPES.SIMPLEDEMAND,
+    DOCTYPES.MONTHLYDEMAND,
+    DOCTYPES.YEARLYDEMAND
+  ].includes(doc_type as DOCTYPES);
+
+  form.doc_type = isValidDocType ? (doc_type as DOCTYPES) : defaultDocType;
 };
+
 
 watch(
     () => route.query,
     () => {
       fetchDrafts();
-      changeTab();
+      changeDocType();
     },
     { immediate: true }
 );
@@ -199,9 +209,9 @@ const editModalHandler = (id: string) => {
               :key="item.value"
               :class="[
               'app-tab',
-              { 'app-tab--active': activeTab === item.value },
+              { 'app-tab--active': form.doc_type === item.value },
             ]"
-              :to="{ query: { ...route.query, ...{ tab: item.value } } }"
+              :to="{ query: { ...route.query, ...{ doc_type: item.value } } }"
           >
             {{ item.title }}
           </RouterLink>
@@ -238,8 +248,8 @@ const editModalHandler = (id: string) => {
           <AppDatePicker
               v-model="form.to_date"
               prop="to_date"
-              placeholder="по эту дату"
-              label="по эту дату"
+              placeholder="По эту дату"
+              label="По эту дату"
               label-class="text-[#7F7D83]"
           />
 

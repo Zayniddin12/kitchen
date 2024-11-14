@@ -1,6 +1,8 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
 import {
+    ActsParamsType,
+    ActsType, ContractsParamsType, ContractsType,
     DocumentCreateDataDocumentType,
     DocumentCreateDataType, DocumentType,
     DraftsParamsType,
@@ -67,6 +69,32 @@ export const useDocumentStore = defineStore("documentStore", () => {
         }
     };
 
+    const acts = ref<ActsType | null>(null);
+    const actsLoading = ref(false);
+
+    const fetchActs = async (params:ActsParamsType = {}) => {
+        actsLoading.value = true;
+
+        try {
+            acts.value = await documentApi.fetchActs(params);
+        }finally {
+            actsLoading.value = false;
+        }
+    }
+
+    const contracts = ref<ContractsType | null>(null);
+    const contractsLoading = ref(false);
+
+    const fetchContracts = async (params:ContractsParamsType = {}) => {
+        contractsLoading.value = true;
+
+        try {
+            contracts.value = await documentApi.fetchContracts(params);
+        }finally {
+            contractsLoading.value = false;
+        }
+    }
+
     return {
         createLoading,
         create,
@@ -79,6 +107,12 @@ export const useDocumentStore = defineStore("documentStore", () => {
         updateLoading,
         update,
         pdfLoading,
-        getPdf
+        getPdf,
+        acts,
+        actsLoading,
+        fetchActs,
+        contracts,
+        contractsLoading,
+        fetchContracts
     };
 });

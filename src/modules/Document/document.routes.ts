@@ -10,7 +10,7 @@ export default [
         meta: {
             title: "Входящие",
             apiUrl: "received",
-            doc_type_id: 1,
+            doc_type: "memo",
             permissionView: true,
             uniqueKeys: {
                 documents: true,
@@ -38,7 +38,7 @@ export default [
         meta: {
             title: "Исходящие",
             apiUrl: "sent",
-            doc_type_id: 1,
+            doc_type: "memo",
             permissionView: true,
             breadcrumbItemTitle: "Исходящие"
         }
@@ -61,7 +61,7 @@ export default [
         component: () => import("@/modules/Document/pages/OfficeNotes/Drafts/Index.vue"),
         meta: {
             title: "Черновики",
-            doc_type_id: 1,
+            doc_type: "memo",
             permissionEdit: true,
             apiUrl: "drafts",
             breadcrumbItemTitle: "Черновики"
@@ -82,7 +82,6 @@ export default [
             permissionView: true,
             apiUrl: "received",
             hasTabs: true,
-            doc_type: "simple_demand"
         }
     },
     {
@@ -105,9 +104,8 @@ export default [
             title: "Отправленные",
             breadcrumbItemTitle: "Отправленные",
             permissionView: true,
-            apiUrl: "received",
+            apiUrl: "sent",
             hasTabs: true,
-            doc_type: "simple_demand"
         }
     },
     {
@@ -126,7 +124,6 @@ export default [
         component: () => import("@/modules/Document/pages/OfficeNotes/Drafts/Index.vue"),
         meta: {
             title: "Черновики",
-            doc_type: "simple_demand",
             permissionEdit: true,
             apiUrl: "drafts",
             breadcrumbItemTitle: "Черновики"
