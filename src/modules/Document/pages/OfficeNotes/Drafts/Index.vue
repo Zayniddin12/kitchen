@@ -94,9 +94,9 @@ const fetchDrafts = async () => {
 
   const newForm = { ...form };
 
-  const doc_type_id: number | undefined = route.meta?.doc_type_id;
+  const doc_type: string | undefined = route.meta?.doc_type;
 
-  if (doc_type_id) newForm.doc_type_id = doc_type_id;
+  if (doc_type) newForm.doc_type = doc_type;
 
   try {
     await documentStore.fetchDrafts(

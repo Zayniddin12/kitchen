@@ -80,7 +80,7 @@ export interface DraftsParamsType extends PaginationParamsType {
     subject?: string,
     to_id?: number | "",
     from_id?: number | "",
-    doc_type_id?: number,
+    doc_type?: string
 }
 
 export interface DraftType {
