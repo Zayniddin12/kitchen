@@ -205,7 +205,7 @@ const changePage = (value: number) => {
         </template>
       </CollapseFilter>
       <pre>
-        {{documentStore.drafts?.documents}}
+        {{ documentStore.drafts?.documents }}
       </pre>
       <ElTable
           v-loading="documentStore.draftsLoading"
@@ -251,7 +251,7 @@ const changePage = (value: number) => {
             label="Основание"
         >
           <template #default="{ row }:{row: DraftType}">
-            {{row.basis || "-"}}
+            {{ row.basis || "-" }}
           </template>
         </ElTableColumn>
         <ElTableColumn
@@ -259,7 +259,7 @@ const changePage = (value: number) => {
             label="От кого"
         >
           <template #default="{ row }:{row: DraftType}">
-            {{row.from_name || "-"}}
+            {{ row.from_name || "-" }}
           </template>
         </ElTableColumn>
         <ElTableColumn
@@ -267,7 +267,7 @@ const changePage = (value: number) => {
             label="Кому"
         >
           <template #default="{ row }:{row: DraftType}">
-            {{row.to_name || "-"}}
+            {{ row.to_name || "-" }}
           </template>
         </ElTableColumn>
         <ElTableColumn
@@ -275,7 +275,7 @@ const changePage = (value: number) => {
             label="Способ отп..."
         >
           <template #default="{ row }:{row: DraftType}">
-            {{row.payment_method || "-"}}
+            {{ row.payment_method || "-" }}
           </template>
         </ElTableColumn>
         <ElTableColumn label="Действие">
