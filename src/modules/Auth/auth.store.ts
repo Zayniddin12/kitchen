@@ -140,7 +140,7 @@ export const useAuthStore = defineStore("authStore", () => {
     };
 
     const remainingTime = ref(0);
-    let intervalId: number | null = null;
+    let intervalId: NodeJS.Timeout | number | null = null;
 
     const updateRemainingTime = () => {
         if (!otp.value) {

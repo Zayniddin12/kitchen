@@ -80,7 +80,8 @@ export interface DraftsParamsType extends PaginationParamsType {
     subject?: string,
     to_id?: number | "",
     from_id?: number | "",
-    doc_type?: string
+    doc_type?: string,
+    [key:string]: any
 }
 
 export interface DraftType {
@@ -92,6 +93,7 @@ export interface DraftType {
     to_name: string,
     number: string,
     content: string,
+    [key:string]: any
 }
 
 export interface DraftsResponseType {
@@ -113,12 +115,14 @@ export interface DocumentType {
     from_id: null | number,
     from_type: string,
     from_name: string,
+    [key: string]: any
 }
 
-export interface ActsParamsType extends DraftsParamsType{}
+export interface ActsParamsType extends DraftsParamsType {
+}
 
-export interface ActType{
-    id:string,
+export interface ActType {
+    id: string,
     date: string,
     number: null | string,
     status: DocumentStatusType,
@@ -127,14 +131,15 @@ export interface ActType{
     warehouse: ""
 }
 
-export interface ActsType{
+export interface ActsType {
     acts: ActType[],
     paginator: PaginationType
 }
 
-export interface ContractsParamsType{}
+export interface ContractsParamsType {
+}
 
-export interface ContractType{
+export interface ContractType {
     id: string,
     date: string,
     number: string | null,
@@ -147,7 +152,7 @@ export interface ContractType{
     total_price: number,
 }
 
-export interface ContractsType{
+export interface ContractsType {
     contracts: ContractType[],
     paginator: PaginationType
 }

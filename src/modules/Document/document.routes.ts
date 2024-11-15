@@ -145,9 +145,12 @@ export default [
     {
         path: "/invoice-inbox",
         name: "invoice-inbox",
-        component: () => import("@/modules/Document/pages/Invoices/InvoiceInbox/Index.vue"),
+        // component: () => import("@/modules/Document/pages/Invoices/InvoiceInbox/Index.vue"),
+        component: () => import("@/modules/Document/pages/Invoices/InvoicesIndex.vue"),
         meta: {
-            title: "Входящие"
+            title: "Входящие",
+            breadcrumbItemTitle: "Входящие",
+            apiUrl: "received"
         }
     },
     {
@@ -163,9 +166,12 @@ export default [
     {
         path: "/invoice-outgoing",
         name: "invoice-outgoing",
-        component: () => import("@/modules/Document/pages/Invoices/InvoiceOutgoing/Index.vue"),
+        // component: () => import("@/modules/Document/pages/Invoices/InvoiceOutgoing/Index.vue"),
+        component: () => import("@/modules/Document/pages/Invoices/InvoicesIndex.vue"),
         meta: {
-            title: "Исходящие"
+            title: "Исходящие",
+            breadcrumbItemTitle: "Исходящие",
+            apiUrl: "sent"
         }
     },
     {

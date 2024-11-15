@@ -53,62 +53,9 @@ const clearForm = () => {
   isOpenFilter.value = false;
 };
 
-interface TableData {
-  id: number,
-  date: string,
-  numDoc: string,
-  vidDoc: string,
-  type: string,
-  vidPro: string,
-  warehouse: string,
-}
-
 const route = useRoute();
 const router = useRouter();
 const isOpenFilter = ref<boolean>(false);
-
-const tableData = ref<TableData[]>([
-  {
-    id: 1,
-    date: "23.08.2024",
-    numDoc: "852369",
-    vidDoc: "Акт",
-    type: "Мясные",
-    vidPro: "Куриное мясо",
-    warehouse: "Зарафшан"
-  },
-  {
-    id: 2,
-    date: "23.08.2024",
-    numDoc: "852369",
-    vidDoc: "Акт",
-    type: "Мясные",
-    vidPro: "Куриное мясо",
-    warehouse: "Зарафшан"
-  },
-  {
-    id: 3,
-    date: "23.08.2024",
-    numDoc: "852369",
-    vidDoc: "Акт",
-    type: "Мясные",
-    vidPro: "Куриное мясо",
-    warehouse: "Зарафшан"
-  },
-  {
-    id: 4,
-    date: "23.08.2024",
-    numDoc: "852369",
-    vidDoc: "Акт",
-    type: "Мясные",
-    vidPro: "Куриное мясо",
-    warehouse: "Зарафшан"
-  }
-]);
-
-const actionButton = (value: TableData): void => {
-  console.log(value, "value");
-};
 
 const { setBreadCrumb } = useBreadcrumb();
 

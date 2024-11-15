@@ -19,7 +19,13 @@ export const useUsersStore = defineStore("usersStore", () => {
 
     const getUserFullName = (user: UserType | null) => {
         if (!user) return "";
-        return `${user.firstname} ${user.lastname}`;
+
+        const { firstname, lastname } = user;
+
+        if (!firstname) return lastname || "";
+        if (!lastname) return firstname;
+
+        return `${firstname} ${lastname}`;
     };
 
     const userLoading = ref(false);

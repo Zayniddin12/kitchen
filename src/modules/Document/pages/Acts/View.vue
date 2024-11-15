@@ -7,10 +7,13 @@ import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 import { onMounted, watch } from "vue";
 import { useDocumentStore } from "@/modules/Document/document.store";
 import { useRoute } from "vue-router";
+import AppOverlay from "@/components/ui/app-overlay/AppOverlay.vue";
+import { useUsersStore } from "@/modules/Users/users.store";
 
 const route = useRoute();
 
 const documentStore = useDocumentStore();
+const userStore = useUsersStore();
 
 const { setBreadCrumb } = useBreadcrumb();
 
@@ -38,143 +41,201 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="flex items-start justify-center">
-    <div class="border-[#E2E6F3] border rounded-[15px] w-[50%] mr-0">
-      <div class="px-[72px] pb-[50px]">
-        <header class="flex items-center justify-center my-[24px] mb-6">
-          <img
-              src="@/assets/images/logo.svg"
-              alt="logo"
-          >
-          <div class="flex flex-col ml-3">
-            <b class="text-[#000D24] text-lg">NKMK</b>
-            <span class="text-[#CBCCCE]">Jamg‘armasi</span>
-          </div>
-        </header>
-        <h1 class="text-[#000D24] font-bold text-[20px] text-center mb-[24px]">АКТ</h1>
-
-        <div class="flex items-center justify-between">
-          <div class="flex items-center mb-[24px]">
-            <h1 class="text-[#4F5662] text-[14px] font-medium">№:</h1>
-            <span class="ml-2 text-[#A8AAAE] text-[14px] block">04-04-01/463</span>
-          </div>
-
-          <div class="flex items-center mb-[8px]">
-            <h1 class="text-[#4F5662] text-[14px] font-medium">Дата:</h1>
-            <span class="ml-2 text-[#A8AAAE] text-[14px] block">24.08.2024</span>
-          </div>
-        </div>
-
-        <div class="text-[#4F5662] text-[14px]">
-          На основании данного документа мы подтверждаем, что следующая продукция принята в соответствии с правилами
-          приемки продукции по количеству и качеству.
-        </div>
-
-        <table class="my-[24px] min-w-full table-auto border-collapse rounded-[15px] overflow-hidden">
-          <tbody>
-          <tr>
-            <th class="border bg-[#E2E6F3]-100 p-4 text-left font-semibold">Название продукта</th>
-            <td class="border p-4">Картофель</td>
-          </tr>
-          <tr>
-            <th class="border bg-[#E2E6F3]-100 p-4 text-left font-semibold">Количество продукта</th>
-            <td class="border p-4">265</td>
-          </tr>
-          <tr>
-            <th class="border bg-[#E2E6F3]-100 p-4 text-left font-semibold">Единица измерения</th>
-            <td class="border p-4">кг</td>
-          </tr>
-          <tr>
-            <th class="border bg-[#E2E6F3]-100 p-4 text-left font-semibold">Номер и дата договора о поставке</th>
-            <td class="border p-4">K1029745 от 25.07.2024</td>
-          </tr>
-          <tr>
-            <th class="border bg-[#E2E6F3]-100 p-4 text-left font-semibold">Номер и дата накладной</th>
-            <td class="border p-4">№ 365 26.08.2024</td>
-          </tr>
-          <tr>
-            <th class="border bg-[#E2E6F3]-100 p-4 text-left font-semibold">Производитель продукта</th>
-            <td class="border p-4">OOO “Brend”</td>
-          </tr>
-          <tr>
-            <th class="border bg-[#E2E6F3]-100 p-4 text-left font-semibold">Поставщик</th>
-            <td class="border p-4">OOO “Yuksalish”</td>
-          </tr>
-          <tr>
-            <th class="border bg-[#E2E6F3]-100 p-4 text-left font-semibold">Получатель</th>
-            <td class="border p-4">РУ "Зарафшан"</td>
-          </tr>
-          <tr>
-            <th class="border bg-[#E2E6F3]-100 p-4 text-left font-semibold">Транспорт</th>
-            <td class="border p-4">85 085 RRR</td>
-          </tr>
-          <tr>
-            <th class="border bg-[#E2E6F3]-100 p-4 text-left font-semibold">Номер и дата лицензии</th>
-            <td class="border p-4">№ L-86978576 от 05.02.2022</td>
-          </tr>
-          <tr>
-            <th class="border  bg-[#E2E6F3]-100 p-4 text-left font-semibold">Номер и дата заключение
-              Санитарно-эпидемиологического центра
-            </th>
-            <td class="border  p-4">№ SM-069788 от 05.01.2024</td>
-          </tr>
-          <tr>
-            <th class="border bg-[#E2E6F3]-100 p-4 text-left font-semibold">Номер и дата удостоверения ветеринарии</th>
-            <td class="border p-4">№ BT-0365 от 10.01.2024</td>
-          </tr>
-          <tr>
-            <th class="border bg-[#E2E6F3]-100 p-4 text-left font-semibold">Номер и дата удостоверения качества</th>
-            <td class="border p-4">№ YK-0614 от 07.02.2024</td>
-          </tr>
-          </tbody>
-        </table>
-
-        <div
-            class="mt-[40px] flex items-center justify-between"
-            v-for="(item, index) in 5"
-            :key="index"
+  <div class="flex items-start justify-center act-show">
+    <AppOverlay
+        :loading="documentStore.documentLoading"
+        parent-class-name="w-[50%] min-w-[792px] border-[#E2E6F3] border rounded-[15px] px-[72px] pb-[50px] min-h-[75vh]"
+    >
+      <header class="flex items-center justify-center my-[24px] mb-6">
+        <img
+            src="@/assets/images/logo.svg"
+            alt="logo"
         >
-          <div class="flex items-baseline mb-[24px] w-[200px]">
-            <h1 class=" text-[14px] text-[#4F5662] font-medium">
-              Кладовщик:
-            </h1>
-          </div>
+        <div class="flex flex-col ml-3">
+          <b class="text-[#000D24] text-lg">NKMK</b>
+          <span class="text-[#CBCCCE]">Jamg‘armasi</span>
+        </div>
+      </header>
+      <h1 class="text-[#000D24] font-bold text-[20px] text-center mb-[24px]">АКТ</h1>
 
-          <img
-              src="@/assets/images/icons/qr.svg"
-              alt="qr"
-          />
+      <div class="flex items-center justify-between">
+        <div class="flex items-center mb-[24px]">
+          <h1 class="text-[#4F5662] text-[14px] font-medium">№:</h1>
+          <span class="ml-2 text-[#A8AAAE] text-[14px] block">{{ documentStore.document?.number }}</span>
+        </div>
 
-          <h1 class="text-[#A8AAAE] text-[14px] mr-[100px]">Эргашева Л.</h1>
+        <div class="flex items-center mb-[8px]">
+          <h1 class="text-[#4F5662] text-[14px] font-medium">Дата:</h1>
+          <span class="ml-2 text-[#A8AAAE] text-[14px] block">{{ documentStore.document?.date }}</span>
         </div>
       </div>
-    </div>
 
-    <div>
-      <button class="custom-white-btn ml-[24px] w-[260px]">
+      <div class="text-[#4F5662] text-sm">
+        {{ documentStore.document?.content }}
+      </div>
+      <table
+          v-for="product in documentStore.document?.products"
+          :key="product.id"
+          class="min-w-full table-auto border-separate border-spacing-0 mt-6 act-show-table last:mt-0"
+      >
+        <tbody>
+        <tr>
+          <th class="border bg-[#E2E6F3]-100 p-4 text-left font-semibold">Название продукта</th>
+          <td class="border p-4">{{ product.name || "-" }}</td>
+        </tr>
+        <tr>
+          <th class="border bg-[#E2E6F3]-100 p-4 text-left font-semibold">Количество продукта</th>
+          <td class="border p-4">{{ product.quantity ?? 0 }}</td>
+        </tr>
+        <tr>
+          <th class="border bg-[#E2E6F3]-100 p-4 text-left font-semibold">Единица измерения</th>
+          <td class="border p-4">{{ product.unit || "-" }}</td>
+        </tr>
+        <tr>
+          <th class="border bg-[#E2E6F3]-100 p-4 text-left font-semibold">Номер и дата договора о поставке</th>
+          <td class="border p-4">{{ documentStore.document?.number }} от {{ documentStore.document?.number }}</td>
+        </tr>
+        <tr>
+          <th class="border bg-[#E2E6F3]-100 p-4 text-left font-semibold">Номер и дата накладной</th>
+          <td class="border p-4">{{ documentStore.document?.number }} от {{ documentStore.document?.number }}</td>
+        </tr>
+        <tr>
+          <th class="border bg-[#E2E6F3]-100 p-4 text-left font-semibold">Производитель продукта</th>
+          <td class="border p-4">{{ product.parent_name }}</td>
+        </tr>
+        <tr>
+          <th class="border bg-[#E2E6F3]-100 p-4 text-left font-semibold">Поставщик</th>
+          <td class="border p-4">{{ documentStore.document?.from_name }}</td>
+        </tr>
+        <tr>
+          <th class="border bg-[#E2E6F3]-100 p-4 text-left font-semibold">Получатель</th>
+          <td class="border p-4">{{ documentStore.document?.to_name }}</td>
+        </tr>
+        <tr>
+          <th class="border bg-[#E2E6F3]-100 p-4 text-left font-semibold">Транспорт</th>
+          <td class="border p-4">{{ documentStore.document?.shipping_method }}</td>
+        </tr>
+        <tr>
+          <th class="border bg-[#E2E6F3]-100 p-4 text-left font-semibold">Номер и дата лицензии</th>
+          <td class="border p-4">
+            <template v-if="documentStore.document?.details">
+              {{ documentStore.document.details.licence }} от
+              {{ documentStore.document.details.licence_date }}
+            </template>
+          </td>
+        </tr>
+        <tr>
+          <th class="border  bg-[#E2E6F3]-100 p-4 text-left font-semibold">Номер и дата заключение
+            Санитарно-эпидемиологического центра
+          </th>
+          <td class="border  p-4">
+            <template v-if="documentStore.document?.details">
+              {{ documentStore.document.details.sanitary }} от
+              {{ documentStore.document.details.sanitary_date }}
+            </template>
+          </td>
+        </tr>
+        <tr>
+          <th class="border bg-[#E2E6F3]-100 p-4 text-left font-semibold">Номер и дата удостоверения ветеринарии</th>
+          <td class="border p-4">
+            <template v-if="documentStore.document?.details">
+              {{ documentStore.document.details.vetirinary }} от
+              {{ documentStore.document.details.vetirinary_date }}
+            </template>
+          </td>
+        </tr>
+        <tr>
+          <th class="border bg-[#E2E6F3]-100 p-4 text-left font-semibold">Номер и дата удостоверения качества</th>
+          <td class="border p-4">
+            <template v-if="documentStore.document?.details">
+              {{ documentStore.document.details.quality }} от
+              {{ documentStore.document.details.quality_date }}
+            </template>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+
+      <div
+          class="mt-[40px] flex items-center justify-between gap-x-6"
+          v-for="singer in documentStore.document?.singers"
+          :key="singer.id"
+      >
+        <p class=" text-sm text-[#4F5662] font-medium w-[18%]">
+          Кладовщик:
+        </p>
+        <img
+            src="@/assets/images/icons/qr.svg"
+            alt="qr"
+        />
+        <p class="text-[#A8AAAE] text-sm w-[22%]">{{ userStore.getUserFullName(singer) || "-" }}</p>
+      </div>
+    </AppOverlay>
+
+    <div class="ml-6 w-[260px] flex flex-col gap-y-2">
+      <ElButton
+          plain
+          text
+          bg
+          class="custom-white-btn w-full h-11"
+      >
         <img
             src="@/assets/images/icons/plane.svg"
             alt="plane"
             class="mr-[12px]"
         />
         Отправить
-      </button>
-      <button class="custom-white-btn ml-[24px] w-[260px] my-[8px]">
+      </ElButton>
+      <ElButton
+          plain
+          text
+          bg
+          class="custom-white-btn w-full h-11 !ml-0"
+      >
         <img
             src="@/assets/images/icons/print.svg"
             alt="plane"
             class="mr-[12px]"
         />
         Печать
-      </button>
-      <button class="custom-white-btn ml-[24px] w-[260px]">
+      </ElButton>
+      <ElButton
+          :loading="documentStore.pdfLoading"
+          @click="documentStore.getPdf(route.params.id as string)"
+          plain
+          text
+          bg
+          class="custom-white-btn w-full h-11 !ml-0"
+      >
         <img
             src="@/assets/images/icons/download.svg"
             alt="plane"
             class="mr-[12px]"
         />
         Скачать
-      </button>
+      </ElButton>
     </div>
   </div>
 </template>
+
+<style lang="scss">
+.act-show {
+  &-table {
+    tr * {
+      @apply first:border-r-0;
+    }
+
+    tr:not(:last-child) * {
+      @apply border-b-0;
+    }
+
+    tr:first-child * {
+      @apply first:rounded-tl-[15px] last:rounded-tr-[15px];
+    }
+
+    tr:last-child * {
+      @apply first:rounded-bl-[15px] last:rounded-br-[15px];
+    }
+  }
+}
+</style>
