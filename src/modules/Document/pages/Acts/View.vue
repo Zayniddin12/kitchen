@@ -1,28 +1,38 @@
-<script setup lang="ts">
+<script
+    setup
+    lang="ts"
+>
 
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
-import { watchEffect } from "vue";
+import { onMounted, watch } from "vue";
+import { useDocumentStore } from "@/modules/Document/document.store";
+import { useRoute } from "vue-router";
+
+const route = useRoute();
+
+const documentStore = useDocumentStore();
 
 const { setBreadCrumb } = useBreadcrumb();
 
 const setBreadCrumbFn = () => {
   setBreadCrumb([
     {
-      label: "Документы",
+      label: "Документы"
     },
     {
       label: "Акты",
-      to: { name: "acts" },
+      to: { name: "acts" }
     },
     {
       label: "Просмотр",
-      isActionable: true,
-    },
+      isActionable: true
+    }
   ]);
 };
 
-watchEffect(() => {
+onMounted(() => {
   setBreadCrumbFn();
+  documentStore.fetchDocument(route.params.id as string);
 });
 
 </script>
@@ -32,7 +42,10 @@ watchEffect(() => {
     <div class="border-[#E2E6F3] border rounded-[15px] w-[50%] mr-0">
       <div class="px-[72px] pb-[50px]">
         <header class="flex items-center justify-center my-[24px] mb-6">
-          <img src="@/assets/images/logo.svg" alt="logo">
+          <img
+              src="@/assets/images/logo.svg"
+              alt="logo"
+          >
           <div class="flex flex-col ml-3">
             <b class="text-[#000D24] text-lg">NKMK</b>
             <span class="text-[#CBCCCE]">Jamg‘armasi</span>
@@ -116,14 +129,21 @@ watchEffect(() => {
           </tbody>
         </table>
 
-        <div class="mt-[40px] flex items-center justify-between" v-for="(item, index) in 5" :key="index">
+        <div
+            class="mt-[40px] flex items-center justify-between"
+            v-for="(item, index) in 5"
+            :key="index"
+        >
           <div class="flex items-baseline mb-[24px] w-[200px]">
             <h1 class=" text-[14px] text-[#4F5662] font-medium">
               Кладовщик:
             </h1>
           </div>
 
-          <img src="@/assets/images/icons/qr.svg" alt="qr" />
+          <img
+              src="@/assets/images/icons/qr.svg"
+              alt="qr"
+          />
 
           <h1 class="text-[#A8AAAE] text-[14px] mr-[100px]">Эргашева Л.</h1>
         </div>
@@ -132,15 +152,27 @@ watchEffect(() => {
 
     <div>
       <button class="custom-white-btn ml-[24px] w-[260px]">
-        <img src="@/assets/images/icons/plane.svg" alt="plane" class="mr-[12px]" />
+        <img
+            src="@/assets/images/icons/plane.svg"
+            alt="plane"
+            class="mr-[12px]"
+        />
         Отправить
       </button>
       <button class="custom-white-btn ml-[24px] w-[260px] my-[8px]">
-        <img src="@/assets/images/icons/print.svg" alt="plane" class="mr-[12px]" />
+        <img
+            src="@/assets/images/icons/print.svg"
+            alt="plane"
+            class="mr-[12px]"
+        />
         Печать
       </button>
       <button class="custom-white-btn ml-[24px] w-[260px]">
-        <img src="@/assets/images/icons/download.svg" alt="plane" class="mr-[12px]" />
+        <img
+            src="@/assets/images/icons/download.svg"
+            alt="plane"
+            class="mr-[12px]"
+        />
         Скачать
       </button>
     </div>

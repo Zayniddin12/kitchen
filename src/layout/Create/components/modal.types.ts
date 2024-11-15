@@ -4,5 +4,4 @@ export interface ModalPropsType {
     id?: number | null;
     name?: string;
     title?: string;
-    uuid?: string;
 }

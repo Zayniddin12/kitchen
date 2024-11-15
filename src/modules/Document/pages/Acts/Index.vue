@@ -31,15 +31,15 @@ const form = reactive<DraftsParamsType>({
   number: "",
   subject: "",
   to_id: "",
-  from_id: "",
+  from_id: ""
 });
 
 const v$ = ref<ValidationType | null>(null);
 const validationErrors = ref<Record<string, any> | null>(null);
 
-const setValidation = (validation:ValidationType) => {
+const setValidation = (validation: ValidationType) => {
   v$.value = validation;
-}
+};
 
 const filterForm = () => {
   const query = { ...filterObjectValues(form) };
@@ -142,12 +142,12 @@ const fetchActs = async () => {
   try {
     await documentStore.fetchActs(filterObjectValues(form));
     validationErrors.value = null;
-  }catch (error: any){
+  } catch (error: any) {
     if (error?.error?.code === 422) {
       validationErrors.value = error.meta.validation_errors;
     }
   }
-}
+};
 
 watch(
     () => route.query,
@@ -162,7 +162,7 @@ onMounted(() => {
   settingsStore.fetchRespondents();
 });
 
-const tableCurrentChange = (value: TableData) => {
+const tableCurrentChange = (value: ActType) => {
   router.push({ name: "acts-id", params: { id: value.id } });
 };
 
@@ -304,13 +304,17 @@ const changePage = (value: number) => {
       <el-table-column
           prop="date"
           label="Дата"
-      />
+      >
+        <template #default="{row}:{row:ActType}">
+          {{ row.date || "-" }}
+        </template>
+      </el-table-column>
       <el-table-column
           prop="number"
           label="№ док..."
       >
         <template #default="{row}:{row:ActType}">
-          {{row.number || "-"}}
+          {{ row.number || "-" }}
         </template>
       </el-table-column>
       <el-table-column
@@ -326,7 +330,7 @@ const changePage = (value: number) => {
           label="Тип продукта"
       >
         <template #default="{row}:{row:ActType}">
-          {{row.product_parent_name || "-"}}
+          {{ row.product_parent_name || "-" }}
         </template>
       </el-table-column>
       <el-table-column
@@ -334,7 +338,7 @@ const changePage = (value: number) => {
           label="Вид продукта"
       >
         <template #default="{row}:{row:ActType}">
-          {{row.product_name || "-"}}
+          {{ row.product_name || "-" }}
         </template>
       </el-table-column>
       <el-table-column
@@ -342,7 +346,7 @@ const changePage = (value: number) => {
           label="Склад"
       >
         <template #default="{row}:{row:ActType}">
-          {{row.warehouse || "-"}}
+          {{ row.warehouse || "-" }}
         </template>
       </el-table-column>
       <el-table-column label="Действие">

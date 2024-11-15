@@ -7,17 +7,22 @@ import AppInput from "@/components/ui/form/app-input/AppInput.vue";
 import AppSelect from "@/components/ui/form/app-select/AppSelect.vue";
 import AppDatePicker from "@/components/ui/form/app-date-picker/AppDatePicker.vue";
 import useConfirm from "@/components/ui/app-confirm/useConfirm";
-import {ModalPropsType, ModalValueType} from "@/layout/Create/components/modal.types";
-import {DocumentCreateDataDocumentType, DocumentStatusType, DraftType} from "@/modules/Document/document.types";
-import {computed, reactive, ref, watch} from "vue";
+import { ModalPropsType, ModalValueType } from "@/layout/Create/components/modal.types";
+import {
+  DocumentCreateDataDocumentType,
+  DocumentStatusType,
+  DocumentType,
+  DraftType
+} from "@/modules/Document/document.types";
+import { computed, reactive, ref, watch } from "vue";
 import AppForm from "@/components/ui/form/app-form/AppForm.vue";
-import {ValidationType} from "@/components/ui/form/app-form/app-form.type";
-import {deepEqual, formatDate2} from "@/utils/helper";
-import {useSettingsStore} from "@/modules/Settings/store";
-import {useCommonStore} from "@/stores/common.store";
-import {useDocumentStore} from "@/modules/Document/document.store";
+import { ValidationType } from "@/components/ui/form/app-form/app-form.type";
+import { deepEqual, formatDate2 } from "@/utils/helper";
+import { useSettingsStore } from "@/modules/Settings/store";
+import { useCommonStore } from "@/stores/common.store";
+import { useDocumentStore } from "@/modules/Document/document.store";
 import AppOverlay from "@/components/ui/app-overlay/AppOverlay.vue";
-import {useAuthStore} from "@/modules/Auth/auth.store";
+import { useAuthStore } from "@/modules/Auth/auth.store";
 import QrCode from "@/components/workplaces/qr-code/QrCode.vue";
 
 interface PropsType extends ModalPropsType {
@@ -25,6 +30,8 @@ interface PropsType extends ModalPropsType {
 }
 
 const model = defineModel<ModalValueType>();
+
+const document = defineModel<DraftType | null>("document");
 
 const props = defineProps<PropsType>();
 
@@ -51,7 +58,7 @@ const oldForm = ref<null | DocumentCreateDataDocumentType>(null);
 
 const v$ = ref<ValidationType | null>(null);
 
-const {confirm} = useConfirm();
+const { confirm } = useConfirm();
 
 const validationErrors = ref<Record<string, any> | null>(null);
 
@@ -67,14 +74,17 @@ const sendForm = async (status: DocumentStatusType) => {
     return;
   }
 
-  const newForm = {...form};
+  const newForm = { ...form };
   delete newForm.to;
 
   try {
-    if (props.uuid) {
+    if (document.value) {
       delete newForm.doc_type_id;
 
-      await documentStore.update(props.uuid, newForm);
+      await documentStore.update(document.value.id, newForm);
+      document.value.content = form.content ?? "";
+      document.value.subject = form.subject ?? "";
+      document.value.to_name = to.value;
     } else {
       await documentStore.create(newForm);
     }
@@ -112,8 +122,8 @@ const clear = () => {
 const setForm = async () => {
   form.doc_type_id = props.id ?? null;
 
-  if (!props.uuid) return;
-  await documentStore.fetchDocument(props.uuid);
+  if (!document.value) return;
+  await documentStore.fetchDocument(document.value.id);
 
   if (!documentStore.document) return;
   form.date = documentStore.document.date;

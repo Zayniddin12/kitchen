@@ -2,8 +2,8 @@
     setup
     lang="ts"
 >
-import {onMounted, reactive, ref, watch} from "vue";
-import {useRoute, useRouter} from "vue-router";
+import { onMounted, reactive, ref, watch } from "vue";
+import { useRoute, useRouter } from "vue-router";
 import CollapseFilter from "@/components/collapseFilter/index.vue";
 import AppInput from "@/components/ui/form/app-input/AppInput.vue";
 import AppSelect from "@/components/ui/form/app-select/AppSelect.vue";
@@ -11,13 +11,13 @@ import white from "@/assets/images/filter2.svg";
 import filter from "@/assets/images/filter.svg";
 import AppDatePicker from "@/components/ui/form/app-date-picker/AppDatePicker.vue";
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
-import {useDocumentStore} from "@/modules/Document/document.store";
-import {filterObjectValues, setTableColumnIndex} from "@/utils/helper";
-import {DraftsParamsType, DraftType} from "@/modules/Document/document.types";
+import { useDocumentStore } from "@/modules/Document/document.store";
+import { filterObjectValues, setTableColumnIndex } from "@/utils/helper";
+import { DraftsParamsType, DraftType } from "@/modules/Document/document.types";
 import AppPagination from "@/components/ui/app-pagination/AppPagination.vue";
 import AppForm from "@/components/ui/form/app-form/AppForm.vue";
-import {ValidationType} from "@/components/ui/form/app-form/app-form.type";
-import {useSettingsStore} from "@/modules/Settings/store";
+import { ValidationType } from "@/components/ui/form/app-form/app-form.type";
+import { useSettingsStore } from "@/modules/Settings/store";
 import MemoModal from "@/layout/Create/components/MemoModal.vue";
 import FreeModal from "@/layout/Create/components/FreeModal.vue";
 
@@ -56,21 +56,21 @@ const setValidation = (value: ValidationType) => {
 };
 
 const filterForm = () => {
-  const query = {...filterObjectValues(form)};
+  const query = { ...filterObjectValues(form) };
   delete query.page;
 
-  router.push({query});
+  router.push({ query });
 };
 
 const clearForm = () => {
-  router.push({query: {}});
+  router.push({ query: {} });
   isOpenFilter.value = false;
 };
 
 const isOpenFilter = ref<boolean>(false);
 const editModal = ref<boolean>(false);
 
-const {setBreadCrumb} = useBreadcrumb();
+const { setBreadCrumb } = useBreadcrumb();
 
 const setBreadCrumbFn = () => {
   setBreadCrumb([
@@ -159,7 +159,7 @@ watch(
       fetchDrafts();
       changeDocType();
     },
-    {immediate: true}
+    { immediate: true }
 );
 
 watch(
@@ -169,30 +169,30 @@ watch(
       isOpenFilter.value = false;
       validationErrors.value = null;
       if (v$.value) v$.value.clear();
-    }, {immediate: true}
+    }, { immediate: true }
 );
 
 const changePage = (value: number) => {
-  router.push({query: {...route.query, page: value}});
+  router.push({ query: { ...route.query, page: value } });
 };
 
-const tableCurrentChange = async (value: DraftType) => {
-  if (!route.meta.permissionView) return;
+const tableCurrentChange = async (value: DraftType | undefined) => {
+  if (!route.meta.permissionView || !value) return;
 
-  await router.push({name: `${route.name as string}-id`, params: {id: value.id}});
+  await router.push({ name: `${route.name as string}-id`, params: { id: value.id } });
 };
 
-const documentId = ref("");
+const document = ref<DraftType | null>(null);
 
-const editModalHandler = (id: string) => {
-  documentId.value = id;
+const editModalHandler = (draft: DraftType) => {
+  document.value = draft;
   editModal.value = true;
 };
 
-const tableRowClassName = ({row}: { row:DraftType }) => {
-  if (row.status === 'sent') return "font-semibold !text-dark";
-  return  "";
-}
+const tableRowClassName = ({ row }: { row: DraftType }) => {
+  if (row.status === "sent") return "font-semibold !text-dark";
+  return "";
+};
 
 </script>
 
@@ -384,7 +384,7 @@ const tableRowClassName = ({row}: { row:DraftType }) => {
             <button
                 v-if="route.meta.permissionEdit"
                 class="action-btn ml-[20px]"
-                @click="editModalHandler(row.id)"
+                @click="editModalHandler(row)"
             >
               <img
                   src="@/assets/images/icons/edit.svg"
@@ -431,13 +431,13 @@ const tableRowClassName = ({row}: { row:DraftType }) => {
       <MemoModal
           v-if="route.meta?.doc_type_id === 1"
           v-model="editModal"
-          :uuid="documentId"
+          v-model:document="document"
           title="Редактировать служебную записку"
       />
       <FreeModal
           v-else-if="route.meta?.doc_type_id === 2"
           v-model="editModal"
-          :uuid="documentId"
+          v-model:document="document"
           title="Редактировать свободный запрос"
       />
     </template>

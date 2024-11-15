@@ -1,5 +1,5 @@
-import {defineStore} from "pinia";
-import {ref} from "vue";
+import { defineStore } from "pinia";
+import { ref } from "vue";
 import {
     ActsParamsType,
     ActsType, ContractsParamsType, ContractsType,
@@ -80,7 +80,7 @@ export const useDocumentStore = defineStore("documentStore", () => {
         } finally {
             actsLoading.value = false;
         }
-    }
+    };
 
     const contracts = ref<ContractsType | null>(null);
     const contractsLoading = ref(false);
@@ -93,7 +93,7 @@ export const useDocumentStore = defineStore("documentStore", () => {
         } finally {
             contractsLoading.value = false;
         }
-    }
+    };
 
     const approveLoading = ref(false);
 
@@ -105,7 +105,7 @@ export const useDocumentStore = defineStore("documentStore", () => {
         } finally {
             approveLoading.value = false;
         }
-    }
+    };
 
     const cancelLoading = ref(false);
 
@@ -117,7 +117,7 @@ export const useDocumentStore = defineStore("documentStore", () => {
         } finally {
             cancelLoading.value = false;
         }
-    }
+    };
 
     const rejectLoading = ref(false);
 
@@ -129,7 +129,14 @@ export const useDocumentStore = defineStore("documentStore", () => {
         } finally {
             rejectLoading.value = false;
         }
-    }
+    };
+
+    const changeDocumentStatus = async (status: "approved" | "rejected" | "cancelled", id: string) => {
+        if (status === "approved") await approve(id);
+        else if (status === "cancelled") await cancel(id);
+        else if (status === "rejected") await reject(id);
+        if (document.value) document.value.status = status;
+    };
 
     return {
         createLoading,
@@ -155,6 +162,7 @@ export const useDocumentStore = defineStore("documentStore", () => {
         rejectLoading,
         reject,
         cancelLoading,
-        cancel
+        cancel,
+        changeDocumentStatus
     };
 });

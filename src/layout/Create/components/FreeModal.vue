@@ -6,17 +6,23 @@ import AppInput from "@/components/ui/form/app-input/AppInput.vue";
 import AppSelect from "@/components/ui/form/app-select/AppSelect.vue";
 import AppDatePicker from "@/components/ui/form/app-date-picker/AppDatePicker.vue";
 import useConfirm from "@/components/ui/app-confirm/useConfirm";
-import {ModalPropsType, ModalValueType} from "@/layout/Create/components/modal.types";
-import {computed, reactive, ref, watch} from "vue";
-import {DocumentCreateDataDocumentType, DocumentStatusType} from "@/modules/Document/document.types";
-import {deepEqual, formatDate2} from "@/utils/helper";
-import {ValidationType} from "@/components/ui/form/app-form/app-form.type";
+import { ModalPropsType, ModalValueType } from "@/layout/Create/components/modal.types";
+import { computed, reactive, ref, watch } from "vue";
+import { DocumentCreateDataDocumentType, DocumentStatusType, DraftType } from "@/modules/Document/document.types";
+import { deepEqual, formatDate2 } from "@/utils/helper";
+import { ValidationType } from "@/components/ui/form/app-form/app-form.type";
 import AppForm from "@/components/ui/form/app-form/AppForm.vue";
-import {useAuthStore} from "@/modules/Auth/auth.store";
-import {useDocumentStore} from "@/modules/Document/document.store";
-import {useCommonStore} from "@/stores/common.store";
-import {useSettingsStore} from "@/modules/Settings/store";
+import { useAuthStore } from "@/modules/Auth/auth.store";
+import { useDocumentStore } from "@/modules/Document/document.store";
+import { useCommonStore } from "@/stores/common.store";
+import { useSettingsStore } from "@/modules/Settings/store";
 import AppOverlay from "@/components/ui/app-overlay/AppOverlay.vue";
+
+const model = defineModel<ModalValueType>();
+
+const document = defineModel<DraftType | null>("document");
+
+const props = defineProps<ModalPropsType>();
 
 const authStore = useAuthStore();
 const documentStore = useDocumentStore();
@@ -60,12 +66,16 @@ const sendForm = async (status: DocumentStatusType) => {
     return;
   }
 
-  const newForm = {...form};
+  const newForm = { ...form };
   delete newForm.to;
 
   try {
-    if (props.uuid) await documentStore.update(props.uuid, newForm);
-    else await documentStore.create(newForm);
+    if (document.value) {
+      await documentStore.update(document.value.id, newForm);
+      document.value.content = form.content ?? "";
+      document.value.subject = form.subject ?? "";
+      document.value.to_name = to.value;
+    } else await documentStore.create(newForm);
 
     commonStore.successToast();
     model.value = false;
@@ -78,10 +88,6 @@ const sendForm = async (status: DocumentStatusType) => {
     }
   }
 };
-
-const model = defineModel<ModalValueType>();
-
-const props = defineProps<ModalPropsType>();
 
 const respondentChange = (value: string, type: "from" | "to") => {
   const values = value.split("_");
@@ -106,7 +112,7 @@ const clear = () => {
   form.to_type = "";
 };
 
-const {confirm} = useConfirm();
+const { confirm } = useConfirm();
 
 const closeModal = async () => {
   if (oldForm.value && !deepEqual(form, oldForm.value)) {
@@ -124,8 +130,8 @@ const closeModal = async () => {
 const setForm = async () => {
   form.doc_type_id = props.id ?? null;
 
-  if (!props.uuid) return;
-  await documentStore.fetchDocument(props.uuid);
+  if (!document.value) return;
+  await documentStore.fetchDocument(document.value.id);
 
   if (!documentStore.document) return;
   form.date = documentStore.document.date;
@@ -136,7 +142,7 @@ const setForm = async () => {
   form.content = documentStore.document.content ?? "";
 
   if (form.to_id && form.to_type) form.to = `${form.to_id}_${form.to_type}`;
-}
+};
 
 const openModal = async () => {
   required.value = false;
@@ -170,9 +176,11 @@ watch(model, (newModel) => {
     </template>
 
     <div class="flex">
-      <AppOverlay :loading="documentStore.documentLoading"
-                  parent-class-name="w-[65%] border-[#E2E6F3] bg-[#fff] border rounded-[15px]"
-                  class="px-[72px] pb-[150px]">
+      <AppOverlay
+          :loading="documentStore.documentLoading"
+          parent-class-name="w-[65%] border-[#E2E6F3] bg-[#fff] border rounded-[15px]"
+          class="px-[72px] pb-[150px]"
+      >
         <header class="flex items-center justify-center my-[24px] mb-6">
           <img
               src="@/assets/images/logo.svg"

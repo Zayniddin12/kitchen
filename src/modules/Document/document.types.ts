@@ -91,7 +91,7 @@ export interface DraftType {
     from_name: string,
     to_name: string,
     number: string,
-    content: ""
+    content: string,
 }
 
 export interface DraftsResponseType {
