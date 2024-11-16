@@ -14,8 +14,8 @@ import CollapseFilter from "@/components/collapseFilter/index.vue";
 import AppInput from "@/components/ui/form/app-input/AppInput.vue";
 import AppSelect from "@/components/ui/form/app-select/AppSelect.vue";
 import { ValidationType } from "@/components/ui/form/app-form/app-form.type";
-import { filterObjectValues, setTableColumnIndex } from "@/utils/helper";
-import { ActType, DraftsParamsType, DraftType } from "@/modules/Document/document.types";
+import { filterObjectValues, formatDate2, setTableColumnIndex } from "@/utils/helper";
+import { DraftsParamsType, DraftType } from "@/modules/Document/document.types";
 import AppForm from "@/components/ui/form/app-form/AppForm.vue";
 import AppPagination from "@/components/ui/app-pagination/AppPagination.vue";
 
@@ -204,9 +204,6 @@ const changePage = (value: number) => {
           </div>
         </template>
       </CollapseFilter>
-      <pre>
-        {{ documentStore.drafts?.documents }}
-      </pre>
       <ElTable
           v-loading="documentStore.draftsLoading"
           :data="documentStore.drafts?.documents ?? []"
@@ -231,13 +228,21 @@ const changePage = (value: number) => {
           </template>
         </ElTableColumn>
         <ElTableColumn
-            prop="system"
+            prop="generated_number"
             label="№ в системе"
-        />
+        >
+          <template #default="{ row }:{row: DraftType}">
+            {{ row.generated_number || "-" }}
+          </template>
+        </ElTableColumn>
         <ElTableColumn
-            prop="dateSystem"
+            prop="created_at"
             label="Дата в системе"
-        />
+        >
+          <template #default="{ row }:{row: DraftType}">
+            {{ row.created_at ? formatDate2(new Date(row.created_at)) : "-" }}
+          </template>
+        </ElTableColumn>
         <ElTableColumn
             prop="doc"
             label="№ док..."
