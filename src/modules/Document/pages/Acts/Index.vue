@@ -189,6 +189,7 @@ const changePage = (value: number) => {
           />
           <AppSelect
               v-model="form.from_id"
+              prop="from_id"
               :items="settingsStore.respondents"
               item-label="name"
               item-value="id"

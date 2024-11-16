@@ -89,7 +89,7 @@ export default [
         path: "/received/:id",
         name: "received-id",
         component: () => import("@/modules/Document/pages/OfficeNotes/Inbox/View.vue"),
-        // component: () => import("@/modules/Document/pages/Requests/Received/View.vue"),
+        // component: () => import("@/modules/Document/pages/Requests/Received/InvoiceInboxShow.vue"),
         meta: {
             title: "Просмотр",
             parentRouteTitle: "Полученные",
@@ -116,7 +116,7 @@ export default [
         path: "/sent/:id",
         name: "sent-id",
         component: () => import("@/modules/Document/pages/OfficeNotes/Inbox/View.vue"),
-        // component: () => import("@/modules/Document/pages/Requests/Sent/View.vue"),
+        // component: () => import("@/modules/Document/pages/Requests/Sent/InvoiceInboxShow.vue"),
         meta: {
             title: "Просмотр",
             parentRouteTitle: "Отправленные",
@@ -156,7 +156,7 @@ export default [
     {
         path: "/invoice-inbox/:id",
         name: "invoice-inbox-id",
-        component: () => import("@/modules/Document/pages/Invoices/InvoiceInbox/View.vue"),
+        component: () => import("@/modules/Document/pages/Invoices/InvoiceInboxShow.vue"),
         meta: {
             title: "Просмотр"
         }
@@ -177,7 +177,7 @@ export default [
     {
         path: "/invoice-outgoing/:id",
         name: "invoice-outgoing-id",
-        component: () => import("@/modules/Document/pages/Invoices/InvoiceOutgoing/View.vue"),
+        component: () => import("@/modules/Document/pages/Invoices/InvoiceOutgoingShow.vue"),
         meta: {
             title: "Исходящие"
         }

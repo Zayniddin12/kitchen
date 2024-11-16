@@ -93,11 +93,15 @@ onMounted(() => {
         </tr>
         <tr>
           <th class="border bg-[#E2E6F3]-100 p-4 text-left font-semibold">Номер и дата договора о поставке</th>
-          <td class="border p-4">{{ documentStore.document?.number }} от {{ documentStore.document?.number }}</td>
+          <td class="border p-4">{{ documentStore.document?.number }} от {{ documentStore.document?.date }}</td>
         </tr>
         <tr>
           <th class="border bg-[#E2E6F3]-100 p-4 text-left font-semibold">Номер и дата накладной</th>
-          <td class="border p-4">{{ documentStore.document?.number }} от {{ documentStore.document?.number }}</td>
+          <td class="border p-4">
+            <template v-if="documentStore.document?.invoice_number && documentStore.document?.invoice_date">
+              {{ documentStore.document.invoice_number }} от {{ documentStore.document.invoice_date }}
+            </template>
+          </td>
         </tr>
         <tr>
           <th class="border bg-[#E2E6F3]-100 p-4 text-left font-semibold">Производитель продукта</th>
