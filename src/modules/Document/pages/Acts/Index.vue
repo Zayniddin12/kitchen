@@ -266,14 +266,6 @@ const changePage = (value: number) => {
         </template>
       </el-table-column>
       <el-table-column
-          prop="dock_view"
-          label="Вид док..."
-      >
-        <template #default>
-          Акт
-        </template>
-      </el-table-column>
-      <el-table-column
           prop="product_parent_name"
           label="Тип продукта"
       >

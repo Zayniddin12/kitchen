@@ -1,69 +1,58 @@
-<script setup lang="ts">
-import { ref, watchEffect } from "vue";
+<script
+    setup
+    lang="ts"
+>
+import { computed, onMounted, ref, watchEffect } from "vue";
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
+import { useRoute } from "vue-router";
+import { useDocumentStore } from "@/modules/Document/document.store";
+import { formatDate2, formatNumber } from "../../../../utils/helper";
+import { DocumentProductType, DocumentType } from "@/modules/Document/document.types";
+import { useUsersStore } from "@/modules/Users/users.store";
 
-interface TableData {
-  name: string;
-  count: string;
-  count2: string;
-  cost: string;
-  sum: string;
-}
+const documentStore = useDocumentStore();
+const userStore = useUsersStore();
 
-const tableData = ref<TableData[]>([
-  {
-    name: "Картофель",
-    count: "80",
-    count2: "кг",
-    cost: "22 000 сум",
-    sum: "1 760 000 сум",
-  },
-  {
-    name: "Говядина",
-    count: "30",
-    count2: "кг",
-    cost: "86 000 сум",
-    sum: "1 700 000 сум",
-  },
-  {
-    name: "Горох",
-    count: "50",
-    count2: "кг",
-    cost: "34 000 сум",
-    sum: "1 000 000 сум",
-  },
-  {
-    name: "Морковь",
-    count: "50",
-    count2: "кг",
-    cost: "20 000 сум",
-    sum: "1 760 000 сум",
-  },
-]);
+const route = useRoute();
+
+const routeId = computed<string>(() => route.params.id as string);
+
+const productsSum = computed(() => {
+  if (!documentStore.document) return 0;
+  return documentStore.document.products.reduce((sum: number, product: DocumentProductType) => {
+    return (
+        sum +
+        Number(
+            product.price && product.quantity ? product.price * product.quantity : 0
+        )
+    );
+  }, 0);
+});
 
 const { setBreadCrumb } = useBreadcrumb();
 
 const setBreadCrumbFn = () => {
   setBreadCrumb([
     {
-      label: "Документы",
+      label: "Документы"
     },
     {
-      label: "Накладные",
+      label: "Накладные"
     },
     {
       label: "Исходящие",
-      to: { name: "invoice-outgoing" },
+      to: { name: "invoice-outgoing" }
     },
     {
       label: "Просмотр",
-      isActionable: true,
-    },
+      isActionable: true
+    }
   ]);
 };
 
-watchEffect(() => {
+onMounted(() => {
   setBreadCrumbFn();
+  documentStore.fetchDocument(routeId.value);
 });
 
 </script>
@@ -73,90 +62,143 @@ watchEffect(() => {
     <div class="border-[#E2E6F3] border rounded-[15px] w-[55%] mr-0">
       <div class="px-[72px] pb-[70px]">
         <header class="flex items-center justify-center my-[24px] mb-6">
-          <img src="../../../../assets/images/logo.svg" alt="logo">
+          <img
+              src="@/assets/images/logo.svg"
+              alt="logo"
+          >
           <div class="flex flex-col ml-3">
             <b class="text-[#000D24] text-lg">NKMK</b>
             <span class="text-[#CBCCCE]">Jamg‘armasi</span>
           </div>
         </header>
-        <h1 class="text-[#000D24] font-bold text-[20px] text-center mb-[24px]">НАЗВАНИЕ ДОКУМЕНТА</h1>
+        <h1 class="text-[#000D24] font-bold text-[20px] text-center mb-6">НАЗВАНИЕ ДОКУМЕНТА</h1>
 
         <div class="flex items-center mb-[8px]">
           <h1 class="text-[#4F5662] text-[14px] font-medium">Дата создания в системе:</h1>
-          <span class="ml-2 text-[#A8AAAE] text-[14px] font-medium block">24.08.2024</span>
+          <span class="ml-2 text-[#A8AAAE] text-[14px] font-medium block">
+            {{
+              documentStore.document?.created_at ? formatDate2(new Date(documentStore.document.created_at)) : ""
+            }}
+          </span>
         </div>
 
-        <div class="flex items-center mb-[24px]">
+        <div class="flex items-center mb-6">
           <h1 class="text-[#4F5662] text-[14px] font-medium">№ накладной в системе:</h1>
-          <span class="ml-2 text-[#A8AAAE] text-[14px] font-medium block"> NK-00000</span>
+          <span class="ml-2 text-[#A8AAAE] text-[14px] font-medium block">{{
+              documentStore.document?.generated_number
+            }}</span>
         </div>
 
         <div class="flex items-center mb-[8px]">
           <h1 class="text-[#4F5662] text-[14px] font-medium">Дата накладной:</h1>
-          <span class="ml-2 text-[#A8AAAE] text-[14px] font-medium block">24.08.2024</span>
+          <span class="ml-2 text-[#A8AAAE] text-[14px] font-medium block">{{ documentStore.document?.date }}</span>
         </div>
 
-        <div class="flex items-center mb-[24px]">
+        <div class="flex items-center mb-6">
           <h1 class="text-[#4F5662] text-[14px] font-medium">№ накладной:</h1>
-          <span class="ml-2 text-[#A8AAAE] text-[14px] font-medium block">247</span>
+          <span class="ml-2 text-[#A8AAAE] text-[14px] font-medium block">{{ documentStore.document?.number }}</span>
         </div>
 
-        <div class="flex items-center mb-[24px]">
+        <div class="flex items-center mb-6">
           <h1 class="text-[#4F5662] text-[14px] font-medium">Вид документа:</h1>
-          <span class="ml-2 text-[#A8AAAE] text-[14px] font-medium block">Входящий накладной</span>
+          <span class="ml-2 text-[#A8AAAE] text-[14px] font-medium block">{{ documentStore.document?.type }}</span>
         </div>
 
-        <div class="flex items-center mb-[24px]">
+        <div class="flex items-center mb-6">
           <h1 class="text-[#4F5662] text-[14px] font-medium">От кого:</h1>
-          <span class="ml-2 text-[#A8AAAE] text-[14px] font-medium block">Руководитель группы отдела координации общественного питания</span>
+          <span class="ml-2 text-[#A8AAAE] text-[14px] font-medium block">{{ documentStore.document?.from_name }}</span>
         </div>
         <div class="flex items-baseline mb-[8px]">
           <h1 class="text-[#4F5662] text-[14px] font-medium">Кому:</h1>
-          <span class="ml-2 text-[#A8AAAE] text-[14px] font-medium block">«Фонд НКМК» ДМ «Навоийской» областной администрации, руководитель комплекса общественного питания Баракаеву Д.</span>
+          <span class="ml-2 text-[#A8AAAE] text-[14px] font-medium block">{{ documentStore.document?.to_name }}</span>
         </div>
-        <div class="flex items-baseline mb-[24px]">
+        <div class="flex items-baseline mb-6">
           <h1 class="text-[#4F5662] text-[14px] font-medium">Через кого:</h1>
-          <span class="ml-2 text-[#A8AAAE] text-[14px] font-medium block">«Фонд НКМК» ДМ «Навоийской» областной администрации, руководитель комплекса общественного питания Баракаеву Д.</span>
+          <span class="ml-2 text-[#A8AAAE] text-[14px] font-medium block">{{
+              documentStore.document?.through_whom
+            }}</span>
         </div>
 
         <div class="flex items-center mb-[14px]">
           <h1 class="text-[#4F5662] text-[14px] font-medium">Основание:</h1>
-          <span class="ml-2 text-[#A8AAAE] text-[14px] font-medium block">Назначение №2392</span>
+          <span class="ml-2 text-[#A8AAAE] text-[14px] font-medium block">{{ documentStore.document?.basis }}</span>
         </div>
-        <div class="flex items-center mb-[24px]">
+        <div class="flex items-center mb-6">
           <h1 class="text-[#4F5662] text-[14px] font-medium">Способ отправления:</h1>
-          <span class="ml-2 text-[#A8AAAE] text-[14px] font-medium block">85 897 VAA</span>
+          <span class="ml-2 text-[#A8AAAE] text-[14px] font-medium block">
+            {{
+              documentStore.document?.shipping_method
+            }}
+          </span>
         </div>
 
-        <el-table :data="tableData" stripe class="custom-element-table">
-          <el-table-column prop="name" label="Название" />
-          <el-table-column prop="count" label="Количество" />
-          <el-table-column prop="count2" label="Ед. измерения" />
-          <el-table-column prop="cost" label="Цена" />
-          <el-table-column prop="sum" label="Сумма" />
+        <el-table
+            :data="documentStore.document?.products ?? []"
+            stripe
+            class="custom-element-table custom-element-table--has-append"
+        >
+          <el-table-column
+              prop="name"
+              label="Название"
+          />
+          <el-table-column
+              prop="quantity"
+              label="Количество"
+          />
+          <el-table-column
+              width="160"
+              prop="unit"
+              label="Ед. измерения"
+          />
+          <el-table-column
+              prop="price"
+              label="Цена"
+          />
+          <el-table-column
+              prop="sum"
+              label="Сумма"
+          >
+            <template #default="{row}:{row:DocumentType}">
+              {{ formatNumber(row.quantity * row.price) }} сум
+            </template>
+          </el-table-column>
+          <template
+              v-if="productsSum"
+              #append
+          >
+            <div class="flex items-center justify-end p-4">
+              <h1 class="text-[#8F9194] text-sm font-bold mr-[5px]">
+                Общая сумма:
+              </h1>
+              <h1 class="text-[#000D24] text-sm font-bold mr-5">
+                {{ formatNumber(productsSum) }} сум
+              </h1>
+            </div>
+          </template>
         </el-table>
-
-        <div class="flex items-center justify-end mt-[10px]">
-          <h1 class="text-[#000D24] text-[14px] font-bold mr-[70px]">Общая сумма: </h1>
-          <h1 class="text-[#000D24] text-[14px] font-bold mr-4">7 040 000 сум</h1>
-        </div>
-
-        <div class="mt-[40px] flex items-center justify-between" v-for="(item, index) in 5" :key="index">
-          <div class="flex items-baseline mb-[24px] w-[200px]">
-            <h1 class=" text-[14px] text-[#4F5662] font-medium">
-              Кладовщик:
-            </h1>
-          </div>
-
-          <img src="../../../../assets/images/icons/qr.svg" alt="qr" />
-
-          <h1 class="text-[#A8AAAE] text-[14px] mr-[100px]">Эргашева Л.</h1>
+        <div
+            class="mt-[40px] flex items-center justify-between gap-x-6"
+            v-for="singer in documentStore.document?.singers"
+            :key="singer.id"
+        >
+          <p class=" text-sm text-[#4F5662] font-medium w-[18%]">
+            Кладовщик:
+          </p>
+          <img
+              src="@/assets/images/icons/qr.svg"
+              alt="qr"
+          />
+          <p class="text-[#A8AAAE] text-sm w-[22%]">{{ userStore.getUserFullName(singer) || "-" }}</p>
         </div>
       </div>
     </div>
 
     <button class="custom-white-btn ml-[24px] w-[260px]">
-      <img src="../../../../assets/images/icons/plane.svg" alt="plane" class="mr-[12px]" />
+      <img
+          src="@/assets/images/icons/plane.svg"
+          alt="plane"
+          class="mr-[12px]"
+      />
       Отправить
     </button>
   </div>

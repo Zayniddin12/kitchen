@@ -3,19 +3,19 @@
     lang="ts"
 >
 
-import {useDocumentStore} from "@/modules/Document/document.store";
-import {useSettingsStore} from "@/modules/Settings/store";
-import {onMounted, reactive, ref, watch} from "vue";
-import {useRoute, useRouter} from "vue-router";
+import { useDocumentStore } from "@/modules/Document/document.store";
+import { useSettingsStore } from "@/modules/Settings/store";
+import { onMounted, reactive, ref, watch } from "vue";
+import { useRoute, useRouter } from "vue-router";
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 import white from "@/assets/images/filter2.svg";
 import filter from "@/assets/images/filter.svg";
 import CollapseFilter from "@/components/collapseFilter/index.vue";
 import AppInput from "@/components/ui/form/app-input/AppInput.vue";
 import AppSelect from "@/components/ui/form/app-select/AppSelect.vue";
-import {ValidationType} from "@/components/ui/form/app-form/app-form.type";
-import {filterObjectValues, formatDate2, setTableColumnIndex} from "@/utils/helper";
-import {DraftsParamsType, DraftType} from "@/modules/Document/document.types";
+import { ValidationType } from "@/components/ui/form/app-form/app-form.type";
+import { filterObjectValues, formatDate2, setTableColumnIndex } from "@/utils/helper";
+import { DraftsParamsType, DraftType } from "@/modules/Document/document.types";
 import AppForm from "@/components/ui/form/app-form/AppForm.vue";
 import AppPagination from "@/components/ui/app-pagination/AppPagination.vue";
 import AppDatePicker from "@/components/ui/form/app-date-picker/AppDatePicker.vue";
@@ -51,14 +51,14 @@ const setValidation = (validation: ValidationType) => {
 };
 
 const filterForm = () => {
-  const query = {...filterObjectValues(form)};
+  const query = { ...filterObjectValues(form) };
   delete query.page;
 
-  router.push({query});
+  router.push({ query });
 };
 
 const clearForm = () => {
-  router.push({query: {}});
+  router.push({ query: {} });
   isOpenFilter.value = false;
 };
 
@@ -66,7 +66,7 @@ const isOpenFilter = ref<boolean>(false);
 const router = useRouter();
 const route = useRoute();
 
-const {setBreadCrumb} = useBreadcrumb();
+const { setBreadCrumb } = useBreadcrumb();
 
 const setBreadCrumbFn = () => {
   setBreadCrumb([
@@ -100,7 +100,7 @@ const fetchInvoices = async () => {
   form.shipping_method = query.shipping_method ?? "";
   form.generated_number = query.generated_number ?? "";
 
-  const newForm = {...form, doc_type: "invoice"}
+  const newForm = { ...form, doc_type: "invoice" };
 
 
   try {
@@ -118,23 +118,23 @@ watch(
     () => {
       fetchInvoices();
     },
-    {immediate: true}
+    { immediate: true }
 );
 
 watch(() => route.name, () => {
   setBreadCrumbFn();
-}, {immediate: true});
+}, { immediate: true });
 
 onMounted(() => {
   settingsStore.fetchRespondents();
-})
+});
 
 const tableCurrentChange = (value: DraftType) => {
-  router.push({name: `${route.name as string}-id`, params: {id: value.id}});
+  router.push({ name: `${route.name as string}-id`, params: { id: value.id } });
 };
 
 const changePage = (value: number) => {
-  router.push({query: {...route.query, page: value}});
+  router.push({ query: { ...route.query, page: value } });
 };
 
 </script>
