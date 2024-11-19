@@ -30,6 +30,10 @@ input[type="number"] {
   -moz-appearance: textfield;
 }
 
+button[disabled]{
+  cursor: not-allowed;
+}
+
 .nested {
   &-enter-active,
   &-leave-active,

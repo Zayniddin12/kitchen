@@ -10,6 +10,7 @@ import {
     ContractsParamsType,
     ContractsType
 } from "@/modules/Document/document.types";
+import { AxiosError } from "axios";
 
 const prefix = "documents";
 
@@ -32,8 +33,10 @@ export default {
         return data.data.document as DocumentType;
     },
 
-    getPdf(uuid: string) {
-        return axios.get(`${prefix}/get-pdf/${uuid}`);
+    async getPdf(uuid: string) {
+        return  await axios.get(`${prefix}/get-pdf/${uuid}`).catch((err: AxiosError) => {
+            console.log(err);
+        });
     },
 
     async fetchActs(params: ActsParamsType = {}): Promise<ActsType> {

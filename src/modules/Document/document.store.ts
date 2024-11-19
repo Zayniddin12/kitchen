@@ -60,13 +60,17 @@ export const useDocumentStore = defineStore("documentStore", () => {
     const pdfLoading = ref(false);
 
     const getPdf = async (uuid: string) => {
-        pdfLoading.value = true;
-
-        try {
-            await documentApi.getPdf(uuid);
-        } finally {
-            pdfLoading.value = false;
-        }
+        window.open(`${import.meta.env.VITE_BACKEND}/documents/get-pdf/${uuid}`, "_blank");
+        // pdfLoading.value = true;
+        //
+        // try {
+        //     const response = await documentApi.getPdf(uuid);
+        //     console.log(response);
+        // } catch (error) {
+        //     console.log("SS", error);
+        // } finally {
+        //     pdfLoading.value = false;
+        // }
     };
 
     const acts = ref<ActsType | null>(null);

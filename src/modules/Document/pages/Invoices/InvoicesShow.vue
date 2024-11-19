@@ -6,9 +6,10 @@ import { computed, onMounted, ref, watchEffect } from "vue";
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 import { useRoute } from "vue-router";
 import { useDocumentStore } from "@/modules/Document/document.store";
-import { formatDate2, formatNumber } from "../../../../utils/helper";
+import { formatDate2, formatNumber } from "@/utils/helper";
 import { DocumentProductType, DocumentType } from "@/modules/Document/document.types";
 import { useUsersStore } from "@/modules/Users/users.store";
+import AppOverlay from "@/components/ui/app-overlay/AppOverlay.vue";
 
 const documentStore = useDocumentStore();
 const userStore = useUsersStore();
@@ -40,8 +41,8 @@ const setBreadCrumbFn = () => {
       label: "Накладные"
     },
     {
-      label: "Исходящие",
-      to: { name: "invoice-outgoing" }
+      label: String(route.meta?.parentRouteTitle ?? ""),
+      to: route.meta.parentRouteUrl
     },
     {
       label: "Просмотр",
@@ -59,8 +60,12 @@ onMounted(() => {
 
 <template>
   <div class="flex items-start justify-center">
-    <div class="border-[#E2E6F3] border rounded-[15px] w-[55%] mr-0">
-      <div class="px-[72px] pb-[70px]">
+    <div class="w-[55%]">
+      <AppOverlay
+          :loading="documentStore.documentLoading"
+          :rounded="15"
+          parent-class-name="border-[#E2E6F3] border rounded-[15px] px-[72px] pb-[70px]"
+      >
         <header class="flex items-center justify-center my-[24px] mb-6">
           <img
               src="@/assets/images/logo.svg"
@@ -71,22 +76,26 @@ onMounted(() => {
             <span class="text-[#CBCCCE]">Jamg‘armasi</span>
           </div>
         </header>
-        <h1 class="text-[#000D24] font-bold text-[20px] text-center mb-6">НАЗВАНИЕ ДОКУМЕНТА</h1>
-
-        <div class="flex items-center mb-[8px]">
-          <h1 class="text-[#4F5662] text-[14px] font-medium">Дата создания в системе:</h1>
-          <span class="ml-2 text-[#A8AAAE] text-[14px] font-medium block">
+        <h1 class="text-[#000D24] font-bold text-[20px] text-center mb-6">
+          {{ route.name === "invoice-inbox-id" ? "НАКЛАДНОЙ" : "НАЗВАНИЕ ДОКУМЕНТА" }}</h1>
+        <div class="flex items-center justify-between">
+          <div class="flex items-center mb-[8px]">
+            <h1 class="text-[#4F5662] text-[14px] font-medium">Дата создания в системе:</h1>
+            <span class="ml-2 text-[#A8AAAE] text-[14px] font-medium block">
             {{
-              documentStore.document?.created_at ? formatDate2(new Date(documentStore.document.created_at)) : ""
-            }}
+                documentStore.document?.created_at ? formatDate2(new Date(documentStore.document.created_at)) : ""
+              }}
           </span>
+          </div>
         </div>
 
         <div class="flex items-center mb-6">
           <h1 class="text-[#4F5662] text-[14px] font-medium">№ накладной в системе:</h1>
-          <span class="ml-2 text-[#A8AAAE] text-[14px] font-medium block">{{
+          <span class="ml-2 text-[#A8AAAE] text-[14px] font-medium block">
+            {{
               documentStore.document?.generated_number
-            }}</span>
+            }}
+          </span>
         </div>
 
         <div class="flex items-center mb-[8px]">
@@ -176,30 +185,78 @@ onMounted(() => {
             </div>
           </template>
         </el-table>
-        <div
-            class="mt-[40px] flex items-center justify-between gap-x-6"
-            v-for="singer in documentStore.document?.singers"
-            :key="singer.id"
+        <template v-if="route.name === 'invoice-outgoing-id'">
+          <div
+              class="mt-[40px] flex items-center justify-between gap-x-6"
+              v-for="singer in documentStore.document?.singers"
+              :key="singer.id"
+          >
+            <p class=" text-sm text-[#4F5662] font-medium w-[18%]">
+              Кладовщик:
+            </p>
+            <img
+                src="@/assets/images/icons/qr.svg"
+                alt="qr"
+            />
+            <p class="text-[#A8AAAE] text-sm w-[22%]">{{ userStore.getUserFullName(singer) || "-" }}</p>
+          </div>
+        </template>
+      </AppOverlay>
+      <div
+          v-if="route.name === 'invoice-inbox-id' && documentStore.document?.status === 'sent' || documentStore.document?.status === 'pending'"
+          class="flex items-center justify-end mt-6 gap-x-4"
+      >
+        <ElButton
+            :loading="documentStore.rejectLoading"
+            @click="documentStore.changeDocumentStatus('rejected', routeId)"
+            text
+            bg
+            plain
+            size="large"
+            class="custom-cancel-btn h-[41px]"
         >
-          <p class=" text-sm text-[#4F5662] font-medium w-[18%]">
-            Кладовщик:
-          </p>
-          <img
-              src="@/assets/images/icons/qr.svg"
-              alt="qr"
-          />
-          <p class="text-[#A8AAAE] text-sm w-[22%]">{{ userStore.getUserFullName(singer) || "-" }}</p>
-        </div>
+          Отклонить
+        </ElButton>
+        <ElButton
+            :loading="documentStore.approveLoading"
+            @click="documentStore.changeDocumentStatus('approved', routeId)"
+            type="success"
+            size="large"
+            class="custom-send-btn h-[41px] !ml-0"
+        >
+          Принять
+        </ElButton>
       </div>
     </div>
-
-    <button class="custom-white-btn ml-[24px] w-[260px]">
-      <img
-          src="@/assets/images/icons/plane.svg"
-          alt="plane"
-          class="mr-[12px]"
-      />
-      Отправить
-    </button>
+    <div class="flex flex-col gap-y-6 ml-4 w-[260px]">
+      <button class="custom-white-btn w-full">
+        <img
+            src="@/assets/images/icons/plane.svg"
+            alt="plane"
+            class="mr-[12px]"
+        />
+        Отправить
+      </button>
+      <a
+          v-if="route.name === 'invoice-inbox-id' && documentStore.document?.file_info && documentStore.document?.file_link"
+          class="border rounded-[16px] py-3 px-4 flex items-start cursor-pointer min-w-[180px]"
+          :href="documentStore.document.file_link"
+          target="_blank"
+      >
+        <img
+            src="@/assets/images/icons/pdf2.svg"
+            class="mr-[8px] mt-1"
+            alt="pdf"
+        />
+        <span class="flex flex-col items-start">
+              <span class="mb-[4px] text-[#000D24] text-[14px] font-medium">
+                Накладной документ
+              </span>
+              <span class="text-[#A8AAAE] text-xs uppercase">{{
+                  (documentStore.document.file_info.mimeType as string).replace("application/", "")
+                }} | {{ documentStore.document.file_info.size }}</span>
+            </span>
+      </a>
+    </div>
   </div>
 </template>

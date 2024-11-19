@@ -82,7 +82,7 @@ export default [
             breadcrumbItemTitle: "Полученные",
             permissionView: true,
             apiUrl: "received",
-            hasTabs: true,
+            hasTabs: true
         }
     },
     {
@@ -95,7 +95,7 @@ export default [
             parentRouteTitle: "Полученные",
             parentRouteUrl: { name: "received" },
             hasRejectBtn: true,
-            hasAcceptBtn: true,
+            hasAcceptBtn: true
         }
     },
 
@@ -109,7 +109,7 @@ export default [
             breadcrumbItemTitle: "Отправленные",
             permissionView: true,
             apiUrl: "sent",
-            hasTabs: true,
+            hasTabs: true
         }
     },
     {
@@ -121,7 +121,7 @@ export default [
             title: "Просмотр",
             parentRouteTitle: "Отправленные",
             parentRouteUrl: { name: "sent" },
-            hasCancelBtn: true,
+            hasCancelBtn: true
         }
     },
 
@@ -145,7 +145,6 @@ export default [
     {
         path: "/invoice-inbox",
         name: "invoice-inbox",
-        // component: () => import("@/modules/Document/pages/Invoices/InvoiceInbox/Index.vue"),
         component: () => import("@/modules/Document/pages/Invoices/InvoicesIndex.vue"),
         meta: {
             title: "Входящие",
@@ -156,8 +155,10 @@ export default [
     {
         path: "/invoice-inbox/:id",
         name: "invoice-inbox-id",
-        component: () => import("@/modules/Document/pages/Invoices/InvoiceInboxShow.vue"),
+        component: () => import("@/modules/Document/pages/Invoices/InvoicesShow.vue"),
         meta: {
+            parentRouteTitle: "Входящие",
+            parentRouteUrl: { name: "invoice-inbox" },
             title: "Просмотр"
         }
     },
@@ -166,7 +167,6 @@ export default [
     {
         path: "/invoice-outgoing",
         name: "invoice-outgoing",
-        // component: () => import("@/modules/Document/pages/Invoices/InvoiceOutgoing/Index.vue"),
         component: () => import("@/modules/Document/pages/Invoices/InvoicesIndex.vue"),
         meta: {
             title: "Исходящие",
@@ -177,8 +177,10 @@ export default [
     {
         path: "/invoice-outgoing/:id",
         name: "invoice-outgoing-id",
-        component: () => import("@/modules/Document/pages/Invoices/InvoiceOutgoingShow.vue"),
+        component: () => import("@/modules/Document/pages/Invoices/InvoicesShow.vue"),
         meta: {
+            parentRouteTitle: "Исходящие",
+            parentRouteUrl: { name: "invoice-outgoing" },
             title: "Исходящие"
         }
     },

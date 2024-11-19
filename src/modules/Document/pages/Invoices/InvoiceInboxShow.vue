@@ -130,7 +130,6 @@ onMounted(() => {
                 class="mr-[8px] mt-1"
                 alt="pdf"
             >
-
             <div>
               <h3 class="mb-[4px] text-[#000D24] text-[14px] font-medium">Накладной документ</h3>
               <h4 class="text-[#A8AAAE] text-[12px]">PDF | 9.83 MB</h4>

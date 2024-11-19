@@ -65,6 +65,7 @@ onMounted(() => {
       :label-position
       :size
       :status-icon
+      @submit.prevent="submit ?? undefined"
   >
     <slot/>
   </ElForm>
