@@ -63,7 +63,7 @@ const { confirm } = useConfirm();
 const validationErrors = ref<Record<string, any> | null>(null);
 
 const sendForm = async (status: DocumentStatusType) => {
-  if (status === "sent") required.value = true;
+  required.value = status === "sent";
 
   form.status = status;
 
@@ -272,7 +272,7 @@ const loading = computed(() => documentStore.createLoading || documentStore.upda
               prop="number"
               label="№ документа"
               label-class="text-[#A8AAAE] text-[12px] font-medium"
-              required
+              :required
           />
           <AppDatePicker
               :placeholder="form.date"
