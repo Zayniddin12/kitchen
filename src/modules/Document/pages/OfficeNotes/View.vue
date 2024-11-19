@@ -59,7 +59,7 @@ watch(() => route.params.id, (newId) => {
       >
         <header class="flex items-center justify-center my-[24px] mb-6">
           <img
-              src="@/assets/images/logo.svg"
+              src="../../../../assets/images/logo.svg"
               alt="logo"
           >
           <div class="flex flex-col ml-3">
@@ -149,7 +149,7 @@ watch(() => route.params.id, (newId) => {
 
     <button class="custom-white-btn w-[260px]">
       <img
-          src="@/assets/images/icons/plane.svg"
+          src="../../../../assets/images/icons/plane.svg"
           alt="plane"
           class="mr-[12px]"
       />

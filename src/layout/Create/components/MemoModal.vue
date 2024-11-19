@@ -217,7 +217,7 @@ const loading = computed(() => documentStore.createLoading || documentStore.upda
 
           <div class="flex items-center mb-[24px]">
             <h1 class="text-[#4F5662] text-[14px] font-medium">№:</h1>
-            <span class="ml-2 text-[#A8AAAE] text-[14px] font-medium block">{{ form.number || "NK-00000" }}</span>
+            <span class="ml-2 text-[#A8AAAE] text-[14px] font-medium block">{{ form.number }}</span>
           </div>
 
           <div class="flex items-baseline mb-[24px]">
@@ -271,9 +271,8 @@ const loading = computed(() => documentStore.createLoading || documentStore.upda
               v-model="form.number"
               prop="number"
               label="№ документа"
-              placeholder="Автоматически"
               label-class="text-[#A8AAAE] text-[12px] font-medium"
-              disabled
+              required
           />
           <AppDatePicker
               :placeholder="form.date"

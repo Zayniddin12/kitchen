@@ -329,7 +329,6 @@ const tableRowClassName = ({ row }: { row: DraftType }) => {
         stripe
         :highlight-current-row="!!route.meta.permissionView"
         @current-change="tableCurrentChange"
-        :row-class-name="tableRowClassName"
     >
       <el-table-column
           prop="num"
@@ -353,7 +352,11 @@ const tableRowClassName = ({ row }: { row: DraftType }) => {
       <el-table-column
           prop="number"
           label="№ документа"
-      />
+      >
+        <template #default="{ row }: { row: DraftType }">
+          {{ row.number ?? "-" }}
+        </template>
+      </el-table-column>
       <el-table-column
           prop="subject"
           label="Тема"
@@ -387,7 +390,7 @@ const tableRowClassName = ({ row }: { row: DraftType }) => {
                 @click="editModalHandler(row)"
             >
               <img
-                  src="@/assets/images/icons/edit.svg"
+                  src="../../../../assets/images/icons/edit.svg"
                   alt="edit"
               />
             </button>
@@ -397,7 +400,7 @@ const tableRowClassName = ({ row }: { row: DraftType }) => {
                 :to="{name: `${route.name as string}-id`, params: {id:row.id}}"
             >
               <img
-                  src="@/assets/images/eye.svg"
+                  src="../../../../assets/images/eye.svg"
                   alt="eye"
               />
             </RouterLink>
@@ -410,7 +413,7 @@ const tableRowClassName = ({ row }: { row: DraftType }) => {
                 bg
             >
               <img
-                  src="@/assets/images/download.svg"
+                  src="../../../../assets/images/download.svg"
                   alt="download"
               />
             </ElButton>

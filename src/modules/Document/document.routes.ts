@@ -6,7 +6,7 @@ export default [
     {
         path: "/inbox",
         name: "inbox",
-        component: () => import("@/modules/Document/pages/OfficeNotes/Drafts/Index.vue"),
+        component: () => import("@/modules/Document/pages/OfficeNotes/Index.vue"),
         meta: {
             title: "Входящие",
             apiUrl: "received",
@@ -22,7 +22,7 @@ export default [
     {
         path: "/inbox/:id",
         name: "inbox-id",
-        component: () => import("@/modules/Document/pages/OfficeNotes/Inbox/View.vue"),
+        component: () => import("@/modules/Document/pages/OfficeNotes/View.vue"),
         meta: {
             title: "Просмотр",
             parentRouteTitle: "Входящие",
@@ -34,7 +34,7 @@ export default [
     {
         path: "/outgoing",
         name: "outgoing",
-        component: () => import("@/modules/Document/pages/OfficeNotes/Drafts/Index.vue"),
+        component: () => import("@/modules/Document/pages/OfficeNotes/Index.vue"),
         meta: {
             title: "Исходящие",
             apiUrl: "sent",
@@ -46,7 +46,7 @@ export default [
     {
         path: "/outgoing/:id",
         name: "outgoing-id",
-        component: () => import("@/modules/Document/pages/OfficeNotes/Inbox/View.vue"),
+        component: () => import("@/modules/Document/pages/OfficeNotes/View.vue"),
         meta: {
             title: "Исходящие",
             parentRouteTitle: "Исходящие",
@@ -58,7 +58,7 @@ export default [
     {
         path: "/drafts",
         name: "drafts",
-        component: () => import("@/modules/Document/pages/OfficeNotes/Drafts/Index.vue"),
+        component: () => import("@/modules/Document/pages/OfficeNotes/Index.vue"),
         meta: {
             title: "Черновики",
             doc_type: "memo",
@@ -76,7 +76,7 @@ export default [
     {
         path: "/received",
         name: "received",
-        component: () => import("@/modules/Document/pages/OfficeNotes/Drafts/Index.vue"),
+        component: () => import("@/modules/Document/pages/OfficeNotes/Index.vue"),
         meta: {
             title: "Полученные",
             breadcrumbItemTitle: "Полученные",
@@ -88,7 +88,7 @@ export default [
     {
         path: "/received/:id",
         name: "received-id",
-        component: () => import("@/modules/Document/pages/OfficeNotes/Inbox/View.vue"),
+        component: () => import("@/modules/Document/pages/OfficeNotes/View.vue"),
         // component: () => import("@/modules/Document/pages/Requests/Received/InvoiceInboxShow.vue"),
         meta: {
             title: "Просмотр",
@@ -103,7 +103,7 @@ export default [
     {
         path: "/sent",
         name: "sent",
-        component: () => import("@/modules/Document/pages/OfficeNotes/Drafts/Index.vue"),
+        component: () => import("@/modules/Document/pages/OfficeNotes/Index.vue"),
         meta: {
             title: "Отправленные",
             breadcrumbItemTitle: "Отправленные",
@@ -115,7 +115,7 @@ export default [
     {
         path: "/sent/:id",
         name: "sent-id",
-        component: () => import("@/modules/Document/pages/OfficeNotes/Inbox/View.vue"),
+        component: () => import("@/modules/Document/pages/OfficeNotes/View.vue"),
         // component: () => import("@/modules/Document/pages/Requests/Sent/InvoiceInboxShow.vue"),
         meta: {
             title: "Просмотр",
@@ -129,7 +129,7 @@ export default [
     {
         path: "/draft",
         name: "draft",
-        component: () => import("@/modules/Document/pages/OfficeNotes/Drafts/Index.vue"),
+        component: () => import("@/modules/Document/pages/OfficeNotes/Index.vue"),
         meta: {
             title: "Черновики",
             doc_type_id: 2,
