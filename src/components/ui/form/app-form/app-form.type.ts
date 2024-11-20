@@ -6,6 +6,7 @@ export interface AppFormPropsType {
     labelPosition?: ElFormItemLabelPosition,
     statusIcon?: boolean,
     validationErrors?: ValidationErrorsType,
+    submit?: Function;
 }
 
 export interface ValidationType {

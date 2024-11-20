@@ -46,8 +46,14 @@ export const useAuthStore = defineStore("authStore", () => {
     const userFullName = computed(() => {
         if (!user.value) return "";
 
-        return `${user.value.firstname} ${user.value.lastname}`;
+        const { firstname, lastname } = user.value;
+
+        if (!firstname) return lastname || "";
+        if (!lastname) return firstname;
+
+        return `${firstname} ${lastname}`;
     });
+
 
     const me = async () => {
         isAuth.value = true;
@@ -134,7 +140,7 @@ export const useAuthStore = defineStore("authStore", () => {
     };
 
     const remainingTime = ref(0);
-    let intervalId: number | null = null;
+    let intervalId: NodeJS.Timeout | number | null = null;
 
     const updateRemainingTime = () => {
         if (!otp.value) {

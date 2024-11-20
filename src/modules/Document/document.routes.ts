@@ -6,22 +6,27 @@ export default [
     {
         path: "/inbox",
         name: "inbox",
-        component: () => import("@/modules/Document/pages/OfficeNotes/Drafts/Index.vue"),
+        component: () => import("@/modules/Document/pages/OfficeNotes/Index.vue"),
         meta: {
             title: "Входящие",
             apiUrl: "received",
+            doc_type: "memo",
+            permissionView: true,
             uniqueKeys: {
                 documents: true,
                 documentInbox: true
-            }
+            },
+            breadcrumbItemTitle: "Входящие"
         }
     },
     {
         path: "/inbox/:id",
         name: "inbox-id",
-        component: () => import("@/modules/Document/pages/OfficeNotes/Inbox/View.vue"),
+        component: () => import("@/modules/Document/pages/OfficeNotes/View.vue"),
         meta: {
-            title: "Просмотр"
+            title: "Просмотр",
+            parentRouteTitle: "Входящие",
+            parentRouteUrl: { name: "inbox" }
         }
     },
 
@@ -29,18 +34,23 @@ export default [
     {
         path: "/outgoing",
         name: "outgoing",
-        component: () => import("@/modules/Document/pages/OfficeNotes/Drafts/Index.vue"),
+        component: () => import("@/modules/Document/pages/OfficeNotes/Index.vue"),
         meta: {
             title: "Исходящие",
-            apiUrl: "sent"
+            apiUrl: "sent",
+            doc_type: "memo",
+            permissionView: true,
+            breadcrumbItemTitle: "Исходящие"
         }
     },
     {
         path: "/outgoing/:id",
         name: "outgoing-id",
-        component: () => import("@/modules/Document/pages/OfficeNotes/Outgoing/View.vue"),
+        component: () => import("@/modules/Document/pages/OfficeNotes/View.vue"),
         meta: {
-            title: "Просмотр"
+            title: "Исходящие",
+            parentRouteTitle: "Исходящие",
+            parentRouteUrl: { name: "outgoing" }
         }
     },
 
@@ -48,10 +58,14 @@ export default [
     {
         path: "/drafts",
         name: "drafts",
-        component: () => import("@/modules/Document/pages/OfficeNotes/Drafts/Index.vue"),
+        component: () => import("@/modules/Document/pages/OfficeNotes/Index.vue"),
         meta: {
             title: "Черновики",
-            apiUrl: "drafts"
+            doc_type: "memo",
+            doc_type_id: 1,
+            permissionEdit: true,
+            apiUrl: "drafts",
+            breadcrumbItemTitle: "Черновики"
         }
     },
     // -------------------------Служебные записки-------------------------------
@@ -62,17 +76,26 @@ export default [
     {
         path: "/received",
         name: "received",
-        component: () => import("@/modules/Document/pages/Requests/Received/Index.vue"),
+        component: () => import("@/modules/Document/pages/OfficeNotes/Index.vue"),
         meta: {
-            title: "Полученные"
+            title: "Полученные",
+            breadcrumbItemTitle: "Полученные",
+            permissionView: true,
+            apiUrl: "received",
+            hasTabs: true
         }
     },
     {
         path: "/received/:id",
         name: "received-id",
-        component: () => import("@/modules/Document/pages/Requests/Received/View.vue"),
+        component: () => import("@/modules/Document/pages/OfficeNotes/View.vue"),
+        // component: () => import("@/modules/Document/pages/Requests/Received/InvoiceInboxShow.vue"),
         meta: {
-            title: "Просмотр"
+            title: "Просмотр",
+            parentRouteTitle: "Полученные",
+            parentRouteUrl: { name: "received" },
+            hasRejectBtn: true,
+            hasAcceptBtn: true
         }
     },
 
@@ -80,17 +103,25 @@ export default [
     {
         path: "/sent",
         name: "sent",
-        component: () => import("@/modules/Document/pages/Requests/Sent/Index.vue"),
+        component: () => import("@/modules/Document/pages/OfficeNotes/Index.vue"),
         meta: {
-            title: "Отправленные"
+            title: "Отправленные",
+            breadcrumbItemTitle: "Отправленные",
+            permissionView: true,
+            apiUrl: "sent",
+            hasTabs: true
         }
     },
     {
         path: "/sent/:id",
         name: "sent-id",
-        component: () => import("@/modules/Document/pages/Requests/Sent/View.vue"),
+        component: () => import("@/modules/Document/pages/OfficeNotes/View.vue"),
+        // component: () => import("@/modules/Document/pages/Requests/Sent/InvoiceInboxShow.vue"),
         meta: {
-            title: "Просмотр"
+            title: "Просмотр",
+            parentRouteTitle: "Отправленные",
+            parentRouteUrl: { name: "sent" },
+            hasCancelBtn: true
         }
     },
 
@@ -98,9 +129,13 @@ export default [
     {
         path: "/draft",
         name: "draft",
-        component: () => import("@/modules/Document/pages/Requests/Drafts/Index.vue"),
+        component: () => import("@/modules/Document/pages/OfficeNotes/Index.vue"),
         meta: {
-            title: "Черновики"
+            title: "Черновики",
+            doc_type_id: 2,
+            permissionEdit: true,
+            apiUrl: "drafts",
+            breadcrumbItemTitle: "Черновики"
         }
     },
 
@@ -110,16 +145,20 @@ export default [
     {
         path: "/invoice-inbox",
         name: "invoice-inbox",
-        component: () => import("@/modules/Document/pages/Invoices/InvoiceInbox/Index.vue"),
+        component: () => import("@/modules/Document/pages/Invoices/InvoicesIndex.vue"),
         meta: {
-            title: "Входящие"
+            title: "Входящие",
+            breadcrumbItemTitle: "Входящие",
+            apiUrl: "received"
         }
     },
     {
         path: "/invoice-inbox/:id",
         name: "invoice-inbox-id",
-        component: () => import("@/modules/Document/pages/Invoices/InvoiceInbox/View.vue"),
+        component: () => import("@/modules/Document/pages/Invoices/InvoicesShow.vue"),
         meta: {
+            parentRouteTitle: "Входящие",
+            parentRouteUrl: { name: "invoice-inbox" },
             title: "Просмотр"
         }
     },
@@ -128,16 +167,20 @@ export default [
     {
         path: "/invoice-outgoing",
         name: "invoice-outgoing",
-        component: () => import("@/modules/Document/pages/Invoices/InvoiceOutgoing/Index.vue"),
+        component: () => import("@/modules/Document/pages/Invoices/InvoicesIndex.vue"),
         meta: {
             title: "Исходящие",
+            breadcrumbItemTitle: "Исходящие",
+            apiUrl: "sent"
         }
     },
     {
         path: "/invoice-outgoing/:id",
         name: "invoice-outgoing-id",
-        component: () => import("@/modules/Document/pages/Invoices/InvoiceOutgoing/View.vue"),
+        component: () => import("@/modules/Document/pages/Invoices/InvoicesShow.vue"),
         meta: {
+            parentRouteTitle: "Исходящие",
+            parentRouteUrl: { name: "invoice-outgoing" },
             title: "Исходящие"
         }
     },

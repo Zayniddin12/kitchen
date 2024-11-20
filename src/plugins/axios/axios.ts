@@ -8,7 +8,7 @@ import { AxiosResponseDataType, ErrorType } from "@/plugins/axios/axios.types";
 
 const axiosInstance: AxiosInstance = axios.create({
     baseURL: import.meta.env.VITE_BACKEND,
-    timeout: 60000,
+    timeout: 120000,
     headers: {
         Accept: "application/json",
         "x-app-lang": activeLocale.value,

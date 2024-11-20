@@ -89,8 +89,8 @@ const setBreadcrumbFn = () => {
 };
 
 watch(() => route.params, async () => {
-  await kitchenStore.GET_KITCHEN_TYPE({
-    base_id: route.params.department_id,
+  await kitchenStore.GET_KITCHEN_VID({
+    management_id: route.params.department_id as string,
     is_paid: route.params.part_name == "menu" ? 0 : route.params.part_name == "sales" ? 1 : null,
   });
   setBreadcrumbFn();
@@ -107,24 +107,26 @@ watch(() => kitchenStore.departments, async () => {
   <section class="kitchen">
     <div>
       <div class="boxes">
-        <RouterLink
-          v-for="box in boxes"
-          :key="box.id"
-          class="box"
-          :to="{name: 'KitchenShow', params: {kitchen_id: box.id}}"
-        >
-          <img
-            :src="box.icon"
-            :alt="box.title"
-            class="box__img"
-          />
-          <strong class="box__title">
-            {{ box.title }}
-          </strong>
-          <span class="box__description">
-          {{ box.description }}
+        <template v-if="kitchenStore.kitchenVid.length">
+          <RouterLink
+            v-for="box in kitchenStore.kitchenVid"
+            :key="box?.id"
+            class="box"
+            :to="{name: 'KitchenShow', params: {kitchen_id: box?.id}}"
+          >
+            <img
+              :src="kitchenIcon"
+              :alt="box.name"
+              class="box__img"
+            />
+            <strong class="box__title">
+              {{ box?.name }}
+            </strong>
+            <span class="box__description">
+          {{ box?.kitchens_count }}
         </span>
-        </RouterLink>
+          </RouterLink>
+        </template>
       </div>
     </div>
   </section>

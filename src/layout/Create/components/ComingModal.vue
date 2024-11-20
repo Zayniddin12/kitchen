@@ -60,8 +60,10 @@ const form = reactive<DocumentCreateDataDocumentType>({
   doc_type_id: null,
   date: "",
   number: "",
+  from: "",
   from_id: null,
   from_type: "",
+  to: "",
   to_id: null,
   to_type: "",
   subject: "",
@@ -148,7 +150,6 @@ const to = computed<string>(() => {
 const v$ = ref<ValidationType | null>(null);
 
 const setValidation = (validation: ValidationType) => {
-  console.log(validation);
   v$.value = validation;
 };
 
@@ -159,9 +160,12 @@ const setActValidation = (validation: ValidationType) => {
 };
 
 const clearValidations = () => {
-  console.log("aa");
   v$.value?.clear();
   if (activeComingModal.value && actV$.value) actV$.value.clear();
+  form.to_type = "";
+  form.to_id = null;
+  form.from_type = "";
+  form.from_id = null;
 };
 
 const sendForm = async () => {
@@ -178,6 +182,9 @@ const sendForm = async () => {
   const newForm: DocumentCreateDataType = {
     Document: JSON.parse(JSON.stringify(form))
   };
+
+  delete newForm.Document.from;
+  delete newForm.Document.to;
 
   if (activeComingModal.value) {
     newForm.Act = JSON.parse(JSON.stringify(actForm));
@@ -201,7 +208,7 @@ const sendForm = async () => {
       Act: {}
     };
   }).catch((error: any) => {
-    if (error.error.code === 422) {
+    if (error?.error?.code === 422) {
       validationErrors.value = error.meta.validation_errors;
     }
   });
@@ -497,7 +504,7 @@ watch(providerCreateModal, newMProviderModal => {
                 Дата накладной:
               </h1>
               <span class="ml-2 text-[#A8AAAE] text-sm font-medium block">
-                {{ form.date ?? "Нет" }}
+                {{ form.date }}
               </span>
             </div>
 
@@ -679,7 +686,8 @@ watch(providerCreateModal, newMProviderModal => {
               required
           />
           <AppSelect
-              prop="from_id"
+              v-model="form.from"
+              prop="from"
               placeholder="От кого"
               label="От кого"
               :items="settingsStore.respondents"
@@ -687,6 +695,7 @@ watch(providerCreateModal, newMProviderModal => {
               label-class="text-[#A8AAAE] text-xs font-medium"
               @change="(value) => respondentChange(value as string, 'from')"
               required
+              trigger="blur"
           >
             <ElOption
                 v-for="item in settingsStore.respondents"
@@ -716,7 +725,8 @@ watch(providerCreateModal, newMProviderModal => {
             </template>
           </AppSelect>
           <AppSelect
-              prop="to_id"
+              v-model="form.to"
+              prop="to"
               placeholder="Кому"
               label="Кому"
               :items="settingsStore.respondents"
@@ -725,6 +735,7 @@ watch(providerCreateModal, newMProviderModal => {
               label-class="text-[#A8AAAE] text-xs font-medium"
               @change="(value) => respondentChange(value as string, 'to')"
               required
+              trigger="blur"
           >
             <ElOption
                 v-for="item in settingsStore.respondents"

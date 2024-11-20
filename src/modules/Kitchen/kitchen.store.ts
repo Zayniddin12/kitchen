@@ -20,8 +20,9 @@ interface Params {
   search?: string | null;
   page?: number;
   per_page?: number;
-  is_paid: number | string;
-  base_id: number | string;
+  is_paid?: number | string | null;
+  management_id?: number | string;
+  kitchen_type_id?: string | number;
 }
 
 interface Part2Type {
@@ -29,6 +30,8 @@ interface Part2Type {
   name: string;
   department_id: number;
   department_name: string;
+  kitchen_vid?: string;
+  kitchen_type: string;
 }
 
 interface DepartmentType {
@@ -37,21 +40,34 @@ interface DepartmentType {
   parts: PartType[];
 }
 
-interface KitchenType {
+interface KitchenVid {
   id: number;
   name: string;
   kitchen_count: number;
 }
 
+interface KitchenType {
+  id: number;
+  name: string;
+  kitchen_capacity: number;
+}
+
 export const useKitchenStore = defineStore("kitchenStore", () => {
   const departments = ref<DepartmentType[]>([]);
+  const kitchenVid = ref<KitchenVid[] | []>([]);
   const kitchenType = ref<KitchenType[] | []>([]);
   const layoutStore = useLayoutStore();
 
-  const GET_KITCHEN_TYPE = async (params: Params) => {
+  const GET_KITCHEN_VID = async (params: Params) => {
     const { data } = await $axios.get("/kitchen-types/list-by-base", { params });
 
-    kitchenType.value = data.data && data.data.kitchen_types;
+    kitchenVid.value = data.data && data.data.kitchen_types;
+  };
+
+  const GET_KITCHEN_TYPE = async (params: Params) => {
+    const { data } = await $axios.get("/kitchen-warehouses/list", { params });
+
+    kitchenType.value = data.data && data.data.kitchen_warehouses;
   };
 
   const GET_KITCHEN_LIST = async (params?: Params) => {
@@ -126,6 +142,40 @@ export const useKitchenStore = defineStore("kitchenStore", () => {
     return part.value?.id === PARTS.SALES;
   });
 
+  const fetchPart2 = (kitchen_vid_id: number | string) => {
+    console.log(kitchenVid.value, "kitchen_vid");
+    if (!kitchenVid.value.length) return;
+
+    const kitchen_vid =
+      kitchenVid.value.find(el => el.id == kitchen_vid_id) ?? null;
+
+    if (!kitchen_vid) return;
+
+    part.value = {
+      ...part.value,
+      ...{
+        kitchen_vid: kitchen_vid.name,
+      },
+    };
+  };
+
+  const fetchPart3 = (kitchen_type_id: number | string) => {
+
+    if (!kitchenType.value.length) return;
+
+    const kitchen_type =
+      kitchenType.value.find(el => el.id == kitchen_type_id) ?? null;
+
+    if (!kitchen_type) return;
+
+    part.value = {
+      ...part.value,
+      ...{
+        kitchen_type: kitchen_type.name,
+      },
+    };
+  };
+
   const fetchPart = (department_id: number, part_name: string) => {
     if (!departments.value.length) return;
 
@@ -148,12 +198,16 @@ export const useKitchenStore = defineStore("kitchenStore", () => {
   };
   return {
     GET_KITCHEN_LIST,
+    GET_KITCHEN_VID,
     GET_KITCHEN_TYPE,
     departments,
     kitchenType,
+    kitchenVid,
     // fetchDepartments,
     // kitchenMenu,
     fetchPart,
+    fetchPart2,
+    fetchPart3,
     part,
     activeMenuPart,
     activeSalesPart,

@@ -30,6 +30,10 @@ input[type="number"] {
   -moz-appearance: textfield;
 }
 
+button[disabled]{
+  cursor: not-allowed;
+}
+
 .nested {
   &-enter-active,
   &-leave-active,
@@ -91,6 +95,10 @@ input[type="number"] {
       border-radius: $progress-radius;
     }
   }
+}
+
+.el-loading-mask{
+  z-index: 5;
 }
 
 .app-filter-btn {

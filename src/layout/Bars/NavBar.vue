@@ -32,11 +32,13 @@ const settingsStore = useSettingsStore();
 
 const docTypeId = ref<number | null>(null);
 const docTypeName = ref<string>("");
+const docTypeTitle = ref<string>("");
 
 const openModal = (item: DocTypeListType) => {
   switch (item.id) {
     case 1:
       editModal.value = true;
+      docTypeTitle.value = "Создать служебную записку";
       break;
     case 7:
     case 11:
@@ -47,12 +49,16 @@ const openModal = (item: DocTypeListType) => {
       break;
     case 3:
       freeModal.value = true;
+      docTypeTitle.value = "Создать свободный запрос";
       break;
     case 4:
       monthlyModal.value = true;
+      docTypeTitle.value = "Создать месячный запрос";
       break;
     case 5:
-      yearlyModal.value = true;
+      monthlyModal.value = true;
+      docTypeTitle.value = "Создать годовой запрос";
+      break;
   }
 
   docTypeId.value = item.id;
@@ -223,33 +229,36 @@ onMounted(() => {
         v-model="editModal"
         :id="docTypeId"
         :name="docTypeName"
-        title="Создать служебную записку"
+        :title="docTypeTitle"
     />
     <ComingModal
         v-model="editModal2"
         :id="docTypeId"
         :name="docTypeName"
     />
-    <ConsumptionModal
-        v-model="editConsumptionModal"
-        :id="docTypeId"
-        :name="docTypeName"
-    />
+    <!--    <ConsumptionModal-->
+    <!--        v-model="editConsumptionModal"-->
+    <!--        :id="docTypeId"-->
+    <!--        :name="docTypeName"-->
+    <!--    />-->
     <FreeModal
         v-model="freeModal"
         :id="docTypeId"
         :name="docTypeName"
+        :title="docTypeTitle"
     />
     <MonthlyModal
         v-model="monthlyModal"
         :id="docTypeId"
         :name="docTypeName"
+        :title="docTypeTitle"
     />
-    <YearlyModal
-        v-model="yearlyModal"
-        :id="docTypeId"
-        :name="docTypeName"
-    />
+    <!--    <YearlyModal-->
+    <!--        v-model="yearlyModal"-->
+    <!--        :id="docTypeId"-->
+    <!--        :name="docTypeName"-->
+    <!--        title="Создать годовой запрос"-->
+    <!--    />-->
     <!----------Создать modal---------->
   </div>
 </template>

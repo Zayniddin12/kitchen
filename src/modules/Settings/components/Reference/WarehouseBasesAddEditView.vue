@@ -11,6 +11,8 @@ import AppForm from "@/components/ui/form/app-form/AppForm.vue";
 import { ValidationType } from "@/components/ui/form/app-form/app-form.type";
 import { useSettingsStore } from "@/modules/Settings/store";
 import { ElNotification } from "element-plus";
+import AppSelect from "@/components/ui/form/app-select/AppSelect.vue";
+import { filterObjectValues } from "@/utils/helper";
 
 const settingsStore = useSettingsStore();
 
@@ -38,6 +40,7 @@ interface WareHouseType {
   created_at?: string;
   updated_at?: string;
   deleted_at?: null | string;
+  factory_id: number | null;
 }
 
 const status = ref<boolean>(true);
@@ -50,6 +53,7 @@ const warehouseData = ref<WareHouseType>({
   address: "",
   code: "",
   status: "active",
+  factory_id: null,
 });
 
 
@@ -87,6 +91,7 @@ const setBreadCrumbFn = () => {
 };
 
 onMounted(async () => {
+  await settingsStore.fetchFoodFactories({ per_page: 100 });
   if (route.params.id) {
     const data = await settingsStore.GET_WAREHOUSE_BASES_ITEM(route.params.id as string | number);
 
@@ -212,6 +217,23 @@ const isDisabled = computed<boolean>(() => {
                 :disabled="isDisabled"
               />
             </div>
+
+            <div class="grid grid-cols-2 gap-4">
+              <AppSelect
+                v-model="warehouseData.factory_id"
+                :items="settingsStore.foodFactories?.food_factories"
+                item-value="id"
+                item-label="name"
+                prop="factory_id"
+                trigger="change"
+                label="Комбинаты питания"
+                placeholder="Выберите"
+                label-class="text-[#A8AAAE] font-medium text-[12px]"
+                required
+                :disabled
+              />
+            </div>
+
             <ElSwitch
               v-model="status"
               v-if="route.params.id && !route.query.type"
@@ -257,7 +279,7 @@ const isDisabled = computed<boolean>(() => {
           v-if="route.query.type == 'view'"
           class="flex items-center gap-4 bg-[#F8F9FC] py-[10px] px-[20px] rounded-[8px]"
         >
-          <img src="@/assets/images/icons/edit.svg" alt="edit"/>
+          <img src="@/assets/images/icons/edit.svg" alt="edit" />
           Редактировать
         </button>
       </div>

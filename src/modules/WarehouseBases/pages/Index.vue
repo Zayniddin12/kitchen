@@ -271,7 +271,7 @@ onMounted(() => {
             <template v-else>
               <div class="grid gap-4 grid-cols-6">
                 <AppDatePicker placeholder="с этой даты" />
-                <AppDatePicker placeholder="по эту дату" />
+                <AppDatePicker placeholder="По эту дату" />
                 <AppSelect
                   class="col-span-2"
                   placeholder="№ накладной"
