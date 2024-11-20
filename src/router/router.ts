@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
-import home from "@/modules/Home/router";
+import home from "@/modules/Home/home.routes";
 import Inbox from "@/modules/Document/document.routes";
 import Monitoring from "@/modules/Monitoring/monitoring.routes";
 import Settings from "@/modules/Settings/router";

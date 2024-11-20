@@ -4,7 +4,7 @@ export default [
   {
     path: "/",
     name: "home",
-    component: () => import("@/modules/Home/views/Home.vue"),
+    component: () => import("@/modules/Home/pages/Home.vue"),
     meta: {
       title: 'Главная',
       uniqueKeys: {

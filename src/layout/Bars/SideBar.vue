@@ -2,12 +2,13 @@
     setup
     lang="ts"
 >
-import { onMounted, onUnmounted, ref, watch } from "vue";
+import { onMounted, onUnmounted, ref, watch, watchEffect } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useLayoutStore } from "@/navigation";
 import ChildSidebar from "@/layout/Bars/ChildSidebar.vue";
 import { useSidebarStore } from "@/layout/Bars/sidebar.store";
 import { useAuthStore } from "@/modules/Auth/auth.store";
+import { useKitchenStore } from "@/modules/Kitchen/kitchen.store";
 
 const emit = defineEmits<{
   (e: "update:childSidebarPin", value: boolean): void;
@@ -41,8 +42,12 @@ watch(
     { immediate: true }
 );
 
+watchEffect(() => {
+  console.log(useKitchenStore().departments);
+})
+
 onMounted(() => {
-  const storedMenu: number = sessionStorage.getItem("current-menu") | 0;
+  const storedMenu:string = sessionStorage.getItem("current-menu") | "0";
   const storedSidebar = localStorage.getItem("child-sidebar");
   console.log(store.menuItems);
   if (childIsOpenPin.value) {
@@ -162,7 +167,6 @@ const logOut = () => {
             class="m-auto pt-[16px] pb-[40px]"
             alt="logo"
         />
-
         <div
             v-for="(item, index) in store.menuItems"
             :key="index"
