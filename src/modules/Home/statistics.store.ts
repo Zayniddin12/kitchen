@@ -1,8 +1,8 @@
-import { defineStore } from "pinia";
-import { ref } from "vue";
+import {defineStore} from "pinia";
+import {ref} from "vue";
 import {
     KitchenPreparationParamsType,
-    KitchenPreparationType, ProductsParamsType, ProductsType, StatisticCountType,
+    KitchenPreparationType, ProductsParamsType, ProductsType, StatisticCountParamsType, StatisticCountType,
     VisitorsParamsType,
     VisitorsType,
     WarehouseCapacityParamsType,
@@ -20,7 +20,7 @@ export const useStatisticsStore = defineStore("statisticsStore", () => {
 
         try {
             warehouseCapacity.value = await statisticsApi.fetchWarehouseCapacity(params);
-        }finally {
+        } finally {
             warehouseCapacityLoading.value = false;
         }
     }
@@ -33,12 +33,12 @@ export const useStatisticsStore = defineStore("statisticsStore", () => {
 
         try {
             visitors.value = await statisticsApi.fetchVisitors(params);
-        }finally {
+        } finally {
             visitorsLoading.value = false;
         }
     }
 
-    const kitchenPreparations = ref<KitchenPreparationType>([]);
+    const kitchenPreparations = ref<KitchenPreparationType | null>(null);
     const kitchenPreparationsLoading = ref(false);
 
     const fetchKitchenPreparations = async (params: KitchenPreparationParamsType = {}) => {
@@ -46,7 +46,7 @@ export const useStatisticsStore = defineStore("statisticsStore", () => {
 
         try {
             kitchenPreparations.value = await statisticsApi.fetchKitchenPreparations(params);
-        }finally {
+        } finally {
             kitchenPreparationsLoading.value = false;
         }
     }
@@ -59,7 +59,7 @@ export const useStatisticsStore = defineStore("statisticsStore", () => {
 
         try {
             products.value = await statisticsApi.fetchProducts(params);
-        }finally {
+        } finally {
             productsLoading.value = false;
         }
     }
@@ -67,12 +67,12 @@ export const useStatisticsStore = defineStore("statisticsStore", () => {
     const kitchenCount = ref<StatisticCountType>([]);
     const kitchenCountLoading = ref(false);
 
-    const fetchKitchenCount = async () => {
+    const fetchKitchenCount = async (params: StatisticCountParamsType = {}) => {
         kitchenCountLoading.value = true;
 
         try {
             kitchenCount.value = await statisticsApi.fetchKitchenCount();
-        }finally {
+        } finally {
             kitchenCountLoading.value = false;
         }
     }
@@ -80,12 +80,12 @@ export const useStatisticsStore = defineStore("statisticsStore", () => {
     const warehouseCount = ref<StatisticCountType>([]);
     const warehouseCountLoading = ref(false);
 
-    const fetchWarehouseCount = async () => {
+    const fetchWarehouseCount = async (params: StatisticCountParamsType = {}) => {
         warehouseCountLoading.value = true;
 
         try {
             warehouseCount.value = await statisticsApi.fetchWarehouseCount();
-        }finally {
+        } finally {
             warehouseCountLoading.value = false;
         }
     }

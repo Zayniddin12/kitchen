@@ -25,7 +25,10 @@ export interface KitchenPreparationKitchenType {
     price: number,
 }
 
-export type KitchenPreparationType = KitchenPreparationKitchenType[];
+export interface KitchenPreparationType {
+    total_price: number,
+    kitchens: KitchenPreparationKitchenType[]
+}
 
 export interface ProductsParamsType extends WarehouseCapacityParamsType {
 }
@@ -49,7 +52,10 @@ export interface GraphProductsType {
 
 }
 
-export interface StatisticCountCountType{
+export interface StatisticCountParamsType extends WarehouseCapacityParamsType {
+}
+
+export interface StatisticCountCountType {
     kitchen_type_name: string,
     count: number
 }

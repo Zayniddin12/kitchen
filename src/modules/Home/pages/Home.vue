@@ -2,9 +2,9 @@
     setup
     lang="ts"
 >
-import { use } from "echarts/core";
-import { CanvasRenderer } from "echarts/renderers";
-import { PieChart, BarChart, LineChart } from "echarts/charts";
+import {use} from "echarts/core";
+import {CanvasRenderer} from "echarts/renderers";
+import {PieChart, BarChart, LineChart} from "echarts/charts";
 import {
   TitleComponent,
   TooltipComponent,
@@ -13,8 +13,8 @@ import {
   GridComponent
 } from "echarts/components";
 import VChart from "vue-echarts";
-import { computed, onMounted, reactive, ref, watch, watchEffect } from "vue";
-import { tableData } from "@/modules/Home/constants";
+import {computed, onMounted, reactive, ref, watch, watchEffect} from "vue";
+import {tableData} from "@/modules/Home/constants";
 import AppDatePicker from "@/components/ui/form/app-date-picker/AppDatePicker.vue";
 import AppSelect from "@/components/ui/form/app-select/AppSelect.vue";
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
@@ -23,11 +23,15 @@ import WarehouseIcon from "@/assets/images/icons/warehouse.svg";
 import UsersIcon from "@/assets/users.svg";
 import KitchenIcon from "@/assets/images/icons/kitchen.svg";
 import BranchIcon from "@/assets/images/icons/branch.svg";
-import { useStatisticsStore } from "@/modules/Home/statistics.store";
-import { AnalyticsCardDataType } from "@/modules/Home/components/analytics-card/analytics-card.types";
-import { useRoute } from "vue-router";
-import { useSettingsStore } from "@/modules/Settings/store";
-import { ProductType, WarehouseCapacityParamsType } from "@/modules/Home/statistics.types";
+import {useStatisticsStore} from "@/modules/Home/statistics.store";
+import {AnalyticsCardDataType} from "@/modules/Home/components/analytics-card/analytics-card.types";
+import {useRoute} from "vue-router";
+import {useSettingsStore} from "@/modules/Settings/store";
+import {KitchenPreparationParamsType, ProductType, WarehouseCapacityParamsType} from "@/modules/Home/statistics.types";
+import {filterObjectValues, formatNumber} from "@/utils/helper";
+import {ValidationType} from "@/components/ui/form/app-form/app-form.type";
+import AppForm from "@/components/ui/form/app-form/AppForm.vue";
+import AppOverlay from "@/components/ui/app-overlay/AppOverlay.vue";
 
 use([
   CanvasRenderer,
@@ -76,15 +80,27 @@ const visitorsData = computed<AnalyticsCardDataType[]>(() => {
   ];
 });
 
-const data = [
-  { value: 1200, name: "Общая вместимость" },
-  { value: 4600, name: "Занятое место" }
-];
+const kitchenData = computed<AnalyticsCardDataType[]>(() => {
+  return statisticsStore.kitchenCount.map(el => {
+    const newEl: AnalyticsCardDataType = {
+      name: el.kitchen_type_name,
+      value: el.count,
+    }
 
-const data2 = [
-  { value: 2200, name: "за свой счет" },
-  { value: 3660, name: "с рационом" }
-];
+    return newEl;
+  });
+});
+
+const warehouseData = computed<AnalyticsCardDataType[]>(() => {
+  return statisticsStore.warehouseCount.map(el => {
+    const newEl: AnalyticsCardDataType = {
+      name: el.kitchen_type_name,
+      value: el.count,
+    }
+
+    return newEl;
+  });
+});
 
 const option3 = {
   tooltip: {
@@ -182,11 +198,11 @@ const optionLine = {
   }
 };
 
-const handleClass = ({ row }:{row:ProductType}) => {
+const handleClass = ({row}: { row: ProductType }) => {
   return !row.quantity ? "!bg-[#FBDDDD]" : undefined;
 };
 
-const { setBreadCrumb } = useBreadcrumb();
+const {setBreadCrumb} = useBreadcrumb();
 
 const setBreadCrumbFn = () => {
   setBreadCrumb([
@@ -197,19 +213,42 @@ const setBreadCrumbFn = () => {
   ]);
 };
 
+const kitchenPreparationsForm = reactive<KitchenPreparationParamsType>({
+  management_id: null,
+  from_date: "",
+  to_date: "",
+});
+
+const kitchenPreparationsValidationErrors = ref<Record<string, any> | null>(null);
+
+const fetchKitchenPreparations = async () => {
+  kitchenPreparationsForm.management_id = form.management_id;
+  try {
+    await statisticsStore.fetchKitchenPreparations(filterObjectValues(kitchenPreparationsForm))
+  } catch (error: any) {
+    if (error?.error?.code === 422) {
+      kitchenPreparationsValidationErrors.value = error.meta.validation_errors;
+    }
+  }
+}
+
 watch(() => route.query.management_id, (newId) => {
   const management_id = newId ? parseInt(newId as string) : null;
   form.management_id = management_id && !isNaN(management_id) ? management_id : null;
 
-  statisticsStore.fetchWarehouseCapacity(form);
-  statisticsStore.fetchVisitors(form);
-  statisticsStore.fetchProducts(form);
+  const newForm = filterObjectValues(form);
 
-}, { immediate: true });
+  statisticsStore.fetchWarehouseCapacity(newForm);
+  statisticsStore.fetchVisitors(newForm);
+  statisticsStore.fetchProducts(newForm);
+  statisticsStore.fetchKitchenCount(newForm);
+  statisticsStore.fetchWarehouseCount(newForm);
+  fetchKitchenPreparations();
+}, {immediate: true});
 
 onMounted(() => {
   setBreadCrumbFn();
-  settingsStore.GET_REGIONAL({ per_page: 100 });
+  settingsStore.GET_REGIONAL({per_page: 100});
 });
 
 </script>
@@ -264,28 +303,38 @@ onMounted(() => {
           />
         </div>
         <div>
-          <div class="bg-[#F8F9FC] rounded-[24px] p-[16px]">
+          <AppOverlay
+              :loading="statisticsStore.kitchenPreparationsLoading"
+              parent-class-name="bg-[#F8F9FC] rounded-3xl p-4"
+          >
             <div class="flex items-center justify-between">
               <h2 class="text-[#000D24] !text-[24px] font-semibold">Приготовление</h2>
-
-              <div class="flex items-center gap-2">
+              <AppForm
+                  :value="kitchenPreparationsForm"
+                  :validation-errors="kitchenPreparationsValidationErrors"
+                  class="grid grid-cols-2 w-[291px] gap-x-2"
+              >
                 <AppDatePicker
+                    v-model="kitchenPreparationsForm.from_date"
+                    prop="from_date"
                     format="DD.MM.YYYY"
                     size="large"
-                    class="w-[142px]"
+                    @change="fetchKitchenPreparations"
                 />
                 <AppDatePicker
-                    class="w-[142px]"
+                    v-model="kitchenPreparationsForm.to_date"
+                    prop="to_date"
                     format="DD.MM.YYYY"
                     size="large"
+                    @change="fetchKitchenPreparations"
                 />
-              </div>
+              </AppForm>
             </div>
 
             <div>
               <span class="text-[#A8AAAE] text-[14px] mb-[4px]">Общая сумма</span>
               <div class="flex items-center">
-                <span class="text-[32px] font-semibold">2 221 680 500 UZS</span>
+                <span class="text-[32px] font-semibold">{{ statisticsStore.kitchenPreparations?.total_price ? formatNumber(statisticsStore.kitchenPreparations.total_price) : 0}} UZS</span>
                 <span class="flex items-center text-[#28C76F] text-[18px] font-medium">
                   <svg
                       width="32"
@@ -327,7 +376,7 @@ onMounted(() => {
                 autoresize
             />
 
-          </div>
+          </AppOverlay>
         </div>
 
       </div>
@@ -374,7 +423,7 @@ onMounted(() => {
               label="Вид продукта"
           >
             <template #default="{row}:{row: ProductType}">
-              {{row.product_name || "-"}}
+              {{ row.product_name || "-" }}
             </template>
           </ElTableColumn>
           <ElTableColumn
@@ -382,7 +431,7 @@ onMounted(() => {
               label="Количество"
           >
             <template #default="{row}:{row: ProductType}">
-              {{row.quantity || "-"}}
+              {{ row.quantity || "-" }}
             </template>
           </ElTableColumn>
           <ElTableColumn
@@ -390,7 +439,7 @@ onMounted(() => {
               label="Количество"
           >
             <template #default="{row}:{row: ProductType}">
-              {{row.base_name || "-"}}
+              {{ row.base_name || "-" }}
             </template>
           </ElTableColumn>
         </ElTable>
@@ -437,13 +486,15 @@ onMounted(() => {
           title="Количество кухонь"
           :icon="KitchenIcon"
           subtitle="Здесь будет текст"
-          :data
+          :data="kitchenData"
+          :loading="statisticsStore.kitchenCountLoading"
       />
       <AnalyticsCard
           title="Количество складов"
           :icon="BranchIcon"
           subtitle="Здесь будет текст"
-          :data="data2"
+          :data="warehouseData"
+          :loading="statisticsStore.warehouseCountLoading"
       />
     </div>
   </div>

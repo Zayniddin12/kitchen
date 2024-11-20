@@ -1,8 +1,14 @@
 import {
     GraphProductsParamsType,
     GraphProductsType,
-    KitchenPreparationParamsType, KitchenPreparationType, ProductsParamsType, ProductsType, StatisticCountType,
-    VisitorsParamsType, VisitorsType,
+    KitchenPreparationParamsType,
+    KitchenPreparationType,
+    ProductsParamsType,
+    ProductsType,
+    StatisticCountParamsType,
+    StatisticCountType,
+    VisitorsParamsType,
+    VisitorsType,
     WarehouseCapacityParamsType,
     WarehouseCapacityType
 } from "@/modules/Home/statistics.types";
@@ -12,37 +18,37 @@ const prefix = "statistics";
 
 export default {
     async fetchWarehouseCapacity(params: WarehouseCapacityParamsType = {}): Promise<WarehouseCapacityType> {
-        const { data }: { data: Record<string, any> } = await axios.get(`${prefix}/warehouse-capacity`, { params });
+        const {data}: { data: Record<string, any> } = await axios.get(`${prefix}/warehouse-capacity`, {params});
         return data.data as WarehouseCapacityType;
     },
 
     async fetchVisitors(params: VisitorsParamsType = {}): Promise<VisitorsType> {
-        const { data }: { data: Record<string, any> } = await axios.get(`${prefix}/visitors`, { params });
+        const {data}: { data: Record<string, any> } = await axios.get(`${prefix}/visitors`, {params});
         return data.data.visitors as VisitorsType;
     },
 
     async fetchKitchenPreparations(params: KitchenPreparationParamsType = {}): Promise<KitchenPreparationType> {
-        const { data }: { data: Record<string, any> } = await axios.get(`${prefix}/kitchen-preparation`, { params });
-        return data.data.kitchens as KitchenPreparationType;
+        const {data}: { data: Record<string, any> } = await axios.get(`${prefix}/kitchen-preparation`, {params});
+        return data.data as KitchenPreparationType;
     },
 
     async fetchProducts(params: ProductsParamsType = {}): Promise<ProductsType> {
-        const { data }: { data: Record<string, any> } = await axios.get(`${prefix}/products`, { params });
+        const {data}: { data: Record<string, any> } = await axios.get(`${prefix}/products`, {params});
         return data.data.products as ProductsType;
     },
 
-    async fetchGraphProducts(url : "incoming-products" | "outgoing-products", params: GraphProductsParamsType = {}): Promise<GraphProductsType> {
-        const { data }: { data: Record<string, any> } = await axios.get(`${prefix}/${url}`, { params });
+    async fetchGraphProducts(url: "incoming-products" | "outgoing-products", params: GraphProductsParamsType = {}): Promise<GraphProductsType> {
+        const {data}: { data: Record<string, any> } = await axios.get(`${prefix}/${url}`, {params});
         return data.data.graph as GraphProductsType;
     },
 
-    async fetchKitchenCount():Promise<StatisticCountType>{
-        const {data}:{data: Record<string, any>} = await axios.get(`${prefix}/kitchen-count`);
+    async fetchKitchenCount(params: StatisticCountParamsType = {}): Promise<StatisticCountType> {
+        const {data}: { data: Record<string, any> } = await axios.get(`${prefix}/kitchen-count`);
         return data.data.count as StatisticCountType;
     },
 
-    async fetchWarehouseCount():Promise<StatisticCountType>{
-        const {data}:{data: Record<string, any>} = await axios.get(`${prefix}/warehouse-count`);
+    async fetchWarehouseCount(params: StatisticCountParamsType = {}): Promise<StatisticCountType> {
+        const {data}: { data: Record<string, any> } = await axios.get(`${prefix}/warehouse-count`);
         return data.data.warehouse_count as StatisticCountType;
     },
 };
