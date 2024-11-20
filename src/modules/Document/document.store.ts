@@ -1,6 +1,8 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
 import {
+    ActsParamsType,
+    ActsType, ContractsParamsType, ContractsType,
     DocumentCreateDataDocumentType,
     DocumentCreateDataType, DocumentType,
     DraftsParamsType,
@@ -55,6 +57,91 @@ export const useDocumentStore = defineStore("documentStore", () => {
         }
     };
 
+    const pdfLoading = ref(false);
+
+    const getPdf = async (uuid: string) => {
+        window.open(`${import.meta.env.VITE_BACKEND}/documents/get-pdf/${uuid}`, "_blank");
+        // pdfLoading.value = true;
+        //
+        // try {
+        //     const response = await documentApi.getPdf(uuid);
+        //     console.log(response);
+        // } catch (error) {
+        //     console.log("SS", error);
+        // } finally {
+        //     pdfLoading.value = false;
+        // }
+    };
+
+    const acts = ref<ActsType | null>(null);
+    const actsLoading = ref(false);
+
+    const fetchActs = async (params: ActsParamsType = {}) => {
+        actsLoading.value = true;
+
+        try {
+            acts.value = await documentApi.fetchActs(params);
+        } finally {
+            actsLoading.value = false;
+        }
+    };
+
+    const contracts = ref<ContractsType | null>(null);
+    const contractsLoading = ref(false);
+
+    const fetchContracts = async (params: ContractsParamsType = {}) => {
+        contractsLoading.value = true;
+
+        try {
+            contracts.value = await documentApi.fetchContracts(params);
+        } finally {
+            contractsLoading.value = false;
+        }
+    };
+
+    const approveLoading = ref(false);
+
+    const approve = async (uuid: string) => {
+        approveLoading.value = true;
+
+        try {
+            await documentApi.approve(uuid);
+        } finally {
+            approveLoading.value = false;
+        }
+    };
+
+    const cancelLoading = ref(false);
+
+    const cancel = async (uuid: string) => {
+        cancelLoading.value = true;
+
+        try {
+            await documentApi.cancel(uuid);
+        } finally {
+            cancelLoading.value = false;
+        }
+    };
+
+    const rejectLoading = ref(false);
+
+    const reject = async (uuid: string) => {
+        rejectLoading.value = true;
+
+        try {
+            await documentApi.reject(uuid);
+        } finally {
+            rejectLoading.value = false;
+        }
+    };
+
+    const changeDocumentStatus = async (status: "approved" | "rejected" | "cancelled", id: string) => {
+        if (status === "approved") await approve(id);
+        else if (status === "cancelled") await cancel(id);
+        else if (status === "rejected") await reject(id);
+        if (document.value) document.value.status = status;
+    };
+
     return {
         createLoading,
         create,
@@ -65,6 +152,21 @@ export const useDocumentStore = defineStore("documentStore", () => {
         document,
         fetchDocument,
         updateLoading,
-        update
+        update,
+        pdfLoading,
+        getPdf,
+        acts,
+        actsLoading,
+        fetchActs,
+        contracts,
+        contractsLoading,
+        fetchContracts,
+        approveLoading,
+        approve,
+        rejectLoading,
+        reject,
+        cancelLoading,
+        cancel,
+        changeDocumentStatus
     };
 });

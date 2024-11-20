@@ -17,8 +17,10 @@ export interface DocumentCreateDataDocumentType {
     doc_type_id?: number | null,
     date?: string,
     number?: string,
+    from?: string,
     from_id?: number | null,
     from_type?: string,
+    to?: string,
     to_id?: number | null,
     to_type?: string,
     through_whom?: string,
@@ -78,6 +80,9 @@ export interface DraftsParamsType extends PaginationParamsType {
     subject?: string,
     to_id?: number | "",
     from_id?: number | "",
+    doc_type?: string,
+
+    [key: string]: any
 }
 
 export interface DraftType {
@@ -88,7 +93,9 @@ export interface DraftType {
     from_name: string,
     to_name: string,
     number: string,
-    content: ""
+    content: string,
+
+    [key: string]: any
 }
 
 export interface DraftsResponseType {
@@ -101,8 +108,65 @@ export interface DocumentType {
     type: string,
     date: string,
     number: string,
+    status: string,
+    to_id: number | null,
+    to_type: string,
     to_name: string,
     subject: string | null,
     content: string | null,
+    from_id: null | number,
+    from_type: string,
     from_name: string,
+
+    [key: string]: any
+}
+
+export interface ActsParamsType extends DraftsParamsType {
+}
+
+export interface ActType {
+    id: string,
+    date: string,
+    number: null | string,
+    status: DocumentStatusType,
+    product_parent_name: string,
+    product_name: string,
+    warehouse: ""
+}
+
+export interface ActsType {
+    acts: ActType[],
+    paginator: PaginationType
+}
+
+export interface ContractsParamsType extends PaginationParamsType{
+    from_date?: string,
+    to_date?: string,
+    number?: string,
+    from_id?: number | "",
+    total_price?: number | null,
+    product_category_id?: number | "",
+    product_type_id?: number | "",
+    quantity?: number | null,
+    unit_id?: number | "",
+}
+
+export interface ContractType {
+    id: string,
+    date: string,
+    number: string | null,
+    from_name: string,
+    to_name: string,
+    subject: string,
+    status: string,
+    product_parent_name: string,
+    product_name: string,
+    quantity: number,
+    unit_name: string,
+    total_price: number,
+}
+
+export interface ContractsType {
+    contracts: ContractType[],
+    paginator: PaginationType
 }

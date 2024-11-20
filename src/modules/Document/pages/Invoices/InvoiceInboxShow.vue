@@ -2,11 +2,18 @@
     setup
     lang="ts"
 >
-import { ref, watchEffect } from "vue";
+import {computed, onMounted, ref, watchEffect} from "vue";
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 import useConfirm from "@/components/ui/app-confirm/useConfirm";
+import {useRoute} from "vue-router";
+import {useDocumentStore} from "@/modules/Document/document.store";
 
-const { init } = useConfirm();
+const route = useRoute();
+const documentStore = useDocumentStore();
+
+const {init} = useConfirm();
+
+const routeId = computed<string>(() => route.params.id as string);
 
 interface TableData {
   name: string;
@@ -47,7 +54,7 @@ const tableData = ref<TableData[]>([
   }
 ]);
 
-const { setBreadCrumb } = useBreadcrumb();
+const {setBreadCrumb} = useBreadcrumb();
 
 const setBreadCrumbFn = () => {
   setBreadCrumb([
@@ -59,7 +66,7 @@ const setBreadCrumbFn = () => {
     },
     {
       label: "Входящие",
-      to: { name: "invoice-inbox" }
+      to: {name: "invoice-inbox"}
     },
     {
       label: "Просмотр",
@@ -67,10 +74,6 @@ const setBreadCrumbFn = () => {
     }
   ]);
 };
-
-watchEffect(() => {
-  setBreadCrumbFn();
-});
 
 const accepted = () => {
   init({
@@ -90,6 +93,11 @@ const accepted = () => {
     ]
   });
 };
+
+onMounted(() => {
+  setBreadCrumbFn();
+  documentStore.fetchDocument(routeId.value)
+});
 
 </script>
 
@@ -112,7 +120,7 @@ const accepted = () => {
         <div class="flex justify-between items-center">
           <div class="flex items-center mb-[8px]">
             <h1 class="text-[#4F5662] text-[14px] font-medium">Дата создания в системе:</h1>
-            <span class="ml-2 text-[#A8AAAE] text-[14px] font-medium block">24.08.2024</span>
+            <span class="ml-2 text-[#A8AAAE] text-[14px] font-medium block">{{documentStore.document?.created_at}}</span>
           </div>
 
           <!--pdf-->
@@ -122,7 +130,6 @@ const accepted = () => {
                 class="mr-[8px] mt-1"
                 alt="pdf"
             >
-
             <div>
               <h3 class="mb-[4px] text-[#000D24] text-[14px] font-medium">Накладной документ</h3>
               <h4 class="text-[#A8AAAE] text-[12px]">PDF | 9.83 MB</h4>

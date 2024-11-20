@@ -22,7 +22,7 @@ const attrs = useAttrs();
 </script>
 
 <template>
-  <div class="app-overlay relative">
+  <div :class="['app-overlay relative', parentClassName]">
     <component
         :is="tag"
         v-bind="attrs"

@@ -6,20 +6,20 @@ import vueDevTools from "vite-plugin-vue-devtools";
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  css: {
-    preprocessorOptions: {
-      scss: {
-        api: "modern-compiler", // or "modern"
-      },
+    css: {
+        preprocessorOptions: {
+            scss: {
+                api: "modern-compiler" // or "modern"
+            }
+        }
     },
-  },
-  plugins: [
-    vue(),
-    vueDevTools(),
-  ],
-  resolve: {
-    alias: {
-      "@": fileURLToPath(new URL("./src", import.meta.url)),
-    },
-  },
+    plugins: [
+        vue(),
+        vueDevTools()
+    ],
+    resolve: {
+        alias: {
+            "@": fileURLToPath(new URL("./src", import.meta.url))
+        }
+    }
 });

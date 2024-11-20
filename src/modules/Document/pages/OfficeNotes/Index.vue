@@ -2,15 +2,14 @@
     setup
     lang="ts"
 >
-import { onMounted, provide, reactive, ref, watch, watchEffect } from "vue";
+import { onMounted, reactive, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import CollapseFilter from "@/components/collapseFilter/index.vue";
-import appInput from "@/components/ui/form/app-input/AppInput.vue";
+import AppInput from "@/components/ui/form/app-input/AppInput.vue";
 import AppSelect from "@/components/ui/form/app-select/AppSelect.vue";
 import white from "@/assets/images/filter2.svg";
 import filter from "@/assets/images/filter.svg";
 import AppDatePicker from "@/components/ui/form/app-date-picker/AppDatePicker.vue";
-import EditModal from "./EditModal.vue";
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 import { useDocumentStore } from "@/modules/Document/document.store";
 import { filterObjectValues, setTableColumnIndex } from "@/utils/helper";
@@ -20,12 +19,21 @@ import AppForm from "@/components/ui/form/app-form/AppForm.vue";
 import { ValidationType } from "@/components/ui/form/app-form/app-form.type";
 import { useSettingsStore } from "@/modules/Settings/store";
 import MemoModal from "@/layout/Create/components/MemoModal.vue";
+import FreeModal from "@/layout/Create/components/FreeModal.vue";
 
 const documentStore = useDocumentStore();
 const settingsStore = useSettingsStore();
 
 const router = useRouter();
 const route = useRoute();
+
+enum DOCTYPES {
+  SIMPLEDEMAND = "simple_demand",
+  MONTHLYDEMAND = "monthly_demand",
+  YEARLYDEMAND = "yearly_demand"
+}
+
+const defaultDocType = DOCTYPES.SIMPLEDEMAND;
 
 const form = reactive<DraftsParamsType>({
   page: null,
@@ -35,7 +43,8 @@ const form = reactive<DraftsParamsType>({
   number: "",
   subject: "",
   to_id: "",
-  from_id: ""
+  from_id: "",
+  doc_type: defaultDocType
 });
 
 const validationErrors = ref<Record<string, any> | null>(null);
@@ -60,17 +69,6 @@ const clearForm = () => {
 
 const isOpenFilter = ref<boolean>(false);
 const editModal = ref<boolean>(false);
-const isView = ref<boolean>(false);
-
-const viewDraft = () => {
-  editModal.value = true;
-  isView.value = true;
-};
-
-const handleEdit = () => {
-  editModal.value = true;
-  isView.value = false;
-};
 
 const { setBreadCrumb } = useBreadcrumb();
 
@@ -83,7 +81,7 @@ const setBreadCrumbFn = () => {
       label: "Служебные записки"
     },
     {
-      label: "Черновики",
+      label: String(route.meta.breadcrumbItemTitle ?? ""),
       isActionable: true
     }
   ]);
@@ -103,6 +101,7 @@ const fetchDrafts = async () => {
   form.from_date = String(query.from_date ?? "");
   form.number = String(query.number ?? "");
   form.subject = String(query.subject ?? "");
+  form.doc_type = !!route.meta?.hasTabs ? String(query.doc_type ?? defaultDocType) : String(route.meta?.doc_type ?? "");
 
   try {
     await documentStore.fetchDrafts(
@@ -111,21 +110,54 @@ const fetchDrafts = async () => {
     );
     validationErrors.value = null;
   } catch (error: any) {
-    if (error.error.code === 422) {
+    if (error?.error?.code === 422) {
       validationErrors.value = error.meta.validation_errors;
     }
   }
 };
 
 onMounted(() => {
-  setBreadCrumbFn();
   settingsStore.fetchRespondents();
 });
+
+interface Tab {
+  title: string;
+  value: string;
+}
+
+const tabItems = ref<Tab[]>([
+  {
+    title: "Единоразовый",
+    value: DOCTYPES.SIMPLEDEMAND
+  },
+  {
+    title: "Месячный",
+    value: DOCTYPES.MONTHLYDEMAND
+  },
+  {
+    title: "Годовой",
+    value: DOCTYPES.YEARLYDEMAND
+  }
+]);
+
+const changeDocType = async () => {
+  const doc_type = route.query.doc_type as string || defaultDocType;
+
+  const isValidDocType = [
+    DOCTYPES.SIMPLEDEMAND,
+    DOCTYPES.MONTHLYDEMAND,
+    DOCTYPES.YEARLYDEMAND
+  ].includes(doc_type as DOCTYPES);
+
+  form.doc_type = isValidDocType ? (doc_type as DOCTYPES) : defaultDocType;
+};
+
 
 watch(
     () => route.query,
     () => {
       fetchDrafts();
+      changeDocType();
     },
     { immediate: true }
 );
@@ -133,40 +165,64 @@ watch(
 watch(
     () => route.name,
     () => {
+      setBreadCrumbFn();
       isOpenFilter.value = false;
       validationErrors.value = null;
       if (v$.value) v$.value.clear();
-    }
+    }, { immediate: true }
 );
 
 const changePage = (value: number) => {
   router.push({ query: { ...route.query, page: value } });
 };
 
-const tableCurrentChange = (value: DraftType) => {
-  if (route.name === "drafts") return;
+const tableCurrentChange = async (value: DraftType | undefined) => {
+  if (!route.meta.permissionView || !value) return;
 
-  router.push({ name: `${route.name as string}-id`, params: { id: value.id } });
+  await router.push({ name: `${route.name as string}-id`, params: { id: value.id } });
 };
 
-const activeDraft = ref<DraftType | null>(null);
+const document = ref<DraftType | null>(null);
 
-const editModalHandler = (value: DraftType) => {
-  activeDraft.value = value;
+const editModalHandler = (draft: DraftType) => {
+  document.value = draft;
   editModal.value = true;
 };
+
+const tableRowClassName = ({ row }: { row: DraftType }) => {
+  if (row.status === "sent") return "font-semibold !text-dark";
+  return "";
+};
+
 </script>
 
 <template>
   <div>
-    <div class="flex items-center justify-between">
-      <h1
-          v-if="route.meta.title"
-          class="m-0 font-semibold text-[32px]"
-      >
-        {{ route.meta.title }}
-      </h1>
-
+    <div class="flex justify-between items-end">
+      <div class="flex flex-col gap-y-6">
+        <h1
+            v-if="route.meta.title"
+            class="m-0 font-semibold text-[32px]"
+        >
+          {{ route.meta.title }}
+        </h1>
+        <div
+            v-if="route.meta?.hasTabs"
+            class="app-tabs !inline-flex"
+        >
+          <RouterLink
+              v-for="item in tabItems"
+              :key="item.value"
+              :class="[
+              'app-tab',
+              { 'app-tab--active': form.doc_type === item.value },
+            ]"
+              :to="{ query: { ...route.query, ...{ doc_type: item.value } } }"
+          >
+            {{ item.title }}
+          </RouterLink>
+        </div>
+      </div>
       <button
           class="custom-filter-btn font-medium"
           :class="isOpenFilter ? '!bg-blue !text-white' : ''"
@@ -180,12 +236,11 @@ const editModalHandler = (value: DraftType) => {
         Фильтр
       </button>
     </div>
-
     <CollapseFilter v-model="isOpenFilter">
       <template #body>
         <AppForm
             :value="form"
-            :validation-errors="validationErrors"
+            :validation-errors
             @validation="setValidation"
             class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-1"
         >
@@ -199,19 +254,19 @@ const editModalHandler = (value: DraftType) => {
           <AppDatePicker
               v-model="form.to_date"
               prop="to_date"
-              placeholder="по эту дату"
-              label="по эту дату"
+              placeholder="По эту дату"
+              label="По эту дату"
               label-class="text-[#7F7D83]"
           />
 
-          <appInput
+          <AppInput
               v-model="form.number"
               prop="number"
               placeholder="Номер документа"
               label="Номер документа"
               label-class="text-[#7F7D83]"
           />
-          <appInput
+          <AppInput
               v-model="form.subject"
               prop="subject"
               placeholder="Доставка картофеля"
@@ -269,10 +324,10 @@ const editModalHandler = (value: DraftType) => {
     </CollapseFilter>
     <el-table
         v-loading="documentStore.draftsLoading"
-        :data="documentStore.drafts?.documents"
+        :data="documentStore.draftsLoading ? [] : documentStore.drafts?.documents"
         class="custom-element-table"
         stripe
-        :highlight-current-row="route.name !== 'drafts'"
+        :highlight-current-row="!!route.meta.permissionView"
         @current-change="tableCurrentChange"
     >
       <el-table-column
@@ -297,7 +352,11 @@ const editModalHandler = (value: DraftType) => {
       <el-table-column
           prop="number"
           label="№ документа"
-      />
+      >
+        <template #default="{ row }: { row: DraftType }">
+          {{ row.number ?? "-" }}
+        </template>
+      </el-table-column>
       <el-table-column
           prop="subject"
           label="Тема"
@@ -326,35 +385,38 @@ const editModalHandler = (value: DraftType) => {
         <template #default="{ row }: { row: DraftType }">
           <div class="flex items-center gap-x-2.5">
             <button
-                v-if="route.name === 'drafts'"
+                v-if="route.meta.permissionEdit"
                 class="action-btn ml-[20px]"
                 @click="editModalHandler(row)"
             >
               <img
-                  src="@/assets/images/icons/edit.svg"
+                  src="../../../../assets/images/icons/edit.svg"
                   alt="edit"
               />
             </button>
-            <template v-else>
-              <RouterLink
-                  class="action-btn"
-                  :to="{name: `${route.name as string}-id`, params: {id:row.id}}"
-              >
-                <img
-                    src="@/assets/images/eye.svg"
-                    alt="eye"
-                />
-              </RouterLink>
-              <button
-                  @click.stop
-                  class="action-btn"
-              >
-                <img
-                    src="@/assets/images/download.svg"
-                    alt="download"
-                />
-              </button>
-            </template>
+            <RouterLink
+                v-if="route.meta.permissionView"
+                class="action-btn"
+                :to="{name: `${route.name as string}-id`, params: {id:row.id}}"
+            >
+              <img
+                  src="../../../../assets/images/eye.svg"
+                  alt="eye"
+              />
+            </RouterLink>
+            <ElButton
+                :loading="documentStore.pdfLoading"
+                plain
+                @click.stop="documentStore.getPdf(row.id)"
+                class="action-btn"
+                text
+                bg
+            >
+              <img
+                  src="../../../../assets/images/download.svg"
+                  alt="download"
+              />
+            </ElButton>
           </div>
         </template>
       </el-table-column>
@@ -368,12 +430,19 @@ const editModalHandler = (value: DraftType) => {
         @current-change="changePage"
     />
 
-    <MemoModal
-        v-model="editModal"
-        v-model:draft="activeDraft"
-        :id="null"
-        title="Редактировать служебную записку"
-        :name="activeDraft?.subject ?? ''"
-    />
+    <template v-if="route.meta?.permissionEdit">
+      <MemoModal
+          v-if="route.meta?.doc_type_id === 1"
+          v-model="editModal"
+          v-model:document="document"
+          title="Редактировать служебную записку"
+      />
+      <FreeModal
+          v-else-if="route.meta?.doc_type_id === 2"
+          v-model="editModal"
+          v-model:document="document"
+          title="Редактировать свободный запрос"
+      />
+    </template>
   </div>
 </template>

@@ -20,6 +20,7 @@
     "external-svg-loader": "^1.7.1",
     "maska": "^2.1.11",
     "pinia": "^2.2.2",
+    "qrcode": "^1.5.4",
     "sass": "^1.77.8",
     "vue": "^3.5.11",
     "vue-echarts": "^7.0.3",
@@ -29,6 +30,7 @@
   "devDependencies": {
     "@tsconfig/node20": "^20.1.4",
     "@types/node": "^20.14.5",
+    "@types/qrcode": "^1.5.5",
     "@vitejs/plugin-vue": "^5.1.4",
     "@vue/tsconfig": "^0.5.1",
     "autoprefixer": "^10.4.20",
