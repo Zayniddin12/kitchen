@@ -114,7 +114,7 @@ watch(() => route.params, async () => {
     is_paid: route.params.part_name == "menu" ? 0 : route.params.part_name == "sales" ? 1 : null,
     kitchen_type_id: route.params.kitchen_id as string,
   });
-  setBreadcrumbFn();
+  setBreadCrumbFn();
 }, { immediate: true });
 
 watchEffect(() => {
