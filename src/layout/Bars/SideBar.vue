@@ -9,6 +9,8 @@ import ChildSidebar from "@/layout/Bars/ChildSidebar.vue";
 import { useSidebarStore } from "@/layout/Bars/sidebar.store";
 import { useAuthStore } from "@/modules/Auth/auth.store";
 import { useKitchenStore } from "@/modules/Kitchen/kitchen.store";
+import {removeItem} from "@/utils/localStorage";
+import {getSessionItem, removeSessionItem, setSessionItem} from "@/utils/sessionStorage";
 
 const emit = defineEmits<{
   (e: "update:childSidebarPin", value: boolean): void;
@@ -43,7 +45,7 @@ watch(
 );
 
 onMounted(() => {
-  const storedMenu: string = sessionStorage.getItem("current-menu") | "0";
+  const storedMenu: string = getSessionItem("current-menu") || "0";
   const storedSidebar = localStorage.getItem("child-sidebar");
   if (childIsOpenPin.value) {
     currentIndex.value = Number(storedMenu);
@@ -67,7 +69,7 @@ onUnmounted(() => {
 watch(
     () => route.path,
     () => {
-      const storedMenu = sessionStorage.getItem("current-menu");
+      const storedMenu = getSessionItem("current-menu");
       currentMenu.value = storedMenu ? (JSON.parse(storedMenu) as number) : 0;
     }
 );
@@ -75,7 +77,7 @@ watch(
 const activeMenu = (index: number, item: MenuItem) => {
   currentIndex.value = index;
   currentMenu.value = index;
-  sessionStorage.setItem("current-menu", currentMenu.value.toString());
+  setSessionItem("current-menu", currentMenu.value.toString());
   if (item.route == "/") {
     localStorage.setItem("child-sidebar", JSON.stringify(false));
     emit("update:childSidebar", false);
@@ -143,8 +145,8 @@ const pinSidebar = () => {
 const authStore = useAuthStore();
 
 const logOut = () => {
-  localStorage.removeItem("child-sidebar");
-  sessionStorage.removeItem("current-menu");
+  removeItem("child-sidebar");
+  removeSessionItem("current-menu");
 
   if (authStore.isAuth) authStore.logout();
   else router.push({ name: "login" });

@@ -13,7 +13,6 @@ import { ValidationType } from "@/components/ui/form/app-form/app-form.type";
 import { useCommonStore } from "@/stores/common.store";
 import { filterObjectValues } from "@/utils/helper";
 import AppForm from "@/components/ui/form/app-form/AppForm.vue";
-import { AppInputValueType } from "@/components/ui/form/app-input/app-input.type";
 
 enum TABS {
   PINFL = 1,
@@ -100,6 +99,7 @@ const fetchSearchUser = async () => {
   try {
     await userStore.fetchSearchUser(userStore.activeUserPage ? "users" : "employee", filterObjectValues(newForm));
     validationErrors.value = null;
+    router.push({name: `${userStore.activeRoutePrefix}-create`})
   } catch (error: any) {
     if (error?.error?.code === 422) {
       validationErrors.value = error.meta.validation_errors;
@@ -128,7 +128,8 @@ onMounted(() => {
           >
             <svg
                 :data-src="'/sidebar/' + item.icon + '.svg'"
-                class="size-5"
+                class="size-5 tab-icon tab-icon--"
+                :class="['size-5', {'tab-icon--no-active': activeTab !== item.value}]"
             />
             {{ item.title }}
           </RouterLink>
@@ -156,7 +157,6 @@ onMounted(() => {
                 required
                 :min="14"
                 :max="14"
-                trigger="blur"
                 :mask="'#'.repeat(14)"
             />
             <template v-else>
@@ -169,14 +169,12 @@ onMounted(() => {
                   required
                   :min="9"
                   :max="9"
-                  trigger="blur"
                   :mask="{
-                    mask: '@@#######',
+                    mask: 'AA#######',
                     tokens: {
                      'A': {
                         pattern: /[A-Z]/,
                        transform: (chr: string) => chr.toUpperCase(),
-                       multiple: true
                      }
                     }
                   }"
@@ -189,7 +187,6 @@ onMounted(() => {
                   label-class="text-[#A8AAAE] text-xs"
                   format="DD.MM.YYYY"
                   required
-                  trigger="blur"
               />
             </template>
           </TransitionGroup>
@@ -208,15 +205,8 @@ onMounted(() => {
   </div>
 </template>
 
-<style lang="scss">
-.create-form {
-  .el-input-group__prepend {
-    background-color: transparent;
+<style scoped lang="scss">
+  .tab-icon--no-active *{
+    fill: #A8AAAE;
   }
-
-  .el-input-group__append {
-    color: #FFFFFF;
-    background-color: #2E90FA;
-  }
-}
 </style>

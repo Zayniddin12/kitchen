@@ -2,13 +2,13 @@
     setup
     lang="ts"
 >
-import { computed, onMounted, ref, watch, watchEffect } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 import { useUsersStore } from "@/modules/Users/users.store";
 import AppOverlay from "@/components/ui/app-overlay/AppOverlay.vue";
 import Avatar from "@/assets/images/avatar.png";
-import { phoneFormatter } from "../../../utils/helper";
+import { phoneFormatter } from "@/utils/helper";
 
 interface Tabs {
   title: string;
@@ -124,7 +124,7 @@ onMounted(() => {
           </div>
 
           <div class="text-xl font-semibold text-gray-900 ml-[24px]">
-            {{ usersStore.employeeFullName || "-" }}
+            {{ usersStore.employeeFullName || "—" }}
           </div>
         </div>
       </div>

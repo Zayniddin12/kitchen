@@ -1,5 +1,5 @@
-import { defineStore } from "pinia";
-import { computed, ref } from "vue";
+import {defineStore} from "pinia";
+import {computed, ref} from "vue";
 import {
     SearchUserDataType,
     UserApiUrlType,
@@ -9,7 +9,8 @@ import {
     UserType
 } from "@/modules/Users/users.types";
 import usersApi from "@/modules/Users/users.api";
-import { useRoute } from "vue-router";
+import {useRoute} from "vue-router";
+import {getSessionItem, removeSessionItem, setSessionItem} from "@/utils/sessionStorage";
 
 export const useUsersStore = defineStore("usersStore", () => {
     const route = useRoute();
@@ -42,7 +43,7 @@ export const useUsersStore = defineStore("usersStore", () => {
     const getUserFullName = (user: UserType | null) => {
         if (!user) return "";
 
-        const { firstname, lastname, patronymic } = user;
+        const {firstname, lastname, patronymic} = user;
 
         return [firstname, lastname, patronymic].filter(Boolean).join(" ");
     };
@@ -121,11 +122,30 @@ export const useUsersStore = defineStore("usersStore", () => {
 
     const searchUser = ref<UserShowType | null>(null);
     const searchUserLoading = ref(false);
+    const searchUserStorageKey = "search-user";
+
+    const setSearchUser = (user: UserShowType) => {
+        searchUser.value = user;
+        setSessionItem(searchUserStorageKey, JSON.stringify(user));
+    };
+
+    const initializeSearchUser = () => {
+        if(!searchUser.value) return
+
+        const storedUser = getSessionItem(searchUserStorageKey);
+        searchUser.value = storedUser ? JSON.parse(storedUser) : null;
+    };
+
+    const clearSearchUser = () => {
+        searchUser.value = null;
+        removeSessionItem(searchUserStorageKey);
+    };
 
     const fetchSearchUser = async (url: UserApiUrlType, data: SearchUserDataType) => {
         searchUserLoading.value = true;
         try {
-            searchUser.value = await usersApi.fetchSearchUser(url, data);
+            const response = await usersApi.fetchSearchUser(url, data);
+            setSearchUser(response);
         } finally {
             searchUserLoading.value = false;
         }
@@ -158,6 +178,8 @@ export const useUsersStore = defineStore("usersStore", () => {
         activeRoutePrefix,
         searchUser,
         searchUserLoading,
-        fetchSearchUser
+        fetchSearchUser,
+        initializeSearchUser,
+        clearSearchUser
     };
 });

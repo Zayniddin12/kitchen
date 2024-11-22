@@ -14,6 +14,7 @@ import Footer from "@/components/ui/Footer.vue";
 import { AuthLoginDataType } from "@/modules/Auth/auth.types";
 import { useAuthStore } from "@/modules/Auth/auth.store";
 import { useCommonStore } from "@/stores/common.store";
+import {setSessionItem} from "@/utils/sessionStorage";
 
 const { t } = useI18n();
 const router = useRouter();
@@ -45,7 +46,7 @@ const onSubmit = async () => {
     newForm.phone = `998${newForm.phone.replace(/\D/g, "")}`;
     await authStore.login(newForm).then(() => {
       commonStore.successToast({ name: "home" });
-      sessionStorage.setItem("current-menu", "0");
+      setSessionItem("current-menu", "0");
     });
   }
 };

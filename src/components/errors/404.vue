@@ -3,8 +3,10 @@
   lang="ts"
 >
 
+import {setSessionItem} from "@/utils/sessionStorage";
+
 const backToHome = () => {
-  sessionStorage.setItem("current-menu", "0");
+  setSessionItem("current-menu", "0");
 };
 </script>
 

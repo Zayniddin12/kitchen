@@ -1,4 +1,4 @@
-import { RouteRecordRaw } from "vue-router";
+import {RouteRecordRaw} from "vue-router";
 
 export default [
     //------------------------------База кадров------------------------------
@@ -17,24 +17,30 @@ export default [
         component: () => import("@/modules/Users/pages/UserFetch.vue"),
         meta: {
             parentRouteTitle: "База кадров",
-            parentRouteUrl: { name: "personal-database" },
-            title: "База кадров"
+            parentRouteUrl: {name: "personal-database"},
+            title: "Добавить"
         }
     },
     {
         path: "/personal-database-create",
         name: "personal-database-create",
-        component: () => import("@/modules/Users/pages/PersonnelDatabase/PersonnelDatabaseAddEdit.vue"),
+        component: () => import("@/modules/Users/pages/UserCreateOrUpdate.vue"),
         meta: {
-            title: "База кадров"
+            parentRouteTitle: "База кадров",
+            parentRouteUrl: {name: 'personal-database'},
+            title: "Добавить",
+            type: "create"
         }
     },
     {
         path: "/personal-database-edit/:id(\\d+)",
         name: "personal-database-edit",
-        component: () => import("@/modules/Users/pages/PersonnelDatabase/PersonnelDatabaseAddEdit.vue"),
+        component: () => import("@/modules/Users/pages/UserCreateOrUpdate.vue"),
         meta: {
-            title: "Редактировать"
+            parentRouteTitle: "База кадров",
+            parentRouteUrl: {name: 'personal-database'},
+            title: "Редактировать",
+            type: "update"
         }
     },
     {
@@ -43,7 +49,7 @@ export default [
         component: () => import("@/modules/Users/pages/User.vue"),
         meta: {
             parentRouteTitle: "База кадров",
-            parentRouteUrl: { name: "personal-database" },
+            parentRouteUrl: {name: "personal-database"},
             title: "Просмотр"
         }
     },
@@ -63,24 +69,30 @@ export default [
         component: () => import("@/modules/Users/pages/UserFetch.vue"),
         meta: {
             parentRouteTitle: "Посетители",
-            parentRouteUrl: { name: "visitors" },
+            parentRouteUrl: {name: "visitors"},
             title: "Добавить"
         }
     },
     {
         path: "/visitors-create",
         name: "visitors-create",
-        component: () => import("@/modules/Users/pages/Visitors/VisitorsAddEdit.vue"),
+        component: () => import("@/modules/Users/pages/UserCreateOrUpdate.vue"),
         meta: {
-            title: "Добавить"
+            parentRouteTitle: "Посетители",
+            parentRouteUrl: {name: 'visitors'},
+            title: "Добавить",
+            type: "create"
         }
     },
     {
         path: "/visitors-edit/:id(\\d+)",
         name: "visitors-edit",
-        component: () => import("@/modules/Users/pages/Visitors/VisitorsAddEdit.vue"),
+        component: () => import("@/modules/Users/pages/UserCreateOrUpdate.vue"),
         meta: {
-            title: "Редактировать"
+            parentRouteTitle: "Посетители",
+            parentRouteUrl: {name: 'visitors'},
+            title: "Редактировать",
+            type: "create"
         }
     },
     {
@@ -90,7 +102,7 @@ export default [
         meta: {
             title: "Просмотр",
             parentRouteTitle: "Посетители",
-            parentRouteUrl: { name: "visitors" }
+            parentRouteUrl: {name: "visitors"}
         }
     }
 ] as RouteRecordRaw[];
