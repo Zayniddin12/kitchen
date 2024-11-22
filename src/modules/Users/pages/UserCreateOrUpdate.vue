@@ -136,68 +136,77 @@ onUnmounted(() => {
           <div class="grid grid-cols-3 gap-4">
             <AppInput
                 label="Фамилия"
-                :placeholder="userStore.searchUser.lastName"
+                :placeholder="userStore.searchUser.lastname"
                 label-class="text-[#A8AAAE] text-xs font-medium"
                 disabled
             />
 
             <AppInput
                 label="Имя"
-                label-class="text-[#A8AAAE] text-[12px] font-medium"
+                :placeholder="userStore.searchUser.firstname"
+                label-class="text-[#A8AAAE] text-xs font-medium"
+                disabled
             />
 
             <AppInput
                 label="Отчество"
-                label-class="text-[#A8AAAE] text-[12px] font-medium"
+                :placeholder="userStore.searchUser.patronymic || ''"
+                label-class="text-[#A8AAAE] text-xs font-medium"
+                disabled
             />
 
             <AppDatePicker
+                v-model="userStore.searchUser.birthday as string"
                 placeholder=""
+                format="DD.MM.YYYY"
                 label="Дата рождения"
-                label-class="text-[#A8AAAE] text-[12px] font-medium"
+                label-class="text-[#A8AAAE] text-xs font-medium"
+                disabled
             />
 
             <AppInput
+                :placeholder="userStore.searchUser.nationality || ''"
                 label="Национальность"
-                label-class="text-[#A8AAAE] text-[12px] font-medium"
+                label-class="text-[#A8AAAE] text-xs font-medium"
+                disabled
             />
 
             <AppInput
                 label="Пол"
-                label-class="text-[#A8AAAE] text-[12px] font-medium"
+                label-class="text-[#A8AAAE] text-xs font-medium"
             />
 
             <AppInput
                 label="Серия и номер паспорта"
-                label-class="text-[#A8AAAE] text-[12px] font-medium"
+                label-class="text-[#A8AAAE] text-xs font-medium"
             />
 
             <AppInput
                 label="Кем выдан"
-                label-class="text-[#A8AAAE] text-[12px] font-medium"
+                label-class="text-[#A8AAAE] text-xs font-medium"
             />
 
             <AppDatePicker
                 label="Дата выпуска"
                 placeholder=""
-                label-class="text-[#A8AAAE] text-[12px] font-medium"
+                label-class="text-[#A8AAAE] text-xs font-medium"
             />
 
             <AppDatePicker
                 label="Срок действия"
                 placeholder=""
-                label-class="text-[#A8AAAE] text-[12px] font-medium"
+                label-class="text-[#A8AAAE] text-xs font-medium"
             />
 
             <AppInput
                 label="ПИНФЛ"
-                label-class="text-[#A8AAAE] text-[12px] font-medium"
+                label-class="text-[#A8AAAE] text-xs font-medium"
             />
 
             <AppInput
                 label="Номер телефона"
                 type="tel"
-                label-class="text-[#A8AAAE] text-[12px] font-medium"
+                label-class="text-[#A8AAAE] text-xs font-medium"
             />
           </div>
 
