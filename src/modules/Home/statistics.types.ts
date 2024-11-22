@@ -1,5 +1,7 @@
+export type ManagementIdType = number | null;
+
 export interface WarehouseCapacityParamsType {
-    management_id?: number | null;
+    management_id?: ManagementIdType;
 }
 
 export interface WarehouseCapacityType {
@@ -45,12 +47,21 @@ export interface ProductType {
 export type ProductsType = ProductType[];
 
 export interface GraphProductsParamsType extends VisitorsParamsType {
-    type_id?: number,
+    type_id?: number | "",
 }
 
-export interface GraphProductsType {
-
+export interface GraphProductDataType {
+    date: string,
+    value: number,
 }
+
+export interface GraphProductType {
+    warehouse_name: string,
+    color: string,
+    data: GraphProductDataType[],
+}
+
+export type GraphProductsType = GraphProductType[];
 
 export interface StatisticCountParamsType extends WarehouseCapacityParamsType {
 }

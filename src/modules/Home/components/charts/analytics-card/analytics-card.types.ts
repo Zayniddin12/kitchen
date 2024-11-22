@@ -1,12 +1,11 @@
+import { ChartType } from "@/modules/Home/components/charts/chart.types";
+
 export interface AnalyticsCardDataType {
     value: number,
     name: string,
 }
 
-export interface AnalyticsCardPropsType {
+export interface AnalyticsCardPropsType extends ChartType {
     icon: string,
-    title: string,
-    subtitle: string,
     data: AnalyticsCardDataType[],
-    loading?: boolean,
 }

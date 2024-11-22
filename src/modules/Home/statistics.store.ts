@@ -1,6 +1,8 @@
-import {defineStore} from "pinia";
-import {ref} from "vue";
+import { defineStore } from "pinia";
+import { ref } from "vue";
 import {
+    GraphProductsParamsType,
+    GraphProductsType,
     KitchenPreparationParamsType,
     KitchenPreparationType, ProductsParamsType, ProductsType, StatisticCountParamsType, StatisticCountType,
     VisitorsParamsType,
@@ -23,7 +25,7 @@ export const useStatisticsStore = defineStore("statisticsStore", () => {
         } finally {
             warehouseCapacityLoading.value = false;
         }
-    }
+    };
 
     const visitors = ref<VisitorsType | null>(null);
     const visitorsLoading = ref(false);
@@ -36,7 +38,7 @@ export const useStatisticsStore = defineStore("statisticsStore", () => {
         } finally {
             visitorsLoading.value = false;
         }
-    }
+    };
 
     const kitchenPreparations = ref<KitchenPreparationType | null>(null);
     const kitchenPreparationsLoading = ref(false);
@@ -49,7 +51,7 @@ export const useStatisticsStore = defineStore("statisticsStore", () => {
         } finally {
             kitchenPreparationsLoading.value = false;
         }
-    }
+    };
 
     const products = ref<ProductsType>([]);
     const productsLoading = ref(false);
@@ -62,7 +64,7 @@ export const useStatisticsStore = defineStore("statisticsStore", () => {
         } finally {
             productsLoading.value = false;
         }
-    }
+    };
 
     const kitchenCount = ref<StatisticCountType>([]);
     const kitchenCountLoading = ref(false);
@@ -75,7 +77,7 @@ export const useStatisticsStore = defineStore("statisticsStore", () => {
         } finally {
             kitchenCountLoading.value = false;
         }
-    }
+    };
 
     const warehouseCount = ref<StatisticCountType>([]);
     const warehouseCountLoading = ref(false);
@@ -88,7 +90,33 @@ export const useStatisticsStore = defineStore("statisticsStore", () => {
         } finally {
             warehouseCountLoading.value = false;
         }
-    }
+    };
+
+    const incomingGraphProducts = ref<GraphProductsType>([]);
+    const incomingGraphProductsLoading = ref(false);
+
+    const fetchIncomingGraphProducts = async (params: GraphProductsParamsType = {}) => {
+        incomingGraphProductsLoading.value = true;
+
+        try {
+            incomingGraphProducts.value = await statisticsApi.fetchGraphProducts("incoming-products", params);
+        } finally {
+            incomingGraphProductsLoading.value = false;
+        }
+    };
+
+    const outgoingGraphProducts = ref<GraphProductsType>([]);
+    const outgoingGraphProductsLoading = ref(false);
+
+    const fetchOutgoingGraphProducts = async (params: GraphProductsParamsType = {}) => {
+        outgoingGraphProductsLoading.value = true;
+
+        try {
+            outgoingGraphProducts.value = await statisticsApi.fetchGraphProducts("outgoing-products", params);
+        } finally {
+            outgoingGraphProductsLoading.value = false;
+        }
+    };
 
 
     return {
@@ -109,6 +137,12 @@ export const useStatisticsStore = defineStore("statisticsStore", () => {
         fetchKitchenCount,
         warehouseCount,
         warehouseCountLoading,
-        fetchWarehouseCount
+        fetchWarehouseCount,
+        incomingGraphProducts,
+        incomingGraphProductsLoading,
+        fetchIncomingGraphProducts,
+        outgoingGraphProducts,
+        outgoingGraphProductsLoading,
+        fetchOutgoingGraphProducts
     };
 });

@@ -136,7 +136,6 @@ const tableCurrentChange = (value: Record<string, any>) => {
         <div
             v-for="item in tabs"
             :key="item.value"
-            class="cursor-pointer"
             :class="['app-tab', {'app-tab--active': activeTab === item.value}]"
             @click="setActiveTab(item)"
         >

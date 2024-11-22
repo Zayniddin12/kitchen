@@ -42,14 +42,9 @@ watch(
     { immediate: true }
 );
 
-watchEffect(() => {
-  console.log(useKitchenStore().departments);
-})
-
 onMounted(() => {
-  const storedMenu:string = sessionStorage.getItem("current-menu") | "0";
+  const storedMenu: string = sessionStorage.getItem("current-menu") | "0";
   const storedSidebar = localStorage.getItem("child-sidebar");
-  console.log(store.menuItems);
   if (childIsOpenPin.value) {
     currentIndex.value = Number(storedMenu);
   } else {

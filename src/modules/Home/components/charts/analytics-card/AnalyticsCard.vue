@@ -3,7 +3,7 @@
     lang="ts"
 >
 
-import { AnalyticsCardPropsType } from "@/modules/Home/components/analytics-card/analytics-card.types";
+import { AnalyticsCardPropsType } from "@/modules/Home/components/charts/analytics-card/analytics-card.types";
 import { computed } from "vue";
 import VChart from "vue-echarts";
 import AppOverlay from "@/components/ui/app-overlay/AppOverlay.vue";
@@ -90,7 +90,7 @@ const chartOption = computed(() => {
 <template>
   <AppOverlay
       :loading
-      parent-class-name="bg-[#F8F9FC] rounded-3xl p-4 analytics-card"
+      parent-class-name="home-card analytics-card"
   >
     <div class="flex items-center gap-x-2">
       <div class="bg-white p-2 rounded-lg flex items-center justify-center">

@@ -73,9 +73,7 @@ const setActiveTab = (item: any) => {
         >
           <svg
             :data-src="'/sidebar/' + item.icon + '.svg'"
-            width="20px"
-            height="20px"
-            class="mr-[8px]"
+            class="mr-2 size-5"
           />
           {{ item.title }}
         </div>

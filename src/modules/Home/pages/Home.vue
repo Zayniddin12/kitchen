@@ -2,9 +2,9 @@
     setup
     lang="ts"
 >
-import {use} from "echarts/core";
-import {CanvasRenderer} from "echarts/renderers";
-import {PieChart, BarChart, LineChart} from "echarts/charts";
+import { use } from "echarts/core";
+import { CanvasRenderer } from "echarts/renderers";
+import { PieChart, BarChart, LineChart } from "echarts/charts";
 import {
   TitleComponent,
   TooltipComponent,
@@ -13,25 +13,29 @@ import {
   GridComponent
 } from "echarts/components";
 import VChart from "vue-echarts";
-import {computed, onMounted, reactive, ref, watch, watchEffect} from "vue";
-import {tableData} from "@/modules/Home/constants";
+import { computed, onMounted, reactive, ref, watch } from "vue";
 import AppDatePicker from "@/components/ui/form/app-date-picker/AppDatePicker.vue";
 import AppSelect from "@/components/ui/form/app-select/AppSelect.vue";
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
-import AnalyticsCard from "@/modules/Home/components/analytics-card/AnalyticsCard.vue";
+import AnalyticsCard from "@/modules/Home/components/charts/analytics-card/AnalyticsCard.vue";
 import WarehouseIcon from "@/assets/images/icons/warehouse.svg";
 import UsersIcon from "@/assets/users.svg";
 import KitchenIcon from "@/assets/images/icons/kitchen.svg";
 import BranchIcon from "@/assets/images/icons/branch.svg";
-import {useStatisticsStore} from "@/modules/Home/statistics.store";
-import {AnalyticsCardDataType} from "@/modules/Home/components/analytics-card/analytics-card.types";
-import {useRoute} from "vue-router";
-import {useSettingsStore} from "@/modules/Settings/store";
-import {KitchenPreparationParamsType, ProductType, WarehouseCapacityParamsType} from "@/modules/Home/statistics.types";
-import {filterObjectValues, formatNumber} from "@/utils/helper";
-import {ValidationType} from "@/components/ui/form/app-form/app-form.type";
+import { useStatisticsStore } from "@/modules/Home/statistics.store";
+import { AnalyticsCardDataType } from "@/modules/Home/components/charts/analytics-card/analytics-card.types";
+import { useRoute } from "vue-router";
+import { useSettingsStore } from "@/modules/Settings/store";
+import {
+  GraphProductsParamsType,
+  KitchenPreparationParamsType,
+  ProductType,
+  WarehouseCapacityParamsType
+} from "@/modules/Home/statistics.types";
+import { filterObjectValues } from "@/utils/helper";
 import AppForm from "@/components/ui/form/app-form/AppForm.vue";
-import AppOverlay from "@/components/ui/app-overlay/AppOverlay.vue";
+import GraphChart from "@/modules/Home/components/charts/graph-chart/GraphChart.vue";
+import PreparationsChart from "@/modules/Home/components/charts/preparations-chart/PreparationsChart.vue";
 
 use([
   CanvasRenderer,
@@ -84,8 +88,8 @@ const kitchenData = computed<AnalyticsCardDataType[]>(() => {
   return statisticsStore.kitchenCount.map(el => {
     const newEl: AnalyticsCardDataType = {
       name: el.kitchen_type_name,
-      value: el.count,
-    }
+      value: el.count
+    };
 
     return newEl;
   });
@@ -95,114 +99,18 @@ const warehouseData = computed<AnalyticsCardDataType[]>(() => {
   return statisticsStore.warehouseCount.map(el => {
     const newEl: AnalyticsCardDataType = {
       name: el.kitchen_type_name,
-      value: el.count,
-    }
+      value: el.count
+    };
 
     return newEl;
   });
 });
 
-const option3 = {
-  tooltip: {
-    trigger: "axis",
-    axisPointer: {
-      type: "shadow"
-    }
-  },
-  grid: {
-    left: "3%",
-    right: "4%",
-    bottom: "3%",
-    containLabel: true
-  },
-  xAxis: {
-    type: "value",
-    boundaryGap: [0, 0.01]
-  },
-  yAxis: {
-    type: "category",
-    data: ["Кухни ЛПП", "Кухня", "Буфет", "Больница", "Профилакторий", "Лагерь"]
-
-  },
-  series: [
-    {
-      name: "Expenses",
-      type: "bar",
-      data: [356800000, 86480500, 286800000, 500000000, 125800000, 865800000],
-      itemStyle: {
-        color: function (params: any) {
-          // Define colors for each bar
-          const colors = ["#36BFFA", "#53D28C", "#EE7677", "#FFB269", "#F670C7", "#9B8AFB"];
-
-          return colors[params.dataIndex];
-        },
-        borderRadius: [0, 20, 20, 0]
-      }
-
-    }
-  ]
-};
-
-const optionLine = {
-  xAxis: {
-    type: "category",
-    boundaryGap: false,
-    data: ["12", "15", "17", "19", "21", "23", "25", "27", "29", "31", "2", "4", "6", "8", "10", "12"]
-  },
-  legend: {
-    data: ["Мясной склад", "Овощной склад", "Рисовый склад"]
-  },
-  yAxis: {
-    type: "value"
-  },
-  series: [
-    {
-      name: "Мясной склад",
-      data: [120, 132, 101, 134, 90, 230, 210, 180, 200, 250, 300, 280, 320, 240, 500],
-      type: "line",
-      smooth: true,
-      lineStyle: {
-        color: "#4682B4",
-        width: 3
-      }
-    },
-    {
-      name: "Овощной склад",
-      data: [220, 182, 191, 234, 290, 330, 310, 210, 150, 220, 270, 310, 120, 54, 350],
-      type: "line",
-      smooth: true,
-      lineStyle: {
-        color: "#FF6347",
-        width: 3
-      }
-    },
-    {
-      name: "Рисовый склад",
-      data: [150, 232, 201, 154, 190, 330, 410, 140, 120, 130, 140, 160, 150, 230, 300],
-      type: "line",
-      smooth: true,
-      lineStyle: {
-        color: "#FFD700",
-        width: 3
-      }
-    }
-  ],
-  tooltip: {
-    trigger: "axis"
-  },
-  grid: {
-    left: "3%",
-    right: "4%",
-    bottom: "3%",
-    containLabel: true
-  }
-};
-
-const handleClass = ({row}: { row: ProductType }) => {
+const handleClass = ({ row }: { row: ProductType }) => {
   return !row.quantity ? "!bg-[#FBDDDD]" : undefined;
 };
 
-const {setBreadCrumb} = useBreadcrumb();
+const { setBreadCrumb } = useBreadcrumb();
 
 const setBreadCrumbFn = () => {
   setBreadCrumb([
@@ -216,7 +124,7 @@ const setBreadCrumbFn = () => {
 const kitchenPreparationsForm = reactive<KitchenPreparationParamsType>({
   management_id: null,
   from_date: "",
-  to_date: "",
+  to_date: ""
 });
 
 const kitchenPreparationsValidationErrors = ref<Record<string, any> | null>(null);
@@ -224,13 +132,58 @@ const kitchenPreparationsValidationErrors = ref<Record<string, any> | null>(null
 const fetchKitchenPreparations = async () => {
   kitchenPreparationsForm.management_id = form.management_id;
   try {
-    await statisticsStore.fetchKitchenPreparations(filterObjectValues(kitchenPreparationsForm))
+    await statisticsStore.fetchKitchenPreparations(filterObjectValues(kitchenPreparationsForm));
+    kitchenPreparationsValidationErrors.value = null;
   } catch (error: any) {
     if (error?.error?.code === 422) {
       kitchenPreparationsValidationErrors.value = error.meta.validation_errors;
     }
   }
-}
+};
+
+const incomingGraphForm = reactive<GraphProductsParamsType>({
+  management_id: null,
+  type_id: "",
+  from_date: "",
+  to_date: ""
+});
+
+const incomingGraphValidationErrors = ref<Record<string, any> | null>(null);
+
+const fetchIncomingGraphProducts = async () => {
+  incomingGraphForm.management_id = form.management_id;
+
+  try {
+    await statisticsStore.fetchIncomingGraphProducts(filterObjectValues(incomingGraphForm));
+    incomingGraphValidationErrors.value = null;
+  } catch (error: any) {
+    if (error?.error?.code === 422) {
+      incomingGraphValidationErrors.value = error.meta.validation_errors;
+    }
+  }
+};
+
+const outgoingGraphForm = reactive<GraphProductsParamsType>({
+  management_id: null,
+  type_id: "",
+  from_date: "",
+  to_date: ""
+});
+
+const outgoingGraphValidationErrors = ref<Record<string, any> | null>(null);
+
+const fetchOutgoingGraphProducts = async () => {
+  outgoingGraphForm.management_id = form.management_id;
+
+  try {
+    await statisticsStore.fetchOutgoingGraphProducts(filterObjectValues(outgoingGraphForm));
+    outgoingGraphValidationErrors.value = null;
+  } catch (error: any) {
+    if (error?.error?.code === 422) {
+      outgoingGraphValidationErrors.value = error.meta.validation_errors;
+    }
+  }
+};
 
 watch(() => route.query.management_id, (newId) => {
   const management_id = newId ? parseInt(newId as string) : null;
@@ -244,11 +197,14 @@ watch(() => route.query.management_id, (newId) => {
   statisticsStore.fetchKitchenCount(newForm);
   statisticsStore.fetchWarehouseCount(newForm);
   fetchKitchenPreparations();
-}, {immediate: true});
+  fetchIncomingGraphProducts();
+  fetchOutgoingGraphProducts();
+
+}, { immediate: true });
 
 onMounted(() => {
   setBreadCrumbFn();
-  settingsStore.GET_REGIONAL({per_page: 100});
+  settingsStore.GET_REGIONAL({ per_page: 100 });
 });
 
 </script>
@@ -302,87 +258,44 @@ onMounted(() => {
               :loading="statisticsStore.visitorsLoading"
           />
         </div>
-        <div>
-          <AppOverlay
-              :loading="statisticsStore.kitchenPreparationsLoading"
-              parent-class-name="bg-[#F8F9FC] rounded-3xl p-4"
-          >
-            <div class="flex items-center justify-between">
-              <h2 class="text-[#000D24] !text-[24px] font-semibold">Приготовление</h2>
-              <AppForm
-                  :value="kitchenPreparationsForm"
-                  :validation-errors="kitchenPreparationsValidationErrors"
-                  class="grid grid-cols-2 w-[291px] gap-x-2"
-              >
-                <AppDatePicker
-                    v-model="kitchenPreparationsForm.from_date"
-                    prop="from_date"
-                    format="DD.MM.YYYY"
-                    size="large"
-                    @change="fetchKitchenPreparations"
-                />
-                <AppDatePicker
-                    v-model="kitchenPreparationsForm.to_date"
-                    prop="to_date"
-                    format="DD.MM.YYYY"
-                    size="large"
-                    @change="fetchKitchenPreparations"
-                />
-              </AppForm>
-            </div>
-
-            <div>
-              <span class="text-[#A8AAAE] text-[14px] mb-[4px]">Общая сумма</span>
-              <div class="flex items-center">
-                <span class="text-[32px] font-semibold">{{ statisticsStore.kitchenPreparations?.total_price ? formatNumber(statisticsStore.kitchenPreparations.total_price) : 0}} UZS</span>
-                <span class="flex items-center text-[#28C76F] text-[18px] font-medium">
-                  <svg
-                      width="32"
-                      height="32"
-                      viewBox="0 0 32 32"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                        d="M16.0002 6.66699V25.3337"
-                        stroke="#28C76F"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                    />
-                    <path
-                        d="M24 14.667L16 6.66699"
-                        stroke="#28C76F"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                    />
-                    <path
-                        d="M8 14.667L16 6.66699"
-                        stroke="#28C76F"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                    />
-                    </svg>
-                    5%
-                </span>
-              </div>
-            </div>
-
-            <v-chart
-                class="chart-horizon"
-                :option="option3"
-                autoresize
-            />
-
-          </AppOverlay>
-        </div>
-
+        <PreparationsChart
+            title="Приготовление"
+            :total_price="statisticsStore.kitchenPreparations?.total_price"
+            :percent="5"
+            :data="statisticsStore.kitchenPreparations?.kitchens ?? []"
+            :loading="statisticsStore.kitchenPreparationsLoading"
+        >
+          <template #form>
+            <AppForm
+                :value="kitchenPreparationsForm"
+                :validation-errors="kitchenPreparationsValidationErrors"
+                class="grid grid-cols-3 gap-x-2"
+            >
+              <AppSelect
+                  size="large"
+                  placeholder="Все типы"
+              />
+              <AppDatePicker
+                  v-model="kitchenPreparationsForm.from_date"
+                  prop="from_date"
+                  format="DD.MM.YYYY"
+                  size="large"
+                  @change="fetchKitchenPreparations"
+              />
+              <AppDatePicker
+                  v-model="kitchenPreparationsForm.to_date"
+                  prop="to_date"
+                  format="DD.MM.YYYY"
+                  size="large"
+                  @change="fetchKitchenPreparations"
+              />
+            </AppForm>
+          </template>
+        </PreparationsChart>
       </div>
       <div class="w-[45%]">
-        <div class="p-[24px] bg-[#F8F9FC] rounded-t-[24px]">
-          <span class="text-[#000D24] text-[18px] font-semibold ">Продукты с низким запасом</span>
+        <div class="p-6 bg-[#F8F9FC] rounded-t-[24px]">
+          <h6 class="text-dark text-lg font-semibold ">Продукты с низким запасом</h6>
         </div>
 
         <ElTable
@@ -445,41 +358,76 @@ onMounted(() => {
         </ElTable>
       </div>
     </div>
-
-    <div
-        class="p-[24px] bg-[#F8F9FC] rounded-[24px] mb-[40px]"
-        v-for="item in 2"
+    <GraphChart
+        title="Приход продуктов"
+        subtitle="Здесь будет текст"
+        class="mb-10"
+        :loading="statisticsStore.incomingGraphProductsLoading"
+        :data="statisticsStore.incomingGraphProducts"
     >
-      <div class="flex items-center justify-between">
-        <div>
-          <span class="block text-[24px] text-[#000D24] font-semibold">Приход продуктов</span>
-          <span class="text-black-sub block text-[14px]">Здесь будет текст</span>
-        </div>
-
-        <div class="flex items-center gap-2">
+      <template #form>
+        <AppForm
+            :value="incomingGraphForm"
+            :validation-errors="incomingGraphValidationErrors"
+            class="grid grid-cols-3 gap-x-4"
+        >
           <AppSelect
+              v-model="incomingGraphForm.type_id"
+              prop="type_id"
               size="large"
-              class="w-[142px]"
+              placeholder="Все типы"
+              @change="fetchIncomingGraphProducts"
           />
           <AppDatePicker
-              format="DD.MM.YYYY"
+              v-model="incomingGraphForm.from_date"
+              prop="from_date"
               size="large"
-              class="w-[142px]"
+              @change="fetchIncomingGraphProducts"
           />
           <AppDatePicker
-              class="w-[142px]"
-              format="DD.MM.YYYY"
+              v-model="incomingGraphForm.to_date"
+              prop="to_date"
               size="large"
+              @change="fetchIncomingGraphProducts"
           />
-        </div>
-      </div>
-
-      <v-chart
-          class="line-chart"
-          :option="optionLine"
-          autoresize
-      />
-    </div>
+        </AppForm>
+      </template>
+    </GraphChart>
+    <GraphChart
+        title="Остатки блюд"
+        subtitle="Здесь будет текст"
+        class="mb-10"
+        :loading="statisticsStore.outgoingGraphProductsLoading"
+        :data="statisticsStore.outgoingGraphProducts"
+    >
+      <template #form>
+        <AppForm
+            :value="outgoingGraphForm"
+            :validation-errors="outgoingGraphValidationErrors"
+            class="grid grid-cols-3 gap-x-4"
+        >
+          <AppSelect
+              v-model="outgoingGraphForm.type_id"
+              prop="type_id"
+              size="large"
+              placeholder="Все кухни"
+              @change="fetchOutgoingGraphProducts"
+          />
+          <AppDatePicker
+              v-model="outgoingGraphForm.from_date"
+              prop="from_date"
+              size="large"
+              @change="fetchOutgoingGraphProducts"
+          />
+          <AppDatePicker
+              v-model="outgoingGraphForm.to_date"
+              prop="to_date"
+              size="large"
+              @change="fetchOutgoingGraphProducts"
+          />
+        </AppForm>
+      </template>
+    </GraphChart>
 
     <div class="grid grid-cols-2 gap-x-4">
       <AnalyticsCard
@@ -499,21 +447,4 @@ onMounted(() => {
     </div>
   </div>
 </template>
-
-<style
-    scoped
-    lang="scss"
->
-.chart {
-  height: 314px;
-}
-
-.chart-horizon {
-  height: 340px;
-}
-
-.line-chart {
-  height: 381px;
-}
-</style>
 
