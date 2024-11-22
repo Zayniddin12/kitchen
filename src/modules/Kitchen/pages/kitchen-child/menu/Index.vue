@@ -2,7 +2,7 @@
     setup
     lang="ts"
 >
-import { computed, nextTick, reactive, ref, useTemplateRef, watch } from "vue";
+import { computed, nextTick, reactive, ref, useTemplateRef, watch, watchEffect } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useKitchenStore } from "@/modules/Kitchen/kitchen.store";
 import { TableColumnType } from "@/types/common.type";
@@ -55,32 +55,32 @@ const tabItems = computed(() => [
   { value: TABS.ALL, name: "Все меню" }
 ]);
 
-const setBreadCrumbFn = async () => {
-  await kitchenStore.fetchPart(
-      +route.params.department_id,
-      route.params.part_name as string
-  );
+const setBreadCrumbFn = () => {
+  kitchenStore.fetchPart(+route.params.department_id, route.params.part_name as string);
+  kitchenStore.fetchPart2(+route.params.kitchen_id);
+  kitchenStore.fetchPart3(+route.params.child_id);
 
   if (!kitchenStore.part) return;
 
   setBreadCrumb([
     {
-      label: "Кухня"
+      label: "Кухня",
     },
     {
-      label: kitchenStore.part.name
+      label: kitchenStore.part.title,
     },
     {
       label: kitchenStore.part.department_name,
-      to: { name: "KitchenIndex" }
+      to: { name: "KitchenIndex" },
     },
     {
-      label: "Лагерь",
-      to: { name: "KitchenShowIndex" }
+      label: kitchenStore.part.kitchen_vid as string,
+      isActionable: true,
+      to: { name: "KitchenShow" },
     },
     {
-      label: "Паҳлавон",
-      to: { name: "KitchenShowChildIndex" }
+      label: kitchenStore.part.kitchen_type as string,
+      isActionable: true,
     },
     {
       label: "Меню",
@@ -499,6 +499,23 @@ const salesTableCurrentChange = (value: Record<string, any>) => {
       },
       { immediate: true }
   );
+
+watch(() => route.params, async () => {
+  await kitchenStore.GET_KITCHEN_VID({
+    management_id: route.params.department_id as string,
+    is_paid: route.params.part_name == "free-kitchen" ? 0 : route.params.part_name == "sales" ? 1 : null,
+  });
+  await kitchenStore.GET_KITCHEN_TYPE({
+    management_id: route.params.department_id as string,
+    is_paid: route.params.part_name == "free-kitchen" ? 0 : route.params.part_name == "sales" ? 1 : null,
+    kitchen_type_id: route.params.kitchen_id as string,
+  });
+  setBreadCrumbFn();
+}, { immediate: true });
+
+watchEffect(() => {
+  setBreadCrumbFn();
+});
 </script>
 
 <template>
@@ -582,7 +599,7 @@ const salesTableCurrentChange = (value: Record<string, any>) => {
       </div>
       <div class="mt-6">
         <TransitionGroup
-            v-if="hasData"
+            v-if="!hasData"
             name="nested"
             :duration="{ enter: 500, leave: 1500 }"
             tag="div"

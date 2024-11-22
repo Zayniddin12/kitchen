@@ -5,7 +5,7 @@ import { useLayoutStore } from "@/navigation/index";
 
 
 enum PARTS {
-  MENU = "menu",
+  MENU = "free-kitchen",
   SALES = "sales",
 }
 
@@ -58,6 +58,8 @@ export const useKitchenStore = defineStore("kitchenStore", () => {
   const kitchenType = ref<KitchenType[] | []>([]);
   const layoutStore = useLayoutStore();
 
+  // KITCHEN CREATE
+
   const GET_KITCHEN_VID = async (params: Params) => {
     const { data } = await $axios.get("/kitchen-types/list-by-base", { params });
 
@@ -83,9 +85,9 @@ export const useKitchenStore = defineStore("kitchenStore", () => {
 
         newItem.children = [
           {
-            id: "menu",
-            title: "Меню",
-            route: `/kitchen/${item.id}/menu`,
+            id: "free-kitchen",
+            title: "Бесплатная кухня",
+            route: `/kitchen/${item.id}/free-kitchen`,
           },
           {
             id: "sales",

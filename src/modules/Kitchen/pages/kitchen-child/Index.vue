@@ -107,11 +107,11 @@ const setBreadCrumbFn = () => {
 watch(() => route.params, async () => {
   await kitchenStore.GET_KITCHEN_VID({
     management_id: route.params.department_id as string,
-    is_paid: route.params.part_name == "menu" ? 0 : route.params.part_name == "sales" ? 1 : null,
+    is_paid: route.params.part_name == "free-kitchen" ? 0 : route.params.part_name == "sales" ? 1 : null,
   });
   await kitchenStore.GET_KITCHEN_TYPE({
     management_id: route.params.department_id as string,
-    is_paid: route.params.part_name == "menu" ? 0 : route.params.part_name == "sales" ? 1 : null,
+    is_paid: route.params.part_name == "free-kitchen" ? 0 : route.params.part_name == "sales" ? 1 : null,
     kitchen_type_id: route.params.kitchen_id as string,
   });
   setBreadCrumbFn();

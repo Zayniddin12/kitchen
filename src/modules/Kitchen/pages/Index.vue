@@ -91,7 +91,7 @@ const setBreadcrumbFn = () => {
 watch(() => route.params, async () => {
   await kitchenStore.GET_KITCHEN_VID({
     management_id: route.params.department_id as string,
-    is_paid: route.params.part_name == "menu" ? 0 : route.params.part_name == "sales" ? 1 : null,
+    is_paid: route.params.part_name == "free-kitchen" ? 0 : route.params.part_name == "sales" ? 1 : null,
   });
   setBreadcrumbFn();
 }, { immediate: true });
