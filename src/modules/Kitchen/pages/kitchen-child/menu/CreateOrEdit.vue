@@ -127,6 +127,7 @@ const tableData = Array(4).fill({
   sum: "15 000 сум",
 });
 
+
 const tableData2 = Array(4).fill({
   ingredients: "Лук",
   quantity: 30,
@@ -150,7 +151,11 @@ const scheduledDates = computed(() => {
 
 // Watch
 watch(scheduledDates, (newValue) => {
-  if (newValue.length > 0) activeScheduledDate.value = newValue[0].date;
+  if (newValue.length > 0) {
+    activeScheduledDate.value = newValue[0].date;
+  } else {
+    activeScheduledDate.value = "";
+  }
 });
 
 const setBreadCrumbFn = () => {
@@ -264,7 +269,15 @@ const sendData = async () => {
     return;
   }
 
-  console.log("AAAA");
+  let kitchenPayload = {
+    kitchen_id: route.params.child_id,
+    start_date: kitchenData.value.startDate,
+    end_date: "",
+    duration: kitchenData.value.intermediateDate1 ? 7 : 10,
+  };
+
+
+  let kitchenElementPayload = {};
 };
 
 </script>
@@ -320,6 +333,7 @@ const sendData = async () => {
             <div
               class="flex flex-wrap items-center"
             >
+              {{ scheduledDates }}
               <button
                 v-for="item in scheduledDates"
                 :key="item.date"
@@ -331,11 +345,12 @@ const sendData = async () => {
             </div>
           </ElScrollbar>
           <div class="mt-6">
-            <template v-if="kitchenStore.activeMenuPart">
+            <template v-if="kitchenStore.activeMenuPart && activeScheduledDate">
               <h3 class="text-lg font-medium text-dark">
                 Выбирайте время еды!
-                {{ settingsStore.rationList.rations }}
+
               </h3>
+              {{ mealTimes }}
               <AppForm :value="mealTimes" @validation="(value) => mealTimesV$ = value"
                        class="mt-3 flex flex-col gap-y-3">
                 <div
@@ -367,6 +382,7 @@ const sendData = async () => {
                           class="max-w-[141px]"
                           label="Время окончания"
                           label-class="text-[#A8AAAE] text-xs font-medium"
+                          required
                         />
                         <AppInput
                           v-model="itemMeal.amount"
@@ -375,10 +391,12 @@ const sendData = async () => {
                           class="max-w-[141px]"
                           label="Количество порции"
                           label-class="text-[#A8AAAE] text-xs font-medium"
+                          required
                         />
                       </div>
                       <AppSelect
                         v-model="itemMeal.product_id"
+                        :prop="`[${index}]mealData.[${indexMeal}]product_id`"
                         :items="settingsStore.rationList.rations"
                         @change="changeRation(itemMeal.product_id,index,indexMeal)"
                         item-value="id"
@@ -387,6 +405,7 @@ const sendData = async () => {
                         label-class="text-[#A8AAAE]"
                         placeholder="Выберите"
                         class="w-[222px]"
+                        required
                       />
                       <div
                         v-if="itemMeal.product_id"

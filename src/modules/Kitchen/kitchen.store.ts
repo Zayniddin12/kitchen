@@ -13,8 +13,8 @@ enum PARTS {
 type PartsType = PARTS.MENU | PARTS.SALES;
 
 interface PartType {
-    id: PartsType;
-    name: string;
+  id: PartsType;
+  name: string;
 }
 
 interface Params {
@@ -36,9 +36,9 @@ interface Part2Type {
 }
 
 interface DepartmentType {
-    name: string;
-    id: number;
-    parts: PartType[];
+  name: string;
+  id: number;
+  parts: PartType[];
 }
 
 interface KitchenVid {
@@ -54,112 +54,152 @@ interface KitchenType {
 }
 
 export const useKitchenStore = defineStore("kitchenStore", () => {
-    const settingsStore = useSettingsStore();
+  const departments = ref<DepartmentType[]>([]);
+  const kitchenVid = ref<KitchenVid[] | []>([]);
+  const kitchenType = ref<KitchenType[] | []>([]);
+  const layoutStore = useLayoutStore();
 
-    const departments = ref<DepartmentType[]>([]);
-    const kitchenType = ref<KitchenType[] | []>([]);
+  // KITCHEN CREATE
 
-    const GET_KITCHEN_TYPE = async (params: Params) => {
-        const { data } = await $axios.get("/kitchen-types/list-by-base", { params });
+  const CREATE_KITCHEN = async (payload: any) => {
+    const { data } = await $axios.post("/kitchen-sales/menu", { data: payload });
 
-        kitchenType.value = data.data && data.data.kitchen_types;
-    };
+    return data;
+  };
 
-    const GET_KITCHEN_LIST = async () => {
-        await settingsStore.GET_REGIONAL({per_page: 100});
+  const CREATE_KITCHEN_ELEMENT = async ({ id, payload }: { id: string, payload: any }) => {
+    const { data } = await $axios.post(`/kitchen-sales/menu/${id}/add-element`, { data: payload });
 
-        if (settingsStore.regional && settingsStore.regional.managements) {
-            departments.value = settingsStore.regional.managements.map(item => {
-                const newItem = {} as Record<string, any>;
-                newItem.title = item.name;
-                newItem.icon = "building-warehouse";
-                newItem.id = item.id;
+    return data;
+  };
 
-                newItem.children = [
-                    {
-                        id: "menu",
-                        title: "Меню",
-                        route: `/kitchen/${item.id}/menu`
-                    },
-                    {
-                        id: "sales",
-                        title: "Продажи",
-                        route: `/kitchen/${item.id}/sales`
-                    }
-                ];
+  const GET_KITCHEN_VID = async (params: Params) => {
+    const { data } = await $axios.get("/kitchen-types/list-by-base", { params });
 
-                return newItem;
-            });
+    kitchenVid.value = data.data && data.data.kitchen_types;
+  };
+
+  const GET_KITCHEN_TYPE = async (params: Params) => {
+    const { data } = await $axios.get("/kitchen-warehouses/list", { params });
+
+    kitchenType.value = data.data && data.data.kitchen_warehouses;
+  };
+
+  const GET_KITCHEN_LIST = async (params?: Params) => {
+    const { data } = await $axios.get("/managements", { params });
+
+    if (data.data && data.data.managements) {
+      // departments.value = data.data && data.data.bases;
+      departments.value = data.data.managements.map(item => {
+        const newItem = {} as Record<string, any>;
+        newItem.title = item.name;
+        newItem.icon = "building-warehouse";
+        newItem.id = item.id;
+
+        newItem.children = [
+          {
+            id: "free-kitchen",
+            title: "Бесплатная кухня",
+            route: `/kitchen/${item.id}/free-kitchen`,
+          },
+          {
+            id: "sales",
+            title: "Продажи",
+            route: `/kitchen/${item.id}/sales`,
+          },
+        ];
+
+        return newItem;
+      });
+
+      layoutStore.menuItems.forEach(el => {
+        if (el.unique == "kitchen") {
+          el.children = departments.value;
         }
+      });
+    }
 
 
+  };
+
+  const part = ref<Part2Type | null>(null);
+
+  const activeMenuPart = computed(() => {
+    return part.value?.id === PARTS.MENU;
+  });
+
+  const activeSalesPart = computed(() => {
+    return part.value?.id === PARTS.SALES;
+  });
+
+  const fetchPart2 = (kitchen_vid_id: number | string) => {
+    console.log(kitchenVid.value, "kitchen_vid");
+    if (!kitchenVid.value.length) return;
+
+    const kitchen_vid =
+      kitchenVid.value.find(el => el.id == kitchen_vid_id) ?? null;
+
+    if (!kitchen_vid) return;
+
+    part.value = {
+      ...part.value,
+      ...{
+        kitchen_vid: kitchen_vid.name,
+      },
     };
+  };
 
-    // const kitchenMenu = computed(() => {
-    //   if (!departments.value.length) return [];
-    //
-    //   return departments.value.map(item => {
-    //     const newItem = {} as Record<string, any>;
-    //     newItem.title = item.name;
-    //     newItem.icon = "building-warehouse";
-    //     newItem.id = item.id;
-    //
-    //     newItem.children = [
-    //       {
-    //         id: "menu",
-    //         title: "Меню",
-    //       },
-    //       {
-    //         id: "sales",
-    //         title: "Продажи",
-    //       },
-    //     ];
-    //     console.log(newItem, "newItem");
-    //
-    //     return newItem;
-    //   });
-    // });
+  const fetchPart3 = (kitchen_type_id: number | string) => {
 
-    const part = ref<Part2Type | null>(null);
+    if (!kitchenType.value.length) return;
 
-    const activeMenuPart = computed(() => {
-        return part.value?.id === PARTS.MENU;
-    });
+    const kitchen_type =
+      kitchenType.value.find(el => el.id == kitchen_type_id) ?? null;
 
-    const activeSalesPart = computed(() => {
-        return part.value?.id === PARTS.SALES;
-    });
+    if (!kitchen_type) return;
 
-    const fetchPart = (department_id: number, part_name: string) => {
-        if (!departments.value.length) return;
-
-        const department =
-            departments.value.find(el => el.id == department_id) ?? null;
-
-        if (!department) return;
-
-        const activePart = department.children.find(el => el.id === part_name) ?? null;
-        if (!activePart) return;
-        ``;
-
-        part.value = {
-            ...activePart,
-            ...{
-                department_id: department.id,
-                department_name: department.title
-            }
-        };
+    part.value = {
+      ...part.value,
+      ...{
+        kitchen_type: kitchen_type.name,
+      },
     };
-    return {
-        GET_KITCHEN_LIST,
-        GET_KITCHEN_TYPE,
-        departments,
-        kitchenType,
-        // fetchDepartments,
-        // kitchenMenu,
-        fetchPart,
-        part,
-        activeMenuPart,
-        activeSalesPart
+  };
+
+  const fetchPart = (department_id: number, part_name: string) => {
+    if (!departments.value.length) return;
+
+    const department =
+      departments.value.find(el => el.id == department_id) ?? null;
+
+    if (!department) return;
+
+    const activePart = department.children.find(el => el.id === part_name) ?? null;
+    if (!activePart) return;
+    ``;
+
+    part.value = {
+      ...activePart,
+      ...{
+        department_id: department.id,
+        department_name: department.title,
+      },
     };
+  };
+  return {
+    GET_KITCHEN_LIST,
+    GET_KITCHEN_VID,
+    GET_KITCHEN_TYPE,
+    departments,
+    kitchenType,
+    kitchenVid,
+    // fetchDepartments,
+    // kitchenMenu,
+    fetchPart,
+    fetchPart2,
+    fetchPart3,
+    part,
+    activeMenuPart,
+    activeSalesPart,
+  };
 });
