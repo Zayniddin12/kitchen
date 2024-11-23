@@ -4,7 +4,7 @@
 >
 import { AppInputPropsType, AppInputValueType } from "@/components/ui/form/app-input/app-input.type";
 import { computed, inject, ref, Ref, useSlots, watch } from "vue";
-import { vMaska } from "maska";
+import { vMaska } from "maska/vue";
 import { getRules, setRules } from "@/components/ui/form/validate";
 import { ValidationErrorsType } from "@/components/ui/form/form.type";
 
@@ -52,7 +52,7 @@ const appInputClasses = computed<string[]>(() => {
 const slots = useSlots();
 
 const computedMask = computed(() =>
-    props.type === "tel" && !props.mask ? "## ###-##-##" : props.mask
+    props.type === "tel" && !props.mask ? "## ###-##-##" : props.mask || ""
 );
 
 const inputMask = computed(() => {
@@ -64,7 +64,7 @@ const change = (value: AppInputValueType) => {
   emit("change", value);
 };
 
-watch(validationErrors, (newErrors) => {
+watch(validationErrors, () => {
   ignoreValidationError.value = false;
 }, {
   deep: true
@@ -106,7 +106,7 @@ watch(validationErrors, (newErrors) => {
         :formatter
         :parser
         :show-password
-        v-maska:[inputMask]
+        v-maska="computedMask"
         :readonly
         :disabled
         :placeholder
@@ -145,3 +145,11 @@ watch(validationErrors, (newErrors) => {
     </ElInput>
   </ElFormItem>
 </template>
+
+<style lang="scss">
+.app-input {
+  .el-input__prefix {
+    margin-right: 7px;
+  }
+}
+</style>

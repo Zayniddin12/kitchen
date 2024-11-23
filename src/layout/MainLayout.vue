@@ -29,7 +29,7 @@ onMounted(async () => {
   if (getAccessToken()) authStore.me();
   // else await router.replace({ name: "login" });
   childSidebarPin.value = JSON.parse(localStorage.getItem("child-sidebar-pin") || "false");
-  await kitchenStore.GET_KITCHEN_LIST({ per_page: 100 });
+  await kitchenStore.GET_KITCHEN_LIST();
 
 });
 

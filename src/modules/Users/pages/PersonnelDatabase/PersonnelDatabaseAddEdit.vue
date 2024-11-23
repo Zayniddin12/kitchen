@@ -1,12 +1,13 @@
 <script
-  setup
-  lang="ts"
+    setup
+    lang="ts"
 >
 import { computed, ref, watchEffect } from "vue";
+import { useRoute, useRouter } from "vue-router";
 import AppInput from "@/components/ui/form/app-input/AppInput.vue";
 import AppDatePicker from "@/components/ui/form/app-date-picker/AppDatePicker.vue";
 import AppSelect from "@/components/ui/form/app-select/AppSelect.vue";
-import { useRoute, useRouter } from "vue-router";
+
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 import AppMediaUploader from "@/components/ui/form/app-media-uploader/AppMediaUploader.vue";
 import useConfirm from "@/components/ui/app-confirm/useConfirm";
@@ -18,42 +19,42 @@ interface Tabs {
 
 const router = useRouter();
 const route = useRoute();
+const { confirm } = useConfirm();
+const { setBreadCrumb } = useBreadcrumb();
 
-const activeTab = ref<number>(0);
 const tabs = ref<Tabs[]>([
   {
     title: "Данные кандидата",
-    value: 0,
+    value: 0
   },
   {
     title: "Фотография для Face ID",
-    value: 1,
-  },
+    value: 1
+  }
 ]);
+const activeTab = ref<number>(0);
 
 const setActiveTab = (item: any) => {
   activeTab.value = item.value;
 };
 
-const { setBreadCrumb } = useBreadcrumb();
-
-const title = computed<string>(() => {
-  return route.name === "visitors-create-form" ? "Добавить" : "Редактировать";
+const title = computed(() => {
+  return route.name === "personal-database-create-form" ? "Добавить" : "Редактировать";
 });
 
 const setBreadCrumbFn = () => {
   setBreadCrumb([
     {
-      label: "Кадры",
+      label: "Кадры"
     },
     {
-      label: "Посетители",
-      to: { name: "visitors" },
+      label: "База кадров",
+      to: { name: "personal-database" }
     },
     {
       label: title.value,
-      isActionable: true,
-    },
+      isActionable: true
+    }
   ]);
 };
 
@@ -61,17 +62,15 @@ watchEffect(() => {
   setBreadCrumbFn();
 });
 
-const { confirm } = useConfirm();
-
 const deleteFn = () => {
   confirm.delete().then(response => {
-    router.push({ name: "visitors" });
+    router.push({ name: "personal-database" });
   });
 };
 
 const cancelFn = () => {
   confirm.cancel().then(response => {
-    router.push({ name: "visitors" });
+    router.push({ name: "personal-database" });
   });
 };
 
@@ -88,15 +87,17 @@ const switchChange = async (): Promise<boolean> => {
 
 <template>
   <div>
-    <h1 class="m-0 font-semibold text-[32px]">{{ title }}</h1>
+    <h1 class="m-0 font-semibold text-[32px]">
+      {{ title }}
+    </h1>
 
     <div class="app-tabs w-[345px] my-[24px]">
       <div
-        v-for="item in tabs"
-        :key="item.value"
-        class="cursor-pointer"
-        :class="['app-tab', {'app-tab--active': activeTab === item.value}]"
-        @click="setActiveTab(item)"
+          v-for="item in tabs"
+          :key="item.value"
+          class="cursor-pointer"
+          :class="['app-tab', {'app-tab--active': activeTab === item.value}]"
+          @click="setActiveTab(item)"
       >
         {{ item.title }}
       </div>
@@ -111,7 +112,7 @@ const switchChange = async (): Promise<boolean> => {
                   src="@/assets/images/avatar.png"
                   alt="Profile Picture"
                   class="object-cover h-[160px] w-[160px] rounded-full"
-              >
+              />
             </div>
 
             <div class="text-xl font-semibold text-gray-900 ml-[24px]">
@@ -186,17 +187,22 @@ const switchChange = async (): Promise<boolean> => {
             />
           </div>
 
-          <div class="grid grid-cols-2 gap-4 mt-[40px]">
-            <app-select
-                label="Место работы"
+          <div class="mt-[40px] grid grid-cols-3 gap-4">
+            <app-input
+                label="OneID"
                 label-class="text-[#A8AAAE] text-[12px] font-medium"
-                placeholder="Выберите"
             />
 
             <app-select
-                label="График работы"
+                label="Должность в системе"
+                placeholder=""
                 label-class="text-[#A8AAAE] text-[12px] font-medium"
-                placeholder="Выберите"
+            />
+
+            <app-select
+                label="Роли"
+                placeholder=""
+                label-class="text-[#A8AAAE] text-[12px] font-medium"
             />
             <ElSwitch
                 v-if="route.params.id && !route.query.type"
@@ -210,8 +216,8 @@ const switchChange = async (): Promise<boolean> => {
 
       <template v-else>
         <AppMediaUploader
-          class="m-6"
-          :height="633"
+            class="m-6"
+            :height="633"
         />
 
       </template>
@@ -219,22 +225,20 @@ const switchChange = async (): Promise<boolean> => {
 
     <div class="flex items-center justify-between mt-[24px]">
       <button
-        v-if="route.params.id"
-        @click="deleteFn"
-        class="custom-danger-btn"
+          v-if="route.params.id"
+          @click="deleteFn"
+          class="custom-danger-btn"
       >
         Удалить
       </button>
       <div class="flex items-center ml-auto">
         <button
-          class="custom-cancel-btn"
-          @click="cancelFn"
+            class="custom-cancel-btn"
+            @click="cancelFn"
         >
           Отменить
         </button>
-        <button class="custom-apply-btn ml-[8px]">
-          {{ route.name === "visitors-edit-form-id" ? "Сохранить" : "Добавить" }}
-        </button>
+        <button class="custom-apply-btn ml-[8px]">Добавить</button>
       </div>
     </div>
   </div>

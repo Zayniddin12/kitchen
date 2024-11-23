@@ -1,9 +1,32 @@
-import { defineStore } from "pinia";
-import { computed, ref } from "vue";
-import { UserShowType, UsersParamsType, UsersType, UserType } from "@/modules/Users/users.types";
+import {defineStore} from "pinia";
+import {computed, ref} from "vue";
+import {
+    SearchUserDataType,
+    UserApiUrlType,
+    UserShowType,
+    UsersParamsType,
+    UsersType,
+    UserType
+} from "@/modules/Users/users.types";
 import usersApi from "@/modules/Users/users.api";
+import {useRoute} from "vue-router";
+import {getSessionItem, removeSessionItem, setSessionItem} from "@/utils/sessionStorage";
 
 export const useUsersStore = defineStore("usersStore", () => {
+    const route = useRoute();
+
+    const includeRouteName = (text: string) => {
+        return (route.name as string).includes(text);
+    };
+
+    const usersUrl = "users";
+
+    const userRoutesPrefix = "personal-database";
+
+    const activeUserPage = computed(() => {
+        return includeRouteName(userRoutesPrefix);
+    });
+
     const users = ref<null | UsersType>(null);
     const usersLoading = ref(false);
 
@@ -11,7 +34,7 @@ export const useUsersStore = defineStore("usersStore", () => {
         usersLoading.value = true;
 
         try {
-            users.value = await usersApi.fetchUsers(params);
+            users.value = await usersApi.fetchUsers(usersUrl, params);
         } finally {
             usersLoading.value = false;
         }
@@ -20,12 +43,9 @@ export const useUsersStore = defineStore("usersStore", () => {
     const getUserFullName = (user: UserType | null) => {
         if (!user) return "";
 
-        const { firstname, lastname } = user;
+        const {firstname, lastname, patronymic} = user;
 
-        if (!firstname) return lastname || "";
-        if (!lastname) return firstname;
-
-        return `${firstname} ${lastname}`;
+        return [firstname, lastname, patronymic].filter(Boolean).join(" ");
     };
 
     const userLoading = ref(false);
@@ -39,7 +59,7 @@ export const useUsersStore = defineStore("usersStore", () => {
         userLoading.value = true;
 
         try {
-            user.value = await usersApi.fetchUser(id);
+            user.value = await usersApi.fetchUser(usersUrl, id);
         } finally {
             userLoading.value = false;
         }
@@ -51,13 +71,101 @@ export const useUsersStore = defineStore("usersStore", () => {
         deleteUserLoading.value = true;
 
         try {
-            await usersApi.deleteUser(id);
+            await usersApi.deleteUser(usersUrl, id);
         } finally {
             deleteUserLoading.value = false;
         }
     };
 
+
+    const employeeUrl = "employee";
+    const employeeRoutesPrefix = "visitors";
+
+    const activeEmployeePage = computed(() => {
+        return includeRouteName(employeeRoutesPrefix);
+    });
+
+    const employees = ref<null | UsersType>(null);
+    const employeesLoading = ref(false);
+
+    const fetchEmployees = async (params: UsersParamsType = {}) => {
+        employeesLoading.value = true;
+
+        try {
+            employees.value = await usersApi.fetchUsers(employeeUrl, params);
+        } finally {
+            employeesLoading.value = false;
+        }
+    };
+
+    const employeeLoading = ref(false);
+    const employee = ref<null | UserShowType>(null);
+
+    const employeeFullName = computed(() => {
+        return getUserFullName(employee.value);
+    });
+
+    const fetchEmployee = async (id: number) => {
+        employeeLoading.value = true;
+
+        try {
+            employee.value = await usersApi.fetchUser(employeeUrl, id);
+        } finally {
+            employeeLoading.value = false;
+        }
+    };
+
+
+    const activeRoutePrefix = computed(() => {
+        return activeUserPage.value ? userRoutesPrefix : employeeRoutesPrefix;
+    });
+
+    const searchUser = ref<UserShowType | null>(null);
+    const searchUserLoading = ref(false);
+    const searchUserStorageKey = "search-user";
+
+    const setSearchUser = (user: UserShowType) => {
+        searchUser.value = user;
+        setSessionItem(searchUserStorageKey, JSON.stringify(user));
+    };
+
+    const initializeSearchUser = () => {
+        if(searchUser.value) return
+
+        const storedUser = getSessionItem(searchUserStorageKey);
+        searchUser.value = storedUser ? JSON.parse(storedUser) : null;
+    };
+
+    const clearSearchUser = () => {
+        searchUser.value = null;
+        removeSessionItem(searchUserStorageKey);
+    };
+
+    const fetchSearchUser = async (url: UserApiUrlType, data: SearchUserDataType) => {
+        searchUserLoading.value = true;
+        try {
+            const response = await usersApi.fetchSearchUser(url, data);
+            setSearchUser(response);
+        } finally {
+            searchUserLoading.value = false;
+        }
+    };
+
+    const deleteEmployeeLoading = ref(false);
+
+    const deleteEmployee = async (id: number) => {
+        deleteEmployeeLoading.value = true;
+
+        try {
+            await usersApi.deleteUser(employeeUrl, id);
+        } finally {
+            deleteEmployeeLoading.value = false;
+        }
+    };
+
     return {
+        userRoutesPrefix,
+        activeUserPage,
         users,
         usersLoading,
         fetchUsers,
@@ -67,6 +175,25 @@ export const useUsersStore = defineStore("usersStore", () => {
         userFullName,
         fetchUser,
         deleteUserLoading,
-        deleteUser
+        deleteUser,
+
+        employeeRoutesPrefix,
+        activeEmployeePage,
+        employees,
+        employeesLoading,
+        fetchEmployees,
+        employee,
+        employeeFullName,
+        employeeLoading,
+        fetchEmployee,
+        deleteEmployeeLoading,
+        deleteEmployee,
+
+        activeRoutePrefix,
+        searchUser,
+        searchUserLoading,
+        fetchSearchUser,
+        initializeSearchUser,
+        clearSearchUser
     };
 });

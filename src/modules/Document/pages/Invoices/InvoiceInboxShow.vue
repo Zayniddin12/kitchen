@@ -120,7 +120,10 @@ onMounted(() => {
         <div class="flex justify-between items-center">
           <div class="flex items-center mb-[8px]">
             <h1 class="text-[#4F5662] text-[14px] font-medium">Дата создания в системе:</h1>
-            <span class="ml-2 text-[#A8AAAE] text-[14px] font-medium block">{{documentStore.document?.created_at}}</span>
+            <span
+                class="ml-2 text-[#A8AAAE] text-[14px] font-medium block">{{
+                documentStore.document?.created_at
+              }}</span>
           </div>
 
           <!--pdf-->

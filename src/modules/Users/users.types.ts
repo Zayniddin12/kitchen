@@ -1,4 +1,4 @@
-import { NameType } from "@/types/common.type";
+import { GenderType, NameType, StatusType } from "@/types/common.type";
 import { PaginationParamsType, PaginationType } from "@/types/pagination.type";
 
 export interface UserType {
@@ -7,23 +7,28 @@ export interface UserType {
     lastname: string,
     patronymic: null | string,
     avatar: null | string,
-    position: NameType | null,
+    position: string,
     phone: string,
     is_oneid_enabled: boolean,
-    status: string
+    work_place: string,
+    work_hours: number | null,
+    status: StatusType
 }
 
 export interface UserShowType extends UserType {
     birthday: null | string,
     nationality: null | string,
-    gender: null | string,
+    gender: GenderType,
     pass_number: null | string,
     pass_given_by: null | string,
     pass_given_at: null | string,
     pass_valid_until: null | string,
     pinfl: null | string,
     position_id: number,
-    dining_locations: null | string
+    dining_locations: null | string,
+    responsible_id: null | number,
+    responsible_name: string,
+    responsible_type: string,
 }
 
 export interface UsersType {
@@ -33,5 +38,13 @@ export interface UsersType {
 
 export interface UsersParamsType extends PaginationParamsType {
     search?: string,
-    status?: string,
+    status?: StatusType,
+}
+
+export type UserApiUrlType = "users" | "employee";
+
+export interface SearchUserDataType {
+    pinfl?: string,
+    pass_number?: string,
+    birthday?: string,
 }

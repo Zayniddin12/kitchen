@@ -6,6 +6,7 @@ import { ref, watchEffect } from "vue";
 import { Search } from "@element-plus/icons-vue";
 import { useRouter } from "vue-router";
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
+import Users from "@/modules/Users/pages/Users.vue";
 
 const { setBreadCrumb } = useBreadcrumb();
 
@@ -125,6 +126,8 @@ const tableCurrentChange = (value: Record<string, any>) => {
 </script>
 
 <template>
+  <Users/>
+
   <div>
     <h1 class="m-0 font-semibold text-[32px]">База кадров</h1>
 
