@@ -127,7 +127,7 @@ interface Tab {
 
 const tabItems = ref<Tab[]>([
   {
-    title: "Единоразовый",
+    title: "Свободный",
     value: DOCTYPES.SIMPLEDEMAND
   },
   {

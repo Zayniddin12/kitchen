@@ -1,6 +1,6 @@
 <script
-    setup
-    lang="ts"
+  setup
+  lang="ts"
 >
 import { use } from "echarts/core";
 import { CanvasRenderer } from "echarts/renderers";
@@ -10,7 +10,7 @@ import {
   TooltipComponent,
   LegendComponent,
   GraphicComponent,
-  GridComponent
+  GridComponent,
 } from "echarts/components";
 import VChart from "vue-echarts";
 import { computed, onMounted, reactive, ref, watch } from "vue";
@@ -30,7 +30,7 @@ import {
   GraphProductsParamsType,
   KitchenPreparationParamsType,
   ProductType,
-  WarehouseCapacityParamsType
+  WarehouseCapacityParamsType,
 } from "@/modules/Home/statistics.types";
 import { filterObjectValues } from "@/utils/helper";
 import AppForm from "@/components/ui/form/app-form/AppForm.vue";
@@ -46,7 +46,7 @@ use([
   TooltipComponent,
   LegendComponent,
   GraphicComponent,
-  GridComponent
+  GridComponent,
 ]);
 
 const route = useRoute();
@@ -55,19 +55,19 @@ const statisticsStore = useStatisticsStore();
 const settingsStore = useSettingsStore();
 
 const form = reactive<WarehouseCapacityParamsType>({
-  management_id: null
+  management_id: null,
 });
 
 const warehouseCapacityData = computed<AnalyticsCardDataType[]>(() => {
   return [
     {
       name: "Общая вместимость",
-      value: statisticsStore.warehouseCapacity?.total_capacity || 0
+      value: statisticsStore.warehouseCapacity?.total_capacity || 0,
     },
     {
       name: "Занятое место",
-      value: statisticsStore.warehouseCapacity?.total_exist || 0
-    }
+      value: statisticsStore.warehouseCapacity?.total_exist || 0,
+    },
   ];
 });
 
@@ -75,12 +75,12 @@ const visitorsData = computed<AnalyticsCardDataType[]>(() => {
   return [
     {
       name: "за свой счет",
-      value: statisticsStore.visitors?.paid || 0
+      value: statisticsStore.visitors?.paid || 0,
     },
     {
       name: "с рационом",
-      value: statisticsStore.visitors?.free || 0
-    }
+      value: statisticsStore.visitors?.free || 0,
+    },
   ];
 });
 
@@ -88,7 +88,7 @@ const kitchenData = computed<AnalyticsCardDataType[]>(() => {
   return statisticsStore.kitchenCount.map(el => {
     const newEl: AnalyticsCardDataType = {
       name: el.kitchen_type_name,
-      value: el.count
+      value: el.count,
     };
 
     return newEl;
@@ -99,7 +99,7 @@ const warehouseData = computed<AnalyticsCardDataType[]>(() => {
   return statisticsStore.warehouseCount.map(el => {
     const newEl: AnalyticsCardDataType = {
       name: el.kitchen_type_name,
-      value: el.count
+      value: el.count,
     };
 
     return newEl;
@@ -116,8 +116,8 @@ const setBreadCrumbFn = () => {
   setBreadCrumb([
     {
       label: "Главная",
-      isActionable: true
-    }
+      isActionable: true,
+    },
   ]);
 };
 
@@ -125,7 +125,7 @@ const kitchenPreparationsForm = reactive<KitchenPreparationParamsType>({
   management_id: null,
   type_id: "",
   from_date: "",
-  to_date: ""
+  to_date: "",
 });
 
 const kitchenPreparationsValidationErrors = ref<Record<string, any> | null>(null);
@@ -146,7 +146,7 @@ const incomingGraphForm = reactive<GraphProductsParamsType>({
   management_id: null,
   type_id: "",
   from_date: "",
-  to_date: ""
+  to_date: "",
 });
 
 const incomingGraphValidationErrors = ref<Record<string, any> | null>(null);
@@ -168,7 +168,7 @@ const outgoingGraphForm = reactive<GraphProductsParamsType>({
   management_id: null,
   type_id: "",
   from_date: "",
-  to_date: ""
+  to_date: "",
 });
 
 const outgoingGraphValidationErrors = ref<Record<string, any> | null>(null);
@@ -208,6 +208,10 @@ watch(() => route.query.management_id, (newId) => {
 onMounted(() => {
   setBreadCrumbFn();
   settingsStore.GET_REGIONAL({ per_page: 100 });
+
+  const data = {
+    '05.11.2024':  [ { "period": 1, "start_time": null, "end_time": null, "amount": null, "product_type": "ration", "product_id": null, "rationsList": [] } ],
+  }
 });
 
 </script>
@@ -218,12 +222,12 @@ onMounted(() => {
       Главная
     </h1>
     <div
-        v-if="settingsStore.regional.managements.length"
-        class="app-tabs !text-sm mb-6"
+      v-if="settingsStore.regional.managements.length"
+      class="app-tabs !text-sm mb-6"
     >
       <RouterLink
-          :to="{name: route.name}"
-          :class="[
+        :to="{name: route.name}"
+        :class="[
               'app-tab',
               { 'app-tab--active': !form.management_id },
             ]"
@@ -231,10 +235,10 @@ onMounted(() => {
         Все
       </RouterLink>
       <RouterLink
-          v-for="item in settingsStore.regional.managements"
-          :key="item.id"
-          :to="{ query: { ...route.query, ...{ management_id: item.id } } }"
-          :class="[
+        v-for="item in settingsStore.regional.managements"
+        :key="item.id"
+        :to="{ query: { ...route.query, ...{ management_id: item.id } } }"
+        :class="[
               'app-tab',
               { 'app-tab--active': form.management_id === item.id },
             ]"
@@ -247,56 +251,56 @@ onMounted(() => {
       <div class="w-[55%]">
         <div class="grid grid-cols-2 gap-x-4 mb-10">
           <AnalyticsCard
-              :icon="WarehouseIcon"
-              title="Занятость складов"
-              subtitle="Здесь будет текст"
-              :data="warehouseCapacityData"
-              :loading="statisticsStore.warehouseCapacityLoading"
+            :icon="WarehouseIcon"
+            title="Занятость складов"
+            subtitle="Здесь будет текст"
+            :data="warehouseCapacityData"
+            :loading="statisticsStore.warehouseCapacityLoading"
           />
           <AnalyticsCard
-              title="Количество посетителей"
-              :icon="UsersIcon"
-              subtitle="Здесь будет текст"
-              :data="visitorsData"
-              :loading="statisticsStore.visitorsLoading"
+            title="Количество посетителей"
+            :icon="UsersIcon"
+            subtitle="Здесь будет текст"
+            :data="visitorsData"
+            :loading="statisticsStore.visitorsLoading"
           />
         </div>
         <PreparationsChart
-            title="Приготовление"
-            :total_price="statisticsStore.kitchenPreparations?.total_price"
-            :percent="5"
-            :data="statisticsStore.kitchenPreparations?.kitchens ?? []"
-            :loading="statisticsStore.kitchenPreparationsLoading"
+          title="Приготовление"
+          :total_price="statisticsStore.kitchenPreparations?.total_price"
+          :percent="5"
+          :data="statisticsStore.kitchenPreparations?.kitchens ?? []"
+          :loading="statisticsStore.kitchenPreparationsLoading"
         >
           <template #form>
             <AppForm
-                :value="kitchenPreparationsForm"
-                :validation-errors="kitchenPreparationsValidationErrors"
-                class="grid grid-cols-3 gap-x-2"
+              :value="kitchenPreparationsForm"
+              :validation-errors="kitchenPreparationsValidationErrors"
+              class="grid grid-cols-3 gap-x-2"
             >
               <AppSelect
-                  v-model="kitchenPreparationsForm.type_id"
-                  prop="type_id"
-                  size="large"
-                  placeholder="Все типы"
-                  :items="settingsStore.kitchenWarehouseList"
-                  item-label="name"
-                  item-value="id"
-                  @change="fetchKitchenPreparations"
+                v-model="kitchenPreparationsForm.type_id"
+                prop="type_id"
+                size="large"
+                placeholder="Все типы"
+                :items="settingsStore.kitchenWarehouseList"
+                item-label="name"
+                item-value="id"
+                @change="fetchKitchenPreparations"
               />
               <AppDatePicker
-                  v-model="kitchenPreparationsForm.from_date"
-                  prop="from_date"
-                  format="DD.MM.YYYY"
-                  size="large"
-                  @change="fetchKitchenPreparations"
+                v-model="kitchenPreparationsForm.from_date"
+                prop="from_date"
+                format="DD.MM.YYYY"
+                size="large"
+                @change="fetchKitchenPreparations"
               />
               <AppDatePicker
-                  v-model="kitchenPreparationsForm.to_date"
-                  prop="to_date"
-                  format="DD.MM.YYYY"
-                  size="large"
-                  @change="fetchKitchenPreparations"
+                v-model="kitchenPreparationsForm.to_date"
+                prop="to_date"
+                format="DD.MM.YYYY"
+                size="large"
+                @change="fetchKitchenPreparations"
               />
             </AppForm>
           </template>
@@ -308,32 +312,32 @@ onMounted(() => {
         </div>
 
         <ElTable
-            v-loading="statisticsStore.productsLoading"
-            :data="statisticsStore.products"
-            :row-class-name="handleClass"
+          v-loading="statisticsStore.productsLoading"
+          :data="statisticsStore.products"
+          :row-class-name="handleClass"
         >
           <ElTableColumn
-              prop="idx"
-              label="№"
-              width="80"
+            prop="idx"
+            label="№"
+            width="80"
           >
             <template #default="{$index}">
               {{ $index + 1 }}
             </template>
           </ElTableColumn>
           <ElTableColumn
-              prop="product_parent_name"
-              label="Тип продукта"
+            prop="product_parent_name"
+            label="Тип продукта"
           >
             <template #default="{row}:{row:ProductType}">
               <div
-                  v-if="row.product_image || row.product_parent_name"
-                  class="flex items-center gap-x-3"
+                v-if="row.product_image || row.product_parent_name"
+                class="flex items-center gap-x-3"
               >
                 <el-avatar
-                    v-if="row.product_image"
-                    :size="32"
-                    :src="row.product_image"
+                  v-if="row.product_image"
+                  :size="32"
+                  :src="row.product_image"
                 />
                 <span>{{ row.product_parent_name }}</span>
               </div>
@@ -341,24 +345,24 @@ onMounted(() => {
             </template>
           </ElTableColumn>
           <ElTableColumn
-              prop="product_name"
-              label="Вид продукта"
+            prop="product_name"
+            label="Вид продукта"
           >
             <template #default="{row}:{row: ProductType}">
               {{ row.product_name || "-" }}
             </template>
           </ElTableColumn>
           <ElTableColumn
-              prop="quantity"
-              label="Количество"
+            prop="quantity"
+            label="Количество"
           >
             <template #default="{row}:{row: ProductType}">
               {{ row.quantity || "-" }}
             </template>
           </ElTableColumn>
           <ElTableColumn
-              prop="base_name"
-              label="Количество"
+            prop="base_name"
+            label="Количество"
           >
             <template #default="{row}:{row: ProductType}">
               {{ row.base_name || "-" }}
@@ -368,77 +372,78 @@ onMounted(() => {
       </div>
     </div>
     <GraphChart
-        title="Приход продуктов"
-        subtitle="Здесь будет текст"
-        class="mb-10"
-        :loading="statisticsStore.incomingGraphProductsLoading"
-        :data="statisticsStore.incomingGraphProducts"
+      title="Приход продуктов"
+      subtitle="Здесь будет текст"
+      class="mb-10"
+      :loading="statisticsStore.incomingGraphProductsLoading"
+      :data="statisticsStore.incomingGraphProducts"
     >
       <template #form>
         <AppForm
-            :value="incomingGraphForm"
-            :validation-errors="incomingGraphValidationErrors"
-            class="grid grid-cols-3 gap-x-4"
+          :value="incomingGraphForm"
+          :validation-errors="incomingGraphValidationErrors"
+          class="grid grid-cols-3 gap-x-4"
         >
           <AppSelect
-              v-model="incomingGraphForm.type_id"
-              prop="type_id"
-              size="large"
-              placeholder="Все типы"
-              :items="settingsStore.kitchenTypesList"
-              item-value="id"
-              item-label="name"
-              @change="fetchIncomingGraphProducts"
+            v-model="incomingGraphForm.type_id"
+            prop="type_id"
+            size="large"
+            placeholder="Все типы"
+            :items="settingsStore.kitchenTypesList"
+            item-value="id"
+            item-label="name"
+            @change="fetchIncomingGraphProducts"
           />
           <AppDatePicker
-              v-model="incomingGraphForm.from_date"
-              prop="from_date"
-              size="large"
-              @change="fetchIncomingGraphProducts"
+            v-model="incomingGraphForm.from_date"
+            prop="from_date"
+            size="large"
+            @change="fetchIncomingGraphProducts"
           />
           <AppDatePicker
-              v-model="incomingGraphForm.to_date"
-              prop="to_date"
-              size="large"
-              @change="fetchIncomingGraphProducts"
+            v-model="incomingGraphForm.to_date"
+            prop="to_date"
+            size="large"
+            @change="fetchIncomingGraphProducts"
           />
         </AppForm>
       </template>
     </GraphChart>
     <GraphChart
-        title="Остатки блюд"
-        subtitle="Здесь будет текст"
-        class="mb-10"
-        :loading="statisticsStore.outgoingGraphProductsLoading"
-        :data="statisticsStore.outgoingGraphProducts"
+      title="Остатки блюд"
+      subtitle="Здесь будет текст"
+      class="mb-10"
+      :loading="statisticsStore.outgoingGraphProductsLoading"
+      :data="statisticsStore.outgoingGraphProducts"
     >
       <template #form>
         <AppForm
-            :value="outgoingGraphForm"
-            :validation-errors="outgoingGraphValidationErrors"
-            class="grid grid-cols-3 gap-x-4"
+          :value="outgoingGraphForm"
+          :validation-errors="outgoingGraphValidationErrors"
+          class="grid grid-cols-3 gap-x-4"
         >
           <AppSelect
-              v-model="outgoingGraphForm.type_id"
-              prop="type_id"
-              size="large"
-              placeholder="Все кухни"
-              :items="settingsStore.kitchenTypesList"
-              item-value="id"
-              item-label="name"
-              @change="fetchOutgoingGraphProducts"
+            v-model="outgoingGraphForm.type_id"
+            prop="type_id"
+            size="large"
+            clearable
+            placeholder="Все кухни"
+            :items="settingsStore.kitchenTypesList"
+            item-value="id"
+            item-label="name"
+            @change="fetchOutgoingGraphProducts"
           />
           <AppDatePicker
-              v-model="outgoingGraphForm.from_date"
-              prop="from_date"
-              size="large"
-              @change="fetchOutgoingGraphProducts"
+            v-model="outgoingGraphForm.from_date"
+            prop="from_date"
+            size="large"
+            @change="fetchOutgoingGraphProducts"
           />
           <AppDatePicker
-              v-model="outgoingGraphForm.to_date"
-              prop="to_date"
-              size="large"
-              @change="fetchOutgoingGraphProducts"
+            v-model="outgoingGraphForm.to_date"
+            prop="to_date"
+            size="large"
+            @change="fetchOutgoingGraphProducts"
           />
         </AppForm>
       </template>
@@ -446,18 +451,18 @@ onMounted(() => {
 
     <div class="grid grid-cols-2 gap-x-4">
       <AnalyticsCard
-          title="Количество кухонь"
-          :icon="KitchenIcon"
-          subtitle="Здесь будет текст"
-          :data="kitchenData"
-          :loading="statisticsStore.kitchenCountLoading"
+        title="Количество кухонь"
+        :icon="KitchenIcon"
+        subtitle="Здесь будет текст"
+        :data="kitchenData"
+        :loading="statisticsStore.kitchenCountLoading"
       />
       <AnalyticsCard
-          title="Количество складов"
-          :icon="BranchIcon"
-          subtitle="Здесь будет текст"
-          :data="warehouseData"
-          :loading="statisticsStore.warehouseCountLoading"
+        title="Количество складов"
+        :icon="BranchIcon"
+        subtitle="Здесь будет текст"
+        :data="warehouseData"
+        :loading="statisticsStore.warehouseCountLoading"
       />
     </div>
   </div>

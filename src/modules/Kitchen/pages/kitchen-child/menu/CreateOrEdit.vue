@@ -39,59 +39,29 @@ const intermediateDate1 = ref(true);
 const intermediateDate2 = ref(false);
 const activeScheduledDate = ref("");
 
+const data = [
+  {
+    date: "222.222.222",
+    data: [],
+  },
+];
+
 // Meal Times
 const mealTimes = ref([
   {
-    id: 1, title: "Завтрак", isChecked: false, mealData: [
-      {
-        period: 1,
-        start_time: null,
-        end_time: null,
-        amount: null,
-        product_type: "ration",
-        product_id: null,
-        rationsList: [],
-      },
-    ],
+    id: 1,
+    title: "Завтрак",
+    isChecked: false,
+    mealData: [],
   },
   {
-    id: 2, title: "Обед", isChecked: false, mealData: [
-      {
-        period: 2,
-        start_time: null,
-        end_time: null,
-        amount: null,
-        product_type: "ration",
-        product_id: null,
-        rationsList: [],
-      },
-    ],
+    id: 2, title: "Обед", isChecked: false, mealData: [],
   },
   {
-    id: 3, title: "Ужин", isChecked: false, mealData: [
-      {
-        period: 3,
-        start_time: null,
-        end_time: null,
-        amount: null,
-        product_type: "ration",
-        product_id: null,
-        rationsList: [],
-      },
-    ],
+    id: 3, title: "Ужин", isChecked: false, mealData: [],
   },
   {
-    id: 4, title: "Сухой питания", isChecked: false, mealData: [
-      {
-        period: 4,
-        start_time: null,
-        end_time: null,
-        amount: null,
-        product_type: "ration",
-        product_id: null,
-        rationsList: [],
-      },
-    ],
+    id: 4, title: "Сухой питания", isChecked: false, mealData: [],
   },
 ]);
 
@@ -153,6 +123,30 @@ const scheduledDates = computed(() => {
 watch(scheduledDates, (newValue) => {
   if (newValue.length > 0) {
     activeScheduledDate.value = newValue[0].date;
+    console.log(scheduledDates.value);
+    mealTimes.value.forEach((item, index) => {
+      scheduledDates.value.forEach((date, dateIndex) => {
+        item.mealData.push({
+          date: date.date,
+          data: [
+            {
+              period: index + 1,
+              start_time: null,
+              end_time: null,
+              amount: null,
+              product_type: "ration",
+              product_id: null,
+              rationsList: [],
+            },
+          ],
+        });
+      });
+    });
+
+    setTimeout(() => {
+      console.log(mealTimes.value[0].mealData.find(item => item.date == activeScheduledDate.value));
+      console.log(activeScheduledDate.value);
+    }, 2000);
   } else {
     activeScheduledDate.value = "";
   }
@@ -350,7 +344,7 @@ const sendData = async () => {
                 Выбирайте время еды!
 
               </h3>
-              {{ mealTimes }}
+              {{ mealTimes[0] }}
               <AppForm :value="mealTimes" @validation="(value) => mealTimesV$ = value"
                        class="mt-3 flex flex-col gap-y-3">
                 <div
@@ -366,7 +360,9 @@ const sendData = async () => {
                     v-show="item.isChecked"
                     class="mt-6"
                   >
-                    <div v-for="(itemMeal, indexMeal) in item.mealData">
+                    <!--                    {{ item.mealData.find(item1 => item1.date == activeScheduledDate).data }}-->
+                    <div
+                      v-for="(itemMeal, indexMeal) in item.mealData.find(item1 => item1.date == activeScheduledDate).data">
                       <div class="flex items-center gap-x-6">
                         <AppTimePicker
                           v-model="itemMeal.start_time"
