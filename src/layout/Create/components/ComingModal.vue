@@ -334,16 +334,15 @@ const closeModal = async () => {
   const documentFormIsChange = oldForm.value && !deepEqual(form, oldForm.value);
   const actFormIsChange = oldActForm.value && !deepEqual(actForm, oldActForm.value);
 
-  if (documentFormIsChange || (activeComingModal.value && actFormIsChange)) {
-    const response = await confirm.cancel({ disabledBody: true });
-
-    if (response === "save") {
-      await sendForm();
-      return;
+  try {
+    if (documentFormIsChange || (activeComingModal.value && actFormIsChange)) {
+      await confirm.cancel({ disabledBody: true, disabledBtn: "save" });
     }
+
+    clearValidations();
+    model.value = false;
+  } catch (error) {
   }
-  clearValidations();
-  model.value = false;
 };
 
 const openModal = () => {
@@ -663,7 +662,7 @@ watch(providerCreateModal, newMProviderModal => {
           />
           <AppInput
               placeholder="Автоматически"
-              label="NK-00000"
+              label="№ накладной в системе"
               label-class="text-[#A8AAAE] text-xs font-medium"
               disabled
           />
@@ -839,26 +838,27 @@ watch(providerCreateModal, newMProviderModal => {
                   required
                   :disabled="!product.category_id"
               />
-              <AppInput
-                  v-model.number="product.quantity"
-                  :prop="`products[${index}].quantity`"
-                  type="number"
-                  placeholder="Количество"
-                  label="Количество"
-                  label-class="text-[#A8AAAE] text-xs font-medium"
-                  required
-              />
-              <AppSelect
-                  v-model="product.unit_id"
-                  :prop="`products[${index}].unit_id`"
-                  :items="settingsStore.units.units"
-                  item-label="name"
-                  item-value="id"
-                  placeholder="Ед. измерения"
-                  label="Ед. измерения"
-                  label-class="text-[#A8AAAE] text-xs font-medium"
-                  required
-              />
+              <div class="grid grid-cols-2 gap-x-4">
+                <AppInput
+                    v-model="product.quantity"
+                    :prop="`products[${index}].quantity`"
+                    placeholder="Количество"
+                    label="Количество"
+                    label-class="text-[#A8AAAE] text-xs font-medium"
+                    required
+                />
+                <AppSelect
+                    v-model="product.unit_id"
+                    :prop="`products[${index}].unit_id`"
+                    :items="settingsStore.units.units"
+                    item-label="name"
+                    item-value="id"
+                    placeholder="Ед. измерения"
+                    label="Ед. измерения"
+                    label-class="text-[#A8AAAE] text-xs font-medium"
+                    required
+                />
+              </div>
               <AppInput
                   v-model.number="product.price"
                   type="number"
@@ -1118,7 +1118,7 @@ watch(providerCreateModal, newMProviderModal => {
 
           <AppInput
               placeholder="Автоматически"
-              label="NK-00000"
+              label="№ накладной в системе"
               label-class="text-[#A8AAAE] text-xs font-medium"
               disabled
           />
@@ -1127,7 +1127,7 @@ watch(providerCreateModal, newMProviderModal => {
               v-model="actForm.number"
               prop="number"
               placeholder="АКТ-00000"
-              label="АКТ-00000"
+              label="№ Акта"
               label-class="text-[#A8AAAE] text-xs font-medium"
               required
           />

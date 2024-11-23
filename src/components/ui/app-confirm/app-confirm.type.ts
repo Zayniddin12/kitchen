@@ -4,19 +4,22 @@ export type DefaultButtonType = "cancel" | "delete" | "show";
 export type textType = string | HTMLElement;
 
 export interface ButtonType {
-  label: string;
-  status: ButtonStatusType;
-  action: ButtonActionType;
+    label: string;
+    status: ButtonStatusType;
+    action: ButtonActionType;
 }
 
 export type DefaultButtonTypes = Record<DefaultButtonType, ButtonType[]>;
 
+export type DisabledBtnType = ButtonActionType | "";
+
 export interface ConfirmParamsType {
-  title?: textType;
-  description?: textType;
-  disabledBody?: boolean;
+    title?: textType;
+    description?: textType;
+    disabledBody?: boolean;
+    disabledBtn?: DisabledBtnType;
 }
 
 export interface ConfirmInitParamsType extends ConfirmParamsType {
-  buttons?: ButtonType[];
+    buttons?: ButtonType[];
 }

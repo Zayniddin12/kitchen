@@ -106,14 +106,15 @@ const deleteLoading = computed(() => {
 const deleteFn = () => {
   if (!activeUserUpdatePage.value) return;
 
-  confirm.delete().then(() => {
-    userStore.activeUserPage ? userStore.deleteUser(routeId.value as number) : userStore.deleteEmployee(routeId.value as number);
+  confirm.delete().then(async () => {
+    await (userStore.activeUserPage ? userStore.deleteUser(routeId.value as number) : userStore.deleteEmployee(routeId.value as number));
+    router.push({ name: userStore.activeRoutePrefix });
   });
 };
 
 const cancelFn = () => {
   confirm.cancel().then(response => {
-    router.push({ name: "visitors" });
+    router.push({ name: userStore.activeRoutePrefix });
   });
 };
 
@@ -139,8 +140,14 @@ const fetchUser = async () => {
   if (activeUserCreatePage.value) {
     fetchSearchUser();
   } else if (activeUserUpdatePage.value) {
-    await userStore.fetchUser(routeId.value as number);
-    setData();
+    try {
+      await userStore.fetchUser(routeId.value as number);
+      setData();
+    } catch (error: any) {
+      if (error.error.code === 404) {
+        router.replace({ name: userStore.activeRoutePrefix });
+      }
+    }
   }
 };
 
