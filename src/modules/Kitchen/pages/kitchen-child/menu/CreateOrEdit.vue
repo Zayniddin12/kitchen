@@ -96,6 +96,7 @@ const mealTimes = ref([
 ]);
 
 const mealTimesV$ = ref<ValidationType | null>(null);
+const kitchenDatav$ = ref<ValidationType | null>(null);
 
 // Diets
 const activeDiet = ref<number | undefined>();
@@ -256,9 +257,9 @@ const changeRation = async (val, parentIndex, childIndex) => {
 const commonStore = useCommonStore();
 
 const sendData = async () => {
-  if (!mealTimesV$.value) return;
+  if (!mealTimesV$.value || !kitchenDatav$.value) return;
 
-  if (!(await mealTimesV$.value.validate())) {
+  if (!(await mealTimesV$.value.validate() || !(await kitchenDatav$.value.validate()))) {
     await commonStore.errorToast("Validation Error");
     return;
   }
@@ -279,33 +280,37 @@ const sendData = async () => {
         {{ route.meta.title }}
       </h1>
       <div>
-        <AppForm class="p-6 rounded-3xl border border-[#E2E6F3] mt-6 min-h-[671px]">
+        <div class="p-6 rounded-3xl border border-[#E2E6F3] mt-6 min-h-[671px]">
           <div>
             <h3 class="text-lg font-medium text-dark">
               Введите дату!
             </h3>
             <template v-if="route.name === 'KitchenMenuCreate'">
-              <AppDatePicker
-                v-model="kitchenData.startDate"
-                placeholder="дд.мм.гггг"
-                format="DD.MM.YYYY"
-                class="w-[141px] mt-3"
-                icon-position="start"
-                required
-              />
-              <ElSwitch
-                v-model="kitchenData.intermediateDate1"
-                active-text="7 дней"
-                class="app-switch"
-                @change="kitchenData.intermediateDate2 = false"
-              />
-              <br class="mt-3">
-              <ElSwitch
-                v-model="kitchenData.intermediateDate2"
-                active-text="10 дней"
-                class="app-switch"
-                @change="kitchenData.intermediateDate1 = false"
-              />
+              <AppForm :value="kitchenData" @validation="value => kitchenDatav$ = value">
+                <AppDatePicker
+                  v-model="kitchenData.startDate"
+                  prop="startDate"
+                  placeholder="дд.мм.гггг"
+                  format="DD.MM.YYYY"
+                  class="w-[141px] mt-3"
+                  icon-position="start"
+                  required
+                />
+                <ElSwitch
+                  v-model="kitchenData.intermediateDate1"
+                  active-text="7 дней"
+                  class="app-switch"
+                  @change="kitchenData.intermediateDate2 = false"
+                />
+                <br class="mt-3">
+                <ElSwitch
+                  v-model="kitchenData.intermediateDate2"
+                  active-text="10 дней"
+                  class="app-switch"
+                  @change="kitchenData.intermediateDate1 = false"
+                />
+
+              </AppForm>
             </template>
           </div>
           <ElScrollbar
@@ -526,7 +531,7 @@ const sendData = async () => {
               </ElButton>
             </template>
           </div>
-        </AppForm>
+        </div>
         <div class="flex justify-end mt-6 items-center">
           <ElButton
             size="large"
