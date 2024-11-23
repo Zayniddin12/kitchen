@@ -130,7 +130,7 @@ export const useUsersStore = defineStore("usersStore", () => {
     };
 
     const initializeSearchUser = () => {
-        if(!searchUser.value) return
+        if(searchUser.value) return
 
         const storedUser = getSessionItem(searchUserStorageKey);
         searchUser.value = storedUser ? JSON.parse(storedUser) : null;
@@ -148,6 +148,18 @@ export const useUsersStore = defineStore("usersStore", () => {
             setSearchUser(response);
         } finally {
             searchUserLoading.value = false;
+        }
+    };
+
+    const deleteEmployeeLoading = ref(false);
+
+    const deleteEmployee = async (id: number) => {
+        deleteEmployeeLoading.value = true;
+
+        try {
+            await usersApi.deleteUser(employeeUrl, id);
+        } finally {
+            deleteEmployeeLoading.value = false;
         }
     };
 
@@ -174,6 +186,8 @@ export const useUsersStore = defineStore("usersStore", () => {
         employeeFullName,
         employeeLoading,
         fetchEmployee,
+        deleteEmployeeLoading,
+        deleteEmployee,
 
         activeRoutePrefix,
         searchUser,

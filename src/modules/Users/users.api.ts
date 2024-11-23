@@ -24,7 +24,7 @@ export default {
     },
 
     async fetchSearchUser(url: UserApiUrlType, userData: SearchUserDataType): Promise<UserShowType> {
-        const { data }: { data: Record<string, any> } = await axios.get(`${url}/search`, { params: userData });
+        const { data }: { data: Record<string, any> } = await axios.post(`${url}/search`, userData );
         return data.data.user;
     }
 };

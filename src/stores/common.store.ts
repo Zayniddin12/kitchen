@@ -1,6 +1,9 @@
 import { defineStore } from "pinia";
 import { RouteLocationRaw, useRouter } from "vue-router";
 import { ElNotification } from "element-plus";
+import { GenderResponseType, GenderType } from "@/types/common.type";
+import MaleAvatar from "@/assets/images/genders/male.png";
+import FemaleAvatar from "@/assets/images/genders/female.png";
 
 export const useCommonStore = defineStore("commonStore", () => {
     const router = useRouter();
@@ -32,9 +35,21 @@ export const useCommonStore = defineStore("commonStore", () => {
         });
     };
 
+    const getGender = (gender: GenderType): GenderResponseType | null => {
+        console.log(gender);
+        if (!gender) return null;
+
+
+        return {
+            name: gender === "f" ? "Женский" : "Мужской",
+            photo: gender === "f" ? FemaleAvatar : MaleAvatar
+        };
+    };
+
     return {
         redirectNotFound,
         successToast,
-        errorToast
+        errorToast,
+        getGender
     };
 });

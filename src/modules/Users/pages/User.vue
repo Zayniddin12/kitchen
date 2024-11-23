@@ -96,7 +96,6 @@ onMounted(() => {
       <RouterLink
           :to="{name: `${usersStore.activeRoutePrefix}-edit`}"
           class="custom-cancel-btn flex items-center"
-          @click="router.push(`/visitors-edit-form/${route.params.id}`)"
       >
         <img
             src="@/assets/images/icons/edit.svg"

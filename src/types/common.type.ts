@@ -1,3 +1,5 @@
+import { Component } from "vue";
+
 export interface TableColumnType {
     prop: string;
     label: string;
@@ -16,3 +18,10 @@ export interface NameType {
 export type StatusType = "active" | "inactive" | "";
 
 export type StatusTextType = "Активация" | "Деактивация"
+
+export type GenderType = null | "m" | "f";
+
+export interface GenderResponseType {
+    name: string,
+    photo: string
+}

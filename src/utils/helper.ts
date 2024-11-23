@@ -35,6 +35,13 @@ export const phoneFormatter = (phoneNumberString: string) => {
     return null;
 };
 
+export const formatPhone = (phone?: string): string => {
+    if (phone && phone.startsWith("998") && phone.length === 12) {
+        return phone.slice(3);
+    }
+    return "";
+};
+
 export const generateRandomID = (): string => {
     const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
     const charactersLength = characters.length;

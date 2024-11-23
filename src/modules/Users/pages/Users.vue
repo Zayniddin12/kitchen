@@ -202,7 +202,7 @@ watch(() => route.name, () => {
       </div>
     </div>
     <ElTable
-        :loading
+        v-loading="loading"
         :data="data?.users ?? []"
         class="custom-element-table mt-6"
         stripe

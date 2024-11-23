@@ -123,6 +123,7 @@ const setBreadCrumbFn = () => {
 
 const kitchenPreparationsForm = reactive<KitchenPreparationParamsType>({
   management_id: null,
+  type_id: "",
   from_date: "",
   to_date: ""
 });
@@ -199,6 +200,8 @@ watch(() => route.query.management_id, (newId) => {
   fetchKitchenPreparations();
   fetchIncomingGraphProducts();
   fetchOutgoingGraphProducts();
+  settingsStore.fetchKitchenTypesList();
+  settingsStore.fetchKitchenWarehouseList();
 
 }, { immediate: true });
 
@@ -272,8 +275,14 @@ onMounted(() => {
                 class="grid grid-cols-3 gap-x-2"
             >
               <AppSelect
+                  v-model="kitchenPreparationsForm.type_id"
+                  prop="type_id"
                   size="large"
                   placeholder="Все типы"
+                  :items="settingsStore.kitchenWarehouseList"
+                  item-label="name"
+                  item-value="id"
+                  @change="fetchKitchenPreparations"
               />
               <AppDatePicker
                   v-model="kitchenPreparationsForm.from_date"
@@ -376,6 +385,9 @@ onMounted(() => {
               prop="type_id"
               size="large"
               placeholder="Все типы"
+              :items="settingsStore.kitchenTypesList"
+              item-value="id"
+              item-label="name"
               @change="fetchIncomingGraphProducts"
           />
           <AppDatePicker
@@ -411,6 +423,9 @@ onMounted(() => {
               prop="type_id"
               size="large"
               placeholder="Все кухни"
+              :items="settingsStore.kitchenTypesList"
+              item-value="id"
+              item-label="name"
               @change="fetchOutgoingGraphProducts"
           />
           <AppDatePicker

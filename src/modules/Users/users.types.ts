@@ -1,4 +1,4 @@
-import { NameType, StatusType } from "@/types/common.type";
+import { GenderType, NameType, StatusType } from "@/types/common.type";
 import { PaginationParamsType, PaginationType } from "@/types/pagination.type";
 
 export interface UserType {
@@ -18,7 +18,7 @@ export interface UserType {
 export interface UserShowType extends UserType {
     birthday: null | string,
     nationality: null | string,
-    gender: null | string,
+    gender: GenderType,
     pass_number: null | string,
     pass_given_by: null | string,
     pass_given_at: null | string,

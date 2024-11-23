@@ -20,6 +20,7 @@ export interface VisitorsType {
 }
 
 export interface KitchenPreparationParamsType extends VisitorsParamsType {
+    type_id?: number | "",
 }
 
 export interface KitchenPreparationKitchenType {

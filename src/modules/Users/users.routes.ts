@@ -92,7 +92,7 @@ export default [
             parentRouteTitle: "Посетители",
             parentRouteUrl: {name: 'visitors'},
             title: "Редактировать",
-            type: "create"
+            type: "update"
         }
     },
     {
