@@ -341,7 +341,7 @@ const sendData = async () => {
   });
 
   const kitchenResponse = await kitchenStore.CREATE_KITCHEN(kitchenPayload);
-  console.log(kitchenResponse.data.menu_id);
+
   const kitchenResponseElement = await kitchenStore.CREATE_KITCHEN_ELEMENT({
     id: kitchenResponse.data.menu_id,
     payload: { Elements: kitchenElementPayload },
@@ -456,6 +456,7 @@ const sendData = async () => {
                             v-model="itemMeal.end_time"
                             :prop="`[${index}].data[${childIndex}].mealData[${indexMeal}].end_time`"
                             class="max-w-[141px]"
+                            value-format="HH:mm"
                             label="Время окончания"
                             label-class="text-[#A8AAAE] text-xs font-medium"
                             required

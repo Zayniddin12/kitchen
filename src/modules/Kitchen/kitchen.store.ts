@@ -58,8 +58,22 @@ export const useKitchenStore = defineStore("kitchenStore", () => {
   const kitchenVid = ref<KitchenVid[] | []>([]);
   const kitchenType = ref<KitchenType[] | []>([]);
   const layoutStore = useLayoutStore();
+  const menuToday = ref({});
+  const menuWeekly = ref({});
 
   // KITCHEN CREATE
+
+  const GET_CURRENT_MENU_LIST = async (id: number | string) => {
+    const { data } = await $axios.get(`/kitchen-sales/${id}/menu-today`);
+    menuToday.value = data.data;
+    return data;
+  };
+
+  const GET_WEEKLY_MENU_LIST = async (id: number | string) => {
+    const { data } = await $axios.get(`/kitchen-sales/${id}/menu-weekly`);
+    menuWeekly.value = data.data;
+    return data;
+  };
 
   const CREATE_KITCHEN = async (payload: any) => {
     const { data } = await $axios.post("/kitchen-sales/menu", payload);
@@ -187,6 +201,10 @@ export const useKitchenStore = defineStore("kitchenStore", () => {
     };
   };
   return {
+    menuToday,
+    menuWeekly,
+    GET_CURRENT_MENU_LIST,
+    GET_WEEKLY_MENU_LIST,
     CREATE_KITCHEN,
     CREATE_KITCHEN_ELEMENT,
     GET_KITCHEN_LIST,
