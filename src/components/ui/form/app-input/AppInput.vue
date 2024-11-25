@@ -1,8 +1,8 @@
-<script
-  setup
-  lang="ts"
->
-import { AppInputPropsType, AppInputValueType } from "@/components/ui/form/app-input/app-input.type";
+<script setup lang="ts">
+import {
+  AppInputPropsType,
+  AppInputValueType,
+} from "@/components/ui/form/app-input/app-input.type";
 import { computed, inject, ref, Ref, useSlots, watch } from "vue";
 import { vMaska } from "maska/vue";
 import { getRules, setRules } from "@/components/ui/form/validate";
@@ -21,18 +21,24 @@ const updateModelValue = (value: any) => {
 };
 
 const emit = defineEmits<{
-  change: [value: AppInputValueType]
+  change: [value: AppInputValueType];
 }>();
 
-const validationErrors = inject<Ref<ValidationErrorsType>>("validation-errors", ref(null));
+const validationErrors = inject<Ref<ValidationErrorsType>>(
+  "validation-errors",
+  ref(null)
+);
 const ignoreValidationError = ref(false);
 
 const computedError = computed(() => {
   if (props.error) return props.error;
-
   else if (ignoreValidationError.value) return "";
-
-  else if (validationErrors.value && props.prop && typeof (props.prop) === "string" && validationErrors.value[props.prop]) {
+  else if (
+    validationErrors.value &&
+    props.prop &&
+    typeof props.prop === "string" &&
+    validationErrors.value[props.prop]
+  ) {
     return validationErrors.value[props.prop];
   }
 
@@ -52,7 +58,7 @@ const appInputClasses = computed<string[]>(() => {
 const slots = useSlots();
 
 const computedMask = computed(() =>
-  props.type === "tel" && !props.mask ? "## ###-##-##" : props.mask || "",
+  props.type === "tel" && !props.mask ? "## ###-##-##" : props.mask || ""
 );
 
 const inputMask = computed(() => {
@@ -64,12 +70,15 @@ const change = (value: AppInputValueType) => {
   emit("change", value);
 };
 
-watch(validationErrors, () => {
-  ignoreValidationError.value = false;
-}, {
-  deep: true,
-});
-
+watch(
+  validationErrors,
+  () => {
+    ignoreValidationError.value = false;
+  },
+  {
+    deep: true,
+  }
+);
 </script>
 
 <template>
@@ -87,10 +96,10 @@ watch(validationErrors, () => {
       #label
     >
       <span :class="labelClass">
-      <slot
-        v-if="slots.label"
-        name="label"
-      />
+        <slot
+          v-if="slots.label"
+          name="label"
+        />
         <template v-else>
           {{ label }}
         </template>
@@ -132,9 +141,7 @@ watch(validationErrors, () => {
           v-if="slots.prepend"
           name="prepend"
         />
-        <template v-else>
-          +998
-        </template>
+        <template v-else>+998</template>
       </template>
       <template
         v-if="slots.append"

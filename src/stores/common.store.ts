@@ -36,7 +36,6 @@ export const useCommonStore = defineStore("commonStore", () => {
     };
 
     const getGender = (gender: GenderType): GenderResponseType | null => {
-        console.log(gender);
         if (!gender) return null;
 
 

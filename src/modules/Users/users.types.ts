@@ -48,3 +48,26 @@ export interface SearchUserDataType {
     pass_number?: string,
     birthday?: string,
 }
+
+export interface UserCreateOrUpdateDataPrefixType {
+    position_id: number| "",
+    phone: string,
+    is_oneid_enabled: boolean,
+}
+
+export interface UserCreateOrUpdateDataType extends UserCreateOrUpdateDataPrefixType {
+    firstname: string,
+    lastname: string,
+    patronymic: string,
+    birthday: string,
+    nationality: string,
+    gender: string,
+    pass_number: string,
+    pass_given_by: string,
+    pass_given_at: string,
+    pass_valid_until: string,
+    avatar?: string | File,
+    pinfl: string,
+    status?: StatusType | boolean
+
+}

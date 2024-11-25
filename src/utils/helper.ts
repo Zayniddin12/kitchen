@@ -42,6 +42,20 @@ export const formatPhone = (phone?: string): string => {
     return "";
 };
 
+type Writable<T> = {
+    -readonly [P in keyof T]: T[P];
+};
+
+export function mergeCommonKeys<T extends Record<string, any>, U extends Record<string, any>>(target: Writable<T>, source: U): T {
+    Object.keys(target).forEach((key) => {
+        if (key in source) {
+            target[key] = source[key];
+        }
+    });
+    return target;
+}
+
+
 export const generateRandomID = (): string => {
     const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
     const charactersLength = characters.length;

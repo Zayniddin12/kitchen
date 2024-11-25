@@ -361,8 +361,8 @@ onMounted(() => {
             </template>
           </ElTableColumn>
           <ElTableColumn
-            prop="base_name"
-            label="Количество"
+              prop="base_name"
+              label="База"
           >
             <template #default="{row}:{row: ProductType}">
               {{ row.base_name || "-" }}
