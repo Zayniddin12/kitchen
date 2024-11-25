@@ -1,16 +1,16 @@
-import {defineStore} from "pinia";
-import {computed, ref} from "vue";
+import { defineStore } from "pinia";
+import { computed, ref } from "vue";
 import {
     SearchUserDataType,
-    UserApiUrlType,
+    UserApiUrlType, UserCreateOrUpdateDataType,
     UserShowType,
     UsersParamsType,
     UsersType,
     UserType
 } from "@/modules/Users/users.types";
 import usersApi from "@/modules/Users/users.api";
-import {useRoute} from "vue-router";
-import {getSessionItem, removeSessionItem, setSessionItem} from "@/utils/sessionStorage";
+import { useRoute } from "vue-router";
+import { getSessionItem, removeSessionItem, setSessionItem } from "@/utils/sessionStorage";
 
 export const useUsersStore = defineStore("usersStore", () => {
     const route = useRoute();
@@ -20,6 +20,7 @@ export const useUsersStore = defineStore("usersStore", () => {
     };
 
     const usersUrl = "users";
+    const userApi = usersApi(usersUrl);
 
     const userRoutesPrefix = "personal-database";
 
@@ -34,7 +35,7 @@ export const useUsersStore = defineStore("usersStore", () => {
         usersLoading.value = true;
 
         try {
-            users.value = await usersApi.fetchUsers(usersUrl, params);
+            users.value = await userApi.fetchUsers(params);
         } finally {
             usersLoading.value = false;
         }
@@ -43,7 +44,7 @@ export const useUsersStore = defineStore("usersStore", () => {
     const getUserFullName = (user: UserType | null) => {
         if (!user) return "";
 
-        const {firstname, lastname, patronymic} = user;
+        const { firstname, lastname, patronymic } = user;
 
         return [firstname, lastname, patronymic].filter(Boolean).join(" ");
     };
@@ -59,7 +60,7 @@ export const useUsersStore = defineStore("usersStore", () => {
         userLoading.value = true;
 
         try {
-            user.value = await usersApi.fetchUser(usersUrl, id);
+            user.value = await userApi.fetchUser(id);
         } finally {
             userLoading.value = false;
         }
@@ -71,14 +72,35 @@ export const useUsersStore = defineStore("usersStore", () => {
         deleteUserLoading.value = true;
 
         try {
-            await usersApi.deleteUser(usersUrl, id);
+            await userApi.deleteUser(id);
         } finally {
             deleteUserLoading.value = false;
         }
     };
 
+    const createUserLoading = ref(false);
+
+    const createUser = async (data: UserCreateOrUpdateDataType) => {
+        createUserLoading.value = true;
+
+        await userApi.createUser(data).finally(() => {
+            createUserLoading.value = false;
+        });
+    };
+
+    const updateUserLoading = ref(false);
+
+    const updateUser = async (id: number, data: UserCreateOrUpdateDataType) => {
+        updateUserLoading.value = true;
+        await userApi.updateUser(id, data).finally(() => {
+            updateUserLoading.value = false;
+        });
+    };
+
 
     const employeeUrl = "employee";
+    const employeeApi = usersApi(employeeUrl);
+
     const employeeRoutesPrefix = "visitors";
 
     const activeEmployeePage = computed(() => {
@@ -92,7 +114,7 @@ export const useUsersStore = defineStore("usersStore", () => {
         employeesLoading.value = true;
 
         try {
-            employees.value = await usersApi.fetchUsers(employeeUrl, params);
+            employees.value = await employeeApi.fetchUsers(params);
         } finally {
             employeesLoading.value = false;
         }
@@ -109,12 +131,42 @@ export const useUsersStore = defineStore("usersStore", () => {
         employeeLoading.value = true;
 
         try {
-            employee.value = await usersApi.fetchUser(employeeUrl, id);
+            employee.value = await employeeApi.fetchUser(id);
         } finally {
             employeeLoading.value = false;
         }
     };
 
+    const deleteEmployeeLoading = ref(false);
+
+    const deleteEmployee = async (id: number) => {
+        deleteEmployeeLoading.value = true;
+
+        try {
+            await employeeApi.deleteUser(id);
+        } finally {
+            deleteEmployeeLoading.value = false;
+        }
+    };
+
+    const createEmployeeLoading = ref(false);
+
+    const createEmployee = async (data: UserCreateOrUpdateDataType) => {
+        createEmployeeLoading.value = true;
+
+        await employeeApi.createUser(data).finally(() => {
+            createEmployeeLoading.value = false;
+        });
+    };
+
+    const updateEmployeeLoading = ref(false);
+
+    const updateEmployee = async (id: number, data: UserCreateOrUpdateDataType) => {
+        updateEmployeeLoading.value = true;
+        await employeeApi.updateUser(id, data).finally(() => {
+            updateEmployeeLoading.value = false;
+        });
+    };
 
     const activeRoutePrefix = computed(() => {
         return activeUserPage.value ? userRoutesPrefix : employeeRoutesPrefix;
@@ -130,7 +182,7 @@ export const useUsersStore = defineStore("usersStore", () => {
     };
 
     const initializeSearchUser = () => {
-        if(searchUser.value) return
+        if (searchUser.value) return;
 
         const storedUser = getSessionItem(searchUserStorageKey);
         searchUser.value = storedUser ? JSON.parse(storedUser) : null;
@@ -144,22 +196,10 @@ export const useUsersStore = defineStore("usersStore", () => {
     const fetchSearchUser = async (url: UserApiUrlType, data: SearchUserDataType) => {
         searchUserLoading.value = true;
         try {
-            const response = await usersApi.fetchSearchUser(url, data);
+            const response = await employeeApi.fetchSearchUser(data);
             setSearchUser(response);
         } finally {
             searchUserLoading.value = false;
-        }
-    };
-
-    const deleteEmployeeLoading = ref(false);
-
-    const deleteEmployee = async (id: number) => {
-        deleteEmployeeLoading.value = true;
-
-        try {
-            await usersApi.deleteUser(employeeUrl, id);
-        } finally {
-            deleteEmployeeLoading.value = false;
         }
     };
 
@@ -176,6 +216,10 @@ export const useUsersStore = defineStore("usersStore", () => {
         fetchUser,
         deleteUserLoading,
         deleteUser,
+        createUserLoading,
+        createUser,
+        updateUserLoading,
+        updateUser,
 
         employeeRoutesPrefix,
         activeEmployeePage,
@@ -188,6 +232,10 @@ export const useUsersStore = defineStore("usersStore", () => {
         fetchEmployee,
         deleteEmployeeLoading,
         deleteEmployee,
+        createEmployeeLoading,
+        createEmployee,
+        updateEmployeeLoading,
+        updateEmployee,
 
         activeRoutePrefix,
         searchUser,

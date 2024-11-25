@@ -56,6 +56,11 @@ onMounted(() => {
   emit("validation", validation);
 });
 
+const submit = () => {
+  if (props.submit) props.submit();
+  console.log("AA");
+};
+
 </script>
 <template>
   <ElForm
@@ -65,7 +70,7 @@ onMounted(() => {
       :label-position
       :size
       :status-icon
-      @submit.prevent="submit ?? undefined"
+      @submit.prevent="submit"
   >
     <slot/>
   </ElForm>
