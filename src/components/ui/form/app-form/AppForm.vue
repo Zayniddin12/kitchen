@@ -1,16 +1,16 @@
 <script
-    setup
-    lang="ts"
+  setup
+  lang="ts"
 >
 import { computed, inject, onMounted, provide, reactive, useTemplateRef, watch, watchEffect } from "vue";
 import {
   AppFormPropsType,
-  ValidationType
+  ValidationType,
 } from "@/components/ui/form/app-form/app-form.type";
 
 const props = withDefaults(defineProps<AppFormPropsType>(), {
   labelPosition: "top",
-  validationErrors: null
+  validationErrors: null,
 });
 
 const emit = defineEmits<{
@@ -42,10 +42,10 @@ const validation = reactive<ValidationType>({
     appForm.value.resetFields();
   },
 
-  clear: function (): void {
+  clear: function(): void {
     this.resetForm();
     this.clearValidate();
-  }
+  },
 });
 
 const appValidationErrors = computed(() => props.validationErrors);
@@ -53,6 +53,7 @@ const appValidationErrors = computed(() => props.validationErrors);
 provide("validation-errors", appValidationErrors);
 
 onMounted(() => {
+  console.log("ASSS", props.value);
   emit("validation", validation);
 });
 
@@ -72,6 +73,6 @@ const submit = () => {
       :status-icon
       @submit.prevent="submit"
   >
-    <slot/>
+    <slot />
   </ElForm>
 </template>
