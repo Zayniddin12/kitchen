@@ -54,10 +54,33 @@ interface KitchenType {
 }
 
 export const useKitchenStore = defineStore("kitchenStore", () => {
-  const departments = ref<DepartmentType[]>([]);
   const kitchenVid = ref<KitchenVid[] | []>([]);
   const kitchenType = ref<KitchenType[] | []>([]);
-  const layoutStore = useLayoutStore();
+  const settingsStore = useSettingsStore();
+
+  const departments = computed<DepartmentType[]>(() => {
+    return settingsStore.regional.managements.map(item => {
+      const newItem = {} as Record<string, any>;
+      newItem.title = item.name;
+      newItem.icon = "building-warehouse";
+      newItem.id = item.id;
+
+      newItem.children = [
+        {
+          id: "free-kitchen",
+          title: "Бесплатная кухня",
+          route: `/kitchen/${item.id}/free-kitchen`,
+        },
+        {
+          id: "sales",
+          title: "Продажи",
+          route: `/kitchen/${item.id}/sales`,
+        },
+      ];
+
+      return newItem;
+    });
+  });
 
   // KITCHEN CREATE
 
@@ -90,36 +113,7 @@ export const useKitchenStore = defineStore("kitchenStore", () => {
 
     if (data.data && data.data.managements) {
       // departments.value = data.data && data.data.bases;
-      departments.value = data.data.managements.map(item => {
-        const newItem = {} as Record<string, any>;
-        newItem.title = item.name;
-        newItem.icon = "building-warehouse";
-        newItem.id = item.id;
-
-        newItem.children = [
-          {
-            id: "free-kitchen",
-            title: "Бесплатная кухня",
-            route: `/kitchen/${item.id}/free-kitchen`,
-          },
-          {
-            id: "sales",
-            title: "Продажи",
-            route: `/kitchen/${item.id}/sales`,
-          },
-        ];
-
-        return newItem;
-      });
-
-      layoutStore.menuItems.forEach(el => {
-        if (el.unique == "kitchen") {
-          el.children = departments.value;
-        }
-      });
     }
-
-
   };
 
   const part = ref<Part2Type | null>(null);

@@ -4,7 +4,7 @@
 >
 
 import { onBeforeRouteUpdate, useRoute } from "vue-router";
-import { useDistrictStore } from "@/modules/WarehouseBases/store/district.store";
+import { useDistrictStore } from "@/modules/WarehouseBases/warehouse-bases.store";
 import { computed, onMounted, ref, watch } from "vue";
 import filterIcon from "@/assets/images/filter.svg";
 import CollapseFilter from "@/components/collapseFilter/index.vue";
