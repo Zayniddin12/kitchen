@@ -2,7 +2,7 @@
   setup
   lang="ts"
 >
-import { computed, watchEffect } from "vue";
+import { computed, watch, watchEffect } from "vue";
 import kitchenIcon from "@/assets/images/icons/kitchen/kitchen.svg";
 import menuIcon from "@/assets/images/icons/kitchen/menu-icon.svg";
 import calculatorIcon from "@/assets/images/icons/kitchen/calculator-icon.svg";
@@ -76,6 +76,8 @@ const boxes = computed(() => {
 
 const setBreadCrumbFn = () => {
   kitchenStore.fetchPart(+route.params.department_id, route.params.part_name as string);
+  kitchenStore.fetchPart2(+route.params.kitchen_id);
+  kitchenStore.fetchPart3(+route.params.child_id);
 
   if (!kitchenStore.part) return;
 
@@ -84,22 +86,36 @@ const setBreadCrumbFn = () => {
       label: "Кухня",
     },
     {
-      label: kitchenStore.part.name,
+      label: kitchenStore.part.title,
     },
     {
       label: kitchenStore.part.department_name,
       to: { name: "KitchenIndex" },
     },
     {
-      label: "Лагерь",
-      to: { name: "KitchenShowIndex" },
+      label: kitchenStore.part.kitchen_vid as string,
+      isActionable: true,
+      to: { name: "KitchenShow" },
     },
     {
-      label: "Паҳлавон",
+      label: kitchenStore.part.kitchen_type as string,
       isActionable: true,
     },
   ]);
 };
+
+watch(() => route.params, async () => {
+  await kitchenStore.GET_KITCHEN_VID({
+    management_id: route.params.department_id as string,
+    is_paid: route.params.part_name == "free-kitchen" ? 0 : route.params.part_name == "sales" ? 1 : null,
+  });
+  await kitchenStore.GET_KITCHEN_TYPE({
+    management_id: route.params.department_id as string,
+    is_paid: route.params.part_name == "free-kitchen" ? 0 : route.params.part_name == "sales" ? 1 : null,
+    kitchen_type_id: route.params.kitchen_id as string,
+  });
+  setBreadCrumbFn();
+}, { immediate: true });
 
 watchEffect(() => {
   setBreadCrumbFn();

@@ -196,7 +196,7 @@ watch(() => route.name, () => {
               <ElSwitch
                 v-model="dataValue.is_paid"
                 :active-text="dataValue.is_paid ? 'Продажи' : 'Меню'"
-                class="app-switch mt-auto"
+                class="app-switch"
                 @change="changeStatus"
               />
 
