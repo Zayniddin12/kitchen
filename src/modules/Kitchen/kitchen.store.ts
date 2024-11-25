@@ -62,13 +62,13 @@ export const useKitchenStore = defineStore("kitchenStore", () => {
   // KITCHEN CREATE
 
   const CREATE_KITCHEN = async (payload: any) => {
-    const { data } = await $axios.post("/kitchen-sales/menu", { data: payload });
+    const { data } = await $axios.post("/kitchen-sales/menu", payload);
 
     return data;
   };
 
   const CREATE_KITCHEN_ELEMENT = async ({ id, payload }: { id: string, payload: any }) => {
-    const { data } = await $axios.post(`/kitchen-sales/menu/${id}/add-element`, { data: payload });
+    const { data } = await $axios.post(`/kitchen-sales/menu/${id}/add-element`, payload);
 
     return data;
   };
@@ -187,6 +187,8 @@ export const useKitchenStore = defineStore("kitchenStore", () => {
     };
   };
   return {
+    CREATE_KITCHEN,
+    CREATE_KITCHEN_ELEMENT,
     GET_KITCHEN_LIST,
     GET_KITCHEN_VID,
     GET_KITCHEN_TYPE,

@@ -4,7 +4,7 @@
 >
 import { AppInputPropsType, AppInputValueType } from "@/components/ui/form/app-input/app-input.type";
 import { computed, inject, ref, Ref, useSlots, watch } from "vue";
-import { vMaska } from "maska";
+import { vMaska } from "maska/vue";
 import { getRules, setRules } from "@/components/ui/form/validate";
 import { ValidationErrorsType } from "@/components/ui/form/form.type";
 
