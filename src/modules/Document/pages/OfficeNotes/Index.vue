@@ -127,7 +127,7 @@ interface Tab {
 
 const tabItems = ref<Tab[]>([
   {
-    title: "Единоразовый",
+    title: "Свободный",
     value: DOCTYPES.SIMPLEDEMAND
   },
   {
@@ -390,7 +390,7 @@ const tableRowClassName = ({ row }: { row: DraftType }) => {
                 @click="editModalHandler(row)"
             >
               <img
-                  src="../../../../assets/images/icons/edit.svg"
+                  src="@/assets/images/icons/edit.svg"
                   alt="edit"
               />
             </button>
@@ -400,7 +400,7 @@ const tableRowClassName = ({ row }: { row: DraftType }) => {
                 :to="{name: `${route.name as string}-id`, params: {id:row.id}}"
             >
               <img
-                  src="../../../../assets/images/eye.svg"
+                  src="@/assets/images/eye.svg"
                   alt="eye"
               />
             </RouterLink>

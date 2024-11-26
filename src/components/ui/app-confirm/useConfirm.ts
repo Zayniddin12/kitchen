@@ -1,13 +1,14 @@
 import {
-  ButtonActionType,
-  ConfirmInitParamsType,
-  ConfirmParamsType,
-  DefaultButtonType,
-  DefaultButtonTypes,
-  textType,
+    ButtonActionType,
+    ConfirmInitParamsType,
+    ConfirmParamsType,
+    DefaultButtonType,
+    DefaultButtonTypes, DisabledBtnType,
+    textType
 } from "@/components/ui/app-confirm/app-confirm.type";
 import { ref } from "vue";
 import { filterObjectValues, togglePageScrolling } from "@/utils/helper";
+import { ButtonType } from "element-plus";
 
 const activeConfirm = ref<null | ConfirmInitParamsType>(null);
 const openConfirmModal = ref(false);
@@ -15,81 +16,89 @@ const openConfirmModal = ref(false);
 let resolvePromise: (value?: "confirm" | "save") => void;
 let rejectPromise: (reason?: "cancel") => void;
 
-export default function() {
-  const defaultButtons: DefaultButtonTypes = {
-    cancel: [
-      { label: "Отменить", status: "secondary", action: "cancel" },
-      { label: "Выйти", status: "danger", action: "confirm" },
-      { label: "Сохранить", status: "primary", action: "save" },
-    ],
-    delete: [
-      { label: "Отменить", status: "secondary", action: "cancel" },
-      { label: "Удалить", status: "danger", action: "confirm" },
-    ],
-    show: [{ label: "Понятно", action: "confirm", status: "primary" }],
-  };
+export default function () {
+    const defaultButtons: DefaultButtonTypes = {
+        cancel: [
+            { label: "Отменить", status: "secondary", action: "cancel" },
+            { label: "Выйти", status: "danger", action: "confirm" },
+            { label: "Сохранить", status: "primary", action: "save" }
+        ],
+        delete: [
+            { label: "Отменить", status: "secondary", action: "cancel" },
+            { label: "Удалить", status: "danger", action: "confirm" }
+        ],
+        show: [{ label: "Понятно", action: "confirm", status: "primary" }]
+    };
 
-  const init = (params: ConfirmInitParamsType = {}) =>
-    new Promise((resolve, reject) => {
-      resolvePromise = resolve;
-      rejectPromise = reject;
+    const init = (params: ConfirmInitParamsType = {}) =>
+        new Promise((resolve, reject) => {
+            resolvePromise = resolve;
+            rejectPromise = reject;
 
-      activeConfirm.value = filterObjectValues(params);
+            activeConfirm.value = filterObjectValues(params);
 
-      openConfirmModal.value = true;
-    });
+            openConfirmModal.value = true;
+        });
 
-  const openModal = (
-    type: DefaultButtonType,
-    title: textType,
-    description: textType,
-    disabledBody = false,
-  ) =>
-    init({
-      title,
-      description,
-      buttons: defaultButtons[type],
-      disabledBody,
-    });
+    const openModal = (
+        type: DefaultButtonType,
+        title: textType,
+        description: textType,
+        disabledBody = false,
+        disabledBtn?: DisabledBtnType
+    ) => {
+        let buttons = defaultButtons[type];
+        if (disabledBtn && buttons) {
+            buttons = buttons.filter(button => button.action !== disabledBtn);
+        }
 
-  const confirm = {
-    openModal,
-    cancel: (params: ConfirmParamsType = {}) =>
-      openModal(
-        "cancel",
-        params.title || "<div class='max-w-[279px]'>Вы уверены что хотите отменить?</div>",
-        params.description || "Все не сохраненные изменения будут потеряны",
-        !!params.disabledBody,
-      ),
-    delete: (params: ConfirmParamsType = {}) =>
-      openModal(
-        "delete",
-        params.title || "<div class='max-w-[360px]'>Вы уверены, что хотите удалить эту запись?</div>",
-        params.description ||
-        "Это действие необратимо, и запись будет полностью удалена из системы",
-        !!params.disabledBody,
-      ),
-    show: (
-      description: textType = "Вы не можете деактивировать эту запись, так как она имеет связи с другими записями в системе. Пожалуйста, сначала удалите или измените записи, с которыми она связана.",
-      disabledBody = false,
-    ) => openModal("show", "", description, disabledBody),
-  };
+        return init({
+            title,
+            description,
+            buttons: buttons,
+            disabledBody
+        });
+    };
 
-  const sendAction = (action: ButtonActionType) => {
-    const successAction = action === "save" || action === "confirm";
-    openConfirmModal.value = false;
-    if (activeConfirm.value?.disabledBody) togglePageScrolling(!successAction);
+    const confirm = {
+        openModal,
+        cancel: (params: ConfirmParamsType = {}) =>
+            openModal(
+                "cancel",
+                params.title || "<div class='max-w-[279px]'>Вы уверены что хотите отменить?</div>",
+                params.description || "Все не сохраненные изменения будут потеряны",
+                !!params.disabledBody,
+                params.disabledBtn || ""
+            ),
+        delete: (params: ConfirmParamsType = {}) =>
+            openModal(
+                "delete",
+                params.title || "<div class='max-w-[360px]'>Вы уверены, что хотите удалить эту запись?</div>",
+                params.description ||
+                "Это действие необратимо, и запись будет полностью удалена из системы",
+                !!params.disabledBody
+            ),
+        show: (
+            description: textType = "Вы не можете деактивировать эту запись, так как она имеет связи с другими записями в системе. Пожалуйста, сначала удалите или измените записи, с которыми она связана.",
+            disabledBody = false
+        ) => openModal("show", "", description, disabledBody)
+    };
 
-    successAction
-      ? resolvePromise(action)
-      : rejectPromise(action);
-  };
+    const sendAction = (action: ButtonActionType) => {
+        const successAction = action === "save" || action === "confirm";
+        openConfirmModal.value = false;
+        if (activeConfirm.value?.disabledBody) togglePageScrolling(!successAction);
 
-  return {
-    confirm,
-    openConfirmModal,
-    activeConfirm,
-    sendAction,
-    init
-  };
+        successAction
+            ? resolvePromise(action)
+            : rejectPromise(action);
+    };
+
+    return {
+        confirm,
+        openConfirmModal,
+        activeConfirm,
+        sendAction,
+        init
+    };
 }

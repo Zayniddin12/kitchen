@@ -35,6 +35,27 @@ export const phoneFormatter = (phoneNumberString: string) => {
     return null;
 };
 
+export const formatPhone = (phone?: string): string => {
+    if (phone && phone.startsWith("998") && phone.length === 12) {
+        return phone.slice(3);
+    }
+    return "";
+};
+
+type Writable<T> = {
+    -readonly [P in keyof T]: T[P];
+};
+
+export function mergeCommonKeys<T extends Record<string, any>, U extends Record<string, any>>(target: Writable<T>, source: U): T {
+    Object.keys(target).forEach((key) => {
+        if (key in source) {
+            target[key] = source[key];
+        }
+    });
+    return target;
+}
+
+
 export const generateRandomID = (): string => {
     const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
     const charactersLength = characters.length;

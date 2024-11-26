@@ -1,6 +1,8 @@
 {
   "compilerOptions": {
+    "noEmit": true,
     "allowJs": false,
+    "emitDeclarationOnly": false,
     "target": "ESNext",
     "module": "ESNext",
     "moduleResolution": "node",
@@ -21,22 +23,17 @@
       "ESNext",
       "DOM"
     ],
-    "noEmit": true,
     "types": [
       "vue",
-      "vite/client",
-      "element-plus/global",
-      "@vue/runtime-core"
+      "vite/client"
     ]
   },
   "include": [
     "src/**/*.ts",
     "src/**/*.d.ts",
-    "src/**/*.tsx",
     "src/**/*.vue"
   ],
   "exclude": [
-    "node_modules",
-    "**/*.js"
+    "node_modules"
   ]
 }

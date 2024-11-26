@@ -1,9 +1,9 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
-import home from "@/modules/Home/router";
+import home from "@/modules/Home/home.routes";
 import Inbox from "@/modules/Document/document.routes";
 import Monitoring from "@/modules/Monitoring/monitoring.routes";
 import Settings from "@/modules/Settings/router";
-import Warehouse from "@/modules/WarehouseBases/router";
+import Warehouse from "@/modules/WarehouseBases/warehouse-bases.routes";
 import KitchenWarehouse from "@/modules/KitchenWarehouse/kitchen-warehouse.routes";
 import Kitchen from "@/modules/Kitchen/kitchen.routes";
 import Users from "@/modules/Users/users.routes";

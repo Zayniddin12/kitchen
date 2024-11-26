@@ -4,7 +4,7 @@ export default [
     {
         path: "/kitchen-warehouse/:id",
         name: "kitchen-warehouse-title-id",
-        component: () => import("@/modules/KitchenWarehouse/views/index.vue"),
+        component: () => import("@/modules/KitchenWarehouse/pages/index.vue"),
         meta: {
             title: "Склад кухни"
         }

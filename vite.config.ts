@@ -1,18 +1,9 @@
 import { fileURLToPath, URL } from "node:url";
-
 import { defineConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
 import vueDevTools from "vite-plugin-vue-devtools";
 
-// https://vitejs.dev/config/
 export default defineConfig({
-    css: {
-        preprocessorOptions: {
-            scss: {
-                api: "modern-compiler" // or "modern"
-            }
-        }
-    },
     plugins: [
         vue(),
         vueDevTools()
@@ -21,5 +12,18 @@ export default defineConfig({
         alias: {
             "@": fileURLToPath(new URL("./src", import.meta.url))
         }
+    },
+    build: {
+        target: "esnext",
+        rollupOptions: {
+            output: {
+                entryFileNames: "[name].js",
+                chunkFileNames: "[name].js",
+                assetFileNames: "[name].[ext]"
+            }
+        },
+        sourcemap: false,
+        emptyOutDir: true,
+        minify: "esbuild"
     }
 });

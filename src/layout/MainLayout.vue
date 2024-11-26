@@ -15,11 +15,13 @@ import HomeIcon from "@/assets/images/icons/nav/nav-drawer/home.svg";
 import DocumentsIcon from "@/assets/images/icons/nav/nav-drawer/documents.svg";
 import NotebookIcon from "@/assets/images/icons/nav/nav-list/notebook.svg";
 import MonitoringIcon from "@/assets/images/icons/nav/nav-drawer/monitoring.svg";
+import { useSettingsStore } from "@/modules/Settings/store";
 
 const authStore = useAuthStore();
 const route = useRoute();
 const router = useRouter();
 const kitchenStore = useKitchenStore();
+const settingsStore = useSettingsStore();
 
 const childSidebarPin = ref<boolean>(JSON.parse(localStorage.getItem("child-sidebar-pin" as string) || "false"));
 const childSidebar = ref<boolean>(JSON.parse(localStorage.getItem("child-sidebar" as string) || "false"));
@@ -29,8 +31,7 @@ onMounted(async () => {
   if (getAccessToken()) authStore.me();
   // else await router.replace({ name: "login" });
   childSidebarPin.value = JSON.parse(localStorage.getItem("child-sidebar-pin") || "false");
-  await kitchenStore.GET_KITCHEN_LIST({ per_page: 100 });
-
+  settingsStore.GET_REGIONAL({ per_page: 100 });
 });
 
 watch(() => route.name, function (val) {

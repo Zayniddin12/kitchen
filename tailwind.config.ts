@@ -10,6 +10,9 @@ export default {
             boxShadow: {
                 "menu": "0px 1.5px 4px -1px #0A090B12"
             },
+            gridColumn: {
+                '1.5': 'span 1.5 / span 1.5',
+            },
             colors: {
                 "black-text": "#000D24",
                 "black-sub": "#A8AAAE",

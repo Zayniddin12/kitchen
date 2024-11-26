@@ -6,12 +6,13 @@ import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 import { BreadcrumbItemType } from "@/components/ui/app-breadcrumb/app-breadcrumb.type";
 import { watch } from "vue";
 import { useRoute } from "vue-router";
+import {setSessionItem} from "@/utils/sessionStorage";
 
 const { breadcrumb, setBreadCrumb } = useBreadcrumb();
 const route = useRoute();
 
 const clickHome = () => {
-  sessionStorage.setItem("current-menu", "0");
+  setSessionItem("current-menu", "0");
 };
 
 type itemComponentTagType = "span" | "RouterLink" | "button";

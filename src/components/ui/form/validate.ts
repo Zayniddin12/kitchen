@@ -33,7 +33,11 @@ export const setRules = (rules: RulesType): Arrayable<FormItemRule> | ValidateRu
         if (rules.min && rules.max) {
             rule.min = rules.min;
             rule.max = rules.max;
-            rule.message = `Characters length should be between ${rules.min} and ${rules.max}`;
+            if (rule.min === rule.max) {
+                rule.message = `Must be ${rule.min} characters long`;
+            } else {
+                rule.message = `Characters length should be between ${rules.min} and ${rules.max}`;
+            }
         } else if (rules.min) {
             rule.min = rules.min;
             rule.message = `Must be at least ${rules.min} characters`;

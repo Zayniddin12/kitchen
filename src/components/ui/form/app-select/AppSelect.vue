@@ -22,7 +22,7 @@ const props = withDefaults(defineProps<AppSelectPropsType>(), {
   itemValue: "",
   itemLabel: "",
   labelClass: "",
-  placeholder: "Выбирать",
+  placeholder: "Выберите",
   persistent: true
 });
 

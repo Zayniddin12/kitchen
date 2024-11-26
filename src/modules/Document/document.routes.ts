@@ -159,7 +159,9 @@ export default [
         meta: {
             parentRouteTitle: "Входящие",
             parentRouteUrl: { name: "invoice-inbox" },
-            title: "Просмотр"
+            title: "Просмотр",
+            hasRejectBtn: true,
+            hasAcceptBtn: true
         }
     },
 
