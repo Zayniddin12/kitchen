@@ -3,7 +3,7 @@
   lang="ts"
 >
 import { useRoute, useRouter } from "vue-router";
-import { ref, watchEffect } from "vue";
+import { onMounted, ref, watch, watchEffect } from "vue";
 import { useKitchenWarehouseStore } from "@/modules/KitchenWarehouse/kitchen-warehouse.store";
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 
@@ -56,15 +56,13 @@ const { setBreadCrumb } = useBreadcrumb();
 const setBreadCrumbFn = () => {
   kitchenWarehouseStore.fetchDynamicItemState(+route.params.id);
 
-  if (!kitchenWarehouseStore.dynamicItemState) return;
-
   setBreadCrumb([
     {
       label: "Склад кухни",
       isActionable: false,
     },
     {
-      label: kitchenWarehouseStore.dynamicItemState.title,
+      label: kitchenWarehouseStore.dynamicItemState?.title ?? "",
       isActionable: true,
     },
   ]);

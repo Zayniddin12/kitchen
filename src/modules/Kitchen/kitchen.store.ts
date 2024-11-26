@@ -4,7 +4,6 @@ import $axios from "@/plugins/axios/axios";
 import { useLayoutStore } from "@/navigation/index";
 import { useSettingsStore } from "@/modules/Settings/store";
 
-
 enum PARTS {
   MENU = "free-kitchen",
   SALES = "sales",
@@ -54,10 +53,34 @@ interface KitchenType {
 }
 
 export const useKitchenStore = defineStore("kitchenStore", () => {
-  const departments = ref<DepartmentType[]>([]);
   const kitchenVid = ref<KitchenVid[] | []>([]);
   const kitchenType = ref<KitchenType[] | []>([]);
-  const layoutStore = useLayoutStore();
+  const settingsStore = useSettingsStore();
+
+  const departments = computed<DepartmentType[]>(() => {
+    return settingsStore.regional.managements.map(item => {
+      const newItem = {} as Record<string, any>;
+      newItem.title = item.name;
+      newItem.icon = "building-warehouse";
+      newItem.id = item.id;
+
+      newItem.children = [
+        {
+          id: "free-kitchen",
+          title: "Бесплатная кухня",
+          route: `/kitchen/${item.id}/free-kitchen`,
+        },
+        {
+          id: "sales",
+          title: "Продажи",
+          route: `/kitchen/${item.id}/sales`,
+        },
+      ];
+
+      return newItem;
+    });
+  });
+
   const menuToday = ref({});
   const menuWeekly = ref({});
 
@@ -81,14 +104,25 @@ export const useKitchenStore = defineStore("kitchenStore", () => {
     return data;
   };
 
-  const CREATE_KITCHEN_ELEMENT = async ({ id, payload }: { id: string, payload: any }) => {
-    const { data } = await $axios.post(`/kitchen-sales/menu/${id}/add-element`, payload);
+  const CREATE_KITCHEN_ELEMENT = async ({
+    id,
+    payload,
+  }: {
+    id: string;
+    payload: any;
+  }) => {
+    const { data } = await $axios.post(
+      `/kitchen-sales/menu/${id}/add-element`,
+      payload
+    );
 
     return data;
   };
 
   const GET_KITCHEN_VID = async (params: Params) => {
-    const { data } = await $axios.get("/kitchen-types/list-by-base", { params });
+    const { data } = await $axios.get("/kitchen-types/list-by-base", {
+      params,
+    });
 
     kitchenVid.value = data.data && data.data.kitchen_types;
   };
@@ -104,36 +138,7 @@ export const useKitchenStore = defineStore("kitchenStore", () => {
 
     if (data.data && data.data.managements) {
       // departments.value = data.data && data.data.bases;
-      departments.value = data.data.managements.map(item => {
-        const newItem = {} as Record<string, any>;
-        newItem.title = item.name;
-        newItem.icon = "building-warehouse";
-        newItem.id = item.id;
-
-        newItem.children = [
-          {
-            id: "free-kitchen",
-            title: "Бесплатная кухня",
-            route: `/kitchen/${item.id}/free-kitchen`,
-          },
-          {
-            id: "sales",
-            title: "Продажи",
-            route: `/kitchen/${item.id}/sales`,
-          },
-        ];
-
-        return newItem;
-      });
-
-      layoutStore.menuItems.forEach(el => {
-        if (el.unique == "kitchen") {
-          el.children = departments.value;
-        }
-      });
     }
-
-
   };
 
   const part = ref<Part2Type | null>(null);
@@ -164,7 +169,6 @@ export const useKitchenStore = defineStore("kitchenStore", () => {
   };
 
   const fetchPart3 = (kitchen_type_id: number | string) => {
-
     if (!kitchenType.value.length) return;
 
     const kitchen_type =
@@ -188,7 +192,8 @@ export const useKitchenStore = defineStore("kitchenStore", () => {
 
     if (!department) return;
 
-    const activePart = department.children.find(el => el.id === part_name) ?? null;
+    const activePart =
+      department.children.find(el => el.id === part_name) ?? null;
     if (!activePart) return;
     ``;
 

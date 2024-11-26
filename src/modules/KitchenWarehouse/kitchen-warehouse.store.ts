@@ -1,56 +1,57 @@
 import { defineStore } from "pinia";
-import { ref } from "vue";
+import { computed, ref } from "vue";
+import { useSettingsStore } from "@/modules/Settings/store";
+import { ListProductsParamsType, ListProductsResponseType } from "@/modules/KitchenWarehouse/kitchen-warehouse.types";
+import kitchenWarehouseApi from "@/modules/KitchenWarehouse/kitchen-warehouse.api";
 
 interface DynamicItemStateType {
-  id: number,
-  title: string,
-  icon: string,
-  route: string
+    id: number,
+    title: string,
+    icon: string,
+    route: string
 }
 
 export const useKitchenWarehouseStore = defineStore("kitchenWarehouse", () => {
-  const dynamicState = ref<DynamicItemStateType[]>([
-    {
-      id: 1,
-      title: "Зарафшан",
-      icon: "building-warehouse",
-      route: "/kitchen-warehouse/1",
-    },
-    {
-      id: 2,
-      title: "Навои",
-      icon: "building-warehouse",
-      route: "/kitchen-warehouse/2",
-    },
-    {
-      id: 3,
-      title: "Учкудук",
-      icon: "building-warehouse",
-      route: "/kitchen-warehouse/3",
-    },
-    {
-      id: 4,
-      title: "Нуробод",
-      icon: "building-warehouse",
-      route: "/kitchen-warehouse/4",
-    },
-    {
-      id: 5,
-      title: "Зафаробод",
-      icon: "building-warehouse",
-      route: "/kitchen-warehouse/10",
-    },
-  ]);
+    const settingsStore = useSettingsStore();
 
-  const dynamicItemState = ref<null | DynamicItemStateType>(null);
+    const dynamicState = computed<DynamicItemStateType[]>(() => {
+        return settingsStore.regional.managements.map((item: any) => {
+            return {
+                id: item.id,
+                title: item.name,
+                icon: "building-warehouse",
+                route: `/kitchen-warehouse/${item.id}`
+            };
+        });
+    });
 
-  const fetchDynamicItemState = (id: number) => {
-    dynamicItemState.value = dynamicState.value.find(el => el.id === id) ?? null;
-  };
+    const dynamicItemState = ref<null | DynamicItemStateType>(null);
 
-  return {
-    dynamicState,
-    dynamicItemState,
-    fetchDynamicItemState
-  };
+    const fetchDynamicItemState = (id: number) => {
+        dynamicItemState.value = dynamicState.value.find(el => el.id === id) ?? null;
+    };
+
+
+    const listProducts = ref<ListProductsResponseType | null>(null);
+    const listProductsLoading = ref(false);
+
+    const fetchListProducts = async (id: number, params: ListProductsParamsType = {}) => {
+        listProductsLoading.value = true;
+
+        try {
+            listProducts.value = await kitchenWarehouseApi.fetchListProducts(id, params);
+        } finally {
+            listProductsLoading.value = false;
+        }
+    };
+
+    return {
+        dynamicState,
+        dynamicItemState,
+        fetchDynamicItemState,
+
+        listProducts,
+        listProductsLoading,
+        fetchListProducts
+    };
 });

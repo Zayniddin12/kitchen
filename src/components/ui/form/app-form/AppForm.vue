@@ -53,7 +53,6 @@ const appValidationErrors = computed(() => props.validationErrors);
 provide("validation-errors", appValidationErrors);
 
 onMounted(() => {
-  console.log("ASSS", props.value);
   emit("validation", validation);
 });
 
