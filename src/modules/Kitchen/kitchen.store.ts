@@ -4,7 +4,6 @@ import $axios from "@/plugins/axios/axios";
 import { useLayoutStore } from "@/navigation/index";
 import { useSettingsStore } from "@/modules/Settings/store";
 
-
 enum PARTS {
   MENU = "free-kitchen",
   SALES = "sales",
@@ -82,7 +81,22 @@ export const useKitchenStore = defineStore("kitchenStore", () => {
     });
   });
 
+  const menuToday = ref({});
+  const menuWeekly = ref({});
+
   // KITCHEN CREATE
+
+  const GET_CURRENT_MENU_LIST = async (id: number | string) => {
+    const { data } = await $axios.get(`/kitchen-sales/${id}/menu-today`);
+    menuToday.value = data.data;
+    return data;
+  };
+
+  const GET_WEEKLY_MENU_LIST = async (id: number | string) => {
+    const { data } = await $axios.get(`/kitchen-sales/${id}/menu-weekly`);
+    menuWeekly.value = data.data;
+    return data;
+  };
 
   const CREATE_KITCHEN = async (payload: any) => {
     const { data } = await $axios.post("/kitchen-sales/menu", payload);
@@ -90,14 +104,25 @@ export const useKitchenStore = defineStore("kitchenStore", () => {
     return data;
   };
 
-  const CREATE_KITCHEN_ELEMENT = async ({ id, payload }: { id: string, payload: any }) => {
-    const { data } = await $axios.post(`/kitchen-sales/menu/${id}/add-element`, payload);
+  const CREATE_KITCHEN_ELEMENT = async ({
+    id,
+    payload,
+  }: {
+    id: string;
+    payload: any;
+  }) => {
+    const { data } = await $axios.post(
+      `/kitchen-sales/menu/${id}/add-element`,
+      payload
+    );
 
     return data;
   };
 
   const GET_KITCHEN_VID = async (params: Params) => {
-    const { data } = await $axios.get("/kitchen-types/list-by-base", { params });
+    const { data } = await $axios.get("/kitchen-types/list-by-base", {
+      params,
+    });
 
     kitchenVid.value = data.data && data.data.kitchen_types;
   };
@@ -144,7 +169,6 @@ export const useKitchenStore = defineStore("kitchenStore", () => {
   };
 
   const fetchPart3 = (kitchen_type_id: number | string) => {
-
     if (!kitchenType.value.length) return;
 
     const kitchen_type =
@@ -168,7 +192,8 @@ export const useKitchenStore = defineStore("kitchenStore", () => {
 
     if (!department) return;
 
-    const activePart = department.children.find(el => el.id === part_name) ?? null;
+    const activePart =
+      department.children.find(el => el.id === part_name) ?? null;
     if (!activePart) return;
     ``;
 
@@ -181,6 +206,10 @@ export const useKitchenStore = defineStore("kitchenStore", () => {
     };
   };
   return {
+    menuToday,
+    menuWeekly,
+    GET_CURRENT_MENU_LIST,
+    GET_WEEKLY_MENU_LIST,
     CREATE_KITCHEN,
     CREATE_KITCHEN_ELEMENT,
     GET_KITCHEN_LIST,
