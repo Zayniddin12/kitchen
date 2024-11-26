@@ -3,7 +3,7 @@
   lang="ts"
 >
 
-import { computed, onMounted, watch } from "vue";
+import { computed, onMounted, watch, watchEffect } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useKitchenStore } from "@/modules/Kitchen/kitchen.store";
 import medicalKitchenIcon from "@/assets/images/icons/kitchen/medical-kitchen.svg";
@@ -100,6 +100,10 @@ watch(() => kitchenStore.departments, async () => {
 
   setBreadcrumbFn();
 }, { immediate: true });
+
+watchEffect(() => {
+  setBreadcrumbFn();
+})
 
 </script>
 

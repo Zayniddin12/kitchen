@@ -28,6 +28,7 @@ interface Params {
     search?: string | null;
     page?: number | string;
     per_page?: number | string;
+    management_id?: number
 }
 
 interface Pagination {

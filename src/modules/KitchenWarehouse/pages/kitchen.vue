@@ -3,9 +3,11 @@
     lang="ts"
 >
 import { useRoute, useRouter } from "vue-router";
-import { ref, watchEffect } from "vue";
+import { computed, ref, watch, watchEffect } from "vue";
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 import { useKitchenWarehouseStore } from "@/modules/KitchenWarehouse/kitchen-warehouse.store";
+import { useCommonStore } from "@/stores/common.store";
+import { useKitchenStore } from "@/modules/Kitchen/kitchen.store";
 
 const router = useRouter();
 const route = useRoute();
@@ -51,10 +53,14 @@ const kitchen = ref<Kitchen[]>([
 
 const { setBreadCrumb } = useBreadcrumb();
 const kitchenWarehouseStore = useKitchenWarehouseStore();
+const commonStore = useCommonStore();
+const kitchenStore = useKitchenStore();
 
 const setBreadCrumbFn = () => {
   kitchenWarehouseStore.fetchDynamicItemState(+route.params.id);
+  const title = commonStore.getTitle(`kitchen_type_id-${route.params.id3}`);
 
+  // if (!title || kitchenWarehouseStore.dynamicItemState) router.replace({ name: "kitchen-warehouse-title-id" });
 
   setBreadCrumb([
     {
@@ -66,7 +72,7 @@ const setBreadCrumbFn = () => {
       to: { name: "kitchen-warehouse-title-id" }
     },
     {
-      label: "Кухня",
+      label: title,
       isActionable: true
     }
   ]);
@@ -76,15 +82,20 @@ watchEffect(() => {
   setBreadCrumbFn();
 });
 
+watch(() => route.params.id3, () => {
+  kitchenStore.GET_KITCHEN_TYPE({ management_id: +route.params.id, kitchen_type_id: +route.params.id3 });
+}, { immediate: true });
+
 </script>
 
 <template>
   <div class="flex flex-wrap gap-6">
     <RouterLink
         class="bg-[#F8F9FC] w-[155px] h-[105px] rounded-[16px] flex flex-col justify-center items-center"
-        v-for="item in kitchen"
+        v-for="item in kitchenStore.kitchenType"
         :key="item.id"
         :to="{name: 'kitchen-warehouse-id-id3-id4', params: {id4: item.id}}"
+        @click="commonStore.setTitle(`kitchen_warehouse_id-${item.id}`, item.name)"
     >
       <svg
           width="24"
@@ -203,8 +214,8 @@ watchEffect(() => {
         />
       </svg>
 
-      <h1 class="text-[#4F5662] text-[14px] font-medium">{{ item.title }}</h1>
-      <h5 class="text-[#A8AAAE] text-[12px]">{{ item.subTitle }}</h5>
+      <h1 class="text-[#4F5662] text-[14px] font-medium">{{ item.name }}</h1>
+      <h5 class="text-[#A8AAAE] text-[12px]">{{ `${item.kitchen_capacity} мест` }}</h5>
     </RouterLink>
   </div>
 </template>

@@ -3,9 +3,9 @@
   lang="ts"
 >
 
-import { onBeforeRouteUpdate, useRoute } from "vue-router";
-import { useDistrictStore } from "@/modules/WarehouseBases/warehouse-bases.store";
-import { computed, onMounted, ref, watch, watchEffect } from "vue";
+import { useRoute } from "vue-router";
+import { useWarehouseBasesStore } from "@/modules/WarehouseBases/warehouse-bases.store";
+import { computed, ref, watch, watchEffect } from "vue";
 import filterIcon from "@/assets/images/filter.svg";
 import CollapseFilter from "@/components/collapseFilter/index.vue";
 import AppSelect from "@/components/ui/form/app-select/AppSelect.vue";
@@ -13,7 +13,7 @@ import AppInput from "@/components/ui/form/app-input/AppInput.vue";
 import AppDatePicker from "@/components/ui/form/app-date-picker/AppDatePicker.vue";
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 
-const districtStore = useDistrictStore();
+const warehouseBasesStore = useWarehouseBasesStore();
 const route = useRoute();
 const { setBreadCrumb } = useBreadcrumb();
 
@@ -90,19 +90,19 @@ const invoiceTableData = computed(() => {
 });
 
 const setBreadCrumbFn = async () => {
-  districtStore.getProduct(+route.params.district_id, +route.params.product_id);
+  warehouseBasesStore.getProduct(+route.params.district_id, +route.params.product_id);
 
-  if (!districtStore.district || !districtStore.product) return;
+  if (!warehouseBasesStore.district || !warehouseBasesStore.product) return;
 
   setBreadCrumb([
     {
       label: "Базы складов",
     },
     {
-      label: districtStore.district.name,
+      label: warehouseBasesStore.district.name,
     },
     {
-      label: districtStore.product.name,
+      label: warehouseBasesStore.product.name,
       isActionable: true,
     },
   ]);
@@ -116,9 +116,9 @@ watchEffect(() => {
 
 <template>
   <section class="warehouse">
-    <div v-if="districtStore.product">
+    <div v-if="warehouseBasesStore.product">
       <h1 class="font-semibold text-[32px] text-dark">
-        {{ districtStore.product.name }}
+        {{ warehouseBasesStore.product.name }}
       </h1>
       <div class="rounded-2xl py-3 px-4 border mt-6">
         <h3 class="text-dark font-medium text-lg">

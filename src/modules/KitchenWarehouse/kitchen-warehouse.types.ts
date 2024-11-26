@@ -1,15 +1,46 @@
 import { PaginationParamsType, PaginationType } from "@/types/pagination.type";
 
+export interface ListProductCommonType {
+    product_name: string,
+    quantity: number,
+    unit_name: string,
+    transportation_costs_percent: number,
+    markup_percent: number,
+    profitability_percent: number,
+    vat_percent: number,
+    total_price: number,
+}
+
 export interface ListProductsParamsType extends PaginationParamsType {
 
 }
 
-export interface ListProductType {
+export interface GroupProductType {
+    parent_name: string,
+    products: ListProductType[],
+}
 
+export interface ListProductType extends ListProductCommonType {
+    product_type_id: number,
 }
 
 export interface ListProductsResponseType {
-    products: ListProductType[],
+    grouped_products: GroupProductType[],
     pagination: PaginationType
 }
 
+export interface ListInvoicesParamsType extends PaginationParamsType {
+}
+
+export interface ListInvoiceType extends ListProductCommonType {
+    invoice_number: string,
+}
+
+export interface ListInvoicesResponseType {
+    invoices: ListInvoiceType[],
+    pagination: PaginationType
+}
+
+export interface FillingPercentageResponseType {
+    percentage: number
+}

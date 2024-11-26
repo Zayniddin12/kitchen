@@ -2,7 +2,7 @@
     setup
     lang="ts"
 >
-import { computed, onMounted, ref, watch } from "vue";
+import { computed, onMounted, onUnmounted, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useKitchenStore } from "@/modules/Kitchen/kitchen.store";
 import NavBar from "@/layout/Bars/NavBar.vue";
@@ -16,12 +16,16 @@ import DocumentsIcon from "@/assets/images/icons/nav/nav-drawer/documents.svg";
 import NotebookIcon from "@/assets/images/icons/nav/nav-list/notebook.svg";
 import MonitoringIcon from "@/assets/images/icons/nav/nav-drawer/monitoring.svg";
 import { useSettingsStore } from "@/modules/Settings/store";
+import { useWarehouseBasesStore } from "@/modules/WarehouseBases/warehouse-bases.store";
+import { useCommonStore } from "@/stores/common.store";
 
 const authStore = useAuthStore();
 const route = useRoute();
 const router = useRouter();
 const kitchenStore = useKitchenStore();
 const settingsStore = useSettingsStore();
+const warehouseBasesStore = useWarehouseBasesStore();
+const commonStore = useCommonStore();
 
 const childSidebarPin = ref<boolean>(JSON.parse(localStorage.getItem("child-sidebar-pin" as string) || "false"));
 const childSidebar = ref<boolean>(JSON.parse(localStorage.getItem("child-sidebar" as string) || "false"));
@@ -31,8 +35,14 @@ onMounted(async () => {
   if (getAccessToken()) authStore.me();
   // else await router.replace({ name: "login" });
   childSidebarPin.value = JSON.parse(localStorage.getItem("child-sidebar-pin") || "false");
-  settingsStore.GET_REGIONAL({ per_page: 100 });
+  await settingsStore.GET_REGIONAL({ per_page: 100 });
+  warehouseBasesStore.getDistricts();
+  commonStore.getTitles();
 });
+
+// onUnmounted(() => {
+//   commonStore.removeTitles();
+// });
 
 watch(() => route.name, function (val) {
   if (val === "home") {

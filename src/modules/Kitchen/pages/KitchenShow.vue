@@ -66,7 +66,7 @@ const setBreadcrumbFn = () => {
       label: "Кухня",
     },
     {
-      label: kitchenStore.part.title,
+      label: kitchenStore.part?.title ?? "",
     },
     {
       label: kitchenStore.part.department_name,

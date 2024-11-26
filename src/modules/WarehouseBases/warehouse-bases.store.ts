@@ -13,112 +13,42 @@ interface DistrictType {
     products?: ProductType[]
 }
 
-export const useDistrictStore = defineStore("districtStore", () => {
+export const useWarehouseBasesStore = defineStore("warehouseBasesStore", () => {
     const settingsStore = useSettingsStore();
 
-    const districts = computed(() => {
-        return settingsStore.regional.managements.map((item: any) => {
-            return {
+    const bases = ref<Map<number, Record<string, any>[]>>(new Map);
+
+    const getBases = async (management_id: number) => {
+        if (bases.value.has(management_id)) return;
+
+        await settingsStore.GET_WAREHOUSE_BASES_LIST({ per_page: 100, management_id });
+
+        bases.value.set(management_id, settingsStore.wareHouseList.bases);
+    };
+
+    const districts = ref<Record<string, any>>([]);
+
+    const getDistricts = () => {
+        settingsStore.regional.managements.forEach(async (item: any) => {
+            await getBases(item.id);
+
+            const activeBase = bases.value.get(item.id);
+
+            if (activeBase && activeBase.length > 0 && !districts.value.find((el:any) => el.id === item.id)) districts.value.push({
                 id: item.id,
                 title: item.name,
                 icon: "building-warehouse",
-                children: []
-            };
+                children: activeBase.map(el => {
+                    return {
+                        id: el.id,
+                        title: el.name,
+                        route: `/warehouse/${item.id}/${el.id}`
+                    };
+                })
+            });
         });
-    });
+    };
 
-    const districts2 = ref<DistrictType[]>([
-        {
-            id: 1,
-            name: "Зарафшан",
-            products: [
-                {
-                    id: 1,
-                    name: "Мясной склад"
-                },
-                {
-                    id: 2,
-                    name: "Овощной склад"
-                },
-                {
-                    id: 3,
-                    name: "Рисовый склад"
-                }
-            ]
-        },
-        {
-            id: 2,
-            name: "Навои",
-            products: [
-                {
-                    id: 1,
-                    name: "Мясной склад"
-                },
-                {
-                    id: 2,
-                    name: "Овощной склад"
-                },
-                {
-                    id: 3,
-                    name: "Рисовый склад"
-                }
-            ]
-        },
-        {
-            id: 3,
-            name: "Учкудук",
-            products: [
-                {
-                    id: 1,
-                    name: "Мясной склад"
-                },
-                {
-                    id: 2,
-                    name: "Овощной склад"
-                },
-                {
-                    id: 3,
-                    name: "Рисовый склад"
-                }
-            ]
-        },
-        {
-            id: 4,
-            name: "Нуробод",
-            products: [
-                {
-                    id: 1,
-                    name: "Мясной склад"
-                },
-                {
-                    id: 2,
-                    name: "Овощной склад"
-                },
-                {
-                    id: 3,
-                    name: "Рисовый склад"
-                }
-            ]
-        },
-        {
-            id: 5,
-            name: "Зафаробод",
-            products: [
-                {
-                    id: 1,
-                    name: "Мясной склад"
-                },
-                {
-                    id: 2,
-                    name: "Овощной склад"
-                },
-                {
-                    id: 3,
-                    name: "Рисовый склад"
-                }
-            ]
-        }
-    ]);
     const product = ref<DistrictType | null>(null);
     const district = ref<DistrictType | null>(null);
 
@@ -143,6 +73,7 @@ export const useDistrictStore = defineStore("districtStore", () => {
         districts,
         district,
         product,
-        getProduct
+        getProduct,
+        getDistricts
     };
 });
