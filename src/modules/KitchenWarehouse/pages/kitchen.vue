@@ -3,7 +3,7 @@
     lang="ts"
 >
 import { useRoute, useRouter } from "vue-router";
-import { computed, ref, watch, watchEffect } from "vue";
+import { watch, watchEffect } from "vue";
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 import { useKitchenWarehouseStore } from "@/modules/KitchenWarehouse/kitchen-warehouse.store";
 import { useCommonStore } from "@/stores/common.store";
@@ -11,45 +11,6 @@ import { useKitchenStore } from "@/modules/Kitchen/kitchen.store";
 
 const router = useRouter();
 const route = useRoute();
-
-interface Kitchen {
-  title: string;
-  subTitle: string;
-  id: number;
-}
-
-const kitchen = ref<Kitchen[]>([
-  {
-    id: 1,
-    title: "Ёшлар",
-    subTitle: "80 мест"
-  },
-  {
-    id: 2,
-    title: "Високоволтнй",
-    subTitle: "100 мест"
-  },
-  {
-    id: 3,
-    title: "Табассум",
-    subTitle: "120 мест"
-  },
-  {
-    id: 4,
-    title: "Мойбулоқ",
-    subTitle: "150 мест"
-  },
-  {
-    id: 5,
-    title: "Ёғду",
-    subTitle: "80 мест"
-  },
-  {
-    id: 6,
-    title: "Паҳлавон",
-    subTitle: "100 мест"
-  }
-]);
 
 const { setBreadCrumb } = useBreadcrumb();
 const kitchenWarehouseStore = useKitchenWarehouseStore();
@@ -60,7 +21,6 @@ const setBreadCrumbFn = () => {
   kitchenWarehouseStore.fetchDynamicItemState(+route.params.id);
   const title = commonStore.getTitle(`kitchen_type_id-${route.params.id3}`);
 
-  // if (!title || kitchenWarehouseStore.dynamicItemState) router.replace({ name: "kitchen-warehouse-title-id" });
 
   setBreadCrumb([
     {
