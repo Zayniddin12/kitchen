@@ -1,6 +1,8 @@
 import { defineStore } from "pinia";
 import { computed, ref } from "vue";
 import { useSettingsStore } from "@/modules/Settings/store";
+import { ListProductsParamsType, ListProductsResponseType } from "@/modules/KitchenWarehouse/kitchen-warehouse.types";
+import kitchenWarehouseApi from "@/modules/KitchenWarehouse/kitchen-warehouse.api";
 
 interface DynamicItemStateType {
     id: number,
@@ -29,9 +31,27 @@ export const useKitchenWarehouseStore = defineStore("kitchenWarehouse", () => {
         dynamicItemState.value = dynamicState.value.find(el => el.id === id) ?? null;
     };
 
+
+    const listProducts = ref<ListProductsResponseType | null>(null);
+    const listProductsLoading = ref(false);
+
+    const fetchListProducts = async (id: number, params: ListProductsParamsType = {}) => {
+        listProductsLoading.value = true;
+
+        try {
+            listProducts.value = await kitchenWarehouseApi.fetchListProducts(id, params);
+        } finally {
+            listProductsLoading.value = false;
+        }
+    };
+
     return {
         dynamicState,
         dynamicItemState,
-        fetchDynamicItemState
+        fetchDynamicItemState,
+
+        listProducts,
+        listProductsLoading,
+        fetchListProducts
     };
 });

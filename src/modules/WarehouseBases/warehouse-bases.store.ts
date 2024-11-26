@@ -17,19 +17,14 @@ export const useDistrictStore = defineStore("districtStore", () => {
     const settingsStore = useSettingsStore();
 
     const districts = computed(() => {
-        return settingsStore.regional.managements.map((item:any) => {
+        return settingsStore.regional.managements.map((item: any) => {
             return {
                 id: item.id,
                 title: item.name,
                 icon: "building-warehouse",
-                children: [
-                    {
-                        id: 1,
-
-                    }
-                ]
-            }
-        })
+                children: []
+            };
+        });
     });
 
     const districts2 = ref<DistrictType[]>([
@@ -128,6 +123,8 @@ export const useDistrictStore = defineStore("districtStore", () => {
     const district = ref<DistrictType | null>(null);
 
     const getProduct = (district_id: number, product_id: number) => {
+
+        console.log(districts.value);
 
         district.value = districts.value.find(el => el.id === district_id) ?? null;
 

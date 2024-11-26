@@ -5,7 +5,7 @@
 
 import { onBeforeRouteUpdate, useRoute } from "vue-router";
 import { useDistrictStore } from "@/modules/WarehouseBases/warehouse-bases.store";
-import { computed, onMounted, ref, watch } from "vue";
+import { computed, onMounted, ref, watch, watchEffect } from "vue";
 import filterIcon from "@/assets/images/filter.svg";
 import CollapseFilter from "@/components/collapseFilter/index.vue";
 import AppSelect from "@/components/ui/form/app-select/AppSelect.vue";
@@ -16,28 +16,6 @@ import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 const districtStore = useDistrictStore();
 const route = useRoute();
 const { setBreadCrumb } = useBreadcrumb();
-
-onBeforeRouteUpdate((to, from, next) => {
-  districtStore.getProduct(+to.params.district_id, +to.params.product_id);
-
-  if (!districtStore.district || !districtStore.product) return next({ name: "notFound" });
-
-
-  to.meta.breadcrumb = [
-    {
-      label: "Базы складов",
-    },
-    {
-      label: districtStore.district.name,
-    },
-    {
-      label: districtStore.product.name,
-      isActionable: true,
-    },
-  ];
-
-  next();
-});
 
 enum TABS {
   PRODUCTS = 1,
@@ -111,7 +89,7 @@ const invoiceTableData = computed(() => {
   return data;
 });
 
-const setBreadCrumbFn = () => {
+const setBreadCrumbFn = async () => {
   districtStore.getProduct(+route.params.district_id, +route.params.product_id);
 
   if (!districtStore.district || !districtStore.product) return;
@@ -130,9 +108,9 @@ const setBreadCrumbFn = () => {
   ]);
 };
 
-onMounted(() => {
+watchEffect(() => {
   setBreadCrumbFn();
-});
+})
 
 </script>
 
