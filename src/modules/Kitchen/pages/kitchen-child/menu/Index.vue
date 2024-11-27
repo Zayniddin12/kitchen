@@ -511,18 +511,24 @@ watch(() => route.params, async () => {
     kitchen_type_id: route.params.kitchen_id as string,
   });
 
+  fullscreenLoading.value = true;
+
   await kitchenStore.GET_CURRENT_MENU_LIST(route.params.child_id as number);
   await kitchenStore.GET_WEEKLY_MENU_LIST(route.params.child_id as number);
+
+  fullscreenLoading.value = false;
   setBreadCrumbFn();
 }, { immediate: true });
 
 watchEffect(() => {
   setBreadCrumbFn();
 });
+const fullscreenLoading = ref(false);
 </script>
 
 <template>
   <section
+    v-loading.fullscreen.lock="fullscreenLoading"
     class="menu transition-all duration-200"
     ref="menuSection"
   >
@@ -612,7 +618,7 @@ watchEffect(() => {
             v-if="activeTab === TABS.CURRENT"
             class="inner"
           >
-            {{kitchenStore.menuWeekly.elements}}
+            {{ kitchenStore.menuWeekly.elements }}
             <div
 
               class="flex flex-col gap-y-8"
