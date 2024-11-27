@@ -1,17 +1,12 @@
 import { defineStore } from "pinia";
 import { computed, ref } from "vue";
 import { useSettingsStore } from "@/modules/Settings/store";
-
-interface ProductType {
-    id: number;
-    name: string;
-}
-
-interface DistrictType {
-    id: number,
-    name: string,
-    products?: ProductType[]
-}
+import { FillingPercentageResponseType } from "@/modules/KitchenWarehouse/kitchen-warehouse.types";
+import {
+    WarehouseBasesInvoicesParamsType, WarehouseBasesInvoicesResponseType, WarehouseBasesProductsParamsType,
+    WarehouseBasesProductsResponseType
+} from "@/modules/WarehouseBases/warehouse-bases.types";
+import warehouseBasesApi from "@/modules/WarehouseBases/warehouse-bases.api";
 
 export const useWarehouseBasesStore = defineStore("warehouseBasesStore", () => {
     const settingsStore = useSettingsStore();
@@ -34,7 +29,7 @@ export const useWarehouseBasesStore = defineStore("warehouseBasesStore", () => {
 
             const activeBase = bases.value.get(item.id);
 
-            if (activeBase && activeBase.length > 0 && !districts.value.find((el:any) => el.id === item.id)) districts.value.push({
+            if (activeBase && activeBase.length > 0 && !districts.value.find((el: any) => el.id === item.id)) districts.value.push({
                 id: item.id,
                 title: item.name,
                 icon: "building-warehouse",
@@ -49,23 +44,59 @@ export const useWarehouseBasesStore = defineStore("warehouseBasesStore", () => {
         });
     };
 
-    const product = ref<DistrictType | null>(null);
-    const district = ref<DistrictType | null>(null);
+    const product = ref<Record<string, any> | null>(null);
+    const district = ref<Record<string, any> | null>(null);
 
     const getProduct = (district_id: number, product_id: number) => {
 
-        console.log(districts.value);
 
-        district.value = districts.value.find(el => el.id === district_id) ?? null;
+        district.value = districts.value.find((el: any) => el.id === district_id) ?? null;
 
-        if (!district.value) return;
-
-
-        if (district.value.products) {
-            product.value = district.value.products.find((el) => el.id === product_id) ?? null;
+        if (district.value && district.value.children) {
+            product.value = district.value.children.find((el: any) => el.id === product_id) ?? null;
         } else {
             product.value = null;
 
+        }
+    };
+
+
+    const fillingPercentage = ref<null | FillingPercentageResponseType>(null);
+    const fillingPercentageLoading = ref(false);
+
+    const fetchFillingPercentage = async (id: number) => {
+        fillingPercentageLoading.value = true;
+
+        try {
+            await warehouseBasesApi.fetchFillingPercentage(id);
+        } finally {
+            fillingPercentageLoading.value = false;
+        }
+    };
+
+    const products = ref<WarehouseBasesProductsResponseType | null>(null);
+    const productsLoading = ref(false);
+
+    const fetchProducts = async (id: number, params: WarehouseBasesProductsParamsType = {}) => {
+        productsLoading.value = true;
+
+        try {
+            products.value = await warehouseBasesApi.fetchProducts(id, params);
+        } finally {
+            productsLoading.value = false;
+        }
+    };
+
+    const invoices = ref<WarehouseBasesInvoicesResponseType | null>(null);
+    const invoicesLoading = ref(false);
+
+    const fetchInvoices = async (id: number, params: WarehouseBasesInvoicesParamsType = {}) => {
+        invoicesLoading.value = true;
+
+        try {
+            invoices.value = await warehouseBasesApi.fetchInvoices(id, params);
+        } finally {
+            invoicesLoading.value = false;
         }
     };
 
@@ -74,6 +105,16 @@ export const useWarehouseBasesStore = defineStore("warehouseBasesStore", () => {
         district,
         product,
         getProduct,
-        getDistricts
+        getDistricts,
+
+        fillingPercentage,
+        fillingPercentageLoading,
+        fetchFillingPercentage,
+        products,
+        productsLoading,
+        fetchProducts,
+        invoices,
+        invoicesLoading,
+        fetchInvoices
     };
 });

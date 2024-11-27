@@ -21,5 +21,7 @@ export interface AppInputPropsType extends ElFormItemType {
     minlength?: string | number,
     showWordLimit?: boolean,
     inputStyle?: string | CSSProperties | CSSProperties[] | string[],
-    mask?: string | MaskInputOptions
+    mask?: string | MaskInputOptions,
+    prepend?: string,
+    append?: string,
 }``
