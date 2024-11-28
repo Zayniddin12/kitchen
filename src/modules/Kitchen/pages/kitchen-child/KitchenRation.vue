@@ -3,11 +3,13 @@
   lang="ts"
 >
 
-import { computed, watchEffect } from "vue";
+import { computed, onMounted, ref, watch, watchEffect } from "vue";
 import { useKitchenStore } from "@/modules/Kitchen/kitchen.store";
 import { useRoute } from "vue-router";
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
+import { useSettingsStore } from "@/modules/Settings/store";
 
+const settingsStore = useSettingsStore();
 const kitchenStore = useKitchenStore();
 const route = useRoute();
 const { setBreadCrumb } = useBreadcrumb();
@@ -22,26 +24,15 @@ interface TableDataType {
   sum: string;
 }
 
-const tableData = computed<TableDataType[]>(() => {
-  const data: TableDataType[] = [];
-
-  for (let i = 1; i <= 12; i++) {
-    data.push({
-      id: i,
-      idx: i,
-      type: `Рацион ${i}`,
-      unique_number: "R-00000",
-      price: "25 000 сум",
-      nd_price: "3 000 сум",
-      sum: "28 000 сум",
-    });
-  }
-
-  return data;
+const params = ref({
+  page: 1,
+  per_page: 10,
 });
 
 const setBreadCrumbFn = () => {
   kitchenStore.fetchPart(+route.params.department_id, route.params.part_name as string);
+  kitchenStore.fetchPart2(+route.params.kitchen_id);
+  kitchenStore.fetchPart3(+route.params.child_id);
 
   if (!kitchenStore.part) return;
 
@@ -50,18 +41,18 @@ const setBreadCrumbFn = () => {
       label: "Кухня",
     },
     {
-      label: kitchenStore.part.name,
+      label: kitchenStore.part.title,
     },
     {
       label: kitchenStore.part.department_name,
       to: { name: "KitchenIndex" },
     },
     {
-      label: "Лагерь",
-      to: { name: "KitchenShowIndex" },
+      label: kitchenStore.part.kitchen_vid as string,
+      to: { name: "KitchenShow" },
     },
     {
-      label: "Паҳлавон",
+      label: kitchenStore.part.kitchen_type as string,
       to: { name: "KitchenShowChildIndex" },
     },
     {
@@ -71,39 +62,71 @@ const setBreadCrumbFn = () => {
   ]);
 };
 
+watch(() => route.params, async () => {
+  await kitchenStore.GET_KITCHEN_VID({
+    management_id: route.params.department_id as string,
+    is_paid: route.params.part_name == "free-kitchen" ? 0 : route.params.part_name == "sales" ? 1 : null,
+  });
+  await kitchenStore.GET_KITCHEN_TYPE({
+    management_id: route.params.department_id as string,
+    is_paid: route.params.part_name == "free-kitchen" ? 0 : route.params.part_name == "sales" ? 1 : null,
+    kitchen_type_id: route.params.kitchen_id as string,
+  });
+
+  setBreadCrumbFn();
+}, { immediate: true });
+
+
+const refresh = async () => {
+  await settingsStore.GET_RATION_LIST(params.value);
+};
+
+onMounted(() => {
+  refresh();
+});
+
 watchEffect(() => {
   setBreadCrumbFn();
 });
+
+const changePage = () => {
+  refresh();
+};
 </script>
 
 <template>
   <section class="kitchen-ration">
     <div>
+<!--      {{ settingsStore.rationList }}-->
       <h1 class="font-semibold text-[32px] text-dark">
         Рационы
       </h1>
       <ElTable
-        :data="tableData"
+        :data="settingsStore.rationList.rations"
         stripe
         class="mt-6 custom-element-table custom-element-table-normal kitchen-ration__table"
       >
         <ElTableColumn
-          prop="idx"
+          prop="id"
           label="№"
           :width="150"
-        />
+        >
+          <template #default="{row,$index}">
+            <span>{{ $index + 1}}</span>
+          </template>
+        </ElTableColumn>
         <ElTableColumn
           prop="type"
           label="Тип рациона"
           sortable
           align="center"
         >
-          <template #default="{row}: {row: TableDataType}">
+          <template #default="{row,$index}">
             <ElDropdown
               placement="bottom"
               class="kitchen-ration__table__dropdown"
             >
-              {{ row.type }}
+              {{ row.name }}
               <template #dropdown>
                 <ElDropdownMenu class="min-w-[140px] p-4 rounded-lg bg-white flex flex-col gap-y-3">
                   <div class="text-sm flex gap-x-2 w-full">
@@ -144,7 +167,7 @@ watchEffect(() => {
           </template>
         </ElTableColumn>
         <ElTableColumn
-          prop="unique_number"
+          prop="number"
           label="Уникальный номер"
           sortable
           align="center"
@@ -170,13 +193,16 @@ watchEffect(() => {
       </ElTable>
       <div class="mt-6 flex items-center justify-between">
         <div class="text-sm text-cool-gray">
-          Показано 1–12 из 100 результатов
+          Показано {{ params.page }}–{{ params.per_page }} из 100 результатов
         </div>
         <el-pagination
+          v-model:current-page="params.page"
+          @current-change="changePage"
+          :page-size="params.per_page"
           class="float-right"
           background
           layout="prev, pager, next"
-          :total="1000"
+          :total="settingsStore.rationList.pagination?.total_count"
         />
       </div>
     </div>

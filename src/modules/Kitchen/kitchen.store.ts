@@ -84,7 +84,24 @@ export const useKitchenStore = defineStore("kitchenStore", () => {
   const menuToday = ref({});
   const menuWeekly = ref({});
 
+  // MEALS CREATE
+  const CREATE_MEALS = async (payload: any) => {
+    const { data } = await $axios.post("/meals", payload, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+
+    return data;
+  };
+  // MEALS CREATE
+
   // KITCHEN CREATE
+
+  const GET_RATION_LIST_IN_MENU = async (id: string | number) => {
+    const { data } = await $axios.get(`/rations/menu/${id}`);
+    return data.data;
+  };
 
   const GET_CURRENT_MENU_LIST = async (id: number | string) => {
     const { data } = await $axios.get(`/kitchen-sales/${id}/menu-today`);
@@ -105,15 +122,15 @@ export const useKitchenStore = defineStore("kitchenStore", () => {
   };
 
   const CREATE_KITCHEN_ELEMENT = async ({
-    id,
-    payload,
-  }: {
+                                          id,
+                                          payload,
+                                        }: {
     id: string;
     payload: any;
   }) => {
     const { data } = await $axios.post(
       `/kitchen-sales/menu/${id}/add-element`,
-      payload
+      payload,
     );
 
     return data;
@@ -200,14 +217,16 @@ export const useKitchenStore = defineStore("kitchenStore", () => {
     part.value = {
       ...activePart,
       ...{
-        department_id: department.id,
-        department_name: department.title,
+        department_id: department?.id,
+        department_name: department?.title,
       },
     };
   };
   return {
     menuToday,
     menuWeekly,
+    CREATE_MEALS,
+    GET_RATION_LIST_IN_MENU,
     GET_CURRENT_MENU_LIST,
     GET_WEEKLY_MENU_LIST,
     CREATE_KITCHEN,
