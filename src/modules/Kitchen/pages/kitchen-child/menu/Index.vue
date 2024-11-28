@@ -6,7 +6,7 @@ import { computed, nextTick, reactive, ref, useTemplateRef, watch, watchEffect }
 import { useRoute, useRouter } from "vue-router";
 import { useKitchenStore } from "@/modules/Kitchen/kitchen.store";
 import { TableColumnType } from "@/types/common.type";
-import { formatNumber } from "@/utils/helper";
+import { formatDate, formatNumber } from "@/utils/helper";
 import ColaImg from "@/assets/images/kitchen/test/cola.png";
 import DishesImg from "@/assets/images/kitchen/test/dishes.png";
 import mailPlanImg from "@/assets/images/mail-plan.png";
@@ -523,6 +523,21 @@ watch(() => route.params, async () => {
 watchEffect(() => {
   setBreadCrumbFn();
 });
+
+const scheduledDates = computed(() => {
+  if (!kitchenData.value.startDate || !(kitchenData.value.intermediateDate1 || kitchenData.value.intermediateDate2)) return [];
+  const intermediate = kitchenData.value.intermediateDate1 ? 7 : 10;
+  const formattedDates = [];
+  for (let i = 0; i < intermediate; i++) {
+    const date = new Date(kitchenData.value.startDate);
+    console.log(date);
+    date.setDate(date.getDate() + i);
+    console.log(date);
+    const formattedDate = formatDate(date);
+    formattedDates.push({ date: formattedDate.date, title: `${formattedDate.week} - ${formattedDate.date}` });
+  }
+  return formattedDates;
+});
 const fullscreenLoading = ref(false);
 </script>
 
@@ -549,7 +564,7 @@ const fullscreenLoading = ref(false);
           </RouterLink>
         </div>
         <div
-          v-if="hasData"
+          v-if="kitchenStore.menuToday.elements && kitchenStore.menuToday.elements.length"
           class="flex items-center"
         >
           <template
@@ -779,6 +794,7 @@ const fullscreenLoading = ref(false);
             v-else-if="activeTab === TABS.ALL"
             class="inner"
           >
+            {{ new Date(Object.keys(kitchenStore.menuWeekly)[0])}}
             <ElScrollbar>
               <div class="flex">
                 <button

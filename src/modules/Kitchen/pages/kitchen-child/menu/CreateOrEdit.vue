@@ -71,9 +71,9 @@ const diets = reactive([{ id: 1, name: "Рацион1 R-0000" }]);
 const tableColumns: TableColumnType[] = [
   { label: "Название", prop: "name" },
   { label: "Количество", prop: "quantity", align: "center" },
-  { label: "Ед. измерения", prop: "unit_measurement", align: "center" },
-  { label: "Цена", prop: "price", align: "right" },
-  { label: "Сумма", prop: "sum", align: "right" },
+  { label: "Ед. измерения", prop: "unit", align: "center" },
+  { label: "Цена", prop: "net_price", align: "right" },
+  { label: "Сумма", prop: "total_price", align: "right" },
 ];
 
 const tableColumns2: TableColumnType[] = [
@@ -107,7 +107,9 @@ const scheduledDates = computed(() => {
   const formattedDates = [];
   for (let i = 0; i < intermediate; i++) {
     const date = new Date(kitchenData.value.startDate);
+    console.log(date);
     date.setDate(date.getDate() + i);
+    console.log(date);
     const formattedDate = formatDate(date);
     formattedDates.push({ date: formattedDate.date, title: `${formattedDate.week} - ${formattedDate.date}` });
   }
@@ -135,7 +137,7 @@ watch(scheduledDates, (newValue) => {
                 amount: null,
                 product_type: "ration",
                 product_id: null,
-                rationsList: [],
+                rationsList: {},
               },
             ],
           },
@@ -148,7 +150,7 @@ watch(scheduledDates, (newValue) => {
                 amount: null,
                 product_type: "ration",
                 product_id: null,
-                rationsList: [],
+                rationsList: {},
               },
             ],
           },
@@ -161,7 +163,7 @@ watch(scheduledDates, (newValue) => {
                 amount: null,
                 product_type: "ration",
                 product_id: null,
-                rationsList: [],
+                rationsList: {},
               },
             ],
           },
@@ -174,7 +176,7 @@ watch(scheduledDates, (newValue) => {
                 amount: null,
                 product_type: "ration",
                 product_id: null,
-                rationsList: [],
+                rationsList: {},
               },
             ],
           },
@@ -282,9 +284,9 @@ const cancel = () => {
   });
 };
 
-const addMealItem = (index: number | string) => {
+const addMealItem = (index: number, childIndex: string | number) => {
   console.log(index);
-  mealTimes.value[index].mealData.push(
+  data.value[index].data[childIndex].mealData.push(
     {
       period: index + 1,
       start_time: null,
@@ -300,9 +302,9 @@ const addMealItem = (index: number | string) => {
 const changeRation = async (val, parentIndex, childIndex, indexMeal) => {
   console.log(val, parentIndex, childIndex);
   if (val) {
-    const { ration } = await settingsStore.GET_SHOW_ITEM(val);
-    // console.log(mealTimes.value[parentIndex].mealData[childIndex], ration.product_types);
-    data.value[parentIndex].data[childIndex].mealData[indexMeal].rationsList = ration.product_types;
+    const responseData = await kitchenStore.GET_RATION_LIST_IN_MENU(val);
+    // console.log(data);
+    data.value[parentIndex].data[childIndex].mealData[indexMeal].rationsList = responseData && responseData;
   }
 };
 
@@ -487,11 +489,11 @@ const sendData = async () => {
                           required
                         />
                         <div
-                          v-if="itemMeal.product_id"
+                          v-if="itemMeal.product_id && itemMeal.rationsList && itemMeal.rationsList.products"
                           class="mt-6"
                         >
                           <ElTable
-                            :data="itemMeal.rationsList"
+                            :data="itemMeal.rationsList.products"
                             stripe
                             :empty-text="'Нет доступных данных'"
                             class="custom-element-table meal-plan-create__table"
@@ -527,7 +529,7 @@ const sendData = async () => {
                                                     Общая сумма:
                                                   </span>
                                   <strong class="font-semibold text-dark">
-                                    28 000 сум
+                                    {{ itemMeal.rationsList.total_price.toLocaleString() }}
                                   </strong>
                                 </div>
                               </div>
@@ -538,7 +540,7 @@ const sendData = async () => {
                       </div>
 
                       <ElButton
-                        @click="addMealItem(index)"
+                        @click="addMealItem(index, childIndex)"
                         type="primary"
                         plain
                         class="mt-6 !bg-white !border-blue-500"

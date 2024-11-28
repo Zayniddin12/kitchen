@@ -423,7 +423,7 @@ export const useSettingsStore = defineStore("settingsStore", () => {
         });
     };
 
-    const GET_MEALS_DETAIL = async (id: number) => {
+    const GET_MEALS_DETAIL = async (id: number | string) => {
         const { data } = await $axios.get(`/meals/${id}`);
         return data.data;
     };
