@@ -10,7 +10,7 @@ import type {
 } from "@/modules/Settings/components/Reference/MainBases/base-warehouses.type";
 import {
     DocTypeListType, KitchenTypesListItemType, KitchenTypesListParamsType,
-    KitchenWarehouseListItemType,
+    KitchenWarehouseListItemType, ManagementBasesType,
     RespondentParamsType,
     RespondentType
 } from "@/modules/Settings/settings.types";
@@ -28,7 +28,7 @@ interface Params {
     search?: string | null;
     page?: number | string;
     per_page?: number | string;
-    management_id?: number
+    management_id?: number;
 }
 
 interface Pagination {
@@ -395,7 +395,7 @@ export const useSettingsStore = defineStore("settingsStore", () => {
         try {
             const { data } = await $axios.get("kitchen-types/list", { params });
             kitchenTypesList.value = data.data.kitchen_types;
-        }finally {
+        } finally {
             kitchenTypesListLoading.value = true;
         }
     };

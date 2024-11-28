@@ -9,7 +9,6 @@ import {
     ListProductsResponseType, UpdatePriceDataType
 } from "@/modules/KitchenWarehouse/kitchen-warehouse.types";
 import kitchenWarehouseApi from "@/modules/KitchenWarehouse/kitchen-warehouse.api";
-import { id } from "element-plus/es/locale";
 
 interface DynamicItemStateType {
     id: number;

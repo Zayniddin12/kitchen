@@ -3,6 +3,8 @@ import { computed, ref } from "vue";
 import { useSettingsStore } from "@/modules/Settings/store";
 import { FillingPercentageResponseType } from "@/modules/KitchenWarehouse/kitchen-warehouse.types";
 import {
+    ActiveManagementBaseType,
+    ManagementBasesType,
     WarehouseBasesInvoicesParamsType, WarehouseBasesInvoicesResponseType, WarehouseBasesProductsParamsType,
     WarehouseBasesProductsResponseType
 } from "@/modules/WarehouseBases/warehouse-bases.types";
@@ -100,6 +102,52 @@ export const useWarehouseBasesStore = defineStore("warehouseBasesStore", () => {
         }
     };
 
+    const managementBases = ref<ManagementBasesType>([]);
+    const managementBasesLoading = ref(false);
+
+    const fetchManagementBases = async () => {
+        managementBasesLoading.value = true;
+        try {
+            managementBases.value = await warehouseBasesApi.fetchManagementBases();
+        } finally {
+            managementBasesLoading.value = false;
+        }
+    };
+
+    const managementBasesMenu = computed(() => {
+        return managementBases.value.map(el => {
+            const menu: Record<string, any> = {
+                id: el.id,
+                title: el.name
+            };
+            if (el.bases.length) {
+                menu.children = el.bases.map(base => {
+                    return {
+                        id: base.id,
+                        title: base.name,
+                        route: `/warehouse/${el.id}/${base.id}`
+                    };
+                });
+            }
+
+            return menu;
+        });
+    });
+
+    const activeManagementBase = ref<ActiveManagementBaseType | null>(null);
+
+    const getManagementBase = (management_id: number, base_id: number) => {
+        const activeManagement = managementBases.value.find(el => el.id === management_id);
+
+        if (activeManagement) {
+            activeManagementBase.value = { ...activeManagement, base: null };
+
+            const activeBase = activeManagement.bases.find(el => el.id === base_id);
+
+            if (activeBase) activeManagementBase.value.base = activeBase;
+        }
+    };
+
     return {
         districts,
         district,
@@ -115,6 +163,12 @@ export const useWarehouseBasesStore = defineStore("warehouseBasesStore", () => {
         fetchProducts,
         invoices,
         invoicesLoading,
-        fetchInvoices
+        fetchInvoices,
+        managementBases,
+        managementBasesLoading,
+        fetchManagementBases,
+        managementBasesMenu,
+        activeManagementBase,
+        getManagementBase
     };
 });

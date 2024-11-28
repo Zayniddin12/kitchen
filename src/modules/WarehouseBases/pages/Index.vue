@@ -13,17 +13,18 @@ import AppInput from "@/components/ui/form/app-input/AppInput.vue";
 import AppDatePicker from "@/components/ui/form/app-date-picker/AppDatePicker.vue";
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 import {
-  WarehouseBasesInvoicesParamsType,
+  WarehouseBasesInvoicesParamsType, WarehouseBasesInvoiceType,
   WarehouseBasesProductsParamsType, WarehouseBasesProductType
 } from "@/modules/WarehouseBases/warehouse-bases.types";
 import { filterObjectValues, getRouteQuery, setTableColumnIndex } from "@/utils/helper";
-import { ListInvoicesParamsType, ListProductsParamsType } from "@/modules/KitchenWarehouse/kitchen-warehouse.types";
 import { useSettingsStore } from "@/modules/Settings/store";
 import AppPagination from "@/components/ui/app-pagination/AppPagination.vue";
 import AppForm from "@/components/ui/form/app-form/AppForm.vue";
+import { useDocumentStore } from "@/modules/Document/document.store";
 
 const warehouseBasesStore = useWarehouseBasesStore();
 const settingsStore = useSettingsStore();
+const documentStore = useDocumentStore();
 
 
 const route = useRoute();
@@ -70,42 +71,6 @@ const getQueryTab = (tab: TABS) => {
   return { tab, ...form };
 };
 
-const productTableData = computed(() => {
-  const data = [];
-
-  for (let i = 1; i <= 10; i++) {
-    data.push({
-      idx: i,
-      product_name: "Говядина",
-      quantity: Math.floor(Math.random() * 11) + 90,
-      unit_measurement: "кг",
-      sum: "6 400 000 сум",
-      action: true
-    });
-  }
-
-  return data;
-});
-
-const invoiceTableData = computed(() => {
-  const data = [];
-
-  for (let i = 1; i <= 10; i++) {
-    data.push({
-      idx: i,
-      product_name: "Говядина",
-      invoice: "NK-00000",
-      invoice_date: "23.08.2024",
-      quantity: Math.floor(Math.random() * 11) + 90,
-      unit_measurement: "кг",
-      price: "80 000 сум",
-      sum: "6 400 000 сум"
-    });
-  }
-
-  return data;
-});
-
 const districtId = computed(() => +route.params.district_id);
 
 const productId = computed(() => +route.params.product_id);
@@ -129,13 +94,14 @@ const fetchProducts = async () => {
     price: "number"
   });
 
-  for (const key of Object.keys(productsForm)) {
-    if (typeof key === "string" && query[key])
-      productsForm[key] = query[key] as any;
-  }
+  productsForm.price = query.price ?? null;
+  productsForm.page = query.page ?? null;
+  productsForm.product_id = query.product_id ?? "";
+  productsForm.measurement_unit_id = query.measurement_unit_id ?? "";
+  productsForm.quantity = query.quantity ?? null;
 
   try {
-    warehouseBasesStore.fetchProducts(productId.value, filterObjectValues(productsForm));
+    if (id.value) warehouseBasesStore.fetchProducts(id.value, filterObjectValues(productsForm));
   } catch (error: any) {
     if (error?.error?.code === 422) {
       productsFormErrors.value = error.meta.validation_errors;
@@ -149,8 +115,9 @@ const invoicesForm = reactive<WarehouseBasesInvoicesParamsType>({
   measurement_unit_id: "",
   quantity: null,
   price: null,
-  to_date: "",
-  from_date: "",
+  net_price: null,
+  to: "",
+  from: "",
   document_id: ""
 });
 
@@ -163,18 +130,24 @@ const fetchInvoices = async () => {
     measurement_unit_id: "number",
     quantity: "number",
     price: "number",
-    to_date: "string",
-    from_date: "string",
+    net_price: "number",
+    to: "string",
+    from: "string",
     document_id: "number"
   });
 
-  for (const key of Object.keys(invoicesForm)) {
-    if (typeof key === "string" && query[key])
-      invoicesForm[key] = query[key] as any;
-  }
+  invoicesForm.net_price = query.net_price ?? null;
+  invoicesForm.to = query.to ?? "";
+  invoicesForm.price = query.price ?? null;
+  invoicesForm.from = query.from ?? "";
+  invoicesForm.page = query.page ?? null;
+  invoicesForm.product_id = query.product_id ?? "";
+  invoicesForm.measurement_unit_id = query.measurement_unit_id ?? "";
+  invoicesForm.quantity = query.quantity ?? null;
+  invoicesForm.document_id = query.document_id ?? "";
 
   try {
-    warehouseBasesStore.fetchInvoices(productId.value, filterObjectValues(invoicesForm));
+    if (id.value) warehouseBasesStore.fetchInvoices(id.value, filterObjectValues(invoicesForm));
   } catch (error: any) {
     if (error?.error?.code === 422) {
       invoicesFormErrors.value = error.meta.validation_errors;
@@ -199,6 +172,8 @@ const changePage = (value: number) => {
   router.push({ query: { ...route.query, page: value } });
 };
 
+const id = ref<number | "">("");
+
 const fetchData = () => {
   if (activeTab.value === TABS.PRODUCTS) {
     fetchProducts();
@@ -210,19 +185,20 @@ const fetchData = () => {
 const { setBreadCrumb } = useBreadcrumb();
 
 const setBreadCrumbFn = async () => {
-  warehouseBasesStore.getProduct(districtId.value, productId.value);
 
-  if (!warehouseBasesStore.district || !warehouseBasesStore.product) return;
+  warehouseBasesStore.getManagementBase(districtId.value, productId.value);
+
+  if (!warehouseBasesStore.activeManagementBase) return;
 
   setBreadCrumb([
     {
       label: "Базы складов"
     },
     {
-      label: warehouseBasesStore.district?.title ?? ""
+      label: warehouseBasesStore.activeManagementBase?.name ?? ""
     },
     {
-      label: warehouseBasesStore.product?.title ?? "",
+      label: warehouseBasesStore.activeManagementBase?.base?.name ?? "",
       isActionable: true
     }
   ]);
@@ -240,20 +216,29 @@ watch(
     { immediate: true }
 );
 
-watch(() => route.params, () => {
-  warehouseBasesStore.fetchFillingPercentage(districtId.value);
+watch(() => route.params.product_id, async () => {
+  await settingsStore.fetchBaseWarehouses({ base_id: productId.value, per_page: 100 });
+  id.value = settingsStore.baseWarehouses?.base_warehouses[0].id ?? "";
+}, { immediate: true });
+
+watch(id, (newId) => {
+  if (newId) {
+    warehouseBasesStore.fetchFillingPercentage(newId);
+    fetchData();
+  }
 });
 
 onMounted(() => {
   settingsStore.GET_VID_PRODUCT({ per_page: 100 });
   settingsStore.GET_UNITS();
+  documentStore.fetchDrafts("received", { doc_type: "invoice", per_page: 100 });
 });
 
 </script>
 
 <template>
   <section class="warehouse">
-    <div v-if="warehouseBasesStore.product">
+    <div v-if="warehouseBasesStore.activeManagementBase?.base">
       <h1 class="font-semibold text-[32px] text-dark">
         {{ warehouseBasesStore.product?.title ?? "" }}
       </h1>
@@ -291,8 +276,12 @@ onMounted(() => {
           </div>
           <div class="grid grid-cols-3 gap-4 w-[486px]">
             <AppSelect
+                v-model="id"
                 size="large"
                 class="mb-0"
+                :items="settingsStore.baseWarehouses?.base_warehouses ?? []"
+                item-value="id"
+                item-label="name"
             />
             <ElDropdown
                 placement="bottom"
@@ -392,7 +381,6 @@ onMounted(() => {
                   label="Название продукта"
                   placeholder="Название продукта"
                   label-class="text-[#A8AAAE] text-xs font-medium"
-                  required
                   clearable
               />
               <AppInput
@@ -422,25 +410,40 @@ onMounted(() => {
                   label-class="text-[#A8AAAE] text-xs font-medium"
               />
             </AppForm>
-            <template v-else>
+            <AppForm
+                v-else
+                :value="invoicesForm"
+                :validation-errors="invoicesFormErrors"
+            >
               <div class="grid gap-4 grid-cols-6">
                 <AppDatePicker
+                    v-model="invoicesForm.from"
+                    property="from"
                     label="С этой даты"
                     placeholder="С этой даты"
                     label-class="text-[#A8AAAE] text-xs font-medium"
                 />
                 <AppDatePicker
+                    v-model="invoicesForm.to"
+                    prop="to"
                     label="По эту дату"
                     placeholder="По эту дату"
                     label-class="text-[#A8AAAE] text-xs font-medium"
                 />
                 <AppSelect
+                    v-model="invoicesForm.document_id"
+                    :items="documentStore.drafts?.documents ?? []"
+                    item-label="number"
+                    item-value="id"
                     class="col-span-2"
                     label="№ накладной"
                     placeholder="№ накладной"
                     label-class="text-[#A8AAAE] text-xs font-medium"
+                    clearable
                 />
                 <AppInput
+                    v-model.number="invoicesForm.price"
+                    type="number"
                     class="col-span-2"
                     placeholder="Сумма"
                     label="Сумма"
@@ -449,27 +452,44 @@ onMounted(() => {
               </div>
               <div class="grid grid-cols-4 gap-4 mt-1">
                 <AppSelect
+                    v-model="invoicesForm.product_id"
+                    :items="settingsStore.vidProduct.product_types"
+                    item-label="name"
+                    item-value="id"
                     label="Название продукта"
                     placeholder="Название продукта"
                     label-class="text-[#A8AAAE] text-xs font-medium"
+                    clearable
                 />
                 <AppInput
+                    v-model.number="invoicesForm.quantity"
+                    prop="quantity"
+                    type="number"
                     label="Количество"
                     placeholder="Количество"
                     label-class="text-[#A8AAAE] text-xs font-medium"
                 />
                 <AppSelect
+                    v-model="invoicesForm.measurement_unit_id"
+                    :items="settingsStore.units.units"
+                    item-label="name"
+                    item-value="id"
+                    property="measurement_unit_id"
                     label="Ед. измерения"
                     placeholder="Ед. измерения"
                     label-class="text-[#A8AAAE] text-xs font-medium"
+                    clearable
                 />
                 <AppInput
+                    v-model.number="invoicesForm.net_price"
+                    property="net_price"
+                    type="number"
                     label="Цена"
                     placeholder="Цена"
                     label-class="text-[#A8AAAE] text-xs font-medium"
                 />
               </div>
-            </template>
+            </AppForm>
           </TransitionGroup>
           <div class="flex items-center mt-[10px] justify-between">
             <div class="text-[#8F9194] text-[14px]">Найдено:
@@ -524,6 +544,7 @@ onMounted(() => {
             <ElTableColumn
                 prop="product_name"
                 label="Название продукта"
+                width="360"
             >
               <template #default="{row}:{row:WarehouseBasesProductType}">
                 {{ row.product.name || "—" }}
@@ -532,6 +553,7 @@ onMounted(() => {
             <ElTableColumn
                 prop="quantity"
                 label="Количество"
+                width="360"
             >
               <template #default="{row}:{row:WarehouseBasesProductType}">
                 {{ row.quantity || "—" }}
@@ -540,6 +562,7 @@ onMounted(() => {
             <ElTableColumn
                 prop="measure"
                 label="Ед. измерения"
+                width="360"
             >
               <template #default="{row}:{row:WarehouseBasesProductType}">
                 {{ row.product.measure || "—" }}
@@ -548,6 +571,7 @@ onMounted(() => {
             <ElTableColumn
                 prop="price_formatted"
                 label="Сумма"
+                width="360"
             >
               <template #default="{row}:{row:WarehouseBasesProductType}">
                 {{ row.price_formatted || "—" }}
@@ -570,6 +594,7 @@ onMounted(() => {
           </ElTable>
           <AppPagination
               v-if="warehouseBasesStore.products"
+              v-model="productsForm.page"
               :pagination="warehouseBasesStore.products.paginator"
               class="mt-6"
               @current-change="changePage"
@@ -580,7 +605,8 @@ onMounted(() => {
             class="inner"
         >
           <ElTable
-              :data="invoiceTableData"
+              v-loading="warehouseBasesStore.invoicesLoading"
+              :data="warehouseBasesStore.invoices?.invoices ?? []"
               class="custom-element-table"
               stripe
           >
@@ -588,48 +614,77 @@ onMounted(() => {
                 prop="idx"
                 label="№"
                 :width="150"
-            />
+            >
+              <template #default="{$index}">
+                {{
+                  setTableColumnIndex($index, invoicesForm.page ?? 0, warehouseBasesStore.invoices?.pagination.per_page ?? 0)
+                }}
+              </template>
+            </ElTableColumn>
             <ElTableColumn
-                prop="product_name"
+                prop="product"
                 label="Название продукта"
-            />
+            >
+              <template #default="{row}:{row: WarehouseBasesInvoiceType}">
+                {{ row.product.name || "—" }}
+              </template>
+            </ElTableColumn>
             <ElTableColumn
-                prop="invoice"
+                prop="number"
                 label="№ накладной"
-            />
+            >
+              <template #default="{row}:{row: WarehouseBasesInvoiceType}">
+                {{ row.document.number || "—" }}
+              </template>
+            </ElTableColumn>
             <ElTableColumn
-                prop="invoice_date"
+                prop="date"
                 label="Дата накладной"
-            />
+            >
+              <template #default="{row}:{row: WarehouseBasesInvoiceType}">
+                {{ row.document.created_at_formatted || "—" }}
+              </template>
+            </ElTableColumn>
             <ElTableColumn
                 prop="quantity"
                 label="Количество"
-            />
+            >
+              <template #default="{row}:{row: WarehouseBasesInvoiceType}">
+                {{ row.quantity || "—" }}
+              </template>
+            </ElTableColumn>
             <ElTableColumn
-                prop="unit_measurement"
+                prop="measurement_unit"
                 label="Ед. измерения"
-            />
+            >
+              <template #default="{row}:{row: WarehouseBasesInvoiceType}">
+                {{ row.product.measurement_unit.name || "—" }}
+              </template>
+            </ElTableColumn>
             <ElTableColumn
-                prop="price"
+                prop="price_formatted"
                 label="Цена"
-            />
+            >
+              <template #default="{row}:{row: WarehouseBasesInvoiceType}">
+                {{ row.price_formatted || "—" }}
+              </template>
+            </ElTableColumn>
             <ElTableColumn
-                prop="sum"
+                prop="total_price_formatted"
                 label="Сумма"
-            />
+            >
+              <template #default="{row}:{row: WarehouseBasesInvoiceType}">
+                {{ row.total_price_formatted || "—" }}
+              </template>
+            </ElTableColumn>
           </ElTable>
-          <div class="mt-6 flex items-center justify-between">
-            <div class="text-cool-gray text-xs">
-              Показано 1–12 из 100 результатов
-            </div>
-
-            <el-pagination
-                class="float-right"
-                background
-                layout="prev, pager, next"
-                :total="1000"
-            />
-          </div>
+          <AppPagination
+              v-if="warehouseBasesStore.invoices"
+              v-model="invoicesForm.page"
+              :pagination="warehouseBasesStore.invoices.pagination"
+              class="mt-6"
+              @current-change="changePage"
+          />
         </div>
       </TransitionGroup>
     </div>

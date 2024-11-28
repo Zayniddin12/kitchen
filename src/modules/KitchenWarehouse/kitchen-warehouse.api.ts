@@ -40,5 +40,7 @@ export default {
 
     updatePrice(id: number, data: UpdatePriceDataType) {
         return axios.put(`${prefix}/${id}/update-price`, data);
-    }
+    },
+
+
 };

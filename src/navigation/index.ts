@@ -107,7 +107,7 @@ export const useLayoutStore = defineStore("layoutStore", () => {
                 title: "Базы складов",
                 icon: "building-warehouse",
                 unique: "building-warehouse",
-                children: warehouseBasesStore.districts
+                children: warehouseBasesStore.managementBasesMenu
             },
             {
                 title: "Склад кухни",

@@ -1,6 +1,7 @@
 import { FillingPercentageResponseType } from "@/modules/KitchenWarehouse/kitchen-warehouse.types";
 import axios from "@/plugins/axios/axios";
 import {
+    ManagementBasesType,
     WarehouseBasesInvoicesParamsType, WarehouseBasesInvoicesResponseType,
     WarehouseBasesProductsParamsType,
     WarehouseBasesProductsResponseType
@@ -22,5 +23,10 @@ export default {
     async fetchInvoices(id: number, params: WarehouseBasesInvoicesParamsType = {}): Promise<WarehouseBasesInvoicesResponseType> {
         const { data }: { data: Record<string, any> } = await axios.get(`${prefix}/${id}/invoices`, { params });
         return data.data as WarehouseBasesInvoicesResponseType;
-    }
+    },
+
+    async fetchManagementBases(): Promise<ManagementBasesType> {
+        const { data }: { data: Record<string, any> } = await axios.get("managements/with-bases");
+        return data.data.managements;
+    },
 };

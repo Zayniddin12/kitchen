@@ -36,7 +36,7 @@ onMounted(async () => {
   // else await router.replace({ name: "login" });
   childSidebarPin.value = JSON.parse(localStorage.getItem("child-sidebar-pin") || "false");
   await settingsStore.GET_REGIONAL({ per_page: 100 });
-  warehouseBasesStore.getDistricts();
+  warehouseBasesStore.fetchManagementBases();
   commonStore.getTitles();
 });
 
