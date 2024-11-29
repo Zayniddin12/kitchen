@@ -8,6 +8,7 @@ import { useKitchenWarehouseStore } from "@/modules/KitchenWarehouse/kitchen-war
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 import { useKitchenStore } from "@/modules/Kitchen/kitchen.store";
 import { useCommonStore } from "@/stores/common.store";
+import AppEmpty from "@/components/ui/app-empty/AppEmpty.vue";
 
 const router = useRouter();
 const route = useRoute();
@@ -219,9 +220,8 @@ watch(() => route.params.id, (newId) => {
       <h5 class="text-[#A8AAAE] text-xs">{{ `${item.kitchens_count} ${item.name}` }}</h5>
     </RouterLink>
   </div>
-  <ElEmpty
+  <AppEmpty
       v-else
       class="h-[60vh]"
-      description="Нет информации"
   />
 </template>

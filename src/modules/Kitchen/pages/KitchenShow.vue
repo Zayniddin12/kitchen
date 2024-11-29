@@ -1,6 +1,6 @@
 <script
-  setup
-  lang="ts"
+    setup
+    lang="ts"
 >
 
 import { computed, watch, watchEffect } from "vue";
@@ -8,6 +8,7 @@ import kitchenIcon from "@/assets/images/icons/kitchen/kitchen.svg";
 import { useKitchenStore } from "@/modules/Kitchen/kitchen.store";
 import { useRoute } from "vue-router";
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
+import AppEmpty from "@/components/ui/app-empty/AppEmpty.vue";
 
 const kitchenStore = useKitchenStore();
 const route = useRoute();
@@ -19,38 +20,38 @@ const boxes = computed(() => {
       id: 1,
       icon: kitchenIcon,
       title: "Ёшлар",
-      description: "80 мест",
+      description: "80 мест"
     },
     {
       id: 2,
       icon: kitchenIcon,
       title: "Високоволтнй",
-      description: "100 мест",
+      description: "100 мест"
     },
     {
       id: 3,
       icon: kitchenIcon,
       title: "Табассум",
-      description: "120 мест",
+      description: "120 мест"
     },
     {
       id: 4,
       icon: kitchenIcon,
       title: "Мойбулоқ",
-      description: "150 мест",
+      description: "150 мест"
     },
     {
       id: 5,
       icon: kitchenIcon,
       title: "Ёғду",
-      description: "80 мест",
+      description: "80 мест"
     },
     {
       id: 6,
       icon: kitchenIcon,
       title: "Паҳлавон",
-      description: "100 мест",
-    },
+      description: "100 мест"
+    }
   ];
 });
 
@@ -63,31 +64,31 @@ const setBreadcrumbFn = () => {
 
   setBreadCrumb([
     {
-      label: "Кухня",
+      label: "Кухня"
     },
     {
-      label: kitchenStore.part?.title ?? "",
+      label: kitchenStore.part?.title ?? ""
     },
     {
       label: kitchenStore.part.department_name,
-      to: { name: "KitchenIndex" },
+      to: { name: "KitchenIndex" }
     },
     {
       label: kitchenStore.part.kitchen_vid as string,
-      isActionable: true,
-    },
+      isActionable: true
+    }
   ]);
 };
 
 watch(() => route.params, async () => {
   await kitchenStore.GET_KITCHEN_VID({
     management_id: route.params.department_id as string,
-    is_paid: route.params.part_name == "free-kitchen" ? 0 : route.params.part_name == "sales" ? 1 : null,
+    is_paid: route.params.part_name == "free-kitchen" ? 0 : route.params.part_name == "sales" ? 1 : null
   });
   await kitchenStore.GET_KITCHEN_TYPE({
     management_id: route.params.department_id as string,
     is_paid: route.params.part_name == "free-kitchen" ? 0 : route.params.part_name == "sales" ? 1 : null,
-    kitchen_type_id: route.params.kitchen_id as string,
+    kitchen_type_id: route.params.kitchen_id as string
   });
   setBreadcrumbFn();
 }, { immediate: true });
@@ -101,18 +102,19 @@ watchEffect(() => {
 <template>
   <section class="kitchen-show">
     <div>
-      <div class="boxes">
-        <!--        {{ kitchenStore.kitchenType}}-->
-        <template v-if="kitchenStore.kitchenType.length">
+      <div
+          v-if="kitchenStore.kitchenType.length"
+          class="boxes"
+      >
           <RouterLink
-            v-for="box in kitchenStore.kitchenType"
-            :key="box.id"
-            class="box"
-            :to="{name: 'KitchenShowChild', params: {child_id: box.id}}"
+              v-for="box in kitchenStore.kitchenType"
+              :key="box.id"
+              class="box"
+              :to="{name: 'KitchenShowChild', params: {child_id: box.id}}"
           >
             <img
-              :src="kitchenIcon"
-              :alt="box.name"
+                :src="kitchenIcon"
+                :alt="box.name"
             />
             <strong class="box__title">
               {{ box.name }}
@@ -121,15 +123,18 @@ watchEffect(() => {
           {{ box.kitchen_capacity }}
         </span>
           </RouterLink>
-        </template>
       </div>
+      <AppEmpty
+          v-else
+          class="h-[60vh]"
+      />
     </div>
   </section>
 </template>
 
 <style
-  scoped
-  lang="scss"
+    scoped
+    lang="scss"
 >
 
 </style>

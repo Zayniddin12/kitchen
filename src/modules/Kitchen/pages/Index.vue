@@ -1,6 +1,6 @@
 <script
-  setup
-  lang="ts"
+    setup
+    lang="ts"
 >
 
 import { computed, onMounted, watch, watchEffect } from "vue";
@@ -13,6 +13,7 @@ import buildingHospitalIcon from "@/assets/images/icons/kitchen/building-hospita
 import healthFoodIcon from "@/assets/images/icons/kitchen/health-food.svg";
 import soupIcon from "@/assets/images/icons/kitchen/soup.svg";
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
+import AppEmpty from "@/components/ui/app-empty/AppEmpty.vue";
 
 const { setBreadCrumb } = useBreadcrumb();
 
@@ -26,38 +27,38 @@ const boxes = computed(() => {
       id: 1,
       icon: medicalKitchenIcon,
       title: "Кухни ЛПП",
-      description: "4 кухни",
+      description: "4 кухни"
     },
     {
       id: 2,
       icon: kitchenIcon,
       title: "Кухня",
-      description: "4 кухни",
+      description: "4 кухни"
     },
     {
       id: 3,
       icon: cookieIcon,
       title: "Буфет",
-      description: "2 Буфета",
+      description: "2 Буфета"
     },
     {
       id: 4,
       icon: buildingHospitalIcon,
       title: "Больница",
-      description: "3 Больници",
+      description: "3 Больници"
     },
     {
       id: 5,
       icon: healthFoodIcon,
       title: "Профилакторий",
-      description: "3 Профилактории",
+      description: "3 Профилактории"
     },
     {
       id: 6,
       icon: soupIcon,
       title: "Лагерь",
-      description: "6 лагерей",
-    },
+      description: "6 лагерей"
+    }
   ];
 });
 
@@ -76,22 +77,22 @@ const setBreadcrumbFn = () => {
 
   setBreadCrumb([
     {
-      label: "Кухня",
+      label: "Кухня"
     },
     {
-      label: kitchenStore.part.title,
+      label: kitchenStore.part.title
     },
     {
       label: kitchenStore.part.department_name,
-      isActionable: true,
-    },
+      isActionable: true
+    }
   ]);
 };
 
 watch(() => route.params, async () => {
   await kitchenStore.GET_KITCHEN_VID({
     management_id: route.params.department_id as string,
-    is_paid: route.params.part_name == "free-kitchen" ? 0 : route.params.part_name == "sales" ? 1 : null,
+    is_paid: route.params.part_name == "free-kitchen" ? 0 : route.params.part_name == "sales" ? 1 : null
   });
   setBreadcrumbFn();
 }, { immediate: true });
@@ -103,35 +104,40 @@ watch(() => kitchenStore.departments, async () => {
 
 watchEffect(() => {
   setBreadcrumbFn();
-})
+});
 
 </script>
 
 <template>
   <section class="kitchen">
     <div>
-      <div class="boxes">
-        <template v-if="kitchenStore.kitchenVid.length">
-          <RouterLink
+      <div
+          v-if="kitchenStore.kitchenVid.length"
+          class="boxes"
+      >
+        <RouterLink
             v-for="box in kitchenStore.kitchenVid"
             :key="box?.id"
             class="box"
             :to="{name: 'KitchenShow', params: {kitchen_id: box?.id}}"
-          >
-            <img
+        >
+          <img
               :src="kitchenIcon"
               :alt="box.name"
               class="box__img"
-            />
-            <strong class="box__title">
-              {{ box?.name }}
-            </strong>
-            <span class="box__description">
+          />
+          <strong class="box__title">
+            {{ box?.name }}
+          </strong>
+          <span class="box__description">
           {{ box?.kitchens_count }}
         </span>
-          </RouterLink>
-        </template>
+        </RouterLink>
       </div>
+      <AppEmpty
+          v-else
+          class="h-[60vh]"
+      />
     </div>
   </section>
 </template>

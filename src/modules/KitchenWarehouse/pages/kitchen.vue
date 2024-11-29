@@ -8,6 +8,7 @@ import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 import { useKitchenWarehouseStore } from "@/modules/KitchenWarehouse/kitchen-warehouse.store";
 import { useCommonStore } from "@/stores/common.store";
 import { useKitchenStore } from "@/modules/Kitchen/kitchen.store";
+import AppEmpty from "@/components/ui/app-empty/AppEmpty.vue";
 
 const router = useRouter();
 const route = useRoute();
@@ -49,7 +50,10 @@ watch(() => route.params.id3, () => {
 </script>
 
 <template>
-  <div v-if="kitchenStore.kitchenType.length" class="flex flex-wrap gap-6">
+  <div
+      v-if="kitchenStore.kitchenType.length"
+      class="flex flex-wrap gap-6"
+  >
     <RouterLink
         class="bg-[#F8F9FC] w-[155px] h-[105px] rounded-[16px] flex flex-col justify-center items-center"
         v-for="item in kitchenStore.kitchenType"
@@ -178,9 +182,8 @@ watch(() => route.params.id3, () => {
       <h5 class="text-[#A8AAAE] text-[12px]">{{ `${item.kitchen_capacity} мест` }}</h5>
     </RouterLink>
   </div>
-  <ElEmpty
+  <AppEmpty
       v-else
       class="h-[60vh]"
-      description="Нет информации"
   />
 </template>
