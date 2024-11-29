@@ -3,7 +3,7 @@
   lang="ts"
 >
 import { useRoute } from "vue-router";
-import { ref, watchEffect } from "vue";
+import { onMounted, ref, watch, watchEffect } from "vue";
 import { useKitchenStore } from "@/modules/Kitchen/kitchen.store";
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 
@@ -64,31 +64,36 @@ const tableData = ref<TableData[]>([
 
 const setBreadCrumbFn = () => {
   kitchenStore.fetchPart(+route.params.department_id, route.params.part_name as string);
+  kitchenStore.fetchPart2(+route.params.kitchen_id);
+  kitchenStore.fetchPart3(+route.params.child_id);
 
   if (!kitchenStore.part) return;
+
+  console.log(kitchenStore.part.kitchen_vid);
 
   setBreadCrumb([
     {
       label: "Кухня",
     },
     {
-      label: kitchenStore.part.name,
+      label: kitchenStore.part.title,
     },
     {
       label: kitchenStore.part.department_name,
       to: { name: "KitchenIndex" },
     },
     {
-      label: "Лагерь",
-      to: { name: "KitchenShowIndex" },
+      label: kitchenStore.part.kitchen_vid as string,
+      isActionable: true,
+      to: { name: "KitchenShow" },
     },
     {
-      label: "Паҳлавон",
-      to: { name: "KitchenShowChildIndex" },
+      label: kitchenStore.part.kitchen_type as string,
+      isActionable: true,
     },
     {
       label: "Меню",
-      to: { name: "KitchenMenuIndex" },
+      isActionable: true,
     },
     {
       label: "Продать",
@@ -96,6 +101,24 @@ const setBreadCrumbFn = () => {
     },
   ]);
 };
+
+onMounted(async () => {
+  await kitchenStore.GET_CURRENT_MENU_LIST(route.params.child_id as number);
+});
+
+watch(() => route.params, async () => {
+  await kitchenStore.GET_KITCHEN_VID({
+    management_id: route.params.department_id as string,
+    is_paid: route.params.part_name == "free-kitchen" ? 0 : route.params.part_name == "sales" ? 1 : null,
+  });
+  await kitchenStore.GET_KITCHEN_TYPE({
+    management_id: route.params.department_id as string,
+    is_paid: route.params.part_name == "free-kitchen" ? 0 : route.params.part_name == "sales" ? 1 : null,
+    kitchen_type_id: route.params.kitchen_id as string,
+  });
+
+  setBreadCrumbFn();
+}, { immediate: true });
 
 watchEffect(() => {
   setBreadCrumbFn();
@@ -107,16 +130,18 @@ watchEffect(() => {
   <div>
     <h1 class="mb-6 text-[32px] text-[#000D24] font-semibold">
       Продать
-    </h1>
+      <!--      {{kitchenStore.part}}-->
 
+    </h1>
+    {{ kitchenStore.menuToday }}
     <div class="bg-[#FFFFFF] border border-[#E2E6F3] rounded-[24px] p-[24px]">
 
       <div class="flex items-center mb-[24px]">
         <div
-          v-for="item in 7"
+          v-for="item in kitchenStore.menuToday.elements"
           class="bg-[#F8F9FC] rounded-[16px] p-[12px] mr-[24px]"
         >
-          <span class="block text-[18px] text-[#4F5662] font-medium mb-[4px]">Рацион {{ item }}</span>
+          <span class="block text-[18px] text-[#4F5662] font-medium mb-[4px]">{{ item.product_name }}</span>
           <span class="block text-[14px] text-[#8F9194] mb-[4px]">R-0000</span>
           <span class="block text-[14px] text-[#8F9194]">R-0000</span>
         </div>
