@@ -288,9 +288,9 @@ watch(
     { immediate: true }
 );
 
-watch(() => route.params, () => {
+watch(() => route.params.id4, () => {
   kitchenWarehouseStore.fetchFillingPercentage(id.value);
-})
+}, {immediate: true});
 
 onMounted(() => {
   settingsStore.GET_VID_PRODUCT({ per_page: 100 });
