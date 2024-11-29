@@ -92,9 +92,9 @@ const setBreadCrumbFn = () => {
 const currentTabTableColumns = computed<TableColumnType[]>(() => [
   { label: "Название", prop: "name" },
   { label: "Количество", prop: "quantity" },
-  { label: "Ед. измерения", prop: "unit_measurement" },
+  { label: "Ед. измерения", prop: "unit" },
   { label: "Цена", prop: "price" },
-  { label: "Сумма", prop: "sum" },
+  { label: "Сумма", prop: "total_price" },
 ]);
 
 const salesAllTabTableColumns = computed<TableColumnType[]>(() => [
@@ -677,8 +677,8 @@ const mealTextFilter = (index: string): string => {
                 <div class="flex justify-between gap-x-5">
                   <div class="flex flex-col gap-y-2">
                     <h3 class="font-semibold text-lg text-dark">
-                      Рацион {{ n.product_name }} R-{{
-                        Math.floor(Math.random() * 1001) + 1000
+                      {{ n.product_name }} {{
+                        n.product_number
                       }}
                     </h3>
                     <div
@@ -691,10 +691,10 @@ const mealTextFilter = (index: string): string => {
                         />
                         <span>{{ n.start_time.slice(0, 5) }}-{{ n.end_time.slice(0, 5) }}</span>
                       </div>
-                      <span>Завтрак</span>
+                      <span>{{ mealTextFilter(n.period.toString()) }}</span>
                     </div>
                   </div>
-                  <h3 class="font-semibold text-lg text-dark">25 000 UZS</h3>
+                  <h3 class="font-semibold text-lg text-dark">{{ n.price.toLocaleString() }} UZS</h3>
                 </div>
                 <ElTable
                   :data="n.product"
@@ -719,31 +719,31 @@ const mealTextFilter = (index: string): string => {
                     <p>
                       <span class="text-cool-gray">Сумма:</span>
                       <strong class="font-semibold text-dark">
-                        5 000 000 UZS
+                        {{ n.total_price && n.total_price.toLocaleString() }} UZS
                       </strong>
                     </p>
                   </div>
                   <div class="flex flex-col gap-y-2 text-sm">
                     <p>
                       <span class="text-cool-gray">Выданние:</span>
-                      <strong class="font-semibold text-dark">200</strong>
+                      <strong class="font-semibold text-dark">{{ n.amount_sold && n.amount_sold }}</strong>
                     </p>
                     <p>
                       <span class="text-cool-gray">Сумма:</span>
                       <strong class="font-semibold text-dark">
-                        5 000 000 UZS
+                        {{ n.price_sold && n.price_sold.toLocaleString() }} UZS
                       </strong>
                     </p>
                   </div>
                   <div class="flex flex-col gap-y-2 text-sm">
                     <p>
                       <span class="text-cool-gray">Остатки порций:</span>
-                      <strong class="font-semibold text-[#EA5455]">8</strong>
+                      <strong class="font-semibold text-[#EA5455]">{{ n.amount_left && n.amount_left}}</strong>
                     </p>
                     <p>
                       <span class="text-cool-gray">Сумма:</span>
                       <strong class="font-semibold text-dark">
-                        5 000 000 UZS
+                        {{ n.price_left && n.price_left.toLocaleString() }} UZS
                       </strong>
                     </p>
                   </div>
