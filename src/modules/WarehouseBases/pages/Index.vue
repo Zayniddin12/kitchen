@@ -21,6 +21,7 @@ import { useSettingsStore } from "@/modules/Settings/store";
 import AppPagination from "@/components/ui/app-pagination/AppPagination.vue";
 import AppForm from "@/components/ui/form/app-form/AppForm.vue";
 import { useDocumentStore } from "@/modules/Document/document.store";
+import { ValidationType } from "@/components/ui/form/app-form/app-form.type";
 
 const warehouseBasesStore = useWarehouseBasesStore();
 const settingsStore = useSettingsStore();
@@ -83,6 +84,8 @@ const productsForm = reactive<WarehouseBasesProductsParamsType>({
   price: null
 });
 
+const productsFormV$ = ref<ValidationType | null>(null);
+
 const productsFormErrors = ref<Record<string, string> | null>(null);
 
 const fetchProducts = async () => {
@@ -120,6 +123,8 @@ const invoicesForm = reactive<WarehouseBasesInvoicesParamsType>({
   from: "",
   document_id: ""
 });
+
+const invoicesFormV$ = ref<ValidationType | null>(null);
 
 const invoicesFormErrors = ref<Record<string, string> | null>(null);
 
@@ -164,7 +169,14 @@ const filterForm = () => {
   router.push({ query });
 };
 
-const clearForm = () => {
+const clearForm = async () => {
+  filterFormOpened.value = false;
+  console.log(activeTab.value === TABS.INVOICES && invoicesFormV$.value);
+  if (activeTab.value === TABS.PRODUCTS && productsFormV$.value) await productsFormV$.value.resetForm();
+  else if (activeTab.value === TABS.INVOICES && invoicesFormV$.value) {
+    console.log("SSS");
+    await invoicesFormV$.value.resetForm();
+  }
   router.push({ query: { tab: activeTab.value } });
 };
 
@@ -370,6 +382,7 @@ onMounted(() => {
             <AppForm
                 v-if="activeTab === TABS.PRODUCTS"
                 :value="productsForm"
+                @validation="value => productsFormV$ = value"
                 :validation-errors="productsFormErrors"
                 class="grid gap-x-4 grid-cols-4"
             >
@@ -413,6 +426,7 @@ onMounted(() => {
             <AppForm
                 v-else
                 :value="invoicesForm"
+                @validation="(value) => invoicesFormV$ = value"
                 :validation-errors="invoicesFormErrors"
             >
               <div class="grid gap-4 grid-cols-6">
@@ -481,8 +495,8 @@ onMounted(() => {
                     clearable
                 />
                 <AppInput
-                    v-model.number="invoicesForm.net_price"
-                    property="net_price"
+                    v-model="invoicesForm.net_price"
+                    prop="net_price"
                     type="number"
                     label="Цена"
                     placeholder="Цена"
