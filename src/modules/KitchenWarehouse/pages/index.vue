@@ -88,7 +88,10 @@ watch(() => route.params.id, (newId) => {
 </script>
 
 <template>
-  <div class="flex flex-wrap gap-6">
+  <div
+      v-if="kitchenStore.kitchenVid.length"
+      class="flex flex-wrap gap-6"
+  >
     <RouterLink
         class="bg-[#F8F9FC] w-[155px] h-[105px] rounded-[16px] flex flex-col justify-center items-center"
         v-for="item in kitchenStore.kitchenVid"
@@ -216,4 +219,9 @@ watch(() => route.params.id, (newId) => {
       <h5 class="text-[#A8AAAE] text-xs">{{ `${item.kitchens_count} ${item.name}` }}</h5>
     </RouterLink>
   </div>
+  <ElEmpty
+      v-else
+      class="h-[60vh]"
+      description="Нет информации"
+  />
 </template>
