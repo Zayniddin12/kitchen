@@ -84,6 +84,8 @@ const productsForm = reactive<ListProductsParamsType>({
   total_price: null
 });
 
+const productsFormV$ = ref<ValidationType | null>(null);
+
 const productsFormErrors = ref<Record<string, string> | null>(null);
 
 const fetchListProducts = async () => {
@@ -180,6 +182,8 @@ const invoicesForm = reactive<ListInvoicesParamsType>({
   price: null
 });
 
+const invoicesFormV$ = ref<ValidationType | null>(null);
+
 const invoicesFormErrors = ref<Record<string, string> | null>(null);
 
 const fetchListInvoices = async () => {
@@ -227,7 +231,10 @@ const filterForm = (data: ListProductsParamsType | ListInvoicesParamsType) => {
   router.push({ query });
 };
 
-const clearForm = () => {
+const clearForm = async () => {
+  filterFormOpened.value = false;
+  if (activeTab.value === TABS.PRODUCTS && productsFormV$.value) await productsFormV$.value.resetForm();
+  else if (activeTab.value === TABS.INVOICES && invoicesFormV$.value) await invoicesFormV$.value.resetForm();
   router.push({ query: { tab: activeTab.value } });
 };
 
@@ -290,7 +297,7 @@ watch(
 
 watch(() => route.params.id4, () => {
   kitchenWarehouseStore.fetchFillingPercentage(id.value);
-}, {immediate: true});
+}, { immediate: true });
 
 onMounted(() => {
   settingsStore.GET_VID_PRODUCT({ per_page: 100 });
@@ -421,6 +428,7 @@ onMounted(() => {
             <template v-if="activeTab === TABS.PRODUCTS">
               <AppForm
                   :value="productsForm"
+                  @validation="value => productsFormV$ = value"
                   :validation-errors="productsFormErrors"
                   class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-2"
               >
@@ -488,6 +496,7 @@ onMounted(() => {
             <template v-else>
               <AppForm
                   :value="invoicesForm"
+                  @validation="(value) => invoicesFormV$ = value"
                   :validation-errors="invoicesFormErrors"
                   class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-2"
               >
@@ -551,7 +560,7 @@ onMounted(() => {
                 />
                 <AppInput
                     v-model.number="invoicesForm.price"
-                    prop="quantity"
+                    prop="price"
                     type="number"
                     placeholder="Цена"
                     label="Цена"
