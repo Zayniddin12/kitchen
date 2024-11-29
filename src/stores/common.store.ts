@@ -4,6 +4,8 @@ import { ElNotification } from "element-plus";
 import { GenderResponseType, GenderType } from "@/types/common.type";
 import MaleAvatar from "@/assets/images/genders/male.png";
 import FemaleAvatar from "@/assets/images/genders/female.png";
+import { ref } from "vue";
+import { getSessionItem, removeSessionItem, setSessionItem } from "@/utils/sessionStorage";
 
 export const useCommonStore = defineStore("commonStore", () => {
     const router = useRouter();
@@ -45,10 +47,38 @@ export const useCommonStore = defineStore("commonStore", () => {
         };
     };
 
+    const titles = ref<Record<string, string>>({});
+    const titlesKey = "page-titles";
+
+    const setTitle = (key: string, value: string) => {
+        titles.value[key] = value;
+        setSessionItem(titlesKey, JSON.stringify(titles.value));
+    };
+
+    const getTitle = (key:string) => {
+        return titles.value[key] ?? "";
+    }
+
+    const getTitles = () => {
+        const storageTitles = getSessionItem(titlesKey);
+        if (!storageTitles) return;
+        titles.value = JSON.parse(storageTitles);
+    };
+
+    const removeTitles = () => {
+        titles.value = {};
+        removeSessionItem(titlesKey);
+    };
+
     return {
         redirectNotFound,
         successToast,
         errorToast,
-        getGender
+        getGender,
+        titles,
+        setTitle,
+        getTitle,
+        getTitles,
+        removeTitles
     };
 });

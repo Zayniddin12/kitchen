@@ -43,7 +43,7 @@ interface DepartmentType {
 interface KitchenVid {
   id: number;
   name: string;
-  kitchen_count: number;
+  kitchens_count: number;
 }
 
 interface KitchenType {
@@ -169,7 +169,6 @@ export const useKitchenStore = defineStore("kitchenStore", () => {
   });
 
   const fetchPart2 = (kitchen_vid_id: number | string) => {
-    console.log(kitchenVid.value, "kitchen_vid");
     if (!kitchenVid.value.length) return;
 
     const kitchen_vid =

@@ -8,7 +8,8 @@ import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 import { useUsersStore } from "@/modules/Users/users.store";
 import AppOverlay from "@/components/ui/app-overlay/AppOverlay.vue";
 import Avatar from "@/assets/images/avatar.png";
-import { phoneFormatter } from "@/utils/helper";
+import { formatDate2, phoneFormatter } from "@/utils/helper";
+import { useCommonStore } from "@/stores/common.store";
 
 interface Tabs {
   title: string;
@@ -19,6 +20,7 @@ const router = useRouter();
 const route = useRoute();
 
 const usersStore = useUsersStore();
+const commonStore = useCommonStore();
 
 const loading = computed(() => {
   return usersStore.activeUserPage ? usersStore.userLoading : usersStore.employeeLoading;
@@ -136,11 +138,11 @@ onMounted(() => {
             <div>
               <div class="mb-4">
                 <span class="text-blue-500">Дата рождения:</span>
-                <p>{{ data?.birthday ?? "—" }}</p>
+                <p>{{ data?.birthday ? formatDate2(new Date(data.birthday)) : "—" }}</p>
               </div>
               <div class="mb-4">
                 <span class="text-blue-500">Пол:</span>
-                <p>{{ data?.gender ?? "—" }}</p>
+                <p>{{ data?.gender ? commonStore.getGender(data.gender)?.name : "—" }}</p>
               </div>
               <div class="mb-4">
                 <span class="text-blue-500">Кем выдан:</span>
