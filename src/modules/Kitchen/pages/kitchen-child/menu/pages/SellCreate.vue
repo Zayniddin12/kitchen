@@ -139,10 +139,10 @@ watchEffect(() => {
       <div class="flex items-center mb-[24px]">
         <div
           v-for="item in kitchenStore.menuToday.elements"
-          class="bg-[#F8F9FC] rounded-[16px] p-[12px] mr-[24px]"
+          class="bg-[#F8F9FC] rounded-[16px] p-[12px] mr-[24px] cursor-pointer w-[113px]"
         >
           <span class="block text-[18px] text-[#4F5662] font-medium mb-[4px]">{{ item.product_name }}</span>
-          <span class="block text-[14px] text-[#8F9194] mb-[4px]">R-0000</span>
+          <span class="block text-[14px] text-[#8F9194] mb-[4px]">{{ item.product_number }}</span>
           <span class="block text-[14px] text-[#8F9194]">R-0000</span>
         </div>
       </div>
