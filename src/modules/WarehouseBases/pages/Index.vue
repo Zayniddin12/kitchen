@@ -417,7 +417,7 @@ onMounted(() => {
               />
               <AppInput
                   v-model.number="productsForm.price"
-                  property="price"
+                  prop="price"
                   label="Сумма"
                   placeholder="Сумма"
                   label-class="text-[#A8AAAE] text-xs font-medium"
