@@ -215,7 +215,7 @@ const dateList = ref([
   { value: "12.09.2024", title: "Воскресенье - 12.09.2024" },
 ]);
 
-const activeDate = ref(dateList.value[0].value);
+const activeDate = ref("");
 
 const hasData = ref(true);
 
@@ -525,20 +525,29 @@ watchEffect(() => {
 });
 
 const scheduledDates = computed(() => {
-  if (!kitchenData.value.startDate || !(kitchenData.value.intermediateDate1 || kitchenData.value.intermediateDate2)) return [];
-  const intermediate = kitchenData.value.intermediateDate1 ? 7 : 10;
+  // Object.keys(kitchenStore.menuWeekly)
+  if (!kitchenStore.menuWeekly || !Object.keys(kitchenStore.menuWeekly).length) return [];
   const formattedDates = [];
-  for (let i = 0; i < intermediate; i++) {
-    const date = new Date(kitchenData.value.startDate);
+  for (let i = 0; i < Object.keys(kitchenStore.menuWeekly).length; i++) {
+    const date = new Date(Object.keys(kitchenStore.menuWeekly)[i]);
     console.log(date);
-    date.setDate(date.getDate() + i);
-    console.log(date);
+    // date.setDate(date.getDate() + i);
+    // console.log(date);
     const formattedDate = formatDate(date);
     formattedDates.push({ date: formattedDate.date, title: `${formattedDate.week} - ${formattedDate.date}` });
   }
   return formattedDates;
 });
 const fullscreenLoading = ref(false);
+
+watch(scheduledDates, (newValue) => {
+  if (newValue.length > 0) {
+    activeDate.value = newValue[0].date;
+
+  }else {
+    activeDate.value = ""
+  }
+})
 </script>
 
 <template>
@@ -794,17 +803,20 @@ const fullscreenLoading = ref(false);
             v-else-if="activeTab === TABS.ALL"
             class="inner"
           >
-            {{ new Date(Object.keys(kitchenStore.menuWeekly)[0])}}
+           <pre> {{Object.keys(kitchenStore.menuWeekly)}}</pre>
+            {{scheduledDates}}
+            {{activeDate}}
+<!--            {{ new Date(Object.keys(kitchenStore.menuWeekly)[0]).getDate()}}-->
             <ElScrollbar>
-              <div class="flex">
+              <div class="flex flex-wrap">
                 <button
-                  v-for="item in dateList"
-                  :key="item.value"
+                  v-for="item in scheduledDates"
+                  :key="item.date"
                   :class="[
                     'py-2 px-4 text-center rounded-lg text-xs font-medium text-dark-gray transition duration-200 ease-in',
-                    { 'bg-[#E2E6F3]': activeDate === item.value },
+                    { 'bg-[#E2E6F3]': activeDate === item.date },
                   ]"
-                  @click="activeDate = item.value"
+                  @click="activeDate = item.date"
                 >
                   {{ item.title }}
                 </button>
