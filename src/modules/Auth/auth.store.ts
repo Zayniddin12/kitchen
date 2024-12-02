@@ -54,6 +54,9 @@ export const useAuthStore = defineStore("authStore", () => {
         return `${firstname} ${lastname}`;
     });
 
+    const disabledUserWorkplace = computed<boolean>(() => {
+       return user.value?.workplaces.length === 1;
+    });
 
     const me = async () => {
         isAuth.value = true;
@@ -199,6 +202,7 @@ export const useAuthStore = defineStore("authStore", () => {
         login,
         userLoading,
         user,
+        disabledUserWorkplace,
         me,
         clear,
         logout,

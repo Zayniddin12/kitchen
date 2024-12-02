@@ -1,12 +1,10 @@
 <script
-    setup
-    lang="ts"
+  setup
+  lang="ts"
 >
-import { onMounted, reactive, ref, watch, watchEffect } from "vue";
+import { onMounted, reactive, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import CollapseFilter from "@/components/collapseFilter/index.vue";
-import appInput from "@/components/ui/form/app-input/AppInput.vue";
-import appSelect from "@/components/ui/form/app-select/AppSelect.vue";
 import white from "@/assets/images/filter2.svg";
 import filter from "@/assets/images/filter.svg";
 import AppDatePicker from "@/components/ui/form/app-date-picker/AppDatePicker.vue";
@@ -31,7 +29,7 @@ const form = reactive<DraftsParamsType>({
   number: "",
   subject: "",
   to_id: "",
-  from_id: ""
+  from_id: "",
 });
 
 const v$ = ref<ValidationType | null>(null);
@@ -62,12 +60,12 @@ const { setBreadCrumb } = useBreadcrumb();
 const setBreadCrumbFn = () => {
   setBreadCrumb([
     {
-      label: "Документы"
+      label: "Документы",
     },
     {
       label: "Акты",
-      isActionable: true
-    }
+      isActionable: true,
+    },
   ]);
 };
 
@@ -97,12 +95,16 @@ const fetchActs = async () => {
 };
 
 watch(
-    () => route.query,
-    () => {
-      fetchActs();
-    },
-    { immediate: true }
+  () => route.query,
+  () => {
+    fetchActs();
+  },
+  { immediate: true },
 );
+
+watch(() => documentStore.documentsIsRefresh, (newValue) => {
+  if (newValue) fetchActs();
+});
 
 onMounted(() => {
   setBreadCrumbFn();
@@ -125,14 +127,14 @@ const changePage = (value: number) => {
       <h1 class="m-0 font-semibold text-[32px]">Акты</h1>
 
       <button
-          class="custom-filter-btn font-medium"
-          :class="isOpenFilter ? '!bg-blue !text-white' : ''"
-          @click="isOpenFilter =! isOpenFilter"
+        class="custom-filter-btn font-medium"
+        :class="isOpenFilter ? '!bg-blue !text-white' : ''"
+        @click="isOpenFilter =! isOpenFilter"
       >
         <img
-            :src="isOpenFilter ? white : filter"
-            alt="filter"
-            class="mr-[12px]"
+          :src="isOpenFilter ? white : filter"
+          alt="filter"
+          class="mr-[12px]"
         />
         Фильтр
       </button>
@@ -141,63 +143,63 @@ const changePage = (value: number) => {
     <CollapseFilter v-model="isOpenFilter">
       <template #body>
         <AppForm
-            :value="form"
-            :validation-errors
-            @validation="setValidation"
-            class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-1"
+          :value="form"
+          :validation-errors
+          @validation="setValidation"
+          class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-1"
         >
           <AppDatePicker
-              v-model="form.from_date"
-              prop="from_date"
-              placeholder="С этой даты"
-              label="С этой даты"
-              label-class="text-[#7F7D83]"
+            v-model="form.from_date"
+            prop="from_date"
+            placeholder="С этой даты"
+            label="С этой даты"
+            label-class="text-[#7F7D83]"
           />
           <AppDatePicker
-              v-model="form.to_date"
-              prop="to_date"
-              placeholder="По эту дату"
-              label="По эту дату"
-              label-class="text-[#7F7D83]"
+            v-model="form.to_date"
+            prop="to_date"
+            placeholder="По эту дату"
+            label="По эту дату"
+            label-class="text-[#7F7D83]"
           />
 
           <AppInput
-              v-model="form.number"
-              prop="number"
-              placeholder="Номер документа"
-              label="Номер документа"
-              label-class="text-[#7F7D83]"
+            v-model="form.number"
+            prop="number"
+            placeholder="Номер документа"
+            label="Номер документа"
+            label-class="text-[#7F7D83]"
           />
           <AppInput
-              v-model="form.subject"
-              prop="subject"
-              placeholder="Доставка картофеля"
-              label="Доставка картофеля"
-              label-class="text-[#7F7D83]"
+            v-model="form.subject"
+            prop="subject"
+            placeholder="Доставка картофеля"
+            label="Доставка картофеля"
+            label-class="text-[#7F7D83]"
           />
           <AppSelect
-              v-model="form.to_id"
-              prop="to_id"
-              :items="settingsStore.respondents"
-              item-label="name"
-              item-value="id"
-              :loading="settingsStore.respondentsLoading"
-              class="col-span-2"
-              placeholder="Кому"
-              label="Кому"
-              label-class="text-[#7F7D83]"
+            v-model="form.to_id"
+            prop="to_id"
+            :items="settingsStore.respondents"
+            item-label="name"
+            item-value="id"
+            :loading="settingsStore.respondentsLoading"
+            class="col-span-2"
+            placeholder="Кому"
+            label="Кому"
+            label-class="text-[#7F7D83]"
           />
           <AppSelect
-              v-model="form.from_id"
-              prop="from_id"
-              :items="settingsStore.respondents"
-              item-label="name"
-              item-value="id"
-              :loading="settingsStore.respondentsLoading"
-              class="col-span-2"
-              placeholder="Отправитель"
-              label="Отправитель"
-              label-class="text-[#7F7D83]"
+            v-model="form.from_id"
+            prop="from_id"
+            :items="settingsStore.respondents"
+            item-label="name"
+            item-value="id"
+            :loading="settingsStore.respondentsLoading"
+            class="col-span-2"
+            placeholder="Отправитель"
+            label="Отправитель"
+            label-class="text-[#7F7D83]"
           />
         </AppForm>
 
@@ -207,17 +209,17 @@ const changePage = (value: number) => {
           </div>
           <div class="flex items-center">
             <button
-                @click="clearForm"
-                class="custom-reset-btn"
+              @click="clearForm"
+              class="custom-reset-btn"
             >
               Сбросить
             </button>
             <ElButton
-                :loading="documentStore.draftsLoading"
-                type="primary"
-                size="large"
-                class="custom-apply-btn ml-4"
-                @click="filterForm"
+              :loading="documentStore.draftsLoading"
+              type="primary"
+              size="large"
+              class="custom-apply-btn ml-4"
+              @click="filterForm"
             >
               Применить
             </ElButton>
@@ -227,91 +229,97 @@ const changePage = (value: number) => {
     </CollapseFilter>
 
     <el-table
-        v-loading="documentStore.actsLoading"
-        :data="documentStore.acts?.acts ?? []"
-        class="custom-element-table"
-        stripe
-        highlight-current-row
-        @current-change="tableCurrentChange"
+      v-loading="documentStore.actsLoading"
+      :data="documentStore.acts?.acts ?? []"
+      class="custom-element-table"
+      stripe
+      highlight-current-row
+      @current-change="tableCurrentChange"
     >
       <el-table-column
-          prop="idx"
-          label="№"
-          width="80"
+        prop="idx"
+        label="№"
+        width="80"
+        align="center"
       >
         <template #default="{ $index }">
           {{
             setTableColumnIndex(
-                $index,
-                form.page as number,
-                documentStore.acts?.paginator.per_page ?? 0
+              $index,
+              form.page as number,
+              documentStore.acts?.paginator.per_page ?? 0,
             )
           }}
         </template>
       </el-table-column>
       <el-table-column
-          prop="date"
-          label="Дата"
+        prop="date"
+        label="Дата"
+        align="center"
       >
         <template #default="{row}:{row:ActType}">
           {{ row.date || "-" }}
         </template>
       </el-table-column>
       <el-table-column
-          prop="number"
-          label="№ док..."
+        prop="number"
+        label="№ док..."
+        align="center"
       >
         <template #default="{row}:{row:ActType}">
           {{ row.number || "-" }}
         </template>
       </el-table-column>
       <el-table-column
-          prop="product_parent_name"
-          label="Тип продукта"
+        prop="product_parent_name"
+        label="Тип продукта"
+        align="center"
       >
         <template #default="{row}:{row:ActType}">
           {{ row.product_parent_name || "-" }}
         </template>
       </el-table-column>
       <el-table-column
-          prop="product_name"
-          label="Вид продукта"
+        prop="product_name"
+        label="Вид продукта"
+        align="center"
       >
         <template #default="{row}:{row:ActType}">
           {{ row.product_name || "-" }}
         </template>
       </el-table-column>
       <el-table-column
-          prop="warehouse"
-          label="Склад"
+        prop="warehouse"
+        label="Склад"
+        align="center"
       >
         <template #default="{row}:{row:ActType}">
           {{ row.warehouse || "-" }}
         </template>
       </el-table-column>
-      <el-table-column label="Действие">
+      <el-table-column label="Действие" align="center">
         <template #default="{row}:{row:ActType}">
-          <div class="flex items-center gap-x-2.5">
+          <div class="flex items-center justify-center gap-x-2.5">
             <RouterLink
-                class="action-btn"
-                :to="{name: 'acts-id', params: {id: row.id}}"
+              class="action-btn"
+              :to="{name: 'acts-id', params: {id: row.id}}"
             >
               <img
-                  src="@/assets/images/eye.svg"
-                  alt="eye"
+                src="@/assets/images/eye.svg"
+                alt="eye"
               />
             </RouterLink>
             <ElButton
-                :loading="documentStore.pdfLoading"
-                plain
-                @click.stop="documentStore.getPdf(row.id)"
-                class="action-btn"
-                text
-                bg
+              :loading="documentStore.pdfLoading"
+              plain
+              @click.stop="documentStore.getPdf(row.id)"
+              class="action-btn"
+              text
+              bg
             >
               <img
-                  src="@/assets/images/download.svg"
-                  alt="download"
+                src="@/assets/images/download.svg"
+                alt="download"
               />
             </ElButton>
           </div>
@@ -320,11 +328,11 @@ const changePage = (value: number) => {
     </el-table>
 
     <AppPagination
-        v-if="documentStore.acts"
-        v-model="form.page"
-        :pagination="documentStore.acts.paginator"
-        class="mt-6"
-        @current-change="changePage"
+      v-if="documentStore.acts"
+      v-model="form.page"
+      :pagination="documentStore.acts.paginator"
+      class="mt-6"
+      @current-change="changePage"
     />
   </div>
 </template>

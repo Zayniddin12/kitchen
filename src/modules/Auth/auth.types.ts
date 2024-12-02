@@ -19,6 +19,15 @@ export interface AuthCreateDataType extends AuthLoginDataType {
     name: string;
 }
 
+export type PositionType = string | null;
+
+export interface UserWorkplaceType {
+    position: PositionType,
+    workplace: string,
+    workplace_id: number,
+    workplace_type: string
+}
+
 export interface UserType {
     id: number;
     phone: string;
@@ -26,7 +35,8 @@ export interface UserType {
     firstname: string;
     lastname: string;
     patronymic: null | string;
-    position: any;
+    position: PositionType;
+    workplaces: UserWorkplaceType[]
 }
 
 export interface SendCodeDataType {

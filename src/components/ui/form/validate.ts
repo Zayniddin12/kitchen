@@ -34,16 +34,16 @@ export const setRules = (rules: RulesType): Arrayable<FormItemRule> | ValidateRu
             rule.min = rules.min;
             rule.max = rules.max;
             if (rule.min === rule.max) {
-                rule.message = `Must be ${rule.min} characters long`;
+                rule.message = `Длина должна быть ${rule.min} символов`;
             } else {
-                rule.message = `Characters length should be between ${rules.min} and ${rules.max}`;
+                rule.message = `Длина символов должна быть в пределах от ${rules.min} до ${rules.max}`;
             }
         } else if (rules.min) {
             rule.min = rules.min;
-            rule.message = `Must be at least ${rules.min} characters`;
+            rule.message = `Должно быть не менее ${rules.min} символов`;
         } else if (rules.max) {
             rule.max = rules.max;
-            rule.message = `Must be at most ${rules.max} characters`;
+            rule.message = `Должно быть не более ${rules.max} символов`;
         }
 
         formRules.push(rule);
@@ -53,7 +53,7 @@ export const setRules = (rules: RulesType): Arrayable<FormItemRule> | ValidateRu
         case "email":
             formRules.push({
                 type: "email",
-                message: "Invalid email",
+                message: "Неправильный email",
                 trigger
             });
     }

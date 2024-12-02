@@ -117,7 +117,7 @@ export const getStatusText = (status: boolean | StatusType): StatusTextType => {
   if (typeof status === "string") {
     status = getStatus(status as StatusType);
   }
-  return status ? "Активация" : "Деактивация";
+  return status ? "Деактивация" : "Активация";
 };
 
 export const deepEqual = (

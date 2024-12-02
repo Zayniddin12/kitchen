@@ -378,7 +378,6 @@ const sendData = async () => {
                   v-model="kitchenData.startDate"
                   prop="startDate"
                   placeholder="дд.мм.гггг"
-                  format="DD.MM.YYYY"
                   class="w-[141px] mt-3"
                   icon-position="start"
                   required

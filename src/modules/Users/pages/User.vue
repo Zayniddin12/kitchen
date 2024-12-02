@@ -216,15 +216,15 @@ onMounted(() => {
 
     <AppOverlay
         :loading
-        parent-class-name="border rounded-[24px] py-[32px] px-[24px] w-[50%] m-auto relative group"
+        parent-class-name="border rounded-[24px] py-[32px] px-[24px] w-[50%] m-auto relative"
         v-else
     >
-      <button class="absolute top-2 left-2 opacity-0 group-hover:opacity-100  edit__btn transition-opacity duration-300 bg-blue-500 text-white px-4 py-2 rounded-lg">
-        Изменить фото
-      </button>
+<!--      <button class="absolute top-2 left-2 opacity-0 group-hover:opacity-100  edit__btn transition-opacity duration-300 bg-blue-500 text-white px-4 py-2 rounded-lg">-->
+<!--        Изменить фото-->
+<!--      </button>-->
       <img
           src="@/assets/images/bigMan.png"
-          class="w-full group-hover:filter group-hover:brightness-50 transition duration-300 rounded-lg"
+          class="w-full h-[550px] object-contain rounded-lg"
           alt="bigMan"
       />
     </AppOverlay>

@@ -85,7 +85,7 @@ const sendForm = async () => {
 
   try {
     if (activeUserCreatePage.value){
-
+      newForm.status = "active";
       if (userStore.activeUserPage){
         await userStore.createUser(newForm);
       }else{
@@ -186,15 +186,6 @@ const cancelFn = () => {
   });
 };
 
-const switchChange = async (): Promise<boolean> => {
-  try {
-    const response = await confirm.show();
-    return true;
-  } catch (error) {
-    return false;
-  }
-};
-
 const fetchSearchUser = () => {
   userStore.initializeSearchUser();
   if (!userStore.searchUser) router.replace({ name: `${userStore.activeRoutePrefix}-fetch` });
@@ -202,9 +193,10 @@ const fetchSearchUser = () => {
 
 const setData = () => {
   if (!data.value) return;
-
+  console.log(data.value);
   form.value = mergeCommonKeys(form.value, data.value);
   form.value.phone = formatPhone(data.value.phone);
+  form.value.position_id = form.value.position_id ?? "";
   form.value.status = getStatus(data.value.status);
 };
 
@@ -291,7 +283,6 @@ onBeforeRouteLeave(() => {
               @validation="setValidation"
               :validation-errors
               class="px-[24px]"
-              :submit="sendForm"
           >
             <div class="grid grid-cols-3 gap-x-6 gap-y-4">
               <AppInput
@@ -441,7 +432,7 @@ onBeforeRouteLeave(() => {
         <template v-else>
           <AppMediaUploader
               class="m-6 w-full"
-              :height="633"
+              :height="450"
           />
 
         </template>

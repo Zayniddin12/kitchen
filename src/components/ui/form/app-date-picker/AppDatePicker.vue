@@ -1,11 +1,11 @@
 <script
-    setup
-    lang="ts"
+  setup
+  lang="ts"
 >
 import { computed, h, inject, ref, Ref, shallowRef, useSlots, watch } from "vue";
 import {
   AppDatePickerPropsType,
-  AppDatePickerValueType
+  AppDatePickerValueType,
 } from "@/components/ui/form/app-date-picker/app-date-picker.type";
 import CalendarIcon from "@/assets/images/icons/calendar.svg";
 import { getRules, setRules } from "@/components/ui/form/validate";
@@ -16,11 +16,13 @@ const model = defineModel<AppDatePickerValueType>();
 const props = withDefaults(defineProps<AppDatePickerPropsType>(), {
   labelPosition: "top",
   placeholder: "Выбирать",
-  format: "YYYY/MM/DD",
-  valueFormat: "YYYY-MM-DD",
+  format: "DD.MM.YYYY",
+  valueFormat: "DD.MM.YYYY",
   type: "date",
+  editable: true,
   labelClass: "",
-  iconPosition: "end"
+  iconPosition: "end",
+  teleported: true,
 });
 
 const emit = defineEmits<{
@@ -58,9 +60,9 @@ const icon = shallowRef<any>({
   render() {
     return h("svg", {
       "data-src": CalendarIcon,
-      class: "app-date-picker__icon"
+      class: "app-date-picker__icon",
     });
-  }
+  },
 });
 
 const change = (value: AppDatePickerValueType) => {
@@ -68,31 +70,31 @@ const change = (value: AppDatePickerValueType) => {
   emit("change", value);
 };
 
-watch(validationErrors, (newErrors) => {
+watch(validationErrors, () => {
   ignoreValidationError.value = false;
 }, {
-  deep: true
+  deep: true,
 });
 
 </script>
 <template>
   <ElFormItem
-      :label-position
-      :required
-      :size
-      :rules="setRules(getRules(props))"
-      :prop
-      :error="computedError"
-      :class="appDatePickerClasses"
+    :label-position
+    :required
+    :size
+    :rules="setRules(getRules(props))"
+    :prop
+    :error="computedError"
+    :class="appDatePickerClasses"
   >
     <template
-        v-if="slots.label || label"
-        #label
+      v-if="slots.label || label"
+      #label
     >
       <span :class="labelClass">
         <slot
-            v-if="slots.label"
-            name="label"
+          v-if="slots.label"
+          name="label"
         />
         <template v-else>
           {{ label }}
@@ -100,32 +102,32 @@ watch(validationErrors, (newErrors) => {
       </span>
     </template>
     <ElDatePicker
-        v-model="model"
-        :id
-        :placeholder
-        :disabled
-        :readonly
-        :size
-        :name
-        :clearable
-        :editable
-        :start-placeholder
-        :end-placeholder
-        :type
-        :format
-        :popper-class
-        :popper-options
-        :range-separator
-        :default-time
-        :default-value
-        :value-format
-        :unlink-panels
-        :prefix-icon="icon"
-        :disabled-date
-        :teleported
-        :empty-values
-        :class="['app-date-picker__date-picker', `app-date-picker__date-picker-icon--${iconPosition}`]"
-        @change="change"
+      v-model="model"
+      :id
+      :placeholder
+      :disabled
+      :readonly
+      :size
+      :name
+      :clearable
+      :editable
+      :start-placeholder
+      :end-placeholder
+      :type
+      :format
+      :popper-class
+      :popper-options
+      :range-separator
+      :default-time
+      :default-value
+      :value-format
+      :unlink-panels
+      :prefix-icon="icon"
+      :disabled-date
+      :teleported
+      :empty-values
+      :class="['app-date-picker__date-picker', `app-date-picker__date-picker-icon--${iconPosition}`]"
+      @change="change"
     />
   </ElFormItem>
 </template>

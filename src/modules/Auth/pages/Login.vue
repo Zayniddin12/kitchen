@@ -98,6 +98,7 @@ const onSubmit = async () => {
           required
           prop="phone"
           trigger="change"
+          @keyup.enter="onSubmit"
         />
         <app-input
           @keyup.enter="onSubmit"
@@ -120,7 +121,6 @@ const onSubmit = async () => {
         </router-link>
       </AppForm>
 
-      <div class="mt-6">
         <ElButton
           :loading="authStore.loginLoading"
           @click="onSubmit"
@@ -129,7 +129,6 @@ const onSubmit = async () => {
         >
           Войти
         </ElButton>
-      </div>
 
       <div class="flex items-center justify-between text-[#7F7D83] text-sm mt-4">
         <img

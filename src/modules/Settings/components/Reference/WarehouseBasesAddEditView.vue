@@ -13,6 +13,7 @@ import { useSettingsStore } from "@/modules/Settings/store";
 import { ElNotification } from "element-plus";
 import AppSelect from "@/components/ui/form/app-select/AppSelect.vue";
 import { filterObjectValues } from "@/utils/helper";
+import { maska } from "maska/dist/svelte";
 
 const settingsStore = useSettingsStore();
 
@@ -214,6 +215,19 @@ const isDisabled = computed<boolean>(() => {
                 class="w-full"
                 required
                 prop="code"
+                :mask="{
+                    mask: 'AAA',
+                    tokens: {
+                     'A': {
+                        pattern: /[A-Z]/,
+                       transform: (chr: string) => chr.toUpperCase(),
+                     }
+                    }
+                  }"
+                :minlength="3"
+                :maxlength="3"
+                :min="3"
+                :max="3"
                 :disabled="isDisabled"
               />
             </div>

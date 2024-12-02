@@ -34,6 +34,7 @@ const layouts = {
   <component
       v-if="layout"
       :is="layouts[layout]"
+      :key="layout"
   >
     <RouterView/>
   </component>

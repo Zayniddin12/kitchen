@@ -25,15 +25,11 @@ import AppOverlay from "@/components/ui/app-overlay/AppOverlay.vue";
 import { useAuthStore } from "@/modules/Auth/auth.store";
 import QrCode from "@/components/workplaces/qr-code/QrCode.vue";
 
-interface PropsType extends ModalPropsType {
-  title: string,
-}
-
 const model = defineModel<ModalValueType>();
 
 const document = defineModel<DraftType | null>("document");
 
-const props = defineProps<PropsType>();
+const props = defineProps<ModalPropsType>();
 
 const settingsStore = useSettingsStore();
 const commonStore = useCommonStore();
@@ -238,8 +234,7 @@ const loading = computed(() => documentStore.createLoading || documentStore.upda
           >
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {{ form.content }}
           </div>
-
-          <div class="mt-[40px] flex items-center justify-between">
+          <div v-if="document" class="mt-[40px] flex items-center justify-between">
             <div class="flex items-baseline mb-[24px] w-[200px]">
               <h1 class=" text-[14px] font-medium">
                 <span class="text-[#4F5662]">Отправитель:</span>
@@ -273,6 +268,9 @@ const loading = computed(() => documentStore.createLoading || documentStore.upda
               label="№ документа"
               label-class="text-[#A8AAAE] text-[12px] font-medium"
               :required
+              :maxlength="20"
+              :max="20"
+
           />
           <AppDatePicker
               :placeholder="form.date"
@@ -304,6 +302,8 @@ const loading = computed(() => documentStore.createLoading || documentStore.upda
               label="Тема"
               label-class="text-[#A8AAAE] text-xs font-medium"
               :required
+              :max="100"
+              :maxlength="100"
           />
 
           <AppInput
@@ -315,6 +315,8 @@ const loading = computed(() => documentStore.createLoading || documentStore.upda
               type="textarea"
               :rows="5"
               :required
+              :max="1000"
+              :maxlength="1000"
           />
 
           <AppInput

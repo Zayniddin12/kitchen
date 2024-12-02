@@ -21,6 +21,7 @@ const appForm = useTemplateRef("app-form");
 
 const validation = reactive<ValidationType>({
   validate: (): Promise<boolean> => {
+    console.log("SSS");
     return new Promise(async resolve => {
       if (!appForm.value) return resolve(false);
 
@@ -42,9 +43,9 @@ const validation = reactive<ValidationType>({
     appForm.value.resetFields();
   },
 
-  clear: function(): void {
-    this.resetForm();
-    this.clearValidate();
+  clear: async function(): void {
+    await this.resetForm();
+    await this.clearValidate();
   },
 });
 
@@ -58,7 +59,6 @@ onMounted(() => {
 
 const submit = () => {
   if (props.submit) props.submit();
-  console.log("AA");
 };
 
 </script>

@@ -2,7 +2,7 @@
     setup
     lang="ts"
 >
-import { computed, onMounted, onUnmounted, ref, watch } from "vue";
+import { computed, onMounted, onUnmounted, provide, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useKitchenStore } from "@/modules/Kitchen/kitchen.store";
 import NavBar from "@/layout/Bars/NavBar.vue";
@@ -88,6 +88,7 @@ const navDrawerItems = computed(() => {
 
 const navDrawerWidth = ref<number>(0);
 
+
 </script>
 
 <template>
@@ -107,7 +108,7 @@ const navDrawerWidth = ref<number>(0);
 
       <div class="flex flex-col">
         <AppBreadcrumb/>
-        <slot/>
+        <RouterView />
       </div>
 
       <span class="mt-[28px] bg-transparent !dark:body-dark w-full text-[#8F9194] text-[12px] select-none">Made by “Anysoft” software & solutions company</span>
