@@ -5,7 +5,6 @@ import { useAuthStore } from "@/modules/Auth/auth.store";
 import { useCommonStore } from "@/stores/common.store";
 import { ErrorType } from "@/plugins/axios/axios.types";
 import { generateRandomID } from "@/utils/helper";
-import router from "@/router";
 
 const id = generateRandomID();
 
@@ -64,7 +63,9 @@ axiosInstance.interceptors.response.use(
     const message = response?.data?.error?.message ?? error?.message ?? "";
     const originalConfig = error.config;
 
-    if (response && response.status === 401 && router.currentRoute.value.meta.layout !== "LoginLayout") {
+    console.log(commonStore.activeLayout);
+
+    if (response && response.status === 401 && commonStore.activeLayout === "MainLayout") {
       const retryOriginalRequest = new Promise((resolve) => {
         addSubscriber(() => {
           originalConfig.headers.Authorization = `Bearer ${tokenManager.getAccessToken()}`;

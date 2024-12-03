@@ -1,14 +1,15 @@
 import { defineStore } from "pinia";
-import { RouteLocationRaw, useRouter } from "vue-router";
+import { RouteLocationRaw, useRoute, useRouter } from "vue-router";
 import { ElNotification } from "element-plus";
 import { GenderResponseType, GenderType } from "@/types/common.type";
 import MaleAvatar from "@/assets/images/genders/male.png";
 import FemaleAvatar from "@/assets/images/genders/female.png";
-import { ref, VNode } from "vue";
+import { computed, ref, VNode } from "vue";
 import { getSessionItem, removeSessionItem, setSessionItem } from "@/utils/sessionStorage";
 
 export const useCommonStore = defineStore("commonStore", () => {
   const router = useRouter();
+  const route = useRoute();
 
   const redirectNotFound = (message: string) => {
     ElNotification({
@@ -87,6 +88,10 @@ export const useCommonStore = defineStore("commonStore", () => {
     removeSessionItem(titlesKey);
   };
 
+  const activeLayout = computed(() => {
+    return route.meta.layout;
+  })
+
   return {
     redirectNotFound,
     successToast,
@@ -98,5 +103,6 @@ export const useCommonStore = defineStore("commonStore", () => {
     getTitles,
     removeTitles,
     errorIds,
+    activeLayout
   };
 });
