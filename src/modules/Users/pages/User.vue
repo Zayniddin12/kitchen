@@ -131,7 +131,7 @@ onMounted(() => {
       </div>
 
       <div class="px-[24px] mt-[90px]">
-        <div class="bg-gray-50 p-6 rounded-[16px] ">
+        <div class="bg-gray-50 p-6 rounded-[16px]">
           <h3 class="text-gray-500 mb-4">Основная информация</h3>
           <div class="grid grid-cols-2 gap-8">
             <!-- Left Column -->

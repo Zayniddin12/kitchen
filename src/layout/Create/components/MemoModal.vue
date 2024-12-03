@@ -11,7 +11,6 @@ import { ModalPropsType, ModalValueType } from "@/layout/Create/components/modal
 import {
   DocumentCreateDataDocumentType,
   DocumentStatusType,
-  DocumentType,
   DraftType
 } from "@/modules/Document/document.types";
 import { computed, reactive, ref, watch } from "vue";
@@ -42,6 +41,9 @@ const form = reactive<DocumentCreateDataDocumentType>({
   to: "",
   to_type: "",
   to_id: null,
+  from: "",
+  from_id: null,
+  from_type: "",
   subject: "",
   number: "",
   content: "",
@@ -113,10 +115,19 @@ const clear = () => {
   form.to_id = null;
   form.to_type = "";
   form.to = "";
+  form.from_type = "";
+  form.from_id = null;
 };
 
 const setForm = async () => {
   form.doc_type_id = props.id ?? null;
+
+  if (authStore.disabledUserWorkplace) {
+    const activeWorkplace = authStore.user.workplaces[0];
+    form.from_id = activeWorkplace.workplace_id;
+    form.from_type = activeWorkplace.workplace_type;
+    form.from = `${activeWorkplace.workplace_id}_${activeWorkplace.workplace_type}`;
+  }
 
   if (!document.value) return;
   await documentStore.fetchDocument(document.value.id);
@@ -165,6 +176,11 @@ const to = computed<string>(() => {
   if (!activeEl) return "";
 
   return activeEl.name;
+});
+
+const from = computed(() => {
+  if (form.from_id && form.from_type) return authStore.getUserWorkplace(form.from_id, form.from_type);
+  return null;
 });
 
 const loading = computed(() => documentStore.createLoading || documentStore.updateLoading);
@@ -238,7 +254,7 @@ const loading = computed(() => documentStore.createLoading || documentStore.upda
             <div class="flex items-baseline mb-[24px] w-[200px]">
               <h1 class=" text-[14px] font-medium">
                 <span class="text-[#4F5662]">Отправитель:</span>
-                <span class="text-[#A8AAAE] ml-2">{{ authStore.user?.position }}</span>
+                <span v-if="from" class="text-[#A8AAAE] ml-2">{{ from.position }} ({{from.workplace}})</span>
               </h1>
             </div>
 
@@ -319,12 +335,22 @@ const loading = computed(() => documentStore.createLoading || documentStore.upda
               :maxlength="1000"
           />
 
-          <AppInput
-              :placeholder="authStore.userFullName"
-              label="Отправитель"
-              label-class="text-[#A8AAAE] text-[12px] font-medium"
-              disabled
-          />
+          <AppSelect
+            v-model="form.from"
+            prop="from"
+            placeholder="Отправитель"
+            label="Отправитель"
+            label-class="text-[#A8AAAE] text-xs font-medium"
+            :disabled="authStore.disabledUserWorkplace"
+            @change="(value) => respondentChange(value as string, 'to')"
+          >
+            <ElOption
+              v-for="item in authStore.user.workplaces"
+              :key="`${item.workplace_type}_${item.workplace_type}`"
+              :value="`${item.workplace_id}_${item.workplace_type}`"
+              :label="item.workplace"
+            />
+          </AppSelect>
         </AppForm>
 
         <div class="flex items-start justify-between gap-x-2">

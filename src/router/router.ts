@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
-import home from "@/modules/Home/home.routes";
+import HomeRoutes from "@/modules/Home/home.routes";
 import Inbox from "@/modules/Document/document.routes";
 import Monitoring from "@/modules/Monitoring/monitoring.routes";
 import Settings from "@/modules/Settings/router";
@@ -8,9 +8,10 @@ import KitchenWarehouse from "@/modules/KitchenWarehouse/kitchen-warehouse.route
 import Kitchen from "@/modules/Kitchen/kitchen.routes";
 import Users from "@/modules/Users/users.routes";
 import AuthRoutes from "@/modules/Auth/auth.routes";
+import tokenManager from "@/utils/token.manager";
 
 const routes: RouteRecordRaw[] = [
-    ...home,
+    ...HomeRoutes,
     ...AuthRoutes,
     ...Inbox,
     ...Monitoring,
@@ -19,17 +20,6 @@ const routes: RouteRecordRaw[] = [
     ...KitchenWarehouse,
     ...Kitchen,
     ...Users,
-
-    // {
-    //     path: "/",
-    //     name: 'login',
-    //     redirect: () => {
-    //         // if (isUserLoggedIn()) {
-    //         //     return {name: "reset-password"};
-    //         // }
-    //         return {name: "login"};
-    //     },
-    // },
 
     {
         path: "/:pathMatch(.*)*",
@@ -47,15 +37,12 @@ const router = createRouter({
 
 router.beforeEach(async (to: any, _, next) => {
     if (!to.meta.layout) to.meta.layout = "MainLayout";
-    next();
 
-    // const isLoggedIn = isUserLoggedIn()
-    //
-    // if (!isLoggedIn) {
-    //     next('/login')
-    // } else {
-    //     next()
-    // }
+    if (to.meta.layout === "MainLayout"){
+        if(!tokenManager.getAccessToken()) next({name: "login"});
+        else next();
+    }
+    next();
 });
 
 

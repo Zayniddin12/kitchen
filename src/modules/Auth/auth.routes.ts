@@ -1,35 +1,47 @@
 import { RouteRecordRaw } from "vue-router";
+import { useAuthStore } from "@/modules/Auth/auth.store";
 
 export default [
-    {
-        path: "/login",
-        name: "login",
-        component: () => import("@/modules/Auth/pages/Login.vue"),
-        meta: {
-            layout: "LoginLayout",
-            title: "Войти в аккаунт"
-        }
+  {
+    path: "/login",
+    name: "login",
+    component: () => import("@/modules/Auth/pages/Login.vue"),
+    meta: {
+      layout: "LoginLayout",
+      title: "Войти в аккаунт",
     },
-    {
-        path: "/reset-password",
-        name: "reset-password",
-        component: () => import("@/modules/Auth/pages/ResetPassword.vue"),
-        meta: {
-            loginNotRequired: true,
-            layout: "ResetPasswordLayout",
-            title: "Сброс пароля"
-        }
+  },
+  {
+    path: "/reset-password",
+    name: "reset-password",
+    component: () => import("@/modules/Auth/pages/ResetPassword.vue"),
+    meta: {
+      layout: "LoginLayout",
+      title: "Сброс пароля",
     },
-    {
-        path: "/income-password",
-        name: "income-password",
-        component: () => import("@/modules/Auth/pages/IncomePassword.vue"),
-        meta: { loginNotRequired: true, layout: "IncomePasswordLayout" }
+  },
+  {
+    path: "/income-password",
+    name: "income-password",
+    component: () => import("@/modules/Auth/pages/IncomePassword.vue"),
+    meta: {
+      layout: "LoginLayout",
     },
-    {
-        path: "/new-password",
-        name: "new-password",
-        component: () => import("@/modules/Auth/pages/Password.vue"),
-        meta: { loginNotRequired: true, layout: "PasswordLayout" }
-    }
+  },
+  {
+    path: "/new-password",
+    name: "new-password",
+    component: () => import("@/modules/Auth/pages/Password.vue"),
+    meta: {
+      layout: "LoginLayout",
+    },
+  },
+  {
+    path: "/verify-oneid",
+    name: "verify-oneid",
+    component: () => import("@/modules/Auth/pages/VerifyOneId.vue"),
+    meta: {
+      layout: "LoginLayout",
+    },
+  }
 ] as RouteRecordRaw[];

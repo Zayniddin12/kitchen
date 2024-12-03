@@ -210,3 +210,10 @@ export const getRouteQuery = (
 
   return result;
 };
+
+export const loginOneId = () =>  {
+  let oneIdAuthUrl = import.meta.env.VITE_ONE_ID_AUTH;
+  const baseUrl = window.location.protocol === 'http:' ? 'https://wms.ngmkfond.uz' : window.location.origin;
+  oneIdAuthUrl = oneIdAuthUrl.replace('{baseUrl}', `${baseUrl}/verify-oneid`);
+  window.location.href = oneIdAuthUrl;
+}

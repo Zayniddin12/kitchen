@@ -9,7 +9,7 @@ import NavBar from "@/layout/Bars/NavBar.vue";
 import SideBar from "@/layout/Bars/SideBar.vue";
 import AppBreadcrumb from "@/components/ui/app-breadcrumb/AppBreadcrumb.vue";
 import { useAuthStore } from "@/modules/Auth/auth.store";
-import { getAccessToken } from "@/utils/token.manager";
+import tokenManager from "@/utils/token.manager";
 import NavDrawer from "@/components/layouts/nav/nav-drawer/NavDrawer.vue";
 import HomeIcon from "@/assets/images/icons/nav/nav-drawer/home.svg";
 import DocumentsIcon from "@/assets/images/icons/nav/nav-drawer/documents.svg";
@@ -32,7 +32,7 @@ const childSidebar = ref<boolean>(JSON.parse(localStorage.getItem("child-sidebar
 const margin = ref("ml-[396px]");
 
 onMounted(async () => {
-  if (getAccessToken()) authStore.me();
+  if (tokenManager.getAccessToken()) authStore.me();
   // else await router.replace({ name: "login" });
   childSidebarPin.value = JSON.parse(localStorage.getItem("child-sidebar-pin") || "false");
   await settingsStore.GET_REGIONAL({ per_page: 100 });

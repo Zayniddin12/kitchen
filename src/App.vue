@@ -12,12 +12,8 @@ import { useRoute } from "vue-router";
 import { computed } from "vue";
 import AppConfirm from "@/components/ui/app-confirm/AppConfirm.vue";
 
-interface RouteMeta {
-  layout?: "MainLayout" | "LoginLayout" | "ErrorLayout" | "ResetPasswordLayout" | "IncomePasswordLayout" | "PasswordLayout";
-}
-
 const route = useRoute();
-const layout = computed(() => (route.meta as RouteMeta).layout);
+const layout = computed(() => route.meta.layout);
 
 const layouts = {
   MainLayout,

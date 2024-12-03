@@ -35,6 +35,9 @@ const form = reactive<DocumentCreateDataDocumentType>({
   to: "",
   to_id: null,
   to_type: "",
+  from: "",
+  from_id: null,
+  from_type: "",
   number: "",
   subject: "",
   content: "",
@@ -106,10 +109,17 @@ const to = computed<string>(() => {
   return activeEl.name;
 });
 
+const from = computed(() => {
+  if (form.from_id && form.from_type) return authStore.getUserWorkplace(form.from_id, form.from_type);
+  return null;
+});
+
 const clear = () => {
   v$.value?.clear();
   form.to_id = null;
   form.to_type = "";
+  form.from_id = null;
+  form.from_type = "";
 };
 
 const { confirm } = useConfirm();
@@ -129,6 +139,12 @@ const closeModal = async () => {
 
 const setForm = async () => {
   form.doc_type_id = props.id ?? null;
+  if (authStore.disabledUserWorkplace) {
+    const activeWorkplace = authStore.user.workplaces[0];
+    form.from_id = activeWorkplace.workplace_id;
+    form.from_type = activeWorkplace.workplace_type;
+    form.from = `${activeWorkplace.workplace_id}_${activeWorkplace.workplace_type}`;
+  }
 
   if (!document.value) return;
   await documentStore.fetchDocument(document.value.id);
@@ -232,7 +248,7 @@ watch(model, (newModel) => {
           <div class="flex items-baseline mb-[24px] w-[200px]">
             <h1 class=" text-[14px] font-medium">
               <span class="text-[#4F5662] font-semibold">Отправитель:</span>
-              <span class="text-[#A8AAAE] ml-2">{{ authStore.user?.position }}</span>
+              <span v-if="from" class="text-[#A8AAAE] ml-2">{{ from.position }} ({{from.workplace}})</span>
             </h1>
           </div>
 
@@ -322,12 +338,22 @@ watch(model, (newModel) => {
             :max="1000"
           />
 
-          <AppInput
-            :placeholder="authStore.userFullName"
+          <AppSelect
+            v-model="form.from"
+            prop="from"
+            placeholder="Отправитель"
             label="Отправитель"
             label-class="text-[#A8AAAE] text-xs font-medium"
-            disabled
-          />
+            :disabled="authStore.disabledUserWorkplace"
+            @change="(value) => respondentChange(value as string, 'to')"
+          >
+            <ElOption
+              v-for="item in authStore.user.workplaces"
+              :key="`${item.workplace_type}_${item.workplace_type}`"
+              :value="`${item.workplace_id}_${item.workplace_type}`"
+              :label="item.workplace"
+            />
+          </AppSelect>
         </AppForm>
 
         <div class="flex items-start justify-between gap-x-2">

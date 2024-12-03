@@ -14,6 +14,7 @@ import { useSettingsStore } from "@/modules/Settings/store";
 import { DocTypeListType } from "@/modules/Settings/settings.types";
 import { useAuthStore } from "@/modules/Auth/auth.store";
 import AvatarIcon from "@/assets/images/avatar.png";
+import Notifications from "@/components/layouts/notifications/Notifications.vue";
 
 const authStore = useAuthStore();
 
@@ -195,15 +196,7 @@ onMounted(() => {
       </el-dropdown>
       <ThemeToggler v-if="false" />
 
-      <el-badge
-        value="18"
-        class="item cursor-pointer"
-      >
-        <img
-          src="@/assets/images/icons/bell.svg"
-          alt="bell"
-        />
-      </el-badge>
+      <Notifications/>
 
       <Language v-if="false" />
 
