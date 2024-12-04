@@ -121,6 +121,10 @@ watch(
     { immediate: true }
 );
 
+watch(() => documentStore.documentsIsRefresh, (newValue) => {
+  if (newValue) fetchInvoices();
+});
+
 watch(() => route.name, () => {
   setBreadCrumbFn();
 }, { immediate: true });

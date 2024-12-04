@@ -212,14 +212,13 @@ watch(() => route.name, () => {
 
               <app-input
                 v-model="dataValue.measure_id"
-                label="Единица измерения"
+                label="Ед. изм. вместимости"
                 placeholder="Введите"
                 label-class="text-[#A8AAAE] font-medium text-[12px]"
                 class="w-full"
-                required
                 type="number"
                 prop="measure_id"
-                :disabled="isDisabled"
+                disabled
               />
 
               <app-select

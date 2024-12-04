@@ -182,11 +182,9 @@ watchEffect(() => {
         <h1 class="font-semibold text-[32px] text-dark">Остатка товаров</h1>
         <div class="grid grid-cols-4 gap-2 max-w-[645px]">
           <AppDatePicker
-            format="DD.MM.YYYY"
             size="large"
           />
           <AppDatePicker
-            format="DD.MM.YYYY"
             size="large"
           />
           <ElDropdown

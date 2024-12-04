@@ -42,9 +42,9 @@ const validation = reactive<ValidationType>({
     appForm.value.resetFields();
   },
 
-  clear: function(): void {
-    this.resetForm();
-    this.clearValidate();
+  clear: async function(): void {
+    await this.resetForm();
+    await this.clearValidate();
   },
 });
 
@@ -58,7 +58,6 @@ onMounted(() => {
 
 const submit = () => {
   if (props.submit) props.submit();
-  console.log("AA");
 };
 
 </script>

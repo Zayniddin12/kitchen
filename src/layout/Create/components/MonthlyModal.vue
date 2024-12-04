@@ -1,6 +1,6 @@
 <script
-    setup
-    lang="ts"
+  setup
+  lang="ts"
 >
 import AppInput from "@/components/ui/form/app-input/AppInput.vue";
 import AppSelect from "@/components/ui/form/app-select/AppSelect.vue";
@@ -11,7 +11,7 @@ import { ModalPropsType, ModalValueType } from "@/layout/Create/components/modal
 import {
   DocumentCreateDataDocumentType,
   DocumentProductType,
-  DocumentStatusType
+  DocumentStatusType,
 } from "@/modules/Document/document.types";
 import { useSettingsStore } from "@/modules/Settings/store";
 import { useCommonStore } from "@/stores/common.store";
@@ -39,7 +39,7 @@ const defaultProduct: DocumentProductType = {
   product_type_id: "",
   quantity: null,
   unit_id: "",
-  price: null
+  price: null,
 };
 
 
@@ -51,12 +51,15 @@ const form = reactive<DocumentCreateDataDocumentType>({
   to: "",
   to_id: null,
   to_type: "",
+  from: "",
+  from_id: null,
+  from_type: "",
   subject: "",
   content: "",
   status: "",
   products: [
-    { ...defaultProduct }
-  ]
+    { ...defaultProduct },
+  ],
 });
 
 const requestType = computed(() => {
@@ -111,6 +114,8 @@ const clear = () => {
   form.to_id = null;
   form.to_type = "";
   form.to = "";
+  form.from_id = null;
+  form.from_type = "";
   form.products = [{ ...defaultProduct }];
 };
 
@@ -123,7 +128,7 @@ const respondentChange = (value: string, type: "from" | "to") => {
 const to = computed<string>(() => {
   if (!form.to_id || !form.to_type) return "";
   const activeEl = settingsStore.respondents.find(
-      el => el.model_type === form.to_type && el.id === form.to_id
+    el => el.model_type === form.to_type && el.id === form.to_id,
   );
 
   if (!activeEl) return "";
@@ -131,20 +136,40 @@ const to = computed<string>(() => {
   return activeEl.name;
 });
 
+const from = computed(() => {
+  if (form.from_id && form.from_type) return authStore.getUserWorkplace(form.from_id, form.from_type);
+  return null;
+});
+
 const loading = computed(() => documentStore.createLoading || documentStore.updateLoading);
 
 const vidProducts = ref<Map<number, Record<string, any>[]>>(new Map);
 
-const fetchVidProductsList = async (value: AppSelectValueType) => {
-
-  if (typeof value !== "number") return;
+const fetchVidProductsList = async (product: DocumentProductType) => {
+  if (!product.category_id) return;
 
   await settingsStore.GET_VID_PRODUCT({
-    parent_id: value,
-    per_page: 100
+    parent_id: product.category_id,
+    per_page: 100,
   });
 
-  vidProducts.value.set(value, settingsStore.vidProduct.product_types);
+  vidProducts.value.set(product.category_id, settingsStore.vidProduct.product_types);
+  product.product_type_id = "";
+  product.unit_id = "";
+};
+
+const changeProduct = (product: DocumentProductType) => {
+  if (!(product.category_id && product.product_type_id)) return;
+
+  const activeVidProducts = vidProducts.value.get(product.category_id);
+
+  if (!activeVidProducts) return;
+
+  const activeProduct = activeVidProducts.find(el => el.id === product.product_type_id);
+
+  if (!activeProduct) return;
+
+  product.unit_id = activeProduct.unit_id;
 };
 
 const getProductTypeTitle = (category_id: number, product_type_id: number) => {
@@ -161,25 +186,25 @@ const getProductTypeTitle = (category_id: number, product_type_id: number) => {
 
 const getProductMeasurement = (id: number) => {
   return (
-      settingsStore.units.units.find((el: Record<string, any>) => el.id === id)
-          ?.name ?? ""
+    settingsStore.units.units.find((el: Record<string, any>) => el.id === id)
+      ?.name ?? ""
   );
 };
 
 const productsTotalSum = computed(() => {
   return form.products?.reduce((sum: number, product: DocumentProductType) => {
     return (
-        sum +
-        Number(
-            product.price && product.quantity ? product.price * product.quantity : 0
-        )
+      sum +
+      Number(
+        product.price && product.quantity ? product.price * product.quantity : 0,
+      )
     );
   }, 0);
 });
 
 const createProduct = () => {
   form.products?.push({
-    ...defaultProduct
+    ...defaultProduct,
   });
 };
 
@@ -204,6 +229,13 @@ const closeModal = async () => {
 
 const setForm = async () => {
   form.doc_type_id = props.id ?? null;
+
+  if (authStore.disabledUserWorkplace) {
+    const activeWorkplace = authStore.user.workplaces[0];
+    form.from_id = activeWorkplace.workplace_id;
+    form.from_type = activeWorkplace.workplace_type;
+    form.from = `${activeWorkplace.workplace_id}_${activeWorkplace.workplace_type}`;
+  }
 
   if (!props.uuid) return;
   await documentStore.fetchDocument(props.uuid);
@@ -243,12 +275,12 @@ watch(model, (newModel) => {
 
 <template>
   <el-dialog
-      v-model="model"
-      :show-close="false"
-      class="w-[70%]"
-      align-center
-      append-to-body
-      :before-close="closeModal"
+    v-model="model"
+    :show-close="false"
+    class="w-[70%]"
+    align-center
+    append-to-body
+    :before-close="closeModal"
   >
     <template #header>
       <div class="text-center text-[#000000] font-bold text-[18px]">{{ title }}</div>
@@ -257,13 +289,13 @@ watch(model, (newModel) => {
     <div class="flex">
       <div class="border-[#E2E6F3] bg-[#fff] border rounded-[15px] w-[65%] mr-0">
         <AppOverlay
-            :loading="documentStore.documentLoading"
-            class="px-[72px] pb-[150px]"
+          :loading="documentStore.documentLoading"
+          class="px-[72px] pb-[150px]"
         >
           <header class="flex items-center justify-center my-[24px] mb-6">
             <img
-                src="@/assets/images/logo.svg"
-                alt="logo"
+              src="@/assets/images/logo.svg"
+              alt="logo"
             >
             <div class="flex flex-col ml-3">
               <b class="text-[#000D24] text-lg">NKMK</b>
@@ -306,48 +338,48 @@ watch(model, (newModel) => {
           </div>
 
           <el-table
-              :data="form.products"
-              stripe
-              class="custom-element-table custom-element-table--has-append"
-              header-cell-class-name="custom-cell-header"
-              cell-class-name="custom-cell-header"
+            :data="form.products"
+            stripe
+            class="custom-element-table custom-element-table--has-append"
+            header-cell-class-name="custom-cell-header"
+            cell-class-name="custom-cell-header"
           >
             <el-table-column
-                prop="title"
-                label="Название"
-                class="!p-0"
+              prop="title"
+              label="Название"
+              class="!p-0"
             >
               <template #default="{ row }: { row: DocumentProductType }">
                 {{
                   row.product_type_id
-                      ? getProductTypeTitle(row.category_id as number, row.product_type_id as number)
-                      : "-"
+                    ? getProductTypeTitle(row.category_id as number, row.product_type_id as number)
+                    : "-"
                 }}
               </template>
             </el-table-column>
             <el-table-column
-                prop="quantity"
-                label="Количество"
+              prop="quantity"
+              label="Количество"
             >
               <template #default="{ row }: { row: DocumentProductType }">
                 {{ row.quantity ?? "-" }}
               </template>
             </el-table-column>
             <el-table-column
-                prop="measurement"
-                label="Ед. измерения"
+              prop="measurement"
+              label="Ед. измерения"
             >
               <template #default="{ row }: { row: DocumentProductType }">
                 {{
                   row.unit_id
-                      ? getProductMeasurement(row.unit_id as number)
-                      : "-"
+                    ? getProductMeasurement(row.unit_id as number)
+                    : "-"
                 }}
               </template>
             </el-table-column>
             <el-table-column
-                prop="price"
-                label="Цена"
+              prop="price"
+              label="Цена"
             >
               <template #default="{ row }: { row: DocumentProductType }">
                 {{
@@ -356,23 +388,23 @@ watch(model, (newModel) => {
               </template>
             </el-table-column>
             <el-table-column
-                prop="total_price"
-                label="Сумма"
+              prop="total_price"
+              label="Сумма"
             >
               <template #default="{ row }: { row: DocumentProductType }">
                 {{
                   row.price && row.quantity
-                      ? `${formatNumber(
-                          (row.price * row.quantity) as number
-                      )} сум`
-                      : "-"
+                    ? `${formatNumber(
+                      (row.price * row.quantity) as number,
+                    )} сум`
+                    : "-"
                 }}
               </template>
             </el-table-column>
 
             <template
-                v-if="productsTotalSum"
-                #append
+              v-if="productsTotalSum"
+              #append
             >
               <div class="flex items-center justify-end p-4">
                 <h1 class="text-[#8F9194] text-sm font-bold mr-[5px]">
@@ -384,100 +416,104 @@ watch(model, (newModel) => {
               </div>
             </template>
           </el-table>
-          <div class="mt-[40px] flex items-center justify-between">
-            <div class="flex items-baseline mb-[24px] w-[200px]">
-              <h1 class=" text-[14px] font-medium">
-                <span class="text-[#4F5662] font-semibold">Отправитель:</span>
-                <span class="text-[#A8AAAE] ml-2">{{ authStore.user?.position }}</span>
-              </h1>
-            </div>
-            <img
-                src="@/assets/images/icons/qr.svg"
-                alt="qr"
-            />
-            <h1 class="text-[#A8AAAE] text-sm mr-[100px]">{{ authStore.userFullName }}</h1>
-          </div>
+          <!--          <div class="mt-[40px] flex items-center justify-between">-->
+          <!--            <div class="flex items-baseline mb-[24px] w-[200px]">-->
+          <!--              <h1 class=" text-[14px] font-medium">-->
+          <!--          <span v-if="from" class="text-[#A8AAAE] ml-2">{{ from.position }} ({{from.workplace}})</span>-->
+          <!--                <span class="text-[#A8AAAE] ml-2">{{ authStore.user?.position }}</span>-->
+          <!--              </h1>-->
+          <!--            </div>-->
+          <!--            <img-->
+          <!--                src="@/assets/images/icons/qr.svg"-->
+          <!--                alt="qr"-->
+          <!--            />-->
+          <!--            <h1 class="text-[#A8AAAE] text-sm mr-[100px]">{{ authStore.userFullName }}</h1>-->
+          <!--          </div>-->
         </AppOverlay>
       </div>
 
       <div class="w-[35%] ml-[24px] flex flex-col justify-between">
         <AppForm
-            :value="form"
-            @validation="(value:ValidationType) => v$ = value"
-            @submit.prevent
-            :validation-errors
+          :value="form"
+          @validation="(value:ValidationType) => v$ = value"
+          @submit.prevent
+          :validation-errors
         >
           <AppInput
-              label="Накладние"
-              placeholder="Запрос"
-              label-class="text-[#A8AAAE] text-xs font-medium"
-              disabled
+            label="Накладние"
+            placeholder="Запрос"
+            label-class="text-[#A8AAAE] text-xs font-medium"
+            disabled
           />
           <AppInput
-              label="Тип запроса"
-              :placeholder="requestType"
-              label-class="text-[#A8AAAE] text-xs font-medium"
-              disabled
+            label="Тип запроса"
+            :placeholder="requestType"
+            label-class="text-[#A8AAAE] text-xs font-medium"
+            disabled
           />
           <AppDatePicker
-              label="Дата создания документа"
-              :placeholder="form.date"
-              label-class="text-[#A8AAAE] text-xs font-medium"
-              disabled
+            label="Дата создания документа"
+            :placeholder="form.date"
+            label-class="text-[#A8AAAE] text-xs font-medium"
+            disabled
           />
           <AppInput
-              v-model="form.number"
-              prop="number"
-              label="№ документа"
-              placeholder="Автоматически"
-              label-class="text-[#A8AAAE] text-xs font-medium"
-              disabled
+            v-model="form.number"
+            prop="number"
+            label="№ документа"
+            placeholder="Автоматически"
+            label-class="text-[#A8AAAE] text-xs font-medium"
+            disabled
           />
           <AppSelect
-              v-model="form.to"
-              prop="to"
-              placeholder="Выберите"
-              label="Получатель"
-              label-class="text-[#A8AAAE] text-[12px] font-medium"
-              :loading="settingsStore.respondentsLoading"
-              @change="(value) => respondentChange(value as string, 'to')"
-              :required
-              trigger="blur"
+            v-model="form.to"
+            prop="to"
+            placeholder="Выберите"
+            label="Получатель"
+            label-class="text-[#A8AAAE] text-[12px] font-medium"
+            :loading="settingsStore.respondentsLoading"
+            @change="(value) => respondentChange(value as string, 'to')"
+            :required
+            trigger="blur"
           >
             <ElOption
-                v-for="item in settingsStore.respondents"
-                :key="`${item.id}_${item.model_type}`"
-                :value="`${item.id}_${item.model_type}`"
-                :label="item.name"
+              v-for="item in settingsStore.respondents"
+              :key="`${item.id}_${item.model_type}`"
+              :value="`${item.id}_${item.model_type}`"
+              :label="item.name"
             />
           </AppSelect>
 
           <AppInput
-              v-model="form.subject"
-              prop="subject"
-              placeholder="Тема"
-              label="Тема"
-              label-class="text-[#A8AAAE] text-xs font-medium"
-              :required
+            v-model="form.subject"
+            prop="subject"
+            placeholder="Тема"
+            label="Тема"
+            label-class="text-[#A8AAAE] text-xs font-medium"
+            :required
+            :max="100"
+            :maxlength="100"
           />
 
           <AppInput
-              v-model="form.content"
-              prop="content"
-              placeholder="Содержание запроса"
-              type="textarea"
-              :rows="5"
-              label="Содержание запроса"
-              label-class="text-[#A8AAAE] text-xs font-medium"
-              :required
+            v-model="form.content"
+            prop="content"
+            placeholder="Содержание запроса"
+            type="textarea"
+            :rows="5"
+            label="Содержание запроса"
+            label-class="text-[#A8AAAE] text-xs font-medium"
+            :required
+            :maxlength="1000"
+            :max="1000"
           />
           <div class="bg-[#FFFFFF] rounded-[8px] p-[12px]">
             <template
-                v-for="(product, index) in form.products"
-                :key="index + 1"
+              v-for="(product, index) in form.products"
+              :key="index + 1"
             >
               <div
-                  class="flex items-center justify-between mb-[16px] text-sm font-medium"
+                class="flex items-center justify-between mb-[16px] text-sm font-medium"
               >
                 <strong class="text-[#4F5662]">
                   <template v-if="form.products && form.products.length > 1">
@@ -486,77 +522,79 @@ watch(model, (newModel) => {
                   Таблица получаемых продуктов
                 </strong>
                 <button
-                    v-if="form.products && form.products.length > 1"
-                    @click.stop="deleteProduct(index)"
-                    class="flex items-center gap-x-1"
+                  v-if="form.products && form.products.length > 1"
+                  @click.stop="deleteProduct(index)"
+                  class="flex items-center gap-x-1"
                 >
                   <svg
-                      :data-src="deleteIcon"
-                      class="size-5"
+                    :data-src="deleteIcon"
+                    class="size-5"
                   />
                   <span class="text-[#EA5455]">Удалить</span>
                 </button>
               </div>
               <AppSelect
-                  v-model="product.category_id"
-                  placeholder="Тип продукта"
-                  :prop="`products[${index}].category_id`"
-                  :items="settingsStore.typeProduct.product_categories"
-                  item-value="id"
-                  item-label="name"
-                  label="Тип продукта"
-                  label-class="text-[#A8AAAE] text-xs font-medium"
-                  @change="fetchVidProductsList"
-                  :required
+                v-model="product.category_id"
+                placeholder="Тип продукта"
+                :prop="`products[${index}].category_id`"
+                :items="settingsStore.typeProduct.product_categories"
+                item-value="id"
+                item-label="name"
+                label="Тип продукта"
+                label-class="text-[#A8AAAE] text-xs font-medium"
+                @change="fetchVidProductsList(product)"
+                :required
               />
               <AppSelect
-                  v-model="product.product_type_id"
-                  :prop="`products[${index}].product_type_id`"
-                  :items="vidProducts.get(product.category_id as number)"
-                  item-label="name"
-                  item-value="id"
-                  placeholder="Вид продукта"
-                  label="Вид продукта"
-                  label-class="text-[#A8AAAE] text-xs font-medium"
-                  :required
-                  :disabled="!product.category_id"
+                v-model="product.product_type_id"
+                :prop="`products[${index}].product_type_id`"
+                :items="vidProducts.get(product.category_id as number)"
+                item-label="name"
+                item-value="id"
+                placeholder="Вид продукта"
+                label="Вид продукта"
+                label-class="text-[#A8AAAE] text-xs font-medium"
+                :required
+                :disabled="!product.category_id"
+                @change="changeProduct(product)"
               />
               <AppInput
-                  v-model.number="product.quantity"
-                  :prop="`products[${index}].quantity`"
-                  type="number"
-                  placeholder="Количество"
-                  label="Количество"
-                  label-class="text-[#A8AAAE] text-xs font-medium"
-                  :required
+                v-model.number="product.quantity"
+                :prop="`products[${index}].quantity`"
+                type="number"
+                placeholder="Количество"
+                label="Количество"
+                label-class="text-[#A8AAAE] text-xs font-medium"
+                :required
               />
               <AppSelect
-                  v-model="product.unit_id"
-                  :prop="`products[${index}].unit_id`"
-                  :items="settingsStore.units.units"
-                  item-label="name"
-                  item-value="id"
-                  placeholder="Ед. измерения"
-                  label="Ед. измерения"
-                  label-class="text-[#A8AAAE] text-xs font-medium"
-                  :required
+                v-model="product.unit_id"
+                :prop="`products[${index}].unit_id`"
+                :items="settingsStore.units.units"
+                item-label="name"
+                item-value="id"
+                placeholder="Ед. измерения"
+                label="Ед. измерения"
+                label-class="text-[#A8AAAE] text-xs font-medium"
+                :required
+                disabled
               />
               <AppInput
-                  v-model.number="product.price"
-                  type="number"
-                  :prop="`products[${index}].price`"
-                  placeholder="Цена"
-                  label="Цена"
-                  label-class="text-[#A8AAAE] text-xs font-medium"
-                  :required
+                v-model.number="product.price"
+                type="number"
+                :prop="`products[${index}].price`"
+                placeholder="Цена"
+                label="Цена"
+                label-class="text-[#A8AAAE] text-xs font-medium"
+                :required
               />
             </template>
             <button
-                @click.stop="createProduct"
-                class="mt-6 flex items-center justify-center gap-3 border-[1px] border-[#2E90FA] rounded-[8px] w-full text-[#2E90FA] text-sm font-medium py-[10px]"
+              @click.stop="createProduct"
+              class="mt-6 flex items-center justify-center gap-3 border-[1px] border-[#2E90FA] rounded-[8px] w-full text-[#2E90FA] text-sm font-medium py-[10px]"
             >
                 <span
-                    :style="{
+                  :style="{
                     maskImage: 'url(/icons/plusIcon.svg)',
                     backgroundColor: '#2E90FA',
                     color: '#2E90FA',
@@ -570,37 +608,45 @@ watch(model, (newModel) => {
               Добавить
             </button>
           </div>
-
-          <AppInput
-              :placeholder="authStore.userFullName"
-              label="Отправитель"
-              label-class="text-[#A8AAAE] text-[12px] font-medium"
-              class="mt-6"
-              disabled
-          />
+          <AppSelect
+            v-model="form.from"
+            prop="from"
+            placeholder="Отправитель"
+            label="Отправитель"
+            label-class="text-[#A8AAAE] text-xs font-medium"
+            :disabled="authStore.disabledUserWorkplace"
+            @change="(value) => respondentChange(value as string, 'to')"
+          >
+            <ElOption
+              v-for="item in authStore.user.workplaces"
+              :key="`${item.workplace_type}_${item.workplace_type}`"
+              :value="`${item.workplace_id}_${item.workplace_type}`"
+              :label="item.workplace"
+            />
+          </AppSelect>
         </AppForm>
         <div class="flex items-start justify-between gap-x-2">
           <button
-              class="custom-cancel-btn"
-              @click="closeModal"
+            class="custom-cancel-btn"
+            @click="closeModal"
           >
             Отменить
           </button>
           <ElButton
-              :loading="form.status ==='draft' ? loading : false"
-              type="primary"
-              size="large"
-              @click="sendForm('draft')"
-              class="custom-apply-btn h-[41px] w-[212px]"
+            :loading="form.status ==='draft' ? loading : false"
+            type="primary"
+            size="large"
+            @click="sendForm('draft')"
+            class="custom-apply-btn h-[41px] w-[212px]"
           >
             Сохранить как черновик
           </ElButton>
           <ElButton
-              :loading="form.status ==='sent' ? loading : false"
-              type="success"
-              size="large"
-              @click="sendForm('sent')"
-              class="custom-send-btn h-[41px] w-[116px] !ml-0"
+            :loading="form.status ==='sent' ? loading : false"
+            type="success"
+            size="large"
+            @click="sendForm('sent')"
+            class="custom-send-btn h-[41px] w-[116px] !ml-0"
           >
             Отправить
           </ElButton>

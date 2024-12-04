@@ -117,7 +117,7 @@ export const getStatusText = (status: boolean | StatusType): StatusTextType => {
   if (typeof status === "string") {
     status = getStatus(status as StatusType);
   }
-  return status ? "Активация" : "Деактивация";
+  return status ? "Деактивация" : "Активация";
 };
 
 export const deepEqual = (
@@ -210,3 +210,10 @@ export const getRouteQuery = (
 
   return result;
 };
+
+export const loginOneId = () =>  {
+  let oneIdAuthUrl = import.meta.env.VITE_ONE_ID_AUTH;
+  const baseUrl = window.location.protocol === 'http:' ? 'https://wms.ngmkfond.uz' : window.location.origin;
+  oneIdAuthUrl = oneIdAuthUrl.replace('{baseUrl}', `${baseUrl}/verify-oneid`);
+  window.location.href = oneIdAuthUrl;
+}

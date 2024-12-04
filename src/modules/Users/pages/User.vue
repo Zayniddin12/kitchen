@@ -30,6 +30,12 @@ const data = computed(() => {
   return usersStore.activeUserPage ? usersStore.user : usersStore.employee;
 });
 
+const gender = computed(() => {
+  if (!data.value) return null;
+
+  return commonStore.getGender(data.value.gender);
+});
+
 const routeId = computed(() => {
   return parseInt(route.params.id as string);
 });
@@ -118,7 +124,7 @@ onMounted(() => {
         <div class="top-[32px] absolute flex items-center">
           <div class="rounded-full overflow-hidden border-4 border-gray-100">
             <img
-                :src="data?.avatar ?? Avatar"
+                :src="data?.avatar ?? gender?.photo ?? Avatar"
                 alt="Profile Picture"
                 class="object-cover size-40 rounded-full"
             >
@@ -131,7 +137,7 @@ onMounted(() => {
       </div>
 
       <div class="px-[24px] mt-[90px]">
-        <div class="bg-gray-50 p-6 rounded-[16px] ">
+        <div class="bg-gray-50 p-6 rounded-[16px]">
           <h3 class="text-gray-500 mb-4">Основная информация</h3>
           <div class="grid grid-cols-2 gap-8">
             <!-- Left Column -->
@@ -142,7 +148,7 @@ onMounted(() => {
               </div>
               <div class="mb-4">
                 <span class="text-blue-500">Пол:</span>
-                <p>{{ data?.gender ? commonStore.getGender(data.gender)?.name : "—" }}</p>
+                <p>{{ gender?.name ?? "—" }}</p>
               </div>
               <div class="mb-4">
                 <span class="text-blue-500">Кем выдан:</span>
@@ -216,15 +222,15 @@ onMounted(() => {
 
     <AppOverlay
         :loading
-        parent-class-name="border rounded-[24px] py-[32px] px-[24px] w-[50%] m-auto relative group"
+        parent-class-name="border rounded-[24px] py-[32px] px-[24px] w-[50%] m-auto relative"
         v-else
     >
-      <button class="absolute top-2 left-2 opacity-0 group-hover:opacity-100  edit__btn transition-opacity duration-300 bg-blue-500 text-white px-4 py-2 rounded-lg">
-        Изменить фото
-      </button>
+<!--      <button class="absolute top-2 left-2 opacity-0 group-hover:opacity-100  edit__btn transition-opacity duration-300 bg-blue-500 text-white px-4 py-2 rounded-lg">-->
+<!--        Изменить фото-->
+<!--      </button>-->
       <img
           src="@/assets/images/bigMan.png"
-          class="w-full group-hover:filter group-hover:brightness-50 transition duration-300 rounded-lg"
+          class="w-full h-[550px] object-contain rounded-lg"
           alt="bigMan"
       />
     </AppOverlay>

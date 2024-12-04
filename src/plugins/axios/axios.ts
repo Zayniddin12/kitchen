@@ -1,10 +1,12 @@
 import axios, { AxiosError, AxiosInstance, AxiosResponse, InternalAxiosRequestConfig } from "axios";
 import { activeLocale } from "@/localization";
-import { getAccessToken } from "@/utils/token.manager";
-import { ElNotification } from "element-plus";
+import tokenManager from "@/utils/token.manager";
 import { useAuthStore } from "@/modules/Auth/auth.store";
 import { useCommonStore } from "@/stores/common.store";
-import { AxiosResponseDataType, ErrorType } from "@/plugins/axios/axios.types";
+import { ErrorType } from "@/plugins/axios/axios.types";
+import { generateRandomID } from "@/utils/helper";
+
+const id = generateRandomID();
 
 const axiosInstance: AxiosInstance = axios.create({
   baseURL: import.meta.env.VITE_BACKEND,
@@ -16,11 +18,23 @@ const axiosInstance: AxiosInstance = axios.create({
   },
 });
 
+// variables and functions
+let isAlreadyFetchingAccessToken = false;
+let subscribers = [];
+
+const onAccessTokenFetched = () => {
+  subscribers = subscribers.filter((callback) => callback());
+};
+
+const addSubscriber = (callback) => {
+  subscribers.push(callback);
+};
+
 axiosInstance.interceptors.request.use(
   async (config: InternalAxiosRequestConfig<any>) => {
-    const accessToken = getAccessToken();
+    const accessToken = tokenManager.getAccessToken();
 
-    if (accessToken) config.headers["Authorization"] = `Bearer ${accessToken}`;
+    if (accessToken && !config.headers.Authorization) config.headers["Authorization"] = `Bearer ${accessToken}`;
 
     return config;
   },
@@ -30,13 +44,13 @@ axiosInstance.interceptors.request.use(
 );
 
 axiosInstance.interceptors.response.use(
-  (response: AxiosResponse<any, any>): Promise<AxiosResponse | ErrorType> => {
+  async (response: AxiosResponse<any, any>): Promise<AxiosResponse | ErrorType> => {
     const data = response.data;
     const error = data.error;
 
     if (data.success) return Promise.resolve(response);
     else if (!data.success && error) {
-      useCommonStore().errorToast(error.message);
+      await useCommonStore().errorToast(error.message, "", `${id}1`);
       return Promise.reject(data);
     }
   },
@@ -44,12 +58,39 @@ axiosInstance.interceptors.response.use(
   async (error) => {
     const authStore = useAuthStore();
     const commonStore = useCommonStore();
-    const message = error?.message ?? error.response?.data?.error?.message ?? "";
 
-    if (error.status === 401) {
-      authStore.clear();
+    const response = error.response;
+    const message = response?.data?.error?.message ?? error?.message ?? "";
+    const originalConfig = error.config;
+
+    if (response && response.status === 401 && commonStore.activeLayout === "MainLayout") {
+      const refreshToken = tokenManager.getRefreshToken();
+
+      if (refreshToken) {
+        const retryOriginalRequest = new Promise((resolve) => {
+          addSubscriber(() => {
+            originalConfig.headers.Authorization = `Bearer ${tokenManager.getAccessToken()}`;
+            resolve(axiosInstance(originalConfig));
+          });
+        });
+
+
+        if (!isAlreadyFetchingAccessToken) {
+          isAlreadyFetchingAccessToken = true;
+          await authStore.refresh();
+          onAccessTokenFetched();
+          isAlreadyFetchingAccessToken = false;
+        }
+
+        return retryOriginalRequest;
+      }
+
+      if (!refreshToken || (isAlreadyFetchingAccessToken && error.config.url === "auth/refresh")) {
+        // await commonStore.errorToast(message, "", id);
+        await authStore.clear();
+      }
     } else {
-      commonStore.errorToast(message);
+      await commonStore.errorToast(message, "", `${id}error`);
     }
 
     return Promise.reject(error);

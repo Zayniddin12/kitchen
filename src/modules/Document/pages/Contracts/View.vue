@@ -9,7 +9,7 @@ import { useDocumentStore } from "@/modules/Document/document.store";
 import { useRoute } from "vue-router";
 import AppOverlay from "@/components/ui/app-overlay/AppOverlay.vue";
 import { DocumentProductType, DocumentType } from "@/modules/Document/document.types";
-import { formatNumber } from "@/utils/helper";
+import { formatDate2, formatNumber } from "@/utils/helper";
 
 const route = useRoute();
 
@@ -106,25 +106,22 @@ onMounted(() => {
       :loading="documentStore.documentLoading"
       parent-class-name="border rounded-[24px] p-6 mt-6 pb-8 min-h-[65vh]"
   >
-    <div class="grid grid-cols-2 gap-6">
-      <AppInput
-          :placeholder="documentStore.document?.number"
-          label-class="text-[#A8AAAE] text-xs font-medium"
-          label="№ контракта"
-          disabled
-      />
-      <AppInput
-          :placeholder="documentStore.document?.from_name"
-          label-class="text-[#A8AAAE] text-xs font-medium"
-          label="Поставщик"
-          disabled
-      />
+    <div class="grid grid-cols-2 gap-6 bg-gray-50 p-6 rounded-[16px]">
+      <div>
+        <span class="text-blue-500">№ контракта</span>
+        <p>{{ documentStore.document?.number ?? "—" }}</p>
+      </div>
+
+      <div>
+        <span class="text-blue-500">Поставщик</span>
+        <p>{{ documentStore.document?.from_name }}</p>
+      </div>
     </div>
 
     <el-table
         :data="documentStore.document?.products ?? []"
         stripe
-        class="custom-element-table custom-element-table--has-append"
+        class="custom-element-table custom-element-table--has-append mt-6"
     >
       <el-table-column
           prop="name"

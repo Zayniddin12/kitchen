@@ -50,7 +50,6 @@ export interface SearchUserDataType {
 }
 
 export interface UserCreateOrUpdateDataPrefixType {
-    position_id: number| "",
     phone: string,
     is_oneid_enabled: boolean,
 }
@@ -68,6 +67,8 @@ export interface UserCreateOrUpdateDataType extends UserCreateOrUpdateDataPrefix
     pass_valid_until: string,
     avatar?: string | File,
     pinfl: string,
+    position_id?: number| "",
+    management_id?: number | "",
     status?: StatusType | boolean
 
 }

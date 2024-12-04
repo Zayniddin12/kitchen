@@ -193,12 +193,17 @@ watch(() => route.name, () => {
                 />
               </div>
               <!--              {{ dataValue }}-->
+              <template v-if="route.name === 'reference-kitchen-type-view'">
+                <span class="text-base text-dark">{{dataValue.is_paid ? 'Продажи' : 'Бесплатная кухня'}}</span>
+              </template>
               <ElSwitch
+                v-else
                 v-model="dataValue.is_paid"
-                :active-text="dataValue.is_paid ? 'Продажи' : 'Меню'"
+                :active-text="dataValue.is_paid ? 'Продажи' : 'Бесплатная кухня'"
                 class="app-switch"
                 @change="changeStatus"
               />
+
 
               <ElSwitch
                 v-if="route.params.id && !route.query.type"

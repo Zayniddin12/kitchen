@@ -4,6 +4,7 @@ import ru from "@/localization/locale/ru.json";
 import { getItem, setItem } from "@/utils/localStorage";
 import { LanguageType, LOCALES } from "@/localization/localization.type";
 import { computed, reactive, ref, watch } from "vue";
+import {useCommonStore} from "@/stores/common.store";
 
 const localeKey = "language";
 
@@ -50,10 +51,11 @@ watch(activeLocale, (newLocale) => {
 
 export const changeLocale = (locale: LOCALES) => {
   if (isValidLocale(locale)) {
+    const commonStore = useCommonStore();
     activeLocale.value = locale;
-    // if (window.location.pathname !== '/login') {
-    //   window.location.reload();
-    // }
+    if (commonStore.activeLayout === "MainLayout") {
+      window.location.reload();
+    }
   }
 };
 

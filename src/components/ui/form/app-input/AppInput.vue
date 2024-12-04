@@ -16,7 +16,9 @@ const [model, modifiers] = defineModel<AppInputValueType>();
 const props = withDefaults(defineProps<AppInputPropsType>(), {
   type: "text",
   labelPosition: "top",
-  labelClass: ""
+  labelClass: "",
+  min: 0,
+  minLength: 0,
 });
 
 const updateModelValue = (value: any) => {
@@ -64,10 +66,6 @@ const computedMask = computed(() =>
     props.type === "tel" && !props.mask ? "## ###-##-##" : props.mask || ""
 );
 
-const inputMask = computed(() => {
-  return { mask: computedMask.value };
-});
-
 const change = (value: AppInputValueType) => {
   ignoreValidationError.value = !!validationErrors.value;
   emit("change", value);
@@ -82,6 +80,8 @@ watch(
       deep: true
     }
 );
+
+
 </script>
 
 <template>
@@ -115,7 +115,6 @@ watch(
         ...modifiers,
       }"
         :type
-        :formatter
         :parser
         :show-password
         v-maska="computedMask"

@@ -91,10 +91,15 @@ const fetchSearchUser = async () => {
     return;
   }
 
-  const newForm: SearchUserDataType = activeTab.value === TABS.PINFL ? { pinfl: form.pinfl } : {
-    ...form,
-    pinfl: undefined
-  };
+  const newForm:SearchUserDataType = {
+    birthday: form.birthday
+  }
+
+  if (activeTab.value === TABS.PINFL) {
+    newForm.pinfl = form.pinfl;
+  }else {
+    newForm.pass_number = form.pass_number;
+  }
 
   try {
     await userStore.fetchSearchUser(userStore.activeUserPage ? "users" : "employee", filterObjectValues(newForm));
@@ -159,8 +164,8 @@ onMounted(() => {
                 :max="14"
                 :mask="'#'.repeat(14)"
             />
-            <template v-else>
               <AppInput
+                v-else
                   v-model="form.pass_number"
                   prop="pass_number"
                   placeholder="Введите"
@@ -169,6 +174,8 @@ onMounted(() => {
                   required
                   :min="9"
                   :max="9"
+                  :maxlength="9"
+                  :minlength="9"
                   :mask="{
                     mask: 'AA#######',
                     tokens: {
@@ -179,16 +186,17 @@ onMounted(() => {
                     }
                   }"
               />
-              <AppDatePicker
-                  v-model="form.birthday"
-                  prop="birthday"
-                  label="Дата рождения"
-                  placeholder="дд.мм.гггг"
-                  label-class="text-[#A8AAAE] text-xs"
-                  format="DD.MM.YYYY"
-                  required
-              />
-            </template>
+            <AppDatePicker
+              v-model="form.birthday"
+              prop="birthday"
+              label="Дата рождения"
+              format="YYYY-MM-DD"
+              value-format="YYYY-MM-DD"
+              placeholder="дд.мм.гггг"
+              :disabled-date="time => Date.now()<time"
+              label-class="text-[#A8AAAE] text-xs"
+              required
+            />
           </TransitionGroup>
           <ElButton
               :loading="userStore.searchUserLoading"

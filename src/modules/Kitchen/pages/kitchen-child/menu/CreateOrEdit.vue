@@ -609,6 +609,7 @@ const addMeal = (parentIndex: number) => {
                     required
                   />
                 </div>
+
                 <ElSwitch
                   v-if="kitchenStore.activeMenuPart"
                   v-model="kitchenData.intermediateDate1"

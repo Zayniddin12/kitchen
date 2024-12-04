@@ -291,14 +291,12 @@ onMounted(() => {
               <AppDatePicker
                 v-model="kitchenPreparationsForm.from_date"
                 prop="from_date"
-                format="DD.MM.YYYY"
                 size="large"
                 @change="fetchKitchenPreparations"
               />
               <AppDatePicker
                 v-model="kitchenPreparationsForm.to_date"
                 prop="to_date"
-                format="DD.MM.YYYY"
                 size="large"
                 @change="fetchKitchenPreparations"
               />

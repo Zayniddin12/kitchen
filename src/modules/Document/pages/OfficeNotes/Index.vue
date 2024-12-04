@@ -1,6 +1,6 @@
 <script
-    setup
-    lang="ts"
+  setup
+  lang="ts"
 >
 import { onMounted, reactive, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
@@ -44,7 +44,7 @@ const form = reactive<DraftsParamsType>({
   subject: "",
   to_id: "",
   from_id: "",
-  doc_type: defaultDocType
+  doc_type: defaultDocType,
 });
 
 const validationErrors = ref<Record<string, any> | null>(null);
@@ -75,15 +75,15 @@ const { setBreadCrumb } = useBreadcrumb();
 const setBreadCrumbFn = () => {
   setBreadCrumb([
     {
-      label: "Документы"
+      label: "Документы",
     },
     {
-      label: "Служебные записки"
+      label: "Служебные записки",
     },
     {
       label: String(route.meta.breadcrumbItemTitle ?? ""),
-      isActionable: true
-    }
+      isActionable: true,
+    },
   ]);
 };
 
@@ -105,8 +105,8 @@ const fetchDrafts = async () => {
 
   try {
     await documentStore.fetchDrafts(
-        route.meta?.apiUrl ?? "",
-        filterObjectValues(form)
+      route.meta?.apiUrl ?? "",
+      filterObjectValues(form),
     );
     validationErrors.value = null;
   } catch (error: any) {
@@ -128,16 +128,16 @@ interface Tab {
 const tabItems = ref<Tab[]>([
   {
     title: "Свободный",
-    value: DOCTYPES.SIMPLEDEMAND
+    value: DOCTYPES.SIMPLEDEMAND,
   },
   {
     title: "Месячный",
-    value: DOCTYPES.MONTHLYDEMAND
+    value: DOCTYPES.MONTHLYDEMAND,
   },
   {
     title: "Годовой",
-    value: DOCTYPES.YEARLYDEMAND
-  }
+    value: DOCTYPES.YEARLYDEMAND,
+  },
 ]);
 
 const changeDocType = async () => {
@@ -146,7 +146,7 @@ const changeDocType = async () => {
   const isValidDocType = [
     DOCTYPES.SIMPLEDEMAND,
     DOCTYPES.MONTHLYDEMAND,
-    DOCTYPES.YEARLYDEMAND
+    DOCTYPES.YEARLYDEMAND,
   ].includes(doc_type as DOCTYPES);
 
   form.doc_type = isValidDocType ? (doc_type as DOCTYPES) : defaultDocType;
@@ -154,22 +154,26 @@ const changeDocType = async () => {
 
 
 watch(
-    () => route.query,
-    () => {
-      fetchDrafts();
-      changeDocType();
-    },
-    { immediate: true }
+  () => route.query,
+  () => {
+    fetchDrafts();
+    changeDocType();
+  },
+  { immediate: true },
 );
 
+watch(() => documentStore.documentsIsRefresh, (newValue) => {
+  if (newValue) fetchDrafts();
+});
+
 watch(
-    () => route.name,
-    () => {
-      setBreadCrumbFn();
-      isOpenFilter.value = false;
-      validationErrors.value = null;
-      if (v$.value) v$.value.clear();
-    }, { immediate: true }
+  () => route.name,
+  () => {
+    setBreadCrumbFn();
+    isOpenFilter.value = false;
+    validationErrors.value = null;
+    if (v$.value) v$.value.clear();
+  }, { immediate: true },
 );
 
 const changePage = (value: number) => {
@@ -201,37 +205,37 @@ const tableRowClassName = ({ row }: { row: DraftType }) => {
     <div class="flex justify-between items-end">
       <div class="flex flex-col gap-y-6">
         <h1
-            v-if="route.meta.title"
-            class="m-0 font-semibold text-[32px]"
+          v-if="route.meta.title"
+          class="m-0 font-semibold text-[32px]"
         >
           {{ route.meta.title }}
         </h1>
         <div
-            v-if="route.meta?.hasTabs"
-            class="app-tabs !inline-flex"
+          v-if="route.meta?.hasTabs"
+          class="app-tabs !inline-flex"
         >
           <RouterLink
-              v-for="item in tabItems"
-              :key="item.value"
-              :class="[
+            v-for="item in tabItems"
+            :key="item.value"
+            :class="[
               'app-tab',
               { 'app-tab--active': form.doc_type === item.value },
             ]"
-              :to="{ query: { ...route.query, ...{ doc_type: item.value } } }"
+            :to="{ query: { ...route.query, ...{ doc_type: item.value } } }"
           >
             {{ item.title }}
           </RouterLink>
         </div>
       </div>
       <button
-          class="custom-filter-btn font-medium"
-          :class="isOpenFilter ? '!bg-blue !text-white' : ''"
-          @click="isOpenFilter = !isOpenFilter"
+        class="custom-filter-btn font-medium"
+        :class="isOpenFilter ? '!bg-blue !text-white' : ''"
+        @click="isOpenFilter = !isOpenFilter"
       >
         <img
-            :src="isOpenFilter ? white : filter"
-            alt="filter"
-            class="mr-[12px]"
+          :src="isOpenFilter ? white : filter"
+          alt="filter"
+          class="mr-[12px]"
         />
         Фильтр
       </button>
@@ -239,62 +243,62 @@ const tableRowClassName = ({ row }: { row: DraftType }) => {
     <CollapseFilter v-model="isOpenFilter">
       <template #body>
         <AppForm
-            :value="form"
-            :validation-errors
-            @validation="setValidation"
-            class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-1"
+          :value="form"
+          :validation-errors
+          @validation="setValidation"
+          class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-1"
         >
           <AppDatePicker
-              v-model="form.from_date"
-              prop="from_date"
-              placeholder="С этой даты"
-              label="С этой даты"
-              label-class="text-[#7F7D83]"
+            v-model="form.from_date"
+            prop="from_date"
+            placeholder="С этой даты"
+            label="С этой даты"
+            label-class="text-[#7F7D83]"
           />
           <AppDatePicker
-              v-model="form.to_date"
-              prop="to_date"
-              placeholder="По эту дату"
-              label="По эту дату"
-              label-class="text-[#7F7D83]"
+            v-model="form.to_date"
+            prop="to_date"
+            placeholder="По эту дату"
+            label="По эту дату"
+            label-class="text-[#7F7D83]"
           />
 
           <AppInput
-              v-model="form.number"
-              prop="number"
-              placeholder="Номер документа"
-              label="Номер документа"
-              label-class="text-[#7F7D83]"
+            v-model="form.number"
+            prop="number"
+            placeholder="Номер документа"
+            label="Номер документа"
+            label-class="text-[#7F7D83]"
           />
           <AppInput
-              v-model="form.subject"
-              prop="subject"
-              placeholder="Доставка картофеля"
-              label="Доставка картофеля"
-              label-class="text-[#7F7D83]"
+            v-model="form.subject"
+            prop="subject"
+            placeholder="Доставка картофеля"
+            label="Доставка картофеля"
+            label-class="text-[#7F7D83]"
           />
           <AppSelect
-              v-model="form.to_id"
-              prop="to_id"
-              :items="settingsStore.respondents"
-              item-label="name"
-              item-value="id"
-              :loading="settingsStore.respondentsLoading"
-              class="col-span-2"
-              placeholder="Кому"
-              label="Кому"
-              label-class="text-[#7F7D83]"
+            v-model="form.to_id"
+            prop="to_id"
+            :items="settingsStore.respondents"
+            item-label="name"
+            item-value="id"
+            :loading="settingsStore.respondentsLoading"
+            class="col-span-2"
+            placeholder="Кому"
+            label="Кому"
+            label-class="text-[#7F7D83]"
           />
           <AppSelect
-              v-model="form.from_id"
-              :items="settingsStore.respondents"
-              item-label="name"
-              item-value="id"
-              :loading="settingsStore.respondentsLoading"
-              class="col-span-2"
-              placeholder="Отправитель"
-              label="Отправитель"
-              label-class="text-[#7F7D83]"
+            v-model="form.from_id"
+            :items="settingsStore.respondents"
+            item-label="name"
+            item-value="id"
+            :loading="settingsStore.respondentsLoading"
+            class="col-span-2"
+            placeholder="Отправитель"
+            label="Отправитель"
+            label-class="text-[#7F7D83]"
           />
         </AppForm>
 
@@ -304,17 +308,17 @@ const tableRowClassName = ({ row }: { row: DraftType }) => {
           </div>
           <div class="flex items-center">
             <button
-                @click="clearForm"
-                class="custom-reset-btn"
+              @click="clearForm"
+              class="custom-reset-btn"
             >
               Сбросить
             </button>
             <ElButton
-                :loading="documentStore.draftsLoading"
-                type="primary"
-                size="large"
-                class="custom-apply-btn ml-4"
-                @click="filterForm"
+              :loading="documentStore.draftsLoading"
+              type="primary"
+              size="large"
+              class="custom-apply-btn ml-4"
+              @click="filterForm"
             >
               Применить
             </ElButton>
@@ -323,59 +327,59 @@ const tableRowClassName = ({ row }: { row: DraftType }) => {
       </template>
     </CollapseFilter>
     <el-table
-        v-loading="documentStore.draftsLoading"
-        :data="documentStore.draftsLoading ? [] : documentStore.drafts?.documents"
-        class="custom-element-table"
-        stripe
-        :highlight-current-row="!!route.meta.permissionView"
-        @current-change="tableCurrentChange"
+      v-loading="documentStore.draftsLoading"
+      :data="documentStore.draftsLoading ? [] : documentStore.drafts?.documents"
+      class="custom-element-table"
+      stripe
+      :highlight-current-row="!!route.meta.permissionView"
+      @current-change="tableCurrentChange"
     >
       <el-table-column
-          prop="num"
-          label="№"
-          width="80"
+        prop="num"
+        label="№"
+        width="80"
       >
         <template #default="{ $index }">
           {{
             setTableColumnIndex(
-                $index,
-                form.page as number,
-                documentStore.drafts?.paginator.per_page ?? 0
+              $index,
+              form.page as number,
+              documentStore.drafts?.paginator.per_page ?? 0,
             )
           }}
         </template>
       </el-table-column>
       <el-table-column
-          prop="date"
-          label="Дата"
+        prop="date"
+        label="Дата"
       />
       <el-table-column
-          prop="number"
-          label="№ документа"
+        prop="number"
+        label="№ документа"
       >
         <template #default="{ row }: { row: DraftType }">
           {{ row.number ?? "-" }}
         </template>
       </el-table-column>
       <el-table-column
-          prop="subject"
-          label="Тема"
+        prop="subject"
+        label="Тема"
       >
         <template #default="{ row }: { row: DraftType }">
           {{ row.subject ?? "-" }}
         </template>
       </el-table-column>
       <el-table-column
-          prop="from_name"
-          label="Отправитель"
+        prop="from_name"
+        label="Отправитель"
       >
         <template #default="{ row }: { row: DraftType }">
           {{ row.from_name || "-" }}
         </template>
       </el-table-column>
       <el-table-column
-          prop="to_name"
-          label="Получатель"
+        prop="to_name"
+        label="Получатель"
       >
         <template #default="{ row }: { row: DraftType }">
           {{ row.to_name || "-" }}
@@ -385,36 +389,36 @@ const tableRowClassName = ({ row }: { row: DraftType }) => {
         <template #default="{ row }: { row: DraftType }">
           <div class="flex items-center gap-x-2.5">
             <button
-                v-if="route.meta.permissionEdit"
-                class="action-btn ml-[20px]"
-                @click="editModalHandler(row)"
+              v-if="route.meta.permissionEdit"
+              class="action-btn ml-[20px]"
+              @click="editModalHandler(row)"
             >
               <img
-                  src="@/assets/images/icons/edit.svg"
-                  alt="edit"
+                src="@/assets/images/icons/edit.svg"
+                alt="edit"
               />
             </button>
             <RouterLink
-                v-if="route.meta.permissionView"
-                class="action-btn"
-                :to="{name: `${route.name as string}-id`, params: {id:row.id}}"
+              v-if="route.meta.permissionView"
+              class="action-btn"
+              :to="{name: `${route.name as string}-id`, params: {id:row.id}}"
             >
               <img
-                  src="@/assets/images/eye.svg"
-                  alt="eye"
+                src="@/assets/images/eye.svg"
+                alt="eye"
               />
             </RouterLink>
             <ElButton
-                :loading="documentStore.pdfLoading"
-                plain
-                @click.stop="documentStore.getPdf(row.id)"
-                class="action-btn"
-                text
-                bg
+              :loading="documentStore.pdfLoading"
+              plain
+              @click.stop="documentStore.getPdf(row.id)"
+              class="action-btn"
+              text
+              bg
             >
               <img
-                  src="../../../../assets/images/download.svg"
-                  alt="download"
+                src="../../../../assets/images/download.svg"
+                alt="download"
               />
             </ElButton>
           </div>
@@ -423,25 +427,25 @@ const tableRowClassName = ({ row }: { row: DraftType }) => {
     </el-table>
 
     <AppPagination
-        v-if="documentStore.drafts"
-        v-model="form.page"
-        :pagination="documentStore.drafts.paginator"
-        class="mt-6"
-        @current-change="changePage"
+      v-if="documentStore.drafts"
+      v-model="form.page"
+      :pagination="documentStore.drafts.paginator"
+      class="mt-6"
+      @current-change="changePage"
     />
 
     <template v-if="route.meta?.permissionEdit">
       <MemoModal
-          v-if="route.meta?.doc_type_id === 1"
-          v-model="editModal"
-          v-model:document="document"
-          title="Редактировать служебную записку"
+        v-if="route.meta?.doc_type_id === 1"
+        v-model="editModal"
+        v-model:document="document"
+        title="Редактировать служебную записку"
       />
       <FreeModal
-          v-else-if="route.meta?.doc_type_id === 2"
-          v-model="editModal"
-          v-model:document="document"
-          title="Редактировать свободный запрос"
+        v-else-if="route.meta?.doc_type_id === 2"
+        v-model="editModal"
+        v-model:document="document"
+        title="Редактировать свободный запрос"
       />
     </template>
   </div>

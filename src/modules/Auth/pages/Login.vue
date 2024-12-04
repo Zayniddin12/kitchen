@@ -15,6 +15,7 @@ import { AuthLoginDataType } from "@/modules/Auth/auth.types";
 import { useAuthStore } from "@/modules/Auth/auth.store";
 import { useCommonStore } from "@/stores/common.store";
 import { setSessionItem } from "@/utils/sessionStorage";
+import { loginOneId } from "@/utils/helper";
 
 const { t } = useI18n();
 const router = useRouter();
@@ -36,11 +37,7 @@ const onSubmit = async () => {
   if (!v$.value) return;
 
   if (!(await v$.value.validate())) {
-    ElNotification({
-      title: "Error",
-      message: "Ошибка",
-      type: "error",
-    });
+    commonStore.errorToast("Validation Error")
   } else {
     const newForm = { ...form };
     newForm.phone = `998${newForm.phone.replace(/\D/g, "")}`;
@@ -98,6 +95,7 @@ const onSubmit = async () => {
           required
           prop="phone"
           trigger="change"
+          @keyup.enter="onSubmit"
         />
         <app-input
           @keyup.enter="onSubmit"
@@ -120,7 +118,6 @@ const onSubmit = async () => {
         </router-link>
       </AppForm>
 
-      <div class="mt-6">
         <ElButton
           :loading="authStore.loginLoading"
           @click="onSubmit"
@@ -129,8 +126,6 @@ const onSubmit = async () => {
         >
           Войти
         </ElButton>
-      </div>
-
       <div class="flex items-center justify-between text-[#7F7D83] text-sm mt-4">
         <img
           src="@/assets/images/line.svg"
@@ -145,7 +140,7 @@ const onSubmit = async () => {
         />
       </div>
 
-      <button class="w-full bg-[#4825C2] py-2.5 flex items-center justify-center text-white rounded-lg mt-4">
+      <button  @click="loginOneId" class="w-full bg-[#4825C2] py-2.5 flex items-center justify-center text-white rounded-lg mt-4">
         ONE
         <img
           class="ml-2"
