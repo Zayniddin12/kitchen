@@ -15,7 +15,7 @@ const model = defineModel<AppDatePickerValueType>();
 
 const props = withDefaults(defineProps<AppDatePickerPropsType>(), {
   labelPosition: "top",
-  placeholder: "Выбирать",
+  placeholder: "Выберите",
   format: "DD.MM.YYYY",
   valueFormat: "DD.MM.YYYY",
   type: "date",

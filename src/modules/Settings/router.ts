@@ -381,7 +381,7 @@ export default [
         }
     },
     {
-        path: "/reference-type-product-edit/:id",
+        path: "/reference-type-product-edit/:id(\\d+)",
         name: "reference-type-product-edit-id",
         component: () =>
             import("@/modules/Settings/components/Reference/Product/TypeProduct/AddEditTypeDoc.vue"),
@@ -391,10 +391,10 @@ export default [
         }
     },
     {
-        path: "/reference-type-product-view/:id",
+        path: "/reference-type-product-view/:id(\\d+)",
         name: "reference-type-product-view-id",
         component: () =>
-            import("@/modules/Settings/components/Reference/Product/TypeProduct/AddEditTypeDoc.vue"),
+            import("@/modules/Settings/components/Reference/Product/TypeProduct/TypeProductShow.vue"),
         meta: {
             title: "Просмотр деталей типа продукта",
             breadcrumbItemTitle: "Просмотр"

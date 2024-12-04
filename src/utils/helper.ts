@@ -52,7 +52,7 @@ export const phoneFormatter = (phoneNumberString: string) => {
 
 export const formatPhone = (phone?: string): string => {
   if (phone && phone.startsWith("998") && phone.length === 12) {
-    return phone.slice(3);
+    return phone.slice(3).replace(/(\d{2})(\d{3})(\d{2})(\d{2})/, "$1 $2-$3-$4");
   }
   return "";
 };
@@ -86,7 +86,7 @@ export const generateRandomID = (): string => {
 };
 
 export const filterObjectValues = (
-  obj: Record<string, any>
+  obj: Record<string, any>,
 ): Record<string, any> => {
   return Object.fromEntries(Object.entries(obj).filter(([_, value]) => value));
 };
@@ -122,7 +122,7 @@ export const getStatusText = (status: boolean | StatusType): StatusTextType => {
 
 export const deepEqual = (
   obj1: Record<string, any>,
-  obj2: Record<string, any>
+  obj2: Record<string, any>,
 ) => {
   if (obj1 === obj2) return true;
 
@@ -167,7 +167,7 @@ export const formatDate2 = (date: Date) => {
 export const setTableColumnIndex = (
   index: number,
   page: number | null,
-  per_page: number
+  per_page: number,
 ) => {
   if (!page) page = 1;
   return index + 1 + (page - 1) * per_page;
@@ -175,7 +175,7 @@ export const setTableColumnIndex = (
 
 export const getRouteQuery = (
   query: LocationQuery | Record<string, string>,
-  items: Record<string, "number" | "string" | "boolean">
+  items: Record<string, "number" | "string" | "boolean">,
 ): Record<string, any> => {
   const result: Record<string, any> = {};
 
@@ -211,9 +211,9 @@ export const getRouteQuery = (
   return result;
 };
 
-export const loginOneId = () =>  {
+export const loginOneId = () => {
   let oneIdAuthUrl = import.meta.env.VITE_ONE_ID_AUTH;
-  const baseUrl = window.location.protocol === 'http:' ? 'https://wms.ngmkfond.uz' : window.location.origin;
-  oneIdAuthUrl = oneIdAuthUrl.replace('{baseUrl}', `${baseUrl}/verify-oneid`);
+  const baseUrl = window.location.protocol === "http:" ? "https://wms.ngmkfond.uz" : window.location.origin;
+  oneIdAuthUrl = oneIdAuthUrl.replace("{baseUrl}", `${baseUrl}/verify-oneid`);
   window.location.href = oneIdAuthUrl;
-}
+};

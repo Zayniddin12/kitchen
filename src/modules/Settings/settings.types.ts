@@ -14,6 +14,10 @@ export interface RespondentType {
     model_type: string
 }
 
+export interface KitchenWarehouseListParamsType{
+    is_paid?: 0 | 1
+}
+
 export interface KitchenWarehouseListItemType {
     id: number,
     name: string

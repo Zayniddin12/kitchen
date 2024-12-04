@@ -2,73 +2,88 @@ import { GenderType, NameType, StatusType } from "@/types/common.type";
 import { PaginationParamsType, PaginationType } from "@/types/pagination.type";
 
 export interface UserType {
-    id: number,
-    firstname: string,
-    lastname: string,
-    patronymic: null | string,
-    avatar: null | string,
-    position: string,
-    phone: string,
-    is_oneid_enabled: boolean,
-    work_place: string,
-    work_hours: number | null,
-    status: StatusType
+  id: number,
+  firstname: string,
+  lastname: string,
+  patronymic: null | string,
+  avatar: null | string,
+  position: string,
+  phone: string,
+  is_oneid_enabled: boolean,
+  work_place: string,
+  work_hours: number | null,
+  status: StatusType
 }
 
 export interface UserShowType extends UserType {
-    birthday: null | string,
-    nationality: null | string,
-    gender: GenderType,
-    pass_number: null | string,
-    pass_given_by: null | string,
-    pass_given_at: null | string,
-    pass_valid_until: null | string,
-    pinfl: null | string,
-    position_id: number,
-    dining_locations: null | string,
-    responsible_id: null | number,
-    responsible_name: string,
-    responsible_type: string,
+  birthday: null | string,
+  nationality: null | string,
+  gender: GenderType,
+  pass_number: null | string,
+  pass_given_by: null | string,
+  pass_given_at: null | string,
+  pass_valid_until: null | string,
+  pinfl: null | string,
+  position_id: number,
+  dining_locations: null | string,
+  responsible_id: null | number,
+  responsible_name: string,
+  responsible_type: string,
 }
 
 export interface UsersType {
-    users: UserType[];
-    pagination: PaginationType;
+  users: UserType[];
+  pagination: PaginationType;
 }
 
 export interface UsersParamsType extends PaginationParamsType {
-    search?: string,
-    status?: StatusType,
+  search?: string,
+  status?: StatusType,
 }
 
 export type UserApiUrlType = "users" | "employee";
 
 export interface SearchUserDataType {
-    pinfl?: string,
-    pass_number?: string,
-    birthday?: string,
+  pinfl?: string,
+  pass_number?: string,
+  birthday?: string,
 }
 
 export interface UserCreateOrUpdateDataPrefixType {
-    phone: string,
-    is_oneid_enabled: boolean,
+  phone: string,
+  is_oneid_enabled: boolean,
+}
+
+export interface UserCreateDiningLocationsChildType {
+  kitchen_id: number | "",
+}
+
+export interface UserCreateDiningLocationsTemporaryType extends UserCreateDiningLocationsChildType {
+  start_date: string,
+  end_date: string,
+}
+
+export interface UserCreateDiningLocationsType {
+  permanent: UserCreateDiningLocationsChildType,
+  temporary: UserCreateDiningLocationsTemporaryType
 }
 
 export interface UserCreateOrUpdateDataType extends UserCreateOrUpdateDataPrefixType {
-    firstname: string,
-    lastname: string,
-    patronymic: string,
-    birthday: string,
-    nationality: string,
-    gender: string,
-    pass_number: string,
-    pass_given_by: string,
-    pass_given_at: string,
-    pass_valid_until: string,
-    avatar?: string | File,
-    pinfl: string,
-    position_id?: number| "",
-    management_id?: number | "",
-    status?: StatusType | boolean
+  firstname: string,
+  lastname: string,
+  patronymic: string,
+  birthday: string,
+  nationality: string,
+  gender: string,
+  pass_number: string,
+  pass_given_by: string,
+  pass_given_at: string,
+  pass_valid_until: string,
+  avatar?: string | File,
+  pinfl: string,
+  position_id?: number | "",
+  management_id?: number | "",
+  dining_locations?: UserCreateDiningLocationsType,
+  status?: StatusType | boolean
 
 }

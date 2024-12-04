@@ -10,7 +10,7 @@ import type {
 } from "@/modules/Settings/components/Reference/MainBases/base-warehouses.type";
 import {
   DocTypeListType, KitchenTypesListItemType, KitchenTypesListParamsType,
-  KitchenWarehouseListItemType, ManagementBasesType,
+  KitchenWarehouseListItemType, KitchenWarehouseListParamsType,
   RespondentParamsType,
   RespondentType,
 } from "@/modules/Settings/settings.types";
@@ -303,8 +303,8 @@ export const useSettingsStore = defineStore("settingsStore", () => {
   const GET_UNITS = async (params?: UnitParamsType) => {
     const { data } = await $axios.get("/measurement-units", { params });
     units.value = data.data;
-    if (params?.product_type_id){
-      unitsData.value.set(params.product_type_id, data.data.units)
+    if (params?.product_type_id) {
+      unitsData.value.set(params.product_type_id, data.data.units);
     }
   };
 
@@ -469,11 +469,11 @@ export const useSettingsStore = defineStore("settingsStore", () => {
   const kitchenWarehouseList = ref<KitchenWarehouseListItemType[]>([]);
   const kitchenWarehouseListLoading = ref(false);
 
-  const fetchKitchenWarehouseList = async () => {
+  const fetchKitchenWarehouseList = async (params: KitchenWarehouseListParamsType) => {
     kitchenWarehouseListLoading.value = true;
 
     try {
-      const { data }: { data: Record<string, any> } = await $axios.get("kitchen-warehouses/all");
+      const { data }: { data: Record<string, any> } = await $axios.get("kitchen-warehouses/all", { params });
       kitchenWarehouseList.value = data.data.kitchen_warehouses as KitchenWarehouseListItemType[];
     } finally {
       kitchenWarehouseListLoading.value = false;
