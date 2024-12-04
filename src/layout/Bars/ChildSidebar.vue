@@ -45,7 +45,7 @@ watch(() => route, () => {
 }, { immediate: true, deep: true });
 
 const activeChildMenu = (item: SidebarItem) => {
-  currentItem.value = item.route
+  currentItem.value = item.route;
   if (item.route) {
     router.push(item.route);
   }
@@ -159,6 +159,10 @@ const activeChildMenu = (item: SidebarItem) => {
     width: 100%;
     align-content: center;
     justify-content: space-between;
+  }
+
+  .el-collapse-item__content:last-child {
+    padding-bottom: 0;
   }
 
   .el-collapse-item__wrap {

@@ -75,12 +75,13 @@ const setBreadCrumbFn = () => {
     },
     {
       label: kitchenStore.part.kitchen_vid as string,
-      isActionable: true,
+      isActionable: false,
       to: { name: "KitchenShow" },
     },
     {
       label: kitchenStore.part.kitchen_type as string,
-      isActionable: true,
+      isActionable: false,
+      to: { name: "KitchenShowChildIndex" },
     },
     {
       label: "Меню",
@@ -490,8 +491,10 @@ watch(
   },
   { immediate: true },
 );
-
+const fullscreenLoading = ref(false);
 watch(() => route.params, async () => {
+  fullscreenLoading.value = true;
+
   await kitchenStore.GET_KITCHEN_VID({
     management_id: route.params.department_id as string,
     is_paid: route.params.part_name == "free-kitchen" ? 0 : route.params.part_name == "sales" ? 1 : null,
@@ -502,12 +505,11 @@ watch(() => route.params, async () => {
     kitchen_type_id: route.params.kitchen_id as string,
   });
 
-  fullscreenLoading.value = true;
-
-  await kitchenStore.GET_CURRENT_MENU_LIST(route.params.child_id as number);
-  await kitchenStore.GET_WEEKLY_MENU_LIST(route.params.child_id as number);
+  await kitchenStore.GET_CURRENT_MENU_LIST(route.params.child_id as string);
+  await kitchenStore.GET_WEEKLY_MENU_LIST(route.params.child_id as string);
 
   fullscreenLoading.value = false;
+
   setBreadCrumbFn();
 }, { immediate: true });
 
@@ -529,7 +531,7 @@ const scheduledDates = computed(() => {
   }
   return formattedDates;
 });
-const fullscreenLoading = ref(false);
+
 
 watch(scheduledDates, (newValue) => {
   if (newValue.length > 0) {
@@ -663,7 +665,7 @@ const mealTextFilter = (index: string): string => {
             v-if="activeTab === TABS.CURRENT"
             class="inner"
           >
-            {{ kitchenStore.menuWeekly.elements }}
+            <!--            {{ kitchenStore.menuWeekly.elements }}-->
             <div
 
               class="flex flex-col gap-y-8"
@@ -689,15 +691,17 @@ const mealTextFilter = (index: string): string => {
                           :data-src="ClockIcon"
                           class="size-5"
                         />
-                        <span>{{ n.start_time.slice(0, 5) }}-{{ n.end_time.slice(0, 5) }}</span>
+                        <span v-if="n.start_time && n.end_time">{{ n.start_time.slice(0, 5) }}-{{ n.end_time.slice(0, 5)
+                          }}</span>
                       </div>
-                      <span>{{ mealTextFilter(n.period.toString()) }}</span>
+                      <span v-if="n.period">{{ mealTextFilter(n.period.toString()) }}</span>
                     </div>
                   </div>
-                  <h3 class="font-semibold text-lg text-dark">{{ n.price.toLocaleString() }} UZS</h3>
+                  <h3 class="font-semibold text-lg text-dark">{{ n.price && n.price.toLocaleString() }} UZS</h3>
                 </div>
                 <ElTable
                   :data="n.product"
+                  empty-text="Нет данных"
                   stripe
                   class="custom-element-table custom-element-table-normal mt-6"
                 >
@@ -713,11 +717,11 @@ const mealTextFilter = (index: string): string => {
                 >
                   <div class="flex flex-col gap-y-2 text-sm">
                     <p>
-                      <span class="text-cool-gray">Всего порций:</span>
+                      <span class="text-cool-gray mr-2">Всего порций:</span>
                       <strong class="font-semibold text-dark">{{ n.amount }}</strong>
                     </p>
                     <p>
-                      <span class="text-cool-gray">Сумма:</span>
+                      <span class="text-cool-gray mr-2">Сумма:</span>
                       <strong class="font-semibold text-dark">
                         {{ n.total_price && n.total_price.toLocaleString() }} UZS
                       </strong>
@@ -725,23 +729,36 @@ const mealTextFilter = (index: string): string => {
                   </div>
                   <div class="flex flex-col gap-y-2 text-sm">
                     <p>
-                      <span class="text-cool-gray">Выданние:</span>
+                      <span class="text-cool-gray mr-2">Выданние:</span>
                       <strong class="font-semibold text-dark">{{ n.amount_sold && n.amount_sold }}</strong>
                     </p>
                     <p>
-                      <span class="text-cool-gray">Сумма:</span>
+                      <span class="text-cool-gray mr-2">Сумма:</span>
                       <strong class="font-semibold text-dark">
                         {{ n.price_sold && n.price_sold.toLocaleString() }} UZS
                       </strong>
                     </p>
                   </div>
+
                   <div class="flex flex-col gap-y-2 text-sm">
                     <p>
-                      <span class="text-cool-gray">Остатки порций:</span>
-                      <strong class="font-semibold text-[#EA5455]">{{ n.amount_left && n.amount_left}}</strong>
+                      <span class="text-cool-gray mr-2">Проданние:</span>
+                      <strong class="font-semibold text-dark">{{ }}</strong>
                     </p>
                     <p>
-                      <span class="text-cool-gray">Сумма:</span>
+                      <span class="text-cool-gray mr-2">Сумма:</span>
+                      <strong class="font-semibold text-dark">
+                        <!--                        {{ n.price_sold && n.price_sold.toLocaleString() }} UZS-->
+                      </strong>
+                    </p>
+                  </div>
+                  <div class="flex flex-col gap-y-2 text-sm">
+                    <p>
+                      <span class="text-cool-gray mr-2">Остатки порций:</span>
+                      <strong class="font-semibold text-[#EA5455]">{{ n.amount_left && n.amount_left }}</strong>
+                    </p>
+                    <p>
+                      <span class="text-cool-gray mr-2">Сумма:</span>
                       <strong class="font-semibold text-dark">
                         {{ n.price_left && n.price_left.toLocaleString() }} UZS
                       </strong>
@@ -806,12 +823,12 @@ const mealTextFilter = (index: string): string => {
                       sortable
                     />
                     <ElTableColumn
-                      prop="date"
-                      label="Дата"
+                      prop="price"
+                      label="Сумма"
                       sortable
                     >
                       <template #default="{row, $index}">
-                        <span>{{ activeDate }}</span>
+                        <span>{{ row.price && row.price.toLocaleString() }} сум</span>
                       </template>
                     </ElTableColumn>
                     <!--                    <ElTableColumn-->

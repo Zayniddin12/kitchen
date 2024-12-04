@@ -118,7 +118,8 @@ export const useWarehouseBasesStore = defineStore("warehouseBasesStore", () => {
         return managementBases.value.map(el => {
             const menu: Record<string, any> = {
                 id: el.id,
-                title: el.name
+                title: el.name,
+                icon: "building-warehouse",
             };
             if (el.bases.length) {
                 menu.children = el.bases.map(base => {

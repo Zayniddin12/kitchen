@@ -55,6 +55,7 @@ interface KitchenType {
 export const useKitchenStore = defineStore("kitchenStore", () => {
   const kitchenVid = ref<KitchenVid[] | []>([]);
   const kitchenType = ref<KitchenType[] | []>([]);
+  const mealsList = ref({});
   const settingsStore = useSettingsStore();
 
   const departments = computed<DepartmentType[]>(() => {
@@ -81,8 +82,48 @@ export const useKitchenStore = defineStore("kitchenStore", () => {
     });
   });
 
+  const menuItem = ref({});
+  const menuElement = ref({});
   const menuToday = ref({});
   const menuWeekly = ref({});
+
+  // GET MENU ITEM
+  const GET_MENU_ITEM = async (kitchen_id: any) => {
+    const { data } = await $axios.get(`/menus/${kitchen_id}`);
+
+    menuItem.value = data.data;
+  };
+
+  const UPDATE_MENU = async (kitchen_id: any, data: any) => {
+    return await $axios.put(`/menus/${kitchen_id}`, data);
+  };
+
+  const UPDATE_MENU_ELEMENT = async (menu_id: any, data: any) => {
+    return await $axios.put(`/kitchen-sales/menu/${menu_id}/update-element`, data);
+  };
+
+  const GET_ELEMENT_LIST = async (kitchen_id: any) => {
+    const { data } = await $axios.get(`/kitchen-sales/${kitchen_id}/menu-edit`);
+
+    menuElement.value = data.data;
+  };
+  // GET MENU ITEM
+
+  // MEALS ORDER
+  const CREATE_ORDER = async (payload: any) => {
+    const { data } = await $axios.post("/kitchen-sales/order", payload);
+
+    return data;
+  };
+
+  const GET_MEALS_LIST = async (params: any) => {
+    const { data } = await $axios.get("/meals", {
+      params,
+    });
+
+    mealsList.value = data.data;
+  };
+  // MEALS ORDER
 
   // MEALS CREATE
   const CREATE_MEALS = async (payload: any) => {
@@ -222,8 +263,17 @@ export const useKitchenStore = defineStore("kitchenStore", () => {
     };
   };
   return {
+    UPDATE_MENU_ELEMENT,
+    UPDATE_MENU,
+    menuElement,
+    GET_ELEMENT_LIST,
+    menuItem,
+    GET_MENU_ITEM,
+    mealsList,
+    GET_MEALS_LIST,
     menuToday,
     menuWeekly,
+    CREATE_ORDER,
     CREATE_MEALS,
     GET_RATION_LIST_IN_MENU,
     GET_CURRENT_MENU_LIST,

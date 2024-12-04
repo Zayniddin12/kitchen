@@ -3,7 +3,7 @@
   lang="ts"
 >
 
-import { computed, watchEffect } from "vue";
+import { computed, watch, watchEffect } from "vue";
 import DishesImg from "@/assets/images/kitchen/test/dishes.png";
 import { useRoute } from "vue-router";
 import { useKitchenStore } from "@/modules/Kitchen/kitchen.store";
@@ -88,6 +88,8 @@ const categories = computed(() => [
 
 const setBreadCrumbFn = () => {
   kitchenStore.fetchPart(+route.params.department_id, route.params.part_name as string);
+  kitchenStore.fetchPart2(+route.params.kitchen_id);
+  kitchenStore.fetchPart3(+route.params.child_id);
 
   if (!kitchenStore.part) return;
 
@@ -96,18 +98,20 @@ const setBreadCrumbFn = () => {
       label: "Кухня",
     },
     {
-      label: kitchenStore.part.name,
+      label: kitchenStore.part.title,
     },
     {
       label: kitchenStore.part.department_name,
       to: { name: "KitchenIndex" },
     },
     {
-      label: "Лагерь",
-      to: { name: "KitchenShowIndex" },
+      label: kitchenStore.part.kitchen_vid as string,
+      isActionable: false,
+      to: { name: "KitchenShow" },
     },
     {
-      label: "Паҳлавон",
+      label: kitchenStore.part.kitchen_type as string,
+      isActionable: false,
       to: { name: "KitchenShowChildIndex" },
     },
     {
@@ -121,12 +125,29 @@ watchEffect(() => {
   setBreadCrumbFn();
 });
 
+watch(() => route.params, async () => {
+  await kitchenStore.GET_KITCHEN_VID({
+    management_id: route.params.department_id as string,
+    is_paid: route.params.part_name == "free-kitchen" ? 0 : route.params.part_name == "sales" ? 1 : null,
+  });
+  await kitchenStore.GET_KITCHEN_TYPE({
+    management_id: route.params.department_id as string,
+    is_paid: route.params.part_name == "free-kitchen" ? 0 : route.params.part_name == "sales" ? 1 : null,
+    kitchen_type_id: route.params.kitchen_id as string,
+  });
+
+  await kitchenStore.GET_MEALS_LIST({ kitchen_id: route.params.child_id });
+
+  setBreadCrumbFn();
+}, { immediate: true });
+
 </script>
 
 <template>
   <section>
     <div>
       <div class="flex flex-col gap-y-6">
+        {{kitchenStore.mealsList  }}
         <div
           v-for="category in categories"
           :key="category.id"

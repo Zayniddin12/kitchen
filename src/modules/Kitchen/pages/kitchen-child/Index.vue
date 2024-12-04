@@ -95,7 +95,7 @@ const setBreadCrumbFn = () => {
     },
     {
       label: kitchenStore.part.kitchen_vid as string,
-      isActionable: true,
+      isActionable: false,
       to: { name: "KitchenShow" }
     },
     {

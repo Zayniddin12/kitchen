@@ -161,7 +161,7 @@ const params = ref({
             empty-text="Нет данных"
             :data="tableData && tableData.products"
             stripe
-            class="custom-element-table custom-element-table--has-append"
+            class="custom-element-table custom-element-table--has-append w-full"
           >
             <el-table-column
               prop="name"
