@@ -1,5 +1,6 @@
 import cookieStorage from "@/utils/cookieStorage";
 import { AuthLoginResponseType } from "@/modules/Auth/auth.types";
+import { getItem, removeItem, setItem } from "@/utils/localStorage";
 
 
 const accessTokenKey: string = "access_token";
@@ -22,15 +23,18 @@ class TokenManager {
   }
 
   setAccessToken(accessToken: string, expires: number): void {
-    this.setToken(accessTokenKey, accessToken, expires);
+    // this.setToken(accessTokenKey, accessToken, expires);
+    setItem(accessTokenKey, accessToken);
   }
 
   getAccessToken(): string | null {
-    return this.getToken(accessTokenKey);
+    // return this.getToken(accessTokenKey);
+    return getItem(accessTokenKey);
   }
 
   removeAccessToken(): void {
-    this.removeToken(accessTokenKey);
+    removeItem(accessTokenKey);
+    // this.removeToken(accessTokenKey);
   }
 
   setRefreshToken(refreshToken: string, expires: number): void {

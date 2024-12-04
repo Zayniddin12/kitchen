@@ -44,13 +44,13 @@ axiosInstance.interceptors.request.use(
 );
 
 axiosInstance.interceptors.response.use(
-   async (response: AxiosResponse<any, any>): Promise<AxiosResponse | ErrorType> => {
+  async (response: AxiosResponse<any, any>): Promise<AxiosResponse | ErrorType> => {
     const data = response.data;
     const error = data.error;
 
     if (data.success) return Promise.resolve(response);
     else if (!data.success && error) {
-       await useCommonStore().errorToast(error.message, "", `${id}1`);
+      await useCommonStore().errorToast(error.message, "", `${id}1`);
       return Promise.reject(data);
     }
   },
@@ -63,29 +63,32 @@ axiosInstance.interceptors.response.use(
     const message = response?.data?.error?.message ?? error?.message ?? "";
     const originalConfig = error.config;
 
-    console.log(commonStore.activeLayout);
-
     if (response && response.status === 401 && commonStore.activeLayout === "MainLayout") {
-      const retryOriginalRequest = new Promise((resolve) => {
-        addSubscriber(() => {
-          originalConfig.headers.Authorization = `Bearer ${tokenManager.getAccessToken()}`;
-          resolve(axiosInstance(originalConfig));
+      const refreshToken = tokenManager.getRefreshToken();
+
+      if (refreshToken) {
+        const retryOriginalRequest = new Promise((resolve) => {
+          addSubscriber(() => {
+            originalConfig.headers.Authorization = `Bearer ${tokenManager.getAccessToken()}`;
+            resolve(axiosInstance(originalConfig));
+          });
         });
-      });
 
 
-      if (!isAlreadyFetchingAccessToken) {
-        isAlreadyFetchingAccessToken = true;
-        await authStore.refresh();
-        onAccessTokenFetched();
-        isAlreadyFetchingAccessToken = false;
-      } else if (isAlreadyFetchingAccessToken && error.config.url === "auth/refresh") {
-        console.log("SSS");
-        await commonStore.errorToast(message, "", id);
-        await authStore.clear();
+        if (!isAlreadyFetchingAccessToken) {
+          isAlreadyFetchingAccessToken = true;
+          await authStore.refresh();
+          onAccessTokenFetched();
+          isAlreadyFetchingAccessToken = false;
+        }
+
+        return retryOriginalRequest;
       }
 
-      return retryOriginalRequest;
+      if (!refreshToken || (isAlreadyFetchingAccessToken && error.config.url === "auth/refresh")) {
+        // await commonStore.errorToast(message, "", id);
+        await authStore.clear();
+      }
     } else {
       await commonStore.errorToast(message, "", `${id}error`);
     }

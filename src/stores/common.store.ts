@@ -4,7 +4,7 @@ import { ElNotification } from "element-plus";
 import { GenderResponseType, GenderType } from "@/types/common.type";
 import MaleAvatar from "@/assets/images/genders/male.png";
 import FemaleAvatar from "@/assets/images/genders/female.png";
-import { computed, ref, VNode } from "vue";
+import { computed, ref } from "vue";
 import { getSessionItem, removeSessionItem, setSessionItem } from "@/utils/sessionStorage";
 
 export const useCommonStore = defineStore("commonStore", () => {

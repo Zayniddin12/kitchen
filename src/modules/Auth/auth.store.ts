@@ -41,10 +41,16 @@ export const useAuthStore = defineStore("authStore", () => {
   };
 
   const refresh = async () => {
-    const response = await authApi.refresh();
-    if (!response) return;
+    try {
+      const response = await authApi.refresh();
+      if (!response) return;
 
-    tokenManager.setTokens(response);
+      tokenManager.setTokens(response);
+    } catch (error: any) {
+      if (error?.error?.code === 401) {
+        tokenManager.remove();
+      }
+    }
   };
 
   const userLoading = ref(false);
@@ -214,7 +220,9 @@ export const useAuthStore = defineStore("authStore", () => {
     oneIdLoading.value = true;
 
     try {
-      await authApi.loginOneId(code);
+      const response = await authApi.loginOneId(code);
+      tokenManager.setTokens(response);
+      isAuth.value = true;
     } finally {
       oneIdLoading.value = false;
     }

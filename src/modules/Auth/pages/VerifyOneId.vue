@@ -20,7 +20,7 @@ const loginOneId = async () => {
   if (!code) return await router.replace({ name: "login" });
 
   await authStore.loginOneId(code).then(() => {
-    commonStore.successToast("Вы успешно вошли в систему", { name: "home" });
+    commonStore.successToast({ name: "home" });
   }).catch(() => router.replace({ name: "login" }));
 };
 

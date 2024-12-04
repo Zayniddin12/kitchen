@@ -1,8 +1,8 @@
 <script
-    setup
-    lang="ts"
+  setup
+  lang="ts"
 >
-import { computed, onMounted, onUnmounted, reactive, ref, watchEffect } from "vue";
+import { computed, onMounted, ref } from "vue";
 import AppInput from "@/components/ui/form/app-input/AppInput.vue";
 import AppDatePicker from "@/components/ui/form/app-date-picker/AppDatePicker.vue";
 import AppSelect from "@/components/ui/form/app-select/AppSelect.vue";
@@ -18,7 +18,8 @@ import AppForm from "@/components/ui/form/app-form/AppForm.vue";
 import { formatPhone, getStatus, getStatusText, mergeCommonKeys, setStatus } from "@/utils/helper";
 import { useCommonStore } from "@/stores/common.store";
 import { usePositionStore } from "@/modules/Position/position.store";
-import { UserCreateOrUpdateDataPrefixType, UserCreateOrUpdateDataType } from "@/modules/Users/users.types";
+import { UserCreateOrUpdateDataType } from "@/modules/Users/users.types";
+import { useSettingsStore } from "@/modules/Settings/store";
 
 interface Tabs {
   title: string;
@@ -36,6 +37,7 @@ const routeId = computed(() => {
 const commonStore = useCommonStore();
 const userStore = useUsersStore();
 const positionStore = usePositionStore();
+const settingsStore = useSettingsStore();
 
 const activeUserCreatePage = computed(() => {
   return route.meta.type === "create";
@@ -49,6 +51,7 @@ const activeUserUpdatePage = computed(() => {
 const form = ref<UserCreateOrUpdateDataType>({
   phone: "",
   position_id: "",
+  management_id: "",
   is_oneid_enabled: false,
   firstname: "",
   lastname: "",
@@ -60,7 +63,7 @@ const form = ref<UserCreateOrUpdateDataType>({
   pass_given_by: "",
   pass_given_at: "",
   pass_valid_until: "",
-  pinfl: ""
+  pinfl: "",
 });
 
 const v$ = ref<ValidationType | null>(null);
@@ -74,7 +77,7 @@ const validationErrors = ref<Record<string, any> | null>(null);
 const sendForm = async () => {
   if (!v$.value || !data.value) return;
 
-  if (!v$.value.validate()) {
+  if (!(await v$.value.validate())) {
     commonStore.errorToast("Validation Error");
     return;
   }
@@ -84,19 +87,19 @@ const sendForm = async () => {
   newForm.phone = `998${newForm.phone.replace(/\D/g, "")}`;
 
   try {
-    if (activeUserCreatePage.value){
+    if (activeUserCreatePage.value) {
       newForm.status = "active";
-      if (userStore.activeUserPage){
+      if (userStore.activeUserPage) {
         await userStore.createUser(newForm);
-      }else{
+      } else {
         await userStore.createEmployee(newForm);
       }
-    }else if (activeUserUpdatePage.value){
-      if (typeof newForm.status === 'boolean') newForm.status = setStatus(newForm.status);
+    } else if (activeUserUpdatePage.value) {
+      if (typeof newForm.status === "boolean") newForm.status = setStatus(newForm.status);
 
-      if(userStore.activeUserPage){
+      if (userStore.activeUserPage) {
         await userStore.updateUser(routeId.value, newForm);
-      }else{
+      } else {
         await userStore.updateEmployee(routeId.value, newForm);
       }
     }
@@ -123,8 +126,8 @@ const loading = computed(() => {
 const sendLoading = computed(() => {
 
   return userStore.activeUserPage
-      ? (activeUserCreatePage.value ? userStore.createUserLoading : userStore.updateUserLoading)
-      : (activeUserCreatePage.value ? userStore.createEmployeeLoading : userStore.updateEmployeeLoading);
+    ? (activeUserCreatePage.value ? userStore.createUserLoading : userStore.updateUserLoading)
+    : (activeUserCreatePage.value ? userStore.createEmployeeLoading : userStore.updateEmployeeLoading);
 });
 
 const defaultTab = 1;
@@ -139,12 +142,12 @@ const activeTab = computed(() => validRouteTab(route.query.tab as string));
 const tabs = ref<Tabs[]>([
   {
     title: "Данные кандидата",
-    value: 1
+    value: 1,
   },
   {
     title: "Фотография для Face ID",
-    value: 2
-  }
+    value: 2,
+  },
 ]);
 
 const { setBreadCrumb } = useBreadcrumb();
@@ -152,16 +155,16 @@ const { setBreadCrumb } = useBreadcrumb();
 const setBreadCrumbFn = () => {
   setBreadCrumb([
     {
-      label: "Кадры"
+      label: "Кадры",
     },
     {
       label: String(route.meta?.parentRouteTitle ?? ""),
-      to: route.meta?.parentRouteUrl
+      to: route.meta?.parentRouteUrl,
     },
     {
       label: String(route.meta?.title ?? ""),
-      isActionable: true
-    }
+      isActionable: true,
+    },
   ]);
 };
 
@@ -193,11 +196,17 @@ const fetchSearchUser = () => {
 
 const setData = () => {
   if (!data.value) return;
-  console.log(data.value);
   form.value = mergeCommonKeys(form.value, data.value);
   form.value.phone = formatPhone(data.value.phone);
-  form.value.position_id = form.value.position_id ?? "";
   form.value.status = getStatus(data.value.status);
+
+  if (userStore.activeUserPage){
+    form.value.position_id = form.value.position_id ?? "";
+    form.value.management_id = form.value.management_id ?? "";
+  }else {
+    form.value.position_id = "";
+    form.value.management_id = "";
+  }
 };
 
 const fetchUser = async () => {
@@ -226,6 +235,7 @@ onMounted(() => {
   fetchUser();
   if (userStore.activeUserPage) {
     positionStore.fetchPositions();
+    settingsStore.GET_REGIONAL({ per_page: 100 });
   }
 });
 
@@ -240,36 +250,36 @@ onBeforeRouteLeave(() => {
     <h1 class="m-0 font-semibold text-[32px]">{{ route.meta?.title }}</h1>
     <div class="app-tabs w-[345px] my-[24px]">
       <RouterLink
-          v-for="item in tabs"
-          :key="item.value"
-          class="cursor-pointer"
-          :class="['app-tab', {'app-tab--active': activeTab === item.value}]"
-          :to="{query: {...route.query, tab: item.value}}"
+        v-for="item in tabs"
+        :key="item.value"
+        class="cursor-pointer"
+        :class="['app-tab', {'app-tab--active': activeTab === item.value}]"
+        :to="{query: {...route.query, tab: item.value}}"
       >
         {{ item.title }}
       </RouterLink>
     </div>
 
     <AppOverlay
-        :loading
-        parent-class-name="border rounded-[24px] pb-[32px] overflow-hidden"
+      :loading
+      parent-class-name="border rounded-[24px] pb-[32px] overflow-hidden"
     >
       <TransitionGroup
-          :name="activeTab>defaultTab ? 'nested' : 'nested-reverse'"
-          tag="div"
-          class="flex gap-x-10 w-full"
+        :name="activeTab>defaultTab ? 'nested' : 'nested-reverse'"
+        tag="div"
+        class="flex gap-x-10 w-full"
       >
         <div
-            class="w-full"
-            v-if="activeTab === 1"
+          class="w-full"
+          v-if="activeTab === 1"
         >
           <div class="py-[70px] bg-[#F8F9FC] px-[24px] relative mb-[90px]">
             <div class="top-[32px] absolute flex items-center">
               <div class="rounded-full overflow-hidden border-4 border-gray-100">
                 <img
-                    :src="gender?.photo ?? Avatar"
-                    alt="Profile Picture"
-                    class="object-cover h-[160px] w-[160px] rounded-full"
+                  :src="data?.avatar ?? gender?.photo ?? Avatar"
+                  alt="Profile Picture"
+                  class="object-cover h-[160px] w-[160px] rounded-full"
                 >
               </div>
 
@@ -279,160 +289,212 @@ onBeforeRouteLeave(() => {
             </div>
           </div>
           <AppForm
-              :value="form"
-              @validation="setValidation"
-              :validation-errors
-              class="px-[24px]"
+            :value="form"
+            @validation="setValidation"
+            :validation-errors
+            class="px-[24px]"
           >
             <div class="grid grid-cols-3 gap-x-6 gap-y-4">
               <AppInput
-                  v-model="form.lastname"
-                  prop="lastname"
-                  label="Фамилия"
-                  label-class="text-[#A8AAAE] text-xs font-medium"
-                  disabled
+                v-model="form.lastname"
+                prop="lastname"
+                label="Фамилия"
+                label-class="text-[#A8AAAE] text-xs font-medium"
+                disabled
+                class="mb-1"
               />
 
               <AppInput
-                  v-model="form.firstname"
-                  prop="firstname"
-                  label="Имя"
-                  label-class="text-[#A8AAAE] text-xs font-medium"
-                  disabled
+                v-model="form.firstname"
+                prop="firstname"
+                label="Имя"
+                label-class="text-[#A8AAAE] text-xs font-medium"
+                disabled
+                class="mb-1"
               />
 
               <AppInput
-                  v-model="form.patronymic"
-                  prop="patronymic"
-                  label="Отчество"
-                  label-class="text-[#A8AAAE] text-xs font-medium"
-                  disabled
+                v-model="form.patronymic"
+                prop="patronymic"
+                label="Отчество"
+                label-class="text-[#A8AAAE] text-xs font-medium"
+                disabled
+                class="mb-1"
               />
 
               <AppDatePicker
-                  v-model="form.birthday"
-                  prop="birthday"
-                  label="Дата рождения"
-                  label-class="text-[#A8AAAE] text-xs font-medium"
-                  disabled
+                v-model="form.birthday"
+                prop="birthday"
+                label="Дата рождения"
+                label-class="text-[#A8AAAE] text-xs font-medium"
+                disabled
+                class="mb-1"
               />
 
               <AppInput
-                  v-model="form.nationality"
-                  prop="nationality"
-                  label="Национальность"
-                  label-class="text-[#A8AAAE] text-xs font-medium"
-                  disabled
-                  class="col-span-1.5"
+                v-model="form.nationality"
+                prop="nationality"
+                label="Национальность"
+                label-class="text-[#A8AAAE] text-xs font-medium"
+                disabled
+                class="col-span-1.5 mb-1"
               />
 
               <AppInput
-                  :placeholder="gender?.name"
-                  prop="gender"
-                  label="Пол"
-                  label-class="text-[#A8AAAE] text-xs font-medium"
-                  disabled
+                :placeholder="gender?.name"
+                prop="gender"
+                label="Пол"
+                label-class="text-[#A8AAAE] text-xs font-medium"
+                disabled
+                class="mb-1"
               />
 
               <AppInput
-                  v-model="form.pass_number"
-                  prop="pass_number"
-                  label="Серия и номер паспорта"
-                  label-class="text-[#A8AAAE] text-xs font-medium"
-                  disabled
+                v-model="form.pass_number"
+                prop="pass_number"
+                label="Серия и номер паспорта"
+                label-class="text-[#A8AAAE] text-xs font-medium"
+                disabled
+                class="mb-1"
               />
 
               <AppInput
-                  v-model="form.pass_given_by"
-                  prop="pass_given_by"
-                  label="Кем выдан"
-                  label-class="text-[#A8AAAE] text-xs font-medium"
-                  disabled
+                v-model="form.pass_given_by"
+                prop="pass_given_by"
+                label="Кем выдан"
+                label-class="text-[#A8AAAE] text-xs font-medium"
+                disabled
+                class="mb-1"
               />
 
               <AppDatePicker
-                  v-model="form.pass_given_at"
-                  prop="pass_given_at"
-                  label="Дата выпуска"
-                  label-class="text-[#A8AAAE] text-xs font-medium"
-                  disabled
+                v-model="form.pass_given_at"
+                prop="pass_given_at"
+                label="Дата выпуска"
+                label-class="text-[#A8AAAE] text-xs font-medium"
+                disabled
+                class="mb-1"
               />
 
               <AppDatePicker
-                  v-model="form.pass_valid_until"
-                  prop="pass_valid_until"
-                  label="Срок действия"
-                  label-class="text-[#A8AAAE] text-xs font-medium"
-                  disabled
+                v-model="form.pass_valid_until"
+                prop="pass_valid_until"
+                label="Срок действия"
+                label-class="text-[#A8AAAE] text-xs font-medium"
+                disabled
+                class="mb-1"
               />
 
               <AppInput
-                  v-model="form.pinfl"
-                  prop="pinfl"
-                  label="ПИНФЛ"
-                  label-class="text-[#A8AAAE] text-xs font-medium"
-                  disabled
+                v-model="form.pinfl"
+                prop="pinfl"
+                label="ПИНФЛ"
+                label-class="text-[#A8AAAE] text-xs font-medium"
+                disabled
+                class="mb-1"
               />
               <AppInput
-                  v-model="form.phone"
-                  prop="phone"
-                  label="Номер телефона"
-                  type="tel"
-                  label-class="text-[#A8AAAE] text-xs font-medium"
-                  required
+                v-model="form.phone"
+                prop="phone"
+                label="Номер телефона"
+                type="tel"
+                label-class="text-[#A8AAAE] text-xs font-medium"
+                required
+                class="mb-1"
               />
-            </div>
-            <div class="grid grid-cols-2 gap-x-6 gap-y-4 mt-2">
               <template v-if="userStore.activeUserPage">
-                <AppSelect
-                    v-model="form.position_id"
-                    prop="position_id"
-                    label="Должность в системе (необязательно)"
-                    label-class="text-[#A8AAAE] text-xs font-medium"
-                    :items="positionStore.positions"
-                    :loading="positionStore.positionsLoading"
-                    item-label="name"
-                    item-value="id"
-                    required
+                <AppInput
+                  label="Фонд"
+                  label-class="text-[#A8AAAE] text-xs font-medium"
+                  class="mb-1"
                 />
                 <AppSelect
-                    label="Роли (необязательно)"
-                    label-class="text-[#A8AAAE] text-xs font-medium"
+                  v-model="form.management_id"
+                  :items="settingsStore.regional.managements"
+                  item-value="id"
+                  item-label="name"
+                  prop="management_id"
+                  label="Региональное управление"
+                  label-class="text-[#A8AAAE] text-xs font-medium"
+                  class="mb-1"
+                  required
+                />
+                <AppSelect
+                  label="Комбинат"
+                  label-class="text-[#A8AAAE] text-xs font-medium"
+                  class="mb-1"
+                />
+                <AppInput
+                  label="База склад"
+                  label-class="text-[#A8AAAE] text-xs font-medium"
+                  class="mb-1"
+                />
+                <AppSelect
+                  label="Склад базы"
+                  label-class="text-[#A8AAAE] text-xs font-medium"
+                  class="mb-1"
+                />
+                <AppSelect
+                  label="Кухня"
+                  label-class="text-[#A8AAAE] text-xs font-medium"
+                  class="mb-1"
+                />
+                <AppSelect
+                  v-model="form.position_id"
+                  prop="position_id"
+                  label="Должность в системе (необязательно)"
+                  label-class="text-[#A8AAAE] text-xs font-medium"
+                  :items="positionStore.positions"
+                  :loading="positionStore.positionsLoading"
+                  item-label="name"
+                  item-value="id"
+                  required
+                  class="mb-1"
+                />
+                <AppSelect
+                  label="Роли (необязательно)"
+                  label-class="text-[#A8AAAE] text-xs font-medium"
+                  class="mb-1"
                 />
               </template>
-              <template v-else>
-                <AppSelect
-                    label="Место работы"
-                    label-class="text-[#A8AAAE] text-[12px] font-medium"
-                    placeholder="Выберите"
-                />
+            </div>
+            <div
+              class="grid grid-cols-2 gap-x-6 gap-y-4"
+              v-if="!userStore.activeUserPage"
+            >
+              <AppSelect
+                label="Место работы"
+                label-class="text-[#A8AAAE] text-[12px] font-medium"
+                placeholder="Выберите"
+                class="mb-1"
+              />
 
-                <AppSelect
-                    label="График работы"
-                    label-class="text-[#A8AAAE] text-[12px] font-medium"
-                    placeholder="Выберите"
-                />
-              </template>
+              <AppSelect
+                label="График работы"
+                label-class="text-[#A8AAAE] text-[12px] font-medium"
+                placeholder="Выберите"
+                class="mb-1"
+              />
             </div>
             <ElCheckbox
-                v-model="form.is_oneid_enabled"
-                label="OneID (необязательно)"
-                class="app-checkbox"
+              v-model="form.is_oneid_enabled"
+              label="OneID"
+              class="app-checkbox mt-4"
             />
             <br>
             <ElSwitch
-                v-if="activeUserUpdatePage && form.status !== undefined"
-                v-model="form.status"
-                :active-text="getStatusText(form.status)"
-                class="app-switch mt-2 inline-flex"
+              v-if="activeUserUpdatePage && form.status !== undefined"
+              v-model="form.status"
+              :active-text="getStatusText(form.status)"
+              class="app-switch mt-2 inline-flex"
             />
           </AppForm>
         </div>
 
         <template v-else>
           <AppMediaUploader
-              class="m-6 w-full"
-              :height="450"
+            class="m-6 w-full"
+            :height="450"
           />
 
         </template>
@@ -441,28 +503,28 @@ onBeforeRouteLeave(() => {
 
     <div class="flex items-center justify-between mt-[24px]">
       <ElButton
-          v-if="activeUserUpdatePage"
-          :loading="deleteLoading"
-          type="danger"
-          size="large"
-          class="custom-danger-btn"
-          @click="deleteFn"
+        v-if="activeUserUpdatePage"
+        :loading="deleteLoading"
+        type="danger"
+        size="large"
+        class="custom-danger-btn"
+        @click="deleteFn"
       >
         Удалить
       </ElButton>
       <div class="flex items-center ml-auto gap-x-2">
         <button
-            class="custom-cancel-btn"
-            @click="cancelFn"
+          class="custom-cancel-btn"
+          @click="cancelFn"
         >
           Отменить
         </button>
         <ElButton
-            :loading="sendLoading"
-            size="large"
-            type="primary"
-            class="custom-apply-btn"
-            @click="sendForm"
+          :loading="sendLoading"
+          size="large"
+          type="primary"
+          class="custom-apply-btn"
+          @click="sendForm"
         >
           {{ activeUserUpdatePage ? "Сохранить" : "Добавить" }}
         </ElButton>

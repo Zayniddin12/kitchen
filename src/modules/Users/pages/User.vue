@@ -30,6 +30,12 @@ const data = computed(() => {
   return usersStore.activeUserPage ? usersStore.user : usersStore.employee;
 });
 
+const gender = computed(() => {
+  if (!data.value) return null;
+
+  return commonStore.getGender(data.value.gender);
+});
+
 const routeId = computed(() => {
   return parseInt(route.params.id as string);
 });
@@ -118,7 +124,7 @@ onMounted(() => {
         <div class="top-[32px] absolute flex items-center">
           <div class="rounded-full overflow-hidden border-4 border-gray-100">
             <img
-                :src="data?.avatar ?? Avatar"
+                :src="data?.avatar ?? gender?.photo ?? Avatar"
                 alt="Profile Picture"
                 class="object-cover size-40 rounded-full"
             >
@@ -142,7 +148,7 @@ onMounted(() => {
               </div>
               <div class="mb-4">
                 <span class="text-blue-500">Пол:</span>
-                <p>{{ data?.gender ? commonStore.getGender(data.gender)?.name : "—" }}</p>
+                <p>{{ gender?.name ?? "—" }}</p>
               </div>
               <div class="mb-4">
                 <span class="text-blue-500">Кем выдан:</span>
