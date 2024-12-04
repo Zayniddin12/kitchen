@@ -278,9 +278,19 @@ watch(scheduledDates, async (newValue) => {
 
       if (route.name === "KitchenMenuEdit") {
 
-        newValue.forEach(item => {
+        newValue.forEach(el => {
           list_dishes.value.push({
-            date: item.date,
+            date: el.date,
+            test: kitchenStore.menuElement.elements[el.date.split(".").reverse().join("-")].product.map(item => {
+              return {
+                product: item.parent_id,
+                vid_product: item.product_id,
+                meal: null,
+                amount: null,
+                vid_list: [],
+                meals_list: [],
+              }
+            }),
             data: [
               {
                 product: null,
