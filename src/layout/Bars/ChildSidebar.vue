@@ -36,18 +36,16 @@ const props = defineProps({
   },
 });
 
-const currentItem = ref<string>("");
+const currentItem = ref<string | null | undefined>("");
 
 watch(() => route, () => {
-  if (route.params.id) {
-    currentItem.value = route.params.id as string;
-  } else {
-    currentItem.value = route.path;
+  if (route.fullPath) {
+    currentItem.value = route.fullPath;
   }
-}, { immediate: true });
+}, { immediate: true, deep: true });
 
 const activeChildMenu = (item: SidebarItem) => {
-  currentItem.value = item.id || item.route || "";
+  currentItem.value = item.route;
   if (item.route) {
     router.push(item.route);
   }
@@ -84,7 +82,7 @@ const activeChildMenu = (item: SidebarItem) => {
         </button>
       </div>
     </header>
-<!--    {{ children }}-->
+
     <el-collapse
       v-for="(item, index) in children"
       :key="index"
@@ -133,7 +131,7 @@ const activeChildMenu = (item: SidebarItem) => {
       <div
         v-else
         class="text-dark-gray text-[14px] text-left py-[10px] font-medium cursor-pointer px-[12px]"
-        :class="{ activeMenu: currentItem == item.route ? true : currentItem == item.id }"
+        :class="{ activeMenu: currentItem == item.route }"
         @click.stop="activeChildMenu(item)"
       >
         <div class="flex items-center">
@@ -161,6 +159,10 @@ const activeChildMenu = (item: SidebarItem) => {
     width: 100%;
     align-content: center;
     justify-content: space-between;
+  }
+
+  .el-collapse-item__content:last-child {
+    padding-bottom: 0;
   }
 
   .el-collapse-item__wrap {

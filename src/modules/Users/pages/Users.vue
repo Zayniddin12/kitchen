@@ -48,11 +48,11 @@ const statuses = computed<StatusTabType[]>(() => {
     },
     {
       name: "Кадровый резерв",
-      value: "active"
+      value: "inactive"
     },
     {
       name: "Сотрудники",
-      value: "inactive"
+      value: "active"
     }
   ];
 });
@@ -299,7 +299,7 @@ watch(() => route.name, () => {
           <div
               :class="['py-2 px-4 rounded-full text-center text-sm font-medium inline-flex items-center justify-center w-[125px] min-h-10',row.status === 'active' ? 'text-[#22A95E] bg-[#D4F4E2]' : 'text-[#8F9194] bg-[#EEEEEF]']"
           >
-            {{ row.status === "active" ? "Активный" : "Завершено" }}
+            {{ row.status === "active" ? "Активный" : "Неактивный" }}
           </div>
         </template>
       </ElTableColumn>

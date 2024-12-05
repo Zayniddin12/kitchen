@@ -3,56 +3,31 @@
   lang="ts"
 >
 import { useRoute } from "vue-router";
-import { computed, ref, watchEffect } from "vue";
+import { computed, onMounted, ref, watch, watchEffect } from "vue";
 import AppSelect from "@/components/ui/form/app-select/AppSelect.vue";
 import AppInput from "@/components/ui/form/app-input/AppInput.vue";
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 import { useKitchenStore } from "@/modules/Kitchen/kitchen.store";
+import { useSettingsStore } from "@/modules/Settings/store";
 
 const route = useRoute();
 
 const { setBreadCrumb } = useBreadcrumb();
 
+const settingsStore = useSettingsStore();
 const kitchenStore = useKitchenStore();
 
 
 const num = ref(1);
 
-const tableData = ([
-  {
-    id: 1,
-    ingredients: "Картофель",
-    quantity: 80,
-    unit_measurement: "кг",
-    sum: "22 000 сум",
-  },
-  {
-    id: 2,
-    ingredients: "Картофель",
-    quantity: 80,
-    unit_measurement: "кг",
-    sum: "22 000 сум",
-  },
-  {
-    id: 3,
-    ingredients: "Картофель",
-    quantity: 80,
-    unit_measurement: "кг",
-    sum: "22 000 сум",
-  },
-  {
-    id: 4,
-    ingredients: "Картофель",
-    quantity: 80,
-    unit_measurement: "кг",
-    sum: "22 000 сум",
-  },
-]);
+const tableData = ref({ products: [] });
 
 const title = computed(() => route.meta.title ?? "");
 
 const setBreadCrumbFn = () => {
   kitchenStore.fetchPart(+route.params.department_id, route.params.part_name as string);
+  kitchenStore.fetchPart2(+route.params.kitchen_id);
+  kitchenStore.fetchPart3(+route.params.child_id);
 
   if (!kitchenStore.part) return;
 
@@ -61,18 +36,18 @@ const setBreadCrumbFn = () => {
       label: "Кухня",
     },
     {
-      label: kitchenStore.part.name,
+      label: kitchenStore.part.title,
     },
     {
       label: kitchenStore.part.department_name,
       to: { name: "KitchenIndex" },
     },
     {
-      label: "Лагерь",
-      to: { name: "KitchenShowIndex" },
+      label: kitchenStore.part.kitchen_vid as string,
+      to: { name: "KitchenShow" },
     },
     {
-      label: "Паҳлавон",
+      label: kitchenStore.part.kitchen_type as string,
       to: { name: "KitchenShowChildIndex" },
     },
     {
@@ -82,8 +57,50 @@ const setBreadCrumbFn = () => {
   ]);
 };
 
+watch(() => route.params, async () => {
+  await kitchenStore.GET_KITCHEN_VID({
+    management_id: route.params.department_id as string,
+    is_paid: route.params.part_name == "free-kitchen" ? 0 : route.params.part_name == "sales" ? 1 : null,
+  });
+  await kitchenStore.GET_KITCHEN_TYPE({
+    management_id: route.params.department_id as string,
+    is_paid: route.params.part_name == "free-kitchen" ? 0 : route.params.part_name == "sales" ? 1 : null,
+    kitchen_type_id: route.params.kitchen_id as string,
+  });
+
+  setBreadCrumbFn();
+}, { immediate: true });
+
+const changeRation = async (val: string | number) => {
+  if (val) {
+    const response = await kitchenStore.GET_RATION_LIST_IN_MENU(val);
+    console.log(response);
+    tableData.value = response;
+  } else {
+    tableData.value = {};
+  }
+};
+
+const changeMeal = async (val: string | number) => {
+  if (val) {
+    tableData.value = await settingsStore.GET_MEALS_DETAIL(val);
+  } else {
+    tableData.value = {};
+  }
+};
+
+onMounted(async () => {
+  await settingsStore.GET_RATION_LIST({ per_page: 100 });
+  await settingsStore.GET_MEALS({ per_page: 100 });
+});
+
 watchEffect(() => {
   setBreadCrumbFn();
+});
+
+const params = ref({
+  ration_id: null,
+  meal_id: null,
 });
 
 </script>
@@ -99,17 +116,40 @@ watchEffect(() => {
       </h1>
 
       <div class="bg-[#FFFFFF] min-h-[65vh] border border-[#E2E6F3] rounded-[24px] p-[24px]">
-
-        <div class="flex items-center gap-4 w-[70%]">
+        <!--        {{ tableData }}-->
+        <div class="flex items-center gap-4 w-full">
           <AppSelect
-            class="w-full"
+            v-model="params.ration_id"
+            :items="settingsStore.rationList.rations"
+            @change="changeRation"
+            :disabled="params.meal_id"
+            clearable
+            item-value="id"
+            item-label="name"
             label="Рацион"
-            label-class="text-[#A8AAAE] text-[12px] font-medium"
-            placeholder="Выберите рацион"
-          />
-          <AppInput
+            label-class="text-[#A8AAAE]"
+            placeholder="Выберите"
             class="w-full"
-            placeholder="Введите количество порций"
+          />
+
+          <AppSelect
+            v-model="params.meal_id"
+            :items="settingsStore.meals.meals"
+            @change="changeMeal"
+            :disabled="params.ration_id"
+            clearable
+            class="w-full"
+            item-value="id"
+            item-label="name"
+            label="Блюды"
+            label-class="text-[#A8AAAE] text-[12px] font-medium"
+            placeholder="Выберите блюды"
+          />
+
+          <AppInput
+            disabled
+            class="w-full"
+            placeholder="1"
             label="Порция"
             label-class="text-[#A8AAAE] text-[12px] font-medium"
           />
@@ -117,12 +157,14 @@ watchEffect(() => {
 
         <div class="mb-[24px]">
           <el-table
-            :data="tableData"
+            v-if="tableData && tableData.products"
+            empty-text="Нет данных"
+            :data="tableData && tableData.products"
             stripe
-            class="custom-element-table custom-element-table--has-append"
+            class="custom-element-table custom-element-table--has-append w-full"
           >
             <el-table-column
-              prop="ingredients"
+              prop="name"
               label="Ингредиенты"
             />
             <el-table-column
@@ -130,11 +172,16 @@ watchEffect(() => {
               label="Количество"
             />
             <el-table-column
-              prop="unit_measurement"
+              prop="unit"
               label="Ед. измерения"
             />
             <el-table-column
-              prop="sum"
+              prop="net_price"
+              label="Сумма"
+            />
+
+            <el-table-column
+              prop="net_price"
               label="Сумма"
             />
 
@@ -162,7 +209,7 @@ watchEffect(() => {
                       Общая сумма:
                     </span>
                     <strong class="font-semibold text-dark">
-                      28 000 сум
+                      {{ tableData?.total_price && tableData?.total_price.toLocaleString() }} сум
                     </strong>
                   </div>
                 </div>

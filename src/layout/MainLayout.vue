@@ -2,37 +2,47 @@
     setup
     lang="ts"
 >
-import { computed, onMounted, ref, watch } from "vue";
+import { computed, onMounted, onUnmounted, provide, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useKitchenStore } from "@/modules/Kitchen/kitchen.store";
 import NavBar from "@/layout/Bars/NavBar.vue";
 import SideBar from "@/layout/Bars/SideBar.vue";
 import AppBreadcrumb from "@/components/ui/app-breadcrumb/AppBreadcrumb.vue";
 import { useAuthStore } from "@/modules/Auth/auth.store";
-import { getAccessToken } from "@/utils/token.manager";
+import tokenManager from "@/utils/token.manager";
 import NavDrawer from "@/components/layouts/nav/nav-drawer/NavDrawer.vue";
 import HomeIcon from "@/assets/images/icons/nav/nav-drawer/home.svg";
 import DocumentsIcon from "@/assets/images/icons/nav/nav-drawer/documents.svg";
 import NotebookIcon from "@/assets/images/icons/nav/nav-list/notebook.svg";
 import MonitoringIcon from "@/assets/images/icons/nav/nav-drawer/monitoring.svg";
 import { useSettingsStore } from "@/modules/Settings/store";
+import { useWarehouseBasesStore } from "@/modules/WarehouseBases/warehouse-bases.store";
+import { useCommonStore } from "@/stores/common.store";
 
 const authStore = useAuthStore();
 const route = useRoute();
 const router = useRouter();
 const kitchenStore = useKitchenStore();
 const settingsStore = useSettingsStore();
+const warehouseBasesStore = useWarehouseBasesStore();
+const commonStore = useCommonStore();
 
 const childSidebarPin = ref<boolean>(JSON.parse(localStorage.getItem("child-sidebar-pin" as string) || "false"));
 const childSidebar = ref<boolean>(JSON.parse(localStorage.getItem("child-sidebar" as string) || "false"));
 const margin = ref("ml-[396px]");
 
 onMounted(async () => {
-  if (getAccessToken()) authStore.me();
+  if (tokenManager.getAccessToken()) authStore.me();
   // else await router.replace({ name: "login" });
   childSidebarPin.value = JSON.parse(localStorage.getItem("child-sidebar-pin") || "false");
-  settingsStore.GET_REGIONAL({ per_page: 100 });
+  await settingsStore.GET_REGIONAL({ per_page: 100 });
+  warehouseBasesStore.fetchManagementBases();
+  commonStore.getTitles();
 });
+
+// onUnmounted(() => {
+//   commonStore.removeTitles();
+// });
 
 watch(() => route.name, function (val) {
   if (val === "home") {
@@ -78,6 +88,7 @@ const navDrawerItems = computed(() => {
 
 const navDrawerWidth = ref<number>(0);
 
+
 </script>
 
 <template>
@@ -97,7 +108,7 @@ const navDrawerWidth = ref<number>(0);
 
       <div class="flex flex-col">
         <AppBreadcrumb/>
-        <slot/>
+        <RouterView />
       </div>
 
       <span class="mt-[28px] bg-transparent !dark:body-dark w-full text-[#8F9194] text-[12px] select-none">Made by “Anysoft” software & solutions company</span>

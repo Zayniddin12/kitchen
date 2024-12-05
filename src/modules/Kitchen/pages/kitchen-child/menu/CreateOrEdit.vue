@@ -30,175 +30,301 @@ const kitchenStore = useKitchenStore();
 // State
 const kitchenData = ref({
   startDate: null,
-  intermediateDate1: null,
-  intermediateDate2: null,
-
+  intermediateDate1: true,
+  endDate: null,
 });
-const startDate = ref<Date | "">("");
-const intermediateDate1 = ref(true);
-const intermediateDate2 = ref(false);
+
 const activeScheduledDate = ref("");
 
 const data = ref([]);
 
+// List dishes
+
+const list_dishes = ref([]);
+
 // Meal Times
-const mealTimes = ref([
-  {
-    id: 1,
-    title: "Завтрак",
-    isChecked: false,
-    mealData: {},
-  },
-  {
-    id: 2, title: "Обед", isChecked: false, mealData: {},
-  },
-  {
-    id: 3, title: "Ужин", isChecked: false, mealData: {},
-  },
-  {
-    id: 4, title: "Сухой питания", isChecked: false, mealData: {},
-  },
-]);
+// const mealTimes = ref([
+//   {
+//     id: 1,
+//     title: "Завтрак",
+//     isChecked: false,
+//     mealData: {},
+//   },
+//   {
+//     id: 2, title: "Обед", isChecked: false, mealData: {},
+//   },
+//   {
+//     id: 3, title: "Ужин", isChecked: false, mealData: {},
+//   },
+//   {
+//     id: 4, title: "Сухой питания", isChecked: false, mealData: {},
+//   },
+// ]);
 
 const mealTimesV$ = ref<ValidationType | null>(null);
 const kitchenDatav$ = ref<ValidationType | null>(null);
-
-// Diets
-const activeDiet = ref<number | undefined>();
-const diets = reactive([{ id: 1, name: "Рацион1 R-0000" }]);
 
 // Table Columns
 const tableColumns: TableColumnType[] = [
   { label: "Название", prop: "name" },
   { label: "Количество", prop: "quantity", align: "center" },
-  { label: "Ед. измерения", prop: "unit_measurement", align: "center" },
-  { label: "Цена", prop: "price", align: "right" },
-  { label: "Сумма", prop: "sum", align: "right" },
+  { label: "Ед. измерения", prop: "unit", align: "center" },
+  { label: "Цена", prop: "net_price", align: "right" },
+  { label: "Сумма", prop: "total_price", align: "right" },
 ];
 
-const tableColumns2: TableColumnType[] = [
-  { prop: "ingredients", label: "Ингредиенты" },
-  { prop: "quantity", label: "Количество", align: "center" },
-  { prop: "unit_measurement", label: "Ед. измерения", align: "center" },
-  { prop: "sum", label: "Сумма", align: "center" },
-];
 
-// Table Data
-const tableData = Array(4).fill({
-  name: "Кабачки",
-  quantity: 0.8,
-  unit_measurement: "кг",
-  price: "1 800 сум",
-  sum: "15 000 сум",
-});
+function getDaysInterval(date1, date2) {
+  // Parse the dates in DD.MM.YYYY format
+  const d1 = new Date(date1.split(".").reverse().join("-"));
+  const d2 = new Date(date2.split(".").reverse().join("-"));
 
+  // Calculate the difference in milliseconds and convert to days
+  return Math.abs((d2 - d1) / (1000 * 60 * 60 * 24));
+}
 
-const tableData2 = Array(4).fill({
-  ingredients: "Лук",
-  quantity: 30,
-  unit_measurement: "кг",
-  sum: "15 000 сум",
-});
 
 // Computed
 const scheduledDates = computed(() => {
-  if (!kitchenData.value.startDate || !(kitchenData.value.intermediateDate1 || kitchenData.value.intermediateDate2)) return [];
-  const intermediate = kitchenData.value.intermediateDate1 ? 7 : 10;
-  const formattedDates = [];
-  for (let i = 0; i < intermediate; i++) {
-    const date = new Date(kitchenData.value.startDate);
-    date.setDate(date.getDate() + i);
-    const formattedDate = formatDate(date);
-    formattedDates.push({ date: formattedDate.date, title: `${formattedDate.week} - ${formattedDate.date}` });
-  }
-  return formattedDates;
+  if (kitchenStore.activeMenuPart) {
+    if (!kitchenData.value.startDate) return [];
+    const intermediate = kitchenData.value.intermediateDate1 ? 7 : 10;
+    const formattedDates = [];
+    for (let i = 0; i < intermediate; i++) {
+      const date = new Date(kitchenData.value.startDate);
+      date.setDate(date.getDate() + i);
+      const formattedDate = formatDate(date);
+      formattedDates.push({ date: formattedDate.date, title: `${formattedDate.week} - ${formattedDate.date}` });
+    }
+    return formattedDates;
+  } else if (kitchenStore.activeSalesPart) {
+    if (!kitchenData.value.startDate || !kitchenData.value.endDate) return [];
+    const intermediate = getDaysInterval(kitchenData.value.startDate, kitchenData.value.endDate) + 1;
+    const formattedDates = [];
+    for (let i = 0; i < intermediate; i++) {
+      const date = new Date(kitchenData.value.startDate);
+      date.setDate(date.getDate() + i);
+      const formattedDate = formatDate(date);
+      formattedDates.push({ date: formattedDate.date, title: `${formattedDate.week} - ${formattedDate.date}` });
+    }
+    return formattedDates;
+  } else return [];
 });
 
 // Watch
-watch(scheduledDates, (newValue) => {
+watch(scheduledDates, async (newValue) => {
   if (newValue.length > 0) {
-    data.value = [];
+    await kitchenStore.GET_ELEMENT_LIST(route.params.child_id as string);
+    if (kitchenStore.activeMenuPart) {
+      data.value = [];
 
-    newValue.forEach(el => {
-      data.value.push({
-        date: el.date,
-        data: [
-          {
-            id: 1,
-            title: "Завтрак",
-            isChecked: false,
-            mealData: [
+      if (route.name === "KitchenMenuEdit") {
+
+        newValue.forEach(el => {
+          data.value.push({
+            date: el.date,
+            data: [
               {
-                period: 1,
-                start_time: null,
-                end_time: null,
-                amount: null,
-                product_type: "ration",
-                product_id: null,
-                rationsList: [],
+                id: 1,
+                title: "Завтрак",
+                isChecked: true,
+                mealData: kitchenStore.menuElement.elements[el.date.split(".").reverse().join("-")]["1"].map(item => {
+                  return {
+                    id: item.id,
+                    period: 1,
+                    start_time: item.start_time.split(":").slice(0, 2).join(":"),
+                    end_time: item.end_time.split(":").slice(0, 2).join(":"),
+                    amount: item.amount,
+                    product_type: "ration",
+                    product_id: item.product_id,
+                    rationsList: {
+                      total_price: item.price,
+                      products: item.product,
+                    },
+                  };
+                }),
+              },
+              {
+                id: 2,
+                title: "Обед",
+                isChecked: true,
+                mealData: kitchenStore.menuElement.elements[el.date.split(".").reverse().join("-")]["2"].map(item => {
+                  return {
+                    id: item.id,
+                    period: 2,
+                    start_time: item.start_time.split(":").slice(0, 2).join(":"),
+                    end_time: item.end_time.split(":").slice(0, 2).join(":"),
+                    amount: item.amount,
+                    product_type: "ration",
+                    product_id: item.product_id,
+                    rationsList: {
+                      total_price: item.price_total,
+                      products: item.product,
+                    },
+                  };
+                }),
+              },
+              {
+                id: 3,
+                title: "Ужин",
+                isChecked: true,
+                mealData: kitchenStore.menuElement.elements[el.date.split(".").reverse().join("-")]["3"].map(item => {
+                  return {
+                    id: item.id,
+                    period: 3,
+                    start_time: item.start_time.split(":").slice(0, 2).join(":"),
+                    end_time: item.end_time.split(":").slice(0, 2).join(":"),
+                    amount: item.amount,
+                    product_type: "ration",
+                    product_id: item.product_id,
+                    rationsList: {
+                      total_price: item.price_total,
+                      products: item.product,
+                    },
+                  };
+                }),
+              },
+              {
+                id: 4,
+                title: "Сухой питания",
+                isChecked: true,
+                mealData: kitchenStore.menuElement.elements[el.date.split(".").reverse().join("-")]["4"].map(item => {
+                  return {
+                    id: item.id,
+                    period: 4,
+                    start_time: item.start_time.split(":").slice(0, 2).join(":"),
+                    end_time: item.end_time.split(":").slice(0, 2).join(":"),
+                    amount: item.amount,
+                    product_type: "ration",
+                    product_id: item.product_id,
+                    rationsList: {
+                      total_price: item.price_total,
+                      products: item.product,
+                    },
+                  };
+                }),
               },
             ],
-          },
-          {
-            id: 2, title: "Обед", isChecked: false, mealData: [
+          });
+        });
+      } else {
+        newValue.forEach(el => {
+          data.value.push({
+            date: el.date,
+            data: [
               {
-                period: 2,
-                start_time: null,
-                end_time: null,
-                amount: null,
-                product_type: "ration",
-                product_id: null,
-                rationsList: [],
+                id: 1,
+                title: "Завтрак",
+                isChecked: false,
+                mealData: [
+                  {
+                    period: 1,
+                    start_time: null,
+                    end_time: null,
+                    amount: null,
+                    product_type: "ration",
+                    product_id: null,
+                    rationsList: {},
+                  },
+                ],
+              },
+              {
+                id: 2, title: "Обед", isChecked: false, mealData: [
+                  {
+                    period: 2,
+                    start_time: null,
+                    end_time: null,
+                    amount: null,
+                    product_type: "ration",
+                    product_id: null,
+                    rationsList: {},
+                  },
+                ],
+              },
+              {
+                id: 3, title: "Ужин", isChecked: false, mealData: [
+                  {
+                    period: 3,
+                    start_time: null,
+                    end_time: null,
+                    amount: null,
+                    product_type: "ration",
+                    product_id: null,
+                    rationsList: {},
+                  },
+                ],
+              },
+              {
+                id: 4, title: "Сухой питания", isChecked: false, mealData: [
+                  {
+                    period: 4,
+                    start_time: null,
+                    end_time: null,
+                    amount: null,
+                    product_type: "ration",
+                    product_id: null,
+                    rationsList: {},
+                  },
+                ],
               },
             ],
-          },
-          {
-            id: 3, title: "Ужин", isChecked: false, mealData: [
-              {
-                period: 3,
-                start_time: null,
-                end_time: null,
+          });
+        });
+      }
+
+
+    }
+    if (kitchenStore.activeSalesPart) {
+
+      if (route.name === "KitchenMenuEdit") {
+
+        newValue.forEach(el => {
+          list_dishes.value.push({
+            date: el.date,
+            test: kitchenStore.menuElement.elements[el.date.split(".").reverse().join("-")].product.map(item => {
+              return {
+                product: item.parent_id,
+                vid_product: item.product_id,
+                meal: null,
                 amount: null,
-                product_type: "ration",
-                product_id: null,
-                rationsList: [],
+                vid_list: [],
+                meals_list: [],
+              }
+            }),
+            data: [
+              {
+                product: null,
+                vid_product: null,
+                meal: null,
+                amount: null,
+                vid_list: [],
+                meals_list: [],
               },
             ],
-          },
-          {
-            id: 4, title: "Сухой питания", isChecked: false, mealData: [
+          });
+        });
+      } else {
+        newValue.forEach(item => {
+          list_dishes.value.push({
+            date: item.date,
+            data: [
               {
-                period: 4,
-                start_time: null,
-                end_time: null,
+                product: null,
+                vid_product: null,
+                meal: null,
                 amount: null,
-                product_type: "ration",
-                product_id: null,
-                rationsList: [],
+                vid_list: [],
+                meals_list: [],
               },
             ],
-          },
-        ],
-      });
-    });
+          });
+        });
+      }
+
+
+    }
 
     activeScheduledDate.value = newValue[0].date;
-    console.log(scheduledDates.value);
-    mealTimes.value.forEach((item, index) => {
-      scheduledDates.value.forEach((date, dateIndex) => {
-        item.mealData[date.date] = [
-          {
-            period: index + 1,
-            start_time: null,
-            end_time: null,
-            amount: null,
-            product_type: "ration",
-            product_id: null,
-            rationsList: [],
-          },
-        ];
-      });
-    });
 
   } else {
     activeScheduledDate.value = "";
@@ -207,6 +333,8 @@ watch(scheduledDates, (newValue) => {
 
 const setBreadCrumbFn = () => {
   kitchenStore.fetchPart(+route.params.department_id, route.params.part_name as string);
+  kitchenStore.fetchPart2(+route.params.kitchen_id);
+  kitchenStore.fetchPart3(+route.params.child_id);
 
   if (!kitchenStore.part) return;
 
@@ -215,18 +343,20 @@ const setBreadCrumbFn = () => {
       label: "Кухня",
     },
     {
-      label: kitchenStore.part.name,
+      label: kitchenStore.part.title,
     },
     {
       label: kitchenStore.part.department_name,
       to: { name: "KitchenIndex" },
     },
     {
-      label: "Лагерь",
-      to: { name: "KitchenShowIndex" },
+      label: kitchenStore.part.kitchen_vid as string,
+      isActionable: false,
+      to: { name: "KitchenShow" },
     },
     {
-      label: "Паҳлавон",
+      label: kitchenStore.part.kitchen_type as string,
+      isActionable: false,
       to: { name: "KitchenShowChildIndex" },
     },
     {
@@ -241,16 +371,25 @@ const setBreadCrumbFn = () => {
 };
 
 onMounted(async () => {
-  console.log(route.name);
+
   await settingsStore.GET_RATION_LIST({ per_page: 100 });
+  await settingsStore.GET_MEALS({ per_page: 100 });
+  await settingsStore.GET_TYPE_PRODUCT({ per_page: 100 });
+
+
   if (route.name === "KitchenMenuEdit") {
-    activeDiet.value = 1;
-    kitchenData.value.startDate = new Date();
-    kitchenData.value.intermediateDate1 = true;
-    mealTimes.value = mealTimes.value.map(el => {
-      el.isChecked = true;
-      return el;
-    });
+    await kitchenStore.GET_MENU_ITEM(route.params.child_id as string);
+    if (kitchenStore.activeMenuPart) {
+      kitchenData.value.startDate = kitchenStore.menuItem.menu.start_date.split(".").reverse().join("-");
+      kitchenData.value.intermediateDate1 = kitchenStore.menuItem.menu.duration == 7;
+
+    }
+    if (kitchenStore.activeSalesPart) {
+      kitchenData.value.startDate = kitchenStore.menuItem.menu.start_date.split(".").reverse().join("-");
+      kitchenData.value.endDate = kitchenStore.menuItem.menu.end_date.split(".").reverse().join("-");
+    }
+
+
   }
 });
 
@@ -282,9 +421,9 @@ const cancel = () => {
   });
 };
 
-const addMealItem = (index: number | string) => {
+const addMealItem = (index: number, childIndex: string | number) => {
   console.log(index);
-  mealTimes.value[index].mealData.push(
+  data.value[index].data[childIndex].mealData.push(
     {
       period: index + 1,
       start_time: null,
@@ -300,58 +439,141 @@ const addMealItem = (index: number | string) => {
 const changeRation = async (val, parentIndex, childIndex, indexMeal) => {
   console.log(val, parentIndex, childIndex);
   if (val) {
-    const { ration } = await settingsStore.GET_SHOW_ITEM(val);
-    // console.log(mealTimes.value[parentIndex].mealData[childIndex], ration.product_types);
-    data.value[parentIndex].data[childIndex].mealData[indexMeal].rationsList = ration.product_types;
+    const responseData = await kitchenStore.GET_RATION_LIST_IN_MENU(val);
+    // console.log(data);
+    data.value[parentIndex].data[childIndex].mealData[indexMeal].rationsList = responseData && responseData;
   }
 };
 
 const commonStore = useCommonStore();
 
 const sendData = async () => {
-  if (!mealTimesV$.value || !kitchenDatav$.value) return;
+  if (kitchenStore.activeMenuPart) {
+    if (!mealTimesV$.value || !kitchenDatav$.value) return;
+
+    if (!(await mealTimesV$.value.validate() || !(await kitchenDatav$.value.validate()))) {
+      await commonStore.errorToast("Validation Error");
+      return;
+    }
+
+    let kitchenPayload = {
+      kitchen_id: Number(route.params.child_id),
+      start_date: kitchenData.value.startDate,
+      end_date: "",
+      type: 0,
+      duration: kitchenData.value.intermediateDate1 ? 7 : 10,
+    };
 
 
-  if (!(await mealTimesV$.value.validate() || !(await kitchenDatav$.value.validate()))) {
-    await commonStore.errorToast("Validation Error");
-    return;
+    let kitchenElementPayload = data.value.flatMap((entry) =>
+      entry.data.flatMap((meal) =>
+        meal.mealData.map((mealDetail) => ({
+          date: entry.date,
+          ...mealDetail,
+        })),
+      ),
+    );
+
+    kitchenElementPayload.forEach(item => {
+      item.amount = Number(item.amount);
+      delete item.rationsList;
+    });
+
+    if (route.name !== "KitchenMenuEdit") {
+      const kitchenResponse = await kitchenStore.CREATE_KITCHEN(kitchenPayload);
+
+      await kitchenStore.CREATE_KITCHEN_ELEMENT({
+        id: kitchenResponse.data.menu_id,
+        payload: { Elements: kitchenElementPayload },
+      });
+    } else {
+      let menu_id = kitchenStore.menuItem.menu.id;
+      await kitchenStore.UPDATE_MENU(menu_id, kitchenPayload);
+      await kitchenStore.UPDATE_MENU_ELEMENT(menu_id, { Elements: kitchenElementPayload });
+    }
+
+
   }
 
-  let kitchenPayload = {
-    kitchen_id: Number(route.params.child_id),
-    start_date: kitchenData.value.startDate,
-    end_date: "",
-    type: 0,
-    duration: kitchenData.value.intermediateDate1 ? 7 : 10,
-  };
+  if (kitchenStore.activeSalesPart) {
+    if (!kitchenDatav$.value) return;
+
+    if (!await kitchenDatav$.value.validate()) {
+      await commonStore.errorToast("Validation Error");
+      return;
+    }
 
 
-  let kitchenElementPayload = data.value.flatMap((entry) =>
-    entry.data.flatMap((meal) =>
-      meal.mealData.map((mealDetail) => ({
-        date: entry.date,
-        ...mealDetail,
-      })),
-    ),
-  );
+    let kitchenPayload = {
+      kitchen_id: Number(route.params.child_id),
+      start_date: kitchenData.value.startDate,
+      end_date: kitchenData.value.endDate,
+    };
 
-  kitchenElementPayload.forEach(item => {
-    item.amount = Number(item.amount);
-    delete item.rationsList;
-  });
 
-  const kitchenResponse = await kitchenStore.CREATE_KITCHEN(kitchenPayload);
+    let kitchenElementPayload = list_dishes.value.map((entry) => {
+      return entry.data.map(meal => {
+        return {
+          date: entry.date,
+          [meal.meal ? "meal_id" : "product_id"]: meal.meal ? meal.meal : meal.vid_product,
+          amount: Number(meal.amount),
+          product_type: meal.meal ? "meal" : "product",
+        };
+      });
+    }).flat();
 
-  const kitchenResponseElement = await kitchenStore.CREATE_KITCHEN_ELEMENT({
-    id: kitchenResponse.data.menu_id,
-    payload: { Elements: kitchenElementPayload },
-  });
+    console.log(kitchenElementPayload);
+
+    kitchenElementPayload.forEach(item => {
+      item.amount = Number(item.amount);
+      delete item.rationsList;
+    });
+
+    const kitchenResponse = await kitchenStore.CREATE_KITCHEN(kitchenPayload);
+
+    const kitchenResponseElement = await kitchenStore.CREATE_KITCHEN_ELEMENT({
+      id: kitchenResponse.data.menu_id,
+      payload: { Elements: kitchenElementPayload },
+    });
+  }
 
   await router.push(`/kitchen/${route.params.department_id}/free-kitchen/${route.params.kitchen_id}/${route.params.child_id}/menu`);
 
 };
 
+watch(() => route.params, async () => {
+  await kitchenStore.GET_KITCHEN_VID({
+    management_id: route.params.department_id as string,
+    is_paid: route.params.part_name == "free-kitchen" ? 0 : route.params.part_name == "sales" ? 1 : null,
+  });
+  await kitchenStore.GET_KITCHEN_TYPE({
+    management_id: route.params.department_id as string,
+    is_paid: route.params.part_name == "free-kitchen" ? 0 : route.params.part_name == "sales" ? 1 : null,
+    kitchen_type_id: route.params.kitchen_id as string,
+  });
 
+  setBreadCrumbFn();
+}, { immediate: true });
+
+
+const changeInput = async (event: any, index: number, childIndex: number) => {
+  const data = await settingsStore.GET_MEALS_VID_PRO({ parent_id: event });
+
+  list_dishes.value[index].data[childIndex].vid_list = data.product_types ? data.product_types : [];
+};
+
+const addMeal = (parentIndex: number) => {
+  list_dishes.value[parentIndex].data.push(
+    {
+      product: null,
+      vid_product: null,
+      meal: null,
+      amount: null,
+      vid_list: [],
+      meals_list: [],
+    },
+  );
+};
 </script>
 
 
@@ -367,45 +589,56 @@ const sendData = async () => {
       <div>
         <div class="p-6 rounded-3xl border border-[#E2E6F3] mt-6 min-h-[671px]">
           <div>
+            <!--            {{ data }}-->
+            <!--            {{ kitchenStore.menuElement }}-->
             <h3 class="text-lg font-medium text-dark">
               Введите дату!
             </h3>
-            <template v-if="route.name === 'KitchenMenuCreate'">
+            {{ kitchenStore.menuItem }}
+            <div>
               <AppForm :value="kitchenData" @validation="value => kitchenDatav$ = value">
-                <AppDatePicker
-                  v-model="kitchenData.startDate"
-                  prop="startDate"
-                  placeholder="дд.мм.гггг"
-                  format="DD.MM.YYYY"
-                  class="w-[141px] mt-3"
-                  icon-position="start"
-                  required
-                />
+                <div class="flex items-center gap-4">
+                  <AppDatePicker
+                    v-model="kitchenData.startDate"
+                    prop="startDate"
+                    placeholder="дд.мм.гггг"
+                    format="DD.MM.YYYY"
+                    class="w-[141px] mt-3"
+                    icon-position="start"
+                    required
+                  />
+
+                  <AppDatePicker
+                    v-if="kitchenStore.activeSalesPart"
+                    v-model="kitchenData.endDate"
+                    prop="endDate"
+                    placeholder="дд.мм.гггг"
+                    format="DD.MM.YYYY"
+                    class="w-[141px] mt-3"
+                    icon-position="start"
+                    required
+                  />
+                </div>
+
                 <ElSwitch
+                  v-if="kitchenStore.activeMenuPart"
                   v-model="kitchenData.intermediateDate1"
                   active-text="7 дней"
+                  inactive-text="10 дней"
                   class="app-switch"
-                  @change="kitchenData.intermediateDate2 = false"
-                />
-                <br class="mt-3">
-                <ElSwitch
-                  v-model="kitchenData.intermediateDate2"
-                  active-text="10 дней"
-                  class="app-switch"
-                  @change="kitchenData.intermediateDate1 = false"
                 />
 
               </AppForm>
-            </template>
+            </div>
           </div>
           <ElScrollbar
             v-if="scheduledDates.length>0"
             class="mt-8"
           >
             <div
-              class="flex flex-wrap items-center"
+              class="flex flex-wrap items-center gap-4"
             >
-              {{ scheduledDates }}
+              <!--              {{ scheduledDates }}-->
               <button
                 v-for="item in scheduledDates"
                 :key="item.date"
@@ -417,7 +650,7 @@ const sendData = async () => {
             </div>
           </ElScrollbar>
           <div class="mt-6">
-            {{ data[0] }}
+            <!--            {{ data[0] }}-->
             <AppForm :value="data" @validation="(value) => mealTimesV$ = value"
                      v-if="kitchenStore.activeMenuPart && activeScheduledDate && data.length>0">
               <h3 class="text-lg font-medium text-dark">
@@ -444,6 +677,7 @@ const sendData = async () => {
                         <div class="flex items-center gap-x-6">
                           <!--                          {{ data[index].data[childIndex].mealData[indexMeal].start_time }}-->
                           <AppTimePicker
+                            :editable="true"
                             v-model="itemMeal.start_time"
                             :prop="`[${index}].data[${childIndex}].mealData[${indexMeal}].start_time`"
                             class="max-w-[141px]"
@@ -487,11 +721,11 @@ const sendData = async () => {
                           required
                         />
                         <div
-                          v-if="itemMeal.product_id"
+                          v-if="itemMeal.product_id && itemMeal.rationsList && itemMeal.rationsList.products"
                           class="mt-6"
                         >
                           <ElTable
-                            :data="itemMeal.rationsList"
+                            :data="itemMeal.rationsList.products"
                             stripe
                             :empty-text="'Нет доступных данных'"
                             class="custom-element-table meal-plan-create__table"
@@ -527,7 +761,7 @@ const sendData = async () => {
                                                     Общая сумма:
                                                   </span>
                                   <strong class="font-semibold text-dark">
-                                    28 000 сум
+                                    {{ itemMeal.rationsList.total_price.toLocaleString() }}
                                   </strong>
                                 </div>
                               </div>
@@ -538,7 +772,7 @@ const sendData = async () => {
                       </div>
 
                       <ElButton
-                        @click="addMealItem(index)"
+                        @click="addMealItem(index, childIndex)"
                         type="primary"
                         plain
                         class="mt-6 !bg-white !border-blue-500"
@@ -558,76 +792,142 @@ const sendData = async () => {
                 </div>
               </div>
             </AppForm>
-            <div v-else-if="kitchenStore.activeSalesPart">
+            <div v-else-if="kitchenStore.activeSalesPart && list_dishes.length > 0">
               <h3 class="text-2xl font-medium text-dark">
                 Список блюды
               </h3>
-              <div class="max-w-[457px] grid grid-cols-2 gap-x-3">
-                <AppSelect
-                  label="Блюда"
-                  label-class="text-[#A8AAAE]"
-                />
-                <AppInput
-                  label="Порция"
-                  label-class="text-[#A8AAAE]"
-                />
-              </div>
-              <ElTable
-                :data="tableData2"
-                stripe
-                class="custom-element-table meal-plan-create__table"
-              >
-                <ElTableColumn
-                  v-for="item in tableColumns2"
-                  :key="item.prop"
-                  :prop="item.prop"
-                  :label="item.label"
-                  :align="item.align ?? 'left'"
-                />
-                <template #append>
-                  <div class="px-4 py-3.5 flex justify-end items-center gap-x-8">
-                    <div class="flex items-center gap-x-1 text-sm">
-                          <span class="text-cool-gray">
-                            Цена:
-                          </span>
-                      <strong class="font-semibold text-dark">
-                        25 000 сум
-                      </strong>
+              {{ list_dishes }}
+              <div v-for="(meal, index) in list_dishes" class="">
+                <!--        {{ tableData }}-->
+                <div v-show="meal.date == activeScheduledDate">
+                  <div v-for="(item, childIndex) in meal.data">
+                    <div class="flex items-center gap-4 w-full">
+
+                      <AppSelect
+                        v-model="item.meal"
+                        :disabled="item.product || item.vid_product"
+                        :items="settingsStore.meals.meals"
+                        clearable
+                        class="w-full"
+                        item-value="id"
+                        item-label="name"
+                        label="Блюды"
+                        label-class="text-[#A8AAAE] text-[12px] font-medium"
+                        placeholder="Выберите блюды"
+                      />
+
+                      <app-select
+                        v-model="item.product"
+                        :disabled="item.meal"
+                        label="Тип продукта"
+                        class="w-full"
+                        placeholder="Выберите"
+                        label-class="text-[#A8AAAE] font-medium text-[12px]"
+                        clearable
+                        itemValue="id"
+                        itemLabel="name"
+                        :items="settingsStore.typeProduct.product_categories"
+                        @change="changeInput($event, index, childIndex)"
+                      />
+                      <app-select
+                        v-model="item.vid_product"
+                        :disabled="item.meal"
+                        class="w-full"
+                        label="Вид продукта"
+                        placeholder="Выберите"
+                        label-class="text-[#A8AAAE] font-medium text-[12px]"
+                        itemValue="id"
+                        itemLabel="name"
+                        :items="item.vid_list"
+                      />
+
+                      <AppInput
+                        v-model="item.amount"
+                        class="w-full"
+                        placeholder=""
+                        label="Порция"
+                        type="number"
+                        label-class="text-[#A8AAAE] text-[12px] font-medium"
+                      />
                     </div>
-                    <div class="flex items-center gap-x-1 text-sm">
-                          <span class="text-cool-gray">
-                            НДС:
-                          </span>
-                      <strong class="font-semibold text-dark">
-                        3 000 сум
-                      </strong>
-                    </div>
-                    <div class="flex items-center gap-x-1 text-sm">
-                          <span class="text-cool-gray">
-                            Общая сумма:
-                          </span>
-                      <strong class="font-semibold text-dark">
-                        28 000 сум
-                      </strong>
+
+                    <div v-if="item.meals_list && item.meals_list.length" class="mb-[24px]">
+                      <el-table
+                        empty-text="Нет данных"
+                        :data="item.meals_list"
+                        stripe
+                        class="custom-element-table custom-element-table--has-append"
+                      >
+                        <el-table-column
+                          prop="name"
+                          label="Ингредиенты"
+                        />
+                        <el-table-column
+                          prop="quantity"
+                          label="Количество"
+                        />
+                        <el-table-column
+                          prop="unit"
+                          label="Ед. измерения"
+                        />
+                        <el-table-column
+                          prop="net_price"
+                          label="Сумма"
+                        />
+
+
+                        <template #append>
+                          <div class="px-4 py-3.5 flex justify-end items-center ">
+                            <div class="flex items-center gap-x-8">
+                              <div class="flex items-center gap-x-1 text-sm">
+                    <span class="text-cool-gray">
+                      Цена:
+                    </span>
+                                <strong class="font-semibold text-dark">
+                                  25 000 сум
+                                </strong>
+                              </div>
+                              <div class="flex items-center gap-x-1 text-sm">
+                    <span class="text-cool-gray">
+                      НДС:
+                    </span>
+                                <strong class="font-semibold text-dark">
+                                  3 000 сум
+                                </strong>
+                              </div>
+                              <div class="flex items-center gap-x-1 text-sm">
+                    <span class="text-cool-gray">
+                      Общая сумма:
+                    </span>
+                                <strong class="font-semibold text-dark">
+                                  {{ tableData?.total_price && tableData?.total_price.toLocaleString() }} сум
+                                </strong>
+                              </div>
+                            </div>
+                          </div>
+                        </template>
+                      </el-table>
                     </div>
                   </div>
-                </template>
-              </ElTable>
-              <ElButton
-                type="primary"
-                plain
-                class="mt-6 !bg-white !border-blue-500"
-              >
-                <div class="flex items-center gap-x-2">
-                  <svg
-                    :data-src="PlusIcon"
-                    class="size-4 meal-plan-create__plus-icon"
-                  />
-                  <span class="text-xs font-medium text-blue-500">
+                  <ElButton
+                    type="primary"
+                    plain
+                    class="mt-6 !bg-white !border-blue-500"
+                    @click="addMeal(index)"
+                  >
+                    <div class="flex items-center gap-x-2">
+                      <svg
+                        :data-src="PlusIcon"
+                        class="size-4 meal-plan-create__plus-icon"
+                      />
+                      <span class="text-xs font-medium text-blue-500">
                     Добавить еще
                   </span>
+                    </div>
+                  </ElButton>
                 </div>
-              </ElButton>
+              </div>
+
             </div>
           </div>
         </div>

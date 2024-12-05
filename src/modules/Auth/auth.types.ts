@@ -1,9 +1,15 @@
-import { NameType } from "@/types/common.type";
-
-export interface AuthTokenType {
-    access_token: string;
-    token_type: string;
+export interface AuthTokenStructureType{
     expires_in: number;
+}
+
+export interface AuthTokenType extends AuthTokenStructureType {
+    access_token: string;
+    token_type: "bearer";
+}
+
+export interface AuthRefreshTokenType extends AuthTokenStructureType {
+    refresh_token: string;
+    token_type: "refresh";
 }
 
 export interface AuthLoginDataType {
@@ -13,10 +19,20 @@ export interface AuthLoginDataType {
 
 export interface AuthLoginResponseType {
     token: AuthTokenType;
+    refresh_token: AuthRefreshTokenType;
 }
 
 export interface AuthCreateDataType extends AuthLoginDataType {
     name: string;
+}
+
+export type PositionType = string | null;
+
+export interface UserWorkplaceType {
+    position: PositionType,
+    workplace: string,
+    workplace_id: number,
+    workplace_type: string
 }
 
 export interface UserType {
@@ -26,7 +42,8 @@ export interface UserType {
     firstname: string;
     lastname: string;
     patronymic: null | string;
-    position: any;
+    position: PositionType;
+    workplaces: UserWorkplaceType[]
 }
 
 export interface SendCodeDataType {
@@ -53,3 +70,5 @@ export interface ForgotPasswordDataType extends VerifyCodeDataType {
     new_password: string,
     password_confirmation: string
 }
+
+export type CodeType = string;

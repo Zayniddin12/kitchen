@@ -2,13 +2,14 @@
   setup
   lang="ts"
 >
-import { useRoute } from "vue-router";
-import { ref, watchEffect } from "vue";
+import { useRoute, useRouter } from "vue-router";
+import { onMounted, ref, watch, watchEffect } from "vue";
 import { useKitchenStore } from "@/modules/Kitchen/kitchen.store";
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 
 const kitchenStore = useKitchenStore();
 const route = useRoute();
+const router = useRouter();
 const { setBreadCrumb } = useBreadcrumb();
 
 const num = ref(1);
@@ -23,72 +24,41 @@ interface TableData {
   receive: string;
 }
 
-const tableData = ref<TableData[]>([
-  {
-    id: 1,
-    num: "1",
-    date: "23.08.2024",
-    doc: "852369",
-    theme: "Доставка мяса",
-    send: "Зарафшан",
-    receive: "Фонд",
-  },
-  {
-    id: 2,
-    num: "2",
-    date: "22.08.2024",
-    doc: "556261",
-    theme: "Доставка картофеля",
-    send: "Учкудук",
-    receive: "Фонд",
-  },
-  {
-    id: 3,
-    num: "3",
-    date: "21.08.2024",
-    doc: "584534",
-    theme: "Доставка лука",
-    send: "Навои",
-    receive: "Фонд",
-  },
-  {
-    id: 4,
-    num: "4",
-    date: "22.08.2024",
-    doc: "556261",
-    theme: "Доставка картофеля",
-    send: "Учкудук",
-    receive: "Фонд",
-  },
-]);
+const tableData = ref<any>({});
+const activeData = ref<number | string | null>(null);
 
 const setBreadCrumbFn = () => {
   kitchenStore.fetchPart(+route.params.department_id, route.params.part_name as string);
+  kitchenStore.fetchPart2(+route.params.kitchen_id);
+  kitchenStore.fetchPart3(+route.params.child_id);
 
   if (!kitchenStore.part) return;
+
+  console.log(kitchenStore.part.kitchen_vid);
 
   setBreadCrumb([
     {
       label: "Кухня",
     },
     {
-      label: kitchenStore.part.name,
+      label: kitchenStore.part.title,
     },
     {
       label: kitchenStore.part.department_name,
       to: { name: "KitchenIndex" },
     },
     {
-      label: "Лагерь",
-      to: { name: "KitchenShowIndex" },
+      label: kitchenStore.part.kitchen_vid as string,
+      isActionable: true,
+      to: { name: "KitchenShow" },
     },
     {
-      label: "Паҳлавон",
-      to: { name: "KitchenShowChildIndex" },
+      label: kitchenStore.part.kitchen_type as string,
+      isActionable: true,
     },
     {
       label: "Меню",
-      to: { name: "KitchenMenuIndex" },
+      isActionable: true,
     },
     {
       label: "Продать",
@@ -97,9 +67,56 @@ const setBreadCrumbFn = () => {
   ]);
 };
 
+onMounted(async () => {
+  await kitchenStore.GET_CURRENT_MENU_LIST(route.params.child_id as number);
+  tableData.value = kitchenStore.menuToday.elements[0];
+  activeData.value = 0;
+});
+
+watch(() => route.params, async () => {
+  await kitchenStore.GET_KITCHEN_VID({
+    management_id: route.params.department_id as string,
+    is_paid: route.params.part_name == "free-kitchen" ? 0 : route.params.part_name == "sales" ? 1 : null,
+  });
+  await kitchenStore.GET_KITCHEN_TYPE({
+    management_id: route.params.department_id as string,
+    is_paid: route.params.part_name == "free-kitchen" ? 0 : route.params.part_name == "sales" ? 1 : null,
+    kitchen_type_id: route.params.kitchen_id as string,
+  });
+
+  setBreadCrumbFn();
+}, { immediate: true });
+
 watchEffect(() => {
   setBreadCrumbFn();
 });
+
+
+const setActiveData = (data, index) => {
+  console.log(data);
+  tableData.value = data ? data : {};
+  activeData.value = index;
+};
+
+const handleSubmit = async () => {
+  try {
+    let data = {
+      kitchen_id: Number(route.params.child_id),
+      rations: [
+        {
+          id: tableData.value.id,
+          quantity: num.value,
+        },
+
+      ],
+
+    };
+    await kitchenStore.CREATE_ORDER(data);
+    await router.push(`/kitchen/${route.params.department_id}/free-kitchen/${route.params.kitchen_id}/${route.params.child_id}/menu`);
+  } catch (err) {
+
+  }
+};
 
 </script>
 
@@ -107,37 +124,45 @@ watchEffect(() => {
   <div>
     <h1 class="mb-6 text-[32px] text-[#000D24] font-semibold">
       Продать
-    </h1>
+      <!--      {{kitchenStore.part}}-->
 
+    </h1>
+    <!--    {{ kitchenStore.menuToday }}-->
     <div class="bg-[#FFFFFF] border border-[#E2E6F3] rounded-[24px] p-[24px]">
 
       <div class="flex items-center mb-[24px]">
         <div
-          v-for="item in 7"
-          class="bg-[#F8F9FC] rounded-[16px] p-[12px] mr-[24px]"
+          v-for="(item, index) in kitchenStore.menuToday.elements" :key="index"
+          :class="['bg-[#F8F9FC] rounded-[16px] p-[12px] mr-[24px] cursor-pointer w-[113px]', activeData == index && 'bg-[#F8F9FC] shadow-2xl !text-[#2E90FA]']"
+
+          @click="setActiveData(item, index)"
         >
-          <span class="block text-[18px] text-[#4F5662] font-medium mb-[4px]">Рацион {{ item }}</span>
-          <span class="block text-[14px] text-[#8F9194] mb-[4px]">R-0000</span>
-          <span class="block text-[14px] text-[#8F9194]">R-0000</span>
+          <span class="block text-[18px] text-[#4F5662] font-medium mb-[4px]"
+                :class="activeData == index && '!text-[#2E90FA]'">{{ item.product_name }}</span>
+          <span class="block text-[14px] text-[#8F9194] mb-[4px]"
+                :class="activeData == index && '!text-[#2E90FA]'">{{ item.product_number }}</span>
+          <span class="block text-[14px] text-[#8F9194]" :class="activeData == index && '!text-[#2E90FA]'">R-0000</span>
         </div>
       </div>
 
       <div class="mb-[24px]">
+        <!--        {{ tableData }} {{ activeData }}-->
         <el-table
-          :data="tableData"
+          empty-text="Нет данных"
+          :data="tableData.product"
           stripe
           class="custom-element-table"
         >
           <el-table-column
-            prop="num"
+            prop="name"
             label="Название"
           />
           <el-table-column
-            prop="date"
+            prop="quantity"
             label="Количество"
           />
           <el-table-column
-            prop="doc"
+            prop="unit"
             label="Ед. измерения"
           />
 
@@ -145,9 +170,12 @@ watchEffect(() => {
             <div class="px-4 py-3.5 flex justify-between items-center ">
               <div class="flex items-center">
                 <span class="text-[#8F9194] text-[14px] font-medium mr-[16px]">Количество порции</span>
+<!--                {{ num }}-->
                 <el-input-number
+                  class="order-kitchen"
                   v-model="num"
                   :min="1"
+                  :max="tableData.amount_left"
                   size="small"
                 />
               </div>
@@ -157,7 +185,7 @@ watchEffect(() => {
                     Цена:
                   </span>
                   <strong class="font-semibold text-dark">
-                    25 000 сум
+                    {{ tableData.price && tableData.price.toLocaleString() }} сум
                   </strong>
                 </div>
                 <div class="flex items-center gap-x-1 text-sm">
@@ -185,9 +213,13 @@ watchEffect(() => {
 
       </div>
       <div class="flex justify-end">
-        <button class="custom-apply-btn">Продать</button>
+        <button @click="handleSubmit" class="custom-apply-btn">Продать</button>
       </div>
 
     </div>
   </div>
 </template>
+
+<style lang="scss">
+
+</style>

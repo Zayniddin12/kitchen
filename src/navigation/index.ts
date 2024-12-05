@@ -2,11 +2,13 @@ import { defineStore } from "pinia";
 import { computed, ref } from "vue";
 import { useKitchenWarehouseStore } from "@/modules/KitchenWarehouse/kitchen-warehouse.store";
 import { useKitchenStore } from "@/modules/Kitchen/kitchen.store";
+import { useWarehouseBasesStore } from "@/modules/WarehouseBases/warehouse-bases.store";
 
 export const useLayoutStore = defineStore("layoutStore", () => {
 
     const kitchenWarehouse = useKitchenWarehouseStore();
     const kitchenStore = useKitchenStore();
+    const warehouseBasesStore = useWarehouseBasesStore();
 
     const currentTheme = ref(localStorage.getItem("currentTheme") || "light");
 
@@ -105,98 +107,7 @@ export const useLayoutStore = defineStore("layoutStore", () => {
                 title: "Базы складов",
                 icon: "building-warehouse",
                 unique: "building-warehouse",
-                children: [
-                    {
-                        title: "Зарафшан",
-                        icon: "building-warehouse",
-                        children: [
-                            {
-                                title: "Мясной склад",
-                                route: "/warehouse/1/1"
-                            },
-                            {
-                                title: "Овощной склад",
-                                route: "/warehouse/1/2"
-                            },
-                            {
-                                title: "Рисовый склад",
-                                route: "/warehouse/1/3"
-                            }
-                        ]
-                    },
-                    {
-                        title: "Навои",
-                        icon: "building-warehouse",
-                        children: [
-                            {
-                                title: "Мясной склад",
-                                route: "/warehouse/2/1"
-                            },
-                            {
-                                title: "Овощной склад",
-                                route: "/warehouse/2/2"
-                            },
-                            {
-                                title: "Рисовый склад",
-                                route: "/warehouse/2/3"
-                            }
-                        ]
-                    },
-                    {
-                        title: "Учкудук",
-                        icon: "building-warehouse",
-                        children: [
-                            {
-                                title: "Мясной склад",
-                                route: "/warehouse/3/1"
-                            },
-                            {
-                                title: "Овощной склад",
-                                route: "/warehouse/3/2"
-                            },
-                            {
-                                title: "Рисовый склад",
-                                route: "/warehouse/3/3"
-                            }
-                        ]
-                    },
-                    {
-                        title: "Нуробод",
-                        icon: "building-warehouse",
-                        children: [
-                            {
-                                title: "Мясной склад",
-                                route: "/warehouse/4/1"
-                            },
-                            {
-                                title: "Овощной склад",
-                                route: "/warehouse/4/2"
-                            },
-                            {
-                                title: "Рисовый склад",
-                                route: "/warehouse/4/3"
-                            }
-                        ]
-                    },
-                    {
-                        title: "Зафаробод",
-                        icon: "building-warehouse",
-                        children: [
-                            {
-                                title: "Мясной склад",
-                                route: "/warehouse/5/1"
-                            },
-                            {
-                                title: "Овощной склад",
-                                route: "/warehouse/5/2"
-                            },
-                            {
-                                title: "Рисовый склад",
-                                route: "/warehouse/5/3"
-                            }
-                        ]
-                    }
-                ]
+                children: warehouseBasesStore.managementBasesMenu
             },
             {
                 title: "Склад кухни",

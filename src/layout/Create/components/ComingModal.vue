@@ -1,6 +1,6 @@
 <script
-    setup
-    lang="ts"
+  setup
+  lang="ts"
 >
 import AppInput from "@/components/ui/form/app-input/AppInput.vue";
 import AppSelect from "@/components/ui/form/app-select/AppSelect.vue";
@@ -9,21 +9,21 @@ import useConfirm from "@/components/ui/app-confirm/useConfirm";
 import {
   DocumentCreateDataActType,
   DocumentCreateDataDocumentType, DocumentCreateDataType,
-  DocumentProductType
+  DocumentProductType,
 } from "@/modules/Document/document.types";
 import { ValidationType } from "@/components/ui/form/app-form/app-form.type";
 import AppForm from "@/components/ui/form/app-form/AppForm.vue";
 import { computed, reactive, ref, watch } from "vue";
 import {
   ModalPropsType,
-  ModalValueType
+  ModalValueType,
 } from "@/layout/Create/components/modal.types";
 import { useSettingsStore } from "@/modules/Settings/store";
 import {
   deepEqual,
   formatDate2,
   formatNumber,
-  togglePageScrolling
+  togglePageScrolling,
 } from "@/utils/helper";
 import { useCommonStore } from "@/stores/common.store";
 import deleteIcon from "@/assets/images/icons/delete-danger-icon.svg";
@@ -31,6 +31,7 @@ import { useDocumentStore } from "@/modules/Document/document.store";
 import { AppSelectValueType } from "@/components/ui/form/app-select/app-select.type";
 import { useUsersStore } from "@/modules/Users/users.store";
 import { UserType } from "@/modules/Users/users.types";
+import { useAuthStore } from "@/modules/Auth/auth.store";
 
 interface ProviderFormType {
   name: string;
@@ -53,6 +54,7 @@ const props = defineProps<ModalPropsType>();
 const settingsStore = useSettingsStore();
 const documentStore = useDocumentStore();
 const usersStore = useUsersStore();
+const authStore = useAuthStore();
 
 const date = ref(formatDate2(new Date()));
 
@@ -77,9 +79,9 @@ const form = reactive<DocumentCreateDataDocumentType>({
       product_type_id: "",
       quantity: null,
       unit_id: "",
-      price: null
-    }
-  ]
+      price: null,
+    },
+  ],
 });
 
 const formNumberAndDate = computed(() => {
@@ -89,7 +91,7 @@ const formNumberAndDate = computed(() => {
 
 const validationErrors = ref<Record<string, any> | null>({
   Document: {},
-  Act: {}
+  Act: {},
 });
 
 const oldForm = ref<null | DocumentCreateDataDocumentType>(null);
@@ -111,7 +113,7 @@ const actForm = reactive<DocumentCreateDataActType>({
     quality_date: "",
     contract_details: "",
     contract_details_date: "",
-    manufacturer: ""
+    manufacturer: "",
   },
   doc_signers: [],
   doc_signer_obj: {
@@ -119,8 +121,8 @@ const actForm = reactive<DocumentCreateDataActType>({
     signer_id_2: "",
     signer_id_3: "",
     signer_id_4: "",
-    signer_id_5: ""
-  }
+    signer_id_5: "",
+  },
 });
 
 const oldActForm = ref<DocumentCreateDataActType | null>(null);
@@ -128,7 +130,7 @@ const oldActForm = ref<DocumentCreateDataActType | null>(null);
 const from = computed<string>(() => {
   if (!form.from_id || !form.from_type) return "";
   const activeEl = settingsStore.respondents.find(
-      el => el.model_type === form.from_type && el.id === form.from_id
+    el => el.model_type === form.from_type && el.id === form.from_id,
   );
 
   if (!activeEl) return "";
@@ -139,7 +141,7 @@ const from = computed<string>(() => {
 const to = computed<string>(() => {
   if (!form.to_id || !form.to_type) return "";
   const activeEl = settingsStore.respondents.find(
-      el => el.model_type === form.to_type && el.id === form.to_id
+    el => el.model_type === form.to_type && el.id === form.to_id,
   );
 
   if (!activeEl) return "";
@@ -162,6 +164,8 @@ const setActValidation = (validation: ValidationType) => {
 const clearValidations = () => {
   v$.value?.clear();
   if (activeComingModal.value && actV$.value) actV$.value.clear();
+  form.to = "";
+  form.from = "";
   form.to_type = "";
   form.to_id = null;
   form.from_type = "";
@@ -180,23 +184,21 @@ const sendForm = async () => {
   }
 
   const newForm: DocumentCreateDataType = {
-    Document: JSON.parse(JSON.stringify(form))
+    Document: JSON.parse(JSON.stringify(form)),
   };
 
   delete newForm.Document.from;
   delete newForm.Document.to;
 
-  if (activeComingModal.value) {
-    newForm.Act = JSON.parse(JSON.stringify(actForm));
+  newForm.Act = JSON.parse(JSON.stringify(actForm));
 
-    if (newForm.Act && newForm.Act.doc_signer_obj) {
-      const signerKeys = ["signer_id_1", "signer_id_2", "signer_id_3", "signer_id_4", "signer_id_5"] as const;
+  if (newForm.Act && newForm.Act.doc_signer_obj) {
+    const signerKeys = ["signer_id_1", "signer_id_2", "signer_id_3", "signer_id_4", "signer_id_5"] as const;
 
-      newForm.Act.doc_signers = signerKeys
-          .map((key) => ({
-            signer_id: newForm.Act!.doc_signer_obj![key] as number
-          }));
-    }
+    newForm.Act.doc_signers = signerKeys
+      .map((key) => ({
+        signer_id: newForm.Act!.doc_signer_obj![key] as number,
+      }));
   }
 
   await documentStore.create(newForm).then(() => {
@@ -205,7 +207,7 @@ const sendForm = async () => {
     clearValidations();
     validationErrors.value = {
       Document: {},
-      Act: {}
+      Act: {},
     };
   }).catch((error: any) => {
     if (error?.error?.code === 422) {
@@ -216,16 +218,32 @@ const sendForm = async () => {
 
 const vidProducts = ref<Map<number, Record<string, any>[]>>(new Map);
 
-const fetchVidProductsList = async (value: AppSelectValueType) => {
+const fetchVidProductsList = async (product: DocumentProductType) => {
 
-  if (typeof value !== "number") return;
+  if (typeof product.category_id !== "number") return;
 
   await settingsStore.GET_VID_PRODUCT({
-    parent_id: value,
-    per_page: 100
+    parent_id: product.category_id,
+    per_page: 100,
   });
 
-  vidProducts.value.set(value, settingsStore.vidProduct.product_types);
+  vidProducts.value.set(product.category_id, settingsStore.vidProduct.product_types);
+  product.product_type_id = "";
+  product.unit_id = "";
+};
+
+const changeProduct = async (product: DocumentProductType) => {
+  if (!(product.product_type_id && product.category_id)) return;
+
+  const activeVidProducts = vidProducts.value.get(product.category_id);
+
+  if (!activeVidProducts) return;
+
+  const activeVidProduct = activeVidProducts.find(el => el.id === product.product_type_id);
+
+  if (!activeVidProduct) return;
+
+  product.unit_id = activeVidProduct.unit_id;
 };
 
 const getProductTypeTitle = (category_id: number, product_type_id: number) => {
@@ -242,18 +260,18 @@ const getProductTypeTitle = (category_id: number, product_type_id: number) => {
 
 const getProductMeasurement = (id: number) => {
   return (
-      settingsStore.units.units.find((el: Record<string, any>) => el.id === id)
-          ?.name ?? ""
+    settingsStore.units.units.find((el: Record<string, any>) => el.id === id)
+      ?.name ?? ""
   );
 };
 
 const productsTotalSum = computed(() => {
   return form.products?.reduce((sum: number, product: DocumentProductType) => {
     return (
-        sum +
-        Number(
-            product.price && product.quantity ? product.price * product.quantity : 0
-        )
+      sum +
+      Number(
+        product.price && product.quantity ? product.price * product.quantity : 0,
+      )
     );
   }, 0);
 });
@@ -264,7 +282,7 @@ const createProduct = () => {
     product_type_id: "",
     quantity: null,
     unit_id: "",
-    price: null
+    price: null,
   });
 };
 
@@ -282,14 +300,14 @@ const selectedProductTypes = computed(() => {
   const appSelectedProductTypes: Record<string, any>[] = [];
 
   form.products?.forEach(el => {
-        if (el.category_id && el.product_type_id) {
-          const vidProduct = vidProducts.value.get(el.category_id);
-          if (vidProduct) {
-            const childProduct = vidProduct.find(element => element.id === el.product_type_id);
-            if (childProduct) appSelectedProductTypes.push(childProduct);
-          }
+      if (el.category_id && el.product_type_id) {
+        const vidProduct = vidProducts.value.get(el.category_id);
+        if (vidProduct) {
+          const childProduct = vidProduct.find(element => element.id === el.product_type_id);
+          if (childProduct) appSelectedProductTypes.push(childProduct);
         }
       }
+    },
   );
 
   return appSelectedProductTypes;
@@ -348,6 +366,15 @@ const closeModal = async () => {
 const openModal = () => {
   form.doc_type_id = props.id;
   fetchRespondents();
+
+  if (authStore.disabledUserWorkplace) {
+    const activeWorkplace = authStore.user.workplaces[0];
+    const type = activeComingModal.value ? "to" : "from";
+    form[`${type}_id`] = activeWorkplace.workplace_id;
+    form[`${type}_type`] = activeWorkplace.workplace_type;
+    form[type] = `${activeWorkplace.workplace_id}_${activeWorkplace.workplace_type}`;
+  }
+
   settingsStore.GET_TYPE_PRODUCT();
   settingsStore.GET_UNITS();
 
@@ -355,7 +382,7 @@ const openModal = () => {
   if (activeComingModal.value) {
     oldActForm.value = JSON.parse(JSON.stringify(actForm));
     usersStore.fetchUsers({
-      per_page: 100
+      per_page: 100,
     });
   }
 };
@@ -379,7 +406,7 @@ const providerForm = reactive<ProviderFormType>({
   sertificate: "",
   sert_end_date: "",
   director: "",
-  phone: ""
+  phone: "",
 });
 
 const oldProviderForm = ref<null | ProviderFormType>(null);
@@ -415,8 +442,8 @@ const providerCreateModal = ref<boolean>(false);
 
 const providerCreateModalClose = async () => {
   if (
-      oldProviderForm.value &&
-      !deepEqual(providerForm, oldProviderForm.value)
+    oldProviderForm.value &&
+    !deepEqual(providerForm, oldProviderForm.value)
   ) {
     const response = await confirm.cancel();
 
@@ -446,28 +473,28 @@ watch(providerCreateModal, newMProviderModal => {
 
 <template>
   <el-dialog
-      v-model="model"
-      :show-close="false"
-      class="w-[75%]"
-      align-center
-      append-to-body
-      :before-close="closeModal"
+    v-model="model"
+    :show-close="false"
+    class="w-[75%]"
+    align-center
+    append-to-body
+    :before-close="closeModal"
   >
     <template #header>
       <div class="text-center text-[#000000] font-bold text-[18px]">
         Создать {{ activeComingModal ? "приход" : " расход" }}
       </div>
     </template>
-    <div>
-      <div class="flex">
+    <div class="flex gap-x-6 flex-wrap">
+      <div class="w-[60%] flex flex-col gap-y-10">
         <div
-            class="border-[#E2E6F3] bg-[#fff] border rounded-[15px] w-[60%] mr-0"
+          :class="['border-[#E2E6F3] bg-[#fff] border rounded-[15px]', `${activeComingModal ? 'min-h-[830px]' : 'min-h-[1319px]'}`]"
         >
           <div class="px-[72px] pb-[150px]">
             <header class="flex items-center justify-center my-[24px] mb-6">
               <img
-                  src="@/assets/images/logo.svg"
-                  alt="logo"
+                src="@/assets/images/logo.svg"
+                alt="logo"
               />
               <div class="flex flex-col ml-3">
                 <b class="text-[#000D24] text-lg">NKMK</b>
@@ -475,7 +502,7 @@ watch(providerCreateModal, newMProviderModal => {
               </div>
             </header>
             <h1
-                class="text-[#000D24] font-bold text-[20px] text-center mb-[24px]"
+              class="text-[#000D24] font-bold text-[20px] text-center mb-[24px]"
             >
               НАКЛАДНОЙ
             </h1>
@@ -561,48 +588,48 @@ watch(providerCreateModal, newMProviderModal => {
             </div>
 
             <el-table
-                :data="form.products"
-                stripe
-                class="custom-element-table custom-element-table--has-append"
-                header-cell-class-name="custom-cell-header"
-                cell-class-name="custom-cell-header"
+              :data="form.products"
+              stripe
+              class="custom-element-table custom-element-table--has-append mb-6"
+              header-cell-class-name="custom-cell-header"
+              cell-class-name="custom-cell-header"
             >
               <el-table-column
-                  prop="title"
-                  label="Название"
-                  class="!p-0"
+                prop="title"
+                label="Название"
+                class="!p-0"
               >
                 <template #default="{ row }: { row: DocumentProductType }">
                   {{
                     row.product_type_id
-                        ? getProductTypeTitle(row.category_id as number, row.product_type_id as number)
-                        : "-"
+                      ? getProductTypeTitle(row.category_id as number, row.product_type_id as number)
+                      : "-"
                   }}
                 </template>
               </el-table-column>
               <el-table-column
-                  prop="quantity"
-                  label="Количество"
+                prop="quantity"
+                label="Количество"
               >
                 <template #default="{ row }: { row: DocumentProductType }">
                   {{ row.quantity ?? "-" }}
                 </template>
               </el-table-column>
               <el-table-column
-                  prop="measurement"
-                  label="Ед. измерения"
+                prop="measurement"
+                label="Ед. измерения"
               >
                 <template #default="{ row }: { row: DocumentProductType }">
                   {{
                     row.unit_id
-                        ? getProductMeasurement(row.unit_id as number)
-                        : "-"
+                      ? getProductMeasurement(row.unit_id as number)
+                      : "-"
                   }}
                 </template>
               </el-table-column>
               <el-table-column
-                  prop="price"
-                  label="Цена"
+                prop="price"
+                label="Цена"
               >
                 <template #default="{ row }: { row: DocumentProductType }">
                   {{
@@ -611,23 +638,23 @@ watch(providerCreateModal, newMProviderModal => {
                 </template>
               </el-table-column>
               <el-table-column
-                  prop="total_price"
-                  label="Сумма"
+                prop="total_price"
+                label="Сумма"
               >
                 <template #default="{ row }: { row: DocumentProductType }">
                   {{
                     row.price && row.quantity
-                        ? `${formatNumber(
-                            (row.price * row.quantity) as number
-                        )} сум`
-                        : "-"
+                      ? `${formatNumber(
+                        (row.price * row.quantity) as number,
+                      )} сум`
+                      : "-"
                   }}
                 </template>
               </el-table-column>
 
               <template
-                  v-if="productsTotalSum"
-                  #append
+                v-if="productsTotalSum"
+                #append
               >
                 <div class="flex items-center justify-end p-4">
                   <h1 class="text-[#8F9194] text-sm font-bold mr-[5px]">
@@ -639,274 +666,56 @@ watch(providerCreateModal, newMProviderModal => {
                 </div>
               </template>
             </el-table>
+            <template v-if="!activeComingModal">
+              <div class="flex items-center justify-between mb-[24px]">
+                <h1 class="text-[#4F5662] text-sm font-semibold">Кладовщик:</h1>
+                <span class="ml-2 text-[#A8AAAE] text-sm font-medium block">
+                {{
+                    actForm.doc_signer_obj.signer_id_1 && typeof (actForm.doc_signer_obj.signer_id_1) === "number" ? usersStore.getUserFullName(getUser(actForm.doc_signer_obj.signer_id_1)) : ""
+                  }}
+              </span>
+              </div>
+
+              <div class="flex items-center justify-between mb-[24px]">
+                <h1 class="text-[#4F5662] text-sm font-semibold">Товаровед:</h1>
+                <span class="ml-2 text-[#A8AAAE] text-sm font-medium block">
+                {{
+                    actForm.doc_signer_obj.signer_id_2 && typeof (actForm.doc_signer_obj.signer_id_2) === "number" ? usersStore.getUserFullName(getUser(actForm.doc_signer_obj.signer_id_2)) : ""
+                  }}
+              </span>
+              </div>
+
+              <div class="flex items-center justify-between mb-[24px]">
+                <h1 class="text-[#4F5662] text-sm font-semibold">Зав. склад</h1>
+                <span class="ml-2 text-[#A8AAAE] text-sm font-medium block">
+               {{
+                    actForm.doc_signer_obj.signer_id_4 && typeof (actForm.doc_signer_obj.signer_id_4) === "number" ? usersStore.getUserFullName(getUser(actForm.doc_signer_obj.signer_id_4)) : ""
+                  }}
+              </span>
+              </div>
+
+              <div class="flex items-center justify-between mb-[24px]">
+                <h1 class="text-[#4F5662] text-sm font-semibold">
+                  Начальник базы
+                </h1>
+                <span class="ml-2 text-[#A8AAAE] text-sm font-medium block">
+                {{
+                    actForm.doc_signer_obj.signer_id_5 && typeof (actForm.doc_signer_obj.signer_id_5) === "number" ? usersStore.getUserFullName(getUser(actForm.doc_signer_obj.signer_id_5)) : ""
+                  }}
+              </span>
+              </div>
+            </template>
           </div>
         </div>
-        <AppForm
-            :value="form"
-            @validation="setValidation"
-            @submit.prevent
-            class="w-[40%] ml-6"
-            :validation-errors="validationErrors?.Document ?? null"
-        >
-          <AppInput
-              placeholder="Входящий накладной"
-              label="Название документа"
-              label-class="text-[#A8AAAE] text-xs font-medium"
-              disabled
-          />
-          <AppDatePicker
-              :placeholder="date"
-              label="Дата создания документа"
-              label-class="text-[#A8AAAE] text-xs font-medium"
-              disabled
-          />
-          <AppInput
-              placeholder="Автоматически"
-              label="№ накладной в системе"
-              label-class="text-[#A8AAAE] text-xs font-medium"
-              disabled
-          />
-          <AppInput
-              v-model="form.number"
-              prop="number"
-              placeholder="№ накладной"
-              label="№ накладной"
-              label-class="text-[#A8AAAE] text-xs font-medium"
-              required
-          />
-          <AppDatePicker
-              v-model="form.date"
-              prop="date"
-              placeholder="Дата накладной"
-              label="Дата накладной"
-              label-class="text-[#A8AAAE] text-xs font-medium"
-              format="DD.MM.YYYY"
-              value-format="DD.MM.YYYY"
-              required
-          />
-          <AppSelect
-              v-model="form.from"
-              prop="from"
-              placeholder="От кого"
-              label="От кого"
-              :items="settingsStore.respondents"
-              :loading="settingsStore.respondentsLoading"
-              label-class="text-[#A8AAAE] text-xs font-medium"
-              @change="(value) => respondentChange(value as string, 'from')"
-              required
-              trigger="blur"
-          >
-            <ElOption
-                v-for="item in settingsStore.respondents"
-                :key="`${item.id}_${item.model_type}`"
-                :value="`${item.id}_${item.model_type}`"
-                :label="item.name"
-            />
-            <template #footer>
-              <button
-                  @click.stop="providerCreateModal = true"
-                  class="flex items-center justify-center gap-3 border-[1px] border-[#2E90FA] rounded-[8px] w-full text-[#2E90FA] text-sm font-medium py-[10px]"
-              >
-                  <span
-                      :style="{
-                      maskImage: 'url(/icons/plusIcon.svg)',
-                      backgroundColor: '#2E90FA',
-                      color: '#2E90FA',
-                      width: '20px',
-                      height: '20px',
-                      maskSize: '20px',
-                      maskPosition: 'center',
-                      maskRepeat: 'no-repeat',
-                    }"
-                  ></span>
-                Добавить
-              </button>
-            </template>
-          </AppSelect>
-          <AppSelect
-              v-model="form.to"
-              prop="to"
-              placeholder="Кому"
-              label="Кому"
-              :items="settingsStore.respondents"
-              item-label="name"
-              :loading="settingsStore.respondentsLoading"
-              label-class="text-[#A8AAAE] text-xs font-medium"
-              @change="(value) => respondentChange(value as string, 'to')"
-              required
-              trigger="blur"
-          >
-            <ElOption
-                v-for="item in settingsStore.respondents"
-                :key="`${item.id}_${item.model_type}`"
-                :value="`${item.id}_${item.model_type}`"
-                :label="item.name"
-            />
-            <template #footer>
-              <button
-                  @click.stop="providerCreateModal = true"
-                  class="flex items-center justify-center gap-3 border-[1px] border-[#2E90FA] rounded-[8px] w-full text-[#2E90FA] text-sm font-medium py-[10px]"
-              >
-                  <span
-                      :style="{
-                      maskImage: 'url(/icons/plusIcon.svg)',
-                      backgroundColor: '#2E90FA',
-                      color: '#2E90FA',
-                      width: '20px',
-                      height: '20px',
-                      maskSize: '20px',
-                      maskPosition: 'center',
-                      maskRepeat: 'no-repeat',
-                    }"
-                  ></span>
-                Добавить
-              </button>
-            </template>
-          </AppSelect>
-          <AppInput
-              v-model="form.through_whom"
-              prop="through_whom"
-              placeholder="Через кого"
-              label="Через кого"
-              label-class="text-[#A8AAAE] text-xs font-medium"
-          />
-          <AppInput
-              v-model="form.basis"
-              prop="basis"
-              placeholder="Основание"
-              label="Основание"
-              label-class="text-[#A8AAAE] text-xs font-medium"
-              required
-          />
-          <AppInput
-              v-model="form.shipping_method"
-              prop="shipping_method"
-              class="mb-[32px]"
-              placeholder="Способ отправления"
-              label="Способ отправления"
-              label-class="text-[#A8AAAE] text-xs font-medium"
-              required
-          />
-          <div class="bg-[#FFFFFF] rounded-[8px] p-[12px]">
-            <template
-                v-for="(product, index) in form.products"
-                :key="index + 1"
-            >
-              <div
-                  class="flex items-center justify-between mb-[16px] text-sm font-medium"
-              >
-                <strong class="text-[#4F5662]">
-                  <template v-if="form.products && form.products.length > 1">
-                    {{ index + 1 }}.
-                  </template>
-                  Таблица получаемых продуктов
-                </strong>
-                <button
-                    v-if="form.products && form.products.length > 1"
-                    @click.stop="deleteProduct(index)"
-                    class="flex items-center gap-x-1"
-                >
-                  <svg
-                      :data-src="deleteIcon"
-                      class="size-5"
-                  />
-                  <span class="text-[#EA5455]">Удалить</span>
-                </button>
-              </div>
-              <AppSelect
-                  v-model="product.category_id"
-                  placeholder="Тип продукта"
-                  :prop="`products[${index}].category_id`"
-                  :items="settingsStore.typeProduct.product_categories"
-                  item-value="id"
-                  item-label="name"
-                  label="Тип продукта"
-                  label-class="text-[#A8AAAE] text-xs font-medium"
-                  @change="fetchVidProductsList"
-                  required
-                  trigger="blur"
-              />
-              <AppSelect
-                  v-model="product.product_type_id"
-                  :prop="`products[${index}].product_type_id`"
-                  :items="vidProducts.get(product.category_id as number)"
-                  item-label="name"
-                  item-value="id"
-                  placeholder="Вид продукта"
-                  label="Вид продукта"
-                  label-class="text-[#A8AAAE] text-xs font-medium"
-                  required
-                  :disabled="!product.category_id"
-              />
-              <div class="grid grid-cols-2 gap-x-4">
-                <AppInput
-                    v-model="product.quantity"
-                    :prop="`products[${index}].quantity`"
-                    placeholder="Количество"
-                    label="Количество"
-                    label-class="text-[#A8AAAE] text-xs font-medium"
-                    required
-                />
-                <AppSelect
-                    v-model="product.unit_id"
-                    :prop="`products[${index}].unit_id`"
-                    :items="settingsStore.units.units"
-                    item-label="name"
-                    item-value="id"
-                    placeholder="Ед. измерения"
-                    label="Ед. измерения"
-                    label-class="text-[#A8AAAE] text-xs font-medium"
-                    required
-                />
-              </div>
-              <AppInput
-                  v-model.number="product.price"
-                  type="number"
-                  :prop="`products[${index}].price`"
-                  placeholder="Цена"
-                  label="Цена"
-                  label-class="text-[#A8AAAE] text-xs font-medium"
-                  required
-              />
-            </template>
-            <button
-                @click.stop="createProduct"
-                class="mt-6 flex items-center justify-center gap-3 border-[1px] border-[#2E90FA] rounded-[8px] w-full text-[#2E90FA] text-sm font-medium py-[10px]"
-            >
-                <span
-                    :style="{
-                    maskImage: 'url(/icons/plusIcon.svg)',
-                    backgroundColor: '#2E90FA',
-                    color: '#2E90FA',
-                    width: '20px',
-                    height: '20px',
-                    maskSize: '20px',
-                    maskPosition: 'center',
-                    maskRepeat: 'no-repeat',
-                  }"
-                ></span>
-              Добавить
-            </button>
-          </div>
-        </AppForm>
-        <!--        <div class="flex items-start justify-between">-->
-        <!--          <button class="custom-cancel-btn" @click="closeModal">Отменить</button>-->
-        <!--          <button class="custom-apply-btn">Сохранить как черновик</button>-->
-        <!--          <button class="custom-send-btn">Отправить</button>-->
-        <!--        </div>-->
-      </div>
-      <div
-          v-if="activeComingModal"
-          class="flex mt-10"
-      >
         <div
-            class="border-[#E2E6F3] bg-[#fff] border rounded-[15px] w-[60%] mr-0"
+          v-if="activeComingModal"
+          class="border-[#E2E6F3] bg-[#fff] border rounded-[15px] min-h-[2249.5px]"
         >
           <div class="px-[72px] pb-[150px]">
             <header class="flex items-center justify-center my-[24px] mb-6">
               <img
-                  src="@/assets/images/logo.svg"
-                  alt="logo"
+                src="@/assets/images/logo.svg"
+                alt="logo"
               />
               <div class="flex flex-col ml-3">
                 <b class="text-[#000D24] text-lg">NKMK</b>
@@ -914,7 +723,7 @@ watch(providerCreateModal, newMProviderModal => {
               </div>
             </header>
             <h1
-                class="text-[#000D24] font-bold text-[20px] text-center mb-[24px]"
+              class="text-[#000D24] font-bold text-[20px] text-center mb-[24px]"
             >
               АКТ
             </h1>
@@ -933,13 +742,13 @@ watch(providerCreateModal, newMProviderModal => {
               </div>
             </div>
             <span
-                class="block text-[#4F5662] text-sm font-normal leading-[20px] mb-[24px]"
+              class="block text-[#4F5662] text-sm font-normal leading-[20px] mb-[24px]"
             >
               {{ actForm.content }}
             </span>
             <div class="overflow-x-auto mb-[24px]">
               <table
-                  class="min-w-full border border-gray-300 bg-white text-left text-sm text-gray-900 rounded-[8px] border-separate table-my border-spacing-0"
+                class="min-w-full border border-gray-300 bg-white text-left text-sm text-gray-900 rounded-[8px] border-separate table-my border-spacing-0"
               >
                 <colgroup>
                   <col class="w-[60%]">
@@ -1102,189 +911,376 @@ watch(providerCreateModal, newMProviderModal => {
             </div>
           </div>
         </div>
+      </div>
+      <div :class="['min-w-[403px] w-[calc(40%-24px)] flex flex-col', `${activeComingModal ? 'gap-y-10' : 'gap-y-6'}`]">
         <AppForm
-            :value="actForm"
-            @validation="setActValidation"
-            @submit.prevent
-            :validation-errors="validationErrors?.Act ?? null"
-            class="w-[40%] ml-6"
+          :value="form"
+          @validation="setValidation"
+          @submit.prevent
+          :validation-errors="validationErrors?.Document ?? null"
+          :class="[{'min-h-[830px]': activeComingModal}]"
         >
           <AppInput
+            placeholder="Входящий накладной"
+            label="Название документа"
+            label-class="text-[#A8AAAE] text-xs font-medium"
+            disabled
+          />
+          <AppDatePicker
+            :placeholder="date"
+            label="Дата создания документа"
+            label-class="text-[#A8AAAE] text-xs font-medium"
+            disabled
+          />
+          <AppInput
+            placeholder="Автоматически"
+            label="№ накладной в системе"
+            label-class="text-[#A8AAAE] text-xs font-medium"
+            disabled
+          />
+          <AppInput
+            v-model="form.number"
+            prop="number"
+            placeholder="№ накладной"
+            label="№ накладной"
+            label-class="text-[#A8AAAE] text-xs font-medium"
+            required
+            :max="20"
+            :maxlength="20"
+          />
+          <AppDatePicker
+            v-model="form.date"
+            prop="date"
+            placeholder="Дата накладной"
+            label="Дата накладной"
+            label-class="text-[#A8AAAE] text-xs font-medium"
+            required
+          />
+          <AppSelect
+            v-model="form.from"
+            prop="from"
+            placeholder="От кого"
+            label="От кого"
+            :items="settingsStore.respondents"
+            :loading="settingsStore.respondentsLoading"
+            label-class="text-[#A8AAAE] text-xs font-medium"
+            @change="(value) => respondentChange(value as string, 'from')"
+            required
+            :disabled="authStore.disabledUserWorkplace && !activeComingModal"
+            trigger="blur"
+          >
+            <template v-if="activeComingModal">
+              <ElOption
+                v-for="item in settingsStore.respondents"
+                :key="`${item.id}_${item.model_type}`"
+                :value="`${item.id}_${item.model_type}`"
+                :label="item.name"
+              />
+            </template>
+            <template v-else>
+              <ElOption
+                v-for="item in authStore.user.workplaces"
+                :key="`${item.workplace_type}_${item.workplace_type}`"
+                :value="`${item.workplace_id}_${item.workplace_type}`"
+                :label="item.workplace"
+              />
+            </template>
+            <template
+              v-if="activeComingModal"
+              #footer
+            >
+              <button
+                @click.stop="providerCreateModal = true"
+                class="flex items-center justify-center gap-3 border-[1px] border-[#2E90FA] rounded-[8px] w-full text-[#2E90FA] text-sm font-medium py-[10px]"
+              >
+                  <span
+                    :style="{
+                      maskImage: 'url(/icons/plusIcon.svg)',
+                      backgroundColor: '#2E90FA',
+                      color: '#2E90FA',
+                      width: '20px',
+                      height: '20px',
+                      maskSize: '20px',
+                      maskPosition: 'center',
+                      maskRepeat: 'no-repeat',
+                    }"
+                  ></span>
+                Добавить
+              </button>
+            </template>
+          </AppSelect>
+          <AppSelect
+            v-model="form.to"
+            prop="to"
+            placeholder="Кому"
+            label="Кому"
+            :loading="authStore.userLoading"
+            label-class="text-[#A8AAAE] text-xs font-medium"
+            @change="(value) => respondentChange(value as string, 'to')"
+            required
+            trigger="blur"
+            :disabled="authStore.disabledUserWorkplace && activeComingModal"
+          >
+            <template v-if="activeComingModal">
+              <ElOption
+                v-for="item in settingsStore.respondents"
+                :key="`${item.id}_${item.model_type}`"
+                :value="`${item.id}_${item.model_type}`"
+                :label="item.name"
+              />
+            </template>
+            <template v-else>
+              <ElOption
+                v-for="item in authStore.user.workplaces"
+                :key="`${item.workplace_type}_${item.workplace_type}`"
+                :value="`${item.workplace_id}_${item.workplace_type}`"
+                :label="item.workplace"
+              />
+            </template>
+            <!--            <template #footer>-->
+            <!--              <button-->
+            <!--                @click.stop="providerCreateModal = true"-->
+            <!--                class="flex items-center justify-center gap-3 border-[1px] border-[#2E90FA] rounded-[8px] w-full text-[#2E90FA] text-sm font-medium py-[10px]"-->
+            <!--              >-->
+            <!--                  <span-->
+            <!--                    :style="{-->
+            <!--                      maskImage: 'url(/icons/plusIcon.svg)',-->
+            <!--                      backgroundColor: '#2E90FA',-->
+            <!--                      color: '#2E90FA',-->
+            <!--                      width: '20px',-->
+            <!--                      height: '20px',-->
+            <!--                      maskSize: '20px',-->
+            <!--                      maskPosition: 'center',-->
+            <!--                      maskRepeat: 'no-repeat',-->
+            <!--                    }"-->
+            <!--                  ></span>-->
+            <!--                Добавить-->
+            <!--              </button>-->
+            <!--            </template>-->
+          </AppSelect>
+          <AppInput
+            v-model="form.through_whom"
+            prop="through_whom"
+            placeholder="Через кого"
+            label="Через кого"
+            label-class="text-[#A8AAAE] text-xs font-medium"
+          />
+          <AppInput
+            v-model="form.basis"
+            prop="basis"
+            placeholder="Основание"
+            label="Основание"
+            label-class="text-[#A8AAAE] text-xs font-medium"
+            required
+          />
+          <AppInput
+            v-model="form.shipping_method"
+            prop="shipping_method"
+            placeholder="Способ отправления"
+            label="Способ отправления"
+            label-class="text-[#A8AAAE] text-xs font-medium"
+            required
+          />
+        </AppForm>
+        <AppForm
+          :value="actForm"
+          @validation="setActValidation"
+          @submit.prevent
+          :validation-errors="validationErrors?.Act ?? null"
+        >
+          <template v-if="activeComingModal">
+            <AppInput
               placeholder="АКТ"
               label="АКТ"
               label-class="text-[#A8AAAE] text-xs font-medium"
               disabled
-          />
+            />
 
-          <AppInput
+            <AppInput
               placeholder="Автоматически"
               label="№ накладной в системе"
               label-class="text-[#A8AAAE] text-xs font-medium"
               disabled
-          />
+            />
 
-          <AppInput
+            <AppInput
               v-model="actForm.number"
               prop="number"
               placeholder="АКТ-00000"
               label="№ Акта"
               label-class="text-[#A8AAAE] text-xs font-medium"
               required
-          />
+              :max="20"
+              :maxlength="20"
+            />
 
-          <div class="bg-[#FFFFFF] rounded-[8px] p-[12px] mb-[24px]">
+            <div class="bg-[#FFFFFF] rounded-[8px] p-[12px] mb-[24px]">
               <span class="block text-[#4F5662] text-sm font-medium mb-[16px]">
                 Содержание акта
               </span>
 
-            <AppInput
+              <AppInput
                 v-model="actForm.content"
                 prop="content"
                 placeholder="Поле ввода текст содержания акта с выводом шаблонного заданного текста"
                 type="textarea"
                 :rows="5"
                 required
-            />
+                :maxlength="1000"
+                :max="1000"
+              />
 
-            <AppSelect
+              <AppSelect
+                v-model="actForm.products[0]"
                 :items="selectedProductTypes"
                 item-label="name"
                 item-value="id"
-                prop="products"
+                prop="products[0]"
                 placeholder="Название продукта"
                 label="Название продукта"
                 label-class="text-[#A8AAAE] text-xs font-medium"
                 @change="actProductTypeChange"
                 required
                 trigger="blur"
-            >
-            </AppSelect>
-            <AppInput
+              >
+              </AppSelect>
+              <AppInput
                 :modelValue="actForm.products[0]?.quantity ?? ''"
                 label="Количество продукта"
                 label-class="text-[#A8AAAE] text-xs font-medium"
                 placeholder="Количество продукта"
                 disabled
-            />
-            <AppInput
+              />
+              <AppInput
                 :model-value="actForm.products[0]?.unit_id ? getProductMeasurement(actForm.products[0].unit_id) : ''"
                 label="Единица измерения"
                 label-class="text-[#A8AAAE] text-xs font-medium"
                 placeholder="Единица измерения"
                 disabled
-            />
-            <AppInput
+              />
+              <AppInput
                 v-model="actForm.doc_details.contract_details"
                 prop="doc_details.contract_details"
                 placeholder="Номер договора о поставке"
                 label="Номер договора о поставке"
                 label-class="text-[#A8AAAE] text-xs font-medium"
                 required
-            />
-            <AppDatePicker
+                :maxlength="20"
+                :max="20"
+              />
+              <AppDatePicker
                 v-model="actForm.doc_details.contract_details_date"
                 prop="doc_details.contract_details_date"
                 placeholder="Дата договора о поставке"
                 label="Дата договора о поставке"
                 label-class="text-[#A8AAAE] text-xs font-medium"
                 required
-            />
-            <AppInput
+              />
+              <AppInput
                 v-model="formNumberAndDate"
                 placeholder="Номер и дата накладной"
                 label="Номер и дата накладной"
                 label-class="text-[#A8AAAE] text-xs font-medium"
                 disabled
-            />
-            <AppInput
+              />
+              <AppInput
                 v-model="actForm.doc_details.manufacturer"
                 prop="doc_details.manufacturer"
                 placeholder="Производитель продукта"
                 label="Производитель продукта"
                 label-class="text-[#A8AAAE] text-xs font-medium"
                 required
-            />
-            <AppInput
+              />
+              <AppInput
                 :model-value="from"
                 label="Поставщик"
                 placeholder="Поставщик"
                 label-class="text-[#A8AAAE] text-xs font-medium"
                 disabled
-            />
+              />
 
-            <AppInput
+              <AppInput
                 v-model="actForm.shipping_method"
                 prop="shipping_method"
                 placeholder="Транспорт"
                 label="Транспорт"
                 label-class="text-[#A8AAAE] text-xs font-medium"
                 required
-            />
-            <AppInput
+              />
+              <AppInput
                 v-model="actForm.doc_details.licence"
                 prop="doc_details.licence"
                 placeholder="Номер лицензии"
                 label="Номер лицензии"
                 label-class="text-[#A8AAAE] text-xs font-medium"
                 required
-            />
-            <AppDatePicker
+                :max="20"
+                :maxlength="20"
+              />
+              <AppDatePicker
                 v-model="actForm.doc_details.licence_date"
                 prop="doc_details.licence_date"
                 placeholder="Дата лицензии"
                 label="Дата лицензии"
                 label-class="text-[#A8AAAE] text-xs font-medium"
                 required
-            />
-            <AppInput
+              />
+              <AppInput
                 v-model="actForm.doc_details.sanitary"
                 prop="doc_details.sanitary"
                 placeholder="Номер заключения Санитарно..."
                 label="Номер заключения Санитарно..."
                 label-class="text-[#A8AAAE] text-xs font-medium"
                 required
-            />
-            <AppDatePicker
+                :max="20"
+                :maxlength="20"
+              />
+              <AppDatePicker
                 v-model="actForm.doc_details.sanitary_date"
                 prop="doc_details.sanitary_date"
                 placeholder="Дата заключения Санитарно..."
                 label="Дата заключения Санитарно..."
                 label-class="text-[#A8AAAE] text-xs font-medium"
                 required
-            />
-            <AppInput
+              />
+              <AppInput
                 v-model="actForm.doc_details.vetirinary"
                 prop="doc_details.vetirinary"
                 placeholder="Номер удостоверения ветеринарии"
                 label="Номер удостоверения ветеринарии"
                 label-class="text-[#A8AAAE] text-xs font-medium"
                 required
-            />
-            <AppDatePicker
+                :max="20"
+                :maxlength="20"
+              />
+              <AppDatePicker
                 v-model="actForm.doc_details.vetirinary_date"
                 prop="doc_details.vetirinary_date"
                 placeholder="Дата удостоверения ветеринарии"
                 label="Дата удостоверения ветеринарии"
                 label-class="text-[#A8AAAE] text-xs font-medium"
                 required
-            />
-            <AppInput
+              />
+              <AppInput
                 v-model="actForm.doc_details.quality"
                 prop="doc_details.quality"
                 placeholder="Номер удостоверения качества"
                 label="Номер удостоверения качества"
                 label-class="text-[#A8AAAE] text-xs font-medium"
                 required
-            />
-            <AppDatePicker
+                :max="20"
+                :maxlength="20"
+              />
+              <AppDatePicker
                 v-model="actForm.doc_details.quality_date"
                 prop="doc_details.quality_date"
                 placeholder="Дата удостоверения качества"
                 label="Дата удостоверения качества"
                 label-class="text-[#A8AAAE] text-xs font-medium"
                 required
-            />
-          </div>
+              />
+            </div>
+          </template>
 
           <div class="bg-[#FFFFFF] rounded-[8px] p-[12px]">
             <strong class="block text-[#4F5662] text-sm font-medium mb-4">
@@ -1292,87 +1288,88 @@ watch(providerCreateModal, newMProviderModal => {
             </strong>
             <div class="flex flex-col">
               <AppSelect
-                  v-model="actForm.doc_signer_obj.signer_id_1"
-                  prop="doc_signer_obj.signer_id_1"
-                  placeholder="Кладовщик"
-                  label="Кладовщик"
-                  label-class="text-[#A8AAAE] text-xs font-medium"
-                  required
+                v-model="actForm.doc_signer_obj.signer_id_1"
+                prop="doc_signer_obj.signer_id_1"
+                placeholder="Кладовщик"
+                label="Кладовщик"
+                label-class="text-[#A8AAAE] text-xs font-medium"
+                required
               >
                 <template v-if="usersStore.users">
                   <ElOption
-                      v-for="item in usersStore.users.users"
-                      :key="item.id"
-                      :label="usersStore.getUserFullName(item)"
-                      :value="item.id"
+                    v-for="item in usersStore.users.users"
+                    :key="item.id"
+                    :label="usersStore.getUserFullName(item)"
+                    :value="item.id"
                   />
                 </template>
               </AppSelect>
               <AppSelect
-                  v-model="actForm.doc_signer_obj.signer_id_2"
-                  prop="doc_signer_obj.signer_id_2"
-                  placeholder="Товаровед"
-                  label="Товаровед"
-                  label-class="text-[#A8AAAE] text-xs font-medium"
-                  required
+                v-model="actForm.doc_signer_obj.signer_id_2"
+                prop="doc_signer_obj.signer_id_2"
+                placeholder="Товаровед"
+                label="Товаровед"
+                label-class="text-[#A8AAAE] text-xs font-medium"
+                required
               >
                 <template v-if="usersStore.users">
                   <ElOption
-                      v-for="item in usersStore.users.users"
-                      :key="item.id"
-                      :label="usersStore.getUserFullName(item)"
-                      :value="item.id"
+                    v-for="item in usersStore.users.users"
+                    :key="item.id"
+                    :label="usersStore.getUserFullName(item)"
+                    :value="item.id"
                   />
                 </template>
               </AppSelect>
               <AppSelect
-                  v-model="actForm.doc_signer_obj.signer_id_3"
-                  prop="doc_signer_obj.signer_id_3"
-                  placeholder="Экспедитор"
-                  label="Экспедитор"
-                  label-class="text-[#A8AAAE] text-xs font-medium"
-                  required
+                v-if="!activeComingModal"
+                v-model="actForm.doc_signer_obj.signer_id_3"
+                prop="doc_signer_obj.signer_id_3"
+                placeholder="Экспедитор"
+                label="Экспедитор"
+                label-class="text-[#A8AAAE] text-xs font-medium"
+                required
               >
                 <template v-if="usersStore.users">
                   <ElOption
-                      v-for="item in usersStore.users.users"
-                      :key="item.id"
-                      :label="usersStore.getUserFullName(item)"
-                      :value="item.id"
+                    v-for="item in usersStore.users.users"
+                    :key="item.id"
+                    :label="usersStore.getUserFullName(item)"
+                    :value="item.id"
                   />
                 </template>
               </AppSelect>
               <AppSelect
-                  v-model="actForm.doc_signer_obj.signer_id_4"
-                  prop="doc_signer_obj.signer_id_4"
-                  placeholder="Зав. склад"
-                  label="Зав. склад"
-                  label-class="text-[#A8AAAE] text-xs font-medium"
-                  required
+                v-model="actForm.doc_signer_obj.signer_id_4"
+                prop="doc_signer_obj.signer_id_4"
+                placeholder="Зав. склад"
+                label="Зав. склад"
+                label-class="text-[#A8AAAE] text-xs font-medium"
+                required
               >
                 <template v-if="usersStore.users">
                   <ElOption
-                      v-for="item in usersStore.users.users"
-                      :key="item.id"
-                      :label="usersStore.getUserFullName(item)"
-                      :value="item.id"
+                    v-for="item in usersStore.users.users"
+                    :key="item.id"
+                    :label="usersStore.getUserFullName(item)"
+                    :value="item.id"
                   />
                 </template>
               </AppSelect>
               <AppSelect
-                  v-model="actForm.doc_signer_obj.signer_id_5"
-                  prop="doc_signer_obj.signer_id_5"
-                  placeholder="Начальник базы"
-                  label="Начальник базы"
-                  label-class="text-[#A8AAAE] text-xs font-medium"
-                  required
+                v-model="actForm.doc_signer_obj.signer_id_5"
+                prop="doc_signer_obj.signer_id_5"
+                placeholder="Начальник базы"
+                label="Начальник базы"
+                label-class="text-[#A8AAAE] text-xs font-medium"
+                required
               >
                 <template v-if="usersStore.users">
                   <ElOption
-                      v-for="item in usersStore.users.users"
-                      :key="item.id"
-                      :label="usersStore.getUserFullName(item)"
-                      :value="item.id"
+                    v-for="item in usersStore.users.users"
+                    :key="item.id"
+                    :label="usersStore.getUserFullName(item)"
+                    :value="item.id"
                   />
                 </template>
               </AppSelect>
@@ -1383,29 +1380,29 @@ watch(providerCreateModal, newMProviderModal => {
     </div>
     <div class="flex items-start justify-end gap-2 mt-[24px]">
       <button
-          class="custom-cancel-btn"
-          @click="closeModal"
+        class="custom-cancel-btn"
+        @click="closeModal"
       >
         Отменить
       </button>
       <ElButton
-          :loading="documentStore.createLoading"
-          type="success"
-          size="large"
-          @click="sendForm"
-          class="custom-send-btn"
+        :loading="documentStore.createLoading"
+        type="success"
+        size="large"
+        @click="sendForm"
+        class="custom-send-btn"
       >
         Отправить
       </ElButton>
     </div>
 
     <ElDialog
-        v-model="providerCreateModal"
-        :show-close="false"
-        class="w-[65%]"
-        align-center
-        append-to-body
-        :before-close="providerCreateModalClose"
+      v-model="providerCreateModal"
+      :show-close="false"
+      class="w-[65%]"
+      align-center
+      append-to-body
+      :before-close="providerCreateModalClose"
     >
       <template #header>
         <div class="text-center text-[#000000] font-bold text-[18px]">
@@ -1414,107 +1411,108 @@ watch(providerCreateModal, newMProviderModal => {
       </template>
 
       <AppForm
-          :value="providerForm"
-          @validation="value => (providerV$ = value)"
-          class="bg-[#F8F9FC] p-6 rounded-[24px] border border-[#E2E6F3]"
+        :value="providerForm"
+        @validation="value => (providerV$ = value)"
+        class="bg-[#F8F9FC] p-6 rounded-[24px] border border-[#E2E6F3]"
       >
         <div class="grid grid-cols-3 gap-x-6 gap-y-1">
           <AppInput
-              v-model="providerForm.name"
-              prop="name"
-              label="Наименование"
-              label-class="text-[#A8AAAE] text-[12px] font-medium"
-              placeholder="Введите"
-              required
+            v-model="providerForm.name"
+            prop="name"
+            label="Наименование"
+            label-class="text-[#A8AAAE] text-[12px] font-medium"
+            placeholder="Введите"
+            required
           />
           <AppInput
-              v-model="providerForm.address"
-              prop="address"
-              placeholder="Введите"
-              label-class="text-[#A8AAAE] text-[12px] font-medium"
-              label="Юр. адрес"
-              required
+            v-model="providerForm.address"
+            prop="address"
+            placeholder="Введите"
+            label-class="text-[#A8AAAE] text-[12px] font-medium"
+            label="Юр. адрес"
+            required
           />
           <AppInput
-              v-model="providerForm.oked"
-              type="number"
-              prop="oked"
-              placeholder="Введите"
-              label="ОКЭД"
-              label-class="text-[#A8AAAE] text-[12px] font-medium"
-              required
+            v-model="providerForm.oked"
+            type="number"
+            prop="oked"
+            placeholder="Введите"
+            label="ОКЭД"
+            label-class="text-[#A8AAAE] text-[12px] font-medium"
+            required
+            :max="5"
+            mask="#####"
           />
           <AppInput
-              v-model="providerForm.tin"
-              prop="tin"
-              type="number"
-              :mask="'#'.repeat(9)"
-              placeholder="Введите"
-              label="ИНН"
-              label-class="text-[#A8AAAE] text-[12px] font-medium"
-              required
-              :min="9"
-              :max="9"
+            v-model="providerForm.tin"
+            prop="tin"
+            type="number"
+            :mask="'#'.repeat(9)"
+            placeholder="Введите"
+            label="ИНН"
+            label-class="text-[#A8AAAE] text-[12px] font-medium"
+            required
+            :min="9"
+            :max="9"
           />
           <AppInput
-              v-model="providerForm.license"
-              prop="license"
-              placeholder="Введите"
-              label-class="text-[#A8AAAE] text-[12px] font-medium"
-              label="Номер лицензии"
-              required
+            v-model="providerForm.license"
+            prop="license"
+            placeholder="Введите"
+            label-class="text-[#A8AAAE] text-[12px] font-medium"
+            label="Номер лицензии"
+            required
           />
           <AppInput
-              v-model="providerForm.sertificate"
-              prop="sertificate"
-              placeholder="Введите"
-              label-class="text-[#A8AAAE] text-[12px] font-medium"
-              label="Сертификат"
-              required
+            v-model="providerForm.sertificate"
+            prop="sertificate"
+            placeholder="Введите"
+            label-class="text-[#A8AAAE] text-[12px] font-medium"
+            label="Сертификат"
+            required
           />
           <AppDatePicker
-              v-model="providerForm.sert_end_date"
-              prop="sert_end_date"
-              placeholder="Введите"
-              label-class="text-[#A8AAAE] text-[12px] font-medium"
-              label="Срок сертификата"
-              format="DD.MM.YYYY"
-              value-format="DD.MM.YYYY"
-              required
+            v-model="providerForm.sert_end_date"
+            prop="sert_end_date"
+            placeholder="Введите"
+            label-class="text-[#A8AAAE] text-[12px] font-medium"
+            label="Срок сертификата"
+            required
+            :disabled-date="(time) => Date.now() >= time.getTime()"
           />
           <AppInput
-              v-model="providerForm.director"
-              prop="director"
-              placeholder="Введите"
-              label-class="text-[#A8AAAE] text-[12px] font-medium"
-              label="Руководитель"
-              required
+            v-model="providerForm.director"
+            prop="director"
+            placeholder="Введите"
+            label-class="text-[#A8AAAE] text-[12px] font-medium"
+            label="Руководитель"
+            required
           />
           <AppInput
-              v-model="providerForm.phone"
-              prop="phone"
-              type="tel"
-              placeholder="Введите"
-              label-class="text-[#A8AAAE] text-[12px] font-medium"
-              label="Контакты"
-              required
+            v-model="providerForm.phone"
+            prop="phone"
+            type="tel"
+            placeholder="Введите"
+            label-class="text-[#A8AAAE] text-[12px] font-medium"
+            label="Контакты"
+            required
           />
         </div>
       </AppForm>
 
       <div class="flex items-center justify-end gap-2 mt-[24px]">
         <button
-            class="custom-cancel-btn h-10"
-            @click="providerCreateModalClose"
+          class="custom-cancel-btn h-10"
+          @click="providerCreateModalClose"
         >
           Отменить
         </button>
         <ElButton
-            :loading="settingsStore.createProviderLoading"
-            size="large"
-            type="primary"
-            class="custom-apply-btn"
-            @click="sendProviderForm"
+          :loading="settingsStore.createProviderLoading"
+          size="large"
+          type="primary"
+          class="custom-apply-btn"
+          @click="sendProviderForm"
         >
           Добавить
         </ElButton>
