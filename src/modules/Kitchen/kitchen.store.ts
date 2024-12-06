@@ -86,6 +86,7 @@ export const useKitchenStore = defineStore("kitchenStore", () => {
   const menuElement = ref({});
   const menuToday = ref({});
   const menuWeekly = ref({});
+  const menuTodaySales = ref({});
 
   // GET MENU ITEM
   const GET_MENU_ITEM = async (kitchen_id: any) => {
@@ -142,6 +143,12 @@ export const useKitchenStore = defineStore("kitchenStore", () => {
   const GET_RATION_LIST_IN_MENU = async (id: string | number) => {
     const { data } = await $axios.get(`/rations/menu/${id}`);
     return data.data;
+  };
+
+  const GET_CURRENT_MENU_SALES_LIST = async (id: number | string) => {
+    const { data } = await $axios.get(`/kitchen-sales/${id}/sell-menu-today`);
+    menuTodaySales.value = data.data;
+    return data;
   };
 
   const GET_CURRENT_MENU_LIST = async (id: number | string) => {
@@ -263,6 +270,8 @@ export const useKitchenStore = defineStore("kitchenStore", () => {
     };
   };
   return {
+    menuTodaySales,
+    GET_CURRENT_MENU_SALES_LIST,
     UPDATE_MENU_ELEMENT,
     UPDATE_MENU,
     menuElement,

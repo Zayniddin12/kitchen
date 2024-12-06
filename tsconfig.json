@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "checkJs": false,
     "noEmit": true,
     "allowJs": false,
     "emitDeclarationOnly": false,

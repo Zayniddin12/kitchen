@@ -1,12 +1,9 @@
-<script
-  setup
-  lang="ts"
->
-import { computed, nextTick, reactive, ref, useTemplateRef, watch, watchEffect } from "vue";
-import { useRoute, useRouter } from "vue-router";
-import { useKitchenStore } from "@/modules/Kitchen/kitchen.store";
+<script setup lang="ts">
+import { computed, nextTick, reactive, ref, useTemplateRef, watch } from "vue";
+import { useRoute } from "vue-router";
+import { useKitchenStore } from "@/modules/Kitchen/store/kitchen.store";
 import { TableColumnType } from "@/types/common.type";
-import { formatDate, formatNumber } from "@/utils/helper";
+import { formatNumber } from "@/utils/helper";
 import ColaImg from "@/assets/images/kitchen/test/cola.png";
 import DishesImg from "@/assets/images/kitchen/test/dishes.png";
 import mailPlanImg from "@/assets/images/mail-plan.png";
@@ -42,7 +39,6 @@ const { setBreadCrumb } = useBreadcrumb();
 
 const kitchenStore = useKitchenStore();
 const route = useRoute();
-const router = useRouter();
 
 enum TABS {
   CURRENT = 1,
@@ -55,10 +51,11 @@ const tabItems = computed(() => [
   { value: TABS.ALL, name: "Все меню" },
 ]);
 
-const setBreadCrumbFn = () => {
-  kitchenStore.fetchPart(+route.params.department_id, route.params.part_name as string);
-  kitchenStore.fetchPart2(+route.params.kitchen_id);
-  kitchenStore.fetchPart3(+route.params.child_id);
+const setBreadCrumbFn = async () => {
+  await kitchenStore.fetchPart(
+    +route.params.department_id,
+    route.params.part_name as string
+  );
 
   if (!kitchenStore.part) return;
 
@@ -67,20 +64,18 @@ const setBreadCrumbFn = () => {
       label: "Кухня",
     },
     {
-      label: kitchenStore.part.title,
+      label: kitchenStore.part.name,
     },
     {
       label: kitchenStore.part.department_name,
       to: { name: "KitchenIndex" },
     },
     {
-      label: kitchenStore.part.kitchen_vid as string,
-      isActionable: false,
-      to: { name: "KitchenShow" },
+      label: "Лагерь",
+      to: { name: "KitchenShowIndex" },
     },
     {
-      label: kitchenStore.part.kitchen_type as string,
-      isActionable: false,
+      label: "Паҳлавон",
       to: { name: "KitchenShowChildIndex" },
     },
     {
@@ -93,9 +88,9 @@ const setBreadCrumbFn = () => {
 const currentTabTableColumns = computed<TableColumnType[]>(() => [
   { label: "Название", prop: "name" },
   { label: "Количество", prop: "quantity" },
-  { label: "Ед. измерения", prop: "unit" },
+  { label: "Ед. измерения", prop: "unit_measurement" },
   { label: "Цена", prop: "price" },
-  { label: "Сумма", prop: "total_price" },
+  { label: "Сумма", prop: "sum" },
 ]);
 
 const salesAllTabTableColumns = computed<TableColumnType[]>(() => [
@@ -147,10 +142,6 @@ const salesAllTabTableColumns = computed<TableColumnType[]>(() => [
   },
 ]);
 
-const salesTableCurrentChange = (value: Record<string, any>) => {
-  router.push({ name: "KitchenMenuShow", params: { id: value.idx } });
-};
-
 const salesAllTabTableData = computed(() => {
   const data = [];
   for (let i = 1; i <= 4; i++) {
@@ -176,7 +167,7 @@ const currentTabTableData = computed(() =>
     unit_measurement: "грамм",
     price: "1 800 сум",
     sum: "15 000 сум",
-  })),
+  }))
 );
 
 const allTabTableData = computed(() => [
@@ -206,8 +197,17 @@ const allTabTableData = computed(() => [
   },
 ]);
 
-const activeDate = ref("");
-const activeListDate = ref("");
+const dateList = ref([
+  { value: "06.09.2024", title: "Понедельник - 06.09.2024" },
+  { value: "07.09.2024", title: "Вторник - 07.09.2024" },
+  { value: "08.09.2024", title: "Среда - 08.09.2024" },
+  { value: "09.09.2024", title: "Четверг - 09.09.2024" },
+  { value: "10.09.2024", title: "Пятница - 10.09.2024" },
+  { value: "11.09.2024", title: "Суббота - 11.09.2024" },
+  { value: "12.09.2024", title: "Воскресенье - 12.09.2024" },
+]);
+
+const activeDate = ref(dateList.value[0].value);
 
 const hasData = ref(true);
 
@@ -386,18 +386,10 @@ const selectedProducts = computed(() => {
 
   const productMap = new Map<number, ProductItemType>();
 
-  Object.keys(kitchenStore.menuTodaySales.elements).forEach(key => {
-    if (key == "product") {
-      Object.keys(kitchenStore.menuTodaySales.elements.product).forEach((key2) => {
-        kitchenStore.menuTodaySales.elements.product[key2].forEach(product => {
-          productMap.set(product.id, product);
-        });
-      });
-    } else {
-      kitchenStore.menuTodaySales.elements.meal.forEach(product => {
-        productMap.set(product.id, product);
-      });
-    }
+  products.value.forEach(productCategory => {
+    productCategory.data.forEach(product => {
+      productMap.set(product.id, product);
+    });
   });
 
   orders.forEach((quantity, product_id) => {
@@ -411,7 +403,6 @@ const selectedProducts = computed(() => {
 });
 
 const updateQuantity = (product_id: number, increment = true) => {
-
   const currentQuantity = orders.get(product_id) || 0;
 
   if (increment) {
@@ -432,51 +423,17 @@ const ordersSum = computed(() => {
   let totalSum = 0;
 
   orders.forEach((quantity, product_id) => {
-    selectedProducts.value.forEach(product => {
-      if (product.id === product_id) {
-        totalSum += product.price * quantity;
-      }
+    products.value.forEach(productCategory => {
+      productCategory.data.forEach(product => {
+        if (product.id === product_id) {
+          totalSum += product.price * quantity;
+        }
+      });
     });
   });
 
   return totalSum;
 });
-
-const createOrder = async () => {
-
-
-  let payload = {
-    kitchen_id: Number(route.params.child_id),
-    products: [],
-    meals: [],
-  };
-  try {
-    selectedProducts.value.forEach(product => {
-      if (product.product_type == "product") {
-        payload.products.push({
-          menu_id: Number(product.id),
-          id: Number(product.product_id),
-          price: Number(product.price),
-          quantity: Number(orders.get(product.id)),
-        });
-      } else {
-        payload.meals.push({
-          menu_id: Number(product.id),
-          id: Number(product.product_id),
-          price: Number(product.price),
-          quantity: Number(orders.get(product.id)),
-        });
-      }
-    });
-
-    await kitchenStore.CREATE_ORDER(payload);
-    await kitchenStore.GET_CURRENT_MENU_SALES_LIST(route.params.child_id as string);
-    ordersModal.value = false;
-  } catch (error) {
-
-  }
-
-};
 
 const { confirm } = useConfirm();
 
@@ -532,101 +489,12 @@ watch(
     await setBreadCrumbFn();
     changeTab();
   },
-  { immediate: true },
+  { immediate: true }
 );
-const fullscreenLoading = ref(false);
-watch(() => route.params, async () => {
-  fullscreenLoading.value = true;
-
-  await kitchenStore.GET_KITCHEN_VID({
-    management_id: route.params.department_id as string,
-    is_paid: route.params.part_name == "free-kitchen" ? 0 : route.params.part_name == "sales" ? 1 : null,
-  });
-  await kitchenStore.GET_KITCHEN_TYPE({
-    management_id: route.params.department_id as string,
-    is_paid: route.params.part_name == "free-kitchen" ? 0 : route.params.part_name == "sales" ? 1 : null,
-    kitchen_type_id: route.params.kitchen_id as string,
-  });
-
-  if (kitchenStore.activeSalesPart) {
-    await kitchenStore.GET_CURRENT_MENU_SALES_LIST(route.params.child_id as string);
-  }
-
-  if (kitchenStore.activeMenuPart) {
-    await kitchenStore.GET_CURRENT_MENU_LIST(route.params.child_id as string);
-
-  }
-
-  await kitchenStore.GET_WEEKLY_MENU_LIST(route.params.child_id as string);
-
-  fullscreenLoading.value = false;
-
-  setBreadCrumbFn();
-}, { immediate: true });
-
-watchEffect(() => {
-  setBreadCrumbFn();
-});
-
-const scheduledDates = computed(() => {
-  // Object.keys(kitchenStore.menuWeekly)
-  if (!kitchenStore.menuWeekly || !Object.keys(kitchenStore.menuWeekly).length) return [];
-  const formattedDates = [];
-  for (let i = 0; i < Object.keys(kitchenStore.menuWeekly).length; i++) {
-    const date = new Date(Object.keys(kitchenStore.menuWeekly)[i]);
-    console.log(date);
-    // date.setDate(date.getDate() + i);
-    // console.log(date);
-    const formattedDate = formatDate(date);
-    formattedDates.push({ date: formattedDate.date, title: `${formattedDate.week} - ${formattedDate.date}` });
-  }
-  return formattedDates;
-});
-
-
-watch(scheduledDates, (newValue) => {
-  if (newValue.length > 0) {
-    activeDate.value = newValue[0].date;
-
-    const [day, month, year] = activeDate.value.split(".");
-    activeListDate.value = `${year}-${month}-${day}`;
-
-  } else {
-    activeDate.value = "";
-    activeListDate.value = "";
-  }
-});
-
-watch(activeDate, (newValue) => {
-  if (newValue) {
-    const [day, month, year] = activeDate.value.split(".");
-    activeListDate.value = `${year}-${month}-${day}`;
-
-  } else {
-    activeDate.value = "";
-    activeListDate.value = "";
-  }
-});
-
-const mealTextFilter = (index: string): string => {
-  switch (index) {
-    case "1":
-      return "Завтрак";
-    case "2":
-      return "Обед";
-    case "3":
-      return "Ужин";
-    case "4":
-      return "Сухой питания";
-    default:
-      return "";
-  }
-};
 </script>
 
 <template>
   <section
-    v-loading.fullscreen.lock="fullscreenLoading"
     class="menu transition-all duration-200"
     ref="menuSection"
   >
@@ -646,9 +514,8 @@ const mealTextFilter = (index: string): string => {
             {{ item.name }}
           </RouterLink>
         </div>
-
         <div
-          v-if="(kitchenStore.menuToday.elements && kitchenStore.menuToday.elements.length) || (kitchenStore.menuTodaySales.elements && Object.keys(kitchenStore.menuTodaySales.elements).length) || (kitchenStore.menuWeekly && Object.keys(kitchenStore.menuWeekly).length)"
+          v-if="hasData"
           class="flex items-center"
         >
           <template
@@ -706,9 +573,8 @@ const mealTextFilter = (index: string): string => {
         </div>
       </div>
       <div class="mt-6">
-
         <TransitionGroup
-          v-if="(kitchenStore.menuToday.elements && kitchenStore.menuToday.elements.length) || (kitchenStore.menuTodaySales.elements && Object.keys(kitchenStore.menuTodaySales.elements).length || (kitchenStore.menuWeekly && Object.keys(kitchenStore.menuWeekly).length))"
+          v-if="hasData"
           name="nested"
           :duration="{ enter: 500, leave: 1500 }"
           tag="div"
@@ -718,22 +584,20 @@ const mealTextFilter = (index: string): string => {
             v-if="activeTab === TABS.CURRENT"
             class="inner"
           >
-            <!--            {{ kitchenStore.menuWeekly.elements }}-->
             <div
               v-if="kitchenStore.activeMenuPart"
               class="flex flex-col gap-y-8"
             >
-
               <div
-                v-for="n in kitchenStore.menuToday.elements"
+                v-for="n in 3"
                 :key="n"
                 class="border rounded-2xl p-4 pb-6 border-[#E2E6F3]"
               >
                 <div class="flex justify-between gap-x-5">
                   <div class="flex flex-col gap-y-2">
                     <h3 class="font-semibold text-lg text-dark">
-                      {{ n.product_name }} {{
-                        n.product_number
+                      Рацион {{ n }} R-{{
+                        Math.floor(Math.random() * 1001) + 1000
                       }}
                     </h3>
                     <div
@@ -744,17 +608,15 @@ const mealTextFilter = (index: string): string => {
                           :data-src="ClockIcon"
                           class="size-5"
                         />
-                        <span v-if="n.start_time && n.end_time">{{ n.start_time.slice(0, 5) }}-{{ n.end_time.slice(0, 5)
-                          }}</span>
+                        <span>08:00-10:00</span>
                       </div>
-                      <span v-if="n.period">{{ mealTextFilter(n.period.toString()) }}</span>
+                      <span>Завтрак</span>
                     </div>
                   </div>
-                  <h3 class="font-semibold text-lg text-dark">{{ n.price && n.price.toLocaleString() }} UZS</h3>
+                  <h3 class="font-semibold text-lg text-dark">25 000 UZS</h3>
                 </div>
                 <ElTable
-                  :data="n.product"
-                  empty-text="Нет данных"
+                  :data="currentTabTableData"
                   stripe
                   class="custom-element-table custom-element-table-normal mt-6"
                 >
@@ -770,50 +632,49 @@ const mealTextFilter = (index: string): string => {
                 >
                   <div class="flex flex-col gap-y-2 text-sm">
                     <p>
-                      <span class="text-cool-gray mr-2">Всего порций:</span>
-                      <strong class="font-semibold text-dark">{{ n.amount }}</strong>
+                      <span class="text-cool-gray">Всего порций:</span>
+                      <strong class="font-semibold text-dark">200</strong>
                     </p>
                     <p>
-                      <span class="text-cool-gray mr-2">Сумма:</span>
+                      <span class="text-cool-gray">Сумма:</span>
                       <strong class="font-semibold text-dark">
-                        {{ n.total_price && n.total_price.toLocaleString() }} UZS
+                        5 000 000 UZS
                       </strong>
                     </p>
                   </div>
                   <div class="flex flex-col gap-y-2 text-sm">
                     <p>
-                      <span class="text-cool-gray mr-2">Выданние:</span>
-                      <strong class="font-semibold text-dark">{{ n.amount_sold && n.amount_sold }}</strong>
+                      <span class="text-cool-gray">Выданние:</span>
+                      <strong class="font-semibold text-dark">200</strong>
                     </p>
                     <p>
-                      <span class="text-cool-gray mr-2">Сумма:</span>
+                      <span class="text-cool-gray">Сумма:</span>
                       <strong class="font-semibold text-dark">
-                        {{ n.price_sold && n.price_sold.toLocaleString() }} UZS
-                      </strong>
-                    </p>
-                  </div>
-
-                  <div class="flex flex-col gap-y-2 text-sm">
-                    <p>
-                      <span class="text-cool-gray mr-2">Проданние:</span>
-                      <strong class="font-semibold text-dark">{{ }}</strong>
-                    </p>
-                    <p>
-                      <span class="text-cool-gray mr-2">Сумма:</span>
-                      <strong class="font-semibold text-dark">
-                        <!--                        {{ n.price_sold && n.price_sold.toLocaleString() }} UZS-->
+                        5 000 000 UZS
                       </strong>
                     </p>
                   </div>
                   <div class="flex flex-col gap-y-2 text-sm">
                     <p>
-                      <span class="text-cool-gray mr-2">Остатки порций:</span>
-                      <strong class="font-semibold text-[#EA5455]">{{ n.amount_left && n.amount_left }}</strong>
+                      <span class="text-cool-gray">Проданние:</span>
+                      <strong class="font-semibold text-dark">200</strong>
                     </p>
                     <p>
-                      <span class="text-cool-gray mr-2">Сумма:</span>
+                      <span class="text-cool-gray">Сумма:</span>
                       <strong class="font-semibold text-dark">
-                        {{ n.price_left && n.price_left.toLocaleString() }} UZS
+                        5 000 000 UZS
+                      </strong>
+                    </p>
+                  </div>
+                  <div class="flex flex-col gap-y-2 text-sm">
+                    <p>
+                      <span class="text-cool-gray">Остатки порций:</span>
+                      <strong class="font-semibold text-[#EA5455]">8</strong>
+                    </p>
+                    <p>
+                      <span class="text-cool-gray">Сумма:</span>
+                      <strong class="font-semibold text-dark">
+                        5 000 000 UZS
                       </strong>
                     </p>
                   </div>
@@ -825,113 +686,53 @@ const mealTextFilter = (index: string): string => {
               class="flex flex-col gap-y-6"
             >
               <div
-                v-if="kitchenStore.menuTodaySales.elements && Object.keys(kitchenStore.menuTodaySales.elements).length"
-                v-for="(dishe) in Object.keys(kitchenStore.menuTodaySales.elements)"
+                v-for="product in products"
+                :key="product.category.id"
               >
-
-                <div
-                  v-if="dishe == 'product'"
-                  v-for="(product, index) in Object.keys(kitchenStore.menuTodaySales.elements.product)"
-                  :key="index"
-                >
-                  <h4 class="text-dark-gray font-semibold text-xl">
-                    {{ product }}
-                  </h4>
-                  <div :class="productsWrapperClassName">
-                    <div
-                      v-for="productItem in kitchenStore.menuTodaySales.elements.product[product]"
-                      :key="productItem.id"
-                      class="menu__card"
-                    >
-                      <h5 class="menu__card-title">
-                        {{ productItem.name }}
-                      </h5>
-                      <img
-                        :src="ColaImg"
-                        :alt="productItem.name"
-                        class="menu__card-img"
-                      />
-                      <div class="menu__card-subtitles">
-                        <span>{{ productItem.unit_name }} </span>
-                        <span>{{ formatNumber(productItem.price) }} UZS</span>
-                      </div>
-                      <div class="menu__card__actions">
-                        <button
-                          @click="updateQuantity(productItem.id, false)"
-                          :disabled="!orders.has(productItem.id)"
-                          class="menu__card__action-btn"
-                        >
-                          <svg
-                            :data-src="MinusIcon"
-                            class="menu__card__action-btn__icon"
-                          />
-                        </button>
-                        <span>
-                        {{ orders.get(productItem.id) ?? 0 }}
-                      </span>
-                        <button
-                          @click="updateQuantity(productItem.id)"
-                          class="menu__card__action-btn"
-                          :disabled="orders.has(productItem.id) && (orders.get(productItem.id) == productItem.amount)"
-                        >
-                          <svg
-                            :data-src="Plus3Icon"
-                            class="menu__card__action-btn__icon"
-                          />
-                        </button>
-                      </div>
+                <h4 class="text-dark-gray font-semibold text-xl">
+                  {{ product.category.name }}
+                </h4>
+                <div :class="productsWrapperClassName">
+                  <div
+                    v-for="productItem in product.data"
+                    :key="productItem.id"
+                    class="menu__card"
+                  >
+                    <h5 class="menu__card-title">
+                      {{ productItem.name }}
+                    </h5>
+                    <img
+                      :src="productItem.photo as any"
+                      :alt="productItem.name"
+                      class="menu__card-img"
+                    />
+                    <div class="menu__card-subtitles">
+                      <span>{{ productItem.weight }} литр</span>
+                      <span>{{ formatNumber(productItem.price) }} UZS</span>
                     </div>
-                  </div>
-                </div>
-                <div
-                  v-if="dishe == 'meal'"
-                >
-                  <h4 class="text-dark-gray font-semibold text-xl">
-                    Блюда
-                  </h4>
-                  <div :class="productsWrapperClassName">
-                    <div
-                      v-for="productItem in kitchenStore.menuTodaySales.elements.meal"
-                      :key="productItem.id"
-                      class="menu__card"
-                    >
-                      <h5 class="menu__card-title">
-                        {{ productItem.name }}
-                      </h5>
-                      <img
-                        :src="ColaImg"
-                        :alt="productItem.name"
-                        class="menu__card-img"
-                      />
-                      <div class="menu__card-subtitles">
-                        <span>{{ productItem.unit_name }} </span>
-                        <span>{{ formatNumber(productItem.price) }} UZS</span>
-                      </div>
-                      <div class="menu__card__actions">
-                        <button
-                          @click="updateQuantity(productItem.id, false)"
-                          :disabled="!orders.has(productItem.id)"
-                          class="menu__card__action-btn"
-                        >
-                          <svg
-                            :data-src="MinusIcon"
-                            class="menu__card__action-btn__icon"
-                          />
-                        </button>
-                        <span>
+                    <div class="menu__card__actions">
+                      <button
+                        @click="updateQuantity(productItem.id, false)"
+                        :disabled="!orders.has(productItem.id)"
+                        class="menu__card__action-btn"
+                      >
+                        <svg
+                          :data-src="MinusIcon"
+                          class="menu__card__action-btn__icon"
+                        />
+                      </button>
+                      <span>
                         {{ orders.get(productItem.id) ?? 0 }}
                       </span>
-                        <button
-                          @click="updateQuantity(productItem.id)"
-                          class="menu__card__action-btn"
-                          :disabled="orders.has(productItem.id) && (orders.get(productItem.id) == productItem.amount)"
-                        >
-                          <svg
-                            :data-src="Plus3Icon"
-                            class="menu__card__action-btn__icon"
-                          />
-                        </button>
-                      </div>
+                      <button
+                        @click="updateQuantity(productItem.id)"
+                        class="menu__card__action-btn"
+                      >
+                        <svg
+                          :data-src="Plus3Icon"
+                          class="menu__card__action-btn__icon"
+                        />
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -942,20 +743,16 @@ const mealTextFilter = (index: string): string => {
             v-else-if="activeTab === TABS.ALL"
             class="inner"
           >
-            <!--            {{ kitchenStore.menuWeekly }}-->
-            <!--            &lt;!&ndash;            {{ scheduledDates }}&ndash;&gt;-->
-            <!--            {{ activeDate }}-->
-            <!--            {{ activeListDate }}-->
             <ElScrollbar>
-              <div class="flex flex-wrap">
+              <div class="flex">
                 <button
-                  v-for="item in scheduledDates"
-                  :key="item.date"
+                  v-for="item in dateList"
+                  :key="item.value"
                   :class="[
                     'py-2 px-4 text-center rounded-lg text-xs font-medium text-dark-gray transition duration-200 ease-in',
-                    { 'bg-[#E2E6F3]': activeDate === item.date },
+                    { 'bg-[#E2E6F3]': activeDate === item.value },
                   ]"
-                  @click="activeDate = item.date"
+                  @click="activeDate = item.value"
                 >
                   {{ item.title }}
                 </button>
@@ -963,26 +760,22 @@ const mealTextFilter = (index: string): string => {
             </ElScrollbar>
             <div class="mt-6">
               <div
-                v-if="kitchenStore.activeMenuPart && kitchenStore.menuWeekly && Object.keys(kitchenStore.menuWeekly).length"
+                v-if="kitchenStore.activeMenuPart"
                 class="flex flex-col gap-y-6"
               >
-                <div v-for="(item, index) in kitchenStore.menuWeekly[activeListDate]">
-                  <h2 class="font-semibold text-2xl text-black">{{ mealTextFilter(index) }}</h2>
+                <div>
+                  <h2 class="font-semibold text-2xl text-black">Завтрак</h2>
                   <ElTable
-                    :data="kitchenStore.menuWeekly[activeListDate][index]"
+                    :data="allTabTableData"
                     stripe
                     class="custom-element-table custom-element-table-normal mt-4"
                   >
                     <ElTableColumn
                       prop="idx"
                       label="№"
-                    >
-                      <template #default="{row, $index}">
-                        <span>{{ $index + 1 }}</span>
-                      </template>
-                    </ElTableColumn>
+                    />
                     <ElTableColumn
-                      prop="name"
+                      prop="type"
                       label="Тип рациона"
                       sortable
                     />
@@ -992,42 +785,208 @@ const mealTextFilter = (index: string): string => {
                       sortable
                     />
                     <ElTableColumn
-                      prop="price"
-                      label="Сумма"
+                      prop="date"
+                      label="Дата"
                       sortable
+                    />
+                    <ElTableColumn
+                      prop="action"
+                      label="Действие"
+                      align="right"
                     >
-                      <template #default="{row, $index}">
-                        <span>{{ row.price && row.price.toLocaleString() }} сум</span>
+                      <template
+                        #default="{ row }: { row: Record<string, any> }"
+                      >
+                        <div
+                          v-if="row.action"
+                          class="flex items-center justify-end gap-x-2"
+                        >
+                          <button class="action-btn">
+                            <img
+                              src="@/assets/images/eye.svg"
+                              alt="eye"
+                            />
+                          </button>
+
+                          <button class="action-btn">
+                            <img
+                              src="@/assets/images/icons/edit.svg"
+                              alt="edit"
+                            />
+                          </button>
+                        </div>
                       </template>
                     </ElTableColumn>
-                    <!--                    <ElTableColumn-->
-                    <!--                      prop="action"-->
-                    <!--                      label="Действие"-->
-                    <!--                      align="right"-->
-                    <!--                    >-->
-                    <!--                      <template-->
-                    <!--                        #default="{ row }: { row: Record<string, any> }"-->
-                    <!--                      >-->
-                    <!--                        <div-->
-                    <!--                          v-if="row.action"-->
-                    <!--                          class="flex items-center justify-end gap-x-2"-->
-                    <!--                        >-->
-                    <!--                          <button class="action-btn">-->
-                    <!--                            <img-->
-                    <!--                              src="@/assets/images/eye.svg"-->
-                    <!--                              alt="eye"-->
-                    <!--                            />-->
-                    <!--                          </button>-->
+                  </ElTable>
+                </div>
+                <div>
+                  <h2 class="font-semibold text-2xl text-black">Обед</h2>
+                  <ElTable
+                    :data="allTabTableData"
+                    stripe
+                    class="custom-element-table custom-element-table-normal mt-4"
+                  >
+                    <ElTableColumn
+                      prop="idx"
+                      label="№"
+                    />
+                    <ElTableColumn
+                      prop="type"
+                      label="Тип рациона"
+                      sortable
+                    />
+                    <ElTableColumn
+                      prop="time"
+                      label="Время"
+                      sortable
+                    />
+                    <ElTableColumn
+                      prop="date"
+                      label="Дата"
+                      sortable
+                    />
+                    <ElTableColumn
+                      prop="action"
+                      label="Действие"
+                      align="right"
+                    >
+                      <template
+                        #default="{ row }: { row: Record<string, any> }"
+                      >
+                        <div
+                          v-if="row.action"
+                          class="flex items-center justify-end gap-x-2"
+                        >
+                          <button class="action-btn">
+                            <img
+                              src="@/assets/images/eye.svg"
+                              alt="eye"
+                            />
+                          </button>
 
-                    <!--                          <button class="action-btn">-->
-                    <!--                            <img-->
-                    <!--                              src="@/assets/images/icons/edit.svg"-->
-                    <!--                              alt="edit"-->
-                    <!--                            />-->
-                    <!--                          </button>-->
-                    <!--                        </div>-->
-                    <!--                      </template>-->
-                    <!--                    </ElTableColumn>-->
+                          <button class="action-btn">
+                            <img
+                              src="@/assets/images/icons/edit.svg"
+                              alt="edit"
+                            />
+                          </button>
+                        </div>
+                      </template>
+                    </ElTableColumn>
+                  </ElTable>
+                </div>
+                <div>
+                  <h2 class="font-semibold text-2xl text-black">Ужин</h2>
+                  <ElTable
+                    :data="allTabTableData"
+                    stripe
+                    class="custom-element-table custom-element-table-normal mt-4"
+                  >
+                    <ElTableColumn
+                      prop="idx"
+                      label="№"
+                    />
+                    <ElTableColumn
+                      prop="type"
+                      label="Тип рациона"
+                      sortable
+                    />
+                    <ElTableColumn
+                      prop="time"
+                      label="Время"
+                      sortable
+                    />
+                    <ElTableColumn
+                      prop="date"
+                      label="Дата"
+                      sortable
+                    />
+                    <ElTableColumn
+                      prop="action"
+                      label="Действие"
+                      align="right"
+                    >
+                      <template
+                        #default="{ row }: { row: Record<string, any> }"
+                      >
+                        <div
+                          v-if="row.action"
+                          class="flex items-center justify-end gap-x-2"
+                        >
+                          <button class="action-btn">
+                            <img
+                              src="@/assets/images/eye.svg"
+                              alt="eye"
+                            />
+                          </button>
+
+                          <button class="action-btn">
+                            <img
+                              src="@/assets/images/icons/edit.svg"
+                              alt="edit"
+                            />
+                          </button>
+                        </div>
+                      </template>
+                    </ElTableColumn>
+                  </ElTable>
+                </div>
+                <div>
+                  <h2 class="font-semibold text-2xl text-black">
+                    Сухой питания
+                  </h2>
+                  <ElTable
+                    :data="allTabTableData"
+                    stripe
+                    class="custom-element-table custom-element-table-normal mt-4"
+                  >
+                    <ElTableColumn
+                      prop="idx"
+                      label="№"
+                    />
+                    <ElTableColumn
+                      prop="type"
+                      label="Тип рациона"
+                      sortable
+                    />
+                    <ElTableColumn
+                      prop="time"
+                      label="Время"
+                      sortable
+                    />
+                    <ElTableColumn
+                      prop="date"
+                      label="Дата"
+                      sortable
+                    />
+                    <ElTableColumn
+                      prop="action"
+                      label="Действие"
+                      align="right"
+                    >
+                      <template
+                        #default="{ row }: { row: Record<string, any> }"
+                      >
+                        <div
+                          v-if="row.action"
+                          class="flex items-center justify-end gap-x-2"
+                        >
+                          <button class="action-btn">
+                            <img
+                              src="@/assets/images/eye.svg"
+                              alt="eye"
+                            />
+                          </button>
+
+                          <button class="action-btn">
+                            <img
+                              src="@/assets/images/icons/edit.svg"
+                              alt="edit"
+                            />
+                          </button>
+                        </div>
+                      </template>
+                    </ElTableColumn>
                   </ElTable>
                 </div>
               </div>
@@ -1037,8 +996,6 @@ const mealTextFilter = (index: string): string => {
                   :data="salesAllTabTableData"
                   stripe
                   class="custom-element-table custom-element-table-normal menu__sales-all-tab-table mt-4"
-                  highlight-current-row
-                  @current-change="salesTableCurrentChange"
                 >
                   <ElTableColumn
                     v-for="column in salesAllTabTableColumns"
@@ -1082,10 +1039,7 @@ const mealTextFilter = (index: string): string => {
                           />
                         </RouterLink>
 
-                        <button
-                          @click.stop
-                          class="action-btn"
-                        >
+                        <button class="action-btn">
                           <img
                             src="@/assets/images/icons/edit.svg"
                             alt="edit"
@@ -1144,20 +1098,19 @@ const mealTextFilter = (index: string): string => {
             >
               <div
                 class="menu__card"
-                v-for="(productItem, productIndex) in selectedProducts"
-                :key="productIndex"
+                v-for="productItem in selectedProducts"
+                :key="productItem.id"
               >
-                <!--                {{productItem}}-->
                 <h5 class="menu__card-title">
                   {{ productItem.name }}
                 </h5>
                 <img
-                  :src="ColaImg"
+                  :src="productItem.photo as any"
                   :alt="productItem.name"
                   class="menu__card-img"
                 />
                 <div class="menu__card-subtitles">
-                  <span>{{ productItem.unit_name }} </span>
+                  <span>{{ productItem.weight }} литр</span>
                   <span>{{ formatNumber(productItem.price) }} UZS</span>
                 </div>
                 <div class="menu__card__actions">
@@ -1177,12 +1130,10 @@ const mealTextFilter = (index: string): string => {
                   <button
                     @click="updateQuantity(productItem.id)"
                     class="menu__card__action-btn"
-                    :disabled="orders.has(productItem.id) && (orders.get(productItem.id) == productItem.amount)"
                   >
                     <svg
                       :data-src="Plus3Icon"
                       class="menu__card__action-btn__icon"
-
                     />
                   </button>
                 </div>
@@ -1208,7 +1159,6 @@ const mealTextFilter = (index: string): string => {
                 type="primary"
                 size="large"
                 class="!bg-blue"
-                @click="createOrder"
               >
                 Продать
               </ElButton>

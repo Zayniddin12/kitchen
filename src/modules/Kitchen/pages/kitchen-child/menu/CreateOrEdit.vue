@@ -91,7 +91,9 @@ const scheduledDates = computed(() => {
     const intermediate = kitchenData.value.intermediateDate1 ? 7 : 10;
     const formattedDates = [];
     for (let i = 0; i < intermediate; i++) {
-      const date = new Date(kitchenData.value.startDate);
+      console.log(kitchenData.value.startDate);
+      const date = new Date(kitchenData.value.startDate.split(".").reverse().join("-"));
+      console.log(date, "date");
       date.setDate(date.getDate() + i);
       const formattedDate = formatDate(date);
       formattedDates.push({ date: formattedDate.date, title: `${formattedDate.week} - ${formattedDate.date}` });
@@ -102,7 +104,7 @@ const scheduledDates = computed(() => {
     const intermediate = getDaysInterval(kitchenData.value.startDate, kitchenData.value.endDate) + 1;
     const formattedDates = [];
     for (let i = 0; i < intermediate; i++) {
-      const date = new Date(kitchenData.value.startDate);
+      const date = new Date(kitchenData.value.startDate.split(".").reverse().join("-"));
       date.setDate(date.getDate() + i);
       const formattedDate = formatDate(date);
       formattedDates.push({ date: formattedDate.date, title: `${formattedDate.week} - ${formattedDate.date}` });
@@ -275,23 +277,23 @@ watch(scheduledDates, async (newValue) => {
 
     }
     if (kitchenStore.activeSalesPart) {
-
+      list_dishes.value = [];
       if (route.name === "KitchenMenuEdit") {
 
         newValue.forEach(el => {
           list_dishes.value.push({
             date: el.date,
-            test: kitchenStore.menuElement.elements[el.date.split(".").reverse().join("-")].product.map(item => {
+            data: kitchenStore.menuElement.elements[el.date.split(".").reverse().join("-")] ? kitchenStore.menuElement.elements[el.date.split(".").reverse().join("-")]["product" || "meal"].map(item => {
               return {
-                product: item.parent_id,
-                vid_product: item.product_id,
-                meal: null,
-                amount: null,
+                id: item.id,
+                product: kitchenStore.menuElement.elements[el.date.split(".").reverse().join("-")].product ? item.parent_id : null,
+                vid_product: kitchenStore.menuElement.elements[el.date.split(".").reverse().join("-")].product ? item.product_id : null,
+                meal: kitchenStore.menuElement.elements[el.date.split(".").reverse().join("-")].meal ? item.product_id : null,
+                amount: item.amount,
                 vid_list: [],
                 meals_list: [],
-              }
-            }),
-            data: [
+              };
+            }) : [
               {
                 product: null,
                 vid_product: null,
@@ -380,13 +382,13 @@ onMounted(async () => {
   if (route.name === "KitchenMenuEdit") {
     await kitchenStore.GET_MENU_ITEM(route.params.child_id as string);
     if (kitchenStore.activeMenuPart) {
-      kitchenData.value.startDate = kitchenStore.menuItem.menu.start_date.split(".").reverse().join("-");
+      kitchenData.value.startDate = kitchenStore.menuItem.menu.start_date;
       kitchenData.value.intermediateDate1 = kitchenStore.menuItem.menu.duration == 7;
 
     }
     if (kitchenStore.activeSalesPart) {
-      kitchenData.value.startDate = kitchenStore.menuItem.menu.start_date.split(".").reverse().join("-");
-      kitchenData.value.endDate = kitchenStore.menuItem.menu.end_date.split(".").reverse().join("-");
+      kitchenData.value.startDate = kitchenStore.menuItem.menu.start_date;
+      kitchenData.value.endDate = kitchenStore.menuItem.menu.end_date;
     }
 
 
@@ -506,16 +508,17 @@ const sendData = async () => {
 
     let kitchenPayload = {
       kitchen_id: Number(route.params.child_id),
-      start_date: kitchenData.value.startDate,
-      end_date: kitchenData.value.endDate,
+      start_date: kitchenData.value.startDate.split(".").reverse().join("-"),
+      end_date: kitchenData.value.endDate.split(".").reverse().join("-"),
     };
 
 
     let kitchenElementPayload = list_dishes.value.map((entry) => {
       return entry.data.map(meal => {
         return {
+          ...(meal.id && { id: meal.id }),
           date: entry.date,
-          [meal.meal ? "meal_id" : "product_id"]: meal.meal ? meal.meal : meal.vid_product,
+          ["product_id"]: meal.meal ? meal.meal : meal.vid_product,
           amount: Number(meal.amount),
           product_type: meal.meal ? "meal" : "product",
         };
@@ -529,15 +532,24 @@ const sendData = async () => {
       delete item.rationsList;
     });
 
-    const kitchenResponse = await kitchenStore.CREATE_KITCHEN(kitchenPayload);
+    if (route.name !== "KitchenMenuEdit") {
+      const kitchenResponse = await kitchenStore.CREATE_KITCHEN(kitchenPayload);
 
-    const kitchenResponseElement = await kitchenStore.CREATE_KITCHEN_ELEMENT({
-      id: kitchenResponse.data.menu_id,
-      payload: { Elements: kitchenElementPayload },
-    });
+      const kitchenResponseElement = await kitchenStore.CREATE_KITCHEN_ELEMENT({
+        id: kitchenResponse.data.menu_id,
+        payload: { Elements: kitchenElementPayload },
+      });
+    } else {
+      let menu_id = kitchenStore.menuItem.menu.id;
+      await kitchenStore.UPDATE_MENU(menu_id, kitchenPayload);
+
+      await kitchenStore.UPDATE_MENU_ELEMENT(menu_id, { Elements: kitchenElementPayload });
+    }
+
+
   }
 
-  await router.push(`/kitchen/${route.params.department_id}/free-kitchen/${route.params.kitchen_id}/${route.params.child_id}/menu`);
+  await router.push(`/kitchen/${route.params.department_id}/${kitchenStore.activeSalesPart ? "sales" : "free-kitchen"}/${route.params.kitchen_id}/${route.params.child_id}/menu`);
 
 };
 
@@ -557,9 +569,17 @@ watch(() => route.params, async () => {
 
 
 const changeInput = async (event: any, index: number, childIndex: number) => {
+  // list_dishes.value[index].data[childIndex].vid_product = null
   const data = await settingsStore.GET_MEALS_VID_PRO({ parent_id: event });
 
   list_dishes.value[index].data[childIndex].vid_list = data.product_types ? data.product_types : [];
+};
+
+const changeChange = async (event: any, index: number, childIndex: number) => {
+  list_dishes.value[index].data[childIndex].vid_product = null;
+  // const data = await settingsStore.GET_MEALS_VID_PRO({ parent_id: event });
+  //
+  // list_dishes.value[index].data[childIndex].vid_list = data.product_types ? data.product_types : [];
 };
 
 const addMeal = (parentIndex: number) => {
@@ -589,12 +609,12 @@ const addMeal = (parentIndex: number) => {
       <div>
         <div class="p-6 rounded-3xl border border-[#E2E6F3] mt-6 min-h-[671px]">
           <div>
-            <!--            {{ data }}-->
+            <!--            {{ kitchenData }}-->
             <!--            {{ kitchenStore.menuElement }}-->
             <h3 class="text-lg font-medium text-dark">
               Введите дату!
             </h3>
-            {{ kitchenStore.menuItem }}
+            <!--            {{ kitchenStore.menuItem }}-->
             <div>
               <AppForm :value="kitchenData" @validation="value => kitchenDatav$ = value">
                 <div class="flex items-center gap-4">
@@ -638,7 +658,7 @@ const addMeal = (parentIndex: number) => {
             <div
               class="flex flex-wrap items-center gap-4"
             >
-              <!--              {{ scheduledDates }}-->
+              {{ scheduledDates }}
               <button
                 v-for="item in scheduledDates"
                 :key="item.date"
@@ -796,7 +816,8 @@ const addMeal = (parentIndex: number) => {
               <h3 class="text-2xl font-medium text-dark">
                 Список блюды
               </h3>
-              {{ list_dishes }}
+              <!--              {{ list_dishes }}-->
+              <!--              {{ activeScheduledDate }}-->
               <div v-for="(meal, index) in list_dishes" class="">
                 <!--        {{ tableData }}-->
                 <div v-show="meal.date == activeScheduledDate">
@@ -827,7 +848,8 @@ const addMeal = (parentIndex: number) => {
                         itemValue="id"
                         itemLabel="name"
                         :items="settingsStore.typeProduct.product_categories"
-                        @change="changeInput($event, index, childIndex)"
+                        @input="changeInput($event, index, childIndex)"
+                        @change="changeChange($event, index, childIndex)"
                       />
                       <app-select
                         v-model="item.vid_product"

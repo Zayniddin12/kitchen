@@ -60,7 +60,7 @@ const languages = computed<LanguagesType>(() => {
       />
       <div class="flex flex-col">
         <strong class="text-sm font-medium text-dark dark:text-white">
-          {{ userFullName }}
+          {{ userFullName }}das
         </strong>
         <span class="text-[#A8AAAE] text-sm">{{ userPosition }}</span>
       </div>
