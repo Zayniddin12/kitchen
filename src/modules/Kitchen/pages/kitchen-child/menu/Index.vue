@@ -110,14 +110,8 @@ const salesAllTabTableColumns = computed<TableColumnType[]>(() => [
     sortable: true,
   },
   {
-    label: "Время",
-    prop: "time",
-    sortable: true,
-    align: "center",
-  },
-  {
     label: "Порция",
-    prop: "portion",
+    prop: "amount",
     sortable: true,
     align: "center",
   },
@@ -129,7 +123,7 @@ const salesAllTabTableColumns = computed<TableColumnType[]>(() => [
   },
   {
     label: "Себестоимость",
-    prop: "cost_price",
+    prop: "net_price",
     sortable: true,
     align: "center",
   },
@@ -139,12 +133,12 @@ const salesAllTabTableColumns = computed<TableColumnType[]>(() => [
     sortable: true,
     align: "center",
   },
-  {
-    label: "Действие",
-    prop: "action",
-    sortable: false,
-    align: "right",
-  },
+  // {
+  //   label: "Действие",
+  //   prop: "action",
+  //   sortable: false,
+  //   align: "right",
+  // },
 ]);
 
 const salesTableCurrentChange = (value: Record<string, any>) => {
@@ -211,151 +205,6 @@ const activeListDate = ref("");
 
 const hasData = ref(true);
 
-const products = ref<ProductType[] | []>([
-  {
-    category: { id: 1, name: "Напитки" },
-    data: [
-      {
-        id: 1,
-        price: 14000,
-        weight: 1.5,
-        name: "Coca Cola",
-        photo: ColaImg,
-      },
-      {
-        id: 2,
-        price: 12000,
-        weight: 1,
-        name: "Coca Cola",
-        photo: ColaImg,
-      },
-      {
-        id: 3,
-        price: 8000,
-        weight: 0.5,
-        name: "Coca Cola",
-        photo: ColaImg,
-      },
-    ],
-  },
-  {
-    category: { id: 2, name: "Блюда" },
-    data: [
-      {
-        id: 4,
-        price: 12000,
-        weight: 0.5,
-        name: "Блюда 1",
-        photo: DishesImg,
-      },
-      {
-        id: 5,
-        price: 14000,
-        weight: 1,
-        name: "Блюда 2",
-        photo: DishesImg,
-      },
-      {
-        id: 6,
-        price: 15000,
-        weight: 1.5,
-        name: "Блюда 3",
-        photo: DishesImg,
-      },
-      {
-        id: 7,
-        price: 18000,
-        weight: 2,
-        name: "Блюда 4",
-        photo: DishesImg,
-      },
-      {
-        id: 8,
-        price: 12000,
-        weight: 0.5,
-        name: "Блюда 5",
-        photo: DishesImg,
-      },
-      {
-        id: 9,
-        price: 14000,
-        weight: 1,
-        name: "Блюда 6",
-        photo: DishesImg,
-      },
-      {
-        id: 10,
-        price: 15000,
-        weight: 1.5,
-        name: "Блюда 7",
-        photo: DishesImg,
-      },
-      {
-        id: 11,
-        price: 18000,
-        weight: 2,
-        name: "Блюда 8",
-        photo: DishesImg,
-      },
-      {
-        id: 12,
-        price: 12000,
-        weight: 0.5,
-        name: "Блюда 9",
-        photo: DishesImg,
-      },
-      {
-        id: 13,
-        price: 14000,
-        weight: 1,
-        name: "Блюда 10",
-        photo: DishesImg,
-      },
-      {
-        id: 13,
-        price: 15000,
-        weight: 1.5,
-        name: "Блюда 11",
-        photo: DishesImg,
-      },
-      {
-        id: 15,
-        price: 18000,
-        weight: 2,
-        name: "Блюда 12",
-        photo: DishesImg,
-      },
-      {
-        id: 16,
-        price: 12000,
-        weight: 0.5,
-        name: "Блюда 13",
-        photo: DishesImg,
-      },
-      {
-        id: 17,
-        price: 14000,
-        weight: 1,
-        name: "Блюда 14",
-        photo: DishesImg,
-      },
-      {
-        id: 18,
-        price: 15000,
-        weight: 1.5,
-        name: "Блюда 15",
-        photo: DishesImg,
-      },
-      {
-        id: 19,
-        price: 18000,
-        weight: 2,
-        name: "Блюда 16",
-        photo: DishesImg,
-      },
-    ],
-  },
-]);
 
 const sideBarStore = useSidebarStore();
 
@@ -471,6 +320,7 @@ const createOrder = async () => {
 
     await kitchenStore.CREATE_ORDER(payload);
     await kitchenStore.GET_CURRENT_MENU_SALES_LIST(route.params.child_id as string);
+    orders.clear()
     ordersModal.value = false;
   } catch (error) {
 
@@ -783,12 +633,12 @@ const mealTextFilter = (index: string): string => {
                   <div class="flex flex-col gap-y-2 text-sm">
                     <p>
                       <span class="text-cool-gray mr-2">Выданние:</span>
-                      <strong class="font-semibold text-dark">{{ n.amount_sold && n.amount_sold }}</strong>
+                      <strong class="font-semibold text-dark">{{n.amount_served && n.amount_served}}</strong>
                     </p>
                     <p>
                       <span class="text-cool-gray mr-2">Сумма:</span>
                       <strong class="font-semibold text-dark">
-                        {{ n.price_sold && n.price_sold.toLocaleString() }} UZS
+                        {{ n.price_served && n.price_served.toLocaleString()}} UZS
                       </strong>
                     </p>
                   </div>
@@ -796,12 +646,12 @@ const mealTextFilter = (index: string): string => {
                   <div class="flex flex-col gap-y-2 text-sm">
                     <p>
                       <span class="text-cool-gray mr-2">Проданние:</span>
-                      <strong class="font-semibold text-dark">{{ }}</strong>
+                      <strong class="font-semibold text-dark">{{ n.amount_sold && n.amount_sold }}</strong>
                     </p>
                     <p>
                       <span class="text-cool-gray mr-2">Сумма:</span>
                       <strong class="font-semibold text-dark">
-                        <!--                        {{ n.price_sold && n.price_sold.toLocaleString() }} UZS-->
+                        {{ n.price_sold && n.price_sold.toLocaleString() }} UZS
                       </strong>
                     </p>
                   </div>
@@ -1034,7 +884,8 @@ const mealTextFilter = (index: string): string => {
               <div v-else-if="kitchenStore.activeSalesPart">
                 <h4 class="font-semibold text-2xl text-black">Меню</h4>
                 <ElTable
-                  :data="salesAllTabTableData"
+                  v-if="kitchenStore.menuWeekly && kitchenStore.menuWeekly[activeListDate] && kitchenStore.menuWeekly[activeListDate]"
+                  :data="kitchenStore.menuWeekly[activeListDate].product ? kitchenStore.menuWeekly[activeListDate].product : kitchenStore.menuWeekly[activeListDate].meal"
                   stripe
                   class="custom-element-table custom-element-table-normal menu__sales-all-tab-table mt-4"
                   highlight-current-row
@@ -1048,51 +899,87 @@ const mealTextFilter = (index: string): string => {
                     :sortable="!!column.sortable"
                     :align="column.align ?? 'left'"
                   >
+
+                    <template
+                      v-if="column.prop === 'idx'"
+                      #default="{ row, $index }: { row: Record<string, any>, $index: number }"
+                    >
+                      <div class="">
+                        {{ $index + 1 }}
+                      </div>
+                    </template>
                     <template
                       v-if="column.prop === 'type'"
                       #default="{ row }: { row: Record<string, any> }"
                     >
                       <div class="flex items-center gap-x-3">
                         <img
-                          :src="DishesImg"
-                          :alt="row.type"
+                          :src="image"
+                          :alt="row.name"
                           class="size-8 rounded-full object-contain"
                         />
-                        <span>{{ row.type }}</span>
+                        <span>{{ row.name }}</span>
                       </div>
                     </template>
+
                     <template
-                      v-if="column.prop === 'action'"
+                      v-if="column.prop === 'date'"
                       #default="{ row }: { row: Record<string, any> }"
                     >
-                      <div
-                        v-if="row.action"
-                        class="flex items-center justify-end gap-x-2"
-                      >
-                        <RouterLink
-                          :to="{
-                            name: 'KitchenMenuShow',
-                            params: { id: row.idx },
-                          }"
-                          class="action-btn"
-                        >
-                          <img
-                            src="@/assets/images/eye.svg"
-                            alt="eye"
-                          />
-                        </RouterLink>
-
-                        <button
-                          @click.stop
-                          class="action-btn"
-                        >
-                          <img
-                            src="@/assets/images/icons/edit.svg"
-                            alt="edit"
-                          />
-                        </button>
+                      <div class="text-center">
+                        {{ activeListDate }}
                       </div>
                     </template>
+
+                    <template
+                      v-if="column.prop === 'net_price'"
+                      #default="{ row }: { row: Record<string, any> }"
+                    >
+                      <div class="text-center">
+                        {{ row.net_price && row.net_price.toLocaleString() }}
+                      </div>
+                    </template>
+
+                    <template
+                      v-if="column.prop === 'price'"
+                      #default="{ row }: { row: Record<string, any> }"
+                    >
+                      <div class="text-center">
+                        {{ row.price && row.price.toLocaleString() }}
+                      </div>
+                    </template>
+                    <!--                    <template-->
+                    <!--                      v-if="column.prop === 'action'"-->
+                    <!--                      #default="{ row }: { row: Record<string, any> }"-->
+                    <!--                    >-->
+                    <!--                      <div-->
+                    <!--                        v-if="row.action"-->
+                    <!--                        class="flex items-center justify-end gap-x-2"-->
+                    <!--                      >-->
+                    <!--                        <RouterLink-->
+                    <!--                          :to="{-->
+                    <!--                            name: 'KitchenMenuShow',-->
+                    <!--                            params: { id: row.idx },-->
+                    <!--                          }"-->
+                    <!--                          class="action-btn"-->
+                    <!--                        >-->
+                    <!--                          <img-->
+                    <!--                            src="@/assets/images/eye.svg"-->
+                    <!--                            alt="eye"-->
+                    <!--                          />-->
+                    <!--                        </RouterLink>-->
+
+                    <!--                        <button-->
+                    <!--                          @click.stop-->
+                    <!--                          class="action-btn"-->
+                    <!--                        >-->
+                    <!--                          <img-->
+                    <!--                            src="@/assets/images/icons/edit.svg"-->
+                    <!--                            alt="edit"-->
+                    <!--                          />-->
+                    <!--                        </button>-->
+                    <!--                      </div>-->
+                    <!--                    </template>-->
                   </ElTableColumn>
                 </ElTable>
               </div>
