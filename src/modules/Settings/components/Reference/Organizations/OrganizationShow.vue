@@ -65,7 +65,7 @@ onMounted(() => {
             Наименование
           </span>
             <p>
-              {{settingsStore.organizationDetail.name || "-"}}
+              {{ settingsStore.organizationDetail.name || "-" }}
             </p>
           </div>
           <div>
@@ -73,7 +73,7 @@ onMounted(() => {
             Юр. адрес
           </span>
             <p>
-              {{settingsStore.organizationDetail.address || "-"}}
+              {{ settingsStore.organizationDetail.address || "-" }}
             </p>
           </div>
           <div>
@@ -81,7 +81,7 @@ onMounted(() => {
             ИНН
           </span>
             <p>
-              {{settingsStore.organizationDetail.tin || "-"}}
+              {{ settingsStore.organizationDetail.tin || "-" }}
             </p>
           </div>
         </template>
@@ -93,6 +93,7 @@ onMounted(() => {
         <img
           src="@/assets/images/icons/edit.svg"
           alt="edit"
+          class="size-5"
         />
         Редактировать
       </RouterLink>

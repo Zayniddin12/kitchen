@@ -141,6 +141,7 @@ onMounted(() => {
         <img
           src="@/assets/images/icons/edit.svg"
           alt="edit"
+          class="size-5"
         />
         Редактировать
       </RouterLink>
