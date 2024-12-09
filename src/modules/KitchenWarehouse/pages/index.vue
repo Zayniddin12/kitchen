@@ -217,7 +217,7 @@ watch(() => route.params.id, (newId) => {
         />
       </svg>
       <h1 class="text-[#4F5662] text-sm font-medium">{{ item.name }}</h1>
-      <h5 class="text-[#A8AAAE] text-xs">{{ `${item.kitchens_count} ${item.name}` }}</h5>
+      <h5 class="text-[#A8AAAE] text-xs">{{ `${item.kitchens_count} кухни` }}</h5>
     </RouterLink>
   </div>
   <AppEmpty

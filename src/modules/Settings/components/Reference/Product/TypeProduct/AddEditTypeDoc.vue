@@ -142,7 +142,6 @@ watch(() => route.name, () => {
       <div class="flex items-start mt-[24px]">
         <div class="grid grid-cols-2 border rounded-[24px] p-[24px] gap-5 h-[50vh] w-[70%]">
           <app-input
-            :disabled="setDisabled"
             v-model="dataValue.name.ru"
             label="Наименование (RU)"
             placeholder="Введите"
@@ -150,7 +149,6 @@ watch(() => route.name, () => {
           />
 
           <app-input
-            :disabled="setDisabled"
             v-model="dataValue.name.uz"
             label="Наименование (UZ)"
             placeholder="Введите"
@@ -158,7 +156,6 @@ watch(() => route.name, () => {
           />
 
           <el-switch
-            :disabled="route.name === 'reference-type-product-view' as any"
             v-model="dataValue.is_active"
             class="mt-auto"
             :active-text="dataValue.is_active ? 'Активация' : 'Деактивация'"
@@ -180,10 +177,7 @@ watch(() => route.name, () => {
         </button>
       </div>
 
-      <div
-        class="flex items-start justify-between mt-[24px] w-[70%]"
-        v-if="route.name === 'reference-type-product-edit-id' || route.name === 'reference-type-product-create'"
-      >
+      <div class="flex items-start justify-between mt-[24px] w-[70%]">
         <button
           class="custom-danger-btn"
           v-if="route.name === 'reference-type-product-edit-id'"

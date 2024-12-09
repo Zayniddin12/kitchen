@@ -1,6 +1,6 @@
 <script
-    setup
-    lang="ts"
+  setup
+  lang="ts"
 >
 import { computed, onMounted, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
@@ -43,12 +43,12 @@ const routeId = computed(() => {
 const tabs = ref<Tabs[]>([
   {
     title: "Данные кандидата",
-    value: 0
+    value: 0,
   },
   {
     title: "Фотография для Face ID",
-    value: 1
-  }
+    value: 1,
+  },
 ]);
 const activeTab = ref<number>(0);
 
@@ -61,16 +61,16 @@ const { setBreadCrumb } = useBreadcrumb();
 const setBreadCrumbFn = () => {
   setBreadCrumb([
     {
-      label: "Кадры"
+      label: "Кадры",
     },
     {
       label: String(route.meta.parentRouteTitle ?? ""),
-      to: route.meta.parentRouteUrl
+      to: route.meta.parentRouteUrl,
     },
     {
       label: "Просмотр",
-      isActionable: true
-    }
+      isActionable: true,
+    },
   ]);
 };
 
@@ -91,42 +91,60 @@ onMounted(() => {
     <div class="flex items-center justify-between">
       <div class="app-tabs w-[345px] my-6">
         <div
-            v-for="item in tabs"
-            :key="item.value"
-            class="cursor-pointer"
-            :class="['app-tab', {'app-tab--active': activeTab === item.value}]"
-            @click="setActiveTab(item)"
+          v-for="item in tabs"
+          :key="item.value"
+          class="cursor-pointer"
+          :class="['app-tab', {'app-tab--active': activeTab === item.value}]"
+          @click="setActiveTab(item)"
         >
           {{ item.title }}
         </div>
       </div>
 
       <RouterLink
-          :to="{name: `${usersStore.activeRoutePrefix}-edit`}"
-          class="custom-cancel-btn flex items-center"
+        :to="{name: `${usersStore.activeRoutePrefix}-edit`}"
+        class="custom-cancel-btn flex items-center gap-2 text-[#4F5662] font-semibold !text-[18px]"
       >
-        <img
-            src="@/assets/images/icons/edit.svg"
-            alt="edit"
-            class="mr-[8px]"
-        />
+        <svg
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M4 20.0003H8L18.5 9.5003C19.6046 8.39573 19.6046 6.60487 18.5 5.5003C17.3954 4.39573 15.6046 4.39573 14.5 5.5003L4 16.0003V20.0003"
+            stroke="#8F9194"
+            stroke-width="1.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+          <path
+            d="M13.5 6.5L17.5 10.5"
+            stroke="#8F9194"
+            stroke-width="1.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+
         Редактировать
       </RouterLink>
     </div>
 
     <AppOverlay
-        :loading
-        :loading-size="70"
-        parent-class-name="border rounded-[24px] pb-[32px] overflow-hidden"
-        v-if="activeTab === 0"
+      :loading
+      :loading-size="70"
+      parent-class-name="border rounded-[24px] pb-[32px] overflow-hidden"
+      v-if="activeTab === 0"
     >
       <div class="py-[70px] bg-[#F8F9FC] px-[24px] relative">
         <div class="top-[32px] absolute flex items-center">
           <div class="rounded-full overflow-hidden border-4 border-gray-100">
             <img
-                :src="data?.avatar ?? gender?.photo ?? Avatar"
-                alt="Profile Picture"
-                class="object-cover size-40 rounded-full"
+              :src="data?.avatar ?? gender?.photo ?? Avatar"
+              alt="Profile Picture"
+              class="object-cover size-40 rounded-full"
             >
           </div>
 
@@ -213,7 +231,7 @@ onMounted(() => {
 
             <div>
               <span class="text-blue-500 mb-[4px] block">Кто внес изменение:</span>
-              <p>{{data?.responsible_name || "—"}}</p>
+              <p>{{ data?.responsible_name || "—" }}</p>
             </div>
           </div>
         </div>
@@ -221,23 +239,26 @@ onMounted(() => {
     </AppOverlay>
 
     <AppOverlay
-        :loading
-        parent-class-name="border rounded-[24px] py-[32px] px-[24px] w-[50%] m-auto relative"
-        v-else
+      :loading
+      parent-class-name="border rounded-[24px] py-[32px] px-[24px] w-[50%] m-auto relative"
+      v-else
     >
-<!--      <button class="absolute top-2 left-2 opacity-0 group-hover:opacity-100  edit__btn transition-opacity duration-300 bg-blue-500 text-white px-4 py-2 rounded-lg">-->
-<!--        Изменить фото-->
-<!--      </button>-->
+      <!--      <button class="absolute top-2 left-2 opacity-0 group-hover:opacity-100  edit__btn transition-opacity duration-300 bg-blue-500 text-white px-4 py-2 rounded-lg">-->
+      <!--        Изменить фото-->
+      <!--      </button>-->
       <img
-          src="@/assets/images/bigMan.png"
-          class="w-full h-[550px] object-contain rounded-lg"
-          alt="bigMan"
+        src="@/assets/images/bigMan.png"
+        class="w-full h-[550px] object-contain rounded-lg"
+        alt="bigMan"
       />
     </AppOverlay>
   </div>
 </template>
 
-<style lang="scss">
+<style
+  scoped
+  lang="scss"
+>
 .edit__btn {
   @apply bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 z-50;
 }

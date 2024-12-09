@@ -7,6 +7,7 @@ import { useSettingsStore } from "@/modules/Settings/store";
 import { useRoute, useRouter } from "vue-router";
 import AppOverlay from "@/components/ui/app-overlay/AppOverlay.vue";
 import { computed, onMounted, ref } from "vue";
+import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 
 const settingsStore = useSettingsStore();
 
@@ -36,16 +37,43 @@ const fetchData = async () => {
     }
   } catch (error: any) {
     if (error?.error?.code === 404) {
-      router.replace({ name: "reference-type-product" });
+      await router.replace({ name: "reference-type-product" });
     }
   } finally {
     loading.value = false;
   }
 };
 
+const { setBreadCrumb } = useBreadcrumb();
+
+const setBreadCrumbFn = () => {
+  setBreadCrumb([
+    {
+      label: "Настройки",
+    },
+    {
+      label: "Справочники",
+    },
+    {
+      label: "Продукты",
+      to: { name: "reference" },
+    },
+    {
+      label: "Типы продуктов",
+      to: { name: "reference-type-product" },
+    },
+    {
+      label: String(route?.meta?.breadcrumbItemTitle ?? ""),
+      isActionable: true,
+    },
+  ]);
+};
+
+
 onMounted(() => {
   fetchData();
-})
+  setBreadCrumbFn();
+});
 </script>
 
 <template>
