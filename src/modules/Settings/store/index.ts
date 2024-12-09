@@ -9,12 +9,21 @@ import type {
   BaseWarehouseType,
 } from "@/modules/Settings/components/Reference/MainBases/base-warehouses.type";
 import {
-  DocTypeListType, KitchenTypesListItemType, KitchenTypesListParamsType,
-  KitchenWarehouseListItemType, KitchenWarehouseListParamsType,
+  DocTypeListType, KitchenTypeDetailType,
+  KitchenTypesListItemType,
+  KitchenTypesListParamsType, KitchenWarehouseDetailType,
+  KitchenWarehouseListItemType,
+  KitchenWarehouseListParamsType,
+  MealDetailType,
+  OrganizationDetailType,
+  ProviderDetailType,
+  RationType, RegionalDetailType,
   RespondentParamsType,
   RespondentType,
+  TypeProductDetailType,
 } from "@/modules/Settings/settings.types";
 import KitchenType from "@/modules/Settings/components/Reference/KitchenType/KitchenType.vue";
+import { ProductType } from "@/modules/Home/statistics.types";
 
 interface TypeDocument {
   document_categories: Array<{ id: string | number, name: string }>;
@@ -151,7 +160,8 @@ export const useSettingsStore = defineStore("settingsStore", () => {
     },
   });
 
-  const wareHouseItem = ref<WareHouseItemType | {}>({});
+  const wareHouseItem = ref<WareHouseItemType | null>(null);
+  const wareHouseItemLoading = ref(false);
 
   // Документы Типы документов
   const GET_TYPE_DOCUMENT = async (params?: { search: string | null }) => {
@@ -201,9 +211,18 @@ export const useSettingsStore = defineStore("settingsStore", () => {
     rationList.value = data.data;
   };
 
+  const ration = ref<RationType | null>(null);
+  const rationLoading = ref(false);
+
   const GET_SHOW_ITEM = async (id: string | number) => {
-    const { data } = await $axios.get(`/rations/${id}`);
-    return data.data;
+    rationLoading.value = true;
+    try {
+      const { data } = await $axios.get(`/rations/${id}`);
+      ration.value = data.data.ration;
+      return data.data;
+    } finally {
+      rationLoading.value = false;
+    }
   };
 
   const CRETE_RATION = async (data: any) => {
@@ -228,9 +247,14 @@ export const useSettingsStore = defineStore("settingsStore", () => {
   };
 
   const GET_WAREHOUSE_BASES_ITEM = async (id: string | number) => {
-    const { data } = await $axios.get("/bases/" + id);
-    wareHouseItem.value = data.data && data.data.base;
-    return data.data;
+    wareHouseItemLoading.value = true;
+    try {
+      const { data } = await $axios.get("/bases/" + id);
+      wareHouseItem.value = data.data && data.data.base;
+      return data.data;
+    } finally {
+      wareHouseItemLoading.value = false;
+    }
   };
 
   const CRETE_WAREHOUSE_BASES = async (data: WareHouseType) => {
@@ -258,9 +282,18 @@ export const useSettingsStore = defineStore("settingsStore", () => {
     typeProduct.value = data.data;
   };
 
+  const typeProductDetail = ref<TypeProductDetailType | null>(null);
+  const typeProductDetailLoading = ref(false);
+
   const GET_TYPE_PRODUCT_DETAIL = async (id: number) => {
-    const { data } = await $axios.get(`/product-types/${id}/`);
-    return data;
+    typeProductDetailLoading.value = true;
+    try {
+      const { data } = await $axios.get(`/product-types/${id}/`);
+      typeProductDetail.value = data.data.product_type;
+      return data;
+    } finally {
+      typeProductDetailLoading.value = false;
+    }
   };
 
   const CREATE_TYPE_PRODUCT = (data: any) => {
@@ -328,9 +361,19 @@ export const useSettingsStore = defineStore("settingsStore", () => {
     providers.value = data.data;
   };
 
+  const providerDetail = ref<ProviderDetailType | null>(null);
+  const providerDetailLoading = ref(false);
+
   const GET_PROVIDERS_DETAIL = async (id: number) => {
-    const { data } = await $axios.get(`/providers/${id}/`);
-    return data.data;
+    providerDetailLoading.value = true;
+
+    try {
+      const { data } = await $axios.get(`/providers/${id}/`);
+      providerDetail.value = data.data.provider;
+      return data.data;
+    } finally {
+      providerDetailLoading.value = false;
+    }
   };
 
   const DELETE_PROVIDERS = async (id: number) => {
@@ -351,9 +394,19 @@ export const useSettingsStore = defineStore("settingsStore", () => {
     regional.value = data.data;
   };
 
+  const regionalDetail = ref<null | RegionalDetailType>(null);
+  const regionalDetailLoading = ref(false);
+
   const GET_REGIONAL_DETAIL = async (id: number) => {
-    const { data } = await $axios.get(`/managements/${id}/`);
-    return data;
+    regionalDetailLoading.value = true;
+
+    try {
+      const { data } = await $axios.get(`/managements/${id}`);
+      regionalDetail.value = data.data.management;
+      return data;
+    } finally {
+      regionalDetailLoading.value = false;
+    }
   };
 
   const DELETE_REGIONAL = async (id: number) => {
@@ -374,9 +427,19 @@ export const useSettingsStore = defineStore("settingsStore", () => {
     organization.value = data.data;
   };
 
+  const organizationDetail = ref<null | OrganizationDetailType>(null);
+  const organizationDetailLoading = ref(false);
+
   const GET_ORGANIZATION_DETAIL = async (id: number) => {
-    const { data } = await $axios.get(`/organizations/${id}/`);
-    return data.data;
+    organizationDetailLoading.value = true;
+
+    try {
+      const { data } = await $axios.get(`/organizations/${id}`);
+      organizationDetail.value = data.data.organization;
+      return data.data;
+    } finally {
+      organizationDetailLoading.value = false;
+    }
   };
 
   const DELETE_ORGANIZATION = async (id: number) => {
@@ -410,9 +473,19 @@ export const useSettingsStore = defineStore("settingsStore", () => {
     }
   };
 
+  const kitchenTypeDetail = ref<null | KitchenTypeDetailType>(null);
+  const kitchenTypeDetailLoading = ref(false);
+
   const GET_KITCHEN_TYPE_DETAIL = async (id: number) => {
-    const { data } = await $axios.get(`/kitchen-types/${id}/`);
-    return data.data;
+    kitchenTypeDetailLoading.value = true;
+
+    try {
+      const { data } = await $axios.get(`/kitchen-types/${id}`);
+      kitchenTypeDetail.value = data.data.kitchen_type;
+      return data.data;
+    } finally {
+      kitchenTypeDetailLoading.value = false;
+    }
   };
 
   const DELETE_KITCHEN_TYPE = async (id: number) => {
@@ -433,9 +506,19 @@ export const useSettingsStore = defineStore("settingsStore", () => {
     });
   };
 
+  const mealDetail = ref<MealDetailType | null>(null);
+  const mealDetailLoading = ref(false);
+
   const GET_MEALS_DETAIL = async (id: number | string) => {
-    const { data } = await $axios.get(`/meals/${id}`);
-    return data.data;
+    mealDetailLoading.value = true;
+
+    try {
+      const { data } = await $axios.get(`/meals/${id}`);
+      mealDetail.value = data.data.meal;
+      return data.data;
+    } finally {
+      mealDetailLoading.value = false;
+    }
   };
 
   const UPDATE_MEALS = ({ id, data }: { id: string | number; data: any }) => {
@@ -492,9 +575,19 @@ export const useSettingsStore = defineStore("settingsStore", () => {
     return $axios.delete(`/kitchen-warehouses/${id}`);
   };
 
+  const kitchenWarehouseDetail = ref<KitchenWarehouseDetailType | null>(null);
+  const kitchenWarehouseDetailLoading = ref(false);
+
   const GET_KITCHEN_WAREHOUSE_DETAIL = async (id: number) => {
-    const { data } = await $axios.get(`/kitchen-warehouses/${id}`);
-    return data.data;
+    kitchenWarehouseDetailLoading.value = true;
+
+    try {
+      const { data } = await $axios.get(`/kitchen-warehouses/${id}`);
+      kitchenWarehouseDetail.value = data.data.kitchen_warehouse;
+      return data.data;
+    } finally {
+      kitchenWarehouseDetailLoading.value = false;
+    }
   };
   // dilshod end
 
@@ -592,6 +685,7 @@ export const useSettingsStore = defineStore("settingsStore", () => {
     GET_TYPE_DOCUMENT,
     GET_VID_DOCUMENT,
     GET_WAREHOUSE_BASES_LIST,
+    wareHouseItemLoading,
     GET_WAREHOUSE_BASES_ITEM,
     UPDATE_WAREHOUSE_BASES,
     CRETE_WAREHOUSE_BASES,
@@ -605,6 +699,8 @@ export const useSettingsStore = defineStore("settingsStore", () => {
     CRETE_RATION,
     DELETE_RATION,
     UPDATE_RATION,
+    ration,
+    rationLoading,
     GET_SHOW_ITEM,
     // begzod end
 
@@ -641,6 +737,8 @@ export const useSettingsStore = defineStore("settingsStore", () => {
     typeProduct,
     dynamicVid,
     GET_TYPE_PRODUCT,
+    typeProductDetail,
+    typeProductDetailLoading,
     GET_TYPE_PRODUCT_DETAIL,
     CREATE_TYPE_PRODUCT,
     UPDATE_TYPE_PRODUCT,
@@ -659,6 +757,8 @@ export const useSettingsStore = defineStore("settingsStore", () => {
     CREATE_PROVIDERS,
     UPDATE_PROVIDERS,
     GET_PROVIDERS,
+    providerDetail,
+    providerDetailLoading,
     GET_PROVIDERS_DETAIL,
     DELETE_PROVIDERS,
 
@@ -666,6 +766,8 @@ export const useSettingsStore = defineStore("settingsStore", () => {
     CREATE_REGIONAL,
     UPDATE_REGIONAL,
     GET_REGIONAL,
+    regionalDetail,
+    regionalDetailLoading,
     GET_REGIONAL_DETAIL,
     DELETE_REGIONAL,
 
@@ -673,6 +775,8 @@ export const useSettingsStore = defineStore("settingsStore", () => {
     CREATE_ORGANIZATION,
     GET_ORGANIZATION,
     UPDATE_ORGANIZATION,
+    organizationDetail,
+    organizationDetailLoading,
     GET_ORGANIZATION_DETAIL,
     DELETE_ORGANIZATION,
 
@@ -680,6 +784,8 @@ export const useSettingsStore = defineStore("settingsStore", () => {
     CREATE_KITCHEN_TYPE,
     UPDATE_KITCHEN_TYPE,
     GET_KITCHEN_TYPE,
+    kitchenTypeDetail,
+    kitchenTypeDetailLoading,
     GET_KITCHEN_TYPE_DETAIL,
     DELETE_KITCHEN_TYPE,
     kitchenTypesList,
@@ -689,6 +795,8 @@ export const useSettingsStore = defineStore("settingsStore", () => {
     meals,
     GET_MEALS,
     CREATE_MEALS,
+    mealDetail,
+    mealDetailLoading,
     GET_MEALS_DETAIL,
     UPDATE_MEALS,
     GET_MEALS_VID_PRO,
@@ -701,6 +809,8 @@ export const useSettingsStore = defineStore("settingsStore", () => {
     CREATE_KITCHEN_WAREHOUSE,
     UPDATE_KITCHEN_WAREHOUSE,
     DELETE_KITCHEN_WAREHOUSE,
+    kitchenWarehouseDetail,
+    kitchenWarehouseDetailLoading,
     GET_KITCHEN_WAREHOUSE_DETAIL,
     // dilshod end
   };

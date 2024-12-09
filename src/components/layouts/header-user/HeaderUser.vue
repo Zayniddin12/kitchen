@@ -4,10 +4,11 @@
 >
 
 import { useAuthStore } from "@/modules/Auth/auth.store";
-import { computed, useTemplateRef } from "vue";
+import { computed, ref, useTemplateRef } from "vue";
 import { useCommonStore } from "@/stores/common.store";
 import AvatarIcon from "@/assets/images/avatar.png";
 import ArrowRightIcon from "@/assets/arrow-right.svg";
+import ArrowDownIcon from "@/assets/images/arrowDown.svg";
 import LanguageIcon from "@/assets/images/icons/language.svg";
 import LogoutIcon from "@/assets/images/logout.svg";
 import { LanguagesType } from "@/components/layouts/header-user/header-user.types";
@@ -25,8 +26,11 @@ const userFullName = computed(() => authStore.userFullName ?? "-");
 
 const userPosition = computed(() => authStore.user?.position || "-");
 
+const dropdownOpen = ref(false);
+
 const closeDropdown = () => {
   dropdown.value?.handleClose();
+  dropdownOpen.value = false;
 };
 
 const languages = computed<LanguagesType>(() => {
@@ -42,7 +46,6 @@ const languages = computed<LanguagesType>(() => {
   ];
 });
 
-
 </script>
 
 <template>
@@ -51,17 +54,26 @@ const languages = computed<LanguagesType>(() => {
     :hide-on-click="false"
     ref="dropdown"
     placement="bottom-start"
+    @visible-change="(value:boolean) => dropdownOpen = value"
   >
-    <div class="flex items-center gap-3 min-w-[260px] max-w-[268px]">
+    <div
+      class="flex items-center gap-3 min-w-[260px] max-w-[268px]"
+    >
       <img
         :src="userImg"
         class="size-10 object-contain rounded-full"
         alt="avatar"
       />
       <div class="flex flex-col">
-        <strong class="text-sm font-medium text-dark dark:text-white">
-          {{ userFullName }}das
-        </strong>
+        <div class="flex justify-between gap-x-3">
+          <strong class="text-sm font-medium text-dark dark:text-white">
+            {{ userFullName }}
+          </strong>
+          <svg
+            :data-src="ArrowDownIcon"
+            :class="['w-3 h-2 mt-1 transition duration-200 ease-in-out', {'rotate-180': dropdownOpen}]"
+          />
+        </div>
         <span class="text-[#A8AAAE] text-sm">{{ userPosition }}</span>
       </div>
     </div>

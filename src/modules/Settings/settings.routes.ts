@@ -58,7 +58,7 @@ export default [
   },
 
   {
-    path: "/reference-regional-directorates-detail/:id",
+    path: "/reference-regional-directorates-detail/:id(\\d+)",
     name: "reference-regional-directorates-edit",
     component: () => import("@/modules/Settings/components/Reference/RegionalDirectorates/RegionalDirectoratesAddEditModal.vue"),
     meta: {
@@ -67,9 +67,9 @@ export default [
   },
 
   {
-    path: "/reference-regional-directorates-view/:id",
+    path: "/reference-regional-directorates-view/:id(\\d+)",
     name: "reference-regional-directorates-view",
-    component: () => import("@/modules/Settings/components/Reference/RegionalDirectorates/RegionalDirectoratesAddEditModal.vue"),
+    component: () => import("@/modules/Settings/components/Reference/RegionalDirectorates/RegionalDirectoratesShow.vue"),
     meta: {
       title: "Просмотр деталей региональное управление",
     },
@@ -80,7 +80,7 @@ export default [
   {
     path: "/reference-combine-nutrition",
     name: "reference-combine-nutrition",
-    component: () => import("@/modules/Settings/components/Reference/CombineNutrition/CombineNutrition.vue"),
+    component: () => import("@/modules/Settings/components/Reference/CombineNutrition/CombineNutritions.vue"),
     meta: {
       title: "Комбинаты питания",
     },
@@ -107,9 +107,9 @@ export default [
   },
 
   {
-    path: "/reference-combine-nutrition-view/:id",
+    path: "/reference-combine-nutrition-view/:id(\\d+)",
     name: "reference-combine-nutrition-view",
-    component: () => import("@/modules/Settings/components/Reference/CombineNutrition/CombineNutritionAddEditModal.vue"),
+    component: () => import("@/modules/Settings/components/Reference/CombineNutrition/CombineNutritionShow.vue"),
     meta: {
       title: "Просмотр деталей комбината",
       breadcrumbItemTitle: "Просмотр",
@@ -121,7 +121,7 @@ export default [
   {
     path: "/reference-warehouse-bases",
     name: "reference-warehouse-bases",
-    component: () => import("@/modules/Settings/components/Reference/WarehouseBases.vue"),
+    component: () => import("@/modules/Settings/components/Reference/WarehouseBases/WarehouseBases.vue"),
     meta: {
       title: "Базы складов",
     },
@@ -130,7 +130,7 @@ export default [
   {
     path: "/reference-warehouse-bases-add",
     name: "reference-warehouse-bases-add",
-    component: () => import("@/modules/Settings/components/Reference/WarehouseBasesAddEditView.vue"),
+    component: () => import("@/modules/Settings/components/Reference/WarehouseBases/WarehouseBasesAddEditView.vue"),
     meta: {
       title: "Добавить базу складов",
       breadcrumbItemTitle: "Добавить",
@@ -138,9 +138,9 @@ export default [
   },
 
   {
-    path: "/reference-warehouse-bases-detail/:id",
+    path: "/reference-warehouse-bases-detail/:id(\\d+)",
     name: "reference-warehouse-bases-edit",
-    component: () => import("@/modules/Settings/components/Reference/WarehouseBasesAddEditView.vue"),
+    component: () => import("@/modules/Settings/components/Reference/WarehouseBases/WarehouseBasesAddEditView.vue"),
     meta: {
       title: "Редактировать базу складов",
       breadcrumbItemTitle: "Редактировать",
@@ -148,9 +148,9 @@ export default [
   },
 
   {
-    path: "/reference-warehouse-bases-view/:id",
+    path: "/reference-warehouse-bases-view/:id(\\d+)",
     name: "reference-warehouse-bases-view",
-    component: () => import("@/modules/Settings/components/Reference/WarehouseBasesAddEditView.vue"),
+    component: () => import("@/modules/Settings/components/Reference/WarehouseBases/WarehouseBasesShow.vue"),
     meta: {
       title: "Просмотр деталей базы складов",
       breadcrumbItemTitle: "Просмотр",
@@ -191,7 +191,7 @@ export default [
   {
     path: "/reference-main-bases-view/:id(\\d+)",
     name: "reference-main-bases-view",
-    component: () => import("@/modules/Settings/components/Reference/MainBases/MainBasesAddEditView.vue"),
+    component: () => import("@/modules/Settings/components/Reference/MainBases/MainBasesShow.vue"),
     meta: {
       title: "Просмотр деталей склада",
       breadcrumbItemTitle: "Просмотр",
@@ -219,7 +219,7 @@ export default [
   },
 
   {
-    path: "/reference-kitchen-warehouse-detail/:id",
+    path: "/reference-kitchen-warehouse-detail/:id(\\d+)",
     name: "reference-kitchen-warehouse-edit",
     component: () => import("@/modules/Settings/components/Reference/KitchenWarehouse/KitchenWarehousesAddEditView.vue"),
     meta: {
@@ -229,9 +229,9 @@ export default [
   },
 
   {
-    path: "/reference-kitchen-warehouse-view/:id",
+    path: "/reference-kitchen-warehouse-view/:id(\\d+)",
     name: "reference-kitchen-warehouse-view",
-    component: () => import("@/modules/Settings/components/Reference/KitchenWarehouse/KitchenWarehousesAddEditView.vue"),
+    component: () => import("@/modules/Settings/components/Reference/KitchenWarehouse/KitchenWarehouseShow.vue"),
     meta: {
       title: "Просмотр деталей склада кухни",
       breadcrumbItemTitle: "Просмотр",
@@ -260,7 +260,7 @@ export default [
   },
 
   {
-    path: "/reference-kitchen-type-detail/:id",
+    path: "/reference-kitchen-type-detail/:id(\\d+)",
     name: "reference-kitchen-type-edit",
     component: () => import("@/modules/Settings/components/Reference/KitchenType/KitchenTypeAddEditModal.vue"),
     meta: {
@@ -270,9 +270,9 @@ export default [
   },
 
   {
-    path: "/reference-kitchen-type-view/:id",
+    path: "/reference-kitchen-type-view/:id(\\d+)",
     name: "reference-kitchen-type-view",
-    component: () => import("@/modules/Settings/components/Reference/KitchenType/KitchenTypeAddEditModal.vue"),
+    component: () => import("@/modules/Settings/components/Reference/KitchenType/KitchenTypeShow.vue"),
     meta: {
       title: "Просмотр деталей тип кухни",
       breadcrumbItemTitle: "Просмотр",
@@ -301,7 +301,7 @@ export default [
   },
 
   {
-    path: "/reference-suppliers-detail/:id",
+    path: "/reference-suppliers-detail/:id(\\d+)",
     name: "reference-suppliers-edit",
     component: () => import("@/modules/Settings/components/Reference/Suppliers/SuppliersAddEditView.vue"),
     meta: {
@@ -311,9 +311,9 @@ export default [
   },
 
   {
-    path: "/reference-suppliers-view/:id",
+    path: "/reference-suppliers-view/:id(\\d+)",
     name: "reference-suppliers-view",
-    component: () => import("@/modules/Settings/components/Reference/Suppliers/SuppliersAddEditView.vue"),
+    component: () => import("@/modules/Settings/components/Reference/Suppliers/SuppliersShow.vue"),
     meta: {
       title: "Просмотр деталей поставщика",
       breadcrumbItemTitle: "Просмотр",
@@ -342,7 +342,7 @@ export default [
   },
 
   {
-    path: "/reference-organization-detail/:id",
+    path: "/reference-organization-detail/:id(\\d+)",
     name: "reference-organization-edit",
     component: () => import("@/modules/Settings/components/Reference/Organizations/OrganizationsAddEditView.vue"),
     meta: {
@@ -352,9 +352,9 @@ export default [
   },
 
   {
-    path: "/reference-organization-view/:id",
+    path: "/reference-organization-view/:id(\\d+)",
     name: "reference-organization-view",
-    component: () => import("@/modules/Settings/components/Reference/Organizations/OrganizationsAddEditView.vue"),
+    component: () => import("@/modules/Settings/components/Reference/Organizations/OrganizationShow.vue"),
     meta: {
       title: "Просмотр деталей организации",
       breadcrumbItemTitle: "Просмотр",
@@ -420,7 +420,7 @@ export default [
     },
   },
   {
-    path: "/reference-vid-view/:id",
+    path: "/reference-vid-view/:id(\\d+)",
     name: "reference-vid-view-id",
     component: () => import("@/modules/Settings/components/Reference/Product/VidProduct/ProductVidShow.vue"),
     meta: {
@@ -429,7 +429,7 @@ export default [
     },
   },
   {
-    path: "/reference-vid-edit/:id",
+    path: "/reference-vid-edit/:id(\\d+)",
     name: "reference-vid-edit-id",
     component: () => import("@/modules/Settings/components/Reference/Product/VidProduct/ProductVidDocCreate.vue"),
     meta: {
@@ -459,7 +459,7 @@ export default [
     },
   },
   {
-    path: "/reference-ration-edit/:id",
+    path: "/reference-ration-edit/:id(\\d+)",
     name: "reference-ration-edit-id",
     component: () => import("@/modules/Settings/components/Reference/RationDishes/Ration/AddEditRation.vue"),
     meta: {
@@ -468,9 +468,9 @@ export default [
     },
   },
   {
-    path: "/reference-ration-view/:id",
+    path: "/reference-ration-view/:id(\\d+)",
     name: "reference-ration-view-id",
-    component: () => import("@/modules/Settings/components/Reference/RationDishes/Ration/AddEditRation.vue"),
+    component: () => import("@/modules/Settings/components/Reference/RationDishes/Ration/RationShow.vue"),
     meta: {
       title: "Просмотр деталей рациона",
       breadcrumbItemTitle: "Просмотр",
@@ -507,7 +507,7 @@ export default [
   {
     path: "/reference-dish-view/:id",
     name: "reference-view-id",
-    component: () => import("@/modules/Settings/components/Reference/RationDishes/Dish/AddEditDish.vue"),
+    component: () => import("@/modules/Settings/components/Reference/RationDishes/Dish/DishShow.vue"),
     meta: {
       title: "Просмотр деталей блюда",
       breadcrumbItemTitle: "Просмотр",

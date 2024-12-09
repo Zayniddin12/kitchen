@@ -1,6 +1,6 @@
 <script
-    setup
-    lang="ts"
+  setup
+  lang="ts"
 >
 import { computed, onMounted, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
@@ -35,26 +35,26 @@ const { setBreadCrumb } = useBreadcrumb();
 const setBreadCrumbFn = () => {
   setBreadCrumb([
     {
-      label: "Настройки"
+      label: "Настройки",
     },
     {
       label: "Справочники",
-      to: { name: "reference" }
+      to: { name: "reference" },
     },
 
     {
       label: "Поставщики и организации",
-      to: { name: "reference" }
+      to: { name: "reference" },
     },
 
     {
       label: "Поставщики",
-      to: { name: "reference-suppliers" }
+      to: { name: "reference-suppliers" },
     },
     {
       label: String(route?.meta?.breadcrumbItemTitle ?? ""),
-      isActionable: true
-    }
+      isActionable: true,
+    },
   ]);
 };
 
@@ -74,7 +74,7 @@ const dataValue = ref<DataValue>({
   sert_end_date: "",
   director: "",
   phone: "",
-  status: "active"
+  status: "active",
 });
 const status = ref<boolean>(true);
 
@@ -127,7 +127,7 @@ const handleSubmit = async () => {
       if (route.params.id) {
         await store.UPDATE_PROVIDERS({
           id: route.params.id as string | number,
-          data: payload
+          data: payload,
         });
       } else {
         await store.CREATE_PROVIDERS(payload);
@@ -154,7 +154,7 @@ watch(() => route.name, () => {
 <template>
   <div>
     <AppOverlay
-        :loading="loading"
+      :loading="loading"
     >
       <div class="flex items-center justify-between mb-[24px]">
         <h1 class="m-0 font-semibold text-[32px] leading-[48px]">{{ route.meta.title }}</h1>
@@ -162,146 +162,146 @@ watch(() => route.name, () => {
       <div class="flex gap-6">
         <div class="w-[70%]">
           <AppForm
-              :value="dataValue"
-              @validation="setValidation"
+            :value="dataValue"
+            @validation="setValidation"
           >
-            <div class="border border-[#E2E6F3] rounded-[24px] p-[24px] h-[65vh] flex flex-col">
+            <div class="border border-[#E2E6F3] rounded-[24px] p-[24px] min-h-[65vh] flex flex-col">
               <div class="grid grid-cols-3 gap-4">
                 <app-input
-                    v-model="dataValue.name"
-                    label="Наименование"
-                    placeholder="Введите"
-                    label-class="text-[#A8AAAE] font-medium text-[12px]"
-                    class="w-full"
-                    required
-                    prop="name"
-                    :disabled="isDisabled"
+                  v-model="dataValue.name"
+                  label="Наименование"
+                  placeholder="Введите"
+                  label-class="text-[#A8AAAE] font-medium text-[12px]"
+                  class="w-full"
+                  required
+                  prop="name"
+                  :disabled="isDisabled"
                 />
 
                 <app-input
-                    v-model="dataValue.address"
-                    label="Юр. адрес"
-                    placeholder="Введите"
-                    label-class="text-[#A8AAAE] font-medium text-[12px]"
-                    class="w-full"
-                    required
-                    prop="address"
-                    :disabled="isDisabled"
+                  v-model="dataValue.address"
+                  label="Юр. адрес"
+                  placeholder="Введите"
+                  label-class="text-[#A8AAAE] font-medium text-[12px]"
+                  class="w-full"
+                  required
+                  prop="address"
+                  :disabled="isDisabled"
                 />
 
                 <app-input
-                    v-model="dataValue.oked"
-                    label="ОКЭД"
-                    placeholder="Введите"
-                    label-class="text-[#A8AAAE] font-medium text-[12px]"
-                    class="w-full"
-                    required
-                    prop="oked"
-                    :disabled="isDisabled"
+                  v-model="dataValue.oked"
+                  label="ОКЭД"
+                  placeholder="Введите"
+                  label-class="text-[#A8AAAE] font-medium text-[12px]"
+                  class="w-full"
+                  required
+                  prop="oked"
+                  :disabled="isDisabled"
                 />
 
                 <app-input
-                    v-model="dataValue.tin"
-                    label="ИНН"
-                    maxlength="9"
-                    placeholder="Введите"
-                    label-class="text-[#A8AAAE] font-medium text-[12px]"
-                    class="w-full"
-                    required
-                    prop="tin"
-                    :disabled="isDisabled"
+                  v-model="dataValue.tin"
+                  label="ИНН"
+                  maxlength="9"
+                  placeholder="Введите"
+                  label-class="text-[#A8AAAE] font-medium text-[12px]"
+                  class="w-full"
+                  required
+                  prop="tin"
+                  :disabled="isDisabled"
                 />
 
                 <app-input
-                    v-model="dataValue.license"
-                    label="Номер лицензии"
-                    placeholder="Введите"
-                    label-class="text-[#A8AAAE] font-medium text-[12px]"
-                    class="w-full"
-                    required
-                    prop="license"
-                    :disabled="isDisabled"
+                  v-model="dataValue.license"
+                  label="Номер лицензии"
+                  placeholder="Введите"
+                  label-class="text-[#A8AAAE] font-medium text-[12px]"
+                  class="w-full"
+                  required
+                  prop="license"
+                  :disabled="isDisabled"
                 />
 
                 <app-input
-                    v-model="dataValue.sertificate"
-                    label="Сертификат"
-                    placeholder="Введите"
-                    label-class="text-[#A8AAAE] font-medium text-[12px]"
-                    class="w-full"
-                    required
-                    prop="sertificate"
-                    :disabled="isDisabled"
+                  v-model="dataValue.sertificate"
+                  label="Сертификат"
+                  placeholder="Введите"
+                  label-class="text-[#A8AAAE] font-medium text-[12px]"
+                  class="w-full"
+                  required
+                  prop="sertificate"
+                  :disabled="isDisabled"
                 />
 
                 <app-date-picker
-                    v-model="dataValue.sert_end_date"
-                    label="Срок сертификата"
-                    placeholder="Введите"
-                    label-class="text-[#A8AAAE] font-medium text-[12px]"
-                    class="w-full"
-                    required
-                    prop="sert_end_date"
-                    :disabled="isDisabled"
+                  v-model="dataValue.sert_end_date"
+                  label="Срок сертификата"
+                  placeholder="Введите"
+                  label-class="text-[#A8AAAE] font-medium text-[12px]"
+                  class="w-full"
+                  required
+                  prop="sert_end_date"
+                  :disabled="isDisabled"
                 />
 
                 <app-input
-                    v-model="dataValue.director"
-                    label="Руководитель"
-                    placeholder="Введите"
-                    label-class="text-[#A8AAAE] font-medium text-[12px]"
-                    class="w-full"
-                    required
-                    prop="director"
-                    :disabled="isDisabled"
+                  v-model="dataValue.director"
+                  label="Руководитель"
+                  placeholder="Введите"
+                  label-class="text-[#A8AAAE] font-medium text-[12px]"
+                  class="w-full"
+                  required
+                  prop="director"
+                  :disabled="isDisabled"
                 />
 
                 <app-input
-                    v-model="dataValue.phone"
-                    label="Контакты"
-                    placeholder="Введите"
-                    label-class="text-[#A8AAAE] font-medium text-[12px]"
-                    class="w-full"
-                    required
-                    prop="phone"
-                    :disabled="isDisabled"
+                  v-model="dataValue.phone"
+                  label="Контакты"
+                  placeholder="Введите"
+                  label-class="text-[#A8AAAE] font-medium text-[12px]"
+                  class="w-full"
+                  required
+                  prop="phone"
+                  :disabled="isDisabled"
                 />
               </div>
 
               <ElSwitch
-                  v-if="route.params.id && !route.query.type"
-                  active-text="Деактивация"
-                  class="app-switch mt-auto"
-                  v-model="status"
-                  @change="changeStatus"
+                v-if="route.params.id && !route.query.type"
+                active-text="Деактивация"
+                class="app-switch mt-auto"
+                v-model="status"
+                @change="changeStatus"
               />
             </div>
           </AppForm>
 
           <div
-              v-if="!route.query.type"
-              class="flex items-center mt-[24px] "
-              :class="!route.params.id ? 'justify-end' : 'justify-between'"
+            v-if="!route.query.type"
+            class="flex items-center mt-[24px] "
+            :class="!route.params.id ? 'justify-end' : 'justify-between'"
           >
             <button
-                v-if="route.params.id"
-                class="custom-danger-btn"
-                @click="deleteFn"
+              v-if="route.params.id"
+              class="custom-danger-btn"
+              @click="deleteFn"
             >
               Удалить
             </button>
 
             <div class="flex items-center gap-4">
               <button
-                  @click="cancelFn"
-                  class="custom-cancel-btn"
+                @click="cancelFn"
+                class="custom-cancel-btn"
               >
                 Отменить
               </button>
 
               <button
-                  class="custom-apply-btn"
-                  @click="handleSubmit"
+                class="custom-apply-btn"
+                @click="handleSubmit"
               >
                 {{ $route.params.id ? "Сохранить" : "Добавить" }}
               </button>
@@ -311,13 +311,13 @@ watch(() => route.name, () => {
 
         <div class="w-[30%]">
           <button
-              @click="router.push({name: 'reference-suppliers-edit', params: {id: 1}})"
-              v-if="route.query.type == 'view'"
-              class="flex items-center gap-4 bg-[#F8F9FC] py-[10px] px-[20px] rounded-[8px]"
+            @click="router.push({name: 'reference-suppliers-edit', params: {id: 1}})"
+            v-if="route.query.type == 'view'"
+            class="flex items-center gap-4 bg-[#F8F9FC] py-[10px] px-[20px] rounded-[8px]"
           >
             <img
-                src="@/assets/images/icons/edit.svg"
-                alt="edit"
+              src="@/assets/images/icons/edit.svg"
+              alt="edit"
             >
             Редактировать
           </button>
