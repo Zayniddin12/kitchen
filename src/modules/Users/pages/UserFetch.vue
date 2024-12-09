@@ -190,7 +190,7 @@ onMounted(() => {
             v-model="form.birthday"
             prop="birthday"
             label="Дата рождения"
-            format="YYYY-MM-DD"
+            format="DD.MM.YYYY"
             value-format="YYYY-MM-DD"
             placeholder="дд.мм.гггг"
             :disabled-date="(time:Date) => Date.now()<time"
