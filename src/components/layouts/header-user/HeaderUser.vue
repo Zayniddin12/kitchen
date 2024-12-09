@@ -14,6 +14,7 @@ import LogoutIcon from "@/assets/images/logout.svg";
 import { LanguagesType } from "@/components/layouts/header-user/header-user.types";
 import { LOCALES } from "@/localization/localization.type";
 import { activeLocale, changeLocale } from "@/localization";
+import { setSessionItem } from "@/utils/sessionStorage";
 
 const authStore = useAuthStore();
 const commonStore = useCommonStore();
@@ -32,6 +33,11 @@ const closeDropdown = () => {
   dropdown.value?.handleClose();
   dropdownOpen.value = false;
 };
+
+const redirectSettingsModule = () => {
+  closeDropdown();
+  setSessionItem("current-menu", '7')
+}
 
 const languages = computed<LanguagesType>(() => {
   return [
@@ -96,7 +102,7 @@ const languages = computed<LanguagesType>(() => {
           <RouterLink
             :to="{name: 'reference'}"
             class="px-3 py-2.5 w-full flex justify-between rounded-lg items-center gap-x-4 transition duration-200 ease-in bg-white hover:shadow-[0px_1.5px_4px_-1px_#0A090B12]"
-            @click="closeDropdown"
+            @click="redirectSettingsModule"
           >
             <span class="flex items-center gap-x-3">
               <svg
