@@ -36,8 +36,8 @@ const closeDropdown = () => {
 
 const redirectSettingsModule = () => {
   closeDropdown();
-  setSessionItem("current-menu", '7')
-}
+  setSessionItem("current-menu", "7");
+};
 
 const languages = computed<LanguagesType>(() => {
   return [
@@ -141,7 +141,7 @@ const languages = computed<LanguagesType>(() => {
           </div>
           <button
             @click="authStore.logout"
-            class="px-3 py-2.5 w-full flex gap-x-3 transition duration-200 ease-in hover:shadow-[0px_1.5px_4px_-1px_#0A090B12]"
+            class="px-3 py-2.5 w-full flex gap-x-3 rounded-lg transition duration-200 ease-in hover:shadow-[0px_1.5px_4px_-1px_#0A090B12]"
           >
             <svg
               :data-src="LogoutIcon"

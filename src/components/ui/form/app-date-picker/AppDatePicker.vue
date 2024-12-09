@@ -17,7 +17,7 @@ const props = withDefaults(defineProps<AppDatePickerPropsType>(), {
   labelPosition: "top",
   placeholder: "Выберите",
   format: "DD.MM.YYYY",
-  valueFormat: "DD.MM.YYYY",
+  valueFormat: "YYYY-MM-DD",
   type: "date",
   editable: true,
   labelClass: "",
