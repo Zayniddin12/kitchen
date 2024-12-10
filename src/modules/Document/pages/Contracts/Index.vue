@@ -69,6 +69,18 @@ const setBreadCrumbFn = () => {
   ]);
 };
 
+const validate = async () => {
+  if (!v$.value) return;
+
+  const value = await v$.value.validate();
+
+  if (!value) {
+    commonStore.errorToast("Validation error");
+  }
+
+  return value;
+};
+
 const fetchContracts = async () => {
   const query = route.query as Record<string, any>;
 
@@ -87,14 +99,6 @@ const fetchContracts = async () => {
   form.product_type_id = !isNaN(productTypeId) ? productTypeId : "";
   form.quantity = !isNaN(quantity) ? quantity : null;
   form.unit_id = !isNaN(unitId) ? unitId : "";
-
-  if (!v$.value) return;
-
-  if (!(await v$.value.validate())) {
-    console.log("SSS");
-    commonStore.errorToast("Validation error");
-    return;
-  }
 
   await fetchVidProductsList();
 
@@ -131,7 +135,9 @@ const changePage = (value: number) => {
   router.push({ query: { ...route.query, page: value } });
 };
 
-const filterForm = () => {
+const filterForm = async () => {
+  if (!(await validate())) return;
+
   const query = { ...filterObjectValues(form) };
   delete query.page;
 

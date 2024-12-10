@@ -222,8 +222,8 @@ const disabledFormItems = computed<boolean>(() => {
             >
             </app-select>
             <app-input
-              v-model.number="form.capacity"
-              type="number"
+              v-model="form.capacity"
+              custom-type="number"
               prop="capacity"
               label="Вместимость склада"
               placeholder="Выберите"

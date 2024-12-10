@@ -21,24 +21,24 @@ export const setRules = (rules: RulesType): Arrayable<FormItemRule> | ValidateRu
     });
   }
 
-  if ((rules.min || rules.max) && rules.type === "text") {
-    const lengthRule: ValidateRulesType = { trigger, min: rules.min, max: rules.max };
+  if (rules.type === "text") {
+    if (rules.min || rules.max) {
+      const lengthRule: ValidateRulesType = { trigger, min: rules.min, max: rules.max };
 
-    if (rules.min === rules.max) {
-      lengthRule.message = `Длина должна быть ${rules.min} символов`;
-    } else {
-      lengthRule.message = [
-        rules.min && `не менее ${rules.min} символов`,
-        rules.max && `не более ${rules.max} символов`,
-      ]
-        .filter(Boolean)
-        .join(" и ");
+      if (rules.min === rules.max) {
+        lengthRule.message = `Длина должна быть ${rules.min} символов`;
+      } else {
+        lengthRule.message = [
+          rules.min && `не менее ${rules.min} символов`,
+          rules.max && `не более ${rules.max} символов`,
+        ]
+          .filter(Boolean)
+          .join(" и ");
+      }
+
+      formRules.push(lengthRule);
     }
-
-    formRules.push(lengthRule);
-  }
-
-  if (rules.type === "email") {
+  } else if (rules.type === "email") {
     formRules.push({
       type: "email",
       message: "Неправильный email",
@@ -47,21 +47,21 @@ export const setRules = (rules: RulesType): Arrayable<FormItemRule> | ValidateRu
   } else if (rules.type === "number") {
     formRules.push({
       type: "number",
-      validator: (_: any, value: any, callback: any) => {
-        if (!value) callback();
+      validator: (rule: any, value: any, callback: any) => {
+        if (!value) return callback();
         else {
           const newValue = validateNumber(value);
 
           if (isNaN(newValue)) {
-            callback(new Error("Неверный номер"));
+            return callback(new Error("Неверный номер"));
           } else if (rules.min && rules.max && rules.min === rules.max && newValue !== rules.max) {
-            callback(new Error(`Число должно быть равно ${rules.max}`));
+            return callback(new Error(`Число должно быть равно ${rules.max}`));
           } else if (rules.min && newValue < rules.min) {
-            callback(new Error(`Число не должно быть меньше ${rules.min}`));
+            return callback(new Error(`Число не должно быть меньше ${rules.min}`));
           } else if (rules.max && newValue > rules.max) {
-            callback(new Error(`Число не должно быть больше ${rules.max}`));
+            return callback(new Error(`Число не должно быть больше ${rules.max}`));
           } else {
-            callback();
+            return callback();
           }
         }
       },

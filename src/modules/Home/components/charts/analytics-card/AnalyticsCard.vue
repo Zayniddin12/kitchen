@@ -1,6 +1,6 @@
 <script
-    setup
-    lang="ts"
+  setup
+  lang="ts"
 >
 
 import { AnalyticsCardPropsType } from "@/modules/Home/components/charts/analytics-card/analytics-card.types";
@@ -18,13 +18,15 @@ const totalDataValue = computed(() => {
 const chartOption = computed(() => {
   return {
     tooltip: {
-      trigger: "item"
+      trigger: "item",
     },
     legend: {
       bottom: "0%",
       left: "center",
-      itemGap: 50,
-      icon: "circle"
+      width: "100%",
+      itemGap: props.legendItemGap ?? 60,
+      icon: "circle",
+      orient: "horizontal",
     },
     series: [
       {
@@ -35,28 +37,28 @@ const chartOption = computed(() => {
         avoidLabelOverlap: false,
         padAngle: 5,
         itemStyle: {
-          borderRadius: 10
+          borderRadius: 10,
         },
         label: {
           show: true,
           position: "inner",
           formatter: "{c}",
           fontSize: 15,
-          fontWeight: "bold"
+          fontWeight: "bold",
         },
         labelLine: {
-          show: false
+          show: false,
         },
         emphasis: {
           label: {
             show: true,
             fontSize: 15,
-            fontWeight: "bold"
-          }
+            fontWeight: "bold",
+          },
         },
         color: ["#D0D5DD", "#7CD4FD"],
-        data: props.data
-      }
+        data: props.data,
+      },
     ],
     graphic: [
       {
@@ -67,8 +69,8 @@ const chartOption = computed(() => {
           text: totalDataValue.value,
           textAlign: "center",
           font: "bold 32px Arial",
-          fill: "#333"
-        }
+          fill: "#333",
+        },
       },
       {
         type: "text",
@@ -78,10 +80,10 @@ const chartOption = computed(() => {
           text: "Итого",
           textAlign: "center",
           font: "normal 16px Arial",
-          fill: "#999"
-        }
-      }
-    ]
+          fill: "#999",
+        },
+      },
+    ],
   };
 });
 
@@ -89,12 +91,13 @@ const chartOption = computed(() => {
 
 <template>
   <AppOverlay
-      :loading
-      parent-class-name="home-card analytics-card"
+    :loading
+    :rounded="24"
+    parent-class-name="home-card analytics-card"
   >
     <div class="flex items-center gap-x-2">
       <div class="bg-white p-2 rounded-lg flex items-center justify-center">
-        <svg :data-src="icon"/>
+        <svg :data-src="icon" />
       </div>
       <div class="flex flex-col gap-x-1">
         <strong class="text-dark font-semibold text-sm">
@@ -106,9 +109,13 @@ const chartOption = computed(() => {
       </div>
     </div>
     <VChart
-        class="analytics-card__chart h-[314px] mt-[38px]"
-        :option="chartOption"
-        autoresize
+      class="analytics-card__chart h-[314px] mt-[38px]"
+      :option="chartOption"
+      autoresize
     />
   </AppOverlay>
 </template>
+
+<style lang="scss">
+
+</style>

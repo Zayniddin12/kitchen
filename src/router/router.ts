@@ -26,7 +26,7 @@ const routes: RouteRecordRaw[] = [
     name: "notFound",
     component: () => import("@/components/errors/404.vue"),
     meta: { layout: "ErrorLayout" },
-  },
+  }
 ];
 
 

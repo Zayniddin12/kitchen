@@ -15,8 +15,8 @@ import { filterObjectValues } from "@/utils/helper";
 import AppForm from "@/components/ui/form/app-form/AppForm.vue";
 
 enum TABS {
-  PINFL = 1,
-  PASSPORT
+  PASSPORT = 1,
+  PINFL
 }
 
 interface TabType {
@@ -28,18 +28,18 @@ interface TabType {
 const router = useRouter();
 const route = useRoute();
 
-const defaultTab = TABS.PINFL;
+const defaultTab = TABS.PASSPORT;
 
 const tabs = ref<TabType[]>([
-  {
-    title: "ПИНФЛ",
-    icon: "pinFl",
-    value: TABS.PINFL,
-  },
   {
     title: "Серия и номер паспорта",
     icon: "seria",
     value: TABS.PASSPORT,
+  },
+  {
+    title: "ПИНФЛ",
+    icon: "pinFl",
+    value: TABS.PINFL,
   },
 ]);
 
@@ -112,6 +112,14 @@ const fetchSearchUser = async () => {
   }
 };
 
+const minAge = computed(() => {
+  const now = new Date();
+  return new Date(now.getFullYear() - 18, now.getMonth(), now.getDate());
+});
+
+const disabledDate = (time: Date) => {
+  return time > minAge.value;
+};
 
 onMounted(() => {
   setBreadCrumbFn();
@@ -146,57 +154,49 @@ onMounted(() => {
           @submit.prevent="fetchSearchUser"
         >
           <div class="border rounded-3xl p-6 my-4 flex flex-col gap-y-1.5">
-          <TransitionGroup
-            :name="activeTab>defaultTab ? 'nested' : 'nested-reverse'"
-            :duration="{ enter: 1000, leave: 2000 }"
-          >
-            <AppInput
-              v-if="activeTab === defaultTab"
-              v-model="form.pinfl"
-              type="number"
-              prop="pinfl"
-              placeholder="Введите"
-              label="ПИНФЛ"
+            <TransitionGroup
+              :name="activeTab>defaultTab ? 'nested' : 'nested-reverse'"
+              :duration="{ enter: 1000, leave: 2000 }"
+            >
+              <AppInput
+                v-if="activeTab === TABS.PINFL"
+                v-model="form.pinfl"
+                type="number"
+                custom-type="text"
+                prop="pinfl"
+                placeholder="Введите"
+                label="ПИНФЛ"
+                label-class="text-[#A8AAAE] text-xs"
+                required
+                :min="14"
+                :max="14"
+                :mask="'#'.repeat(14)"
+              />
+              <AppInput
+                v-else
+                v-model="form.pass_number"
+                type="passport"
+                prop="pass_number"
+                placeholder="Введите"
+                label="Серия и номер паспорта"
+                label-class="text-[#A8AAAE] text-xs"
+                required
+                :min="9"
+                :max="9"
+                :maxlength="10"
+                :minlength="10"
+              />
+            </TransitionGroup>
+            <AppDatePicker
+              v-model="form.birthday"
+              :default-value="minAge"
+              prop="birthday"
+              label="Дата рождения"
+              placeholder="дд.мм.гггг"
+              :disabled-date
               label-class="text-[#A8AAAE] text-xs"
               required
-              :min="14"
-              :max="14"
-              :mask="'#'.repeat(14)"
             />
-            <AppInput
-              v-else
-              v-model="form.pass_number"
-              prop="pass_number"
-              placeholder="Введите"
-              label="Серия и номер паспорта"
-              label-class="text-[#A8AAAE] text-xs"
-              required
-              :min="9"
-              :max="9"
-              :maxlength="9"
-              :minlength="9"
-              :mask="{
-                    mask: 'AA#######',
-                    tokens: {
-                     'A': {
-                        pattern: /[A-Z]/,
-                       transform: (chr: string) => chr.toUpperCase(),
-                     }
-                    }
-                  }"
-            />
-          </TransitionGroup>
-          <AppDatePicker
-            v-model="form.birthday"
-            prop="birthday"
-            label="Дата рождения"
-            format="DD.MM.YYYY"
-            value-format="YYYY-MM-DD"
-            placeholder="дд.мм.гггг"
-            :disabled-date="(time:Date) => Date.now()<time"
-            label-class="text-[#A8AAAE] text-xs"
-            required
-          />
           </div>
           <ElButton
             :loading="userStore.searchUserLoading"
@@ -213,10 +213,7 @@ onMounted(() => {
   </div>
 </template>
 
-<style
-  scoped
-  lang="scss"
->
+<style lang="scss">
 .tab-icon--no-active * {
   fill: #A8AAAE;
 }

@@ -210,8 +210,16 @@ onMounted(() => {
   settingsStore.GET_REGIONAL({ per_page: 100 });
 
   const data = {
-    '05.11.2024':  [ { "period": 1, "start_time": null, "end_time": null, "amount": null, "product_type": "ration", "product_id": null, "rationsList": [] } ],
-  }
+    "05.11.2024": [{
+      "period": 1,
+      "start_time": null,
+      "end_time": null,
+      "amount": null,
+      "product_type": "ration",
+      "product_id": null,
+      "rationsList": [],
+    }],
+  };
 });
 
 </script>
@@ -255,12 +263,14 @@ onMounted(() => {
             title="Занятость складов"
             subtitle="Здесь будет текст"
             :data="warehouseCapacityData"
+            :legend-item-gap="180"
             :loading="statisticsStore.warehouseCapacityLoading"
           />
           <AnalyticsCard
             title="Количество посетителей"
             :icon="UsersIcon"
             subtitle="Здесь будет текст"
+            :legend-item-gap="240"
             :data="visitorsData"
             :loading="statisticsStore.visitorsLoading"
           />
@@ -359,8 +369,8 @@ onMounted(() => {
             </template>
           </ElTableColumn>
           <ElTableColumn
-              prop="base_name"
-              label="База"
+            prop="base_name"
+            label="База"
           >
             <template #default="{row}:{row: ProductType}">
               {{ row.base_name || "-" }}
@@ -453,12 +463,14 @@ onMounted(() => {
         :icon="KitchenIcon"
         subtitle="Здесь будет текст"
         :data="kitchenData"
+        :legend-item-gap="135"
         :loading="statisticsStore.kitchenCountLoading"
       />
       <AnalyticsCard
         title="Количество складов"
         :icon="BranchIcon"
         subtitle="Здесь будет текст"
+        :legend-item-gap="135"
         :data="warehouseData"
         :loading="statisticsStore.warehouseCountLoading"
       />

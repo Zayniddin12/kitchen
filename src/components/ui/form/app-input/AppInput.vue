@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/form/app-input/app-input.type";
 import { computed, inject, ref, Ref, useSlots, watch } from "vue";
 import { vMaska } from "maska/vue";
-import { getRules, setRules } from "@/components/ui/form/validate";
+import { setRules } from "@/components/ui/form/validate";
 import { ValidationErrorsType } from "@/components/ui/form/form.type";
 
 const [model, modifiers] = defineModel<AppInputValueType>();
@@ -62,9 +62,26 @@ const appInputClasses = computed<string[]>(() => {
 
 const slots = useSlots();
 
-const computedMask = computed(() =>
-  props.type === "tel" && !props.mask ? "## ###-##-##" : props.mask || "",
-);
+const computedMask = computed(() => {
+  if (props.mask) return props.mask;
+
+  switch (props.type) {
+    case "tel":
+      return "## ###-##-##";
+    case "passport":
+      return {
+        mask: "AA #######",
+        tokens: {
+          "A": {
+            pattern: /[A-Z]/,
+            transform: (chr: string) => chr.toUpperCase(),
+          },
+        },
+      };
+    default:
+      return "";
+  }
+});
 
 const computedType = computed(() => {
   return props.customType ?? props.type;

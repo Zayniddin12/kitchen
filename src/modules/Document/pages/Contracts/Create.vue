@@ -1,6 +1,6 @@
 <script
-    setup
-    lang="ts"
+  setup
+  lang="ts"
 >
 import { computed, onMounted, reactive, ref, watchEffect } from "vue";
 import { useRouter } from "vue-router";
@@ -35,13 +35,13 @@ const defaultProduct: DocumentProductType = {
   category_id: "",
   quantity: null,
   unit_id: "",
-  price: null
+  price: null,
 };
 
 const form = reactive<FormType>({
   from_id: "",
   number: "",
-  products: [{ ...defaultProduct }]
+  products: [{ ...defaultProduct }],
 });
 
 const oldForm = ref<FormType>(JSON.parse(JSON.stringify(form)));
@@ -78,7 +78,7 @@ const fetchVidProductsList = async (value: AppSelectValueType) => {
 
   await settingsStore.GET_VID_PRODUCT({
     parent_id: value,
-    per_page: 100
+    per_page: 100,
   });
 
   vidProducts.value.set(value, settingsStore.vidProduct.product_types);
@@ -89,16 +89,16 @@ const { setBreadCrumb } = useBreadcrumb();
 const setBreadCrumbFn = () => {
   setBreadCrumb([
     {
-      label: "Документы"
+      label: "Документы",
     },
     {
       label: "Контракты",
-      to: { name: "contracts" }
+      to: { name: "contracts" },
     },
     {
       label: "Добавить",
-      isActionable: true
-    }
+      isActionable: true,
+    },
   ]);
 };
 
@@ -128,7 +128,7 @@ const sendForm = async () => {
 
   const newForm = {
     doc_type_id: 9,
-    ...form
+    ...form,
   };
 
   try {
@@ -154,120 +154,120 @@ onMounted(() => {
   <h1 class="m-0 font-semibold text-[32px]">Добавить</h1>
 
   <AppForm
-      :value="form"
-      @validation="setValidation"
-      :validation-errors
-      class="border rounded-[24px] p-6 my-6"
-      :submit="sendForm"
+    :value="form"
+    @validation="setValidation"
+    :validation-errors
+    class="border rounded-[24px] p-6 my-6"
+    :submit="sendForm"
   >
     <div class="grid grid-cols-2 gap-6">
       <AppInput
-          v-model="form.number"
-          prop="number"
-          label="№ контракта"
-          label-class="text-[#A8AAAE] text-xs font-medium"
-          required
+        v-model="form.number"
+        prop="number"
+        label="№ контракта"
+        label-class="text-[#A8AAAE] text-xs font-medium"
+        required
       />
       <AppSelect
-          v-model="form.from_id"
-          prop="from_id"
-          label-class="text-[#A8AAAE] text-xs font-medium"
-          label="Поставщик"
-          :items="settingsStore.respondents"
-          item-label="name"
-          item-value="id"
-          :loading="settingsStore.respondentsLoading"
-          required
+        v-model="form.from_id"
+        prop="from_id"
+        label-class="text-[#A8AAAE] text-xs font-medium"
+        label="Поставщик"
+        :items="settingsStore.respondents"
+        item-label="name"
+        item-value="id"
+        :loading="settingsStore.respondentsLoading"
+        required
       />
     </div>
 
     <div class="bg-[#F8F9FC] p-4 rounded-[16px] mt-2">
       <div
-          class="flex items-end gap-x-5 border-b last:border-b-0 mb-4 last:mb-0"
-          v-for="(product, index) in form.products"
-          :key="index"
+        class="flex items-end gap-x-5 border-b last:border-b-0 mb-4 last:mb-0"
+        v-for="(product, index) in form.products"
+        :key="index"
       >
         <div class="grid grid-cols-6 gap-x-5 w-[calc(100%-40px)]">
           <AppSelect
-              v-model="product.category_id"
-              :prop="`products[${index}].category_id`"
-              placeholder="Выберите"
-              label="Тип продукта"
-              label-class="text-[#A8AAAE] text-xs font-medium"
-              :items="settingsStore.typeProduct.product_categories"
-              item-value="id"
-              item-label="name"
-              @change="fetchVidProductsList"
-              required
+            v-model="product.category_id"
+            :prop="`products[${index}].category_id`"
+            placeholder="Выберите"
+            label="Тип продукта"
+            label-class="text-[#A8AAAE] text-xs font-medium"
+            :items="settingsStore.typeProduct.product_categories"
+            item-value="id"
+            item-label="name"
+            @change="fetchVidProductsList"
+            required
           />
           <AppSelect
-              v-model="product.product_type_id"
-              :prop="`products[${index}].product_type_id`"
-              :items="vidProducts.get(product.category_id as number)"
-              item-label="name"
-              item-value="id"
-              placeholder="Выберите"
-              label="Вид продукта"
-              label-class="text-[#A8AAAE] text-xs font-medium"
-              required
-              :disabled="!product.category_id"
+            v-model="product.product_type_id"
+            :prop="`products[${index}].product_type_id`"
+            :items="vidProducts.get(product.category_id as number)"
+            item-label="name"
+            item-value="id"
+            placeholder="Выберите"
+            label="Вид продукта"
+            label-class="text-[#A8AAAE] text-xs font-medium"
+            required
+            :disabled="!product.category_id"
           />
           <AppInput
-              v-model.number="product.quantity"
-              :prop="`products[${index}].quantity`"
-              label="Количество"
-              type="number"
-              label-class="text-[#A8AAAE] text-xs font-medium"
-              placeholder="0"
-              required
+            v-model="product.quantity"
+            :prop="`products[${index}].quantity`"
+            label="Количество"
+            custom-type="number"
+            label-class="text-[#A8AAAE] text-xs font-medium"
+            placeholder="0"
+            required
           />
           <AppSelect
-              v-model="product.unit_id"
-              :prop="`products[${index}].unit_id`"
-              :items="settingsStore.units.units"
-              item-label="name"
-              item-value="id"
-              label="Ед. измерения"
-              label-class="text-[#A8AAAE] text-xs font-medium"
-              required
+            v-model="product.unit_id"
+            :prop="`products[${index}].unit_id`"
+            :items="settingsStore.units.units"
+            item-label="name"
+            item-value="id"
+            label="Ед. измерения"
+            label-class="text-[#A8AAAE] text-xs font-medium"
+            required
           />
           <AppInput
-              v-model.number="product.price"
-              type="number"
-              :prop="`products[${index}].price`"
-              placeholder="0"
-              label="Цена"
-              label-class="text-[#A8AAAE] text-xs font-medium"
-              required
+            v-model.number="product.price"
+            type="number"
+            :prop="`products[${index}].price`"
+            placeholder="0"
+            label="Цена"
+            label-class="text-[#A8AAAE] text-xs font-medium"
+            required
           />
           <AppInput
-              label="Сумма"
-              label-class="text-[#A8AAAE] text-xs font-medium"
-              :placeholder="product.quantity && product.price ? `${formatNumber(product.quantity*product.price)}` : '0'"
-              disabled
+            label="Сумма"
+            label-class="text-[#A8AAAE] text-xs font-medium"
+            :placeholder="product.quantity && product.price ? `${formatNumber(product.quantity*product.price)}` : '0'"
+            disabled
           />
         </div>
         <button
-            :disabled="!permissionProductDelete"
-            class="bg-[#E2E6F3] size-10 rounded-[8px] p-[10px] mb-[19px] inline-flex items-center justify-center"
-            @click.stop="deleteProduct(index)"
+          :disabled="!permissionProductDelete"
+          class="bg-[#E2E6F3] size-10 rounded-[8px] p-[10px] mb-[19px] inline-flex items-center justify-center"
+          @click.stop="deleteProduct(index)"
         >
           <img
-              src="@/assets/images/icons/delete.svg"
-              alt="delete"
+            src="@/assets/images/icons/delete.svg"
+            alt="delete"
           />
         </button>
       </div>
     </div>
 
     <button
-        class="text-[#2E90FA] flex items-center mt-4 border px-[16px] py-[8px] border-[#2E90FA] rounded-lg text-xs font-medium"
-        @click.stop="addProduct"
+      class="text-[#2E90FA] flex items-center mt-4 border px-[16px] py-[8px] border-[#2E90FA] rounded-lg text-xs font-medium"
+      @click.stop="addProduct"
     >
       <img
-          src="@/assets/images/icons/plus2.svg"
-          class="mr-[4px]"
-          alt="plus"
+        src="@/assets/images/icons/plus2.svg"
+        class="mr-[4px]"
+        alt="plus"
       />
       Добавить еще
     </button>
@@ -275,14 +275,14 @@ onMounted(() => {
 
   <div class="flex items-center justify-end">
     <button
-        class="custom-cancel-btn"
-        @click="cancel"
+      class="custom-cancel-btn"
+      @click="cancel"
     >
       Отменить
     </button>
     <button
-        @click="sendForm"
-        class="custom-apply-btn ml-[8px]"
+      @click="sendForm"
+      class="custom-apply-btn ml-[8px]"
     >Добавить
     </button>
   </div>

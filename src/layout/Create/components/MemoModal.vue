@@ -1,6 +1,6 @@
 <script
-    setup
-    lang="ts"
+  setup
+  lang="ts"
 >
 
 import AppInput from "@/components/ui/form/app-input/AppInput.vue";
@@ -11,7 +11,7 @@ import { ModalPropsType, ModalValueType } from "@/layout/Create/components/modal
 import {
   DocumentCreateDataDocumentType,
   DocumentStatusType,
-  DraftType
+  DraftType,
 } from "@/modules/Document/document.types";
 import { computed, reactive, ref, watch } from "vue";
 import AppForm from "@/components/ui/form/app-form/AppForm.vue";
@@ -47,7 +47,7 @@ const form = reactive<DocumentCreateDataDocumentType>({
   subject: "",
   number: "",
   content: "",
-  status: ""
+  status: "",
 });
 
 const required = ref(false);
@@ -170,7 +170,7 @@ const respondentChange = (value: string, type: "from" | "to") => {
 const to = computed<string>(() => {
   if (!form.to_id || !form.to_type) return "";
   const activeEl = settingsStore.respondents.find(
-      el => el.model_type === form.to_type && el.id === form.to_id
+    el => el.model_type === form.to_type && el.id === form.to_id,
   );
 
   if (!activeEl) return "";
@@ -189,17 +189,17 @@ const loading = computed(() => documentStore.createLoading || documentStore.upda
 
 <template>
   <el-dialog
-      v-model="model"
-      :show-close="false"
-      class="w-[70%]"
-      align-center
-      append-to-body
-      :before-close="closeModal"
+    v-model="model"
+    :show-close="false"
+    class="w-[70%]"
+    align-center
+    append-to-body
+    :before-close="closeModal"
   >
     <template #header>
       <div
-          v-if="title"
-          class="text-center text-[#000000] font-bold text-[18px]"
+        v-if="title"
+        class="text-center text-[#000000] font-bold text-[18px]"
       >
         {{ title }}
       </div>
@@ -207,13 +207,13 @@ const loading = computed(() => documentStore.createLoading || documentStore.upda
     <div class="flex">
       <div class="border-[#E2E6F3] bg-[#fff] border rounded-[15px] w-[65%] mr-0">
         <AppOverlay
-            :loading="documentStore.documentLoading"
-            class="px-[72px] pb-[150px]"
+          :loading="documentStore.documentLoading"
+          class="px-[72px] pb-[150px]"
         >
           <header class="flex items-center justify-center my-[24px] mb-6">
             <img
-                src="@/assets/images/logo.svg"
-                alt="logo"
+              src="@/assets/images/logo.svg"
+              alt="logo"
             >
             <div class="flex flex-col ml-3">
               <b class="text-[#000D24] text-lg">NKMK</b>
@@ -245,94 +245,97 @@ const loading = computed(() => documentStore.createLoading || documentStore.upda
           </div>
 
           <div
-              v-if="form.content"
-              class="text-[#4F5662] text-[14px]"
+            v-if="form.content"
+            class="text-[#4F5662] text-[14px]"
           >
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {{ form.content }}
           </div>
-          <div v-if="document" class="mt-[40px] flex items-center justify-between">
-            <div class="flex items-baseline mb-[24px] w-[200px]">
+          <div class="mt-[40px] flex items-center gap-x-[100px] justify-between">
+            <div class="flex items-baseline  max-w-[200px]">
               <h1 class=" text-[14px] font-medium">
                 <span class="text-[#4F5662]">Отправитель:</span>
-                <span v-if="from" class="text-[#A8AAAE] ml-2">{{ from.position }} ({{from.workplace}})</span>
+                <span
+                  v-if="from"
+                  class="text-[#A8AAAE] ml-2"
+                >{{ from.position }} ({{ from.workplace }})</span>
               </h1>
             </div>
 
-            <QrCode/>
+            <!--            <QrCode/>-->
 
-            <h1 class="text-[#A8AAAE] text-[14px] mr-[100px]">{{ authStore.userFullName }}</h1>
+            <h1 class="text-[#A8AAAE] text-[14px]">{{ authStore.userFullName }}</h1>
           </div>
         </AppOverlay>
       </div>
 
       <div class="w-[35%] ml-[24px] flex flex-col justify-between">
         <AppForm
-            :value="form"
-            @validation="(value:ValidationType) => v$ = value"
-            @submit.prevent
-            :validation-errors="validationErrors"
+          :value="form"
+          @validation="(value:ValidationType) => v$ = value"
+          @submit.prevent
+          :validation-errors="validationErrors"
         >
           <AppInput
-              placeholder="Служебная записка"
-              label="Название документа"
-              label-class="text-[#A8AAAE] text-[12px] font-medium"
-              disabled
+            placeholder="Служебная записка"
+            label="Название документа"
+            label-class="text-[#A8AAAE] text-[12px] font-medium"
+            disabled
           />
           <AppInput
-              v-model="form.number"
-              prop="number"
-              label="№ документа"
-              label-class="text-[#A8AAAE] text-[12px] font-medium"
-              :required
-              :maxlength="20"
-              :max="20"
+            v-model="form.number"
+            prop="number"
+            label="№ документа"
+            label-class="text-[#A8AAAE] text-[12px] font-medium"
+            :required
+            :maxlength="20"
+            :max="20"
 
           />
           <AppDatePicker
-              :placeholder="form.date"
-              label="Дата создания документа"
-              label-class="text-[#A8AAAE] text-[12px] font-medium"
-              disabled
+            :placeholder="form.date"
+            label="Дата создания документа"
+            label-class="text-[#A8AAAE] text-[12px] font-medium"
+            disabled
           />
           <AppSelect
-              v-model="form.to"
-              prop="to"
-              placeholder="Выберите"
-              label="Кому"
-              label-class="text-[#A8AAAE] text-[12px] font-medium"
-              :loading="settingsStore.respondentsLoading"
-              @change="(value) => respondentChange(value as string, 'to')"
-              :required
+            v-model="form.to"
+            prop="to"
+            placeholder="Выберите"
+            label="Кому"
+            label-class="text-[#A8AAAE] text-[12px] font-medium"
+            :loading="settingsStore.respondentsLoading"
+            @change="(value) => respondentChange(value as string, 'to')"
+            :required
           >
             <ElOption
-                v-for="item in settingsStore.respondents"
-                :key="`${item.id}_${item.model_type}`"
-                :value="`${item.id}_${item.model_type}`"
-                :label="item.name"
+              v-for="item in settingsStore.respondents"
+              :key="`${item.id}_${item.model_type}`"
+              :value="`${item.id}_${item.model_type}`"
+              :label="item.name"
             />
           </AppSelect>
           <AppInput
-              v-model="form.subject"
-              prop="subject"
-              placeholder="Введите"
-              label="Тема"
-              label-class="text-[#A8AAAE] text-xs font-medium"
-              :required
-              :max="100"
-              :maxlength="100"
+            v-model="form.subject"
+            prop="subject"
+            placeholder="Введите"
+            label="Тема"
+            label-class="text-[#A8AAAE] text-xs font-medium"
+            :required
+            :max="100"
+            :maxlength="100"
           />
 
           <AppInput
-              v-model="form.content"
-              prop="content"
-              label="Сообщения"
-              label-class="text-[#A8AAAE] text-[12px] font-medium"
-              placeholder="Отображение сообщения служебки"
-              type="textarea"
-              :rows="5"
-              :required
-              :max="1000"
-              :maxlength="1000"
+            v-model="form.content"
+            prop="content"
+            label="Сообщения"
+            label-class="text-[#A8AAAE] text-[12px] font-medium"
+            placeholder="Отображение сообщения служебки"
+            type="textarea"
+            :rows="5"
+            :required
+            :max="1000"
+            :maxlength="1000"
           />
 
           <AppSelect
@@ -355,26 +358,26 @@ const loading = computed(() => documentStore.createLoading || documentStore.upda
 
         <div class="flex items-start justify-between gap-x-2">
           <button
-              class="custom-cancel-btn"
-              @click="closeModal"
+            class="custom-cancel-btn"
+            @click="closeModal"
           >
             Отменить
           </button>
           <ElButton
-              :loading="form.status ==='draft' ? loading : false"
-              type="primary"
-              size="large"
-              @click="sendForm('draft')"
-              class="custom-apply-btn h-[41px] w-[212px]"
+            :loading="form.status ==='draft' ? loading : false"
+            type="primary"
+            size="large"
+            @click="sendForm('draft')"
+            class="custom-apply-btn h-[41px] w-[212px]"
           >
             Сохранить как черновик
           </ElButton>
           <ElButton
-              :loading="form.status ==='sent' ? loading : false"
-              type="success"
-              size="large"
-              @click="sendForm('sent')"
-              class="custom-send-btn h-[41px] !w-[116px] !ml-0"
+            :loading="form.status ==='sent' ? loading : false"
+            type="success"
+            size="large"
+            @click="sendForm('sent')"
+            class="custom-send-btn h-[41px] !w-[116px] !ml-0"
           >
             Отправить
           </ElButton>
