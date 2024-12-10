@@ -11,6 +11,7 @@ interface AutoSizeType {
 
 export interface AppInputPropsType extends ElFormItemType {
     type?: InputTypeHTMLAttribute,
+    customType?: InputTypeHTMLAttribute,
     formatter?: (value: string | number) => string,
     parser?: (value?: string) => string,
     showPassword?: boolean,

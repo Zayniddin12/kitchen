@@ -217,3 +217,8 @@ export const loginOneId = () => {
   oneIdAuthUrl = oneIdAuthUrl.replace("{baseUrl}", `${baseUrl}/verify-oneid`);
   window.location.href = oneIdAuthUrl;
 };
+
+export const validateNumber = (value: string) => {
+  if (/^0\d+$/.test(value)) return NaN;
+  return Number(value);
+};

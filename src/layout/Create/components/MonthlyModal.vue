@@ -558,27 +558,29 @@ watch(model, (newModel) => {
                 :disabled="!product.category_id"
                 @change="changeProduct(product)"
               />
-              <AppInput
-                v-model.number="product.quantity"
-                :prop="`products[${index}].quantity`"
-                type="number"
-                placeholder="Количество"
-                label="Количество"
-                label-class="text-[#A8AAAE] text-xs font-medium"
-                :required
-              />
-              <AppSelect
-                v-model="product.unit_id"
-                :prop="`products[${index}].unit_id`"
-                :items="settingsStore.units.units"
-                item-label="name"
-                item-value="id"
-                placeholder="Ед. измерения"
-                label="Ед. измерения"
-                label-class="text-[#A8AAAE] text-xs font-medium"
-                :required
-                disabled
-              />
+              <div class="grid grid-cols-2 gap-x-4">
+                <AppInput
+                  v-model="product.quantity"
+                  :prop="`products[${index}].quantity`"
+                  custom-type="number"
+                  placeholder="Количество"
+                  label="Количество"
+                  label-class="text-[#A8AAAE] text-xs font-medium"
+                  :required
+                />
+                <AppSelect
+                  v-model="product.unit_id"
+                  :prop="`products[${index}].unit_id`"
+                  :items="settingsStore.units.units"
+                  item-label="name"
+                  item-value="id"
+                  placeholder="Ед. измерения"
+                  label="Ед. измерения"
+                  label-class="text-[#A8AAAE] text-xs font-medium"
+                  :required
+                  disabled
+                />
+              </div>
               <AppInput
                 v-model.number="product.price"
                 type="number"

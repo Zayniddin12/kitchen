@@ -488,7 +488,7 @@ watch(providerCreateModal, newMProviderModal => {
     <div class="flex gap-x-6 flex-wrap">
       <div class="w-[60%] flex flex-col gap-y-10">
         <div
-          :class="['border-[#E2E6F3] bg-[#fff] border rounded-[15px]', `${activeComingModal ? 'min-h-[830px]' : 'min-h-[1319px]'}`]"
+          :class="['border-[#E2E6F3] bg-[#fff] border rounded-[15px]', `${activeComingModal ? 'min-h-[1258.63px]' : 'min-h-[1319px]'}`]"
         >
           <div class="px-[72px] pb-[150px]">
             <header class="flex items-center justify-center my-[24px] mb-6">
@@ -1081,6 +1081,114 @@ watch(providerCreateModal, newMProviderModal => {
             label-class="text-[#A8AAAE] text-xs font-medium"
             required
           />
+          <div
+            v-if="activeComingModal"
+            class="bg-[#FFFFFF] rounded-[8px] p-[12px]"
+          >
+            <template
+              v-for="(product, index) in form.products"
+              :key="index + 1"
+            >
+              <div
+                class="flex items-center justify-between mb-[16px] text-sm font-medium"
+              >
+                <strong class="text-[#4F5662]">
+                  <template v-if="form.products && form.products.length > 1">
+                    {{ index + 1 }}.
+                  </template>
+                  Таблица получаемых продуктов
+                </strong>
+                <button
+                  v-if="form.products && form.products.length > 1"
+                  @click.stop="deleteProduct(index)"
+                  class="flex items-center gap-x-1"
+                >
+                  <svg
+                    :data-src="deleteIcon"
+                    class="size-5"
+                  />
+                  <span class="text-[#EA5455]">Удалить</span>
+                </button>
+              </div>
+              <AppSelect
+                v-model="product.category_id"
+                placeholder="Тип продукта"
+                :prop="`products[${index}].category_id`"
+                :items="settingsStore.typeProduct.product_categories"
+                item-value="id"
+                item-label="name"
+                label="Тип продукта"
+                label-class="text-[#A8AAAE] text-xs font-medium"
+                @change="fetchVidProductsList(product)"
+                required
+                trigger="blur"
+              />
+              <AppSelect
+                v-model="product.product_type_id"
+                :prop="`products[${index}].product_type_id`"
+                :items="vidProducts.get(product.category_id as number)"
+                item-label="name"
+                item-value="id"
+                placeholder="Вид продукта"
+                label="Вид продукта"
+                label-class="text-[#A8AAAE] text-xs font-medium"
+                required
+                :disabled="!product.category_id"
+                @change="changeProduct(product)"
+              />
+              <div class="grid grid-cols-2 gap-x-4">
+                <AppInput
+                  v-model="product.quantity"
+                  custom-type="number"
+                  :prop="`products[${index}].quantity`"
+                  placeholder="Количество"
+                  label="Количество"
+                  label-class="text-[#A8AAAE] text-xs font-medium"
+                  required
+                />
+                <AppSelect
+                  v-model="product.unit_id"
+                  :prop="`products[${index}].unit_id`"
+                  :items="settingsStore.units.units ?? []"
+                  item-label="name"
+                  item-value="id"
+                  placeholder="Ед. измерения"
+                  label="Ед. измерения"
+                  label-class="text-[#A8AAAE] text-xs font-medium"
+                  required
+                  disabled
+                />
+              </div>
+              <AppInput
+                v-model.number="product.price"
+                type="number"
+                :prop="`products[${index}].price`"
+                placeholder="Цена"
+                label="Цена"
+                label-class="text-[#A8AAAE] text-xs font-medium"
+                required
+              />
+            </template>
+            <button
+              @click.stop="createProduct"
+              class="mt-6 flex items-center justify-center gap-3 border-[1px] border-[#2E90FA] rounded-[8px] w-full text-[#2E90FA] text-sm font-medium py-[10px]"
+            >
+                <span
+                  :style="{
+                    maskImage: 'url(/icons/plusIcon.svg)',
+                    backgroundColor: '#2E90FA',
+                    color: '#2E90FA',
+                    width: '20px',
+                    height: '20px',
+                    maskSize: '20px',
+                    maskPosition: 'center',
+                    maskRepeat: 'no-repeat',
+                  }"
+                ></span>
+              Добавить
+            </button>
+          </div>
+
         </AppForm>
         <AppForm
           :value="actForm"

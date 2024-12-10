@@ -17,6 +17,7 @@ export interface RulesType {
 
 export interface ValidateRulesType extends RulesType {
   message?: string;
+  validator?: any;
 }
 
 export type ElFormItemSize = "large" | "small";
