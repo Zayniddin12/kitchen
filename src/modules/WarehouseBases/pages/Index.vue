@@ -397,9 +397,9 @@ onMounted(() => {
                   clearable
               />
               <AppInput
-                  v-model.number="productsForm.quantity"
+                  v-model="productsForm.quantity"
                   property="quantity"
-                  type="number"
+                  custom-type="number"
                   label="Количество"
                   placeholder="Количество"
                   label-class="text-[#A8AAAE] text-xs font-medium"
@@ -476,9 +476,9 @@ onMounted(() => {
                     clearable
                 />
                 <AppInput
-                    v-model.number="invoicesForm.quantity"
+                    v-model="invoicesForm.quantity"
                     prop="quantity"
-                    type="number"
+                    custom-type="number"
                     label="Количество"
                     placeholder="Количество"
                     label-class="text-[#A8AAAE] text-xs font-medium"

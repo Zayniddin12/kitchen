@@ -168,7 +168,7 @@ const disabled = computed(() => {
       <div class="w-[70%]">
         <AppOverlay
             :loading="settingsStore.foodFactoryLoading"
-            :rounded="24"
+            :rounded="16"
             class="border border-[#E2E6F3] p-[24px] min-h-[60vh] flex flex-col gap-y-6 justify-between"
         >
           <AppForm

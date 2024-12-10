@@ -15,7 +15,7 @@ import { useUsersStore } from "@/modules/Users/users.store";
 import AppOverlay from "@/components/ui/app-overlay/AppOverlay.vue";
 import { ValidationType } from "@/components/ui/form/app-form/app-form.type";
 import AppForm from "@/components/ui/form/app-form/AppForm.vue";
-import { formatPhone, getStatus, getStatusText, mergeCommonKeys, setStatus } from "@/utils/helper";
+import { deepEqual, formatPhone, getStatus, getStatusText, mergeCommonKeys, setStatus } from "@/utils/helper";
 import { useCommonStore } from "@/stores/common.store";
 import { usePositionStore } from "@/modules/Position/position.store";
 import { UserCreateOrUpdateDataType } from "@/modules/Users/users.types";
@@ -50,8 +50,6 @@ const activeUserUpdatePage = computed(() => {
 
 const form = ref<UserCreateOrUpdateDataType>({
   phone: "",
-  position_id: "",
-  management_id: "",
   is_oneid_enabled: false,
   firstname: "",
   lastname: "",
@@ -65,6 +63,8 @@ const form = ref<UserCreateOrUpdateDataType>({
   pass_valid_until: "",
   pinfl: "",
 });
+
+const oldForm = ref<UserCreateOrUpdateDataType | null>(null);
 
 const v$ = ref<ValidationType | null>(null);
 
@@ -183,10 +183,20 @@ const deleteFn = () => {
   });
 };
 
-const cancelFn = () => {
-  confirm.cancel().then(response => {
-    router.push({ name: userStore.activeRoutePrefix });
-  });
+const cancelFn = async () => {
+  const isChange = oldForm.value && !deepEqual(form.value, oldForm.value);
+
+  if (isChange) {
+    const response = await confirm.cancel();
+
+    if (response === "save") {
+      await sendForm();
+      return;
+    }
+  }
+
+  await v$.value?.clear();
+  router.push({ name: userStore.activeRoutePrefix });
 };
 
 const fetchSearchUser = () => {
@@ -196,17 +206,35 @@ const fetchSearchUser = () => {
 
 const setData = () => {
   if (!data.value) return;
+
+  if (userStore.activeUserPage) {
+    form.value.position_id = "";
+    form.value.management_id = "";
+  } else {
+    form.value.dining_locations = {
+      permanent: {
+        kitchen_id: "",
+      },
+      temporary: {
+        kitchen_id: "",
+        start_date: "",
+        end_date: "",
+      },
+    };
+  }
+
   form.value = mergeCommonKeys(form.value, data.value);
   form.value.phone = formatPhone(data.value.phone);
   form.value.status = getStatus(data.value.status);
 
-  if (userStore.activeUserPage){
-    form.value.position_id = form.value.position_id ?? "";
-    form.value.management_id = form.value.management_id ?? "";
-  }else {
-    form.value.position_id = "";
-    form.value.management_id = "";
-  }
+  console.log(form.value);
+
+  // if (userStore.activeUserPage) {
+  //   form.value.position_id = form.value.position_id ?? "";
+  //   form.value.management_id = form.value.management_id ?? "";
+  // }
+
+  oldForm.value = JSON.parse(JSON.stringify(form.value));
 };
 
 const fetchUser = async () => {
@@ -236,6 +264,8 @@ onMounted(() => {
   if (userStore.activeUserPage) {
     positionStore.fetchPositions();
     settingsStore.GET_REGIONAL({ per_page: 100 });
+  } else {
+    settingsStore.fetchKitchenWarehouseList({ is_paid: 0 });
   }
 });
 
@@ -457,24 +487,63 @@ onBeforeRouteLeave(() => {
                   class="mb-1"
                 />
               </template>
-            </div>
-            <div
-              class="grid grid-cols-2 gap-x-6 gap-y-4"
-              v-if="!userStore.activeUserPage"
-            >
-              <AppSelect
-                label="Место работы"
-                label-class="text-[#A8AAAE] text-[12px] font-medium"
-                placeholder="Выберите"
-                class="mb-1"
-              />
+              <template v-else-if="userStore.activeEmployeePage && form.dining_locations">
+                <AppSelect
+                  v-model="form.dining_locations.permanent.kitchen_id"
+                  :items="settingsStore.kitchenWarehouseList"
+                  item-value="id"
+                  item-label="name"
+                  prop="dining_locations.permanent.kitchen_id"
+                  label="Постоянная кухня"
+                  label-class="text-[#A8AAAE] text-xs font-medium"
+                  required
+                  class="mb-1"
+                  clearable
+                />
+                <AppSelect
+                  v-model="form.dining_locations.temporary.kitchen_id"
+                  :items="settingsStore.kitchenWarehouseList"
+                  item-value="id"
+                  item-label="name"
+                  prop="dining_locations.temporary.kitchen_id"
+                  label="Временная кухня"
+                  label-class="text-[#A8AAAE] text-xs font-medium"
+                  required
+                  class="mb-1"
+                  clearable
+                />
+                <AppDatePicker
+                  v-model="form.dining_locations.temporary.start_date"
+                  prop="dining_locations.temporary.start_date"
+                  label="Период временной кухни с"
+                  label-class="text-[#A8AAAE] text-xs font-medium"
+                  required
+                  value-format="YYYY-MM-DD"
+                  class="mb-1"
+                />
+                <AppDatePicker
+                  v-model="form.dining_locations.temporary.end_date"
+                  prop="dining_locations.temporary.end_date"
+                  label="Период временной кухни по"
+                  label-class="text-[#A8AAAE] text-xs font-medium"
+                  value-format="YYYY-MM-DD"
+                  required
+                  class="mb-1"
+                />
+                <AppSelect
+                  label="Место работы"
+                  label-class="text-[#A8AAAE] text-[12px] font-medium"
+                  placeholder="Выберите"
+                  class="mb-1"
+                />
 
-              <AppSelect
-                label="График работы"
-                label-class="text-[#A8AAAE] text-[12px] font-medium"
-                placeholder="Выберите"
-                class="mb-1"
-              />
+                <AppSelect
+                  label="График работы"
+                  label-class="text-[#A8AAAE] text-[12px] font-medium"
+                  placeholder="Выберите"
+                  class="mb-1"
+                />
+              </template>
             </div>
             <ElCheckbox
               v-model="form.is_oneid_enabled"

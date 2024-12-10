@@ -241,23 +241,23 @@ watch(model, (newModel) => {
           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ form.content }}
         </div>
 
-        <div
-          v-if="document"
-          class="mt-[40px] flex items-center justify-between"
-        >
-          <div class="flex items-baseline mb-[24px] w-[200px]">
-            <h1 class=" text-[14px] font-medium">
+        <div class="mt-[40px] flex items-center gap-x-[100px] justify-between">
+          <div class="flex items-baseline max-w-[200px]">
+            <h1 class=" text-sm font-medium">
               <span class="text-[#4F5662] font-semibold">Отправитель:</span>
-              <span v-if="from" class="text-[#A8AAAE] ml-2">{{ from.position }} ({{from.workplace}})</span>
+              <span
+                v-if="from"
+                class="text-[#A8AAAE] ml-2"
+              >{{ from.position }} ({{ from.workplace }})</span>
             </h1>
           </div>
 
-          <img
-            src="@/assets/images/icons/qr.svg"
-            alt="qr"
-          />
+<!--          <img-->
+<!--            src="@/assets/images/icons/qr.svg"-->
+<!--            alt="qr"-->
+<!--          />-->
 
-          <h1 class="text-[#A8AAAE] text-[14px] mr-[100px]">{{ authStore.userFullName }}</h1>
+          <h1 class="text-[#A8AAAE] text-sm">{{ authStore.userFullName }}</h1>
         </div>
       </AppOverlay>
 

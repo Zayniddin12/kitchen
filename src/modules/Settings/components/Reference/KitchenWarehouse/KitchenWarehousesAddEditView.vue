@@ -1,4 +1,7 @@
-<script setup lang="ts">
+<script
+  setup
+  lang="ts"
+>
 import { computed, onMounted, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { Name } from "@/utils/helper";
@@ -77,7 +80,7 @@ onMounted(async () => {
       await store.GET_KITCHEN_TYPE();
 
       if (route.params.id) {
-        const wr = await store.GET_KITCHEN_WAREHOUSE_DETAIL(route.params.id);
+        const wr = await store.GET_KITCHEN_WAREHOUSE_DETAIL(+route.params.id);
         if (wr && wr.kitchen_warehouse) {
           dataValue.value = wr.kitchen_warehouse;
         }
@@ -151,12 +154,16 @@ watch(() => route.name, () => {
 </script>
 
 <template>
-  <AppOverlay :loading="loading">
+  <section>
     <h1 class="m-0 font-semibold text-[32px] leading-[48px] mb-[24px]">{{ route.meta.title }}</h1>
 
     <div class="flex gap-6">
       <div class="w-[70%]">
-        <div class="border border-[#E2E6F3] rounded-[24px] p-[24px] min-h-[65vh] flex flex-col">
+        <AppOverlay
+          :loading
+          :rounded="16"
+          class="border border-[#E2E6F3] rounded-2xl p-[24px] min-h-[60vh] flex flex-col"
+        >
           <AppForm
             :value="dataValue"
             @validation="setValidation"
@@ -205,7 +212,7 @@ watch(() => route.name, () => {
                 label-class="text-[#A8AAAE] font-medium text-[12px]"
                 class="w-full"
                 required
-                type="number"
+                custom-type="number"
                 prop="capacity"
                 :disabled="isDisabled"
               />
@@ -255,7 +262,7 @@ watch(() => route.name, () => {
             class="app-switch mt-auto"
             :before-change="switchChange"
           />
-        </div>
+        </AppOverlay>
 
         <div
           v-if="!route.query.type"
@@ -278,7 +285,10 @@ watch(() => route.name, () => {
               Отменить
             </button>
 
-            <button class="custom-apply-btn" @click="handleSubmit">
+            <button
+              class="custom-apply-btn"
+              @click="handleSubmit"
+            >
               {{ $route.params.id ? "Сохранить" : "Добавить" }}
             </button>
           </div>
@@ -291,11 +301,14 @@ watch(() => route.name, () => {
           v-if="route.query.type == 'view'"
           class="flex items-center gap-4 bg-[#F8F9FC] py-[10px] px-[20px] rounded-[8px]"
         >
-          <img src="@/assets/images/icons/edit.svg" alt="#">
+          <img
+            src="@/assets/images/icons/edit.svg"
+            alt="#"
+          >
           Редактировать
         </button>
       </div>
     </div>
-  </AppOverlay>
+  </section>
 </template>
 

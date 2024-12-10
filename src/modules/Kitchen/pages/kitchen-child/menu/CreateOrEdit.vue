@@ -91,7 +91,9 @@ const scheduledDates = computed(() => {
     const intermediate = kitchenData.value.intermediateDate1 ? 7 : 10;
     const formattedDates = [];
     for (let i = 0; i < intermediate; i++) {
-      const date = new Date(kitchenData.value.startDate);
+      console.log(kitchenData.value.startDate);
+      const date = new Date(kitchenData.value.startDate.split(".").reverse().join("-"));
+      console.log(date, "date");
       date.setDate(date.getDate() + i);
       const formattedDate = formatDate(date);
       formattedDates.push({ date: formattedDate.date, title: `${formattedDate.week} - ${formattedDate.date}` });
@@ -102,7 +104,7 @@ const scheduledDates = computed(() => {
     const intermediate = getDaysInterval(kitchenData.value.startDate, kitchenData.value.endDate) + 1;
     const formattedDates = [];
     for (let i = 0; i < intermediate; i++) {
-      const date = new Date(kitchenData.value.startDate);
+      const date = new Date(kitchenData.value.startDate.split(".").reverse().join("-"));
       date.setDate(date.getDate() + i);
       const formattedDate = formatDate(date);
       formattedDates.push({ date: formattedDate.date, title: `${formattedDate.week} - ${formattedDate.date}` });
@@ -127,8 +129,8 @@ watch(scheduledDates, async (newValue) => {
               {
                 id: 1,
                 title: "Завтрак",
-                isChecked: true,
-                mealData: kitchenStore.menuElement.elements[el.date.split(".").reverse().join("-")]["1"].map(item => {
+                isChecked: kitchenStore.menuElement.elements[el.date.split(".").reverse().join("-")] && kitchenStore.menuElement.elements[el.date.split(".").reverse().join("-")]["1"] ? true : false,
+                mealData: kitchenStore.menuElement.elements[el.date.split(".").reverse().join("-")] && kitchenStore.menuElement.elements[el.date.split(".").reverse().join("-")]["1"] ? kitchenStore.menuElement.elements[el.date.split(".").reverse().join("-")]["1"].map(item => {
                   return {
                     id: item.id,
                     period: 1,
@@ -142,13 +144,23 @@ watch(scheduledDates, async (newValue) => {
                       products: item.product,
                     },
                   };
-                }),
+                }) : [
+                  {
+                    period: 1,
+                    start_time: null,
+                    end_time: null,
+                    amount: null,
+                    product_type: "ration",
+                    product_id: null,
+                    rationsList: {},
+                  },
+                ],
               },
               {
                 id: 2,
                 title: "Обед",
-                isChecked: true,
-                mealData: kitchenStore.menuElement.elements[el.date.split(".").reverse().join("-")]["2"].map(item => {
+                isChecked: kitchenStore.menuElement.elements[el.date.split(".").reverse().join("-")] && kitchenStore.menuElement.elements[el.date.split(".").reverse().join("-")]["2"] ? true : false,
+                mealData: kitchenStore.menuElement.elements[el.date.split(".").reverse().join("-")] && kitchenStore.menuElement.elements[el.date.split(".").reverse().join("-")]["2"] ? kitchenStore.menuElement.elements[el.date.split(".").reverse().join("-")]["2"].map(item => {
                   return {
                     id: item.id,
                     period: 2,
@@ -162,13 +174,23 @@ watch(scheduledDates, async (newValue) => {
                       products: item.product,
                     },
                   };
-                }),
+                }) : [
+                  {
+                    period: 2,
+                    start_time: null,
+                    end_time: null,
+                    amount: null,
+                    product_type: "ration",
+                    product_id: null,
+                    rationsList: {},
+                  },
+                ],
               },
               {
                 id: 3,
                 title: "Ужин",
-                isChecked: true,
-                mealData: kitchenStore.menuElement.elements[el.date.split(".").reverse().join("-")]["3"].map(item => {
+                isChecked: kitchenStore.menuElement.elements[el.date.split(".").reverse().join("-")] && kitchenStore.menuElement.elements[el.date.split(".").reverse().join("-")]["3"] ? true : false,
+                mealData: kitchenStore.menuElement.elements[el.date.split(".").reverse().join("-")] && kitchenStore.menuElement.elements[el.date.split(".").reverse().join("-")]["3"] ? kitchenStore.menuElement.elements[el.date.split(".").reverse().join("-")]["3"].map(item => {
                   return {
                     id: item.id,
                     period: 3,
@@ -182,13 +204,23 @@ watch(scheduledDates, async (newValue) => {
                       products: item.product,
                     },
                   };
-                }),
+                }) : [
+                  {
+                    period: 3,
+                    start_time: null,
+                    end_time: null,
+                    amount: null,
+                    product_type: "ration",
+                    product_id: null,
+                    rationsList: {},
+                  },
+                ],
               },
               {
                 id: 4,
                 title: "Сухой питания",
-                isChecked: true,
-                mealData: kitchenStore.menuElement.elements[el.date.split(".").reverse().join("-")]["4"].map(item => {
+                isChecked: kitchenStore.menuElement.elements[el.date.split(".").reverse().join("-")] && kitchenStore.menuElement.elements[el.date.split(".").reverse().join("-")]["4"] ? true : false,
+                mealData: kitchenStore.menuElement.elements[el.date.split(".").reverse().join("-")] && kitchenStore.menuElement.elements[el.date.split(".").reverse().join("-")]["4"] ? kitchenStore.menuElement.elements[el.date.split(".").reverse().join("-")]["4"].map(item => {
                   return {
                     id: item.id,
                     period: 4,
@@ -202,7 +234,17 @@ watch(scheduledDates, async (newValue) => {
                       products: item.product,
                     },
                   };
-                }),
+                }) : [
+                  {
+                    period: 4,
+                    start_time: null,
+                    end_time: null,
+                    amount: null,
+                    product_type: "ration",
+                    product_id: null,
+                    rationsList: {},
+                  },
+                ],
               },
             ],
           });
@@ -275,33 +317,69 @@ watch(scheduledDates, async (newValue) => {
 
     }
     if (kitchenStore.activeSalesPart) {
-
+      list_dishes.value = [];
       if (route.name === "KitchenMenuEdit") {
 
         newValue.forEach(el => {
-          list_dishes.value.push({
-            date: el.date,
-            test: kitchenStore.menuElement.elements[el.date.split(".").reverse().join("-")].product.map(item => {
-              return {
-                product: item.parent_id,
-                vid_product: item.product_id,
-                meal: null,
-                amount: null,
-                vid_list: [],
-                meals_list: [],
-              }
-            }),
-            data: [
-              {
-                product: null,
-                vid_product: null,
-                meal: null,
-                amount: null,
-                vid_list: [],
-                meals_list: [],
-              },
-            ],
-          });
+          console.log(kitchenStore.menuElement.elements[el.date.split(".").reverse().join("-")]);
+
+          if (kitchenStore.menuElement.elements[el.date.split(".").reverse().join("-")]) {
+            Object.keys(kitchenStore.menuElement.elements[el.date.split(".").reverse().join("-")]).forEach(key => {
+              list_dishes.value.push({
+                date: el.date,
+                data: kitchenStore.menuElement.elements[el.date.split(".").reverse().join("-")][key].map(item => {
+                  return {
+                    id: item.id,
+                    product: key == "product" ? item.parent_id : null,
+                    vid_product: key == "product" ? item.product_id : null,
+                    meal: key == "meal" ? item.product_id : null,
+                    amount: item.amount,
+                    vid_list: [],
+                    meals_list: {},
+                  };
+                }),
+              });
+
+            });
+          } else {
+            list_dishes.value.push({
+              date: el.date,
+              data: [
+                {
+                  product: null,
+                  vid_product: null,
+                  meal: null,
+                  amount: null,
+                  vid_list: [],
+                  meals_list: {},
+                },
+              ],
+            });
+          }
+
+          // list_dishes.value.push({
+          //   date: el.date,
+          //   data: kitchenStore.menuElement.elements[el.date.split(".").reverse().join("-")] ? kitchenStore.menuElement.elements[el.date.split(".").reverse().join("-")]["product" || "meal"].map(item => {
+          //     return {
+          //       id: item.id,
+          //       product: kitchenStore.menuElement.elements[el.date.split(".").reverse().join("-")].product ? item.parent_id : null,
+          //       vid_product: kitchenStore.menuElement.elements[el.date.split(".").reverse().join("-")].product ? item.product_id : null,
+          //       meal: kitchenStore.menuElement.elements[el.date.split(".").reverse().join("-")].meal ? item.product_id : null,
+          //       amount: item.amount,
+          //       vid_list: [],
+          //       meals_list: [],
+          //     };
+          //   }) : [
+          //     {
+          //       product: null,
+          //       vid_product: null,
+          //       meal: null,
+          //       amount: null,
+          //       vid_list: [],
+          //       meals_list: [],
+          //     },
+          //   ],
+          // });
         });
       } else {
         newValue.forEach(item => {
@@ -380,13 +458,13 @@ onMounted(async () => {
   if (route.name === "KitchenMenuEdit") {
     await kitchenStore.GET_MENU_ITEM(route.params.child_id as string);
     if (kitchenStore.activeMenuPart) {
-      kitchenData.value.startDate = kitchenStore.menuItem.menu.start_date.split(".").reverse().join("-");
+      kitchenData.value.startDate = kitchenStore.menuItem.menu.start_date;
       kitchenData.value.intermediateDate1 = kitchenStore.menuItem.menu.duration == 7;
 
     }
     if (kitchenStore.activeSalesPart) {
-      kitchenData.value.startDate = kitchenStore.menuItem.menu.start_date.split(".").reverse().join("-");
-      kitchenData.value.endDate = kitchenStore.menuItem.menu.end_date.split(".").reverse().join("-");
+      kitchenData.value.startDate = kitchenStore.menuItem.menu.start_date;
+      kitchenData.value.endDate = kitchenStore.menuItem.menu.end_date;
     }
 
 
@@ -449,30 +527,32 @@ const commonStore = useCommonStore();
 
 const sendData = async () => {
   if (kitchenStore.activeMenuPart) {
-    if (!mealTimesV$.value || !kitchenDatav$.value) return;
+    if (!kitchenDatav$.value) return;
 
-    if (!(await mealTimesV$.value.validate() || !(await kitchenDatav$.value.validate()))) {
+    if (!(await kitchenDatav$.value.validate())) {
       await commonStore.errorToast("Validation Error");
       return;
     }
 
     let kitchenPayload = {
       kitchen_id: Number(route.params.child_id),
-      start_date: kitchenData.value.startDate,
+      start_date: kitchenData.value.startDate.split(".").reverse().join("-"),
       end_date: "",
       type: 0,
       duration: kitchenData.value.intermediateDate1 ? 7 : 10,
     };
 
-
-    let kitchenElementPayload = data.value.flatMap((entry) =>
-      entry.data.flatMap((meal) =>
-        meal.mealData.map((mealDetail) => ({
-          date: entry.date,
-          ...mealDetail,
-        })),
-      ),
+    const kitchenElementPayload = data.value.flatMap(({ date, data }) =>
+      data
+        .filter(meal => meal.isChecked) // Only include meals with isChecked === true
+        .flatMap(meal =>
+          meal.mealData.map((mealDetail) => ({
+            date,
+            ...mealDetail,
+          })),
+        ),
     );
+
 
     kitchenElementPayload.forEach(item => {
       item.amount = Number(item.amount);
@@ -506,16 +586,17 @@ const sendData = async () => {
 
     let kitchenPayload = {
       kitchen_id: Number(route.params.child_id),
-      start_date: kitchenData.value.startDate,
-      end_date: kitchenData.value.endDate,
+      start_date: kitchenData.value.startDate.split(".").reverse().join("-"),
+      end_date: kitchenData.value.endDate.split(".").reverse().join("-"),
     };
 
 
     let kitchenElementPayload = list_dishes.value.map((entry) => {
       return entry.data.map(meal => {
         return {
+          ...(meal.id && { id: meal.id }),
           date: entry.date,
-          [meal.meal ? "meal_id" : "product_id"]: meal.meal ? meal.meal : meal.vid_product,
+          ["product_id"]: meal.meal ? meal.meal : meal.vid_product,
           amount: Number(meal.amount),
           product_type: meal.meal ? "meal" : "product",
         };
@@ -529,15 +610,24 @@ const sendData = async () => {
       delete item.rationsList;
     });
 
-    const kitchenResponse = await kitchenStore.CREATE_KITCHEN(kitchenPayload);
+    if (route.name !== "KitchenMenuEdit") {
+      const kitchenResponse = await kitchenStore.CREATE_KITCHEN(kitchenPayload);
 
-    const kitchenResponseElement = await kitchenStore.CREATE_KITCHEN_ELEMENT({
-      id: kitchenResponse.data.menu_id,
-      payload: { Elements: kitchenElementPayload },
-    });
+      const kitchenResponseElement = await kitchenStore.CREATE_KITCHEN_ELEMENT({
+        id: kitchenResponse.data.menu_id,
+        payload: { Elements: kitchenElementPayload },
+      });
+    } else {
+      let menu_id = kitchenStore.menuItem.menu.id;
+      await kitchenStore.UPDATE_MENU(menu_id, kitchenPayload);
+
+      await kitchenStore.UPDATE_MENU_ELEMENT(menu_id, { Elements: kitchenElementPayload });
+    }
+
+
   }
 
-  await router.push(`/kitchen/${route.params.department_id}/free-kitchen/${route.params.kitchen_id}/${route.params.child_id}/menu`);
+  await router.push(`/kitchen/${route.params.department_id}/${kitchenStore.activeSalesPart ? "sales" : "free-kitchen"}/${route.params.kitchen_id}/${route.params.child_id}/menu`);
 
 };
 
@@ -557,9 +647,31 @@ watch(() => route.params, async () => {
 
 
 const changeInput = async (event: any, index: number, childIndex: number) => {
+  // list_dishes.value[index].data[childIndex].vid_product = null
   const data = await settingsStore.GET_MEALS_VID_PRO({ parent_id: event });
 
   list_dishes.value[index].data[childIndex].vid_list = data.product_types ? data.product_types : [];
+};
+
+const changeInputMeals = async (event: any, index: number, childIndex: number) => {
+  // list_dishes.value[index].data[childIndex].vid_product = null
+
+  if (event) {
+    const { meal } = await settingsStore.GET_MEALS_DETAIL(event);
+    list_dishes.value[index].data[childIndex].meals_list = meal ? meal : {};
+
+  }
+
+
+  // list_dishes.value[index].data[childIndex].meals_list = data.product_types ? data.product_types : [];
+};
+
+
+const changeChange = async (event: any, index: number, childIndex: number) => {
+  list_dishes.value[index].data[childIndex].vid_product = null;
+  // const data = await settingsStore.GET_MEALS_VID_PRO({ parent_id: event });
+  //
+  // list_dishes.value[index].data[childIndex].vid_list = data.product_types ? data.product_types : [];
 };
 
 const addMeal = (parentIndex: number) => {
@@ -589,12 +701,13 @@ const addMeal = (parentIndex: number) => {
       <div>
         <div class="p-6 rounded-3xl border border-[#E2E6F3] mt-6 min-h-[671px]">
           <div>
-            <!--            {{ data }}-->
+            <!--            {{ kitchenStore.menuElement.elements }}-->
+            <!--            {{ kitchenData }}-->
             <!--            {{ kitchenStore.menuElement }}-->
             <h3 class="text-lg font-medium text-dark">
               Введите дату!
             </h3>
-            {{ kitchenStore.menuItem }}
+            <!--            {{ kitchenStore.menuItem }}-->
             <div>
               <AppForm :value="kitchenData" @validation="value => kitchenDatav$ = value">
                 <div class="flex items-center gap-4">
@@ -651,8 +764,7 @@ const addMeal = (parentIndex: number) => {
           </ElScrollbar>
           <div class="mt-6">
             <!--            {{ data[0] }}-->
-            <AppForm :value="data" @validation="(value) => mealTimesV$ = value"
-                     v-if="kitchenStore.activeMenuPart && activeScheduledDate && data.length>0">
+            <div v-if="kitchenStore.activeMenuPart && activeScheduledDate && data.length>0">
               <h3 class="text-lg font-medium text-dark">
                 Выбирайте время еды!
               </h3>
@@ -679,37 +791,30 @@ const addMeal = (parentIndex: number) => {
                           <AppTimePicker
                             :editable="true"
                             v-model="itemMeal.start_time"
-                            :prop="`[${index}].data[${childIndex}].mealData[${indexMeal}].start_time`"
                             class="max-w-[141px]"
                             value-format="HH:mm"
                             label="Время начало"
                             label-class="text-[#A8AAAE] text-xs font-medium"
-                            required
                           />
                           <AppTimePicker
                             v-model="itemMeal.end_time"
-                            :prop="`[${index}].data[${childIndex}].mealData[${indexMeal}].end_time`"
                             class="max-w-[141px]"
                             value-format="HH:mm"
                             label="Время окончания"
                             label-class="text-[#A8AAAE] text-xs font-medium"
-                            required
                           />
 
                           <AppInput
                             v-model="itemMeal.amount"
-                            :prop="`[${index}].data[${childIndex}].mealData[${indexMeal}].amount`"
                             type="number"
                             class="max-w-[141px]"
                             label="Количество порции"
                             label-class="text-[#A8AAAE] text-xs font-medium"
-                            required
                           />
                         </div>
 
                         <AppSelect
                           v-model="itemMeal.product_id"
-                          :prop="`[${index}].data[${childIndex}].mealData[${indexMeal}].product_id`"
                           :items="settingsStore.rationList.rations"
                           @change="changeRation(itemMeal.product_id,index,childIndex,indexMeal)"
                           item-value="id"
@@ -718,7 +823,6 @@ const addMeal = (parentIndex: number) => {
                           label-class="text-[#A8AAAE]"
                           placeholder="Выберите"
                           class="w-[222px]"
-                          required
                         />
                         <div
                           v-if="itemMeal.product_id && itemMeal.rationsList && itemMeal.rationsList.products"
@@ -791,12 +895,13 @@ const addMeal = (parentIndex: number) => {
                   </div>
                 </div>
               </div>
-            </AppForm>
+            </div>
             <div v-else-if="kitchenStore.activeSalesPart && list_dishes.length > 0">
               <h3 class="text-2xl font-medium text-dark">
                 Список блюды
               </h3>
-              {{ list_dishes }}
+              <!--              {{ list_dishes }}-->
+              <!--              {{ activeScheduledDate }}-->
               <div v-for="(meal, index) in list_dishes" class="">
                 <!--        {{ tableData }}-->
                 <div v-show="meal.date == activeScheduledDate">
@@ -814,6 +919,7 @@ const addMeal = (parentIndex: number) => {
                         label="Блюды"
                         label-class="text-[#A8AAAE] text-[12px] font-medium"
                         placeholder="Выберите блюды"
+                        @input="changeInputMeals($event, index, childIndex)"
                       />
 
                       <app-select
@@ -827,7 +933,8 @@ const addMeal = (parentIndex: number) => {
                         itemValue="id"
                         itemLabel="name"
                         :items="settingsStore.typeProduct.product_categories"
-                        @change="changeInput($event, index, childIndex)"
+                        @input="changeInput($event, index, childIndex)"
+                        @change="changeChange($event, index, childIndex)"
                       />
                       <app-select
                         v-model="item.vid_product"
@@ -850,16 +957,16 @@ const addMeal = (parentIndex: number) => {
                         label-class="text-[#A8AAAE] text-[12px] font-medium"
                       />
                     </div>
-
-                    <div v-if="item.meals_list && item.meals_list.length" class="mb-[24px]">
+                    {{ item }}
+                    <div v-if="item.meals_list && item.meals_list.compositions" class="mb-[24px]">
                       <el-table
                         empty-text="Нет данных"
-                        :data="item.meals_list"
+                        :data="item.meals_list.compositions"
                         stripe
                         class="custom-element-table custom-element-table--has-append"
                       >
                         <el-table-column
-                          prop="name"
+                          prop="product_type_name"
                           label="Ингредиенты"
                         />
                         <el-table-column
@@ -871,7 +978,7 @@ const addMeal = (parentIndex: number) => {
                           label="Ед. измерения"
                         />
                         <el-table-column
-                          prop="net_price"
+                          prop="price"
                           label="Сумма"
                         />
 
@@ -884,7 +991,7 @@ const addMeal = (parentIndex: number) => {
                       Цена:
                     </span>
                                 <strong class="font-semibold text-dark">
-                                  25 000 сум
+                                  {{ item.meals_list.net_price && item.meals_list.net_price.toLocaleString() }} сум
                                 </strong>
                               </div>
                               <div class="flex items-center gap-x-1 text-sm">
@@ -892,7 +999,7 @@ const addMeal = (parentIndex: number) => {
                       НДС:
                     </span>
                                 <strong class="font-semibold text-dark">
-                                  3 000 сум
+                                  {{ item.meals_list.tax && item.meals_list.tax.toLocaleString() }} сум
                                 </strong>
                               </div>
                               <div class="flex items-center gap-x-1 text-sm">
@@ -900,7 +1007,7 @@ const addMeal = (parentIndex: number) => {
                       Общая сумма:
                     </span>
                                 <strong class="font-semibold text-dark">
-                                  {{ tableData?.total_price && tableData?.total_price.toLocaleString() }} сум
+                                  {{ item.meals_list.price && item.meals_list.price.toLocaleString() }} сум
                                 </strong>
                               </div>
                             </div>

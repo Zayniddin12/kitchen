@@ -110,14 +110,8 @@ const salesAllTabTableColumns = computed<TableColumnType[]>(() => [
     sortable: true,
   },
   {
-    label: "Время",
-    prop: "time",
-    sortable: true,
-    align: "center",
-  },
-  {
     label: "Порция",
-    prop: "portion",
+    prop: "amount",
     sortable: true,
     align: "center",
   },
@@ -129,7 +123,7 @@ const salesAllTabTableColumns = computed<TableColumnType[]>(() => [
   },
   {
     label: "Себестоимость",
-    prop: "cost_price",
+    prop: "net_price",
     sortable: true,
     align: "center",
   },
@@ -139,12 +133,12 @@ const salesAllTabTableColumns = computed<TableColumnType[]>(() => [
     sortable: true,
     align: "center",
   },
-  {
-    label: "Действие",
-    prop: "action",
-    sortable: false,
-    align: "right",
-  },
+  // {
+  //   label: "Действие",
+  //   prop: "action",
+  //   sortable: false,
+  //   align: "right",
+  // },
 ]);
 
 const salesTableCurrentChange = (value: Record<string, any>) => {
@@ -211,151 +205,6 @@ const activeListDate = ref("");
 
 const hasData = ref(true);
 
-const products = ref<ProductType[] | []>([
-  {
-    category: { id: 1, name: "Напитки" },
-    data: [
-      {
-        id: 1,
-        price: 14000,
-        weight: 1.5,
-        name: "Coca Cola",
-        photo: ColaImg,
-      },
-      {
-        id: 2,
-        price: 12000,
-        weight: 1,
-        name: "Coca Cola",
-        photo: ColaImg,
-      },
-      {
-        id: 3,
-        price: 8000,
-        weight: 0.5,
-        name: "Coca Cola",
-        photo: ColaImg,
-      },
-    ],
-  },
-  {
-    category: { id: 2, name: "Блюда" },
-    data: [
-      {
-        id: 4,
-        price: 12000,
-        weight: 0.5,
-        name: "Блюда 1",
-        photo: DishesImg,
-      },
-      {
-        id: 5,
-        price: 14000,
-        weight: 1,
-        name: "Блюда 2",
-        photo: DishesImg,
-      },
-      {
-        id: 6,
-        price: 15000,
-        weight: 1.5,
-        name: "Блюда 3",
-        photo: DishesImg,
-      },
-      {
-        id: 7,
-        price: 18000,
-        weight: 2,
-        name: "Блюда 4",
-        photo: DishesImg,
-      },
-      {
-        id: 8,
-        price: 12000,
-        weight: 0.5,
-        name: "Блюда 5",
-        photo: DishesImg,
-      },
-      {
-        id: 9,
-        price: 14000,
-        weight: 1,
-        name: "Блюда 6",
-        photo: DishesImg,
-      },
-      {
-        id: 10,
-        price: 15000,
-        weight: 1.5,
-        name: "Блюда 7",
-        photo: DishesImg,
-      },
-      {
-        id: 11,
-        price: 18000,
-        weight: 2,
-        name: "Блюда 8",
-        photo: DishesImg,
-      },
-      {
-        id: 12,
-        price: 12000,
-        weight: 0.5,
-        name: "Блюда 9",
-        photo: DishesImg,
-      },
-      {
-        id: 13,
-        price: 14000,
-        weight: 1,
-        name: "Блюда 10",
-        photo: DishesImg,
-      },
-      {
-        id: 13,
-        price: 15000,
-        weight: 1.5,
-        name: "Блюда 11",
-        photo: DishesImg,
-      },
-      {
-        id: 15,
-        price: 18000,
-        weight: 2,
-        name: "Блюда 12",
-        photo: DishesImg,
-      },
-      {
-        id: 16,
-        price: 12000,
-        weight: 0.5,
-        name: "Блюда 13",
-        photo: DishesImg,
-      },
-      {
-        id: 17,
-        price: 14000,
-        weight: 1,
-        name: "Блюда 14",
-        photo: DishesImg,
-      },
-      {
-        id: 18,
-        price: 15000,
-        weight: 1.5,
-        name: "Блюда 15",
-        photo: DishesImg,
-      },
-      {
-        id: 19,
-        price: 18000,
-        weight: 2,
-        name: "Блюда 16",
-        photo: DishesImg,
-      },
-    ],
-  },
-]);
 
 const sideBarStore = useSidebarStore();
 
@@ -386,10 +235,18 @@ const selectedProducts = computed(() => {
 
   const productMap = new Map<number, ProductItemType>();
 
-  products.value.forEach(productCategory => {
-    productCategory.data.forEach(product => {
-      productMap.set(product.id, product);
-    });
+  Object.keys(kitchenStore.menuTodaySales.elements).forEach(key => {
+    if (key == "product") {
+      Object.keys(kitchenStore.menuTodaySales.elements.product).forEach((key2) => {
+        kitchenStore.menuTodaySales.elements.product[key2].forEach(product => {
+          productMap.set(product.id, product);
+        });
+      });
+    } else {
+      kitchenStore.menuTodaySales.elements.meal.forEach(product => {
+        productMap.set(product.id, product);
+      });
+    }
   });
 
   orders.forEach((quantity, product_id) => {
@@ -403,6 +260,7 @@ const selectedProducts = computed(() => {
 });
 
 const updateQuantity = (product_id: number, increment = true) => {
+
   const currentQuantity = orders.get(product_id) || 0;
 
   if (increment) {
@@ -423,17 +281,52 @@ const ordersSum = computed(() => {
   let totalSum = 0;
 
   orders.forEach((quantity, product_id) => {
-    products.value.forEach(productCategory => {
-      productCategory.data.forEach(product => {
-        if (product.id === product_id) {
-          totalSum += product.price * quantity;
-        }
-      });
+    selectedProducts.value.forEach(product => {
+      if (product.id === product_id) {
+        totalSum += product.price * quantity;
+      }
     });
   });
 
   return totalSum;
 });
+
+const createOrder = async () => {
+
+
+  let payload = {
+    kitchen_id: Number(route.params.child_id),
+    products: [],
+    meals: [],
+  };
+  try {
+    selectedProducts.value.forEach(product => {
+      if (product.product_type == "product") {
+        payload.products.push({
+          menu_id: Number(product.id),
+          id: Number(product.product_id),
+          price: Number(product.price),
+          quantity: Number(orders.get(product.id)),
+        });
+      } else {
+        payload.meals.push({
+          menu_id: Number(product.id),
+          id: Number(product.product_id),
+          price: Number(product.price),
+          quantity: Number(orders.get(product.id)),
+        });
+      }
+    });
+
+    await kitchenStore.CREATE_ORDER(payload);
+    await kitchenStore.GET_CURRENT_MENU_SALES_LIST(route.params.child_id as string);
+    orders.clear()
+    ordersModal.value = false;
+  } catch (error) {
+
+  }
+
+};
 
 const { confirm } = useConfirm();
 
@@ -505,7 +398,15 @@ watch(() => route.params, async () => {
     kitchen_type_id: route.params.kitchen_id as string,
   });
 
-  await kitchenStore.GET_CURRENT_MENU_LIST(route.params.child_id as string);
+  if (kitchenStore.activeSalesPart) {
+    await kitchenStore.GET_CURRENT_MENU_SALES_LIST(route.params.child_id as string);
+  }
+
+  if (kitchenStore.activeMenuPart) {
+    await kitchenStore.GET_CURRENT_MENU_LIST(route.params.child_id as string);
+
+  }
+
   await kitchenStore.GET_WEEKLY_MENU_LIST(route.params.child_id as string);
 
   fullscreenLoading.value = false;
@@ -595,8 +496,9 @@ const mealTextFilter = (index: string): string => {
             {{ item.name }}
           </RouterLink>
         </div>
+
         <div
-          v-if="kitchenStore.menuToday.elements && kitchenStore.menuToday.elements.length"
+          v-if="(kitchenStore.menuToday.elements && kitchenStore.menuToday.elements.length) || (kitchenStore.menuTodaySales.elements && Object.keys(kitchenStore.menuTodaySales.elements).length) || (kitchenStore.menuWeekly && Object.keys(kitchenStore.menuWeekly).length)"
           class="flex items-center"
         >
           <template
@@ -654,8 +556,9 @@ const mealTextFilter = (index: string): string => {
         </div>
       </div>
       <div class="mt-6">
+
         <TransitionGroup
-          v-if="kitchenStore.menuToday.elements && kitchenStore.menuToday.elements.length"
+          v-if="(kitchenStore.menuToday.elements && kitchenStore.menuToday.elements.length) || (kitchenStore.menuTodaySales.elements && Object.keys(kitchenStore.menuTodaySales.elements).length || (kitchenStore.menuWeekly && Object.keys(kitchenStore.menuWeekly).length))"
           name="nested"
           :duration="{ enter: 500, leave: 1500 }"
           tag="div"
@@ -667,7 +570,7 @@ const mealTextFilter = (index: string): string => {
           >
             <!--            {{ kitchenStore.menuWeekly.elements }}-->
             <div
-
+              v-if="kitchenStore.activeMenuPart"
               class="flex flex-col gap-y-8"
             >
 
@@ -730,12 +633,12 @@ const mealTextFilter = (index: string): string => {
                   <div class="flex flex-col gap-y-2 text-sm">
                     <p>
                       <span class="text-cool-gray mr-2">Выданние:</span>
-                      <strong class="font-semibold text-dark">{{ n.amount_sold && n.amount_sold }}</strong>
+                      <strong class="font-semibold text-dark">{{n.amount_served && n.amount_served}}</strong>
                     </p>
                     <p>
                       <span class="text-cool-gray mr-2">Сумма:</span>
                       <strong class="font-semibold text-dark">
-                        {{ n.price_sold && n.price_sold.toLocaleString() }} UZS
+                        {{ n.price_served && n.price_served.toLocaleString()}} UZS
                       </strong>
                     </p>
                   </div>
@@ -743,12 +646,12 @@ const mealTextFilter = (index: string): string => {
                   <div class="flex flex-col gap-y-2 text-sm">
                     <p>
                       <span class="text-cool-gray mr-2">Проданние:</span>
-                      <strong class="font-semibold text-dark">{{ }}</strong>
+                      <strong class="font-semibold text-dark">{{ n.amount_sold && n.amount_sold }}</strong>
                     </p>
                     <p>
                       <span class="text-cool-gray mr-2">Сумма:</span>
                       <strong class="font-semibold text-dark">
-                        <!--                        {{ n.price_sold && n.price_sold.toLocaleString() }} UZS-->
+                        {{ n.price_sold && n.price_sold.toLocaleString() }} UZS
                       </strong>
                     </p>
                   </div>
@@ -767,7 +670,123 @@ const mealTextFilter = (index: string): string => {
                 </div>
               </div>
             </div>
+            <div
+              v-else-if="kitchenStore.activeSalesPart"
+              class="flex flex-col gap-y-6"
+            >
+              <div
+                v-if="kitchenStore.menuTodaySales.elements && Object.keys(kitchenStore.menuTodaySales.elements).length"
+                v-for="(dishe) in Object.keys(kitchenStore.menuTodaySales.elements)"
+              >
 
+                <div
+                  v-if="dishe == 'product'"
+                  v-for="(product, index) in Object.keys(kitchenStore.menuTodaySales.elements.product)"
+                  :key="index"
+                >
+                  <h4 class="text-dark-gray font-semibold text-xl">
+                    {{ product }}
+                  </h4>
+                  <div :class="productsWrapperClassName">
+                    <div
+                      v-for="productItem in kitchenStore.menuTodaySales.elements.product[product]"
+                      :key="productItem.id"
+                      class="menu__card"
+                    >
+                      <h5 class="menu__card-title">
+                        {{ productItem.name }}
+                      </h5>
+                      <img
+                        :src="ColaImg"
+                        :alt="productItem.name"
+                        class="menu__card-img"
+                      />
+                      <div class="menu__card-subtitles">
+                        <span>{{ productItem.unit_name }} </span>
+                        <span>{{ formatNumber(productItem.price) }} UZS</span>
+                      </div>
+                      <div class="menu__card__actions">
+                        <button
+                          @click="updateQuantity(productItem.id, false)"
+                          :disabled="!orders.has(productItem.id)"
+                          class="menu__card__action-btn"
+                        >
+                          <svg
+                            :data-src="MinusIcon"
+                            class="menu__card__action-btn__icon"
+                          />
+                        </button>
+                        <span>
+                        {{ orders.get(productItem.id) ?? 0 }}
+                      </span>
+                        <button
+                          @click="updateQuantity(productItem.id)"
+                          class="menu__card__action-btn"
+                          :disabled="orders.has(productItem.id) && (orders.get(productItem.id) == productItem.amount)"
+                        >
+                          <svg
+                            :data-src="Plus3Icon"
+                            class="menu__card__action-btn__icon"
+                          />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div
+                  v-if="dishe == 'meal'"
+                >
+                  <h4 class="text-dark-gray font-semibold text-xl">
+                    Блюда
+                  </h4>
+                  <div :class="productsWrapperClassName">
+                    <div
+                      v-for="productItem in kitchenStore.menuTodaySales.elements.meal"
+                      :key="productItem.id"
+                      class="menu__card"
+                    >
+                      <h5 class="menu__card-title">
+                        {{ productItem.name }}
+                      </h5>
+                      <img
+                        :src="ColaImg"
+                        :alt="productItem.name"
+                        class="menu__card-img"
+                      />
+                      <div class="menu__card-subtitles">
+                        <span>{{ productItem.unit_name }} </span>
+                        <span>{{ formatNumber(productItem.price) }} UZS</span>
+                      </div>
+                      <div class="menu__card__actions">
+                        <button
+                          @click="updateQuantity(productItem.id, false)"
+                          :disabled="!orders.has(productItem.id)"
+                          class="menu__card__action-btn"
+                        >
+                          <svg
+                            :data-src="MinusIcon"
+                            class="menu__card__action-btn__icon"
+                          />
+                        </button>
+                        <span>
+                        {{ orders.get(productItem.id) ?? 0 }}
+                      </span>
+                        <button
+                          @click="updateQuantity(productItem.id)"
+                          class="menu__card__action-btn"
+                          :disabled="orders.has(productItem.id) && (orders.get(productItem.id) == productItem.amount)"
+                        >
+                          <svg
+                            :data-src="Plus3Icon"
+                            class="menu__card__action-btn__icon"
+                          />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
           <div
             v-else-if="activeTab === TABS.ALL"
@@ -861,12 +880,12 @@ const mealTextFilter = (index: string): string => {
                     <!--                    </ElTableColumn>-->
                   </ElTable>
                 </div>
-
               </div>
               <div v-else-if="kitchenStore.activeSalesPart">
                 <h4 class="font-semibold text-2xl text-black">Меню</h4>
                 <ElTable
-                  :data="salesAllTabTableData"
+                  v-if="kitchenStore.menuWeekly && kitchenStore.menuWeekly[activeListDate] && kitchenStore.menuWeekly[activeListDate]"
+                  :data="kitchenStore.menuWeekly[activeListDate].product ? kitchenStore.menuWeekly[activeListDate].product : kitchenStore.menuWeekly[activeListDate].meal"
                   stripe
                   class="custom-element-table custom-element-table-normal menu__sales-all-tab-table mt-4"
                   highlight-current-row
@@ -880,51 +899,87 @@ const mealTextFilter = (index: string): string => {
                     :sortable="!!column.sortable"
                     :align="column.align ?? 'left'"
                   >
+
+                    <template
+                      v-if="column.prop === 'idx'"
+                      #default="{ row, $index }: { row: Record<string, any>, $index: number }"
+                    >
+                      <div class="">
+                        {{ $index + 1 }}
+                      </div>
+                    </template>
                     <template
                       v-if="column.prop === 'type'"
                       #default="{ row }: { row: Record<string, any> }"
                     >
                       <div class="flex items-center gap-x-3">
                         <img
-                          :src="DishesImg"
-                          :alt="row.type"
+                          :src="image"
+                          :alt="row.name"
                           class="size-8 rounded-full object-contain"
                         />
-                        <span>{{ row.type }}</span>
+                        <span>{{ row.name }}</span>
                       </div>
                     </template>
+
                     <template
-                      v-if="column.prop === 'action'"
+                      v-if="column.prop === 'date'"
                       #default="{ row }: { row: Record<string, any> }"
                     >
-                      <div
-                        v-if="row.action"
-                        class="flex items-center justify-end gap-x-2"
-                      >
-                        <RouterLink
-                          :to="{
-                            name: 'KitchenMenuShow',
-                            params: { id: row.idx },
-                          }"
-                          class="action-btn"
-                        >
-                          <img
-                            src="@/assets/images/eye.svg"
-                            alt="eye"
-                          />
-                        </RouterLink>
-
-                        <button
-                          @click.stop
-                          class="action-btn"
-                        >
-                          <img
-                            src="@/assets/images/icons/edit.svg"
-                            alt="edit"
-                          />
-                        </button>
+                      <div class="text-center">
+                        {{ activeListDate }}
                       </div>
                     </template>
+
+                    <template
+                      v-if="column.prop === 'net_price'"
+                      #default="{ row }: { row: Record<string, any> }"
+                    >
+                      <div class="text-center">
+                        {{ row.net_price && row.net_price.toLocaleString() }}
+                      </div>
+                    </template>
+
+                    <template
+                      v-if="column.prop === 'price'"
+                      #default="{ row }: { row: Record<string, any> }"
+                    >
+                      <div class="text-center">
+                        {{ row.price && row.price.toLocaleString() }}
+                      </div>
+                    </template>
+                    <!--                    <template-->
+                    <!--                      v-if="column.prop === 'action'"-->
+                    <!--                      #default="{ row }: { row: Record<string, any> }"-->
+                    <!--                    >-->
+                    <!--                      <div-->
+                    <!--                        v-if="row.action"-->
+                    <!--                        class="flex items-center justify-end gap-x-2"-->
+                    <!--                      >-->
+                    <!--                        <RouterLink-->
+                    <!--                          :to="{-->
+                    <!--                            name: 'KitchenMenuShow',-->
+                    <!--                            params: { id: row.idx },-->
+                    <!--                          }"-->
+                    <!--                          class="action-btn"-->
+                    <!--                        >-->
+                    <!--                          <img-->
+                    <!--                            src="@/assets/images/eye.svg"-->
+                    <!--                            alt="eye"-->
+                    <!--                          />-->
+                    <!--                        </RouterLink>-->
+
+                    <!--                        <button-->
+                    <!--                          @click.stop-->
+                    <!--                          class="action-btn"-->
+                    <!--                        >-->
+                    <!--                          <img-->
+                    <!--                            src="@/assets/images/icons/edit.svg"-->
+                    <!--                            alt="edit"-->
+                    <!--                          />-->
+                    <!--                        </button>-->
+                    <!--                      </div>-->
+                    <!--                    </template>-->
                   </ElTableColumn>
                 </ElTable>
               </div>
@@ -976,19 +1031,20 @@ const mealTextFilter = (index: string): string => {
             >
               <div
                 class="menu__card"
-                v-for="productItem in selectedProducts"
-                :key="productItem.id"
+                v-for="(productItem, productIndex) in selectedProducts"
+                :key="productIndex"
               >
+                <!--                {{productItem}}-->
                 <h5 class="menu__card-title">
                   {{ productItem.name }}
                 </h5>
                 <img
-                  :src="productItem.photo as any"
+                  :src="ColaImg"
                   :alt="productItem.name"
                   class="menu__card-img"
                 />
                 <div class="menu__card-subtitles">
-                  <span>{{ productItem.weight }} литр</span>
+                  <span>{{ productItem.unit_name }} </span>
                   <span>{{ formatNumber(productItem.price) }} UZS</span>
                 </div>
                 <div class="menu__card__actions">
@@ -1008,10 +1064,12 @@ const mealTextFilter = (index: string): string => {
                   <button
                     @click="updateQuantity(productItem.id)"
                     class="menu__card__action-btn"
+                    :disabled="orders.has(productItem.id) && (orders.get(productItem.id) == productItem.amount)"
                   >
                     <svg
                       :data-src="Plus3Icon"
                       class="menu__card__action-btn__icon"
+
                     />
                   </button>
                 </div>
@@ -1037,6 +1095,7 @@ const mealTextFilter = (index: string): string => {
                 type="primary"
                 size="large"
                 class="!bg-blue"
+                @click="createOrder"
               >
                 Продать
               </ElButton>

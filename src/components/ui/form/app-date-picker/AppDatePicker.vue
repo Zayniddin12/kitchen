@@ -2,7 +2,7 @@
   setup
   lang="ts"
 >
-import { computed, h, inject, ref, Ref, shallowRef, useSlots, watch } from "vue";
+import { computed, h, inject, ref, Ref, shallowRef, useSlots, useTemplateRef, watch, watchEffect } from "vue";
 import {
   AppDatePickerPropsType,
   AppDatePickerValueType,
@@ -10,14 +10,15 @@ import {
 import CalendarIcon from "@/assets/images/icons/calendar.svg";
 import { getRules, setRules } from "@/components/ui/form/validate";
 import { ValidationErrorsType } from "@/components/ui/form/form.type";
+import { MaskInput } from "maska";
 
 const model = defineModel<AppDatePickerValueType>();
 
 const props = withDefaults(defineProps<AppDatePickerPropsType>(), {
   labelPosition: "top",
-  placeholder: "Выбирать",
+  placeholder: "Выберите",
   format: "DD.MM.YYYY",
-  valueFormat: "DD.MM.YYYY",
+  valueFormat: "YYYY-MM-DD",
   type: "date",
   editable: true,
   labelClass: "",
@@ -76,6 +77,27 @@ watch(validationErrors, () => {
   deep: true,
 });
 
+
+const computedMask = computed(() => {
+  if (!props.format) return "##.##.####";
+  return props.format.replace(/D/g, "#").replace(/M/g, "#").replace(/Y/g, "#");
+});
+
+
+const datePickerWrapper = useTemplateRef<HTMLDivElement | null>("date-picker-wrapper");
+
+const applyMask = () => {
+  if (!datePickerWrapper.value) return;
+
+  const inputElement = datePickerWrapper.value.querySelector(".el-input__inner") as HTMLInputElement | null;
+
+  if (!inputElement) return;
+
+  new MaskInput(inputElement, { mask: computedMask.value });
+};
+
+watch(datePickerWrapper, applyMask, { immediate: true });
+
 </script>
 <template>
   <ElFormItem
@@ -101,34 +123,39 @@ watch(validationErrors, () => {
         </template>
       </span>
     </template>
-    <ElDatePicker
-      v-model="model"
-      :id
-      :placeholder
-      :disabled
-      :readonly
-      :size
-      :name
-      :clearable
-      :editable
-      :start-placeholder
-      :end-placeholder
-      :type
-      :format
-      :popper-class
-      :popper-options
-      :range-separator
-      :default-time
-      :default-value
-      :value-format
-      :unlink-panels
-      :prefix-icon="icon"
-      :disabled-date
-      :teleported
-      :empty-values
-      :class="['app-date-picker__date-picker', `app-date-picker__date-picker-icon--${iconPosition}`]"
-      @change="change"
-    />
+    <div
+      ref="date-picker-wrapper"
+      class="w-full"
+    >
+      <ElDatePicker
+        v-model="model"
+        :id
+        :placeholder
+        :disabled
+        :readonly
+        :size
+        :name
+        :clearable
+        :editable
+        :start-placeholder
+        :end-placeholder
+        :type
+        :format
+        :popper-class
+        :popper-options
+        :range-separator
+        :default-time
+        :default-value
+        :value-format
+        :unlink-panels
+        :prefix-icon="icon"
+        :disabled-date
+        :teleported
+        :empty-values
+        :class="['app-date-picker__date-picker', `app-date-picker__date-picker-icon--${iconPosition}`]"
+        @change="change"
+      />
+    </div>
   </ElFormItem>
 </template>
 

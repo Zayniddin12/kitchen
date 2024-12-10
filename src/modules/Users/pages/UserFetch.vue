@@ -1,6 +1,6 @@
 <script
-    setup
-    lang="ts"
+  setup
+  lang="ts"
 >
 import { computed, onMounted, reactive, ref, watch, watchEffect } from "vue";
 import { useRoute, useRouter } from "vue-router";
@@ -15,8 +15,8 @@ import { filterObjectValues } from "@/utils/helper";
 import AppForm from "@/components/ui/form/app-form/AppForm.vue";
 
 enum TABS {
-  PINFL = 1,
-  PASSPORT
+  PASSPORT = 1,
+  PINFL
 }
 
 interface TabType {
@@ -28,19 +28,19 @@ interface TabType {
 const router = useRouter();
 const route = useRoute();
 
-const defaultTab = TABS.PINFL;
+const defaultTab = TABS.PASSPORT;
 
 const tabs = ref<TabType[]>([
   {
-    title: "ПИНФЛ",
-    icon: "pinFl",
-    value: TABS.PINFL
-  },
-  {
     title: "Серия и номер паспорта",
     icon: "seria",
-    value: TABS.PASSPORT
-  }
+    value: TABS.PASSPORT,
+  },
+  {
+    title: "ПИНФЛ",
+    icon: "pinFl",
+    value: TABS.PINFL,
+  },
 ]);
 
 const validTabs = tabs.value.map(tab => tab.value);
@@ -57,16 +57,16 @@ const { setBreadCrumb } = useBreadcrumb();
 const setBreadCrumbFn = () => {
   setBreadCrumb([
     {
-      label: "Кадры"
+      label: "Кадры",
     },
     {
       label: String(route.meta?.parentRouteTitle ?? ""),
-      to: route.meta?.parentRouteUrl
+      to: route.meta?.parentRouteUrl,
     },
     {
       label: "Добавить",
-      isActionable: true
-    }
+      isActionable: true,
+    },
   ]);
 };
 
@@ -76,7 +76,7 @@ const commonStore = useCommonStore();
 const form = reactive<SearchUserDataType>({
   pinfl: "",
   pass_number: "",
-  birthday: ""
+  birthday: "",
 });
 
 const v$ = ref<ValidationType | null>(null);
@@ -91,20 +91,20 @@ const fetchSearchUser = async () => {
     return;
   }
 
-  const newForm:SearchUserDataType = {
-    birthday: form.birthday
-  }
+  const newForm: SearchUserDataType = {
+    birthday: form.birthday,
+  };
 
   if (activeTab.value === TABS.PINFL) {
     newForm.pinfl = form.pinfl;
-  }else {
+  } else {
     newForm.pass_number = form.pass_number;
   }
 
   try {
     await userStore.fetchSearchUser(userStore.activeUserPage ? "users" : "employee", filterObjectValues(newForm));
     validationErrors.value = null;
-    router.push({name: `${userStore.activeRoutePrefix}-create`})
+    router.push({ name: `${userStore.activeRoutePrefix}-create` });
   } catch (error: any) {
     if (error?.error?.code === 422) {
       validationErrors.value = error.meta.validation_errors;
@@ -112,6 +112,14 @@ const fetchSearchUser = async () => {
   }
 };
 
+const minAge = computed(() => {
+  const now = new Date();
+  return new Date(now.getFullYear() - 18, now.getMonth(), now.getDate());
+});
+
+const disabledDate = (time: Date) => {
+  return time > minAge.value;
+};
 
 onMounted(() => {
   setBreadCrumbFn();
@@ -126,35 +134,35 @@ onMounted(() => {
       <div>
         <div class="app-tabs w-full">
           <RouterLink
-              v-for="item in tabs"
-              :key="item.value"
-              :class="['app-tab flex items-center gap-x-2', {'app-tab--active': activeTab === item.value}]"
-              :to="{query: {...route.query, tab: item.value}}"
+            v-for="item in tabs"
+            :key="item.value"
+            :class="['app-tab flex items-center gap-x-2', {'app-tab--active': activeTab === item.value}]"
+            :to="{query: {...route.query, tab: item.value}}"
           >
             <svg
-                :data-src="'/sidebar/' + item.icon + '.svg'"
-                class="size-5 tab-icon tab-icon--"
-                :class="['size-5', {'tab-icon--no-active': activeTab !== item.value}]"
+              :data-src="'/sidebar/' + item.icon + '.svg'"
+              class="size-5 tab-icon tab-icon--"
+              :class="['size-5', {'tab-icon--no-active': activeTab !== item.value}]"
             />
             {{ item.title }}
           </RouterLink>
         </div>
         <AppForm
-            :value="form"
-            :validation-errors
-            @validation="(value) => v$=value"
-            @submit.prevent="fetchSearchUser"
+          :value="form"
+          :validation-errors
+          @validation="(value) => v$=value"
+          @submit.prevent="fetchSearchUser"
         >
-          <TransitionGroup
+          <div class="border rounded-3xl p-6 my-4 flex flex-col gap-y-1.5">
+            <TransitionGroup
               :name="activeTab>defaultTab ? 'nested' : 'nested-reverse'"
               :duration="{ enter: 1000, leave: 2000 }"
-              tag="div"
-              class="border rounded-3xl p-6 my-4 flex flex-col gap-y-1.5"
-          >
-            <AppInput
-                v-if="activeTab === defaultTab"
+            >
+              <AppInput
+                v-if="activeTab === TABS.PINFL"
                 v-model="form.pinfl"
                 type="number"
+                custom-type="text"
                 prop="pinfl"
                 placeholder="Введите"
                 label="ПИНФЛ"
@@ -163,21 +171,19 @@ onMounted(() => {
                 :min="14"
                 :max="14"
                 :mask="'#'.repeat(14)"
-            />
+              />
               <AppInput
                 v-else
-                  v-model="form.pass_number"
-                  prop="pass_number"
-                  placeholder="Введите"
-                  label="Серия и номер паспорта"
-                  label-class="text-[#A8AAAE] text-xs"
-                  required
-                  :min="9"
-                  :max="9"
-                  :maxlength="9"
-                  :minlength="9"
-                  :mask="{
-                    mask: 'AA#######',
+                v-model="form.pass_number"
+                prop="pass_number"
+                placeholder="Введите"
+                label="Серия и номер паспорта"
+                label-class="text-[#A8AAAE] text-xs"
+                required
+                :min="10"
+                :max="10"
+                :mask="{
+                    mask: 'AA #######',
                     tokens: {
                      'A': {
                         pattern: /[A-Z]/,
@@ -186,24 +192,24 @@ onMounted(() => {
                     }
                   }"
               />
+            </TransitionGroup>
             <AppDatePicker
               v-model="form.birthday"
+              :default-value="minAge"
               prop="birthday"
               label="Дата рождения"
-              format="YYYY-MM-DD"
-              value-format="YYYY-MM-DD"
               placeholder="дд.мм.гггг"
-              :disabled-date="time => Date.now()<time"
+              :disabled-date
               label-class="text-[#A8AAAE] text-xs"
               required
             />
-          </TransitionGroup>
+          </div>
           <ElButton
-              :loading="userStore.searchUserLoading"
-              type="primary"
-              size="large"
-              class="custom-apply-btn ml-auto"
-              @click="fetchSearchUser"
+            :loading="userStore.searchUserLoading"
+            type="primary"
+            size="large"
+            class="custom-apply-btn ml-auto"
+            @click="fetchSearchUser"
           >
             Найти
           </ElButton>
@@ -213,8 +219,8 @@ onMounted(() => {
   </div>
 </template>
 
-<style scoped lang="scss">
-  .tab-icon--no-active *{
-    fill: #A8AAAE;
-  }
+<style lang="scss">
+.tab-icon--no-active * {
+  fill: #A8AAAE;
+}
 </style>

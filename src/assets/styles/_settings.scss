@@ -140,3 +140,11 @@ button[disabled] {
   fill: white;
   stroke: #EA5455;
 }
+
+.app-card {
+  @apply bg-gray-50 p-6 rounded-2xl;
+
+  &__item-title{
+    @apply text-blue-500 mb-[4px] block;
+  }
+}

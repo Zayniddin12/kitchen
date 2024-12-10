@@ -7,5 +7,6 @@ export interface AnalyticsCardDataType {
 
 export interface AnalyticsCardPropsType extends ChartType {
     icon: string,
+    legendItemGap?: number,
     data: AnalyticsCardDataType[],
 }

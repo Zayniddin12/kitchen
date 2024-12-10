@@ -1,6 +1,6 @@
 <script
-    setup
-    lang="ts"
+  setup
+  lang="ts"
 >
 import { AppSelectPropsType, AppSelectValueType } from "@/components/ui/form/app-select/app-select.type";
 import { computed, inject, onMounted, ref, Ref, useSlots, watch } from "vue";
@@ -9,11 +9,12 @@ import { ValidationErrorsType } from "@/components/ui/form/form.type";
 import { AppDatePickerValueType } from "@/components/ui/form/app-date-picker/app-date-picker.type";
 
 const model = defineModel<AppSelectValueType>({
-  default: ""
+  default: "",
 });
 
 const emit = defineEmits<{
   change: [value: AppSelectValueType]
+  input: [value: AppSelectValueType]
   clear: [value: AppSelectValueType]
 }>();
 
@@ -23,7 +24,7 @@ const props = withDefaults(defineProps<AppSelectPropsType>(), {
   itemLabel: "",
   labelClass: "",
   placeholder: "Выберите",
-  persistent: true
+  persistent: true,
 });
 
 const slots = useSlots();
@@ -57,6 +58,11 @@ const change = (value: AppSelectValueType) => {
   ignoreValidationError.value = !!validationErrors.value;
   emit("change", value);
 };
+
+const input = (value: AppSelectValueType) => {
+  ignoreValidationError.value = !!validationErrors.value;
+  emit("input", value);
+};
 const clear = (value: any) => {
   emit("clear", value);
 };
@@ -64,28 +70,34 @@ const clear = (value: any) => {
 watch(validationErrors, (newErrors) => {
   ignoreValidationError.value = false;
 }, {
-  deep: true
+  deep: true,
+});
+
+watch(model, (val) => {
+  input(val);
+}, {
+  immediate: true,
 });
 </script>
 
 <template>
   <ElFormItem
-      :label-position
-      :required
-      :class="appSelectClasses"
-      :size
-      :prop
-      :error="computedError"
-      :rules="setRules(getRules(props))"
+    :label-position
+    :required
+    :class="appSelectClasses"
+    :size
+    :prop
+    :error="computedError"
+    :rules="setRules(getRules(props))"
   >
     <template
-        v-if="slots.label || label"
-        #label
+      v-if="slots.label || label"
+      #label
     >
       <span :class="labelClass">
       <slot
-          v-if="slots.label"
-          name="label"
+        v-if="slots.label"
+        name="label"
       />
         <template v-else>
           {{ label }}
@@ -93,59 +105,60 @@ watch(validationErrors, (newErrors) => {
       </span>
     </template>
     <ElSelect
-        v-model="model"
-        :value-key="itemValue"
-        :size
-        :placeholder
-        :readonly
-        :disabled
-        :clearable
-        :name
-        :suffix-icon
-        :multiple
-        :multiple-limit
-        :collapse-tags
-        :collapseTagsTooltip
-        :maxCollapseTags
-        :loading
-        :loading-text
-        :filterable
-        :no-match-text
-        :no-data-text
-        :popper-class
-        :default-first-option
-        :teleported
-        :persistent
-        :automatic-dropdown
-        :placement
-        class="app-select__select"
-        @change="change"
-        @clear="clear"
-        :remote-method
-        :remote-show-suffix
-        :remote
+      v-model="model"
+      :value-key="itemValue"
+      :size
+      :placeholder
+      :readonly
+      :disabled
+      :clearable
+      :name
+      :suffix-icon
+      :multiple
+      :multiple-limit
+      :collapse-tags
+      :collapseTagsTooltip
+      :maxCollapseTags
+      :loading
+      :loading-text
+      :filterable
+      :no-match-text
+      :no-data-text
+      :popper-class
+      :default-first-option
+      :teleported
+      :persistent
+      :automatic-dropdown
+      :placement
+      class="app-select__select"
+      @change="change"
+      @input="input"
+      @clear="clear"
+      :remote-method
+      :remote-show-suffix
+      :remote
     >
       <template v-if="!slots.default">
         <ElOption
-            v-for="item in items"
-            :key="item[itemValue]"
-            :label="item[itemLabel]"
-            :value="item[itemValue]"
+          v-for="item in items"
+          :key="item[itemValue]"
+          :label="item[itemLabel]"
+          :value="item[itemValue]"
         >
           <slot
-              v-if="slots.option"
-              name="option"
-              v-bind="item"
+            v-if="slots.option"
+            name="option"
+            v-bind="item"
           />
         </ElOption>
       </template>
-      <slot/>
+      <slot />
       <template
-          #footer
-          v-if="slots.footer"
+        #footer
+        v-if="slots.footer"
       >
         <slot
-            name="footer"
+          name="footer"
         />
       </template>
     </ElSelect>

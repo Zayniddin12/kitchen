@@ -1,6 +1,6 @@
 <script
-    setup
-    lang="ts"
+  setup
+  lang="ts"
 >
 import { onMounted, reactive, ref, watch } from "vue";
 import { Search } from "@element-plus/icons-vue";
@@ -8,9 +8,9 @@ import { useRoute, useRouter } from "vue-router";
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 import { useSettingsStore } from "@/modules/Settings/store";
 import {
-  FoodFactoriesParamsType, FoodFactoryListType
+  FoodFactoriesParamsType, FoodFactoryListType,
 } from "@/modules/Settings/components/Reference/CombineNutrition/combine-nutrition.type";
-import { filterObjectValues } from "@/utils/helper";
+import { filterObjectValues, setTableColumnIndex } from "@/utils/helper";
 import { watchDebounced } from "@vueuse/core";
 
 const route = useRoute();
@@ -19,7 +19,7 @@ const router = useRouter();
 const form = reactive<FoodFactoriesParamsType>({
   page: null,
   per_page: null,
-  search: ""
+  search: "",
 });
 
 const settingsStore = useSettingsStore();
@@ -30,24 +30,24 @@ const setBreadCrumbFn = () => {
   setBreadCrumb([
     {
       label: "Настройки",
-      isActionable: false
+      isActionable: false,
     },
     {
       label: "Справочники",
       isActionable: false,
-      to: { name: "reference" }
+      to: { name: "reference" },
     },
 
     {
       label: "Управ, комбинаты и склады",
       isActionable: false,
-      to: { name: "reference" }
+      to: { name: "reference" },
     },
 
     {
       label: "Комбинаты питания",
-      isActionable: true
-    }
+      isActionable: true,
+    },
   ]);
 };
 
@@ -95,18 +95,18 @@ const tableCurrentChange = (value: FoodFactoryListType) => {
 
       <div class="flex items-center">
         <el-input
-            v-model="form.search"
-            placeholder="Поиск"
-            :prefix-icon="Search"
-            class="w-[300px] mr-[16px]"
+          v-model="form.search"
+          placeholder="Поиск"
+          :prefix-icon="Search"
+          class="w-[300px] mr-[16px]"
         />
 
         <button
-            @click="$router.push({name: 'reference-combine-nutrition-add'})"
-            class="flex items-center justify-center gap-3 custom-apply-btn"
+          @click="$router.push({name: 'reference-combine-nutrition-add'})"
+          class="flex items-center justify-center gap-3 custom-apply-btn"
         >
           <span
-              :style="{
+            :style="{
                   maskImage: 'url(/icons/plusIcon.svg)',
                   backgroundColor: '#fff',
                   color: '#fff',
@@ -128,65 +128,60 @@ const tableCurrentChange = (value: FoodFactoryListType) => {
 
     <div class="mt-6">
       <el-table
-          v-loading="settingsStore.foodFactoriesLoading"
-          :data="settingsStore.foodFactories?.food_factories ?? []"
-          stripe
-          class="custom-element-table"
-          highlight-current-row
-          @current-change="tableCurrentChange"
+        v-loading="settingsStore.foodFactoriesLoading"
+        :data="settingsStore.foodFactories?.food_factories ?? []"
+        stripe
+        class="custom-element-table"
+        highlight-current-row
+        @current-change="tableCurrentChange"
       >
         <el-table-column
-            prop="idx"
-            label="№"
-            width="80"
+          prop="idx"
+          label="№"
+          width="80"
         >
-          <template
-              #default="{$index}"
-              v-if="settingsStore.foodFactories"
-          >
-            {{
-              form.page > 1 ? settingsStore.foodFactories.paginator.per_page * (form.page - 1) + $index + 1 : $index + 1
-            }}
+          <template #default="{$index}">
+            {{ setTableColumnIndex($index, form.page ?? 1, settingsStore.foodFactories?.paginator.per_page ?? 0) }}
           </template>
         </el-table-column>
         <el-table-column
-            prop="name"
-            label="Наименование"
-            sortable
-            width="400"
+          prop="name"
+          label="Наименование"
+          sortable
+          width="400"
         />
         <el-table-column
-            prop="management"
-            label="Региональное управление"
-            sortable
+          prop="management"
+          label="Региональное управление"
+          sortable
         >
           <template #default="{row}">
             {{ row.management.name }}
           </template>
         </el-table-column>
         <el-table-column
-            label="Действие"
-            align="right"
+          label="Действие"
+          align="right"
         >
           <template #default="{row}">
             <div class="inline-flex items-center">
               <RouterLink
-                  class="action-btn mr-2"
-                  :to="{name: 'reference-combine-nutrition-view', params: {id: row.id}}"
+                class="action-btn mr-2"
+                :to="{name: 'reference-combine-nutrition-view', params: {id: row.id}}"
               >
                 <img
-                    src="@/assets/images/eye.svg"
-                    alt="download"
+                  src="@/assets/images/eye.svg"
+                  alt="download"
                 />
               </RouterLink>
 
               <RouterLink
-                  class="action-btn"
-                  :to="{name: 'reference-combine-nutrition-edit', params: {id: row.id}}"
+                class="action-btn"
+                :to="{name: 'reference-combine-nutrition-edit', params: {id: row.id}}"
               >
                 <img
-                    src="@/assets/images/icons/edit.svg"
-                    alt="eye"
+                  src="@/assets/images/icons/edit.svg"
+                  alt="eye"
                 />
               </RouterLink>
             </div>
@@ -194,8 +189,8 @@ const tableCurrentChange = (value: FoodFactoryListType) => {
         </el-table-column>
       </el-table>
       <div
-          v-if="settingsStore.foodFactories && settingsStore.foodFactories.paginator.pages_count>1"
-          class="mt-6 flex items-center justify-between"
+        v-if="settingsStore.foodFactories && settingsStore.foodFactories.paginator.pages_count>1"
+        class="mt-6 flex items-center justify-between"
       >
         <div class="text-cool-gray text-[14px]">
           Показано {{ form.page }}–{{ form.per_page }} из {{ settingsStore.foodFactories.paginator.pages_count }}
@@ -203,13 +198,13 @@ const tableCurrentChange = (value: FoodFactoryListType) => {
         </div>
 
         <el-pagination
-            v-model:current-page="form.page"
-            @current-change="changePage"
-            :page-size="form.per_page"
-            class="float-right"
-            background
-            layout="prev, pager, next"
-            :total="settingsStore.foodFactories.paginator.total_count"
+          v-model:current-page="form.page"
+          @current-change="changePage"
+          :page-size="form.per_page"
+          class="float-right"
+          background
+          layout="prev, pager, next"
+          :total="settingsStore.foodFactories.paginator.total_count"
         />
       </div>
     </div>

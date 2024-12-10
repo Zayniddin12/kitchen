@@ -14,18 +14,13 @@ import { ElNotification } from "element-plus";
 import AppSelect from "@/components/ui/form/app-select/AppSelect.vue";
 import { filterObjectValues } from "@/utils/helper";
 import { maska } from "maska/dist/svelte";
+import AppOverlay from "@/components/ui/app-overlay/AppOverlay.vue";
 
 const settingsStore = useSettingsStore();
 
 const route = useRoute();
 const router = useRouter();
 const { confirm } = useConfirm();
-
-interface TableData {
-  id: number;
-  name: string;
-  type: string;
-}
 
 interface Name {
   uz: string;
@@ -169,9 +164,13 @@ const isDisabled = computed<boolean>(() => {
         <AppForm
           :value="warehouseData"
           @validation="setValidation"
-          class="mt-6"
         >
-          <div class="border border-[#E2E6F3] rounded-[24px] p-[24px] h-[65vh] flex flex-col">
+          <AppOverlay
+            :loading="settingsStore.wareHouseItemLoading"
+            :rounded="16"
+            parent-class-name="rounded-2xl border border-[#E2E6F3] p-[24px]"
+            class="min-h-[55vh] flex flex-col"
+          >
             <div class="flex items-center gap-4">
               <app-input
                 v-model="warehouseData.name.ru"
@@ -256,7 +255,7 @@ const isDisabled = computed<boolean>(() => {
               @change="switchChange2"
               :disabled="isDisabled"
             />
-          </div>
+          </AppOverlay>
         </AppForm>
         <div
           v-if="!route.query.type"
@@ -280,7 +279,10 @@ const isDisabled = computed<boolean>(() => {
               Отменить
             </button>
 
-            <button class="custom-apply-btn" @click="handleSubmit">
+            <button
+              class="custom-apply-btn"
+              @click="handleSubmit"
+            >
               {{ $route.params.id ? "Сохранить" : "Добавить" }}
             </button>
           </div>
@@ -293,7 +295,10 @@ const isDisabled = computed<boolean>(() => {
           v-if="route.query.type == 'view'"
           class="flex items-center gap-4 bg-[#F8F9FC] py-[10px] px-[20px] rounded-[8px]"
         >
-          <img src="@/assets/images/icons/edit.svg" alt="edit" />
+          <img
+            src="../../../../../assets/images/icons/edit.svg"
+            alt="edit"
+          />
           Редактировать
         </button>
       </div>

@@ -14,17 +14,19 @@ import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 import { useDocumentStore } from "@/modules/Document/document.store";
 import { ActType, ContractsParamsType, ContractType } from "@/modules/Document/document.types";
 import { ValidationType } from "@/components/ui/form/app-form/app-form.type";
-import { filterObjectValues, formatNumber, setTableColumnIndex } from "@/utils/helper";
+import { filterObjectValues, formatNumber, setTableColumnIndex, validateNumber } from "@/utils/helper";
 import { useSettingsStore } from "@/modules/Settings/store";
 import AppForm from "@/components/ui/form/app-form/AppForm.vue";
 import { AppSelectValueType } from "@/components/ui/form/app-select/app-select.type";
 import AppPagination from "@/components/ui/app-pagination/AppPagination.vue";
+import { useCommonStore } from "@/stores/common.store";
 
 const route = useRoute();
 const router = useRouter();
 
 const documentStore = useDocumentStore();
 const settingsStore = useSettingsStore();
+const commonStore = useCommonStore();
 
 const form = reactive<ContractsParamsType>({
   page: null,
@@ -67,6 +69,18 @@ const setBreadCrumbFn = () => {
   ]);
 };
 
+const validate = async () => {
+  if (!v$.value) return;
+
+  const value = await v$.value.validate();
+
+  if (!value) {
+    commonStore.errorToast("Validation error");
+  }
+
+  return value;
+};
+
 const fetchContracts = async () => {
   const query = route.query as Record<string, any>;
 
@@ -75,7 +89,7 @@ const fetchContracts = async () => {
   const totalPrice = parseInt(query.total_price as string);
   const productCategoryId = parseInt(query.product_category_id as string);
   const productTypeId = parseInt(query.product_type_id as string);
-  const quantity = parseInt(query.quantity as string);
+  const quantity = validateNumber(query.quantity as string);
   const unitId = parseInt(query.unit_id as string);
 
   form.page = !isNaN(page) ? page : null;
@@ -121,7 +135,9 @@ const changePage = (value: number) => {
   router.push({ query: { ...route.query, page: value } });
 };
 
-const filterForm = () => {
+const filterForm = async () => {
+  if (!(await validate())) return;
+
   const query = { ...filterObjectValues(form) };
   delete query.page;
 
@@ -255,8 +271,9 @@ watch(() => documentStore.documentsIsRefresh, (newValue) => {
               @change="changeProductType"
             />
             <AppInput
-              v-model.number="form.quantity"
-              type="number"
+              v-model="form.quantity"
+              prop="quantity"
+              custom-type="number"
               placeholder="Количество"
               label="Количество"
               label-class="text-[#A8AAAE] text-xs font-medium"

@@ -3,7 +3,7 @@ import { PaginationParamsType, PaginationType } from "@/types/pagination.type";
 
 export interface BaseWarehousesParamsType extends PaginationParamsType{
     search?: string;
-    base_id: number;
+    base_id?: number;
 }
 
 export interface WarehouseProductType{

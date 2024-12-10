@@ -104,7 +104,9 @@ const handleSubmit = async () => {
       kitchen_id: Number(route.params.child_id),
       rations: [
         {
-          id: tableData.value.id,
+          id: tableData.value.product_id,
+          price: tableData.value.price,
+          menu_id: tableData.value.id,
           quantity: num.value,
         },
 
@@ -170,7 +172,7 @@ const handleSubmit = async () => {
             <div class="px-4 py-3.5 flex justify-between items-center ">
               <div class="flex items-center">
                 <span class="text-[#8F9194] text-[14px] font-medium mr-[16px]">Количество порции</span>
-<!--                {{ num }}-->
+                <!--                {{ num }}-->
                 <el-input-number
                   class="order-kitchen"
                   v-model="num"

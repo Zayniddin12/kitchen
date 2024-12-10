@@ -1,14 +1,14 @@
 <script
-    setup
-    lang="ts"
+  setup
+  lang="ts"
 >
 import {
   AppInputPropsType,
-  AppInputValueType
+  AppInputValueType,
 } from "@/components/ui/form/app-input/app-input.type";
 import { computed, inject, ref, Ref, useSlots, watch } from "vue";
 import { vMaska } from "maska/vue";
-import { getRules, setRules } from "@/components/ui/form/validate";
+import { setRules } from "@/components/ui/form/validate";
 import { ValidationErrorsType } from "@/components/ui/form/form.type";
 
 const [model, modifiers] = defineModel<AppInputValueType>();
@@ -30,8 +30,8 @@ const emit = defineEmits<{
 }>();
 
 const validationErrors = inject<Ref<ValidationErrorsType>>(
-    "validation-errors",
-    ref(null)
+  "validation-errors",
+  ref(null),
 );
 const ignoreValidationError = ref(false);
 
@@ -39,10 +39,10 @@ const computedError = computed(() => {
   if (props.error) return props.error;
   else if (ignoreValidationError.value) return "";
   else if (
-      validationErrors.value &&
-      props.prop &&
-      typeof props.prop === "string" &&
-      validationErrors.value[props.prop]
+    validationErrors.value &&
+    props.prop &&
+    typeof props.prop === "string" &&
+    validationErrors.value[props.prop]
   ) {
     return validationErrors.value[props.prop];
   }
@@ -63,8 +63,27 @@ const appInputClasses = computed<string[]>(() => {
 const slots = useSlots();
 
 const computedMask = computed(() =>
-    props.type === "tel" && !props.mask ? "## ###-##-##" : props.mask || ""
+  props.type === "tel" && !props.mask ? "## ###-##-##" : props.mask || "",
 );
+
+const computedType = computed(() => {
+  return props.customType ?? props.type;
+});
+
+const computedMin = computed(() => {
+  if (props.min) return props.min;
+
+  if (computedType.value === "number") return 0.1;
+});
+
+const computedRules = computed(() => {
+  return setRules({
+    required: props.required,
+    min: computedMin.value,
+    max: props.max,
+    type: computedType.value,
+  });
+});
 
 const change = (value: AppInputValueType) => {
   ignoreValidationError.value = !!validationErrors.value;
@@ -72,13 +91,13 @@ const change = (value: AppInputValueType) => {
 };
 
 watch(
-    validationErrors,
-    () => {
-      ignoreValidationError.value = false;
-    },
-    {
-      deep: true
-    }
+  validationErrors,
+  () => {
+    ignoreValidationError.value = false;
+  },
+  {
+    deep: true,
+  },
 );
 
 
@@ -86,22 +105,22 @@ watch(
 
 <template>
   <ElFormItem
-      :label-position
-      :required
-      :class="appInputClasses"
-      :size
-      :prop
-      :error="computedError"
-      :rules="setRules(getRules(props))"
+    :label-position
+    :required
+    :class="appInputClasses"
+    :size
+    :prop
+    :error="computedError"
+    :rules="computedRules"
   >
     <template
-        v-if="slots.label || label"
-        #label
+      v-if="slots.label || label"
+      #label
     >
       <span :class="labelClass">
         <slot
-            v-if="slots.label"
-            name="label"
+          v-if="slots.label"
+          name="label"
         />
         <template v-else>
           {{ label }}
@@ -109,52 +128,55 @@ watch(
       </span>
     </template>
     <ElInput
-        v-bind="{
+      v-bind="{
         modelValue: model,
         'onUpdate:modelValue': updateModelValue,
         ...modifiers,
       }"
-        :type
-        :parser
-        :show-password
-        v-maska="computedMask"
-        :readonly
-        :disabled
-        :placeholder
-        :size
-        :clearable
-        :name
-        :suffix-icon
-        :prefix-icon
-        :rows
-        :autosize
-        :maxlength
-        :minlength
-        :showWordLimit
-        :inputStyle
-        class="app-input__input"
-        @change="change"
+      :type
+      :parser
+      :show-password
+      v-maska="computedMask"
+      :readonly
+      :disabled
+      :placeholder
+      :size
+      :clearable
+      :name
+      :suffix-icon
+      :prefix-icon
+      :rows
+      :autosize
+      :maxlength="props.maxlength ?? props.max"
+      :minlength="props.minlength ?? computedMin"
+      :showWordLimit
+      :inputStyle
+      class="app-input__input"
+      @change="change"
     >
       <template
-          v-if="slots.prepend || type === 'tel' || prepend"
-          #prepend
+        v-if="slots.prepend || type === 'tel' || prepend"
+        #prepend
       >
         <slot
-            v-if="slots.prepend"
-            name="prepend"
+          v-if="slots.prepend"
+          name="prepend"
         />
         <template v-else-if="prepend">
-          {{prepend}}
+          {{ prepend }}
         </template>
         <template v-else>+998</template>
       </template>
       <template
-          v-if="slots.append || append"
-          #append
+        v-if="slots.append || append"
+        #append
       >
-        <slot v-if="slots.append" name="append"/>
+        <slot
+          v-if="slots.append"
+          name="append"
+        />
         <template v-else>
-          {{ append}}
+          {{ append }}
         </template>
       </template>
     </ElInput>
