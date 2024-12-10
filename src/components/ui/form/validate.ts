@@ -21,9 +21,11 @@ export const setRules = (rules: RulesType): Arrayable<FormItemRule> | ValidateRu
     });
   }
 
-  if (rules.type === "text") {
+  if (rules.type === "text" || rules.type === "passport") {
     if (rules.min || rules.max) {
-      const lengthRule: ValidateRulesType = { trigger, min: rules.min, max: rules.max };
+      const lengthRule: ValidateRulesType = {
+        trigger, min: rules.min, max: rules.max
+      };
 
       if (rules.min === rules.max) {
         lengthRule.message = `Длина должна быть ${rules.min} символов`;

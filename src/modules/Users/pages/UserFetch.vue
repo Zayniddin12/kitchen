@@ -175,16 +175,22 @@ onMounted(() => {
               <AppInput
                 v-else
                 v-model="form.pass_number"
-                type="passport"
                 prop="pass_number"
                 placeholder="Введите"
                 label="Серия и номер паспорта"
                 label-class="text-[#A8AAAE] text-xs"
                 required
-                :min="9"
-                :max="9"
-                :maxlength="10"
-                :minlength="10"
+                :min="10"
+                :max="10"
+                :mask="{
+                    mask: 'AA #######',
+                    tokens: {
+                     'A': {
+                        pattern: /[A-Z]/,
+                       transform: (chr: string) => chr.toUpperCase(),
+                     }
+                    }
+                  }"
               />
             </TransitionGroup>
             <AppDatePicker

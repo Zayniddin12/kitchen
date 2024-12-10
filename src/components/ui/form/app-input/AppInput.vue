@@ -62,26 +62,9 @@ const appInputClasses = computed<string[]>(() => {
 
 const slots = useSlots();
 
-const computedMask = computed(() => {
-  if (props.mask) return props.mask;
-
-  switch (props.type) {
-    case "tel":
-      return "## ###-##-##";
-    case "passport":
-      return {
-        mask: "AA #######",
-        tokens: {
-          "A": {
-            pattern: /[A-Z]/,
-            transform: (chr: string) => chr.toUpperCase(),
-          },
-        },
-      };
-    default:
-      return "";
-  }
-});
+const computedMask = computed(() =>
+  props.type === "tel" && !props.mask ? "## ###-##-##" : props.mask || "",
+);
 
 const computedType = computed(() => {
   return props.customType ?? props.type;
