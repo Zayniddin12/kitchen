@@ -25,7 +25,7 @@ const itemComponentTag = (breadcrumbItem: BreadcrumbItemType): itemComponentTagT
 };
 
 watch(() => route.name, () => {
-  setBreadCrumb([]);
+  // setBreadCrumb([]);
 });
 
 </script>

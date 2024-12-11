@@ -222,3 +222,7 @@ export const validateNumber = (value: string) => {
   if (/^0\d+$/.test(value)) return NaN;
   return Number(value);
 };
+
+export const setDocumentTitle = (title: string) => {
+  document.title = title;
+}

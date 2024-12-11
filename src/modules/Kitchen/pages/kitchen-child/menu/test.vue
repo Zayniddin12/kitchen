@@ -1069,7 +1069,7 @@ watch(
             class="!bg-blue-500 mt-6"
             type="primary"
             size="large"
-            tag="router-link"
+            tag="index-link"
             :to="{ name: 'KitchenMenuCreate' }"
           >
             <div class="flex items-center gap-x-2">

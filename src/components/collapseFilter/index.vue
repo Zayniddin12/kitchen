@@ -4,8 +4,11 @@
 >
 
 import { computed } from "vue";
+import { useI18n } from "vue-i18n";
 
 const model = defineModel<boolean>();
+
+const { t } = useI18n();
 
 const activeNames = computed<string[]>(() => {
   return model.value ? ["1"] : [];
@@ -30,7 +33,7 @@ const activeNames = computed<string[]>(() => {
           <div />
         </template>
         <div class="border-[#e2e6f3] border bg-[#F8F9FC] dark:bg-dark rounded-[10px] py-3 px-4">
-          <h1 class="text-[#4F5662] font-medium text-lg mb-3">Фильтр</h1>
+          <h1 class="text-[#4F5662] font-medium text-lg mb-3">{{ t("common.filter")}}</h1>
           <slot name="body" />
         </div>
       </el-collapse-item>

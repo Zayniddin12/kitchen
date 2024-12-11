@@ -71,14 +71,14 @@ const computedMin = computed(() => {
 
   if (computedType.value === "passport") return 10;
 
-    if (computedType.value === "number") return 0.1;
+  if (computedType.value === "number") return 0.1;
 });
 
 const computedMax = computed(() => {
   if (props.max) return props.max;
 
   if (computedType.value === "passport") return 10;
-})
+});
 
 const computedRules = computed(() => {
   return setRules({
@@ -108,6 +108,14 @@ const computedMask = computed(() => {
     default:
       return "";
   }
+});
+
+const computedShowPassword = computed(() => {
+  if (props.showPassword) return props.showPassword;
+
+  if (props.type === "password") return true;
+
+  return false;
 });
 
 const change = (value: AppInputValueType) => {
@@ -160,7 +168,7 @@ watch(
       }"
       :type
       :parser
-      :show-password
+      :show-password="computedShowPassword"
       v-maska="computedMask"
       :readonly
       :disabled

@@ -36,7 +36,7 @@ export const useCommonStore = defineStore("commonStore", () => {
       const hasIndex = errorIds.value.includes(id);
       if (hasIndex) {
         return;
-      } else{
+      } else {
         errorIds.value.push(id);
       }
     }
@@ -51,7 +51,7 @@ export const useCommonStore = defineStore("commonStore", () => {
           const index = errorIds.value.indexOf(id);
           errorIds.value.splice(index, 1);
         }
-      }
+      },
     });
   };
 
@@ -90,7 +90,7 @@ export const useCommonStore = defineStore("commonStore", () => {
 
   const activeLayout = computed(() => {
     return route.meta.layout;
-  })
+  });
 
   return {
     redirectNotFound,
@@ -103,6 +103,6 @@ export const useCommonStore = defineStore("commonStore", () => {
     getTitles,
     removeTitles,
     errorIds,
-    activeLayout
+    activeLayout,
   };
 });

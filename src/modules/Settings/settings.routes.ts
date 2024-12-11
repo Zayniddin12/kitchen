@@ -1,6 +1,8 @@
 import { RouteRecordRaw } from "vue-router";
+import ProfileSettingsRoutes from "@/modules/Settings/pages/ProfileSettings/profile-settings.routes";
 
 export default [
+  ...ProfileSettingsRoutes,
   // sidebar start
   {
     path: "/reference",

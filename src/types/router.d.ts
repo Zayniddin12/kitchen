@@ -7,6 +7,7 @@ declare module "vue-router" {
   interface RouteMeta {
     layout?: LayoutType;
     title?: string;
+    isTranslate?: boolean;
     breadcrumbItemTitle?: string;
     uniqueKeys?: Record<string, boolean>,
     apiUrl?: string;

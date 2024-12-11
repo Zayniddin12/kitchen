@@ -4,7 +4,10 @@ import ru from "@/localization/locale/ru.json";
 import { getItem, setItem } from "@/utils/localStorage";
 import { LanguageType, LOCALES } from "@/localization/localization.type";
 import { computed, reactive, ref, watch } from "vue";
-import {useCommonStore} from "@/stores/common.store";
+import router from "@/router";
+import { RouteLocationNormalizedLoadedGeneric } from "vue-router";
+import { setDocumentTitle } from "@/utils/helper";
+
 
 const localeKey = "language";
 
@@ -43,19 +46,27 @@ const updateDocumentLanguage = (locale: LOCALES) => {
   document.documentElement.setAttribute("lang", locale);
 };
 
+const updateDocumentTitle = () => {
+  const route: RouteLocationNormalizedLoadedGeneric = router.currentRoute.value;
+
+  if (route.meta.isTranslate && route.meta.title) {
+    const title = i18n.t(route.meta.title);
+    setDocumentTitle(title);
+  }
+};
+
 watch(activeLocale, (newLocale) => {
   i18n.locale.value = newLocale;
   setItem(localeKey, newLocale);
   updateDocumentLanguage(newLocale);
+  updateDocumentTitle();
 }, { immediate: true });
 
-export const changeLocale = (locale: LOCALES) => {
+export const changeLocale = (locale: LOCALES, isReload = false): void => {
   if (isValidLocale(locale)) {
-    const commonStore = useCommonStore();
     activeLocale.value = locale;
-    if (commonStore.activeLayout === "MainLayout") {
-      window.location.reload();
-    }
+
+    if (isReload) window.location.reload();
   }
 };
 

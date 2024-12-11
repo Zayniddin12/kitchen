@@ -5,7 +5,6 @@
 
 import { useAuthStore } from "@/modules/Auth/auth.store";
 import { computed, ref, useTemplateRef } from "vue";
-import { useCommonStore } from "@/stores/common.store";
 import AvatarIcon from "@/assets/images/avatar.png";
 import ArrowRightIcon from "@/assets/arrow-right.svg";
 import ArrowDownIcon from "@/assets/images/arrowDown.svg";
@@ -17,7 +16,6 @@ import { activeLocale, changeLocale } from "@/localization";
 import { setSessionItem } from "@/utils/sessionStorage";
 
 const authStore = useAuthStore();
-const commonStore = useCommonStore();
 
 const dropdown = useTemplateRef("dropdown");
 
@@ -132,7 +130,7 @@ const languages = computed<LanguagesType>(() => {
               <button
                 v-for="lang in languages"
                 :key="lang.value"
-                @click="changeLocale(lang.value)"
+                @click="changeLocale(lang.value, true)"
                 :class="['px-2 py-1.5 rounded-[6px] text-xs font-medium', `${lang.value === activeLocale ? 'bg-white shadow-[0_1.5px_4px_-1px_#0A090B12] text-blue' : 'text-black-sub'}`]"
               >
                 {{ lang.name }}

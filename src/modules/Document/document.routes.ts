@@ -89,7 +89,7 @@ export default [
         path: "/received/:id",
         name: "received-id",
         component: () => import("@/modules/Document/pages/OfficeNotes/View.vue"),
-        // component: () => import("@/modules/Document/pages/Requests/Received/InvoiceInboxShow.vue"),
+        // component: () => import("@/modules/Document/modules/Requests/Received/InvoiceInboxShow.vue"),
         meta: {
             title: "Просмотр",
             parentRouteTitle: "Полученные",
@@ -116,7 +116,7 @@ export default [
         path: "/sent/:id",
         name: "sent-id",
         component: () => import("@/modules/Document/pages/OfficeNotes/View.vue"),
-        // component: () => import("@/modules/Document/pages/Requests/Sent/InvoiceInboxShow.vue"),
+        // component: () => import("@/modules/Document/modules/Requests/Sent/InvoiceInboxShow.vue"),
         meta: {
             title: "Просмотр",
             parentRouteTitle: "Отправленные",

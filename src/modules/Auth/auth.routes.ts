@@ -1,5 +1,4 @@
 import { RouteRecordRaw } from "vue-router";
-import { useAuthStore } from "@/modules/Auth/auth.store";
 
 export default [
   {
@@ -8,7 +7,9 @@ export default [
     component: () => import("@/modules/Auth/pages/Login.vue"),
     meta: {
       layout: "LoginLayout",
-      title: "Войти в аккаунт",
+      title: "auth.login",
+      isTranslate: true,
+      isAuth: true,
     },
   },
   {
@@ -43,5 +44,5 @@ export default [
     meta: {
       layout: "LoginLayout",
     },
-  }
+  },
 ] as RouteRecordRaw[];
