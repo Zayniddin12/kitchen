@@ -24,11 +24,11 @@ export const setRules = (rules: RulesType): Arrayable<FormItemRule> | ValidateRu
   if (rules.type === "text" || rules.type === "passport") {
     if (rules.min || rules.max) {
       const lengthRule: ValidateRulesType = {
-        trigger, min: rules.min, max: rules.max
+        trigger, min: rules.min, max: rules.max,
       };
 
-      if (rules.min === rules.max) {
-        lengthRule.message = `Длина должна быть ${rules.min} символов`;
+      if (rules.min && rules.max && rules.min === rules.max) {
+        lengthRule.message = `Длина должна быть ${rules.min - (rules.type === "passport" ? 1 : 0)} символов`;
       } else {
         lengthRule.message = [
           rules.min && `не менее ${rules.min} символов`,

@@ -4,7 +4,7 @@
 >
 import { reactive, ref } from "vue";
 import { useI18n } from "vue-i18n";
-import { useRouter } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { ValidationType } from "@/components/ui/form/app-form/app-form.type";
 import { ElNotification } from "element-plus";
 import Language from "@/components/language/index.vue";
@@ -18,7 +18,7 @@ import { setSessionItem } from "@/utils/sessionStorage";
 import { loginOneId } from "@/utils/helper";
 
 const { t } = useI18n();
-const router = useRouter();
+const route = useRoute();
 const authStore = useAuthStore();
 const commonStore = useCommonStore();
 
@@ -37,7 +37,7 @@ const onSubmit = async () => {
   if (!v$.value) return;
 
   if (!(await v$.value.validate())) {
-    commonStore.errorToast("Validation Error")
+    commonStore.errorToast("Validation Error");
   } else {
     const newForm = { ...form };
     newForm.phone = `998${newForm.phone.replace(/\D/g, "")}`;
@@ -76,7 +76,12 @@ const onSubmit = async () => {
         </div>
       </header>
 
-      <h1 class="text-dark text-xl font-bold">{{ t("Войти в аккаунт") }}</h1>
+      <h1
+        v-if="route.meta.title"
+        class="text-dark text-xl font-bold"
+      >
+        {{ t(route.meta.title) }}
+      </h1>
       <p class="text-[#A8AAAE] text-[14px] mt-[6px] w-[90%]">
         Введите свои учетные данные для доступа к вашей учетной записи
       </p>
@@ -101,7 +106,6 @@ const onSubmit = async () => {
           @keyup.enter="onSubmit"
           v-model="form.password"
           type="password"
-          show-password
           placeholder="Введите"
           label="Пароль"
           label-class="text-[#A8AAAE] text-sm"
@@ -118,14 +122,14 @@ const onSubmit = async () => {
         </router-link>
       </AppForm>
 
-        <ElButton
-          :loading="authStore.loginLoading"
-          @click="onSubmit"
-          type="primary"
-          class="w-full bg-[#2E90FA] h-11 py-2.5 text-white rounded-lg text-sm"
-        >
-          Войти
-        </ElButton>
+      <ElButton
+        :loading="authStore.loginLoading"
+        @click="onSubmit"
+        type="primary"
+        class="w-full bg-[#2E90FA] h-11 py-2.5 text-white rounded-lg text-sm"
+      >
+        Войти
+      </ElButton>
       <div class="flex items-center justify-between text-[#7F7D83] text-sm mt-4">
         <img
           src="@/assets/images/line.svg"
@@ -140,7 +144,10 @@ const onSubmit = async () => {
         />
       </div>
 
-      <button  @click="loginOneId" class="w-full bg-[#4825C2] py-2.5 flex items-center justify-center text-white rounded-lg mt-4">
+      <button
+        @click="loginOneId"
+        class="w-full bg-[#4825C2] py-2.5 flex items-center justify-center text-white rounded-lg mt-4"
+      >
         ONE
         <img
           class="ml-2"

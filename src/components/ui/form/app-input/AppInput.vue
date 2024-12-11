@@ -62,10 +62,6 @@ const appInputClasses = computed<string[]>(() => {
 
 const slots = useSlots();
 
-const computedMask = computed(() =>
-  props.type === "tel" && !props.mask ? "## ###-##-##" : props.mask || "",
-);
-
 const computedType = computed(() => {
   return props.customType ?? props.type;
 });
@@ -73,16 +69,53 @@ const computedType = computed(() => {
 const computedMin = computed(() => {
   if (props.min) return props.min;
 
+  if (computedType.value === "passport") return 10;
+
   if (computedType.value === "number") return 0.1;
+});
+
+const computedMax = computed(() => {
+  if (props.max) return props.max;
+
+  if (computedType.value === "passport") return 10;
 });
 
 const computedRules = computed(() => {
   return setRules({
     required: props.required,
     min: computedMin.value,
-    max: props.max,
+    max: computedMax.value,
     type: computedType.value,
   });
+});
+
+const computedMask = computed(() => {
+  if (props.mask) return props.mask;
+
+  switch (computedType.value) {
+    case "tel":
+      return "## ###-##-##";
+    case "passport":
+      return {
+        mask: "AA #######",
+        tokens: {
+          "A": {
+            pattern: /[A-Z]/,
+            transform: (chr: string) => chr.toUpperCase(),
+          },
+        },
+      };
+    default:
+      return "";
+  }
+});
+
+const computedShowPassword = computed(() => {
+  if (props.showPassword) return props.showPassword;
+
+  if (props.type === "password") return true;
+
+  return false;
 });
 
 const change = (value: AppInputValueType) => {
@@ -135,7 +168,7 @@ watch(
       }"
       :type
       :parser
-      :show-password
+      :show-password="computedShowPassword"
       v-maska="computedMask"
       :readonly
       :disabled
@@ -147,7 +180,7 @@ watch(
       :prefix-icon
       :rows
       :autosize
-      :maxlength="props.maxlength ?? props.max"
+      :maxlength="props.maxlength ?? computedMax"
       :minlength="props.minlength ?? computedMin"
       :showWordLimit
       :inputStyle

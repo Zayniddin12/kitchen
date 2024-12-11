@@ -42,7 +42,7 @@ const { setBreadCrumb } = useBreadcrumb();
 
 const kitchenStore = useKitchenStore();
 const route = useRoute();
-const router = useRouter();
+const index = useRouter();
 
 enum TABS {
   CURRENT = 1,
@@ -1002,7 +1002,7 @@ const mealTextFilter = (index: string): string => {
             class="!bg-blue-500 mt-6"
             type="primary"
             size="large"
-            tag="router-link"
+            tag="index-link"
             :to="{ name: 'KitchenMenuCreate' }"
           >
             <div class="flex items-center gap-x-2">

@@ -6,7 +6,7 @@ import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 interface MenuInterface {
   title: string;
   subTitle: string;
-  router?: string;
+  index?: string;
 }
 
 interface UlItems {
@@ -14,7 +14,7 @@ interface UlItems {
   menu: MenuInterface[];
 }
 
-const router = useRouter();
+const index = useRouter();
 
 const ulItems = ref<UlItems[]>([
   {

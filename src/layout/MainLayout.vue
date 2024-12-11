@@ -33,7 +33,7 @@ const margin = ref("ml-[396px]");
 
 onMounted(async () => {
   if (tokenManager.getAccessToken()) authStore.me();
-  // else await router.replace({ name: "login" });
+  // else await index.replace({ name: "login" });
   childSidebarPin.value = JSON.parse(localStorage.getItem("child-sidebar-pin") || "false");
   await settingsStore.GET_REGIONAL({ per_page: 100 });
   warehouseBasesStore.fetchManagementBases();

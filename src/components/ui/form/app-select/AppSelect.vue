@@ -54,7 +54,7 @@ const appSelectClasses = computed<string[]>(() => {
   return classes;
 });
 
-const change = (value: AppSelectValueType) => {
+const change = (value: AppSelectValueType):void => {
   ignoreValidationError.value = !!validationErrors.value;
   emit("change", value);
 };
