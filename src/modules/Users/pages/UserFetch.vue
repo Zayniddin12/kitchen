@@ -98,7 +98,7 @@ const fetchSearchUser = async () => {
   if (activeTab.value === TABS.PINFL) {
     newForm.pinfl = form.pinfl;
   } else {
-    newForm.pass_number = form.pass_number;
+    newForm.pass_number = form.pass_number?.replace(/\s+/g, "");
   }
 
   try {

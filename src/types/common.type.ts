@@ -25,3 +25,5 @@ export interface GenderResponseType {
     name: string,
     photo: string
 }
+
+export type IsTranslateType = boolean;

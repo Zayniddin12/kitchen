@@ -7,6 +7,7 @@ import { computed, inject, onMounted, ref, Ref, useSlots, watch } from "vue";
 import { getRules, setRules } from "@/components/ui/form/validate";
 import { ValidationErrorsType } from "@/components/ui/form/form.type";
 import { AppDatePickerValueType } from "@/components/ui/form/app-date-picker/app-date-picker.type";
+import { useI18n } from "vue-i18n";
 
 const model = defineModel<AppSelectValueType>({
   default: "",
@@ -23,8 +24,13 @@ const props = withDefaults(defineProps<AppSelectPropsType>(), {
   itemValue: "",
   itemLabel: "",
   labelClass: "",
-  placeholder: "Выберите",
   persistent: true,
+});
+
+const { t } = useI18n();
+
+const computedPlaceholder = computed(() => {
+  return props.placeholder ?? t("form.select");
 });
 
 const slots = useSlots();
@@ -54,7 +60,7 @@ const appSelectClasses = computed<string[]>(() => {
   return classes;
 });
 
-const change = (value: AppSelectValueType):void => {
+const change = (value: AppSelectValueType): void => {
   ignoreValidationError.value = !!validationErrors.value;
   emit("change", value);
 };
@@ -108,7 +114,7 @@ watch(model, (val) => {
       v-model="model"
       :value-key="itemValue"
       :size
-      :placeholder
+      :placeholder="computedPlaceholder"
       :readonly
       :disabled
       :clearable

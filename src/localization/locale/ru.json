@@ -1,8 +1,127 @@
 {
   "auth": {
-    "login": "Войти в аккаунт"
+    "login": "Войти в аккаунт",
+    "logout": "Выход"
+  },
+  "logo": {
+    "title": "NKMK",
+    "subtitle": "Jamg‘armasi"
   },
   "common": {
-    "filter": "Фильтр"
+    "filter": "Фильтр",
+    "settings": "Настройки",
+    "language": "Язык",
+    "back": "назад",
+    "empty": "Нет информации",
+    "and": "и",
+    "name": "Название",
+    "quantity": "Количество",
+    "measurement": "Ед. измерения",
+    "price": "Цена",
+    "sum": "Сумма",
+    "totalSum": "Общая сумма"
+  },
+  "currency": {
+    "sum": "сум"
+  },
+  "time": {
+    "hour": "ч"
+  },
+  "notification": {
+    "title": "Уведомление"
+  },
+  "notFound": {
+    "title": "Страница не найдена",
+    "description": "Извините, запрошенная вами страница не найдена пожалуйста, вернитесь на главную страницу",
+    "redirectHome": "Вернуться на главную"
+  },
+  "method": {
+    "cancel": "Отменить",
+    "logout": "Выйти",
+    "save": "Сохранить",
+    "delete": "Удалить",
+    "understandable": "Понятно"
+  },
+  "confirm": {
+    "cancel": {
+      "title": "Вы уверены что хотите отменить",
+      "description": "Все не сохраненные изменения будут потеряны"
+    },
+    "delete": {
+      "title": "Вы уверены, что хотите удалить эту запись",
+      "description": "Это действие необратимо, и запись будет полностью удалена из системы"
+    },
+    "show": {
+      "description": "Вы не можете деактивировать эту запись, так как она имеет связи с другими записями в системе. Пожалуйста, сначала удалите или измените записи, с которыми она связана."
+    }
+  },
+  "pagination": {
+    "description": "Показано {start}–{end} из {count} результатов"
+  },
+  "form": {
+    "select": "Выберите",
+    "create": "Создать",
+    "search": "Поиск",
+    "validate": {
+      "required": "Обязательное поле",
+      "email": "Неправильный email",
+      "symbol": {
+        "length": "Длина должна быть {length} символов",
+        "min": "не менее {length} символов",
+        "max": "не более {length} символов"
+      },
+      "number": {
+        "incorrect": "Неверный номер",
+        "length": "Число должно быть равно {length}",
+        "min": "Число не должно быть меньше {length}",
+        "max": "Число не должно быть больше {length}"
+      }
+    }
+  },
+  "mediaUploader": {
+    "title": "Перетащите фотографию для загрузки",
+    "description": "Максимальный размер фотографии 10 МБ",
+    "editPhoto": "Изменить фото",
+    "selectPhoto": "Выбрать фото"
+  },
+  "document": {
+    "memo": {
+      "create": "Создать служебную записку"
+    },
+    "freeRequest": {
+      "create": "Создать свободный запрос"
+    },
+    "monthlyRequest": {
+      "create": "Создать месячный запрос"
+    },
+    "annualRequest": {
+      "create": "Создать годовой запрос"
+    },
+    "coming": {
+      "createComing": "Создать приход",
+      "createConsumption": "Создать расход"
+    },
+    "overhead": "НАКЛАДНОЙ",
+    "dateCreatedSystem": "Дата создания в системе",
+    "invoiceNumberSystem": "№ накладной в системе",
+    "invoiceDate": "Дата накладной",
+    "invoiceNumber": "№ накладно",
+    "type": "Вид документа",
+    "whom": {
+      "from": "От кого",
+      "to": "Кому",
+      "through": "Через кого"
+    },
+    "base": "Основание",
+    "shippingMethod": "Способ отправления",
+    "commission": {
+      "storekeeper": "Кладовщик",
+      "commodityExpert": "Товаровед",
+      "warehouseManager": "Зав. склад",
+      "baseChief": "Начальник базы"
+    }
+  },
+  "error": {
+    "validation": "Validation Error"
   }
 }

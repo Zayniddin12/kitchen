@@ -11,12 +11,14 @@ import CalendarIcon from "@/assets/images/icons/calendar.svg";
 import { getRules, setRules } from "@/components/ui/form/validate";
 import { ValidationErrorsType } from "@/components/ui/form/form.type";
 import { MaskInput } from "maska";
+import { useI18n } from "vue-i18n";
 
 const model = defineModel<AppDatePickerValueType>();
 
+const { t } = useI18n();
+
 const props = withDefaults(defineProps<AppDatePickerPropsType>(), {
   labelPosition: "top",
-  placeholder: "Выберите",
   format: "DD.MM.YYYY",
   valueFormat: "YYYY-MM-DD",
   type: "date",
@@ -24,6 +26,10 @@ const props = withDefaults(defineProps<AppDatePickerPropsType>(), {
   labelClass: "",
   iconPosition: "end",
   teleported: true,
+});
+
+const computedPlaceholder = computed(() => {
+  return props.placeholder ?? t("form.select");
 });
 
 const emit = defineEmits<{
@@ -130,7 +136,7 @@ watch(datePickerWrapper, applyMask, { immediate: true });
       <ElDatePicker
         v-model="model"
         :id
-        :placeholder
+        :placeholder="computedPlaceholder"
         :disabled
         :readonly
         :size

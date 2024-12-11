@@ -4,6 +4,9 @@
 >
 import { useTemplateRef } from "vue";
 import CloseIcon from "@/assets/images/icons/close.svg";
+import { useI18n } from "vue-i18n";
+
+const {t} = useI18n();
 
 const dropdown = useTemplateRef("dropdown");
 
@@ -33,7 +36,7 @@ const closeDropdown = () => {
         <div class="flex justify-between items-center py-3.5 border-b border-[#EEEEEF]">
           <div class="flex items-center gap-x-2">
             <h6 class="text-lg font-medium text-dark">
-              Уведомление
+              {{t("notification.title")}}
             </h6>
             <div class="flex items-center justify-center rounded-full min-h-4 min-w-4 bg-[#EEEEEF]">
             <span class="text-[10px] font-medium leading-[10px] text-[#4F5662]">
@@ -66,7 +69,7 @@ const closeDropdown = () => {
                 v-if="n<4"
                 class="size-3 bg-blue rounded-full ml-auto"
               ></span>
-              <span class="text-xs text-[#A8AAAE] mt-auto">1 ч. назад</span>
+              <span class="text-xs text-[#A8AAAE] mt-auto">1 {{t("time.hour")}}. {{t("common.back")}}</span>
             </div>
           </div>
         </div>
@@ -74,10 +77,3 @@ const closeDropdown = () => {
     </template>
   </ElDropdown>
 </template>
-
-<style
-  scoped
-  lang="scss"
->
-
-</style>
