@@ -19,6 +19,7 @@ import Plus3Icon from "@/assets/images/icons/plus3.svg";
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 import useConfirm from "@/components/ui/app-confirm/useConfirm";
 import { useSidebarStore } from "@/layout/Bars/sidebar.store";
+import AppEmpty from "@/components/ui/app-empty/AppEmpty.vue";
 
 interface ProductItemType {
   id: number;
@@ -575,6 +576,7 @@ const mealTextFilter = (index: string): string => {
             >
 
               <div
+                v-if="kitchenStore.menuToday.elements && kitchenStore.menuToday.elements.length"
                 v-for="n in kitchenStore.menuToday.elements"
                 :key="n"
                 class="border rounded-2xl p-4 pb-6 border-[#E2E6F3]"
@@ -669,6 +671,11 @@ const mealTextFilter = (index: string): string => {
                   </div>
                 </div>
               </div>
+
+              <AppEmpty
+                v-else
+                class="h-[60vh]"
+              />
             </div>
             <div
               v-else-if="kitchenStore.activeSalesPart"
