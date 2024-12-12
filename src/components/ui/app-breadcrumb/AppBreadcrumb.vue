@@ -7,9 +7,11 @@ import { BreadcrumbItemType } from "@/components/ui/app-breadcrumb/app-breadcrum
 import { watch } from "vue";
 import { useRoute } from "vue-router";
 import {setSessionItem} from "@/utils/sessionStorage";
+import { useI18n } from "vue-i18n";
 
 const { breadcrumb, setBreadCrumb } = useBreadcrumb();
 const route = useRoute();
+const {t} = useI18n();
 
 const clickHome = () => {
   setSessionItem("current-menu", "0");
@@ -62,7 +64,7 @@ watch(() => route.name, () => {
           @click="breadcrumbItem.click"
           :class="['text-[#A8AAAE] !text-[12px] font-medium', {'text-dark-gray dark:text-primary': breadcrumbItem.isActionable}]"
         >
-          {{ breadcrumbItem.label }}
+          {{ breadcrumbItem.isTranslate ? t(breadcrumbItem.label) : breadcrumbItem.label }}
         </component>
       </div>
     </div>

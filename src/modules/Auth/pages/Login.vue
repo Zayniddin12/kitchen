@@ -37,7 +37,7 @@ const onSubmit = async () => {
   if (!v$.value) return;
 
   if (!(await v$.value.validate())) {
-    commonStore.errorToast("Validation Error");
+    commonStore.errorToast(t("error.validation"));
   } else {
     const newForm = { ...form };
     newForm.phone = `998${newForm.phone.replace(/\D/g, "")}`;
@@ -71,8 +71,8 @@ const onSubmit = async () => {
           class="h-[50px]"
         />
         <div class="flex flex-col ml-3">
-          <b class="text-dark text-lg">НГМК</b>
-          <span class="text-[#CBCCCE]">Фонд</span>
+          <b class="text-dark text-lg">{{ t("logo.title") }}</b>
+          <span class="text-[#CBCCCE]">{{ t("logo.subtitle") }}</span>
         </div>
       </header>
 
@@ -83,7 +83,7 @@ const onSubmit = async () => {
         {{ t(route.meta.title) }}
       </h1>
       <p class="text-[#A8AAAE] text-[14px] mt-[6px] w-[90%]">
-        Введите свои учетные данные для доступа к вашей учетной записи
+        {{ t("auth.loginSubtitle") }}
       </p>
 
       <AppForm
@@ -95,7 +95,7 @@ const onSubmit = async () => {
         <app-input
           v-model="form.phone"
           type="tel"
-          label="Номер телефона"
+          :label="t('common.phone')"
           label-class="text-[#A8AAAE] text-sm"
           required
           prop="phone"
@@ -106,8 +106,7 @@ const onSubmit = async () => {
           @keyup.enter="onSubmit"
           v-model="form.password"
           type="password"
-          placeholder="Введите"
-          label="Пароль"
+          :label="t('common.password')"
           label-class="text-[#A8AAAE] text-sm"
           required
           prop="password"
@@ -118,7 +117,7 @@ const onSubmit = async () => {
           class="float-right mb-[20px] text-[#2E90FA] text-xs mt-1 cursor-pointer"
           to="/reset-password"
         >
-          Забыли пароль?
+          {{ t("auth.forgotPassword") }}?
         </router-link>
       </AppForm>
 
@@ -128,7 +127,7 @@ const onSubmit = async () => {
         type="primary"
         class="w-full bg-[#2E90FA] h-11 py-2.5 text-white rounded-lg text-sm"
       >
-        Войти
+        {{ t("auth.login.btn") }}
       </ElButton>
       <div class="flex items-center justify-between text-[#7F7D83] text-sm mt-4">
         <img
@@ -136,7 +135,9 @@ const onSubmit = async () => {
           class="ml-4 md:w-[40%] lg:w-[40%] w-[20%]"
           alt="line"
         />
-        <span class="px-2">или</span>
+        <span class="px-2">
+          {{ t("common.or") }}
+        </span>
         <img
           src="@/assets/images/line.svg"
           class="mr-4 md:w-[40%] lg:w-[40%] w-[20%]"

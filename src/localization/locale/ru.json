@@ -1,7 +1,22 @@
 {
+  "title": "Склад",
   "auth": {
-    "login": "Войти в аккаунт",
-    "logout": "Выход"
+    "login": {
+      "title": "Войти в аккаунт",
+      "btn": "Войти",
+      "oneId": "Войти через ONE ID"
+    },
+    "loginSubtitle": "Введите свои учетные данные для доступа к вашей учетной записи",
+    "logout": "Выход",
+    "resetPassword": {
+      "title": "Сброс пароля",
+      "description": "На данной странице Вы можете восстановить доступ к своему аккаунту. Введите Ваш номер телефона и система автоматически отправит Вам временный код для сброса пароля.",
+      "enterSentCode": "Введите отправленный код"
+    },
+    "forgotPassword": "Забыли пароль",
+    "newPassword": "Новый пароль",
+    "confirmPassword": "Подтвердите пароль",
+    "sendCode": "Отправить код"
   },
   "logo": {
     "title": "NKMK",
@@ -15,12 +30,41 @@
     "empty": "Нет информации",
     "and": "и",
     "name": "Название",
+    "name2": "Наименование",
     "quantity": "Количество",
     "measurement": "Ед. измерения",
+    "unitMeasurement": "Единица измерения",
     "price": "Цена",
     "sum": "Сумма",
     "totalSum": "Общая сумма",
-    "date": "Дата"
+    "date": "Дата",
+    "supplier": "Поставщик",
+    "recipient": "Получатель",
+    "transport": "Транспорт",
+    "automatically": "Автоматически",
+    "legalAddress": "Юр. адрес",
+    "oked": "ОКЭД",
+    "tin": "ИНН",
+    "certificate": "Сертификат",
+    "certificateDuration": "Срок сертификата",
+    "supervisor": "Руководитель",
+    "contact": "Контакты",
+    "theme": "Тема",
+    "sender": "Отправитель",
+    "message": "Сообщения",
+    "phone": "Номер телефона",
+    "password": "Пароль",
+    "or": "или",
+    "code": "Код",
+    "fromDate": "С этой даты",
+    "endDate": "По эту дату",
+    "found": "Найдено",
+    "action": "Действие"
+  },
+  "licence": {
+    "numberAndDate": "Номер и дата лицензии",
+    "number": "Номер лицензии",
+    "date": "Дата лицензии"
   },
   "currency": {
     "sum": "сум"
@@ -39,9 +83,14 @@
   "method": {
     "cancel": "Отменить",
     "logout": "Выйти",
+    "add": "Добавить",
     "save": "Сохранить",
+    "saveAsDraft": "Сохранить как черновик",
     "delete": "Удалить",
-    "understandable": "Понятно"
+    "understandable": "Понятно",
+    "send": "Отправить",
+    "reset": "Сбросить",
+    "apply": "Применить"
   },
   "confirm": {
     "cancel": {
@@ -60,12 +109,14 @@
     "description": "Показано {start}–{end} из {count} результатов"
   },
   "form": {
+    "enter": "Введите",
     "select": "Выберите",
     "create": "Создать",
     "search": "Поиск",
     "validate": {
       "required": "Обязательное поле",
       "email": "Неправильный email",
+      "confirmPassword": "Пароль проверки неверен",
       "symbol": {
         "length": "Длина должна быть {length} символов",
         "min": "не менее {length} символов",
@@ -77,7 +128,8 @@
         "min": "Число не должно быть меньше {length}",
         "max": "Число не должно быть больше {length}"
       }
-    }
+    },
+    "enterPhone": "Введите номер телефона"
   },
   "mediaUploader": {
     "title": "Перетащите фотографию для загрузки",
@@ -86,30 +138,53 @@
     "selectPhoto": "Выбрать фото"
   },
   "document": {
+    "title1": "Документы",
+    "title": "Название документа",
+    "number": "№ документа",
+    "shortNum": "№ док...",
+    "number2": "Номер документа",
+    "creationDate": "Дата создания документа",
     "memo": {
-      "create": "Создать служебную записку"
+      "create": "Создать служебную записку",
+      "title": "Служебная записка",
+      "message": "Отображение сообщения служебки"
     },
     "freeRequest": {
-      "create": "Создать свободный запрос"
+      "create": "Создать свободный запрос",
+      "title": "Запрос",
+      "subtitle": "Свободный запрос",
+      "type": "Тип запроса",
+      "contents": "Содержание запроса"
     },
     "monthlyRequest": {
-      "create": "Создать месячный запрос"
+      "create": "Создать месячный запрос",
+      "title": "Месячный запрос"
     },
     "annualRequest": {
-      "create": "Создать годовой запрос"
+      "create": "Создать годовой запрос",
+      "title": "Годовой запрос"
     },
     "coming": {
       "createComing": "Создать приход",
-      "createConsumption": "Создать расход"
+      "createConsumption": "Создать расход",
+      "incomingConsignment": "Входящий накладной"
     },
     "act": {
-      "title": "АКТ"
+      "title": "АКТ",
+      "title2": "Акты",
+      "numberAgreement": "Номер договора о поставке",
+      "dateAgreement": "Дата договора о поставке",
+      "numberDateAgreement": "Номер и дата договора о поставке",
+      "number": "№ Акта",
+      "contents": "Содержание акта",
+      "specifiedContentText": "Поле ввода текст содержания акта с выводом шаблонного заданного текста"
     },
+    "consignmentNumberDate": "Номер и дата накладной",
     "overhead": "НАКЛАДНОЙ",
     "dateCreatedSystem": "Дата создания в системе",
     "invoiceNumberSystem": "№ накладной в системе",
     "invoiceDate": "Дата накладной",
-    "invoiceNumber": "№ накладно",
+    "invoiceNumber": "№ накладной",
     "type": "Вид документа",
     "whom": {
       "from": "От кого",
@@ -119,13 +194,43 @@
     "base": "Основание",
     "shippingMethod": "Способ отправления",
     "commission": {
+      "title": "Состав комиссии приема продуктов",
       "storekeeper": "Кладовщик",
       "commodityExpert": "Товаровед",
+      "forwarder": "Экспедитор",
       "warehouseManager": "Зав. склад",
       "baseChief": "Начальник базы"
-    }
+    },
+    "numberAndDateOfTheConclusionOfTheSanitaryAndEpidemiologicalCenter": "Номер и дата заключение Санитарно-эпидемиологического центра",
+    "numberAndDateOfVeterinaryCertificate": "Номер и дата удостоверения ветеринарии",
+    "numberAndDateOfQualityCertificate": "Номер и дата удостоверения качества",
+    "tableReceivedProducts": "Таблица получаемых продуктов",
+    "sanitaryConclusion": {
+      "number": "Номер заключения Санитарно",
+      "date": "Дата заключения Санитарно"
+    },
+    "veterinaryCertificate": {
+      "number": "Номер удостоверения ветеринарии",
+      "date": "Дата удостоверения ветеринарии"
+    },
+    "qualityCertificate": {
+      "number": "Номер удостоверения качества",
+      "date": "Дата удостоверения качества"
+    },
+    "supplier": {
+      "createTitle": "Добавить нового поставщика"
+    },
+    "overlay": "Накладние",
+    "potatoDelivery": "Доставка картофеля"
   },
   "error": {
     "validation": "Validation Error"
+  },
+  "product": {
+    "name": "Название продукта",
+    "quantity": "Количество продукта",
+    "manufacturer": "Производитель продукта",
+    "type": "Тип продукта",
+    "view": "Вид продукта"
   }
 }

@@ -10,6 +10,7 @@ import { computed, inject, ref, Ref, useSlots, watch } from "vue";
 import { vMaska } from "maska/vue";
 import { setRules } from "@/components/ui/form/validate";
 import { ValidationErrorsType } from "@/components/ui/form/form.type";
+import { useI18n } from "vue-i18n";
 
 const [model, modifiers] = defineModel<AppInputValueType>();
 
@@ -118,6 +119,12 @@ const computedShowPassword = computed(() => {
   return false;
 });
 
+const { t } = useI18n();
+
+const computedPlaceholder = computed(() => {
+  return props.placeholder ?? t("form.enter");
+});
+
 const change = (value: AppInputValueType) => {
   ignoreValidationError.value = !!validationErrors.value;
   emit("change", value);
@@ -167,12 +174,13 @@ watch(
         ...modifiers,
       }"
       :type
+      :formatter
       :parser
       :show-password="computedShowPassword"
       v-maska="computedMask"
       :readonly
       :disabled
-      :placeholder
+      :placeholder="computedPlaceholder"
       :size
       :clearable
       :name

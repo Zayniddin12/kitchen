@@ -59,6 +59,7 @@ index.afterEach((to: RouteLocationNormalized) => {
   const { title, isTranslate } = to.meta;
 
   if (title) setDocumentTitle(isTranslate ? t(title) : title);
+  else setDocumentTitle(t("title"));
 });
 
 export default index;

@@ -173,6 +173,9 @@ export const useAuthStore = defineStore("authStore", () => {
     const timeLeft = expiryTime - currentTime;
 
     remainingTime.value = Math.max(0, Math.floor(timeLeft / 1000));
+    if (remainingTime.value <=0) {
+      clearSessionOtp();
+    }
   };
 
   const startRemainingTimeInterval = () => {
