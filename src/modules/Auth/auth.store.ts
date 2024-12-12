@@ -70,7 +70,7 @@ export const useAuthStore = defineStore("authStore", () => {
   });
 
   const getUserWorkplace = (id: number, type: string): null | UserWorkplaceType => {
-    if (!user.value.workplaces.length) return null;
+    if (!user.value?.workplaces.length) return null;
 
     return user.value.workplaces.find(el => el.workplace_id === id && el.workplace_type === type) ?? null;
   };

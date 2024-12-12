@@ -10,9 +10,11 @@ declare module "vue-router" {
     title?: string;
     isTranslate?: IsTranslateType;
     breadcrumbItemTitle?: string;
+    breadcrumbItemIsTranslate?: IsTranslateType;
     uniqueKeys?: Record<string, boolean>,
     apiUrl?: string;
     parentRouteTitle?: string;
+    parentRouteIsTranslate?: IsTranslateType;
     parentRouteUrl?: RouteLocationRaw,
 
     [key: string]: any,

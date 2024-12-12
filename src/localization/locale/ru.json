@@ -59,7 +59,8 @@
     "fromDate": "С этой даты",
     "endDate": "По эту дату",
     "found": "Найдено",
-    "action": "Действие"
+    "action": "Действие",
+    "view": "Просмотр"
   },
   "licence": {
     "numberAndDate": "Номер и дата лицензии",
@@ -221,7 +222,11 @@
       "createTitle": "Добавить нового поставщика"
     },
     "overlay": "Накладние",
-    "potatoDelivery": "Доставка картофеля"
+    "potatoDelivery": "Доставка картофеля",
+    "incoming": "Входящие",
+    "outgoing": "Исходящие",
+    "drafts": "Черновики",
+    "received": "Полученные"
   },
   "error": {
     "validation": "Validation Error"
