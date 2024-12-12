@@ -14,6 +14,9 @@ import { LanguagesType } from "@/components/layouts/header-user/header-user.type
 import { LOCALES } from "@/localization/localization.type";
 import { activeLocale, changeLocale } from "@/localization";
 import { setSessionItem } from "@/utils/sessionStorage";
+import { useI18n } from "vue-i18n";
+
+const { t } = useI18n();
 
 const authStore = useAuthStore();
 
@@ -108,7 +111,7 @@ const languages = computed<LanguagesType>(() => {
                 class="size-5"
               />
               <span class="text-sm font-medium text-[#4F5662]">
-                Настройки
+                {{t("common.settings")}}
               </span>
             </span>
             <svg
@@ -123,7 +126,7 @@ const languages = computed<LanguagesType>(() => {
                 class="size-5"
               />
               <span class="text-sm font-medium text-[#4F5662]">
-                Язык
+                {{t("common.language")}}
               </span>
             </span>
             <div class="inline-flex rounded-lg bg-[#F8F9FC] p-1">
@@ -146,7 +149,7 @@ const languages = computed<LanguagesType>(() => {
               class="size-5"
             />
             <span class="text-sm font-medium text-[#EA5455]">
-              Выход
+              {{t("auth.logout")}}
             </span>
           </button>
         </div>
@@ -154,7 +157,3 @@ const languages = computed<LanguagesType>(() => {
     </template>
   </ElDropdown>
 </template>
-
-<style lang="scss">
-
-</style>

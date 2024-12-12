@@ -2,6 +2,7 @@ import { RulesType, ValidateRulesType } from "@/components/ui/form/form.type";
 import { FormItemRule } from "element-plus";
 import { Arrayable } from "element-plus/es/utils";
 import { validateNumber } from "@/utils/helper";
+import { useI18n } from "vue-i18n";
 
 export const getRules = (rules: RulesType) => {
   const { required, min, max, type, trigger } = rules;
@@ -10,13 +11,15 @@ export const getRules = (rules: RulesType) => {
 };
 
 export const setRules = (rules: RulesType): Arrayable<FormItemRule> | ValidateRulesType[] => {
+  const { t } = useI18n();
+
   const formRules: ValidateRulesType[] = [];
   const trigger = rules.trigger || "change";
 
   if (rules.required) {
     formRules.push({
       required: true,
-      message: "Обязательное поле",
+      message: t("form.validate.required"),
       trigger,
     });
   }
@@ -28,14 +31,14 @@ export const setRules = (rules: RulesType): Arrayable<FormItemRule> | ValidateRu
       };
 
       if (rules.min && rules.max && rules.min === rules.max) {
-        lengthRule.message = `Длина должна быть ${rules.min - (rules.type === "passport" ? 1 : 0)} символов`;
+        lengthRule.message = t("form.validate.symbol.length", { length: rules.min - (rules.type === "passport" ? 1 : 0) });
       } else {
         lengthRule.message = [
-          rules.min && `не менее ${rules.min} символов`,
-          rules.max && `не более ${rules.max} символов`,
+          rules.min && t("form.validate.symbol.min", { length: rules.min }),
+          rules.max && t("form.validate.symbol.max", { length: rules.max }),
         ]
           .filter(Boolean)
-          .join(" и ");
+          .join(` ${t("common.and")} `);
       }
 
       formRules.push(lengthRule);
@@ -43,7 +46,7 @@ export const setRules = (rules: RulesType): Arrayable<FormItemRule> | ValidateRu
   } else if (rules.type === "email") {
     formRules.push({
       type: "email",
-      message: "Неправильный email",
+      message: t("form.validate.email"),
       trigger,
     });
   } else if (rules.type === "number") {
@@ -55,13 +58,13 @@ export const setRules = (rules: RulesType): Arrayable<FormItemRule> | ValidateRu
           const newValue = validateNumber(value);
 
           if (isNaN(newValue)) {
-            return callback(new Error("Неверный номер"));
+            return callback(new Error(t("form.validate.number.incorrect")));
           } else if (rules.min && rules.max && rules.min === rules.max && newValue !== rules.max) {
-            return callback(new Error(`Число должно быть равно ${rules.max}`));
+            return callback(new Error(t("form.validate.number.length", { length: rules.min })));
           } else if (rules.min && newValue < rules.min) {
-            return callback(new Error(`Число не должно быть меньше ${rules.min}`));
+            return callback(new Error(t("form.validate.number.min", { length: rules.min })));
           } else if (rules.max && newValue > rules.max) {
-            return callback(new Error(`Число не должно быть больше ${rules.max}`));
+            return callback(new Error(t("form.validate.number.max", { length: rules.max })));
           } else {
             return callback();
           }

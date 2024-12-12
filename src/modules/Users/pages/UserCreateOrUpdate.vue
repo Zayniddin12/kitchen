@@ -227,8 +227,6 @@ const setData = () => {
   form.value.phone = formatPhone(data.value.phone);
   form.value.status = getStatus(data.value.status);
 
-  console.log(form.value);
-
   // if (userStore.activeUserPage) {
   //   form.value.position_id = form.value.position_id ?? "";
   //   form.value.management_id = form.value.management_id ?? "";

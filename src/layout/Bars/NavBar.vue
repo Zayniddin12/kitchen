@@ -12,12 +12,11 @@ import MonthlyModal from "@/layout/Create/components/MonthlyModal.vue";
 import ThemeToggler from "@/layout/Bars/ThemeToggler.vue";
 import { useSettingsStore } from "@/modules/Settings/store";
 import { DocTypeListType } from "@/modules/Settings/settings.types";
-import { useAuthStore } from "@/modules/Auth/auth.store";
-import AvatarIcon from "@/assets/images/avatar.png";
 import Notifications from "@/components/layouts/notifications/Notifications.vue";
 import HeaderUser from "@/components/layouts/header-user/HeaderUser.vue";
+import { useI18n } from "vue-i18n";
 
-const authStore = useAuthStore();
+const { t } = useI18n();
 
 const editModal = ref<boolean>(false);
 const editModal2 = ref<boolean>(false);
@@ -36,7 +35,7 @@ const openModal = (item: DocTypeListType) => {
   switch (item.id) {
     case 1:
       editModal.value = true;
-      docTypeTitle.value = "Создать служебную записку";
+      docTypeTitle.value = t("document.memo.create");
       break;
     case 7:
     case 11:
@@ -47,15 +46,15 @@ const openModal = (item: DocTypeListType) => {
       break;
     case 3:
       freeModal.value = true;
-      docTypeTitle.value = "Создать свободный запрос";
+      docTypeTitle.value = t("document.freeRequest.create");
       break;
     case 4:
       monthlyModal.value = true;
-      docTypeTitle.value = "Создать месячный запрос";
+      docTypeTitle.value = t("document.monthlyRequest.create");
       break;
     case 5:
       monthlyModal.value = true;
-      docTypeTitle.value = "Создать годовой запрос";
+      docTypeTitle.value = t("document.annualRequest.create");
       break;
   }
 
@@ -83,7 +82,7 @@ onMounted(() => {
         <input
           v-model="input1"
           class="bg-white-blue dark:bg-dark w-[552px] rounded-2xl text-black px-[16px] py-[12px] pl-[50px] outline-none"
-          placeholder="Поиск"
+          :placeholder="t('form.search')"
         />
       </div>
 
@@ -121,7 +120,9 @@ onMounted(() => {
             alt="plus"
           />
 
-          <span class="text-white vertical-mid">Создать</span>
+          <span class="text-white vertical-mid">
+            {{ t("form.create")}}
+          </span>
         </ElButton>
         <template
           #dropdown
@@ -197,11 +198,11 @@ onMounted(() => {
       </el-dropdown>
       <ThemeToggler v-if="false" />
 
-      <Notifications/>
+      <Notifications />
 
       <Language v-if="false" />
 
-      <HeaderUser/>
+      <HeaderUser />
     </div>
     <MemoModal
       v-model="editModal"

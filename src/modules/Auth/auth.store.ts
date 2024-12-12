@@ -47,9 +47,7 @@ export const useAuthStore = defineStore("authStore", () => {
 
       tokenManager.setTokens(response);
     } catch (error: any) {
-      if (error?.error?.code === 401) {
-        tokenManager.remove();
-      }
+      tokenManager.remove();
     }
   };
 

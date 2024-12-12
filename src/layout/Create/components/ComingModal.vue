@@ -32,6 +32,7 @@ import { AppSelectValueType } from "@/components/ui/form/app-select/app-select.t
 import { useUsersStore } from "@/modules/Users/users.store";
 import { UserType } from "@/modules/Users/users.types";
 import { useAuthStore } from "@/modules/Auth/auth.store";
+import { useI18n } from "vue-i18n";
 
 interface ProviderFormType {
   name: string;
@@ -55,6 +56,8 @@ const settingsStore = useSettingsStore();
 const documentStore = useDocumentStore();
 const usersStore = useUsersStore();
 const authStore = useAuthStore();
+
+const { t } = useI18n();
 
 const date = ref(formatDate2(new Date()));
 
@@ -179,7 +182,7 @@ const sendForm = async () => {
   const isModalValid = activeComingModal.value ? await actV$.value?.validate() : true;
 
   if (!isMainValid || !isModalValid) {
-    commonStore.errorToast("Validation Error");
+    commonStore.errorToast(t("error.validation"));
     return;
   }
 
@@ -424,7 +427,7 @@ const sendProviderForm = async () => {
   if (!providerV$.value) return;
 
   if (!(await providerV$.value.validate())) {
-    commonStore.errorToast("Validation Error");
+    commonStore.errorToast(t("error.validation"));
     return;
   }
 
@@ -482,7 +485,7 @@ watch(providerCreateModal, newMProviderModal => {
   >
     <template #header>
       <div class="text-center text-[#000000] font-bold text-[18px]">
-        Создать {{ activeComingModal ? "приход" : " расход" }}
+        {{ t(activeComingModal ? "document.coming.createComing" : "document.coming.createConsumption") }}
       </div>
     </template>
     <div class="flex gap-x-6 flex-wrap">
@@ -497,91 +500,105 @@ watch(providerCreateModal, newMProviderModal => {
                 alt="logo"
               />
               <div class="flex flex-col ml-3">
-                <b class="text-[#000D24] text-lg">NKMK</b>
-                <span class="text-[#CBCCCE]">Jamg‘armasi</span>
+                <b class="text-[#000D24] text-lg">
+                  {{ t("logo.title") }}
+                </b>
+                <span class="text-[#CBCCCE]">
+                  {{ t("logo.subtitle") }}
+                </span>
               </div>
             </header>
-            <h1
+            <h2
               class="text-[#000D24] font-bold text-[20px] text-center mb-[24px]"
             >
-              НАКЛАДНОЙ
-            </h1>
+              {{ t("document.overhead") }}
+            </h2>
 
             <div class="flex mb-[8px]">
-              <h1 class="text-[#4F5662] text-sm font-medium">
-                Дата создания в системе:
-              </h1>
+              <h2 class="text-[#4F5662] text-sm font-medium">
+                {{ t("document.dateCreatedSystem") }}:
+              </h2>
               <span class="ml-2 text-[#A8AAAE] text-sm font-medium block">
                 {{ date }}
               </span>
             </div>
 
             <div class="flex mb-[24px]">
-              <h1 class="text-[#4F5662] text-sm font-medium">
-                № накладной в системе:
-              </h1>
+              <h2 class="text-[#4F5662] text-sm font-medium">
+                {{ t("document.invoiceNumberSystem") }}:
+              </h2>
               <span class="ml-2 text-[#A8AAAE] text-sm font-medium block">
                 NK-00000
               </span>
             </div>
 
             <div class="flex mb-[8px]">
-              <h1 class="text-[#4F5662] text-sm font-medium">
-                Дата накладной:
-              </h1>
+              <h2 class="text-[#4F5662] text-sm font-medium">
+                {{ t("document.invoiceDate") }}:
+              </h2>
               <span class="ml-2 text-[#A8AAAE] text-sm font-medium block">
                 {{ form.date }}
               </span>
             </div>
 
             <div class="flex mb-[24px]">
-              <h1 class="text-[#4F5662] text-sm font-medium">№ накладной:</h1>
+              <h2 class="text-[#4F5662] text-sm font-medium">
+                {{ t("document.invoiceNumber") }}:
+              </h2>
               <span class="ml-2 text-[#A8AAAE] text-sm font-medium block">
                 {{ form.number }}
               </span>
             </div>
 
             <div class="flex mb-[24px]">
-              <h1 class="text-[#4F5662] text-sm font-medium">Вид документа:</h1>
+              <h2 class="text-[#4F5662] text-sm font-medium">
+                {{ t("document.type") }}
+              </h2>
               <span class="ml-2 text-[#A8AAAE] text-sm font-medium block">
                 {{ name }}
               </span>
             </div>
 
             <div class="flex items-center mb-[8px]">
-              <h1 class="text-[#4F5662] text-sm font-medium">От кого:</h1>
+              <h2 class="text-[#4F5662] text-sm font-medium">
+                {{ t("document.whom.from") }}:
+              </h2>
               <span class="ml-2 text-[#A8AAAE] text-sm font-medium block">
                 {{ from }}
               </span>
             </div>
 
             <div class="flex mb-[8px]">
-              <h1 class="text-[#4F5662] text-sm font-medium">Кому:</h1>
+              <h2 class="text-[#4F5662] text-sm font-medium">
+                {{ t("document.whom.to") }}:
+              </h2>
               <span class="ml-2 text-[#A8AAAE] text-sm font-medium block">
                 {{ to }}
               </span>
             </div>
 
             <div class="flex mb-[24px]">
-              <h1 class="text-[#4F5662] text-sm font-medium whitespace-nowrap">
-                Через кого:
-              </h1>
+              <h2 class="text-[#4F5662] text-sm font-medium whitespace-nowrap">
+                {{ t("document.whom.through") }}:
+              </h2>
               <span class="ml-2 text-[#A8AAAE] text-sm font-medium block">
                 {{ form.through_whom }}
               </span>
             </div>
 
             <div class="flex mb-[8px]">
-              <h1 class="text-[#4F5662] text-sm font-medium">Основание:</h1>
+              <h2 class="text-[#4F5662] text-sm font-medium">
+                {{ t("document.base") }}:
+              </h2>
               <span class="ml-2 text-[#A8AAAE] text-sm font-medium block">
                 {{ form.basis }}
               </span>
             </div>
 
             <div class="flex mb-[24px]">
-              <h1 class="text-[#4F5662] text-sm font-medium">
-                Способ отправления:
-              </h1>
+              <h2 class="text-[#4F5662] text-sm font-medium">
+                {{ t("document.shippingMethod") }}:
+              </h2>
               <span class="ml-2 text-[#A8AAAE] text-sm font-medium block">
                 {{ form.shipping_method }}
               </span>
@@ -593,10 +610,11 @@ watch(providerCreateModal, newMProviderModal => {
               class="custom-element-table custom-element-table--has-append mb-6"
               header-cell-class-name="custom-cell-header"
               cell-class-name="custom-cell-header"
+              :empty-text="t('common.empty')"
             >
               <el-table-column
                 prop="title"
-                label="Название"
+                :label="t('common.name')"
                 class="!p-0"
               >
                 <template #default="{ row }: { row: DocumentProductType }">
@@ -609,7 +627,7 @@ watch(providerCreateModal, newMProviderModal => {
               </el-table-column>
               <el-table-column
                 prop="quantity"
-                label="Количество"
+                :label="t('common.quantity')"
               >
                 <template #default="{ row }: { row: DocumentProductType }">
                   {{ row.quantity ?? "-" }}
@@ -617,7 +635,7 @@ watch(providerCreateModal, newMProviderModal => {
               </el-table-column>
               <el-table-column
                 prop="measurement"
-                label="Ед. измерения"
+                :label="t('common.measurement')"
               >
                 <template #default="{ row }: { row: DocumentProductType }">
                   {{
@@ -629,24 +647,24 @@ watch(providerCreateModal, newMProviderModal => {
               </el-table-column>
               <el-table-column
                 prop="price"
-                label="Цена"
+                :label="t('common.price')"
               >
                 <template #default="{ row }: { row: DocumentProductType }">
                   {{
-                    row.price ? `${formatNumber(row.price as number)} сум` : "-"
+                    row.price ? `${formatNumber(row.price as number)} ${t("currency.sum")}` : "-"
                   }}
                 </template>
               </el-table-column>
               <el-table-column
                 prop="total_price"
-                label="Сумма"
+                :label="t('common.sum')"
               >
                 <template #default="{ row }: { row: DocumentProductType }">
                   {{
                     row.price && row.quantity
                       ? `${formatNumber(
                         (row.price * row.quantity) as number,
-                      )} сум`
+                      )} ${t("currency.sum")}`
                       : "-"
                   }}
                 </template>
@@ -657,18 +675,20 @@ watch(providerCreateModal, newMProviderModal => {
                 #append
               >
                 <div class="flex items-center justify-end p-4">
-                  <h1 class="text-[#8F9194] text-sm font-bold mr-[5px]">
-                    Общая сумма:
-                  </h1>
-                  <h1 class="text-[#000D24] text-sm font-bold mr-5">
-                    {{ formatNumber(productsTotalSum) }} сум
-                  </h1>
+                  <h2 class="text-[#8F9194] text-sm font-bold mr-[5px]">
+                    {{ t("common.totalSum") }}:
+                  </h2>
+                  <h2 class="text-[#000D24] text-sm font-bold mr-5">
+                    {{ formatNumber(productsTotalSum) }} t("currency.sum")
+                  </h2>
                 </div>
               </template>
             </el-table>
             <template v-if="!activeComingModal">
               <div class="flex items-center justify-between mb-[24px]">
-                <h1 class="text-[#4F5662] text-sm font-semibold">Кладовщик:</h1>
+                <h2 class="text-[#4F5662] text-sm font-semibold">
+                  {{ t("document.commission.storekeeper") }}:
+                </h2>
                 <span class="ml-2 text-[#A8AAAE] text-sm font-medium block">
                 {{
                     actForm.doc_signer_obj.signer_id_1 && typeof (actForm.doc_signer_obj.signer_id_1) === "number" ? usersStore.getUserFullName(getUser(actForm.doc_signer_obj.signer_id_1)) : ""
@@ -677,7 +697,9 @@ watch(providerCreateModal, newMProviderModal => {
               </div>
 
               <div class="flex items-center justify-between mb-[24px]">
-                <h1 class="text-[#4F5662] text-sm font-semibold">Товаровед:</h1>
+                <h2 class="text-[#4F5662] text-sm font-semibold">
+                  {{ t("document.commission.commodityExpert") }}:
+                </h2>
                 <span class="ml-2 text-[#A8AAAE] text-sm font-medium block">
                 {{
                     actForm.doc_signer_obj.signer_id_2 && typeof (actForm.doc_signer_obj.signer_id_2) === "number" ? usersStore.getUserFullName(getUser(actForm.doc_signer_obj.signer_id_2)) : ""
@@ -686,7 +708,9 @@ watch(providerCreateModal, newMProviderModal => {
               </div>
 
               <div class="flex items-center justify-between mb-[24px]">
-                <h1 class="text-[#4F5662] text-sm font-semibold">Зав. склад</h1>
+                <h2 class="text-[#4F5662] text-sm font-semibold">
+                  {{ t("document.commission.warehouseManager") }}:
+                </h2>
                 <span class="ml-2 text-[#A8AAAE] text-sm font-medium block">
                {{
                     actForm.doc_signer_obj.signer_id_4 && typeof (actForm.doc_signer_obj.signer_id_4) === "number" ? usersStore.getUserFullName(getUser(actForm.doc_signer_obj.signer_id_4)) : ""
@@ -695,9 +719,9 @@ watch(providerCreateModal, newMProviderModal => {
               </div>
 
               <div class="flex items-center justify-between mb-[24px]">
-                <h1 class="text-[#4F5662] text-sm font-semibold">
-                  Начальник базы
-                </h1>
+                <h2 class="text-[#4F5662] text-sm font-semibold">
+                  {{ t("document.commission.baseChief") }}:
+                </h2>
                 <span class="ml-2 text-[#A8AAAE] text-sm font-medium block">
                 {{
                     actForm.doc_signer_obj.signer_id_5 && typeof (actForm.doc_signer_obj.signer_id_5) === "number" ? usersStore.getUserFullName(getUser(actForm.doc_signer_obj.signer_id_5)) : ""
@@ -718,24 +742,24 @@ watch(providerCreateModal, newMProviderModal => {
                 alt="logo"
               />
               <div class="flex flex-col ml-3">
-                <b class="text-[#000D24] text-lg">NKMK</b>
-                <span class="text-[#CBCCCE]">Jamg‘armasi</span>
+                <b class="text-[#000D24] text-lg">{{ t("logo.title") }}</b>
+                <span class="text-[#CBCCCE]">{{ t("logo.subtitle") }}</span>
               </div>
             </header>
-            <h1
+            <h2
               class="text-[#000D24] font-bold text-[20px] text-center mb-[24px]"
             >
-              АКТ
-            </h1>
+              {{ t("document.act.title") }}
+            </h2>
             <div class="flex items-center justify-between mb-[24px]">
               <div class="flex items-center mb-[8px]">
-                <h1 class="text-[#4F5662] text-sm font-semibold">№:</h1>
+                <h2 class="text-[#4F5662] text-sm font-semibold">№:</h2>
                 <span class="ml-2 text-[#A8AAAE] text-sm font-medium block">
                   {{ actForm.number }}
                 </span>
               </div>
               <div class="flex items-center mb-[8px]">
-                <h1 class="text-[#4F5662] text-sm font-semibold">Дата:</h1>
+                <h2 class="text-[#4F5662] text-sm font-semibold">{{ t("common.date")}}:</h2>
                 <span class="ml-2 text-[#A8AAAE] text-sm font-medium block">
                   {{ date }}
                 </span>
@@ -864,7 +888,7 @@ watch(providerCreateModal, newMProviderModal => {
             </div>
 
             <div class="flex items-center justify-between mb-[24px]">
-              <h1 class="text-[#4F5662] text-sm font-semibold">Кладовщик:</h1>
+              <h2 class="text-[#4F5662] text-sm font-semibold">Кладовщик:</h2>
               <span class="ml-2 text-[#A8AAAE] text-sm font-medium block">
                 {{
                   actForm.doc_signer_obj.signer_id_1 && typeof (actForm.doc_signer_obj.signer_id_1) === "number" ? usersStore.getUserFullName(getUser(actForm.doc_signer_obj.signer_id_1)) : ""
@@ -873,7 +897,7 @@ watch(providerCreateModal, newMProviderModal => {
             </div>
 
             <div class="flex items-center justify-between mb-[24px]">
-              <h1 class="text-[#4F5662] text-sm font-semibold">Товаровед:</h1>
+              <h2 class="text-[#4F5662] text-sm font-semibold">Товаровед:</h2>
               <span class="ml-2 text-[#A8AAAE] text-sm font-medium block">
                 {{
                   actForm.doc_signer_obj.signer_id_2 && typeof (actForm.doc_signer_obj.signer_id_2) === "number" ? usersStore.getUserFullName(getUser(actForm.doc_signer_obj.signer_id_2)) : ""
@@ -882,7 +906,7 @@ watch(providerCreateModal, newMProviderModal => {
             </div>
 
             <div class="flex items-center justify-between mb-[24px]">
-              <h1 class="text-[#4F5662] text-sm font-semibold">Экспедитор:</h1>
+              <h2 class="text-[#4F5662] text-sm font-semibold">Экспедитор:</h2>
               <span class="ml-2 text-[#A8AAAE] text-sm font-medium block">
                {{
                   actForm.doc_signer_obj.signer_id_3 && typeof (actForm.doc_signer_obj.signer_id_3) === "number" ? usersStore.getUserFullName(getUser(actForm.doc_signer_obj.signer_id_3)) : ""
@@ -891,7 +915,7 @@ watch(providerCreateModal, newMProviderModal => {
             </div>
 
             <div class="flex items-center justify-between mb-[24px]">
-              <h1 class="text-[#4F5662] text-sm font-semibold">Зав. склад</h1>
+              <h2 class="text-[#4F5662] text-sm font-semibold">Зав. склад</h2>
               <span class="ml-2 text-[#A8AAAE] text-sm font-medium block">
                {{
                   actForm.doc_signer_obj.signer_id_4 && typeof (actForm.doc_signer_obj.signer_id_4) === "number" ? usersStore.getUserFullName(getUser(actForm.doc_signer_obj.signer_id_4)) : ""
@@ -900,9 +924,9 @@ watch(providerCreateModal, newMProviderModal => {
             </div>
 
             <div class="flex items-center justify-between mb-[24px]">
-              <h1 class="text-[#4F5662] text-sm font-semibold">
+              <h2 class="text-[#4F5662] text-sm font-semibold">
                 Начальник базы
-              </h1>
+              </h2>
               <span class="ml-2 text-[#A8AAAE] text-sm font-medium block">
                 {{
                   actForm.doc_signer_obj.signer_id_5 && typeof (actForm.doc_signer_obj.signer_id_5) === "number" ? usersStore.getUserFullName(getUser(actForm.doc_signer_obj.signer_id_5)) : ""
