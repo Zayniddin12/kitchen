@@ -19,6 +19,43 @@ import AppForm from "@/components/ui/form/app-form/AppForm.vue";
 import type { ValidationType } from "@/components/ui/form/app-form/app-form.type";
 import { useCommonStore } from "@/stores/common.store";
 
+interface MealDataType {
+  period: number;
+  start_time: string;
+  end_time: string;
+  amount: number | string;
+  product_type: string;
+  product_id: number | string;
+  rationsList: any;
+}
+
+interface DataType {
+  id: number | string;
+  title: string;
+  isChecked: boolean;
+  mealData: MealDataType[];
+}
+
+interface MealType {
+  date: string;
+  data: DataType[];
+}
+
+interface ListDataType {
+  id?: number | string;
+  product: number | null;
+  vid_product: number | null;
+  meal: number | null;
+  amount: number | null;
+  vid_list: any[];
+  meals_list: any[];
+}
+
+interface ListDishesType {
+  date: string;
+  data: ListDataType[];
+}
+
 const route = useRoute();
 const router = useRouter();
 const { setBreadCrumb } = useBreadcrumb();
@@ -36,30 +73,11 @@ const kitchenData = ref({
 
 const activeScheduledDate = ref("");
 
-const data = ref([]);
+const data = ref<MealType | []>([]);
 
 // List dishes
 
-const list_dishes = ref([]);
-
-// Meal Times
-// const mealTimes = ref([
-//   {
-//     id: 1,
-//     title: "Завтрак",
-//     isChecked: false,
-//     mealData: {},
-//   },
-//   {
-//     id: 2, title: "Обед", isChecked: false, mealData: {},
-//   },
-//   {
-//     id: 3, title: "Ужин", isChecked: false, mealData: {},
-//   },
-//   {
-//     id: 4, title: "Сухой питания", isChecked: false, mealData: {},
-//   },
-// ]);
+const list_dishes = ref<ListDishesType | []>([]);
 
 const mealTimesV$ = ref<ValidationType | null>(null);
 const kitchenDatav$ = ref<ValidationType | null>(null);
@@ -111,6 +129,13 @@ const scheduledDates = computed(() => {
     }
     return formattedDates;
   } else return [];
+});
+
+watch(() => kitchenData.value.startDate, (newValue, oldValue) => {
+
+  if (newValue && oldValue) {
+    kitchenData.value.endDate = null;
+  }
 });
 
 // Watch
@@ -321,7 +346,6 @@ watch(scheduledDates, async (newValue) => {
       if (route.name === "KitchenMenuEdit") {
 
         newValue.forEach(el => {
-          console.log(kitchenStore.menuElement.elements[el.date.split(".").reverse().join("-")]);
 
           if (kitchenStore.menuElement.elements[el.date.split(".").reverse().join("-")]) {
             Object.keys(kitchenStore.menuElement.elements[el.date.split(".").reverse().join("-")]).forEach(key => {
@@ -356,30 +380,6 @@ watch(scheduledDates, async (newValue) => {
               ],
             });
           }
-
-          // list_dishes.value.push({
-          //   date: el.date,
-          //   data: kitchenStore.menuElement.elements[el.date.split(".").reverse().join("-")] ? kitchenStore.menuElement.elements[el.date.split(".").reverse().join("-")]["product" || "meal"].map(item => {
-          //     return {
-          //       id: item.id,
-          //       product: kitchenStore.menuElement.elements[el.date.split(".").reverse().join("-")].product ? item.parent_id : null,
-          //       vid_product: kitchenStore.menuElement.elements[el.date.split(".").reverse().join("-")].product ? item.product_id : null,
-          //       meal: kitchenStore.menuElement.elements[el.date.split(".").reverse().join("-")].meal ? item.product_id : null,
-          //       amount: item.amount,
-          //       vid_list: [],
-          //       meals_list: [],
-          //     };
-          //   }) : [
-          //     {
-          //       product: null,
-          //       vid_product: null,
-          //       meal: null,
-          //       amount: null,
-          //       vid_list: [],
-          //       meals_list: [],
-          //     },
-          //   ],
-          // });
         });
       } else {
         newValue.forEach(item => {
@@ -458,13 +458,15 @@ onMounted(async () => {
   if (route.name === "KitchenMenuEdit") {
     await kitchenStore.GET_MENU_ITEM(route.params.child_id as string);
     if (kitchenStore.activeMenuPart) {
-      kitchenData.value.startDate = kitchenStore.menuItem.menu.start_date;
+      kitchenData.value.startDate = kitchenStore.menuItem.menu.start_date.split(".").reverse().join("-");
       kitchenData.value.intermediateDate1 = kitchenStore.menuItem.menu.duration == 7;
 
     }
     if (kitchenStore.activeSalesPart) {
-      kitchenData.value.startDate = kitchenStore.menuItem.menu.start_date;
-      kitchenData.value.endDate = kitchenStore.menuItem.menu.end_date;
+      kitchenData.value.startDate = kitchenStore.menuItem.menu.start_date.split(".").reverse().join("-");
+      ;
+      kitchenData.value.endDate = kitchenStore.menuItem.menu.end_date.split(".").reverse().join("-");
+      ;
     }
 
 
@@ -500,7 +502,6 @@ const cancel = () => {
 };
 
 const addMealItem = (index: number, childIndex: string | number) => {
-  console.log(index);
   data.value[index].data[childIndex].mealData.push(
     {
       period: index + 1,
@@ -514,7 +515,7 @@ const addMealItem = (index: number, childIndex: string | number) => {
   );
 };
 
-const changeRation = async (val, parentIndex, childIndex, indexMeal) => {
+const changeRation = async (val: number, parentIndex: number, childIndex: number, indexMeal: number): Promise<void> => {
   console.log(val, parentIndex, childIndex);
   if (val) {
     const responseData = await kitchenStore.GET_RATION_LIST_IN_MENU(val);
@@ -525,6 +526,48 @@ const changeRation = async (val, parentIndex, childIndex, indexMeal) => {
 
 const commonStore = useCommonStore();
 
+const checkIsEmpty = (data: any[]): boolean => {
+  let dateInput = false;
+
+  for (let datee of data) {
+    let userChecked = false;
+
+    for (let datum of datee.data) {
+      if (datum.isChecked === false) {
+        continue;
+      }
+      userChecked = true;
+
+      for (let meal of datum.mealData) {
+        // Check if all required fields in mealData are set
+        for (let key of Object.keys(meal)) {
+          if (!meal[key]) {
+            console.log("This field is empty:", key);
+            commonStore.errorToast("This field is empty:" + key);
+            return false;
+          }
+        }
+      }
+
+      dateInput = true; // Indicates valid input exists
+    }
+
+    if (!userChecked) {
+      commonStore.errorToast("At least one period must be added.");
+      console.log("At least one period must be added.");
+      return false;
+    }
+  }
+
+  if (!dateInput) {
+    commonStore.errorToast("No valid date input found.");
+    console.log("No valid date input found.");
+    return false;
+  }
+
+  return true; // All checks passed
+};
+
 const sendData = async () => {
   if (kitchenStore.activeMenuPart) {
     if (!kitchenDatav$.value) return;
@@ -533,6 +576,11 @@ const sendData = async () => {
       await commonStore.errorToast("Validation Error");
       return;
     }
+
+    if (!checkIsEmpty(data.value)) {
+      return;
+    }
+
 
     let kitchenPayload = {
       kitchen_id: Number(route.params.child_id),
@@ -603,7 +651,6 @@ const sendData = async () => {
       });
     }).flat();
 
-    console.log(kitchenElementPayload);
 
     kitchenElementPayload.forEach(item => {
       item.amount = Number(item.amount);
@@ -957,7 +1004,7 @@ const addMeal = (parentIndex: number) => {
                         label-class="text-[#A8AAAE] text-[12px] font-medium"
                       />
                     </div>
-                    {{ item }}
+                    <!--                    {{ item }}-->
                     <div v-if="item.meals_list && item.meals_list.compositions" class="mb-[24px]">
                       <el-table
                         empty-text="Нет данных"

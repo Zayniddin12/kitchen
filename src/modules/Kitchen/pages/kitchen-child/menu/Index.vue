@@ -793,6 +793,10 @@ const mealTextFilter = (index: string): string => {
                   </div>
                 </div>
               </div>
+              <AppEmpty
+                v-else
+                class="h-[60vh]"
+              />
             </div>
           </div>
           <div
