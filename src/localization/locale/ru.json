@@ -60,7 +60,12 @@
     "endDate": "По эту дату",
     "found": "Найдено",
     "action": "Действие",
-    "view": "Просмотр"
+    "view": "Просмотр",
+    "from": "от"
+  },
+  "system": {
+    "number": "№ в системе",
+    "date": "Дата в системе"
   },
   "licence": {
     "numberAndDate": "Номер и дата лицензии",
@@ -85,13 +90,18 @@
     "cancel": "Отменить",
     "logout": "Выйти",
     "add": "Добавить",
+    "addMore": "Добавить еще",
     "save": "Сохранить",
     "saveAsDraft": "Сохранить как черновик",
     "delete": "Удалить",
     "understandable": "Понятно",
+    "reject": "Отклонить",
+    "accept": "Принять",
     "send": "Отправить",
     "reset": "Сбросить",
-    "apply": "Применить"
+    "apply": "Применить",
+    "seal": "Печать",
+    "download": "Скачать"
   },
   "confirm": {
     "cancel": {
@@ -150,6 +160,7 @@
       "title": "Служебная записка",
       "message": "Отображение сообщения служебки"
     },
+    "requests": "Запросы",
     "freeRequest": {
       "create": "Создать свободный запрос",
       "title": "Запрос",
@@ -182,9 +193,11 @@
     },
     "consignmentNumberDate": "Номер и дата накладной",
     "overhead": "НАКЛАДНОЙ",
+    "overhead2": "Накладные",
     "dateCreatedSystem": "Дата создания в системе",
     "invoiceNumberSystem": "№ накладной в системе",
     "invoiceDate": "Дата накладной",
+    "shortInvoiceDate": "Дата нак...",
     "invoiceNumber": "№ накладной",
     "type": "Вид документа",
     "whom": {
@@ -194,6 +207,7 @@
     },
     "base": "Основание",
     "shippingMethod": "Способ отправления",
+    "shortShippingMethod": "Способ отп...",
     "commission": {
       "title": "Состав комиссии приема продуктов",
       "storekeeper": "Кладовщик",
@@ -226,7 +240,12 @@
     "incoming": "Входящие",
     "outgoing": "Исходящие",
     "drafts": "Черновики",
-    "received": "Полученные"
+    "received": "Полученные",
+    "sent": "Отправленные",
+    "contract": "Контракты",
+    "contractNumber": "№ контракта",
+    "contractTotalSum": "Общая сумма контракта",
+    "consignmentNote": "Накладной документ"
   },
   "error": {
     "validation": "Validation Error"

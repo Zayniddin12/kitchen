@@ -4,38 +4,48 @@
 >
 
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
-import { onMounted, watch } from "vue";
-import { useDocumentStore } from "@/modules/Document/document.store";
-import { useRoute } from "vue-router";
+import {computed, onMounted, watch} from "vue";
+import {useDocumentStore} from "@/modules/Document/document.store";
+import {useRoute} from "vue-router";
 import AppOverlay from "@/components/ui/app-overlay/AppOverlay.vue";
-import { useUsersStore } from "@/modules/Users/users.store";
+import {useUsersStore} from "@/modules/Users/users.store";
+import {useI18n} from "vue-i18n";
 
 const route = useRoute();
+
+const {t} = useI18n();
 
 const documentStore = useDocumentStore();
 const userStore = useUsersStore();
 
-const { setBreadCrumb } = useBreadcrumb();
+const {setBreadCrumb} = useBreadcrumb();
+
+const title = computed(() => route.meta.title ?? "");
+
+const isTranslate = computed(() => !!route.meta.isTranslate);
 
 const setBreadCrumbFn = () => {
-  setBreadCrumb([
-    {
-      label: "Документы",
-    },
-    {
-      label: "Акты",
-      to: { name: "acts" },
-    },
-    {
-      label: "Просмотр",
-      isActionable: true,
-    },
-  ]);
+	setBreadCrumb([
+		{
+			label: "document.title1",
+			isTranslate: true,
+		},
+		{
+			label: "document.act.title2",
+			isTranslate: true,
+			to: {name: "acts"},
+		},
+		{
+			label: title.value,
+			isTranslate: isTranslate.value,
+			isActionable: true,
+		},
+	]);
 };
 
 onMounted(() => {
-  setBreadCrumbFn();
-  documentStore.fetchDocument(route.params.id as string);
+	setBreadCrumbFn();
+	documentStore.fetchDocument(route.params.id as string);
 });
 
 </script>
@@ -52,26 +62,42 @@ onMounted(() => {
           alt="logo"
         >
         <div class="flex flex-col ml-3">
-          <b class="text-[#000D24] text-lg">NKMK</b>
-          <span class="text-[#CBCCCE]">Jamg‘armasi</span>
+          <b class="text-[#000D24] text-lg">{{
+		          t("logo.title")
+                                            }}</b>
+          <span class="text-[#CBCCCE]">{{
+		          t("logo.subtitle")
+                                       }}</span>
         </div>
       </header>
-      <h1 class="text-[#000D24] font-bold text-[20px] text-center mb-[24px]">АКТ</h1>
+      <h1 class="text-[#000D24] font-bold text-[20px] text-center mb-[24px]">
+	      {{ t("document.act.title") }}
+      </h1>
 
       <div class="flex items-center justify-between">
         <div class="flex items-center mb-[24px]">
           <h1 class="text-[#4F5662] text-[14px] font-medium">№:</h1>
-          <span class="ml-2 text-[#A8AAAE] text-[14px] block">{{ documentStore.document?.number }}</span>
+          <span class="ml-2 text-[#A8AAAE] text-[14px] block">
+	          {{
+		          documentStore.document?.number ?? "-"
+	          }}
+          </span>
         </div>
 
         <div class="flex items-center mb-[8px]">
-          <h1 class="text-[#4F5662] text-[14px] font-medium">Дата:</h1>
-          <span class="ml-2 text-[#A8AAAE] text-[14px] block">{{ documentStore.document?.date }}</span>
+          <h1 class="text-[#4F5662] text-[14px] font-medium">{{ t("common.date") }}:</h1>
+          <span class="ml-2 text-[#A8AAAE] text-[14px] block">
+	          {{
+		          documentStore.document?.date ?? "-"
+	          }}
+          </span>
         </div>
       </div>
 
       <div class="text-[#4F5662] text-sm">
-        {{ documentStore.document?.content }}
+        {{
+	        documentStore.document?.content ?? "-"
+        }}
       </div>
 
       <div
@@ -80,108 +106,150 @@ onMounted(() => {
         class="bg-gray-50 p-6 rounded-[16px] mt-6 grid grid-cols-2 gap-6"
       >
         <div>
-          <span class="text-blue-500">Название продукта</span>
-          <p>{{ product.name || "-" }}</p>
+          <span class="text-blue-500">{{ t("product.name") }}</span>
+          <p>{{
+		          product.name || "-"
+             }}</p>
         </div>
         <div>
-          <span class="text-blue-500">Количество продукта</span>
-          <p>{{ product.quantity ?? 0 }}</p>
+          <span class="text-blue-500">{{ t("product.quantity") }}</span>
+          <p>{{
+		          product.quantity ?? 0
+             }}</p>
         </div>
         <div>
-          <span class="text-blue-500">Единица измерения</span>
-          <p>{{ product.unit || "-" }}</p>
+          <span class="text-blue-500">{{ t("common.unitMeasurement") }}</span>
+          <p>{{
+		          product.unit || "-"
+             }}</p>
         </div>
         <div>
-          <span class="text-blue-500">Номер и дата договора о поставке</span>
-          <p>{{ documentStore.document?.number }} от {{ documentStore.document?.date }}</p>
+          <span class="text-blue-500">{{ t("document.act.numberDateAgreement") }}</span>
+          <p>{{
+	          documentStore.document?.number
+             }} {{ t("common.from") }} {{
+	          documentStore.document?.date
+             }}</p>
         </div>
         <div>
           <span class="text-blue-500">
-            Номер и дата накладной
+	          {{ t("document.consignmentNumberDate") }}
           </span>
           <p>
             <template v-if="documentStore.document?.invoice_number && documentStore.document?.invoice_date">
-              {{ documentStore.document.invoice_number }} от {{ documentStore.document.invoice_date }}
+              {{
+	              documentStore.document.invoice_number
+              }} {{ t("common.from") }} {{
+	              documentStore.document.invoice_date
+              }}
             </template>
             <template v-else>-</template>
           </p>
         </div>
         <div>
           <span class="text-blue-500">
-            Производитель продукта
+	          {{ t("product.manufacturer") }}
           </span>
           <p>
-            {{ product.parent_name || "-" }}
+            {{
+	            product.parent_name || "-"
+            }}
           </p>
         </div>
         <div>
           <span class="text-blue-500">
-            Поставщик
+	          {{ t("common.supplier") }}
           </span>
           <p>
-            {{ documentStore.document?.from_name || "-" }}
+            {{
+	            documentStore.document?.from_name || "-"
+            }}
           </p>
         </div>
         <div>
           <span class="text-blue-500">
-            Получатель
+	          {{ t("common.recipient") }}
           </span>
           <p>
-            {{ documentStore.document?.to_name }}
+            {{
+	            documentStore.document?.to_name ?? "-"
+            }}
           </p>
         </div>
         <div>
           <span class="text-blue-500">
-            Транспорт
+	          {{ t("common.transport") }}
           </span>
           <p>
-            {{ documentStore.document?.shipping_method || "-" }}
+            {{
+	            documentStore.document?.shipping_method || "-"
+            }}
           </p>
         </div>
         <div>
           <span class="text-blue-500">
-            Номер и дата лицензии
+	          {{ t("licence.numberAndDate") }}
           </span>
           <p>
             <template v-if="documentStore.document?.details">
-              {{ documentStore.document.details.licence }} от
-              {{ documentStore.document.details.licence_date }}
+              {{
+	              documentStore.document.details.licence
+              }}
+             {{ t("common.from") }}
+              {{
+	              documentStore.document.details.licence_date
+              }}
             </template>
             <template v-else>-</template>
           </p>
         </div>
         <div>
           <span class="text-blue-500">
-            Номер и дата заключение Санитарно-эпидемиологического центра
+	          {{ t("document.numberAndDateOfTheConclusionOfTheSanitaryAndEpidemiologicalCenter") }}
           </span>
           <p>
             <template v-if="documentStore.document?.details">
-              {{ documentStore.document.details.sanitary }} от
-              {{ documentStore.document.details.sanitary_date }}
+              {{
+	              documentStore.document.details.sanitary
+              }}
+                {{ t("common.from") }}
+              {{
+	              documentStore.document.details.sanitary_date
+              }}
             </template>
             <template v-else>-</template>
           </p>
         </div>
         <div>
           <span class="text-blue-500">
-            Номер и дата удостоверения ветеринарии
+	          {{ t("document.numberAndDateOfVeterinaryCertificate") }}
           </span>
           <p>
             <template v-if="documentStore.document?.details">
-              {{ documentStore.document.details.vetirinary }} от
-              {{ documentStore.document.details.vetirinary_date }}
+              {{
+	              documentStore.document.details.vetirinary
+              }}
+              {{ t("common.from") }}
+              {{
+	              documentStore.document.details.vetirinary_date
+              }}
             </template>
             <template v-else>-</template>
           </p>
         </div>
         <div>
           <span class="text-blue-500">
-            Номер и дата удостоверения качества
+	          {{ t("document.numberAndDateOfQualityCertificate") }}
           </span>
           <p>
             <template v-if="documentStore.document?.details">
-              {{ documentStore.document.details.quality }} от
-              {{ documentStore.document.details.quality_date }}
+              {{
+	              documentStore.document.details.quality
+              }}
+              {{ t("common.from") }}
+              {{
+	              documentStore.document.details.quality_date
+              }}
             </template>
             <template v-else>-</template>
           </p>
@@ -193,13 +261,15 @@ onMounted(() => {
         :key="singer.id"
       >
         <p class=" text-sm text-[#4F5662] font-medium w-[18%]">
-          Кладовщик:
+	        {{ singer.position_name || t("document.commission.storekeeper") }}:
         </p>
         <img
           src="@/assets/images/icons/qr.svg"
           alt="qr"
         />
-        <p class="text-[#A8AAAE] text-sm w-[22%]">{{ userStore.getUserFullName(singer) || "-" }}</p>
+        <p class="text-[#A8AAAE] text-sm w-[22%]">{{
+		        userStore.getUserFullName(singer) || "-"
+                                                  }}</p>
       </div>
     </AppOverlay>
 
@@ -215,7 +285,7 @@ onMounted(() => {
           alt="plane"
           class="mr-[12px]"
         />
-        Отправить
+        {{ t("method.send") }}
       </ElButton>
       <ElButton
         plain
@@ -228,7 +298,7 @@ onMounted(() => {
           alt="plane"
           class="mr-[12px]"
         />
-        Печать
+        {{ t("method.seal") }}
       </ElButton>
       <ElButton
         :loading="documentStore.pdfLoading"
@@ -243,7 +313,7 @@ onMounted(() => {
           alt="plane"
           class="mr-[12px]"
         />
-        Скачать
+        {{ t("method.download") }}
       </ElButton>
     </div>
   </div>
@@ -251,22 +321,22 @@ onMounted(() => {
 
 <style lang="scss">
 .act-show {
-  &-table {
-    tr * {
-      @apply first:border-r-0;
-    }
+	&-table {
+		tr * {
+			@apply first:border-r-0;
+		}
 
-    tr:not(:last-child) * {
-      @apply border-b-0;
-    }
+		tr:not(:last-child) * {
+			@apply border-b-0;
+		}
 
-    tr:first-child * {
-      @apply first:rounded-tl-[15px] last:rounded-tr-[15px];
-    }
+		tr:first-child * {
+			@apply first:rounded-tl-[15px] last:rounded-tr-[15px];
+		}
 
-    tr:last-child * {
-      @apply first:rounded-bl-[15px] last:rounded-br-[15px];
-    }
-  }
+		tr:last-child * {
+			@apply first:rounded-bl-[15px] last:rounded-br-[15px];
+		}
+	}
 }
 </style>

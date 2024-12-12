@@ -201,10 +201,13 @@ const sendForm = async () => {
   if (newForm.Act && newForm.Act.doc_signer_obj) {
     const signerKeys = ["signer_id_1", "signer_id_2", "signer_id_3", "signer_id_4", "signer_id_5"] as const;
 
-    newForm.Act.doc_signers = signerKeys
-      .map((key) => ({
-        signer_id: newForm.Act!.doc_signer_obj![key] as number,
-      }));
+	  newForm.Act.doc_signers = signerKeys
+	    .filter((key) => newForm.Act!.doc_signer_obj![key]) // Faqat qiymati borlarini olish
+	    .map((key) => ({
+		    signer_id: +newForm.Act!.doc_signer_obj![key] as number,
+	    }));
+
+	  delete newForm.Act.doc_signer_obj;
   }
 
   await documentStore.create(newForm).then(() => {
@@ -682,7 +685,7 @@ watch(providerCreateModal, newMProviderModal => {
                     {{ t("common.totalSum") }}:
                   </h2>
                   <h2 class="text-[#000D24] text-sm font-bold mr-5">
-                    {{ formatNumber(productsTotalSum) }} t("currency.sum")
+                    {{ formatNumber(productsTotalSum) }} {{ t("currency.sum") }}
                   </h2>
                 </div>
               </template>

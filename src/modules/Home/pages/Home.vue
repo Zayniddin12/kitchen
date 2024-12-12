@@ -263,14 +263,14 @@ onMounted(() => {
             title="Занятость складов"
             subtitle="Здесь будет текст"
             :data="warehouseCapacityData"
-            :legend-item-gap="180"
+            :legend-item-gap="160"
             :loading="statisticsStore.warehouseCapacityLoading"
           />
           <AnalyticsCard
             title="Количество посетителей"
             :icon="UsersIcon"
             subtitle="Здесь будет текст"
-            :legend-item-gap="240"
+            :legend-item-gap="220"
             :data="visitorsData"
             :loading="statisticsStore.visitorsLoading"
           />

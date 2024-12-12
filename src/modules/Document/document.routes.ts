@@ -1,249 +1,267 @@
-import { RouteRecordRaw } from "vue-router";
+import {RouteRecordRaw} from "vue-router";
 
 export default [
-  // -------------------------Служебные записки-------------------------------
-  // Входящие
-  {
-    path: "/inbox",
-    name: "inbox",
-    component: () => import("@/modules/Document/pages/OfficeNotes/Index.vue"),
-    meta: {
-      title: "document.incoming",
-      isTranslate: true,
-      apiUrl: "received",
-      doc_type: "memo",
-      permissionView: true,
-      uniqueKeys: {
-        documents: true,
-        documentInbox: true,
-      },
-      breadcrumbItemTitle: "document.incoming",
-      breadcrumbItemIsTranslate: true,
+    // -------------------------Служебные записки-------------------------------
+    // Входящие
+    {
+        path: "/inbox",
+        name: "inbox",
+        component: () => import("@/modules/Document/pages/OfficeNotes/Index.vue"),
+        meta: {
+            title: "document.incoming",
+            isTranslate: true,
+            apiUrl: "received",
+            doc_type: "memo",
+            permissionView: true,
+            uniqueKeys: {
+                documents: true,
+                documentInbox: true,
+            },
+            breadcrumbItemTitle: "document.incoming",
+            breadcrumbItemIsTranslate: true,
+        },
     },
-  },
-  {
-    path: "/inbox/:id",
-    name: "inbox-id",
-    component: () => import("@/modules/Document/pages/OfficeNotes/View.vue"),
-    meta: {
-      title: "common.view",
-      isTranslate: true,
-      parentRouteTitle: "document.incoming",
-      parentRouteIsTranslate: true,
-      parentRouteUrl: { name: "inbox" },
+    {
+        path: "/inbox/:id",
+        name: "inbox-id",
+        component: () => import("@/modules/Document/pages/OfficeNotes/View.vue"),
+        meta: {
+            title: "common.view",
+            isTranslate: true,
+            parentRouteTitle: "document.incoming",
+            parentRouteIsTranslate: true,
+            parentRouteUrl: {name: "inbox"},
+        },
     },
-  },
 
-  // Исходящие
-  {
-    path: "/outgoing",
-    name: "outgoing",
-    component: () => import("@/modules/Document/pages/OfficeNotes/Index.vue"),
-    meta: {
-      title: "document.outgoing",
-      isTranslate: true,
-      apiUrl: "sent",
-      doc_type: "memo",
-      permissionView: true,
-      breadcrumbItemTitle: "document.outgoing",
-      breadcrumbItemIsTranslate: true,
+    // Исходящие
+    {
+        path: "/outgoing",
+        name: "outgoing",
+        component: () => import("@/modules/Document/pages/OfficeNotes/Index.vue"),
+        meta: {
+            title: "document.outgoing",
+            isTranslate: true,
+            apiUrl: "sent",
+            doc_type: "memo",
+            permissionView: true,
+            breadcrumbItemTitle: "document.outgoing",
+            breadcrumbItemIsTranslate: true,
+        },
     },
-  },
-  {
-    path: "/outgoing/:id",
-    name: "outgoing-id",
-    component: () => import("@/modules/Document/pages/OfficeNotes/View.vue"),
-    meta: {
-      title: "common.view",
-      isTranslate: true,
-      parentRouteTitle: "document.outgoing",
-      parentRouteIsTranslate: true,
-      parentRouteUrl: { name: "outgoing" },
+    {
+        path: "/outgoing/:id",
+        name: "outgoing-id",
+        component: () => import("@/modules/Document/pages/OfficeNotes/View.vue"),
+        meta: {
+            title: "common.view",
+            isTranslate: true,
+            parentRouteTitle: "document.outgoing",
+            parentRouteIsTranslate: true,
+            parentRouteUrl: {name: "outgoing"},
+        },
     },
-  },
 
-  // Черновики
-  {
-    path: "/drafts",
-    name: "drafts",
-    component: () => import("@/modules/Document/pages/OfficeNotes/Index.vue"),
-    meta: {
-      title: "document.drafts",
-      isTranslate: true,
-      doc_type: "memo",
-      doc_type_id: 1,
-      permissionEdit: true,
-      apiUrl: "drafts",
-      breadcrumbItemTitle: "document.drafts",
-      breadcrumbItemIsTranslate: true,
+    // Черновики
+    {
+        path: "/drafts",
+        name: "drafts",
+        component: () => import("@/modules/Document/pages/OfficeNotes/Index.vue"),
+        meta: {
+            title: "document.drafts",
+            isTranslate: true,
+            doc_type: "memo",
+            doc_type_id: 1,
+            permissionEdit: true,
+            apiUrl: "drafts",
+            breadcrumbItemTitle: "document.drafts",
+            breadcrumbItemIsTranslate: true,
+        },
     },
-  },
-  // -------------------------Служебные записки-------------------------------
-
-
-  // -------------------------Запросы-------------------------------
-  // Полученные
-  {
-    path: "/received",
-    name: "received",
-    component: () => import("@/modules/Document/pages/OfficeNotes/Index.vue"),
-    meta: {
-      title: "document.received",
-      isTranslate: true,
-      breadcrumbItemTitle: "document.received",
-      breadcrumbItemIsTranslate: true,
-      permissionView: true,
-      apiUrl: "received",
-      hasTabs: true,
-    },
-  },
-  {
-    path: "/received/:id",
-    name: "received-id",
-    component: () => import("@/modules/Document/pages/OfficeNotes/View.vue"),
-    // component: () => import("@/modules/Document/modules/Requests/Received/InvoiceInboxShow.vue"),
-    meta: {
-      title: "common.view",
-      isTranslate: true,
-      parentRouteTitle: "document.received",
-      parentRouteIsTranslate: true,
-      parentRouteUrl: { name: "received" },
-      hasRejectBtn: true,
-      hasAcceptBtn: true,
-    },
-  },
-
-  // Отправленные
-  {
-    path: "/sent",
-    name: "sent",
-    component: () => import("@/modules/Document/pages/OfficeNotes/Index.vue"),
-    meta: {
-      title: "Отправленные",
-      breadcrumbItemTitle: "Отправленные",
-      permissionView: true,
-      apiUrl: "sent",
-      hasTabs: true,
-    },
-  },
-  {
-    path: "/sent/:id",
-    name: "sent-id",
-    component: () => import("@/modules/Document/pages/OfficeNotes/View.vue"),
-    // component: () => import("@/modules/Document/modules/Requests/Sent/InvoiceInboxShow.vue"),
-    meta: {
-      title: "Просмотр",
-      parentRouteTitle: "Отправленные",
-      parentRouteUrl: { name: "sent" },
-      hasCancelBtn: true,
-    },
-  },
-
-  // Черновики
-  {
-    path: "/draft",
-    name: "draft",
-    component: () => import("@/modules/Document/pages/OfficeNotes/Index.vue"),
-    meta: {
-      title: "Черновики",
-      doc_type_id: 2,
-      permissionEdit: true,
-      apiUrl: "drafts",
-      breadcrumbItemTitle: "Черновики",
-    },
-  },
+    // -------------------------Служебные записки-------------------------------
 
 
-  // Накладные
-  // Входящие
-  {
-    path: "/invoice-inbox",
-    name: "invoice-inbox",
-    component: () => import("@/modules/Document/pages/Invoices/InvoicesIndex.vue"),
-    meta: {
-      title: "Входящие",
-      breadcrumbItemTitle: "Входящие",
-      apiUrl: "received",
+    // -------------------------Запросы-------------------------------
+    // Полученные
+    {
+        path: "/received",
+        name: "received",
+        component: () => import("@/modules/Document/pages/OfficeNotes/Index.vue"),
+        meta: {
+            title: "document.received",
+            isTranslate: true,
+            breadcrumbItemTitle: "document.received",
+            breadcrumbItemIsTranslate: true,
+            parentRouteTitle: "document.requests",
+            parentRouteIsTranslate: true,
+            permissionView: true,
+            apiUrl: "received",
+            hasTabs: true,
+        },
     },
-  },
-  {
-    path: "/invoice-inbox/:id",
-    name: "invoice-inbox-id",
-    component: () => import("@/modules/Document/pages/Invoices/InvoicesShow.vue"),
-    meta: {
-      parentRouteTitle: "Входящие",
-      parentRouteUrl: { name: "invoice-inbox" },
-      title: "Просмотр",
-      hasRejectBtn: true,
-      hasAcceptBtn: true,
+    {
+        path: "/received/:id",
+        name: "received-id",
+        component: () => import("@/modules/Document/pages/OfficeNotes/View.vue"),
+        meta: {
+            title: "common.view",
+            isTranslate: true,
+            parentRouteTitle: "document.received",
+            parentRouteIsTranslate: true,
+            parentRouteUrl: {name: "received"},
+            hasRejectBtn: true,
+            hasAcceptBtn: true,
+        },
     },
-  },
 
-  // Исходящие
-  {
-    path: "/invoice-outgoing",
-    name: "invoice-outgoing",
-    component: () => import("@/modules/Document/pages/Invoices/InvoicesIndex.vue"),
-    meta: {
-      title: "Исходящие",
-      breadcrumbItemTitle: "Исходящие",
-      apiUrl: "sent",
+    // Отправленные
+    {
+        path: "/sent",
+        name: "sent",
+        component: () => import("@/modules/Document/pages/OfficeNotes/Index.vue"),
+        meta: {
+            title: "document.sent",
+            isTranslate: true,
+            breadcrumbItemTitle: "document.sent",
+            breadcrumbItemIsTranslate: true,
+            permissionView: true,
+            apiUrl: "sent",
+            hasTabs: true,
+        },
     },
-  },
-  {
-    path: "/invoice-outgoing/:id",
-    name: "invoice-outgoing-id",
-    component: () => import("@/modules/Document/pages/Invoices/InvoicesShow.vue"),
-    meta: {
-      parentRouteTitle: "Исходящие",
-      parentRouteUrl: { name: "invoice-outgoing" },
-      title: "Исходящие",
+    {
+        path: "/sent/:id",
+        name: "sent-id",
+        component: () => import("@/modules/Document/pages/OfficeNotes/View.vue"),
+        meta: {
+            title: "common.view",
+            isTranslate: true,
+            parentRouteTitle: "document.sent",
+            parentRouteIsTranslate: true,
+            parentRouteUrl: {name: "sent"},
+            hasCancelBtn: true,
+        },
     },
-  },
-  // -------------------------Запросы-------------------------------
 
-  //acts
-  {
-    path: "/acts",
-    name: "acts",
-    component: () => import("@/modules/Document/pages/Acts/Index.vue"),
-    meta: {
-      title: "document.act.title2",
-      isTranslate: true,
+    // Черновики
+    {
+        path: "/draft",
+        name: "draft",
+        component: () => import("@/modules/Document/pages/OfficeNotes/Index.vue"),
+        meta: {
+            title: "document.drafts",
+            isTranslate: true,
+            doc_type_id: 2,
+            permissionEdit: true,
+            apiUrl: "drafts",
+            breadcrumbItemTitle: "document.drafts",
+            breadcrumbItemIsTranslate: true
+        },
     },
-  },
-  {
-    path: "/acts/:id",
-    name: "acts-id",
-    component: () => import("@/modules/Document/pages/Acts/View.vue"),
-    meta: {
-      title: "Просмотр",
-    },
-  },
 
-  // Contracts
-  {
-    path: "/contracts",
-    name: "contracts",
-    component: () => import("@/modules/Document/pages/Contracts/Index.vue"),
-    meta: {
-      title: "Контракты",
+
+    // Накладные
+    // Входящие
+    {
+        path: "/invoice-inbox",
+        name: "invoice-inbox",
+        component: () => import("@/modules/Document/pages/Invoices/InvoicesIndex.vue"),
+        meta: {
+            title: "document.incoming",
+            isTranslate: true,
+            breadcrumbItemTitle: "document.incoming",
+            breadcrumbItemIsTranslate: true,
+            apiUrl: "received",
+        },
     },
-  },
-  {
-    path: "/contracts-create",
-    name: "contracts-create",
-    component: () => import("@/modules/Document/pages/Contracts/Create.vue"),
-    meta: {
-      title: "Добавить",
+    {
+        path: "/invoice-inbox/:id",
+        name: "invoice-inbox-id",
+        component: () => import("@/modules/Document/pages/Invoices/InvoicesShow.vue"),
+        meta: {
+            parentRouteTitle: "document.incoming",
+            parentRouteIsTranslate: true,
+            parentRouteUrl: {name: "invoice-inbox"},
+            title: "common.view",
+            isTranslate: true,
+            hasRejectBtn: true,
+            hasAcceptBtn: true,
+        },
     },
-  },
-  {
-    path: "/contracts-view/:id",
-    name: "contracts-view-view",
-    component: () => import("@/modules/Document/pages/Contracts/View.vue"),
-    meta: {
-      title: "Просмотр",
+
+    // Исходящие
+    {
+        path: "/invoice-outgoing",
+        name: "invoice-outgoing",
+        component: () => import("@/modules/Document/pages/Invoices/InvoicesIndex.vue"),
+        meta: {
+            title: "document.outgoing",
+            isTranslate: true,
+            breadcrumbItemTitle: "document.outgoing",
+            breadcrumbItemIsTranslate: true,
+            apiUrl: "sent",
+        },
     },
-  },
+    {
+        path: "/invoice-outgoing/:id",
+        name: "invoice-outgoing-id",
+        component: () => import("@/modules/Document/pages/Invoices/InvoicesShow.vue"),
+        meta: {
+            parentRouteTitle: "document.outgoing",
+            parentRouteIsTranslate: true,
+            parentRouteUrl: {name: "invoice-outgoing"},
+            title: "common.view",
+            isTranslate: true
+        },
+    },
+    // -------------------------Запросы-------------------------------
+
+    //acts
+    {
+        path: "/acts",
+        name: "acts",
+        component: () => import("@/modules/Document/pages/Acts/Index.vue"),
+        meta: {
+            title: "document.act.title2",
+            isTranslate: true,
+        },
+    },
+    {
+        path: "/acts/:id",
+        name: "acts-id",
+        component: () => import("@/modules/Document/pages/Acts/View.vue"),
+        meta: {
+            title: "common.view",
+            isTranslate: true
+        },
+    },
+
+    // Contracts
+    {
+        path: "/contracts",
+        name: "contracts",
+        component: () => import("@/modules/Document/pages/Contracts/Index.vue"),
+        meta: {
+            title: "document.contract",
+            isTranslate: true,
+        },
+    },
+    {
+        path: "/contracts-create",
+        name: "contracts-create",
+        component: () => import("@/modules/Document/pages/Contracts/Create.vue"),
+        meta: {
+            title: "method.add",
+            isTranslate: true,
+        },
+    },
+    {
+        path: "/contracts-view/:id",
+        name: "contracts-view-view",
+        component: () => import("@/modules/Document/pages/Contracts/View.vue"),
+        meta: {
+            title: "common.view",
+            isTranslate: true,
+        },
+    },
 ] as RouteRecordRaw[];
