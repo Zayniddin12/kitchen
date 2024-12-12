@@ -759,7 +759,7 @@ watch(providerCreateModal, newMProviderModal => {
                 </span>
               </div>
               <div class="flex items-center mb-[8px]">
-                <h2 class="text-[#4F5662] text-sm font-semibold">Дата:</h2>
+                <h2 class="text-[#4F5662] text-sm font-semibold">{{ t("common.date")}}:</h2>
                 <span class="ml-2 text-[#A8AAAE] text-sm font-medium block">
                   {{ date }}
                 </span>

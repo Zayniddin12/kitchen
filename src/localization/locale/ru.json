@@ -19,7 +19,8 @@
     "measurement": "Ед. измерения",
     "price": "Цена",
     "sum": "Сумма",
-    "totalSum": "Общая сумма"
+    "totalSum": "Общая сумма",
+    "date": "Дата"
   },
   "currency": {
     "sum": "сум"
