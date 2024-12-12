@@ -101,6 +101,9 @@
       "createComing": "Создать приход",
       "createConsumption": "Создать расход"
     },
+    "act": {
+      "title": "АКТ"
+    },
     "overhead": "НАКЛАДНОЙ",
     "dateCreatedSystem": "Дата создания в системе",
     "invoiceNumberSystem": "№ накладной в системе",

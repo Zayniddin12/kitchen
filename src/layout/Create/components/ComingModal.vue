@@ -742,14 +742,14 @@ watch(providerCreateModal, newMProviderModal => {
                 alt="logo"
               />
               <div class="flex flex-col ml-3">
-                <b class="text-[#000D24] text-lg">NKMK</b>
-                <span class="text-[#CBCCCE]">Jamg‘armasi</span>
+                <b class="text-[#000D24] text-lg">{{ t("logo.title") }}</b>
+                <span class="text-[#CBCCCE]">{{ t("logo.subtitle") }}</span>
               </div>
             </header>
             <h2
               class="text-[#000D24] font-bold text-[20px] text-center mb-[24px]"
             >
-              АКТ
+              {{ t("document.act.title") }}
             </h2>
             <div class="flex items-center justify-between mb-[24px]">
               <div class="flex items-center mb-[8px]">
