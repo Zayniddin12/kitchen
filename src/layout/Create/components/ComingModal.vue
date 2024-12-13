@@ -20,7 +20,7 @@ import {
 } from "@/layout/Create/components/modal.types";
 import { useSettingsStore } from "@/modules/Settings/store";
 import {
-  deepEqual,
+  deepEqual, filterObjectValues,
   formatDate2,
   formatNumber,
   togglePageScrolling,
@@ -196,21 +196,27 @@ const sendForm = async () => {
   delete newForm.Document.from;
   delete newForm.Document.to;
 
-  newForm.Act = JSON.parse(JSON.stringify(actForm));
+  if (activeComingModal.value) {
+    newForm.Act = JSON.parse(JSON.stringify(actForm));
 
-  if (newForm.Act && newForm.Act.doc_signer_obj) {
-    const signerKeys = ["signer_id_1", "signer_id_2", "signer_id_3", "signer_id_4", "signer_id_5"] as const;
+    if (newForm.Act && newForm.Act.doc_signer_obj) {
+      const signerKeys = ["signer_id_1", "signer_id_2", "signer_id_3", "signer_id_4", "signer_id_5"] as const;
 
-	  newForm.Act.doc_signers = signerKeys
-	    .filter((key) => newForm.Act!.doc_signer_obj![key]) // Faqat qiymati borlarini olish
-	    .map((key) => ({
-		    signer_id: +newForm.Act!.doc_signer_obj![key] as number,
-	    }));
+      newForm.Act.doc_signers = signerKeys
+        .filter((key) => newForm.Act!.doc_signer_obj![key]) // Faqat qiymati borlarini olish
+        .map((key) => ({
+          signer_id: +newForm.Act!.doc_signer_obj![key] as number,
+        }));
 
-	  delete newForm.Act.doc_signer_obj;
+      delete newForm.Act.doc_signer_obj;
+    }
+  } else {
+    delete newForm.Document.products;
+    delete newForm.Document.subject;
+    delete newForm.Document.status;
   }
 
-  await documentStore.create(newForm).then(() => {
+  await documentStore.create(filterObjectValues(newForm)).then(() => {
     commonStore.successToast();
     model.value = false;
     clearValidations();
@@ -390,10 +396,10 @@ const openModal = () => {
   oldForm.value = JSON.parse(JSON.stringify(form));
   if (activeComingModal.value) {
     oldActForm.value = JSON.parse(JSON.stringify(actForm));
-    usersStore.fetchUsers({
-      per_page: 100,
-    });
   }
+  usersStore.fetchUsers({
+    per_page: 100,
+  });
 };
 
 watch(model, newValue => {
@@ -1016,7 +1022,7 @@ watch(providerCreateModal, newMProviderModal => {
                 :label="item.name"
               />
             </template>
-            <template v-else>
+            <template v-else-if="authStore.user">
               <ElOption
                 v-for="item in authStore.user.workplaces"
                 :key="`${item.workplace_type}_${item.workplace_type}`"

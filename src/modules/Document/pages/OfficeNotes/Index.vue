@@ -2,8 +2,8 @@
   setup
   lang="ts"
 >
-import {onMounted, reactive, ref, watch} from "vue";
-import {useRoute, useRouter} from "vue-router";
+import { computed, onMounted, reactive, ref, watch } from "vue";
+import { useRoute, useRouter } from "vue-router";
 import CollapseFilter from "@/components/collapseFilter/index.vue";
 import AppInput from "@/components/ui/form/app-input/AppInput.vue";
 import AppSelect from "@/components/ui/form/app-select/AppSelect.vue";
@@ -11,43 +11,47 @@ import white from "@/assets/images/filter2.svg";
 import filter from "@/assets/images/filter.svg";
 import AppDatePicker from "@/components/ui/form/app-date-picker/AppDatePicker.vue";
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
-import {useDocumentStore} from "@/modules/Document/document.store";
-import {filterObjectValues, setTableColumnIndex} from "@/utils/helper";
-import {DraftsParamsType, DraftType} from "@/modules/Document/document.types";
+import { useDocumentStore } from "@/modules/Document/document.store";
+import { filterObjectValues, setTableColumnIndex } from "@/utils/helper";
+import { DraftsParamsType, DraftType } from "@/modules/Document/document.types";
 import AppPagination from "@/components/ui/app-pagination/AppPagination.vue";
 import AppForm from "@/components/ui/form/app-form/AppForm.vue";
-import {ValidationType} from "@/components/ui/form/app-form/app-form.type";
-import {useSettingsStore} from "@/modules/Settings/store";
+import { ValidationType } from "@/components/ui/form/app-form/app-form.type";
+import { useSettingsStore } from "@/modules/Settings/store";
 import MemoModal from "@/layout/Create/components/MemoModal.vue";
 import FreeModal from "@/layout/Create/components/FreeModal.vue";
-import {useI18n} from "vue-i18n";
+import { useI18n } from "vue-i18n";
 
 const documentStore = useDocumentStore();
 const settingsStore = useSettingsStore();
 
-const {t} = useI18n();
+const { t } = useI18n();
 
 const router = useRouter();
 const route = useRoute();
 
+const title = computed(() => route.meta.title ?? "");
+
+const isTranslate = computed(() => !!route.meta.isTranslate);
+
 enum DOCTYPES {
-	SIMPLEDEMAND = "simple_demand",
-	MONTHLYDEMAND = "monthly_demand",
-	YEARLYDEMAND = "yearly_demand"
+  SIMPLEDEMAND = "simple_demand",
+  MONTHLYDEMAND = "monthly_demand",
+  YEARLYDEMAND = "yearly_demand"
 }
 
 const defaultDocType = DOCTYPES.SIMPLEDEMAND;
 
 const form = reactive<DraftsParamsType>({
-	page: null,
-	search: "",
-	from_date: "",
-	to_date: "",
-	number: "",
-	subject: "",
-	to_id: "",
-	from_id: "",
-	doc_type: defaultDocType,
+  page: null,
+  search: "",
+  from_date: "",
+  to_date: "",
+  number: "",
+  subject: "",
+  to_id: "",
+  from_id: "",
+  doc_type: defaultDocType,
 });
 
 const validationErrors = ref<Record<string, any> | null>(null);
@@ -55,153 +59,153 @@ const validationErrors = ref<Record<string, any> | null>(null);
 const v$ = ref<ValidationType | null>(null);
 
 const setValidation = (value: ValidationType) => {
-	v$.value = value;
+  v$.value = value;
 };
 
 const filterForm = () => {
-	const query = {...filterObjectValues(form)};
-	delete query.page;
+  const query = { ...filterObjectValues(form) };
+  delete query.page;
 
-	router.push({query});
+  router.push({ query });
 };
 
 const clearForm = () => {
-	router.push({query: {}});
-	isOpenFilter.value = false;
+  router.push({ query: {} });
+  isOpenFilter.value = false;
 };
 
 const isOpenFilter = ref<boolean>(false);
 const editModal = ref<boolean>(false);
 
-const {setBreadCrumb} = useBreadcrumb();
+const { setBreadCrumb } = useBreadcrumb();
 
 const setBreadCrumbFn = () => {
-	setBreadCrumb([
-		{
-			label: "document.title1",
-			isTranslate: true
-		},
-		{
-			label: route.meta.parentRouteTitle ?? "",
-			isTranslate: route.meta.parentRouteIsTranslate
-		},
-		{
-			label: String(route.meta.breadcrumbItemTitle ?? ""),
-			isActionable: true,
-			isTranslate: route.meta.breadcrumbItemIsTranslate
-		},
-	]);
+  setBreadCrumb([
+    {
+      label: "document.title1",
+      isTranslate: true,
+    },
+    {
+      label: route.meta.parentRouteTitle ?? "",
+      isTranslate: route.meta.parentRouteIsTranslate,
+    },
+    {
+      label: String(route.meta.breadcrumbItemTitle ?? ""),
+      isActionable: true,
+      isTranslate: route.meta.breadcrumbItemIsTranslate,
+    },
+  ]);
 };
 
 const fetchDrafts = async () => {
-	const query = route.query as Record<string, any>;
+  const query = route.query as Record<string, any>;
 
-	const page = parseInt(query.page as string);
-	const fromId = parseInt(query.from_id as string);
-	const toId = parseInt(query.to_id as string);
+  const page = parseInt(query.page as string);
+  const fromId = parseInt(query.from_id as string);
+  const toId = parseInt(query.to_id as string);
 
-	form.page = !isNaN(page) ? page : null;
-	form.from_id = !isNaN(fromId) ? fromId : "";
-	form.to_id = !isNaN(toId) ? toId : "";
-	form.to_date = String(query.to_date ?? "");
-	form.from_date = String(query.from_date ?? "");
-	form.number = String(query.number ?? "");
-	form.subject = String(query.subject ?? "");
-	form.doc_type = !!route.meta?.hasTabs ? String(query.doc_type ?? defaultDocType) : String(route.meta?.doc_type ?? "");
+  form.page = !isNaN(page) ? page : null;
+  form.from_id = !isNaN(fromId) ? fromId : "";
+  form.to_id = !isNaN(toId) ? toId : "";
+  form.to_date = String(query.to_date ?? "");
+  form.from_date = String(query.from_date ?? "");
+  form.number = String(query.number ?? "");
+  form.subject = String(query.subject ?? "");
+  form.doc_type = !!route.meta?.hasTabs ? String(query.doc_type ?? defaultDocType) : String(route.meta?.doc_type ?? "");
 
-	try {
-		await documentStore.fetchDrafts(
-		  route.meta?.apiUrl ?? "",
-		  filterObjectValues(form),
-		);
-		validationErrors.value = null;
-	} catch (error: any) {
-		if (error?.error?.code === 422) {
-			validationErrors.value = error.meta.validation_errors;
-		}
-	}
+  try {
+    await documentStore.fetchDrafts(
+      route.meta?.apiUrl ?? "",
+      filterObjectValues(form),
+    );
+    validationErrors.value = null;
+  } catch (error: any) {
+    if (error?.error?.code === 422) {
+      validationErrors.value = error.meta.validation_errors;
+    }
+  }
 };
 
 onMounted(() => {
-	settingsStore.fetchRespondents();
+  settingsStore.fetchRespondents();
 });
 
 interface Tab {
-	title: string;
-	value: string;
+  title: string;
+  value: string;
 }
 
-const tabItems = ref<Tab[]>([
-	{
-		title: "Свободный",
-		value: DOCTYPES.SIMPLEDEMAND,
-	},
-	{
-		title: "Месячный",
-		value: DOCTYPES.MONTHLYDEMAND,
-	},
-	{
-		title: "Годовой",
-		value: DOCTYPES.YEARLYDEMAND,
-	},
+const tabItems = computed<Tab[]>(() => [
+  {
+    title: t("common.free"),
+    value: DOCTYPES.SIMPLEDEMAND,
+  },
+  {
+    title: t("common.monthly"),
+    value: DOCTYPES.MONTHLYDEMAND,
+  },
+  {
+    title: t("common.annual"),
+    value: DOCTYPES.YEARLYDEMAND,
+  },
 ]);
 
 const changeDocType = async () => {
-	const doc_type = route.query.doc_type as string || defaultDocType;
+  const doc_type = route.query.doc_type as string || defaultDocType;
 
-	const isValidDocType = [
-		DOCTYPES.SIMPLEDEMAND,
-		DOCTYPES.MONTHLYDEMAND,
-		DOCTYPES.YEARLYDEMAND,
-	].includes(doc_type as DOCTYPES);
+  const isValidDocType = [
+    DOCTYPES.SIMPLEDEMAND,
+    DOCTYPES.MONTHLYDEMAND,
+    DOCTYPES.YEARLYDEMAND,
+  ].includes(doc_type as DOCTYPES);
 
-	form.doc_type = isValidDocType ? (doc_type as DOCTYPES) : defaultDocType;
+  form.doc_type = isValidDocType ? (doc_type as DOCTYPES) : defaultDocType;
 };
 
 
 watch(
   () => route.query,
   () => {
-	  fetchDrafts();
-	  changeDocType();
+    fetchDrafts();
+    changeDocType();
   },
-  {immediate: true},
+  { immediate: true },
 );
 
 watch(() => documentStore.documentsIsRefresh, (newValue) => {
-	if (newValue) fetchDrafts();
+  if (newValue) fetchDrafts();
 });
 
 watch(
   () => route.name,
   () => {
-	  setBreadCrumbFn();
-	  isOpenFilter.value = false;
-	  validationErrors.value = null;
-	  if (v$.value) v$.value.clear();
-  }, {immediate: true},
+    setBreadCrumbFn();
+    isOpenFilter.value = false;
+    validationErrors.value = null;
+    if (v$.value) v$.value.clear();
+  }, { immediate: true },
 );
 
 const changePage = (value: number) => {
-	router.push({query: {...route.query, page: value}});
+  router.push({ query: { ...route.query, page: value } });
 };
 
 const tableCurrentChange = async (value: DraftType | undefined) => {
-	if (!route.meta.permissionView || !value) return;
+  if (!route.meta.permissionView || !value) return;
 
-	await router.push({name: `${route.name as string}-id`, params: {id: value.id}});
+  await router.push({ name: `${route.name as string}-id`, params: { id: value.id } });
 };
 
 const document = ref<DraftType | null>(null);
 
 const editModalHandler = (draft: DraftType) => {
-	document.value = draft;
-	editModal.value = true;
+  document.value = draft;
+  editModal.value = true;
 };
 
-const tableRowClassName = ({row}: { row: DraftType }) => {
-	if (row.status === "sent") return "font-semibold !text-dark";
-	return "";
+const tableRowClassName = ({ row }: { row: DraftType }) => {
+  if (row.status === "sent") return "font-semibold !text-dark";
+  return "";
 };
 
 </script>
@@ -211,10 +215,10 @@ const tableRowClassName = ({row}: { row: DraftType }) => {
     <div class="flex justify-between items-end">
       <div class="flex flex-col gap-y-6">
         <h1
-          v-if="route.meta.title"
+          v-if="title"
           class="m-0 font-semibold text-[32px]"
         >
-          {{ route.meta.title }}
+          {{ isTranslate ? t(title) : title }}
         </h1>
         <div
           v-if="route.meta?.hasTabs"
@@ -243,7 +247,7 @@ const tableRowClassName = ({row}: { row: DraftType }) => {
           alt="filter"
           class="mr-[12px]"
         />
-        Фильтр
+        {{ t("common.filter") }}
       </button>
     </div>
     <CollapseFilter v-model="isOpenFilter">
@@ -257,30 +261,30 @@ const tableRowClassName = ({row}: { row: DraftType }) => {
           <AppDatePicker
             v-model="form.from_date"
             prop="from_date"
-            placeholder="С этой даты"
-            label="С этой даты"
+            :placeholder="t('common.fromDate')"
+            :label="t('common.fromDate')"
             label-class="text-[#7F7D83]"
           />
           <AppDatePicker
             v-model="form.to_date"
             prop="to_date"
-            placeholder="По эту дату"
-            label="По эту дату"
+            :placeholder="t('common.endDate')"
+            :label="t('common.endDate')"
             label-class="text-[#7F7D83]"
           />
 
           <AppInput
             v-model="form.number"
             prop="number"
-            placeholder="Номер документа"
-            label="Номер документа"
+            :placeholder="t('document.number2')"
+            :label="t('document.number2')"
             label-class="text-[#7F7D83]"
           />
           <AppInput
             v-model="form.subject"
             prop="subject"
-            placeholder="Доставка картофеля"
-            label="Доставка картофеля"
+            :placeholder="t('document.potatoDelivery')"
+            :label="t('document.potatoDelivery')"
             label-class="text-[#7F7D83]"
           />
           <AppSelect
@@ -291,8 +295,8 @@ const tableRowClassName = ({row}: { row: DraftType }) => {
             item-value="id"
             :loading="settingsStore.respondentsLoading"
             class="col-span-2"
-            placeholder="Кому"
-            label="Кому"
+            :placeholder="t('document.whom.to')"
+            :label="t('document.whom.to')"
             label-class="text-[#7F7D83]"
           />
           <AppSelect
@@ -302,22 +306,22 @@ const tableRowClassName = ({row}: { row: DraftType }) => {
             item-value="id"
             :loading="settingsStore.respondentsLoading"
             class="col-span-2"
-            placeholder="Отправитель"
-            label="Отправитель"
+            :label="t('common.sender')"
+            :placeholder="t('common.sender')"
             label-class="text-[#7F7D83]"
           />
         </AppForm>
 
         <div class="flex items-center mt-[10px] justify-between">
           <div class="text-[#8F9194] text-[14px]">
-            Найдено: {{ documentStore.drafts?.paginator.total_count }}
+            {{ t("common.found") }}: {{ documentStore.drafts?.paginator.total_count }}
           </div>
           <div class="flex items-center">
             <button
               @click="clearForm"
               class="custom-reset-btn"
             >
-              Сбросить
+              {{ t("method.reset") }}
             </button>
             <ElButton
               :loading="documentStore.draftsLoading"
@@ -326,7 +330,7 @@ const tableRowClassName = ({row}: { row: DraftType }) => {
               class="custom-apply-btn ml-4"
               @click="filterForm"
             >
-              Применить
+              {{ t("method.apply") }}
             </ElButton>
           </div>
         </div>
@@ -339,6 +343,7 @@ const tableRowClassName = ({row}: { row: DraftType }) => {
       stripe
       :highlight-current-row="!!route.meta.permissionView"
       @current-change="tableCurrentChange"
+      :empty-text="t('common.empty')"
     >
       <el-table-column
         prop="num"
@@ -347,21 +352,25 @@ const tableRowClassName = ({row}: { row: DraftType }) => {
       >
         <template #default="{ $index }">
           {{
-	          setTableColumnIndex(
-	            $index,
-	            form.page as number,
-	            documentStore.drafts?.paginator.per_page ?? 0,
-	          )
+            setTableColumnIndex(
+              $index,
+              form.page as number,
+              documentStore.drafts?.paginator.per_page ?? 0,
+            )
           }}
         </template>
       </el-table-column>
       <el-table-column
         prop="date"
-        label="Дата"
-      />
+        :label="t('common.date')"
+      >
+        <template #default="{ row }: { row: DraftType }">
+          {{ row.date ?? "-" }}
+        </template>
+      </el-table-column>
       <el-table-column
         prop="number"
-        label="№ документа"
+        :label="t('document.number')"
       >
         <template #default="{ row }: { row: DraftType }">
           {{ row.number ?? "-" }}
@@ -369,7 +378,7 @@ const tableRowClassName = ({row}: { row: DraftType }) => {
       </el-table-column>
       <el-table-column
         prop="subject"
-        label="Тема"
+        :label="t('common.theme')"
       >
         <template #default="{ row }: { row: DraftType }">
           {{ row.subject ?? "-" }}
@@ -377,7 +386,7 @@ const tableRowClassName = ({row}: { row: DraftType }) => {
       </el-table-column>
       <el-table-column
         prop="from_name"
-        label="Отправитель"
+        :label="t('common.sender')"
       >
         <template #default="{ row }: { row: DraftType }">
           {{ row.from_name || "-" }}
@@ -385,13 +394,16 @@ const tableRowClassName = ({row}: { row: DraftType }) => {
       </el-table-column>
       <el-table-column
         prop="to_name"
-        label="Получатель"
+        :label="t('common.recipient')"
       >
         <template #default="{ row }: { row: DraftType }">
           {{ row.to_name || "-" }}
         </template>
       </el-table-column>
-      <el-table-column label="Действие">
+      <el-table-column
+        prop="action"
+        :label="t('common.action')"
+      >
         <template #default="{ row }: { row: DraftType }">
           <div class="flex items-center gap-x-2.5">
             <button
@@ -423,7 +435,7 @@ const tableRowClassName = ({row}: { row: DraftType }) => {
               bg
             >
               <img
-                src="../../../../assets/images/download.svg"
+                src="@/assets/images/download.svg"
                 alt="download"
               />
             </ElButton>
@@ -445,13 +457,13 @@ const tableRowClassName = ({row}: { row: DraftType }) => {
         v-if="route.meta?.doc_type_id === 1"
         v-model="editModal"
         v-model:document="document"
-        title="Редактировать служебную записку"
+        :title="t('document.memo.edit')"
       />
       <FreeModal
         v-else-if="route.meta?.doc_type_id === 2"
         v-model="editModal"
         v-model:document="document"
-        title="Редактировать свободный запрос"
+        :title="t('document.freeRequest.edit')"
       />
     </template>
   </div>
