@@ -1,5 +1,5 @@
 import axios from "@/plugins/axios/axios";
-import { PositionsType, PositionType } from "@/modules/Position/position.types";
+import { PositionsType, PositionType } from "@/modules/Settings/components/Reference/Position/position.types";
 
 const prefix = "positions";
 

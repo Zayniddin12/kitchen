@@ -166,16 +166,15 @@ const setActValidation = (validation: ValidationType) => {
 
 const clearValidations = () => {
   v$.value?.clear();
-  if (activeComingModal.value && actV$.value) {
-    actV$.value.clear();
-    actForm.products = [];
-  }
+  actV$.value?.clear();
+  actForm.products = [];
   form.to = "";
   form.from = "";
   form.to_type = "";
   form.to_id = null;
   form.from_type = "";
   form.from_id = null;
+
 };
 
 const sendForm = async () => {
@@ -196,24 +195,28 @@ const sendForm = async () => {
   delete newForm.Document.from;
   delete newForm.Document.to;
 
-  if (activeComingModal.value) {
-    newForm.Act = JSON.parse(JSON.stringify(actForm));
+  newForm.Act = JSON.parse(JSON.stringify(actForm));
 
-    if (newForm.Act && newForm.Act.doc_signer_obj) {
-      const signerKeys = ["signer_id_1", "signer_id_2", "signer_id_3", "signer_id_4", "signer_id_5"] as const;
+  if (newForm.Act && newForm.Act.doc_signer_obj) {
+    const signerKeys = ["signer_id_1", "signer_id_2", "signer_id_3", "signer_id_4", "signer_id_5"] as const;
 
-      newForm.Act.doc_signers = signerKeys
-        .filter((key) => newForm.Act!.doc_signer_obj![key]) // Faqat qiymati borlarini olish
-        .map((key) => ({
-          signer_id: +newForm.Act!.doc_signer_obj![key] as number,
-        }));
+    newForm.Act.doc_signers = signerKeys
+      .filter((key) => newForm.Act!.doc_signer_obj![key]) // Faqat qiymati borlarini olish
+      .map((key) => ({
+        signer_id: +newForm.Act!.doc_signer_obj![key] as number,
+      }));
 
-      delete newForm.Act.doc_signer_obj;
-    }
-  } else {
-    delete newForm.Document.products;
+    delete newForm.Act.doc_signer_obj;
+  }
+
+  if (!activeComingModal.value) {
     delete newForm.Document.subject;
     delete newForm.Document.status;
+    delete newForm.Act?.content;
+    delete newForm.Act?.number;
+    delete newForm.Act?.products;
+    delete newForm.Act?.shipping_method;
+    delete newForm.Act?.subject;
   }
 
   await documentStore.create(filterObjectValues(newForm)).then(() => {
@@ -503,7 +506,7 @@ watch(providerCreateModal, newMProviderModal => {
     <div class="flex gap-x-6 flex-wrap">
       <div class="w-[60%] flex flex-col gap-y-10">
         <div
-          :class="['border-[#E2E6F3] bg-[#fff] border rounded-[15px]', `${activeComingModal ? 'min-h-[1258.63px]' : 'min-h-[1319px]'}`]"
+          :class="['border-[#E2E6F3] bg-[#fff] border rounded-[15px]', `${activeComingModal ? 'min-h-[1258.63px]' : 'min-h-[1753.56px]'}`]"
         >
           <div class="px-[72px] pb-[150px]">
             <header class="flex items-center justify-center my-[24px] mb-6">
@@ -1126,10 +1129,7 @@ watch(providerCreateModal, newMProviderModal => {
             label-class="text-[#A8AAAE] text-xs font-medium"
             required
           />
-          <div
-            v-if="activeComingModal"
-            class="bg-[#FFFFFF] rounded-[8px] p-[12px]"
-          >
+          <div class="bg-[#FFFFFF] rounded-[8px] p-[12px]">
             <template
               v-for="(product, index) in form.products"
               :key="index + 1"

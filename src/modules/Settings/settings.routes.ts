@@ -1,8 +1,12 @@
 import { RouteRecordRaw } from "vue-router";
 import ProfileSettingsRoutes from "@/modules/Settings/pages/ProfileSettings/profile-settings.routes";
+import PositionRoutes from "@/modules/Settings/components/Reference/Position/position.routes";
+import RoleRoutes from "@/modules/Settings/components/Reference/Role/role.routes";
 
 export default [
   ...ProfileSettingsRoutes,
+  ...PositionRoutes,
+  ...RoleRoutes,
   // sidebar start
   {
     path: "/reference",

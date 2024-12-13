@@ -1,5 +1,6 @@
 import { StatusTextType, StatusType } from "@/types/common.type";
 import { LocationQuery } from "vue-router";
+import localization from "@/localization";
 
 export const formatDate = (date: Date) => {
   const daysOfWeek = [
@@ -114,10 +115,11 @@ export const setStatus = (status: boolean): StatusType => {
 };
 
 export const getStatusText = (status: boolean | StatusType): StatusTextType => {
+  const { t } = localization.global;
   if (typeof status === "string") {
     status = getStatus(status as StatusType);
   }
-  return status ? "Деактивация" : "Активация";
+  return status ? t("status.deactivation") : t("status.activation");
 };
 
 export const deepEqual = (
@@ -225,4 +227,4 @@ export const validateNumber = (value: string) => {
 
 export const setDocumentTitle = (title: string) => {
   document.title = title;
-}
+};

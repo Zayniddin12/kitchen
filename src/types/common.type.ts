@@ -17,7 +17,7 @@ export interface NameType {
 
 export type StatusType = "active" | "inactive" | "";
 
-export type StatusTextType = "Активация" | "Деактивация"
+export type StatusTextType = string;
 
 export type GenderType = null | "m" | "f";
 

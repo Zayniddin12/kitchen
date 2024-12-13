@@ -64,7 +64,7 @@ const languages = computed<LanguagesType>(() => {
     @visible-change="(value:boolean) => dropdownOpen = value"
   >
     <div
-      class="flex items-center gap-3 min-w-[260px] max-w-[268px]"
+      :class="['flex items-center gap-3', {'w-[200px]' : authStore.userLoading}]"
     >
       <img
         :src="userImg"

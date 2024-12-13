@@ -101,12 +101,14 @@ const ulItems = ref<UlItems[]>([
     title: "Должности и роли",
     menu: [
       {
-        title: "Типы документов",
-        subTitle: "Типы документов",
+        title: "Должности",
+        subTitle: "Должности",
+        router: {name: "position"}
       },
       {
-        title: "Виды документов",
-        subTitle: "Виды документов",
+        title: "Роли",
+        subTitle: "Роли",
+        router: {name: "role"}
       },
     ],
   },

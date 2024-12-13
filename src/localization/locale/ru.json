@@ -20,9 +20,11 @@
   },
   "logo": {
     "title": "NKMK",
-    "subtitle": "Jamg‘armasi"
+    "subtitle": "Jamg‘armasi",
+    "name":"Фонд НГМК"
   },
   "common": {
+    "fund": "Фонд",
     "filter": "Фильтр",
     "settings": "Настройки",
     "language": "Язык",
@@ -64,7 +66,15 @@
     "from": "от",
     "free": "Свободный",
     "monthly": "Месячный",
-    "annual": "Годовой"
+    "annual": "Годовой",
+    "status": "Статус"
+  },
+  "status": {
+    "active": "Активный",
+    "completed": "Завершено",
+    "success": "Успешно",
+    "deactivation": "Деактивация",
+    "activation": "Активация"
   },
   "system": {
     "number": "№ в системе",
@@ -87,12 +97,14 @@
   "notFound": {
     "title": "Страница не найдена",
     "description": "Извините, запрошенная вами страница не найдена пожалуйста, вернитесь на главную страницу",
-    "redirectHome": "Вернуться на главную"
+    "redirectHome": "Вернуться на главную",
+    "toast": "Error 404"
   },
   "method": {
     "cancel": "Отменить",
     "logout": "Выйти",
     "add": "Добавить",
+    "edit": "Редактировать",
     "addMore": "Добавить еще",
     "save": "Сохранить",
     "saveAsDraft": "Сохранить как черновик",
@@ -255,6 +267,7 @@
     "consignmentNote": "Накладной документ"
   },
   "error": {
+    "title": "Error",
     "validation": "Validation Error"
   },
   "product": {
@@ -263,5 +276,45 @@
     "manufacturer": "Производитель продукта",
     "type": "Тип продукта",
     "view": "Вид продукта"
+  },
+  "position": {
+    "list": "Должности",
+    "show": "Просмотреть должность",
+    "create": "Добавить новую должность",
+    "edit": "Редактировать должность",
+    "name": "Наименование должности {lang}",
+    "responsibility": "Принадлежность",
+    "affiliation": "Принадлежность должности"
+  },
+  "settings": {
+    "directories": "Справочники",
+    "positionsAndRoles": "Должности и роли",
+    "regionalAdministration": "Региональное управление"
+  },
+  "lang": {
+    "ru": "РУС",
+    "uz": "ЎЗБ"
+  },
+  "user": {
+    "combine": "Комбинат"
+  },
+  "base": {
+    "warehouse": {
+      "title": "База склад",
+      "reverseTitle": "Склад базы"
+    }
+  },
+  "kitchen": {
+    "title": "Кухня"
+  },
+  "gender": {
+    "female": "Женский",
+    "male": "Мужской"
+  },
+  "role": {
+    "name": "Роли",
+    "name2": "Наименование роли",
+    "ownership": "Принадлежность роли",
+    "numberOfUses": "Кол. использований"
   }
 }
