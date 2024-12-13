@@ -31,6 +31,13 @@ const routes: RouteRecordRaw[] = [
   ...Users,
 
   {
+    path: "/cashier",
+    name: "cashier",
+    component: () => import("@/layout/Cashier/Cashier.vue"),
+    meta: { layout: "CashierLayout" },
+  },
+
+  {
     path: "/:pathMatch(.*)*",
     name: "notFound",
     component: () => import("@/components/errors/404.vue"),

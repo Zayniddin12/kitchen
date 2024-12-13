@@ -217,7 +217,7 @@ const productsWrapperClassName = computed<string[]>(() => {
   } else if (sideBarStore.childSideBarOpen && !ordersModal.value) {
     className.push("grid-cols-8");
   } else if (!sideBarStore.childSideBarOpen && ordersModal.value) {
-    className.push("grid-cols-7");
+    className.push("grid-cols-5");
   } else {
     className.push("grid-cols-6");
   }
@@ -321,7 +321,7 @@ const createOrder = async () => {
 
     await kitchenStore.CREATE_ORDER(payload);
     await kitchenStore.GET_CURRENT_MENU_SALES_LIST(route.params.child_id as string);
-    orders.clear()
+    orders.clear();
     ordersModal.value = false;
   } catch (error) {
 
@@ -635,12 +635,12 @@ const mealTextFilter = (index: string): string => {
                   <div class="flex flex-col gap-y-2 text-sm">
                     <p>
                       <span class="text-cool-gray mr-2">Выданние:</span>
-                      <strong class="font-semibold text-dark">{{n.amount_served && n.amount_served}}</strong>
+                      <strong class="font-semibold text-dark">{{ n.amount_served && n.amount_served }}</strong>
                     </p>
                     <p>
                       <span class="text-cool-gray mr-2">Сумма:</span>
                       <strong class="font-semibold text-dark">
-                        {{ n.price_served && n.price_served.toLocaleString()}} UZS
+                        {{ n.price_served && n.price_served.toLocaleString() }} UZS
                       </strong>
                     </p>
                   </div>
@@ -760,7 +760,9 @@ const mealTextFilter = (index: string): string => {
                       />
 
                       <div class="menu__card-subtitles text-start mt-[12px] mb-[16px]">
-                        <span class="text-[#000D24] font-semibold text-[20px] mb-[4px]">{{ formatNumber(productItem.price) }} UZS</span>
+                        <span
+                          class="text-[#000D24] font-semibold text-[20px] mb-[4px]">{{ formatNumber(productItem.price)
+                          }} UZS</span>
                         <span class="text-[#000D24] font-medium text-[14px]">{{ productItem.name }} </span>
                       </div>
 
@@ -768,31 +770,54 @@ const mealTextFilter = (index: string): string => {
                         {{ productItem.unit_name }}
                       </h5>
 
-                      <div class="menu__card__actions !justify-between  bg-[#E2E6F3] px-[24px] py-[14px] rounded-[12px]">
+                      <div
+                        v-if="orders.get(productItem.id)"
+                        class="menu__card__actions !justify-between  bg-[#E2E6F3] px-[24px] py-[14px] rounded-[12px]">
                         <button
                           @click="updateQuantity(productItem.id, false)"
                           :disabled="!orders.has(productItem.id)"
                           class=""
                         >
-                          <svg
-                            :data-src="MinusIcon"
-                            class="text-[#4F5662]"
-                          />
+                          <svg width="20" height="20" viewBox="0 0 20 20" fill="none"
+                               xmlns="http://www.w3.org/2000/svg">
+                            <path d="M4.16602 9.99967H15.8327" stroke="#4F5662" stroke-width="1.2"
+                                  stroke-linecap="round" stroke-linejoin="round" />
+                          </svg>
+
                         </button>
                         <span>
                         {{ orders.get(productItem.id) ?? 0 }}
-                      </span>
+                        </span>
                         <button
                           @click="updateQuantity(productItem.id)"
                           class=""
-                          :disabled="orders.has(productItem.id) && (orders.get(productItem.id) == productItem.amount)"
+                          :disabled="productItem.amount == 0 || orders.has(productItem.id) && (orders.get(productItem.id) == productItem.amount)"
                         >
-                          <svg
-                            :data-src="Plus3Icon"
-                            class=""
-                          />
+                          <svg width="21" height="20" viewBox="0 0 21 20" fill="none"
+                               xmlns="http://www.w3.org/2000/svg">
+                            <path d="M10.5007 4.16699V15.8337" stroke="#4F5662" stroke-width="1.2"
+                                  stroke-linecap="round" stroke-linejoin="round" />
+                            <path d="M4.66602 9.99967H16.3327" stroke="#4F5662" stroke-width="1.2"
+                                  stroke-linecap="round" stroke-linejoin="round" />
+                          </svg>
+
                         </button>
                       </div>
+                      <!--                      :disabled="productItem.amount == 0 || orders.has(productItem.id) && (orders.get(productItem.id) == productItem.amount)"-->
+                      <button v-else
+                              @click="updateQuantity(productItem.id)"
+
+                              class="menu__card__actions  bg-[#E2E6F3] px-[24px] py-[14px] rounded-[12px]">
+                        <svg width="21" height="20" viewBox="0 0 21 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M10.5007 4.16699V15.8337" stroke="#4F5662" stroke-width="1.2" stroke-linecap="round"
+                                stroke-linejoin="round" />
+                          <path d="M4.66602 9.99967H16.3327" stroke="#4F5662" stroke-width="1.2" stroke-linecap="round"
+                                stroke-linejoin="round" />
+                        </svg>
+
+
+                        Добавить
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -1039,54 +1064,70 @@ const mealTextFilter = (index: string): string => {
           class="fixed top-0 right-0 pt-8 pb-6 w-[21%] h-screen flex flex-col justify-between z-10 bg-white shadow-[-32px_72px_96px_0_#0926450F] rounded-l-[32px]"
         >
           <div>
-            <h4 class="text-xl text-black font-semibold px-8">Заказы</h4>
+            <h4 class="text-xl text-black font-semibold px-8">Корзина</h4>
             <div
               v-if="selectedProducts.length > 0"
-              class="grid grid-cols-2 gap-6 mt-6 px-8 max-h-[76vh] overflow-y-auto"
+              class="grid gap-6 mt-6 px-8 h-[100vh] overflow-y-auto"
             >
+              <!--              menu__card-->
               <div
-                class="menu__card"
+                class="h-[136px] p-[8px] flex gap-2 bg-[#F8F9FC] rounded-[16px]"
                 v-for="(productItem, productIndex) in selectedProducts"
                 :key="productIndex"
               >
                 <!--                {{productItem}}-->
-                <h5 class="menu__card-title">
-                  {{ productItem.name }}
-                </h5>
+                <!--                menu__card-img-->
                 <img
                   :src="ColaImg"
                   :alt="productItem.name"
-                  class="menu__card-img"
+                  class="w-[120px]"
                 />
-                <div class="menu__card-subtitles">
-                  <span>{{ productItem.unit_name }} </span>
-                  <span>{{ formatNumber(productItem.price) }} UZS</span>
-                </div>
-                <div class="menu__card__actions">
-                  <button
-                    @click="updateQuantity(productItem.id, false)"
-                    :disabled="!orders.has(productItem.id)"
-                    class="menu__card__action-btn"
-                  >
-                    <svg
-                      :data-src="MinusIcon"
-                      class="menu__card__action-btn__icon"
-                    />
-                  </button>
-                  <span>
-                    {{ orders.get(productItem.id) }}
-                  </span>
-                  <button
-                    @click="updateQuantity(productItem.id)"
-                    class="menu__card__action-btn"
-                    :disabled="orders.has(productItem.id) && (orders.get(productItem.id) == productItem.amount)"
-                  >
-                    <svg
-                      :data-src="Plus3Icon"
-                      class="menu__card__action-btn__icon"
+                <div class="w-full">
+                  <div class="flex items-center justify-between">
+                    <!--                    menu__card-title-->
+                    <h5 class="text-[#000D24] text-[20px] font-semibold">
+                      {{ formatNumber(productItem.price) }} UZS
+                    </h5>
 
-                    />
-                  </button>
+                    <span class="text-[#A8AAAE]">{{ productItem.unit_name }} </span>
+                  </div>
+                  <h5 class="text-[#000D24] font-medium mt-[4px]">
+                    {{ productItem.name }}
+                  </h5>
+
+                  <div
+                    v-if="orders.get(productItem.id)"
+                    class="menu__card__actions !justify-between !mt-[12px] bg-[#E2E6F3] px-[24px] py-[14px] rounded-[12px]">
+                    <button
+                      @click="updateQuantity(productItem.id, false)"
+                      :disabled="!orders.has(productItem.id)"
+                      class=""
+                    >
+                      <svg width="20" height="20" viewBox="0 0 20 20" fill="none"
+                           xmlns="http://www.w3.org/2000/svg">
+                        <path d="M4.16602 9.99967H15.8327" stroke="#4F5662" stroke-width="1.2"
+                              stroke-linecap="round" stroke-linejoin="round" />
+                      </svg>
+
+                    </button>
+                    <span class="h-[20px]">
+                        {{ orders.get(productItem.id) ?? 0 }}
+                        </span>
+                    <button
+                      @click="updateQuantity(productItem.id)"
+                      class=""
+                      :disabled="orders.has(productItem.id) && (orders.get(productItem.id) == productItem.amount)"
+                    >
+                      <svg width="21" height="20" viewBox="0 0 21 20" fill="none"
+                           xmlns="http://www.w3.org/2000/svg">
+                        <path d="M10.5007 4.16699V15.8337" stroke="#4F5662" stroke-width="1.2"
+                              stroke-linecap="round" stroke-linejoin="round" />
+                        <path d="M4.66602 9.99967H16.3327" stroke="#4F5662" stroke-width="1.2"
+                              stroke-linecap="round" stroke-linejoin="round" />
+                      </svg>
+
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
