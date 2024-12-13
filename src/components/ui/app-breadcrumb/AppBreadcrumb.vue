@@ -6,12 +6,12 @@ import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 import { BreadcrumbItemType } from "@/components/ui/app-breadcrumb/app-breadcrumb.type";
 import { watch } from "vue";
 import { useRoute } from "vue-router";
-import {setSessionItem} from "@/utils/sessionStorage";
+import { setSessionItem } from "@/utils/sessionStorage";
 import { useI18n } from "vue-i18n";
 
 const { breadcrumb, setBreadCrumb } = useBreadcrumb();
 const route = useRoute();
-const {t} = useI18n();
+const { t } = useI18n();
 
 const clickHome = () => {
   setSessionItem("current-menu", "0");
@@ -26,7 +26,7 @@ const itemComponentTag = (breadcrumbItem: BreadcrumbItemType): itemComponentTagT
   return "span";
 };
 
-watch(() => route.name, () => {
+watch(() => route.name, (newRoute) => {
   // setBreadCrumb([]);
 });
 

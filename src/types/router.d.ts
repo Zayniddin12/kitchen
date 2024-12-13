@@ -16,6 +16,7 @@ declare module "vue-router" {
     parentRouteTitle?: string;
     parentRouteIsTranslate?: IsTranslateType;
     parentRouteUrl?: RouteLocationRaw,
+    method?: "update" | "show" | "create"
 
     [key: string]: any,
   }

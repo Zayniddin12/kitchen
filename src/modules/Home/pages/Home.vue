@@ -12,7 +12,6 @@ import {
   GraphicComponent,
   GridComponent,
 } from "echarts/components";
-import VChart from "vue-echarts";
 import { computed, onMounted, reactive, ref, watch } from "vue";
 import AppDatePicker from "@/components/ui/form/app-date-picker/AppDatePicker.vue";
 import AppSelect from "@/components/ui/form/app-select/AppSelect.vue";

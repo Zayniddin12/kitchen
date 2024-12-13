@@ -11,7 +11,7 @@ import AppForm from "@/components/ui/form/app-form/AppForm.vue";
 import AppInput from "@/components/ui/form/app-input/AppInput.vue";
 import AppSelect from "@/components/ui/form/app-select/AppSelect.vue";
 import { activeLocale, changeLocale, languages } from "@/localization";
-import { usePositionStore } from "@/modules/Position/position.store";
+import { usePositionStore } from "@/modules/Settings/components/Reference/Position/position.store";
 import { formatPhone } from "@/utils/helper";
 import { ValidationType } from "@/components/ui/form/app-form/app-form.type";
 import { useCommonStore } from "@/stores/common.store";

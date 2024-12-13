@@ -17,14 +17,17 @@ import { ValidationType } from "@/components/ui/form/app-form/app-form.type";
 import AppForm from "@/components/ui/form/app-form/AppForm.vue";
 import { deepEqual, formatPhone, getStatus, getStatusText, mergeCommonKeys, setStatus } from "@/utils/helper";
 import { useCommonStore } from "@/stores/common.store";
-import { usePositionStore } from "@/modules/Position/position.store";
+import { usePositionStore } from "@/modules/Settings/components/Reference/Position/position.store";
 import { UserCreateOrUpdateDataType } from "@/modules/Users/users.types";
 import { useSettingsStore } from "@/modules/Settings/store";
+import { useI18n } from "vue-i18n";
 
 interface Tabs {
   title: string;
   value: number;
 }
+
+const { t } = useI18n();
 
 const router = useRouter();
 const route = useRoute();
@@ -432,9 +435,11 @@ onBeforeRouteLeave(() => {
               />
               <template v-if="userStore.activeUserPage">
                 <AppInput
-                  label="Фонд"
+                  :label="t('common.fund')"
                   label-class="text-[#A8AAAE] text-xs font-medium"
                   class="mb-1"
+                  :placeholder="t('logo.name')"
+                  disabled
                 />
                 <AppSelect
                   v-model="form.management_id"
@@ -442,28 +447,28 @@ onBeforeRouteLeave(() => {
                   item-value="id"
                   item-label="name"
                   prop="management_id"
-                  label="Региональное управление"
+                  :label="t('settings.regionalAdministration')"
                   label-class="text-[#A8AAAE] text-xs font-medium"
                   class="mb-1"
                   required
                 />
                 <AppSelect
-                  label="Комбинат"
+                  :label="t('user.combine')"
                   label-class="text-[#A8AAAE] text-xs font-medium"
                   class="mb-1"
                 />
                 <AppInput
-                  label="База склад"
+                  :label="t('base.warehouse.title')"
                   label-class="text-[#A8AAAE] text-xs font-medium"
                   class="mb-1"
                 />
                 <AppSelect
-                  label="Склад базы"
+                  :label="t('base.warehouse.reverseTitle')"
                   label-class="text-[#A8AAAE] text-xs font-medium"
                   class="mb-1"
                 />
                 <AppSelect
-                  label="Кухня"
+                  :label="t('kitchen.title')"
                   label-class="text-[#A8AAAE] text-xs font-medium"
                   class="mb-1"
                 />

@@ -6,14 +6,16 @@ import MaleAvatar from "@/assets/images/genders/male.png";
 import FemaleAvatar from "@/assets/images/genders/female.png";
 import { computed, ref } from "vue";
 import { getSessionItem, removeSessionItem, setSessionItem } from "@/utils/sessionStorage";
+import { useI18n } from "vue-i18n";
 
 export const useCommonStore = defineStore("commonStore", () => {
   const router = useRouter();
   const route = useRoute();
+  const { t } = useI18n();
 
   const redirectNotFound = (message: string) => {
     ElNotification({
-      title: "Error 404",
+      title: t("notFound.toast"),
       message,
       type: "error",
     });
@@ -23,8 +25,8 @@ export const useCommonStore = defineStore("commonStore", () => {
   const successToast = async (route?: RouteLocationRaw) => {
     if (route) await router.push(route);
     ElNotification({
-      title: "Успешно",
-      message: "Успешно",
+      title: t("toast.success"),
+      message: t("toast.success"),
       type: "success",
     });
   };
@@ -43,7 +45,7 @@ export const useCommonStore = defineStore("commonStore", () => {
 
     if (route) await router.push(route);
     await ElNotification({
-      title: "Error",
+      title: t("error.title"),
       message,
       type: "error",
       onClose: () => {
@@ -60,7 +62,7 @@ export const useCommonStore = defineStore("commonStore", () => {
 
 
     return {
-      name: gender === "f" ? "Женский" : "Мужской",
+      name: gender === "f" ? t("gender.female") : t("gender.male"),
       photo: gender === "f" ? FemaleAvatar : MaleAvatar,
     };
   };

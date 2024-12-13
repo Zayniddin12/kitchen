@@ -6,11 +6,13 @@ import {
   AppInputPropsType,
   AppInputValueType,
 } from "@/components/ui/form/app-input/app-input.type";
-import { computed, inject, ref, Ref, useSlots, watch } from "vue";
+import { computed, h, inject, ref, Ref, shallowRef, useSlots, watch } from "vue";
 import { vMaska } from "maska/vue";
 import { setRules } from "@/components/ui/form/validate";
 import { ValidationErrorsType } from "@/components/ui/form/form.type";
 import { useI18n } from "vue-i18n";
+import SearchIcon from "@/assets/images/icons/search.svg";
+import CalendarIcon from "@/assets/images/icons/calendar.svg";
 
 const [model, modifiers] = defineModel<AppInputValueType>();
 
@@ -122,7 +124,28 @@ const computedShowPassword = computed(() => {
 const { t } = useI18n();
 
 const computedPlaceholder = computed(() => {
-  return props.placeholder ?? t("form.enter");
+  if (props.placeholder) return props.placeholder;
+
+  if (props.type === "search") return t("form.search");
+
+  return t("form.enter");
+});
+
+const renderSearchIcon = shallowRef<any>({
+  render() {
+    return h("svg", {
+      "data-src": SearchIcon,
+      class: "!size-[18px]",
+    });
+  },
+});
+
+const computedPrefixIcon = computed(() => {
+  if (props.prefixIcon) return props.prefixIcon;
+
+  if (computedType.value === "search") return renderSearchIcon.value;
+
+  return "";
 });
 
 const change = (value: AppInputValueType) => {
@@ -185,7 +208,7 @@ watch(
       :clearable
       :name
       :suffix-icon
-      :prefix-icon
+      :prefix-icon="computedPrefixIcon"
       :rows
       :autosize
       :maxlength="props.maxlength ?? computedMax"
@@ -228,6 +251,15 @@ watch(
 .app-input {
   .el-input__prefix {
     margin-right: 7px;
+  }
+
+  .el-input .el-input__icon {
+    width: unset;
+    height: unset;
+  }
+
+  el-input--large {
+
   }
 }
 </style>

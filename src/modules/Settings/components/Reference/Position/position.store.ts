@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
-import { PositionsType, PositionType } from "@/modules/Position/position.types";
-import positionApi from "@/modules/Position/position.api";
+import { PositionsType, PositionType } from "@/modules/Settings/components/Reference/Position/position.types";
+import positionApi from "@/modules/Settings/components/Reference/Position/position.api";
 
 export const usePositionStore = defineStore("positionStore", () => {
 

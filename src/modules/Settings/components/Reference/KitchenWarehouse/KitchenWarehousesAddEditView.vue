@@ -78,6 +78,7 @@ onMounted(async () => {
     try {
       await store.GET_WAREHOUSE_BASES_LIST({ per_page: 100 });
       await store.GET_KITCHEN_TYPE();
+      await store.GET_UNITS();
 
       if (route.params.id) {
         const wr = await store.GET_KITCHEN_WAREHOUSE_DETAIL(+route.params.id);
@@ -217,15 +218,17 @@ watch(() => route.name, () => {
                 :disabled="isDisabled"
               />
 
-              <app-input
+              <AppSelect
                 v-model="dataValue.measure_id"
+                :items="store.units.units"
+                item-value="id"
+                item-label="name"
                 label="Ед. изм. вместимости"
                 placeholder="Введите"
                 label-class="text-[#A8AAAE] font-medium text-[12px]"
                 class="w-full"
                 type="number"
                 prop="measure_id"
-                disabled
               />
 
               <app-select

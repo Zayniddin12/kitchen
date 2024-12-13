@@ -18,12 +18,15 @@ import MonitoringIcon from "@/assets/images/icons/nav/nav-drawer/monitoring.svg"
 import { useSettingsStore } from "@/modules/Settings/store";
 import { useWarehouseBasesStore } from "@/modules/WarehouseBases/warehouse-bases.store";
 import { useCommonStore } from "@/stores/common.store";
+import { useI18n } from "vue-i18n";
 
 const authStore = useAuthStore();
 const route = useRoute();
 const settingsStore = useSettingsStore();
 const warehouseBasesStore = useWarehouseBasesStore();
 const commonStore = useCommonStore();
+
+const {t} = useI18n();
 
 const childSidebarPin = ref<boolean>(JSON.parse(localStorage.getItem("child-sidebar-pin" as string) || "false"));
 const childSidebar = ref<boolean>(JSON.parse(localStorage.getItem("child-sidebar" as string) || "false"));
@@ -109,7 +112,7 @@ const navDrawerWidth = ref<number>(0);
         <RouterView />
       </div>
 
-      <span class="mt-[28px] bg-transparent !dark:body-dark w-full text-[#8F9194] text-[12px] select-none">Made by “Anysoft” software & solutions company</span>
+      <span class="mt-[28px] bg-transparent !dark:body-dark w-full text-[#8F9194] text-[12px] select-none">{{ t("footer")}}</span>
     </div>
 
     <div
