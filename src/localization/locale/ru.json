@@ -316,5 +316,6 @@
     "name2": "Наименование роли",
     "ownership": "Принадлежность роли",
     "numberOfUses": "Кол. использований"
-  }
+  },
+  "footer": "Made by “Anysoft” software & solutions company"
 }
