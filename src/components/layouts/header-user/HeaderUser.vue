@@ -64,7 +64,7 @@ const languages = computed<LanguagesType>(() => {
     @visible-change="(value:boolean) => dropdownOpen = value"
   >
     <div
-      class="flex items-center gap-3 min-w-[260px] max-w-[268px]"
+      :class="['flex items-center gap-3', {'w-[200px]' : authStore.userLoading}]"
     >
       <img
         :src="userImg"
@@ -101,6 +101,7 @@ const languages = computed<LanguagesType>(() => {
         </div>
         <div class="flex flex-col gap-y-2 mt-3">
           <RouterLink
+            v-if="$route.name !== 'cashier'"
             :to="{name: 'reference'}"
             class="px-3 py-2.5 w-full flex justify-between rounded-lg items-center gap-x-4 transition duration-200 ease-in bg-white hover:shadow-[0px_1.5px_4px_-1px_#0A090B12]"
             @click="redirectSettingsModule"
@@ -111,7 +112,7 @@ const languages = computed<LanguagesType>(() => {
                 class="size-5"
               />
               <span class="text-sm font-medium text-[#4F5662]">
-                {{t("common.settings")}}
+                {{ t("common.settings") }}
               </span>
             </span>
             <svg
@@ -119,14 +120,15 @@ const languages = computed<LanguagesType>(() => {
               class="size-3"
             />
           </RouterLink>
-          <div class="px-3 py-0.5 w-full flex justify-between rounded-lg items-center gap-x-4 bg-white transition duration-200 ease-in hover:shadow-[0px_1.5px_4px_-1px_#0A090B12]">
+          <div
+            class="px-3 py-0.5 w-full flex justify-between rounded-lg items-center gap-x-4 bg-white transition duration-200 ease-in hover:shadow-[0px_1.5px_4px_-1px_#0A090B12]">
             <span class="flex items-center gap-x-3">
               <svg
                 :data-src="LanguageIcon"
                 class="size-5"
               />
               <span class="text-sm font-medium text-[#4F5662]">
-                {{t("common.language")}}
+                {{ t("common.language") }}
               </span>
             </span>
             <div class="inline-flex rounded-lg bg-[#F8F9FC] p-1">
@@ -149,7 +151,7 @@ const languages = computed<LanguagesType>(() => {
               class="size-5"
             />
             <span class="text-sm font-medium text-[#EA5455]">
-              {{t("auth.logout")}}
+              {{ t("auth.logout") }}
             </span>
           </button>
         </div>

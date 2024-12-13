@@ -5,6 +5,7 @@
 import MainLayout from "@/layout/MainLayout.vue";
 import LoginLayout from "@/layout/LoginLayout.vue";
 import ErrorLayout from "@/layout/ErrorLayout.vue";
+import CashierLayout from "@/layout/CashierLayout.vue";
 import ResetPasswordLayout from "@/modules/Auth/pages/ResetPassword.vue";
 import { useRoute } from "vue-router";
 import { computed } from "vue";
@@ -17,6 +18,7 @@ const layouts = {
   MainLayout,
   LoginLayout,
   ErrorLayout,
+  CashierLayout,
   ResetPasswordLayout,
 };
 
