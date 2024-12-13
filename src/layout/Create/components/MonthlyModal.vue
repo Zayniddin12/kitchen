@@ -23,6 +23,7 @@ import { AppSelectValueType } from "@/components/ui/form/app-select/app-select.t
 import AppForm from "@/components/ui/form/app-form/AppForm.vue";
 import deleteIcon from "@/assets/images/icons/delete-danger-icon.svg";
 import AppOverlay from "@/components/ui/app-overlay/AppOverlay.vue";
+import { useI18n } from "vue-i18n";
 
 
 const model = defineModel<ModalValueType>();
@@ -33,6 +34,8 @@ const settingsStore = useSettingsStore();
 const commonStore = useCommonStore();
 const documentStore = useDocumentStore();
 const authStore = useAuthStore();
+
+const { t } = useI18n();
 
 const defaultProduct: DocumentProductType = {
   category_id: "",
@@ -63,8 +66,8 @@ const form = reactive<DocumentCreateDataDocumentType>({
 });
 
 const requestType = computed(() => {
-  if (props.id === 4) return "Месячный запрос";
-  else return "Годовой запрос";
+  if (props.id === 4) return t("document.monthlyRequest.title");
+  else return t("document.annualRequest.title");
 });
 
 const required = ref(false);
@@ -83,7 +86,7 @@ const sendForm = async (status: DocumentStatusType) => {
   if (!v$.value) return;
 
   if (!(await v$.value.validate())) {
-    commonStore.errorToast("Validation Error");
+    commonStore.errorToast(t("error.validation"));
     return;
   }
 
@@ -91,13 +94,8 @@ const sendForm = async (status: DocumentStatusType) => {
   delete newForm.to;
 
   try {
-    if (props.uuid) {
-      delete newForm.doc_type_id;
 
-      await documentStore.update(props.uuid, newForm);
-    } else {
-      await documentStore.create(newForm);
-    }
+    await documentStore.create(newForm);
 
     commonStore.successToast();
     validationErrors.value = null;
@@ -298,14 +296,18 @@ watch(model, (newModel) => {
               alt="logo"
             >
             <div class="flex flex-col ml-3">
-              <b class="text-[#000D24] text-lg">NKMK</b>
-              <span class="text-[#CBCCCE]">Jamg‘armasi</span>
+              <b class="text-[#000D24] text-lg">{{ t("logo.title") }}</b>
+              <span class="text-[#CBCCCE]">{{ t("logo.subtitle") }}</span>
             </div>
           </header>
-          <h1 class="text-[#000D24] font-bold text-[20px] text-center mb-[24px]">ЗАПРОС</h1>
+          <h1 class="text-[#000D24] font-bold text-[20px] text-center mb-[24px] uppercase">
+            {{ t("document.freeRequest.title") }}
+          </h1>
 
           <div class="flex items-center mb-[8px]">
-            <h1 class="text-[#4F5662] text-[14px] font-semibold">Дата:</h1>
+            <h1 class="text-[#4F5662] text-[14px] font-semibold">
+              {{ t("common.date") }}:
+            </h1>
             <span class="ml-2 text-[#A8AAAE] text-[14px] font-medium block">{{ form.date }}</span>
           </div>
 
@@ -316,20 +318,20 @@ watch(model, (newModel) => {
 
           <div class="flex items-baseline mb-[24px]">
             <h1 class=" text-[14px] font-medium">
-              <span class="text-[#4F5662] font-semibold">Получатель: </span>
+              <span class="text-[#4F5662] font-semibold">{{ t("common.recipient") }}: </span>
               <span class="text-[#A8AAAE] ml-2">{{ to }}</span>
             </h1>
           </div>
 
           <div class="flex items-baseline mb-[24px]">
             <h1 class=" text-[14px] font-medium">
-              <span class="text-[#4F5662] font-semibold">Тип запроса:</span>
+              <span class="text-[#4F5662] font-semibold">{{ t("document.freeRequest.type") }}:</span>
               <span class="text-[#A8AAAE] ml-2">{{ requestType }}</span>
             </h1>
           </div>
 
           <div class="flex items-center mb-[24px]">
-            <h1 class="text-[#4F5662] text-[14px] font-semibold">Тема:</h1>
+            <h1 class="text-[#4F5662] text-[14px] font-semibold">{{ t("common.theme") }}:</h1>
             <span class="ml-2 text-[#A8AAAE] text-[14px] font-medium block">{{ form.subject }}</span>
           </div>
 
@@ -346,7 +348,7 @@ watch(model, (newModel) => {
           >
             <el-table-column
               prop="title"
-              label="Название"
+              :label="t('common.name')"
               class="!p-0"
             >
               <template #default="{ row }: { row: DocumentProductType }">
@@ -359,7 +361,7 @@ watch(model, (newModel) => {
             </el-table-column>
             <el-table-column
               prop="quantity"
-              label="Количество"
+              :label="t('common.quantity')"
             >
               <template #default="{ row }: { row: DocumentProductType }">
                 {{ row.quantity ?? "-" }}
@@ -367,7 +369,7 @@ watch(model, (newModel) => {
             </el-table-column>
             <el-table-column
               prop="measurement"
-              label="Ед. измерения"
+              :label="t('common.measurement')"
             >
               <template #default="{ row }: { row: DocumentProductType }">
                 {{
@@ -379,24 +381,24 @@ watch(model, (newModel) => {
             </el-table-column>
             <el-table-column
               prop="price"
-              label="Цена"
+              :label="t('common.price')"
             >
               <template #default="{ row }: { row: DocumentProductType }">
                 {{
-                  row.price ? `${formatNumber(row.price as number)} сум` : "-"
+                  row.price ? `${formatNumber(row.price as number)} ${t("currency.sum")}` : "-"
                 }}
               </template>
             </el-table-column>
             <el-table-column
               prop="total_price"
-              label="Сумма"
+              :label="t('common.sum')"
             >
               <template #default="{ row }: { row: DocumentProductType }">
                 {{
                   row.price && row.quantity
                     ? `${formatNumber(
                       (row.price * row.quantity) as number,
-                    )} сум`
+                    )} ${t("currency.sum")}`
                     : "-"
                 }}
               </template>
@@ -408,10 +410,10 @@ watch(model, (newModel) => {
             >
               <div class="flex items-center justify-end p-4">
                 <h1 class="text-[#8F9194] text-sm font-bold mr-[5px]">
-                  Общая сумма:
+                  {{ t("common.totalSum") }}:
                 </h1>
                 <h1 class="text-[#000D24] text-sm font-bold mr-5">
-                  {{ formatNumber(productsTotalSum) }} сум
+                  {{ formatNumber(productsTotalSum) }} {{ t("currency.sum") }}
                 </h1>
               </div>
             </template>
@@ -440,19 +442,19 @@ watch(model, (newModel) => {
           :validation-errors
         >
           <AppInput
-            label="Накладние"
-            placeholder="Запрос"
+            :label="t('document.overlay')"
+            :placeholder="t('document.freeRequest.title')"
             label-class="text-[#A8AAAE] text-xs font-medium"
             disabled
           />
           <AppInput
-            label="Тип запроса"
+            :label="t('document.freeRequest.type')"
             :placeholder="requestType"
             label-class="text-[#A8AAAE] text-xs font-medium"
             disabled
           />
           <AppDatePicker
-            label="Дата создания документа"
+            :label="t('document.creationDate')"
             :placeholder="form.date"
             label-class="text-[#A8AAAE] text-xs font-medium"
             disabled
@@ -460,16 +462,15 @@ watch(model, (newModel) => {
           <AppInput
             v-model="form.number"
             prop="number"
-            label="№ документа"
-            placeholder="Автоматически"
+            :label="t('document.number')"
+            :placeholder="t('common.automatically')"
             label-class="text-[#A8AAAE] text-xs font-medium"
             disabled
           />
           <AppSelect
             v-model="form.to"
             prop="to"
-            placeholder="Выберите"
-            label="Получатель"
+            :label="t('common.recipient')"
             label-class="text-[#A8AAAE] text-[12px] font-medium"
             :loading="settingsStore.respondentsLoading"
             @change="(value) => respondentChange(value as string, 'to')"
@@ -487,27 +488,25 @@ watch(model, (newModel) => {
           <AppInput
             v-model="form.subject"
             prop="subject"
-            placeholder="Тема"
-            label="Тема"
+            :placeholder="t('common.theme')"
+            :label="t('common.theme')"
             label-class="text-[#A8AAAE] text-xs font-medium"
             :required
             :max="100"
-            :maxlength="100"
           />
 
           <AppInput
             v-model="form.content"
             prop="content"
-            placeholder="Содержание запроса"
             type="textarea"
             :rows="5"
-            label="Содержание запроса"
+            :label="t('document.freeRequest.contents')"
+            :placeholder="t('document.freeRequest.contents')"
             label-class="text-[#A8AAAE] text-xs font-medium"
             :required
-            :maxlength="1000"
             :max="1000"
           />
-          <div class="bg-[#FFFFFF] rounded-[8px] p-[12px]">
+          <div class="bg-[#FFFFFF] rounded-[8px] p-[12px] mb-3">
             <template
               v-for="(product, index) in form.products"
               :key="index + 1"
@@ -519,7 +518,7 @@ watch(model, (newModel) => {
                   <template v-if="form.products && form.products.length > 1">
                     {{ index + 1 }}.
                   </template>
-                  Таблица получаемых продуктов
+                  {{ t("document.tableReceivedProducts") }}
                 </strong>
                 <button
                   v-if="form.products && form.products.length > 1"
@@ -530,17 +529,17 @@ watch(model, (newModel) => {
                     :data-src="deleteIcon"
                     class="size-5"
                   />
-                  <span class="text-[#EA5455]">Удалить</span>
+                  <span class="text-[#EA5455]">{{ t("method.delete") }}</span>
                 </button>
               </div>
               <AppSelect
                 v-model="product.category_id"
-                placeholder="Тип продукта"
                 :prop="`products[${index}].category_id`"
                 :items="settingsStore.typeProduct.product_categories"
                 item-value="id"
                 item-label="name"
-                label="Тип продукта"
+                :label="t('product.type')"
+                :placeholder="t('product.type')"
                 label-class="text-[#A8AAAE] text-xs font-medium"
                 @change="fetchVidProductsList(product)"
                 :required
@@ -551,8 +550,8 @@ watch(model, (newModel) => {
                 :items="vidProducts.get(product.category_id as number)"
                 item-label="name"
                 item-value="id"
-                placeholder="Вид продукта"
-                label="Вид продукта"
+                :label="t('product.view')"
+                :placeholder="t('product.view')"
                 label-class="text-[#A8AAAE] text-xs font-medium"
                 :required
                 :disabled="!product.category_id"
@@ -563,8 +562,8 @@ watch(model, (newModel) => {
                   v-model="product.quantity"
                   :prop="`products[${index}].quantity`"
                   custom-type="number"
-                  placeholder="Количество"
-                  label="Количество"
+                  :placeholder="t('common.quantity')"
+                  :label="t('common.quantity')"
                   label-class="text-[#A8AAAE] text-xs font-medium"
                   :required
                 />
@@ -574,8 +573,8 @@ watch(model, (newModel) => {
                   :items="settingsStore.units.units"
                   item-label="name"
                   item-value="id"
-                  placeholder="Ед. измерения"
-                  label="Ед. измерения"
+                  :placeholder="t('common.measurement')"
+                  :label="t('common.measurement')"
                   label-class="text-[#A8AAAE] text-xs font-medium"
                   :required
                   disabled
@@ -585,8 +584,8 @@ watch(model, (newModel) => {
                 v-model.number="product.price"
                 type="number"
                 :prop="`products[${index}].price`"
-                placeholder="Цена"
-                label="Цена"
+                :placeholder="t('common.price')"
+                :label="t('common.price')"
                 label-class="text-[#A8AAAE] text-xs font-medium"
                 :required
               />
@@ -607,24 +606,26 @@ watch(model, (newModel) => {
                     maskRepeat: 'no-repeat',
                   }"
                 ></span>
-              Добавить
+              {{ t("method.add") }}
             </button>
           </div>
           <AppSelect
             v-model="form.from"
             prop="from"
-            placeholder="Отправитель"
-            label="Отправитель"
+            :placeholder="t('common.sender')"
+            :label="t('common.sender')"
             label-class="text-[#A8AAAE] text-xs font-medium"
             :disabled="authStore.disabledUserWorkplace"
             @change="(value) => respondentChange(value as string, 'to')"
           >
-            <ElOption
-              v-for="item in authStore.user.workplaces"
-              :key="`${item.workplace_type}_${item.workplace_type}`"
-              :value="`${item.workplace_id}_${item.workplace_type}`"
-              :label="item.workplace"
-            />
+            <template v-if="authStore.user">
+              <ElOption
+                v-for="item in authStore.user.workplaces"
+                :key="`${item.workplace_type}_${item.workplace_type}`"
+                :value="`${item.workplace_id}_${item.workplace_type}`"
+                :label="item.workplace"
+              />
+            </template>
           </AppSelect>
         </AppForm>
         <div class="flex items-start justify-between gap-x-2">
@@ -632,7 +633,7 @@ watch(model, (newModel) => {
             class="custom-cancel-btn"
             @click="closeModal"
           >
-            Отменить
+            {{ t("method.cancel") }}
           </button>
           <ElButton
             :loading="form.status ==='draft' ? loading : false"
@@ -641,7 +642,7 @@ watch(model, (newModel) => {
             @click="sendForm('draft')"
             class="custom-apply-btn h-[41px] w-[212px]"
           >
-            Сохранить как черновик
+            {{ t("method.saveAsDraft") }}
           </ElButton>
           <ElButton
             :loading="form.status ==='sent' ? loading : false"
@@ -650,7 +651,7 @@ watch(model, (newModel) => {
             @click="sendForm('sent')"
             class="custom-send-btn h-[41px] w-[116px] !ml-0"
           >
-            Отправить
+            {{ t("method.send") }}
           </ElButton>
         </div>
       </div>

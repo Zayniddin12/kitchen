@@ -2,7 +2,7 @@
   setup
   lang="ts"
 >
-import { onMounted, reactive, ref, watch } from "vue";
+import { computed, onMounted, reactive, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import CollapseFilter from "@/components/collapseFilter/index.vue";
 import white from "@/assets/images/filter2.svg";
@@ -18,9 +18,12 @@ import AppForm from "@/components/ui/form/app-form/AppForm.vue";
 import { ActType, DraftsParamsType } from "@/modules/Document/document.types";
 import { filterObjectValues, setTableColumnIndex } from "@/utils/helper";
 import AppPagination from "@/components/ui/app-pagination/AppPagination.vue";
+import { useI18n } from "vue-i18n";
 
 const documentStore = useDocumentStore();
 const settingsStore = useSettingsStore();
+
+const { t } = useI18n();
 
 const form = reactive<DraftsParamsType>({
   page: null,
@@ -57,13 +60,19 @@ const isOpenFilter = ref<boolean>(false);
 
 const { setBreadCrumb } = useBreadcrumb();
 
+const title = computed(() => route.meta.title ?? "");
+
+const isTranslate = computed(() => !!route.meta.isTranslate);
+
 const setBreadCrumbFn = () => {
   setBreadCrumb([
     {
-      label: "Документы",
+      label: "document.title1",
+      isTranslate: true,
     },
     {
-      label: "Акты",
+      label: title.value,
+      isTranslate: isTranslate.value,
       isActionable: true,
     },
   ]);
@@ -124,7 +133,12 @@ const changePage = (value: number) => {
 <template>
   <div>
     <div class="flex items-center justify-between">
-      <h1 class="m-0 font-semibold text-[32px]">Акты</h1>
+      <h1
+        v-if="title"
+        class="m-0 font-semibold text-[32px]"
+      >
+        {{ isTranslate ? t(title) : title }}
+      </h1>
 
       <button
         class="custom-filter-btn font-medium"
@@ -136,7 +150,7 @@ const changePage = (value: number) => {
           alt="filter"
           class="mr-[12px]"
         />
-        Фильтр
+        {{ t("common.filter") }}
       </button>
     </div>
 
@@ -151,30 +165,30 @@ const changePage = (value: number) => {
           <AppDatePicker
             v-model="form.from_date"
             prop="from_date"
-            placeholder="С этой даты"
-            label="С этой даты"
+            :placeholder="t('common.fromDate')"
+            :label="t('common.fromDate')"
             label-class="text-[#7F7D83]"
           />
           <AppDatePicker
             v-model="form.to_date"
             prop="to_date"
-            placeholder="По эту дату"
-            label="По эту дату"
+            :placeholder="t('common.endDate')"
+            :label="t('common.endDate')"
             label-class="text-[#7F7D83]"
           />
 
           <AppInput
             v-model="form.number"
             prop="number"
-            placeholder="Номер документа"
-            label="Номер документа"
+            :placeholder="t('document.number2')"
+            :label="t('document.number2')"
             label-class="text-[#7F7D83]"
           />
           <AppInput
             v-model="form.subject"
             prop="subject"
-            placeholder="Доставка картофеля"
-            label="Доставка картофеля"
+            :placeholder="t('document.potatoDelivery')"
+            :label="t('document.potatoDelivery')"
             label-class="text-[#7F7D83]"
           />
           <AppSelect
@@ -185,8 +199,8 @@ const changePage = (value: number) => {
             item-value="id"
             :loading="settingsStore.respondentsLoading"
             class="col-span-2"
-            placeholder="Кому"
-            label="Кому"
+            :placeholder="t('document.whom.to')"
+            :label="t('document.whom.to')"
             label-class="text-[#7F7D83]"
           />
           <AppSelect
@@ -197,22 +211,22 @@ const changePage = (value: number) => {
             item-value="id"
             :loading="settingsStore.respondentsLoading"
             class="col-span-2"
-            placeholder="Отправитель"
-            label="Отправитель"
+            :placeholder="t('common.sender')"
+            :label="t('common.sender')"
             label-class="text-[#7F7D83]"
           />
         </AppForm>
 
         <div class="flex items-center mt-[10px] justify-between">
           <div class="text-[#8F9194] text-[14px]">
-            Найдено: {{ documentStore.drafts?.paginator.total_count }}
+            {{ t("common.found") }}: {{ documentStore.drafts?.paginator.total_count }}
           </div>
           <div class="flex items-center">
             <button
               @click="clearForm"
               class="custom-reset-btn"
             >
-              Сбросить
+              {{ t("method.reset") }}
             </button>
             <ElButton
               :loading="documentStore.draftsLoading"
@@ -221,7 +235,7 @@ const changePage = (value: number) => {
               class="custom-apply-btn ml-4"
               @click="filterForm"
             >
-              Применить
+              {{ t("method.apply") }}
             </ElButton>
           </div>
         </div>
@@ -234,6 +248,7 @@ const changePage = (value: number) => {
       class="custom-element-table"
       stripe
       highlight-current-row
+      :empty-text="t('common.empty')"
       @current-change="tableCurrentChange"
     >
       <el-table-column
@@ -254,7 +269,7 @@ const changePage = (value: number) => {
       </el-table-column>
       <el-table-column
         prop="date"
-        label="Дата"
+        :label="t('common.date')"
         align="center"
       >
         <template #default="{row}:{row:ActType}">
@@ -263,7 +278,7 @@ const changePage = (value: number) => {
       </el-table-column>
       <el-table-column
         prop="number"
-        label="№ док..."
+        :label="t('document.shortNum')"
         align="center"
       >
         <template #default="{row}:{row:ActType}">
@@ -272,7 +287,7 @@ const changePage = (value: number) => {
       </el-table-column>
       <el-table-column
         prop="product_parent_name"
-        label="Тип продукта"
+        :label="t('product.type')"
         align="center"
       >
         <template #default="{row}:{row:ActType}">
@@ -281,7 +296,7 @@ const changePage = (value: number) => {
       </el-table-column>
       <el-table-column
         prop="product_name"
-        label="Вид продукта"
+        :label="t('product.view')"
         align="center"
       >
         <template #default="{row}:{row:ActType}">
@@ -290,14 +305,17 @@ const changePage = (value: number) => {
       </el-table-column>
       <el-table-column
         prop="warehouse"
-        label="Склад"
+        :label="t('title')"
         align="center"
       >
         <template #default="{row}:{row:ActType}">
           {{ row.warehouse || "-" }}
         </template>
       </el-table-column>
-      <el-table-column label="Действие" align="center">
+      <el-table-column
+        :label="t('common.action')"
+        align="center"
+      >
         <template #default="{row}:{row:ActType}">
           <div class="flex items-center justify-center gap-x-2.5">
             <RouterLink

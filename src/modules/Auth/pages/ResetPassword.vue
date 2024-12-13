@@ -1,8 +1,8 @@
 <script
-    setup
-    lang="ts"
+  setup
+  lang="ts"
 >
-import { computed, onMounted, onUnmounted, reactive, ref } from "vue";
+import { computed, onMounted, onUnmounted, reactive, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { ValidationType } from "@/components/ui/form/app-form/app-form.type";
@@ -14,7 +14,7 @@ import { ElNotification } from "element-plus";
 import { ForgotPasswordDataType, SendCodeDataType, VerifyCodeDataType } from "@/modules/Auth/auth.types";
 import { useCommonStore } from "@/stores/common.store";
 import { useAuthStore } from "@/modules/Auth/auth.store";
-import { formatTime } from "../../../utils/helper";
+import { formatPhone, formatTime } from "../../../utils/helper";
 
 const router = useRouter();
 const authStore = useAuthStore();
@@ -23,15 +23,17 @@ const commonStore = useCommonStore();
 const form = reactive<VerifyCodeDataType>({
   phone: "",
   code: "",
-  otp_session_id: ""
+  otp_session_id: "",
 });
+
+const { t } = useI18n();
 
 const confirmForm = reactive<ForgotPasswordDataType>({
   new_password: "",
   password_confirmation: "",
   phone: "",
   code: "",
-  otp_session_id: ""
+  otp_session_id: "",
 });
 
 const activeConfirmForm = computed<boolean>(() => {
@@ -40,6 +42,8 @@ const activeConfirmForm = computed<boolean>(() => {
 
 const v$ = ref<ValidationType | null>(null);
 
+const validationErrors = ref<Record<string, any>>({});
+
 const setValidation = (value: ValidationType) => {
   v$.value = value;
 };
@@ -47,7 +51,18 @@ const setValidation = (value: ValidationType) => {
 const sendForm = async () => {
   if (!v$.value) return;
 
-  if (!(await v$.value.validate())) return;
+  if (!(await v$.value.validate())) {
+    commonStore.errorToast(t("error.validation"));
+    return;
+  }
+
+  validationErrors.value = {};
+
+  if (confirmForm.new_password && confirmForm.password_confirmation && confirmForm.new_password !== confirmForm.password_confirmation) {
+    validationErrors.value.password_confirmation = t("form.validate.confirmPassword");
+    commonStore.errorToast(t("error.validation"));
+    return;
+  }
 
   const newForm = { ...form };
 
@@ -60,86 +75,93 @@ const sendForm = async () => {
     await authStore.forgotPassword(confirmForm).then(() => {
       authStore.clearSessionOtp();
       commonStore.successToast({ name: "login" });
+      validationErrors.value = {};
+    }).catch((error: any) => {
+      if (error?.error?.code === 422) {
+        validationErrors.value = error.meta.validation_errors;
+      }
     });
     return;
   } else if (authStore.otp) {
     authStore.verifyCode({
       ...newForm,
-      otp_session_id: authStore.otp.session_id
+      otp_session_id: authStore.otp.session_id,
     });
     return;
   } else {
     authStore.sendCode({
-      phone: newForm.phone
+      phone: newForm.phone,
     });
   }
 };
 
 onMounted(() => {
   authStore.getSessionOtp();
-  form.phone = authStore.otp?.phone ?? "";
+  form.phone = authStore.otp?.phone ? formatPhone(authStore.otp.phone) : "";
 });
 
 onUnmounted(() => {
   authStore.clearSessionOtp();
 });
 
+watch(() => authStore.otp, (newValue) => {
+  if (!newValue) v$.value?.clear();
+});
+
 </script>
 
 <template>
   <div class="p-8 h-screen flex flex-col lg:flex-row items-center relative bg-[#ffffff]">
-    <Language class="fixed top-[32px] right-[32px]"/>
+    <Language class="fixed top-[32px] right-[32px]" />
 
     <div class="w-full lg:w-1/4 md:w-1/2 m-auto">
       <header class="flex items-center justify-center mb-6">
         <img
-            src="@/assets/images/logo.svg"
-            alt="logo"
-            class="h-[50px]"
+          src="@/assets/images/logo.svg"
+          alt="logo"
+          class="h-[50px]"
         />
         <div class="flex flex-col ml-3">
-          <b class="text-dark text-lg">НГМК</b>
-          <span class="text-[#CBCCCE]">Фонд</span>
+          <b class="text-dark text-lg">{{ t("logo.title") }}</b>
+          <span class="text-[#CBCCCE]">{{ t("logo.subtitle") }}</span>
         </div>
       </header>
-      <h1 class="text-dark text-xl font-bold text-center">Сброс пароля</h1>
+      <h1 class="text-dark text-xl font-bold text-center">{{ t("auth.resetPassword.title") }}</h1>
       <p class="text-[#A8AAAE] text-[14px] mt-[6px] w-[90%] text-center">
-        На данной странице Вы можете восстановить доступ к своему аккаунту. Введите Ваш номер телефона и система
-        автоматически отправит Вам временный
-        код для сброса пароля.
+        {{ t("auth.resetPassword.description") }}
       </p>
       <AppForm
-          :value="activeConfirmForm ? confirmForm : form"
-          @validation="setValidation"
-          class="mt-[24px] flex flex-col gap-y-1"
-          @submit.prevent="sendForm"
+        :value="activeConfirmForm ? confirmForm : form"
+        @validation="setValidation"
+        :validation-errors
+        class="mt-[24px] flex flex-col gap-y-1"
+        @submit.prevent="sendForm"
       >
         <template v-if="!activeConfirmForm">
           <AppInput
-              v-model="form.phone"
-              prop="phone"
-              type="tel"
-              placeholder="Введите номер телефона"
-              label="Номер телефона"
-              label-class="text-[#A8AAAE] text-sm"
-              required
+            v-model="form.phone"
+            prop="phone"
+            type="tel"
+            :placeholder="t('form.enterPhone')"
+            :label="t('common.phone')"
+            label-class="text-[#A8AAAE] text-sm"
+            required
           />
           <template v-if="authStore.otp">
             <AppInput
-                v-model="form.code"
-                type="number"
-                placeholder="Введите отправленный код"
-                label="Код"
-                label-class="text-[#A8AAAE] text-sm"
-                required
-                :min="authStore.otp.code_length"
-                :max="authStore.otp.code_length"
-                :mask="'#'.repeat(authStore.otp.code_length)"
-                prop="code"
+              v-model="form.code"
+              prop="code"
+              :placeholder="t('auth.resetPassword.enterSentCode')"
+              :label="t('common.code')"
+              label-class="text-[#A8AAAE] text-sm"
+              required
+              :min="authStore.otp.code_length"
+              :max="authStore.otp.code_length"
+              :mask="'#'.repeat(authStore.otp.code_length)"
             />
             <div
-                v-if="authStore.remainingTime"
-                class="text-[#8F9194] text-[14px] text-center"
+              v-if="authStore.remainingTime"
+              class="text-[#8F9194] text-[14px] text-center"
             >
               {{ formatTime(authStore.remainingTime) }}
             </div>
@@ -147,48 +169,47 @@ onUnmounted(() => {
         </template>
         <template v-else>
           <AppInput
-              v-model="confirmForm.new_password"
-              placeholder="Введите"
-              label="Новый пароль"
-              label-class="text-[#A8AAAE] text-sm"
-              required
-              show-password
-              prop="new_password"
-              maxlength="13"
+            v-model="confirmForm.new_password"
+            :label="t('auth.newPassword')"
+            label-class="text-[#A8AAAE] text-sm"
+            required
+            show-password
+            prop="new_password"
+            :max="13"
           />
 
           <AppInput
-              v-model="confirmForm.password_confirmation"
-              placeholder="Введите"
-              label="Подтвердите пароль"
-              label-class="text-[#A8AAAE] text-sm"
-              required
-              show-password
-              prop="password_confirmation"
+            v-model="confirmForm.password_confirmation"
+            type="password"
+            :label="t('auth.confirmPassword')"
+            label-class="text-[#A8AAAE] text-sm"
+            required
+            prop="password_confirmation"
+            :max="13"
           />
         </template>
       </AppForm>
       <ElButton
-          :loading="authStore.codeLoading"
-          type="primary"
-          @click="sendForm"
-          class="w-full bg-[#2E90FA] py-2.5 h-11 text-white rounded-lg mt-4"
+        :loading="authStore.codeLoading"
+        type="primary"
+        @click="sendForm"
+        class="w-full bg-[#2E90FA] py-2.5 h-11 text-white rounded-lg mt-4"
       >
-        Отправить код
+        {{ t("auth.sendCode") }}
       </ElButton>
       <button
-          class="flex mx-auto items-center justify-center mt-5 cursor-pointer"
-          @click="router.go(-1)"
+        class="flex mx-auto items-center justify-center mt-5 cursor-pointer"
+        @click="router.go(-1)"
       >
         <img
-            src="@/assets/images/icons/back.svg"
-            alt="back"
+          src="@/assets/images/icons/back.svg"
+          alt="back"
         />
-        <span class="text-[#2E90FA] text-sm font-medium ml-[8px]">Назад</span>
+        <span class="text-[#2E90FA] text-sm font-medium ml-[8px]">{{ t("common.back") }}</span>
       </button>
     </div>
 
-    <Footer/>
+    <Footer />
   </div>
 </template>
 

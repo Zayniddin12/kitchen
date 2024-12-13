@@ -5,6 +5,7 @@ export interface BreadcrumbItemType {
   label: string;
   to?: RouteLocationRaw,
   isActionable?: boolean,
+  isTranslate?: IsTranslateType,
   click?: () => void,
 }
 

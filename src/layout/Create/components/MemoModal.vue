@@ -23,12 +23,15 @@ import { useDocumentStore } from "@/modules/Document/document.store";
 import AppOverlay from "@/components/ui/app-overlay/AppOverlay.vue";
 import { useAuthStore } from "@/modules/Auth/auth.store";
 import QrCode from "@/components/workplaces/qr-code/QrCode.vue";
+import { useI18n } from "vue-i18n";
 
 const model = defineModel<ModalValueType>();
 
 const document = defineModel<DraftType | null>("document");
 
 const props = defineProps<ModalPropsType>();
+
+const { t } = useI18n();
 
 const settingsStore = useSettingsStore();
 const commonStore = useCommonStore();
@@ -68,7 +71,7 @@ const sendForm = async (status: DocumentStatusType) => {
   if (!v$.value) return;
 
   if (!(await v$.value.validate())) {
-    commonStore.errorToast("Validation Error");
+    commonStore.errorToast(t("error.validation"));
     return;
   }
 
@@ -216,14 +219,15 @@ const loading = computed(() => documentStore.createLoading || documentStore.upda
               alt="logo"
             >
             <div class="flex flex-col ml-3">
-              <b class="text-[#000D24] text-lg">NKMK</b>
-              <span class="text-[#CBCCCE]">Jamg‘armasi</span>
+              <b class="text-[#000D24] text-lg">{{ t("logo.title") }}</b>
+              <span class="text-[#CBCCCE]">{{ t("logo.subtitle") }}</span>
             </div>
           </header>
-          <h1 class="text-[#000D24] font-bold text-[20px] text-center mb-[24px]">СЛУЖЕБНАЯ ЗАПИСКА</h1>
+          <h1 class="text-[#000D24] font-bold text-[20px] text-center mb-[24px] uppercase">
+            {{ t("document.memo.title") }}</h1>
 
           <div class="flex items-center mb-[8px]">
-            <h1 class="text-[#4F5662] text-[14px] font-medium">Дата:</h1>
+            <h1 class="text-[#4F5662] text-[14px] font-medium">{{ t("common.date") }}:</h1>
             <span class="ml-2 text-[#A8AAAE] text-[14px] font-medium block">{{ form.date }}</span>
           </div>
 
@@ -234,13 +238,13 @@ const loading = computed(() => documentStore.createLoading || documentStore.upda
 
           <div class="flex items-baseline mb-[24px]">
             <h1 class=" text-[14px] font-medium">
-              <span class="text-[#4F5662]">Кому:</span>
+              <span class="text-[#4F5662]">{{ t("document.whom.to") }}:</span>
               <span class="text-[#A8AAAE] ml-2">{{ to }}</span>
             </h1>
           </div>
 
           <div class="flex items-center mb-[24px]">
-            <h1 class="text-[#4F5662] text-[14px] font-medium">Тема:</h1>
+            <h1 class="text-[#4F5662] text-[14px] font-medium">{{ t("common.theme") }}:</h1>
             <span class="ml-2 text-[#A8AAAE] text-[14px] font-medium block">{{ form.subject }}</span>
           </div>
 
@@ -253,7 +257,7 @@ const loading = computed(() => documentStore.createLoading || documentStore.upda
           <div class="mt-[40px] flex items-center gap-x-[100px] justify-between">
             <div class="flex items-baseline  max-w-[200px]">
               <h1 class=" text-[14px] font-medium">
-                <span class="text-[#4F5662]">Отправитель:</span>
+                <span class="text-[#4F5662]">{{ t("common.sender") }}:</span>
                 <span
                   v-if="from"
                   class="text-[#A8AAAE] ml-2"
@@ -276,32 +280,30 @@ const loading = computed(() => documentStore.createLoading || documentStore.upda
           :validation-errors="validationErrors"
         >
           <AppInput
-            placeholder="Служебная записка"
-            label="Название документа"
+            :placeholder="t('document.memo.title')"
+            :label="t('document.title')"
             label-class="text-[#A8AAAE] text-[12px] font-medium"
             disabled
           />
           <AppInput
             v-model="form.number"
             prop="number"
-            label="№ документа"
+            :label="t('document.number')"
             label-class="text-[#A8AAAE] text-[12px] font-medium"
             :required
-            :maxlength="20"
             :max="20"
 
           />
           <AppDatePicker
             :placeholder="form.date"
-            label="Дата создания документа"
+            :label="t('document.creationDate')"
             label-class="text-[#A8AAAE] text-[12px] font-medium"
             disabled
           />
           <AppSelect
             v-model="form.to"
             prop="to"
-            placeholder="Выберите"
-            label="Кому"
+            :label="t('document.whom.to')"
             label-class="text-[#A8AAAE] text-[12px] font-medium"
             :loading="settingsStore.respondentsLoading"
             @change="(value) => respondentChange(value as string, 'to')"
@@ -317,42 +319,41 @@ const loading = computed(() => documentStore.createLoading || documentStore.upda
           <AppInput
             v-model="form.subject"
             prop="subject"
-            placeholder="Введите"
-            label="Тема"
+            :label="t('common.theme')"
             label-class="text-[#A8AAAE] text-xs font-medium"
             :required
             :max="100"
-            :maxlength="100"
           />
 
           <AppInput
             v-model="form.content"
             prop="content"
-            label="Сообщения"
+            :label="t('common.message')"
             label-class="text-[#A8AAAE] text-[12px] font-medium"
-            placeholder="Отображение сообщения служебки"
+            :placeholder="t('document.memo.message')"
             type="textarea"
             :rows="5"
             :required
             :max="1000"
-            :maxlength="1000"
           />
 
           <AppSelect
             v-model="form.from"
             prop="from"
-            placeholder="Отправитель"
-            label="Отправитель"
+            :placeholder="t('common.sender')"
+            :label="t('common.sender')"
             label-class="text-[#A8AAAE] text-xs font-medium"
             :disabled="authStore.disabledUserWorkplace"
             @change="(value) => respondentChange(value as string, 'to')"
           >
-            <ElOption
-              v-for="item in authStore.user.workplaces"
-              :key="`${item.workplace_type}_${item.workplace_type}`"
-              :value="`${item.workplace_id}_${item.workplace_type}`"
-              :label="item.workplace"
-            />
+            <template v-if="authStore.user">
+              <ElOption
+                v-for="item in authStore.user.workplaces"
+                :key="`${item.workplace_type}_${item.workplace_type}`"
+                :value="`${item.workplace_id}_${item.workplace_type}`"
+                :label="item.workplace"
+              />
+            </template>
           </AppSelect>
         </AppForm>
 
@@ -361,7 +362,7 @@ const loading = computed(() => documentStore.createLoading || documentStore.upda
             class="custom-cancel-btn"
             @click="closeModal"
           >
-            Отменить
+            {{ t("method.cancel") }}
           </button>
           <ElButton
             :loading="form.status ==='draft' ? loading : false"
@@ -370,7 +371,7 @@ const loading = computed(() => documentStore.createLoading || documentStore.upda
             @click="sendForm('draft')"
             class="custom-apply-btn h-[41px] w-[212px]"
           >
-            Сохранить как черновик
+            {{ t("method.saveAsDraft") }}
           </ElButton>
           <ElButton
             :loading="form.status ==='sent' ? loading : false"
@@ -379,7 +380,7 @@ const loading = computed(() => documentStore.createLoading || documentStore.upda
             @click="sendForm('sent')"
             class="custom-send-btn h-[41px] !w-[116px] !ml-0"
           >
-            Отправить
+            {{ t("method.send") }}
           </ElButton>
         </div>
       </div>
