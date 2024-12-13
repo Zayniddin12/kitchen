@@ -80,12 +80,14 @@ axiosInstance.interceptors.response.use(
           await authStore.refresh();
           onAccessTokenFetched();
           isAlreadyFetchingAccessToken = false;
+        }else if (error.config.url === "auth/refresh"){
+          await authStore.clear();
         }
 
         return retryOriginalRequest;
       }
 
-      if (!refreshToken || (isAlreadyFetchingAccessToken && error.config.url === "auth/refresh")) {
+      else{
         // await commonStore.errorToast(message, "", id);
         await authStore.clear();
       }

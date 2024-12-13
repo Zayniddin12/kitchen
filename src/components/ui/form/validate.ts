@@ -53,6 +53,7 @@ export const setRules = (rules: RulesType): Arrayable<FormItemRule> | ValidateRu
     formRules.push({
       type: "number",
       validator: (rule: any, value: any, callback: any) => {
+        console.log(rules);
         if (!value) return callback();
         else {
           const newValue = validateNumber(value);

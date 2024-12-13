@@ -20,7 +20,7 @@ import {
 } from "@/layout/Create/components/modal.types";
 import { useSettingsStore } from "@/modules/Settings/store";
 import {
-  deepEqual,
+  deepEqual, filterObjectValues,
   formatDate2,
   formatNumber,
   togglePageScrolling,
@@ -166,7 +166,10 @@ const setActValidation = (validation: ValidationType) => {
 
 const clearValidations = () => {
   v$.value?.clear();
-  if (activeComingModal.value && actV$.value) actV$.value.clear();
+  if (activeComingModal.value && actV$.value) {
+    actV$.value.clear();
+    actForm.products = [];
+  }
   form.to = "";
   form.from = "";
   form.to_type = "";
@@ -193,18 +196,27 @@ const sendForm = async () => {
   delete newForm.Document.from;
   delete newForm.Document.to;
 
-  newForm.Act = JSON.parse(JSON.stringify(actForm));
+  if (activeComingModal.value) {
+    newForm.Act = JSON.parse(JSON.stringify(actForm));
 
-  if (newForm.Act && newForm.Act.doc_signer_obj) {
-    const signerKeys = ["signer_id_1", "signer_id_2", "signer_id_3", "signer_id_4", "signer_id_5"] as const;
+    if (newForm.Act && newForm.Act.doc_signer_obj) {
+      const signerKeys = ["signer_id_1", "signer_id_2", "signer_id_3", "signer_id_4", "signer_id_5"] as const;
 
-    newForm.Act.doc_signers = signerKeys
-      .map((key) => ({
-        signer_id: newForm.Act!.doc_signer_obj![key] as number,
-      }));
+      newForm.Act.doc_signers = signerKeys
+        .filter((key) => newForm.Act!.doc_signer_obj![key]) // Faqat qiymati borlarini olish
+        .map((key) => ({
+          signer_id: +newForm.Act!.doc_signer_obj![key] as number,
+        }));
+
+      delete newForm.Act.doc_signer_obj;
+    }
+  } else {
+    delete newForm.Document.products;
+    delete newForm.Document.subject;
+    delete newForm.Document.status;
   }
 
-  await documentStore.create(newForm).then(() => {
+  await documentStore.create(filterObjectValues(newForm)).then(() => {
     commonStore.successToast();
     model.value = false;
     clearValidations();
@@ -384,10 +396,10 @@ const openModal = () => {
   oldForm.value = JSON.parse(JSON.stringify(form));
   if (activeComingModal.value) {
     oldActForm.value = JSON.parse(JSON.stringify(actForm));
-    usersStore.fetchUsers({
-      per_page: 100,
-    });
   }
+  usersStore.fetchUsers({
+    per_page: 100,
+  });
 };
 
 watch(model, newValue => {
@@ -679,7 +691,7 @@ watch(providerCreateModal, newMProviderModal => {
                     {{ t("common.totalSum") }}:
                   </h2>
                   <h2 class="text-[#000D24] text-sm font-bold mr-5">
-                    {{ formatNumber(productsTotalSum) }} t("currency.sum")
+                    {{ formatNumber(productsTotalSum) }} {{ t("currency.sum") }}
                   </h2>
                 </div>
               </template>
@@ -706,6 +718,17 @@ watch(providerCreateModal, newMProviderModal => {
                   }}
               </span>
               </div>
+              <div class="flex items-center justify-between mb-[24px]">
+                <h2 class="text-[#4F5662] text-sm font-semibold">
+                  {{ t("document.commission.forwarder") }}:
+                </h2>
+                <span class="ml-2 text-[#A8AAAE] text-sm font-medium block">
+               {{
+                    actForm.doc_signer_obj.signer_id_3 && typeof (actForm.doc_signer_obj.signer_id_3) === "number" ? usersStore.getUserFullName(getUser(actForm.doc_signer_obj.signer_id_3)) : ""
+                  }}
+              </span>
+              </div>
+
 
               <div class="flex items-center justify-between mb-[24px]">
                 <h2 class="text-[#4F5662] text-sm font-semibold">
@@ -759,7 +782,7 @@ watch(providerCreateModal, newMProviderModal => {
                 </span>
               </div>
               <div class="flex items-center mb-[8px]">
-                <h2 class="text-[#4F5662] text-sm font-semibold">{{ t("common.date")}}:</h2>
+                <h2 class="text-[#4F5662] text-sm font-semibold">{{ t("common.date") }}:</h2>
                 <span class="ml-2 text-[#A8AAAE] text-sm font-medium block">
                   {{ date }}
                 </span>
@@ -780,14 +803,14 @@ watch(providerCreateModal, newMProviderModal => {
                 <tbody>
                 <tr class="border-gray-300">
                   <td class="border-r border-b p-2 font-medium">
-                    Название продукта
+                    {{ t("product.name") }}
                   </td>
                   <td class="p-2 border-b border-gray-300">{{ activeProductType?.name }}</td>
                 </tr>
 
                 <tr class="border-gray-300">
                   <td class="border-r border-b p-2 font-medium">
-                    Количество продукта
+                    {{ t("product.quantity") }}
                   </td>
                   <td class="p-2 border-b border-gray-300">
                     {{ actForm.products[0]?.quantity ? formatNumber(actForm.products[0].quantity) : "" }}
@@ -796,7 +819,7 @@ watch(providerCreateModal, newMProviderModal => {
 
                 <tr class="border-gray-300">
                   <td class="border-r border-b p-2 font-medium">
-                    Единица измерения
+                    {{ t("common.unitMeasurement") }}
                   </td>
                   <td class="p-2 border-b border-gray-300">
                     {{ actForm.products[0]?.unit_id ? getProductMeasurement(actForm.products[0].unit_id) : "" }}
@@ -805,7 +828,7 @@ watch(providerCreateModal, newMProviderModal => {
 
                 <tr class="border-gray-300">
                   <td class="border-r border-b p-2 font-medium">
-                    Номер и дата договора о поставке
+                    {{ t("document.act.numberDateAgreement") }}
                   </td>
                   <td class="p-2 border-b border-gray-300">
                     {{ actForm.doc_details.contract_details }}
@@ -814,7 +837,7 @@ watch(providerCreateModal, newMProviderModal => {
 
                 <tr class="border-gray-300">
                   <td class="border-r border-b p-2 font-medium">
-                    Номер и дата накладной
+                    {{ t("document.consignmentNumberDate") }}
                   </td>
                   <td class="p-2 border-b border-gray-300">
                     {{ formNumberAndDate }}
@@ -823,13 +846,13 @@ watch(providerCreateModal, newMProviderModal => {
 
                 <tr class="border-gray-300">
                   <td class="border-r border-b p-2 font-medium">
-                    Производитель продукта
+                    {{ t("product.manufacturer") }}
                   </td>
                   <td class="p-2 border-b border-gray-300">{{ actForm.doc_details.manufacturer }}</td>
                 </tr>
 
                 <tr class="border-gray-300">
-                  <td class="border-r border-b p-2 font-medium">Поставщик</td>
+                  <td class="border-r border-b p-2 font-medium">{{ t("common.supplier") }}</td>
                   <td class="p-2 border-b border-gray-300">
                     {{ from }}
                   </td>
@@ -837,19 +860,21 @@ watch(providerCreateModal, newMProviderModal => {
 
                 <tr class="border-gray-300">
                   <td class="border-r border-b p-2 font-medium">
-                    Получатель
+                    {{ t("common.recipient") }}
                   </td>
                   <td class="p-2 border-b border-gray-300">{{ to }}</td>
                 </tr>
 
                 <tr class="border-gray-300">
-                  <td class="border-r border-b p-2 font-medium">Транспорт</td>
+                  <td class="border-r border-b p-2 font-medium">
+                    {{ t("common.transport") }}
+                  </td>
                   <td class="p-2 border-b border-gray-300">{{ actForm.shipping_method }}</td>
                 </tr>
 
                 <tr class="border-gray-300">
                   <td class="border-r border-b p-2 font-medium">
-                    Номер и дата лицензии
+                    {{ t("licence.numberAndDate") }}
                   </td>
                   <td class="p-2 border-b border-gray-300">
                     {{ actForm.doc_details.licence }}
@@ -858,8 +883,7 @@ watch(providerCreateModal, newMProviderModal => {
 
                 <tr class="border-gray-300">
                   <td class="border-r border-b p-2 font-medium">
-                    Номер и дата заключение Санитарно-эпидемиологического
-                    центра
+                    {{ t("document.numberAndDateOfTheConclusionOfTheSanitaryAndEpidemiologicalCenter") }}
                   </td>
                   <td class="p-2 border-b border-gray-300">
                     {{ actForm.doc_details.sanitary }}
@@ -868,7 +892,7 @@ watch(providerCreateModal, newMProviderModal => {
 
                 <tr class="border-gray-300">
                   <td class="border-r border-b p-2 font-medium">
-                    Номер и дата удостоверения ветеринарии
+                    {{ t("document.numberAndDateOfVeterinaryCertificate") }}
                   </td>
                   <td class="p-2 border-b border-gray-300">
                     {{ actForm.doc_details.vetirinary }}
@@ -877,7 +901,7 @@ watch(providerCreateModal, newMProviderModal => {
 
                 <tr class="border-gray-300">
                   <td class="border-r border-b p-2 font-medium">
-                    Номер и дата удостоверения качества
+                    {{ t("document.numberAndDateOfQualityCertificate") }}
                   </td>
                   <td class="p-2 border-b border-gray-300">
                     {{ actForm.doc_details.quality }}
@@ -888,7 +912,9 @@ watch(providerCreateModal, newMProviderModal => {
             </div>
 
             <div class="flex items-center justify-between mb-[24px]">
-              <h2 class="text-[#4F5662] text-sm font-semibold">Кладовщик:</h2>
+              <h2 class="text-[#4F5662] text-sm font-semibold">
+                {{ t("document.commission.storekeeper") }}:
+              </h2>
               <span class="ml-2 text-[#A8AAAE] text-sm font-medium block">
                 {{
                   actForm.doc_signer_obj.signer_id_1 && typeof (actForm.doc_signer_obj.signer_id_1) === "number" ? usersStore.getUserFullName(getUser(actForm.doc_signer_obj.signer_id_1)) : ""
@@ -897,7 +923,9 @@ watch(providerCreateModal, newMProviderModal => {
             </div>
 
             <div class="flex items-center justify-between mb-[24px]">
-              <h2 class="text-[#4F5662] text-sm font-semibold">Товаровед:</h2>
+              <h2 class="text-[#4F5662] text-sm font-semibold">
+                {{ t("document.commission.commodityExpert") }}:
+              </h2>
               <span class="ml-2 text-[#A8AAAE] text-sm font-medium block">
                 {{
                   actForm.doc_signer_obj.signer_id_2 && typeof (actForm.doc_signer_obj.signer_id_2) === "number" ? usersStore.getUserFullName(getUser(actForm.doc_signer_obj.signer_id_2)) : ""
@@ -906,16 +934,9 @@ watch(providerCreateModal, newMProviderModal => {
             </div>
 
             <div class="flex items-center justify-between mb-[24px]">
-              <h2 class="text-[#4F5662] text-sm font-semibold">Экспедитор:</h2>
-              <span class="ml-2 text-[#A8AAAE] text-sm font-medium block">
-               {{
-                  actForm.doc_signer_obj.signer_id_3 && typeof (actForm.doc_signer_obj.signer_id_3) === "number" ? usersStore.getUserFullName(getUser(actForm.doc_signer_obj.signer_id_3)) : ""
-                }}
-              </span>
-            </div>
-
-            <div class="flex items-center justify-between mb-[24px]">
-              <h2 class="text-[#4F5662] text-sm font-semibold">Зав. склад</h2>
+              <h2 class="text-[#4F5662] text-sm font-semibold">
+                {{ t("document.commission.warehouseManager") }}:
+              </h2>
               <span class="ml-2 text-[#A8AAAE] text-sm font-medium block">
                {{
                   actForm.doc_signer_obj.signer_id_4 && typeof (actForm.doc_signer_obj.signer_id_4) === "number" ? usersStore.getUserFullName(getUser(actForm.doc_signer_obj.signer_id_4)) : ""
@@ -925,7 +946,7 @@ watch(providerCreateModal, newMProviderModal => {
 
             <div class="flex items-center justify-between mb-[24px]">
               <h2 class="text-[#4F5662] text-sm font-semibold">
-                Начальник базы
+                {{ t("document.commission.baseChief") }}:
               </h2>
               <span class="ml-2 text-[#A8AAAE] text-sm font-medium block">
                 {{
@@ -945,28 +966,28 @@ watch(providerCreateModal, newMProviderModal => {
           :class="[{'min-h-[830px]': activeComingModal}]"
         >
           <AppInput
-            placeholder="Входящий накладной"
-            label="Название документа"
+            :placeholder="t('document.coming.incomingConsignment')"
+            :label="t('document.title')"
             label-class="text-[#A8AAAE] text-xs font-medium"
             disabled
           />
           <AppDatePicker
             :placeholder="date"
-            label="Дата создания документа"
+            :label="t('document.creationDate')"
             label-class="text-[#A8AAAE] text-xs font-medium"
             disabled
           />
           <AppInput
-            placeholder="Автоматически"
-            label="№ накладной в системе"
+            :placeholder="t('common.automatically')"
+            :label="t('document.invoiceNumberSystem')"
             label-class="text-[#A8AAAE] text-xs font-medium"
             disabled
           />
           <AppInput
             v-model="form.number"
             prop="number"
-            placeholder="№ накладной"
-            label="№ накладной"
+            :placeholder="t('document.invoiceNumber')"
+            :label="t('document.invoiceNumber')"
             label-class="text-[#A8AAAE] text-xs font-medium"
             required
             :max="20"
@@ -975,16 +996,16 @@ watch(providerCreateModal, newMProviderModal => {
           <AppDatePicker
             v-model="form.date"
             prop="date"
-            placeholder="Дата накладной"
-            label="Дата накладной"
+            :placeholder="t('document.invoiceDate')"
+            :label="t('document.invoiceDate')"
             label-class="text-[#A8AAAE] text-xs font-medium"
             required
           />
           <AppSelect
             v-model="form.from"
             prop="from"
-            placeholder="От кого"
-            label="От кого"
+            :placeholder="t('document.whom.from')"
+            :label="t('document.whom.from')"
             :items="settingsStore.respondents"
             :loading="settingsStore.respondentsLoading"
             label-class="text-[#A8AAAE] text-xs font-medium"
@@ -1001,7 +1022,7 @@ watch(providerCreateModal, newMProviderModal => {
                 :label="item.name"
               />
             </template>
-            <template v-else>
+            <template v-else-if="authStore.user">
               <ElOption
                 v-for="item in authStore.user.workplaces"
                 :key="`${item.workplace_type}_${item.workplace_type}`"
@@ -1029,15 +1050,15 @@ watch(providerCreateModal, newMProviderModal => {
                       maskRepeat: 'no-repeat',
                     }"
                   ></span>
-                Добавить
+                {{ t("method.add") }}
               </button>
             </template>
           </AppSelect>
           <AppSelect
             v-model="form.to"
             prop="to"
-            placeholder="Кому"
-            label="Кому"
+            :placeholder="t('document.whom.to')"
+            :label="t('document.whom.to')"
             :loading="authStore.userLoading"
             label-class="text-[#A8AAAE] text-xs font-medium"
             @change="(value) => respondentChange(value as string, 'to')"
@@ -1085,23 +1106,23 @@ watch(providerCreateModal, newMProviderModal => {
           <AppInput
             v-model="form.through_whom"
             prop="through_whom"
-            placeholder="Через кого"
-            label="Через кого"
+            :placeholder="t('document.whom.through')"
+            :label="t('document.whom.through')"
             label-class="text-[#A8AAAE] text-xs font-medium"
           />
           <AppInput
             v-model="form.basis"
             prop="basis"
-            placeholder="Основание"
-            label="Основание"
+            :placeholder="t('document.base')"
+            :label="t('document.base')"
             label-class="text-[#A8AAAE] text-xs font-medium"
             required
           />
           <AppInput
             v-model="form.shipping_method"
             prop="shipping_method"
-            placeholder="Способ отправления"
-            label="Способ отправления"
+            :placeholder="t('document.shippingMethod')"
+            :label="t('document.shippingMethod')"
             label-class="text-[#A8AAAE] text-xs font-medium"
             required
           />
@@ -1120,7 +1141,7 @@ watch(providerCreateModal, newMProviderModal => {
                   <template v-if="form.products && form.products.length > 1">
                     {{ index + 1 }}.
                   </template>
-                  Таблица получаемых продуктов
+                  {{ t("document.tableReceivedProducts") }}
                 </strong>
                 <button
                   v-if="form.products && form.products.length > 1"
@@ -1131,17 +1152,19 @@ watch(providerCreateModal, newMProviderModal => {
                     :data-src="deleteIcon"
                     class="size-5"
                   />
-                  <span class="text-[#EA5455]">Удалить</span>
+                  <span class="text-[#EA5455]">
+                    {{ t("method.delete") }}
+                  </span>
                 </button>
               </div>
               <AppSelect
                 v-model="product.category_id"
-                placeholder="Тип продукта"
                 :prop="`products[${index}].category_id`"
                 :items="settingsStore.typeProduct.product_categories"
                 item-value="id"
                 item-label="name"
-                label="Тип продукта"
+                :label="t('product.type')"
+                :placeholder="t('product.type')"
                 label-class="text-[#A8AAAE] text-xs font-medium"
                 @change="fetchVidProductsList(product)"
                 required
@@ -1153,8 +1176,8 @@ watch(providerCreateModal, newMProviderModal => {
                 :items="vidProducts.get(product.category_id as number)"
                 item-label="name"
                 item-value="id"
-                placeholder="Вид продукта"
-                label="Вид продукта"
+                :label="t('product.view')"
+                :placeholder="t('product.view')"
                 label-class="text-[#A8AAAE] text-xs font-medium"
                 required
                 :disabled="!product.category_id"
@@ -1165,8 +1188,8 @@ watch(providerCreateModal, newMProviderModal => {
                   v-model="product.quantity"
                   custom-type="number"
                   :prop="`products[${index}].quantity`"
-                  placeholder="Количество"
-                  label="Количество"
+                  :placeholder="t('common.quantity')"
+                  :label="t('common.quantity')"
                   label-class="text-[#A8AAAE] text-xs font-medium"
                   required
                 />
@@ -1176,8 +1199,8 @@ watch(providerCreateModal, newMProviderModal => {
                   :items="settingsStore.units.units ?? []"
                   item-label="name"
                   item-value="id"
-                  placeholder="Ед. измерения"
-                  label="Ед. измерения"
+                  :placeholder="t('common.measurement')"
+                  :label="t('common.measurement')"
                   label-class="text-[#A8AAAE] text-xs font-medium"
                   required
                   disabled
@@ -1187,8 +1210,8 @@ watch(providerCreateModal, newMProviderModal => {
                 v-model.number="product.price"
                 type="number"
                 :prop="`products[${index}].price`"
-                placeholder="Цена"
-                label="Цена"
+                :placeholder="t('common.price')"
+                :label="t('common.price')"
                 label-class="text-[#A8AAAE] text-xs font-medium"
                 required
               />
@@ -1209,7 +1232,7 @@ watch(providerCreateModal, newMProviderModal => {
                     maskRepeat: 'no-repeat',
                   }"
                 ></span>
-              Добавить
+              {{ t("method.add") }}
             </button>
           </div>
 
@@ -1222,15 +1245,15 @@ watch(providerCreateModal, newMProviderModal => {
         >
           <template v-if="activeComingModal">
             <AppInput
-              placeholder="АКТ"
-              label="АКТ"
+              :placeholder="t('document.act.title')"
+              :label="t('document.act.title')"
               label-class="text-[#A8AAAE] text-xs font-medium"
               disabled
             />
 
             <AppInput
-              placeholder="Автоматически"
-              label="№ накладной в системе"
+              :placeholder="t('common.automatically')"
+              :label="t('document.invoiceNumberSystem')"
               label-class="text-[#A8AAAE] text-xs font-medium"
               disabled
             />
@@ -1239,7 +1262,7 @@ watch(providerCreateModal, newMProviderModal => {
               v-model="actForm.number"
               prop="number"
               placeholder="АКТ-00000"
-              label="№ Акта"
+              :label="t('document.act.number')"
               label-class="text-[#A8AAAE] text-xs font-medium"
               required
               :max="20"
@@ -1248,13 +1271,13 @@ watch(providerCreateModal, newMProviderModal => {
 
             <div class="bg-[#FFFFFF] rounded-[8px] p-[12px] mb-[24px]">
               <span class="block text-[#4F5662] text-sm font-medium mb-[16px]">
-                Содержание акта
+                {{ t("document.act.contents") }}
               </span>
 
               <AppInput
                 v-model="actForm.content"
                 prop="content"
-                placeholder="Поле ввода текст содержания акта с выводом шаблонного заданного текста"
+                :placeholder="t('document.act.specifiedContentText')"
                 type="textarea"
                 :rows="5"
                 required
@@ -1268,8 +1291,8 @@ watch(providerCreateModal, newMProviderModal => {
                 item-label="name"
                 item-value="id"
                 prop="products[0]"
-                placeholder="Название продукта"
-                label="Название продукта"
+                :placeholder="t('product.name')"
+                :label="t('product.name')"
                 label-class="text-[#A8AAAE] text-xs font-medium"
                 @change="actProductTypeChange"
                 required
@@ -1278,23 +1301,23 @@ watch(providerCreateModal, newMProviderModal => {
               </AppSelect>
               <AppInput
                 :modelValue="actForm.products[0]?.quantity ?? ''"
-                label="Количество продукта"
                 label-class="text-[#A8AAAE] text-xs font-medium"
-                placeholder="Количество продукта"
+                :placeholder="t('product.quantity')"
+                :label="t('product.quantity')"
                 disabled
               />
               <AppInput
                 :model-value="actForm.products[0]?.unit_id ? getProductMeasurement(actForm.products[0].unit_id) : ''"
-                label="Единица измерения"
                 label-class="text-[#A8AAAE] text-xs font-medium"
-                placeholder="Единица измерения"
+                :label="t('common.unitMeasurement')"
+                :placeholder="t('common.unitMeasurement')"
                 disabled
               />
               <AppInput
                 v-model="actForm.doc_details.contract_details"
                 prop="doc_details.contract_details"
-                placeholder="Номер договора о поставке"
-                label="Номер договора о поставке"
+                :placeholder="t('document.act.numberAgreement')"
+                :label="t('document.act.numberAgreement')"
                 label-class="text-[#A8AAAE] text-xs font-medium"
                 required
                 :maxlength="20"
@@ -1303,30 +1326,30 @@ watch(providerCreateModal, newMProviderModal => {
               <AppDatePicker
                 v-model="actForm.doc_details.contract_details_date"
                 prop="doc_details.contract_details_date"
-                placeholder="Дата договора о поставке"
-                label="Дата договора о поставке"
+                :placeholder="t('document.act.dateAgreement')"
+                :label="t('document.act.dateAgreement')"
                 label-class="text-[#A8AAAE] text-xs font-medium"
                 required
               />
               <AppInput
                 v-model="formNumberAndDate"
-                placeholder="Номер и дата накладной"
-                label="Номер и дата накладной"
+                :placeholder="t('document.consignmentNumberDate')"
+                :label="t('document.consignmentNumberDate')"
                 label-class="text-[#A8AAAE] text-xs font-medium"
                 disabled
               />
               <AppInput
                 v-model="actForm.doc_details.manufacturer"
                 prop="doc_details.manufacturer"
-                placeholder="Производитель продукта"
-                label="Производитель продукта"
+                :placeholder="t('product.manufacturer')"
+                :label="t('product.manufacturer')"
                 label-class="text-[#A8AAAE] text-xs font-medium"
                 required
               />
               <AppInput
                 :model-value="from"
-                label="Поставщик"
-                placeholder="Поставщик"
+                :label="t('common.supplier')"
+                :placeholder="t('common.supplier')"
                 label-class="text-[#A8AAAE] text-xs font-medium"
                 disabled
               />
@@ -1334,16 +1357,16 @@ watch(providerCreateModal, newMProviderModal => {
               <AppInput
                 v-model="actForm.shipping_method"
                 prop="shipping_method"
-                placeholder="Транспорт"
-                label="Транспорт"
+                :placeholder="t('common.transport')"
+                :label="t('common.transport')"
                 label-class="text-[#A8AAAE] text-xs font-medium"
                 required
               />
               <AppInput
                 v-model="actForm.doc_details.licence"
                 prop="doc_details.licence"
-                placeholder="Номер лицензии"
-                label="Номер лицензии"
+                :placeholder="t('licence.number')"
+                :label="t('licence.number')"
                 label-class="text-[#A8AAAE] text-xs font-medium"
                 required
                 :max="20"
@@ -1352,52 +1375,50 @@ watch(providerCreateModal, newMProviderModal => {
               <AppDatePicker
                 v-model="actForm.doc_details.licence_date"
                 prop="doc_details.licence_date"
-                placeholder="Дата лицензии"
-                label="Дата лицензии"
+                :placeholder="t('licence.date')"
+                :label="t('licence.date')"
                 label-class="text-[#A8AAAE] text-xs font-medium"
                 required
               />
               <AppInput
                 v-model="actForm.doc_details.sanitary"
                 prop="doc_details.sanitary"
-                placeholder="Номер заключения Санитарно..."
-                label="Номер заключения Санитарно..."
+                :placeholder="t('document.sanitaryConclusion.number')"
+                :label="t('document.sanitaryConclusion.number')"
                 label-class="text-[#A8AAAE] text-xs font-medium"
                 required
                 :max="20"
-                :maxlength="20"
               />
               <AppDatePicker
                 v-model="actForm.doc_details.sanitary_date"
                 prop="doc_details.sanitary_date"
-                placeholder="Дата заключения Санитарно..."
-                label="Дата заключения Санитарно..."
+                :placeholder="t('document.sanitaryConclusion.date')"
+                :label="t('document.sanitaryConclusion.date')"
                 label-class="text-[#A8AAAE] text-xs font-medium"
                 required
               />
               <AppInput
                 v-model="actForm.doc_details.vetirinary"
                 prop="doc_details.vetirinary"
-                placeholder="Номер удостоверения ветеринарии"
-                label="Номер удостоверения ветеринарии"
+                :placeholder="t('document.veterinaryCertificate.number')"
+                :label="t('document.veterinaryCertificate.number')"
                 label-class="text-[#A8AAAE] text-xs font-medium"
                 required
                 :max="20"
-                :maxlength="20"
               />
               <AppDatePicker
                 v-model="actForm.doc_details.vetirinary_date"
                 prop="doc_details.vetirinary_date"
-                placeholder="Дата удостоверения ветеринарии"
-                label="Дата удостоверения ветеринарии"
+                :placeholder="t('document.veterinaryCertificate.date')"
+                :label="t('document.veterinaryCertificate.date')"
                 label-class="text-[#A8AAAE] text-xs font-medium"
                 required
               />
               <AppInput
                 v-model="actForm.doc_details.quality"
                 prop="doc_details.quality"
-                placeholder="Номер удостоверения качества"
-                label="Номер удостоверения качества"
+                :placeholder="t('document.qualityCertificate.number')"
+                :label="t('document.qualityCertificate.number')"
                 label-class="text-[#A8AAAE] text-xs font-medium"
                 required
                 :max="20"
@@ -1406,8 +1427,8 @@ watch(providerCreateModal, newMProviderModal => {
               <AppDatePicker
                 v-model="actForm.doc_details.quality_date"
                 prop="doc_details.quality_date"
-                placeholder="Дата удостоверения качества"
-                label="Дата удостоверения качества"
+                :placeholder="t('document.qualityCertificate.date')"
+                :label="t('document.qualityCertificate.date')"
                 label-class="text-[#A8AAAE] text-xs font-medium"
                 required
               />
@@ -1416,14 +1437,14 @@ watch(providerCreateModal, newMProviderModal => {
 
           <div class="bg-[#FFFFFF] rounded-[8px] p-[12px]">
             <strong class="block text-[#4F5662] text-sm font-medium mb-4">
-              Состав комиссии приема продуктов
+              {{ t("document.commission.title") }}
             </strong>
             <div class="flex flex-col">
               <AppSelect
                 v-model="actForm.doc_signer_obj.signer_id_1"
                 prop="doc_signer_obj.signer_id_1"
-                placeholder="Кладовщик"
-                label="Кладовщик"
+                :placeholder="t('document.commission.storekeeper')"
+                :label="t('document.commission.storekeeper')"
                 label-class="text-[#A8AAAE] text-xs font-medium"
                 required
               >
@@ -1439,8 +1460,8 @@ watch(providerCreateModal, newMProviderModal => {
               <AppSelect
                 v-model="actForm.doc_signer_obj.signer_id_2"
                 prop="doc_signer_obj.signer_id_2"
-                placeholder="Товаровед"
-                label="Товаровед"
+                :placeholder="t('document.commission.commodityExpert')"
+                :label="t('document.commission.commodityExpert')"
                 label-class="text-[#A8AAAE] text-xs font-medium"
                 required
               >
@@ -1457,8 +1478,8 @@ watch(providerCreateModal, newMProviderModal => {
                 v-if="!activeComingModal"
                 v-model="actForm.doc_signer_obj.signer_id_3"
                 prop="doc_signer_obj.signer_id_3"
-                placeholder="Экспедитор"
-                label="Экспедитор"
+                :placeholder="t('document.commission.forwarder')"
+                :label="t('document.commission.forwarder')"
                 label-class="text-[#A8AAAE] text-xs font-medium"
                 required
               >
@@ -1474,8 +1495,8 @@ watch(providerCreateModal, newMProviderModal => {
               <AppSelect
                 v-model="actForm.doc_signer_obj.signer_id_4"
                 prop="doc_signer_obj.signer_id_4"
-                placeholder="Зав. склад"
-                label="Зав. склад"
+                :placeholder="t('document.commission.warehouseManager')"
+                :label="t('document.commission.warehouseManager')"
                 label-class="text-[#A8AAAE] text-xs font-medium"
                 required
               >
@@ -1491,8 +1512,8 @@ watch(providerCreateModal, newMProviderModal => {
               <AppSelect
                 v-model="actForm.doc_signer_obj.signer_id_5"
                 prop="doc_signer_obj.signer_id_5"
-                placeholder="Начальник базы"
-                label="Начальник базы"
+                :placeholder="t('document.commission.baseChief')"
+                :label="t('document.commission.baseChief')"
                 label-class="text-[#A8AAAE] text-xs font-medium"
                 required
               >
@@ -1515,7 +1536,7 @@ watch(providerCreateModal, newMProviderModal => {
         class="custom-cancel-btn"
         @click="closeModal"
       >
-        Отменить
+        {{ t("method.cancel") }}
       </button>
       <ElButton
         :loading="documentStore.createLoading"
@@ -1524,7 +1545,8 @@ watch(providerCreateModal, newMProviderModal => {
         @click="sendForm"
         class="custom-send-btn"
       >
-        Отправить
+        {{ t("method.send") }}
+
       </ElButton>
     </div>
 
@@ -1538,7 +1560,7 @@ watch(providerCreateModal, newMProviderModal => {
     >
       <template #header>
         <div class="text-center text-[#000000] font-bold text-[18px]">
-          Добавить нового поставщика
+          {{ t("document.supplier.createTitle") }}
         </div>
       </template>
 
@@ -1551,25 +1573,22 @@ watch(providerCreateModal, newMProviderModal => {
           <AppInput
             v-model="providerForm.name"
             prop="name"
-            label="Наименование"
+            :label="t('common.name2')"
             label-class="text-[#A8AAAE] text-[12px] font-medium"
-            placeholder="Введите"
             required
           />
           <AppInput
             v-model="providerForm.address"
             prop="address"
-            placeholder="Введите"
             label-class="text-[#A8AAAE] text-[12px] font-medium"
-            label="Юр. адрес"
+            :label="t('common.legalAddress')"
             required
           />
           <AppInput
             v-model="providerForm.oked"
             type="number"
             prop="oked"
-            placeholder="Введите"
-            label="ОКЭД"
+            :label="t('common.oked')"
             label-class="text-[#A8AAAE] text-[12px] font-medium"
             required
             :max="5"
@@ -1580,8 +1599,7 @@ watch(providerCreateModal, newMProviderModal => {
             prop="tin"
             type="number"
             :mask="'#'.repeat(9)"
-            placeholder="Введите"
-            label="ИНН"
+            :label="t('common.tin')"
             label-class="text-[#A8AAAE] text-[12px] font-medium"
             required
             :min="9"
@@ -1590,17 +1608,15 @@ watch(providerCreateModal, newMProviderModal => {
           <AppInput
             v-model="providerForm.license"
             prop="license"
-            placeholder="Введите"
             label-class="text-[#A8AAAE] text-[12px] font-medium"
-            label="Номер лицензии"
+            :label="t('licence.number')"
             required
           />
           <AppInput
             v-model="providerForm.sertificate"
             prop="sertificate"
-            placeholder="Введите"
             label-class="text-[#A8AAAE] text-[12px] font-medium"
-            label="Сертификат"
+            :label="t('common.certificate')"
             required
           />
           <AppDatePicker
@@ -1608,25 +1624,23 @@ watch(providerCreateModal, newMProviderModal => {
             prop="sert_end_date"
             placeholder="Введите"
             label-class="text-[#A8AAAE] text-[12px] font-medium"
-            label="Срок сертификата"
+            :label="t('common.certificateDuration')"
             required
             :disabled-date="(time) => Date.now() >= time.getTime()"
           />
           <AppInput
             v-model="providerForm.director"
             prop="director"
-            placeholder="Введите"
             label-class="text-[#A8AAAE] text-[12px] font-medium"
-            label="Руководитель"
+            :label="t('common.supervisor')"
             required
           />
           <AppInput
             v-model="providerForm.phone"
             prop="phone"
             type="tel"
-            placeholder="Введите"
             label-class="text-[#A8AAAE] text-[12px] font-medium"
-            label="Контакты"
+            :label="t('common.contact')"
             required
           />
         </div>
@@ -1637,7 +1651,7 @@ watch(providerCreateModal, newMProviderModal => {
           class="custom-cancel-btn h-10"
           @click="providerCreateModalClose"
         >
-          Отменить
+          {{ t("method.cancel") }}
         </button>
         <ElButton
           :loading="settingsStore.createProviderLoading"
@@ -1646,7 +1660,7 @@ watch(providerCreateModal, newMProviderModal => {
           class="custom-apply-btn"
           @click="sendProviderForm"
         >
-          Добавить
+          {{ t("method.add") }}
         </ElButton>
       </div>
     </ElDialog>

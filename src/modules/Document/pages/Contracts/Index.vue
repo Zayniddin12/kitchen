@@ -2,8 +2,8 @@
   setup
   lang="ts"
 >
-import { onMounted, reactive, ref, watch } from "vue";
-import { useRoute, useRouter } from "vue-router";
+import {computed, onMounted, reactive, ref, watch} from "vue";
+import {useRoute, useRouter} from "vue-router";
 import CollapseFilter from "@/components/collapseFilter/index.vue";
 import AppInput from "@/components/ui/form/app-input/AppInput.vue";
 import AppSelect from "@/components/ui/form/app-select/AppSelect.vue";
@@ -11,40 +11,46 @@ import white from "@/assets/images/filter2.svg";
 import filter from "@/assets/images/filter.svg";
 import AppDatePicker from "@/components/ui/form/app-date-picker/AppDatePicker.vue";
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
-import { useDocumentStore } from "@/modules/Document/document.store";
-import { ActType, ContractsParamsType, ContractType } from "@/modules/Document/document.types";
-import { ValidationType } from "@/components/ui/form/app-form/app-form.type";
-import { filterObjectValues, formatNumber, setTableColumnIndex, validateNumber } from "@/utils/helper";
-import { useSettingsStore } from "@/modules/Settings/store";
+import {useDocumentStore} from "@/modules/Document/document.store";
+import {ActType, ContractsParamsType, ContractType} from "@/modules/Document/document.types";
+import {ValidationType} from "@/components/ui/form/app-form/app-form.type";
+import {filterObjectValues, formatNumber, setTableColumnIndex, validateNumber} from "@/utils/helper";
+import {useSettingsStore} from "@/modules/Settings/store";
 import AppForm from "@/components/ui/form/app-form/AppForm.vue";
-import { AppSelectValueType } from "@/components/ui/form/app-select/app-select.type";
+import {AppSelectValueType} from "@/components/ui/form/app-select/app-select.type";
 import AppPagination from "@/components/ui/app-pagination/AppPagination.vue";
-import { useCommonStore } from "@/stores/common.store";
+import {useCommonStore} from "@/stores/common.store";
+import {useI18n} from "vue-i18n";
 
 const route = useRoute();
 const router = useRouter();
+
+const {t} = useI18n();
+
+const title = computed(() => route.meta.title ?? "");
+const isTranslate = computed(() => !!route.meta.isTranslate);
 
 const documentStore = useDocumentStore();
 const settingsStore = useSettingsStore();
 const commonStore = useCommonStore();
 
 const form = reactive<ContractsParamsType>({
-  page: null,
-  from_date: "",
-  to_date: "",
-  number: "",
-  from_id: "",
-  total_price: null,
-  product_category_id: "",
-  product_type_id: "",
-  quantity: null,
-  unit_id: "",
+	page: null,
+	from_date: "",
+	to_date: "",
+	number: "",
+	from_id: "",
+	total_price: null,
+	product_category_id: "",
+	product_type_id: "",
+	quantity: null,
+	unit_id: "",
 });
 
 const v$ = ref<ValidationType | null>(null);
 
 const setValidation = (value: ValidationType) => {
-  v$.value = value;
+	v$.value = value;
 };
 
 const validationErrors = ref<Record<string, any> | null>(null);
@@ -52,116 +58,118 @@ const validationErrors = ref<Record<string, any> | null>(null);
 const isOpenFilter = ref<boolean>(false);
 
 const tableCurrentChange = (value: ContractType) => {
-  router.push({ name: "contracts-view-view", params: { id: value.id } });
+	router.push({name: "contracts-view-view", params: {id: value.id}});
 };
 
-const { setBreadCrumb } = useBreadcrumb();
+const {setBreadCrumb} = useBreadcrumb();
 
 const setBreadCrumbFn = () => {
-  setBreadCrumb([
-    {
-      label: "Документы",
-    },
-    {
-      label: "Контракты",
-      isActionable: true,
-    },
-  ]);
+	setBreadCrumb([
+		{
+			label: "document.title1",
+			isTranslate: true,
+		},
+		{
+			label: title.value,
+			isTranslate: isTranslate.value,
+			isActionable: true,
+		},
+	]);
 };
 
 const validate = async () => {
-  if (!v$.value) return;
+	if (!v$.value) return;
 
-  const value = await v$.value.validate();
+	const value = await v$.value.validate();
 
-  if (!value) {
-    commonStore.errorToast("Validation error");
-  }
+	if (!value) {
+		commonStore.errorToast("Validation error");
+	}
 
-  return value;
+	return value;
 };
 
 const fetchContracts = async () => {
-  const query = route.query as Record<string, any>;
+	const query = route.query as Record<string, any>;
 
-  const page = parseInt(query.page as string);
-  const fromId = parseInt(query.from_id as string);
-  const totalPrice = parseInt(query.total_price as string);
-  const productCategoryId = parseInt(query.product_category_id as string);
-  const productTypeId = parseInt(query.product_type_id as string);
-  const quantity = validateNumber(query.quantity as string);
-  const unitId = parseInt(query.unit_id as string);
+	const page = parseInt(query.page as string);
+	const fromId = parseInt(query.from_id as string);
+	const totalPrice = parseInt(query.total_price as string);
+	const productCategoryId = parseInt(query.product_category_id as string);
+	const productTypeId = parseInt(query.product_type_id as string);
+	const quantity = validateNumber(query.quantity as string);
+	const unitId = parseInt(query.unit_id as string);
 
-  form.page = !isNaN(page) ? page : null;
-  form.from_id = !isNaN(fromId) ? fromId : "";
-  form.total_price = !isNaN(totalPrice) ? totalPrice : null;
-  form.product_category_id = !isNaN(productCategoryId) ? productCategoryId : "";
-  form.product_type_id = !isNaN(productTypeId) ? productTypeId : "";
-  form.quantity = !isNaN(quantity) ? quantity : null;
-  form.unit_id = !isNaN(unitId) ? unitId : "";
+	form.page = !isNaN(page) ? page : null;
+	form.from_id = !isNaN(fromId) ? fromId : "";
+	form.total_price = !isNaN(totalPrice) ? totalPrice : null;
+	form.product_category_id = !isNaN(productCategoryId) ? productCategoryId : "";
+	form.product_type_id = !isNaN(productTypeId) ? productTypeId : "";
+	form.quantity = !isNaN(quantity) ? quantity : null;
+	form.unit_id = !isNaN(unitId) ? unitId : "";
 
-  await fetchVidProductsList();
+	await fetchVidProductsList();
 
-  try {
-    await documentStore.fetchContracts(filterObjectValues(form));
-    validationErrors.value = null;
-  } catch (error: any) {
-    if (error?.error?.code === 422) {
-      validationErrors.value = error.meta.validation_errors;
-    }
-  }
+	try {
+		await documentStore.fetchContracts(filterObjectValues(form));
+		validationErrors.value = null;
+	} catch (error: any) {
+		if (error?.error?.code === 422) {
+			validationErrors.value = error.meta.validation_errors;
+		}
+	}
 };
 
 
 const fetchVidProductsList = async () => {
-  if (!form.product_category_id) return;
+	if (!form.product_category_id) return;
 
-  await settingsStore.GET_VID_PRODUCT({
-    parent_id: form.product_category_id,
-    per_page: 100,
-  });
+	await settingsStore.GET_VID_PRODUCT({
+		parent_id: form.product_category_id,
+		per_page: 100,
+	});
 };
 
 const changeProductCategory = async () => {
-  await fetchVidProductsList();
-  form.product_type_id = "";
+	await fetchVidProductsList();
+	form.product_type_id = "";
 };
 
 const changeProductType = async () => {
-  form.unit_id = "";
+	form.unit_id = "";
 };
 
 const changePage = (value: number) => {
-  router.push({ query: { ...route.query, page: value } });
+	router.push({query: {...route.query, page: value}});
 };
 
 const filterForm = async () => {
-  if (!(await validate())) return;
+	if (!(await validate())) return;
 
-  const query = { ...filterObjectValues(form) };
-  delete query.page;
+	const query = {...filterObjectValues(form)};
+	delete query.page;
 
-  router.push({ query });
+	router.push({query});
 };
 
 const clearForm = () => {
-  router.push({ query: {} });
-  isOpenFilter.value = false;
+	router.push({query: {}});
+	isOpenFilter.value = false;
 };
 
 onMounted(() => {
-  setBreadCrumbFn();
-  settingsStore.fetchRespondents();
-  settingsStore.GET_TYPE_PRODUCT();
-  settingsStore.GET_UNITS();
+	setBreadCrumbFn();
+	settingsStore.fetchRespondents();
+	settingsStore.GET_TYPE_PRODUCT();
+	settingsStore.GET_UNITS();
 });
 
 watch(() => route.query, (newQuery) => {
-  fetchContracts();
-}, { immediate: true });
+	fetchContracts();
+}, {immediate: true});
 
 watch(() => documentStore.documentsIsRefresh, (newValue) => {
-  if (newValue) fetchContracts();
+	if (newValue) fetchContracts();
 });
 
 </script>
@@ -169,7 +177,9 @@ watch(() => documentStore.documentsIsRefresh, (newValue) => {
 <template>
   <div>
     <div class="flex items-center justify-between">
-      <h1 class="m-0 p-0 font-semibold text-[32px] leading-[36px]">Контракты</h1>
+      <h1 class="m-0 p-0 font-semibold text-[32px] leading-[36px]">
+	      {{ isTranslate ? t(title) : title }}
+      </h1>
 
       <div class="flex items-center">
         <RouterLink
@@ -180,7 +190,7 @@ watch(() => documentStore.documentsIsRefresh, (newValue) => {
             src="@/assets/images/icons/plus.svg"
             alt="add"
           >
-          Добавить
+          {{ t("method.add") }}
         </RouterLink>
 
         <button
@@ -193,7 +203,7 @@ watch(() => documentStore.documentsIsRefresh, (newValue) => {
             alt="filter"
             class="mr-[12px]"
           />
-          Фильтр
+          {{ t("common.filter") }}
         </button>
       </div>
     </div>
@@ -210,29 +220,29 @@ watch(() => documentStore.documentsIsRefresh, (newValue) => {
             <AppDatePicker
               v-model="form.from_date"
               prop="from_date"
-              placeholder="С этой даты"
-              label="С этой даты"
+              :placeholder="t('common.fromDate')"
+              :label="t('common.fromDate')"
               label-class="text-[#A8AAAE] text-xs font-medium"
             />
             <AppDatePicker
               v-model="form.to_date"
               prop="to_date"
-              placeholder="По эту дату"
-              label="По эту дату"
+              :placeholder="t('common.endDate')"
+              :label="t('common.endDate')"
               label-class="text-[#A8AAAE] text-xs font-medium"
             />
             <AppInput
               v-model="form.number"
               prop="number"
-              placeholder="Номер документа"
-              label="Номер документа"
+              :placeholder="t('document.number2')"
+              :label="t('document.number2')"
               label-class="text-[#A8AAAE] text-xs font-medium"
             />
             <AppSelect
               v-model="form.from_id"
               prop="from_id"
               label-class="text-[#A8AAAE] text-xs font-medium"
-              label="Поставщик"
+              :label="t('common.supplier')"
               :items="settingsStore.respondents"
               item-label="name"
               item-value="id"
@@ -242,8 +252,8 @@ watch(() => documentStore.documentsIsRefresh, (newValue) => {
               v-model.number="form.total_price"
               prop="total_price"
               type="number"
-              placeholder="Общая сумма контракта"
-              label="Общая сумма контракта"
+              :placeholder="t('document.contractTotalSum')"
+              :label="t('document.contractTotalSum')"
               label-class="text-[#A8AAAE] text-xs font-medium"
             />
           </div>
@@ -251,7 +261,8 @@ watch(() => documentStore.documentsIsRefresh, (newValue) => {
             <AppSelect
               v-model="form.product_category_id"
               prop="product_category_id"
-              label="Тип продукта"
+              :label="t('product.type')"
+              :placeholder="t('product.type')"
               label-class="text-[#A8AAAE] text-xs font-medium"
               :items="settingsStore.typeProduct.product_categories"
               item-value="id"
@@ -261,8 +272,8 @@ watch(() => documentStore.documentsIsRefresh, (newValue) => {
             <AppSelect
               v-model="form.product_type_id"
               prop="product_type_id"
-              placeholder=" Вид продукта"
-              label=" Вид продукта"
+              :label="t('product.view')"
+              :placeholder="t('product.view')"
               label-class="text-[#A8AAAE] text-xs font-medium"
               :items="settingsStore.vidProduct.product_types"
               item-label="name"
@@ -274,15 +285,15 @@ watch(() => documentStore.documentsIsRefresh, (newValue) => {
               v-model="form.quantity"
               prop="quantity"
               custom-type="number"
-              placeholder="Количество"
-              label="Количество"
+              :placeholder="t('common.quantity')"
+              :label="t('common.quantity')"
               label-class="text-[#A8AAAE] text-xs font-medium"
             />
             <AppSelect
               v-model="form.unit_id"
               prop="unit_id"
-              placeholder="Ед. измерения"
-              label="Ед. измерения"
+              :placeholder="t('common.measurement')"
+              :label="t('common.measurement')"
               label-class="text-[#A8AAAE] text-xs font-medium"
               :items="settingsStore.units.units"
               item-label="name"
@@ -291,13 +302,15 @@ watch(() => documentStore.documentsIsRefresh, (newValue) => {
           </div>
         </AppForm>
         <div class="flex items-center mt-[10px] justify-between">
-          <div class="text-[#8F9194] text-[14px]">Найдено: {{ documentStore.contracts?.paginator.total_count }}</div>
+          <div class="text-[#8F9194] text-[14px]">{{ t("common.found") }}: {{
+		          documentStore.contracts?.paginator.total_count
+                                                  }}</div>
           <div class="flex items-center gap-x-4">
             <button
               @click="clearForm"
               class="custom-reset-btn"
             >
-              Сбросить
+                {{ t("method.reset") }}
             </button>
             <ElButton
               :loading="documentStore.contractsLoading"
@@ -306,7 +319,7 @@ watch(() => documentStore.documentsIsRefresh, (newValue) => {
               class="custom-apply-btn"
               @click="filterForm"
             >
-              Применить
+                {{ t("method.apply") }}
             </ElButton>
           </div>
         </div>
@@ -318,6 +331,7 @@ watch(() => documentStore.documentsIsRefresh, (newValue) => {
       stripe
       class="custom-element-table"
       highlight-current-row
+      :empty-text="t('common.empty')"
       @current-change="tableCurrentChange"
     >
       <el-table-column
@@ -327,17 +341,17 @@ watch(() => documentStore.documentsIsRefresh, (newValue) => {
       >
         <template #default="{ $index }">
           {{
-            setTableColumnIndex(
-              $index,
-              form.page as number,
-              documentStore.acts?.paginator.per_page ?? 0,
-            )
+	          setTableColumnIndex(
+	            $index,
+	            form.page as number,
+	            documentStore.acts?.paginator.per_page ?? 0,
+	          )
           }}
         </template>
       </el-table-column>
       <el-table-column
         prop="date"
-        label="Дата"
+        :label="t('common.date')"
       >
         <template #default="{row}:{row:ContractType}">
           {{ row.date || "-" }}
@@ -345,7 +359,7 @@ watch(() => documentStore.documentsIsRefresh, (newValue) => {
       </el-table-column>
       <el-table-column
         prop="number"
-        label="№ контракта"
+        :label="t('document.contractNumber')"
       >
         <template #default="{row}:{row:ContractType}">
           {{ row.number || "-" }}
@@ -353,7 +367,7 @@ watch(() => documentStore.documentsIsRefresh, (newValue) => {
       </el-table-column>
       <el-table-column
         prop="from_name"
-        label="Поставщик"
+        :label="t('common.supplier')"
       >
         <template #default="{row}:{row:ContractType}">
           {{ row.from_name || "-" }}
@@ -361,7 +375,7 @@ watch(() => documentStore.documentsIsRefresh, (newValue) => {
       </el-table-column>
       <el-table-column
         prop="product_parent_name"
-        label="Тип продукта"
+        :label="t('product.type')"
       >
         <template #default="{row}:{row:ContractType}">
           {{ row.product_parent_name || "-" }}
@@ -369,7 +383,7 @@ watch(() => documentStore.documentsIsRefresh, (newValue) => {
       </el-table-column>
       <el-table-column
         prop="product_name"
-        label="Вид продукта"
+        :label="t('product.view')"
       >
         <template #default="{row}:{row:ContractType}">
           {{ row.product_name || "-" }}
@@ -377,7 +391,7 @@ watch(() => documentStore.documentsIsRefresh, (newValue) => {
       </el-table-column>
       <el-table-column
         prop="quantity"
-        label="Количество"
+        :label="t('common.quantity')"
       >
         <template #default="{row}:{row:ContractType}">
           {{ row.quantity || "-" }}
@@ -385,7 +399,7 @@ watch(() => documentStore.documentsIsRefresh, (newValue) => {
       </el-table-column>
       <el-table-column
         prop="unit_name"
-        label="Ед. измерения"
+        :label="t('common.measurement')"
       >
         <template #default="{row}:{row:ContractType}">
           {{ row.unit_name || "-" }}
@@ -393,10 +407,10 @@ watch(() => documentStore.documentsIsRefresh, (newValue) => {
       </el-table-column>
       <el-table-column
         prop="total_price"
-        label="Общая сумма"
+        :label="t('common.totalSum')"
       >
         <template #default="{row}:{row:ContractType}">
-          {{ row.total_price ? `${formatNumber(row.total_price)} сум` : "-" }}
+	        {{ row.total_price ? `${formatNumber(row.total_price)} ${t('currency.sum')}` : "-" }}
         </template>
       </el-table-column>
       <el-table-column label="Действие">

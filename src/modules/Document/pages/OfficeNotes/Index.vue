@@ -2,7 +2,7 @@
   setup
   lang="ts"
 >
-import { onMounted, reactive, ref, watch } from "vue";
+import { computed, onMounted, reactive, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import CollapseFilter from "@/components/collapseFilter/index.vue";
 import AppInput from "@/components/ui/form/app-input/AppInput.vue";
@@ -20,12 +20,19 @@ import { ValidationType } from "@/components/ui/form/app-form/app-form.type";
 import { useSettingsStore } from "@/modules/Settings/store";
 import MemoModal from "@/layout/Create/components/MemoModal.vue";
 import FreeModal from "@/layout/Create/components/FreeModal.vue";
+import { useI18n } from "vue-i18n";
 
 const documentStore = useDocumentStore();
 const settingsStore = useSettingsStore();
 
+const { t } = useI18n();
+
 const router = useRouter();
 const route = useRoute();
+
+const title = computed(() => route.meta.title ?? "");
+
+const isTranslate = computed(() => !!route.meta.isTranslate);
 
 enum DOCTYPES {
   SIMPLEDEMAND = "simple_demand",
@@ -75,14 +82,17 @@ const { setBreadCrumb } = useBreadcrumb();
 const setBreadCrumbFn = () => {
   setBreadCrumb([
     {
-      label: "Документы",
+      label: "document.title1",
+      isTranslate: true,
     },
     {
-      label: "Служебные записки",
+      label: route.meta.parentRouteTitle ?? "",
+      isTranslate: route.meta.parentRouteIsTranslate,
     },
     {
       label: String(route.meta.breadcrumbItemTitle ?? ""),
       isActionable: true,
+      isTranslate: route.meta.breadcrumbItemIsTranslate,
     },
   ]);
 };
@@ -125,17 +135,17 @@ interface Tab {
   value: string;
 }
 
-const tabItems = ref<Tab[]>([
+const tabItems = computed<Tab[]>(() => [
   {
-    title: "Свободный",
+    title: t("common.free"),
     value: DOCTYPES.SIMPLEDEMAND,
   },
   {
-    title: "Месячный",
+    title: t("common.monthly"),
     value: DOCTYPES.MONTHLYDEMAND,
   },
   {
-    title: "Годовой",
+    title: t("common.annual"),
     value: DOCTYPES.YEARLYDEMAND,
   },
 ]);
@@ -205,10 +215,10 @@ const tableRowClassName = ({ row }: { row: DraftType }) => {
     <div class="flex justify-between items-end">
       <div class="flex flex-col gap-y-6">
         <h1
-          v-if="route.meta.title"
+          v-if="title"
           class="m-0 font-semibold text-[32px]"
         >
-          {{ route.meta.title }}
+          {{ isTranslate ? t(title) : title }}
         </h1>
         <div
           v-if="route.meta?.hasTabs"
@@ -237,7 +247,7 @@ const tableRowClassName = ({ row }: { row: DraftType }) => {
           alt="filter"
           class="mr-[12px]"
         />
-        Фильтр
+        {{ t("common.filter") }}
       </button>
     </div>
     <CollapseFilter v-model="isOpenFilter">
@@ -251,30 +261,30 @@ const tableRowClassName = ({ row }: { row: DraftType }) => {
           <AppDatePicker
             v-model="form.from_date"
             prop="from_date"
-            placeholder="С этой даты"
-            label="С этой даты"
+            :placeholder="t('common.fromDate')"
+            :label="t('common.fromDate')"
             label-class="text-[#7F7D83]"
           />
           <AppDatePicker
             v-model="form.to_date"
             prop="to_date"
-            placeholder="По эту дату"
-            label="По эту дату"
+            :placeholder="t('common.endDate')"
+            :label="t('common.endDate')"
             label-class="text-[#7F7D83]"
           />
 
           <AppInput
             v-model="form.number"
             prop="number"
-            placeholder="Номер документа"
-            label="Номер документа"
+            :placeholder="t('document.number2')"
+            :label="t('document.number2')"
             label-class="text-[#7F7D83]"
           />
           <AppInput
             v-model="form.subject"
             prop="subject"
-            placeholder="Доставка картофеля"
-            label="Доставка картофеля"
+            :placeholder="t('document.potatoDelivery')"
+            :label="t('document.potatoDelivery')"
             label-class="text-[#7F7D83]"
           />
           <AppSelect
@@ -285,8 +295,8 @@ const tableRowClassName = ({ row }: { row: DraftType }) => {
             item-value="id"
             :loading="settingsStore.respondentsLoading"
             class="col-span-2"
-            placeholder="Кому"
-            label="Кому"
+            :placeholder="t('document.whom.to')"
+            :label="t('document.whom.to')"
             label-class="text-[#7F7D83]"
           />
           <AppSelect
@@ -296,22 +306,22 @@ const tableRowClassName = ({ row }: { row: DraftType }) => {
             item-value="id"
             :loading="settingsStore.respondentsLoading"
             class="col-span-2"
-            placeholder="Отправитель"
-            label="Отправитель"
+            :label="t('common.sender')"
+            :placeholder="t('common.sender')"
             label-class="text-[#7F7D83]"
           />
         </AppForm>
 
         <div class="flex items-center mt-[10px] justify-between">
           <div class="text-[#8F9194] text-[14px]">
-            Найдено: {{ documentStore.drafts?.paginator.total_count }}
+            {{ t("common.found") }}: {{ documentStore.drafts?.paginator.total_count }}
           </div>
           <div class="flex items-center">
             <button
               @click="clearForm"
               class="custom-reset-btn"
             >
-              Сбросить
+              {{ t("method.reset") }}
             </button>
             <ElButton
               :loading="documentStore.draftsLoading"
@@ -320,7 +330,7 @@ const tableRowClassName = ({ row }: { row: DraftType }) => {
               class="custom-apply-btn ml-4"
               @click="filterForm"
             >
-              Применить
+              {{ t("method.apply") }}
             </ElButton>
           </div>
         </div>
@@ -333,6 +343,7 @@ const tableRowClassName = ({ row }: { row: DraftType }) => {
       stripe
       :highlight-current-row="!!route.meta.permissionView"
       @current-change="tableCurrentChange"
+      :empty-text="t('common.empty')"
     >
       <el-table-column
         prop="num"
@@ -351,11 +362,15 @@ const tableRowClassName = ({ row }: { row: DraftType }) => {
       </el-table-column>
       <el-table-column
         prop="date"
-        label="Дата"
-      />
+        :label="t('common.date')"
+      >
+        <template #default="{ row }: { row: DraftType }">
+          {{ row.date ?? "-" }}
+        </template>
+      </el-table-column>
       <el-table-column
         prop="number"
-        label="№ документа"
+        :label="t('document.number')"
       >
         <template #default="{ row }: { row: DraftType }">
           {{ row.number ?? "-" }}
@@ -363,7 +378,7 @@ const tableRowClassName = ({ row }: { row: DraftType }) => {
       </el-table-column>
       <el-table-column
         prop="subject"
-        label="Тема"
+        :label="t('common.theme')"
       >
         <template #default="{ row }: { row: DraftType }">
           {{ row.subject ?? "-" }}
@@ -371,7 +386,7 @@ const tableRowClassName = ({ row }: { row: DraftType }) => {
       </el-table-column>
       <el-table-column
         prop="from_name"
-        label="Отправитель"
+        :label="t('common.sender')"
       >
         <template #default="{ row }: { row: DraftType }">
           {{ row.from_name || "-" }}
@@ -379,13 +394,16 @@ const tableRowClassName = ({ row }: { row: DraftType }) => {
       </el-table-column>
       <el-table-column
         prop="to_name"
-        label="Получатель"
+        :label="t('common.recipient')"
       >
         <template #default="{ row }: { row: DraftType }">
           {{ row.to_name || "-" }}
         </template>
       </el-table-column>
-      <el-table-column label="Действие">
+      <el-table-column
+        prop="action"
+        :label="t('common.action')"
+      >
         <template #default="{ row }: { row: DraftType }">
           <div class="flex items-center gap-x-2.5">
             <button
@@ -417,7 +435,7 @@ const tableRowClassName = ({ row }: { row: DraftType }) => {
               bg
             >
               <img
-                src="../../../../assets/images/download.svg"
+                src="@/assets/images/download.svg"
                 alt="download"
               />
             </ElButton>
@@ -439,13 +457,13 @@ const tableRowClassName = ({ row }: { row: DraftType }) => {
         v-if="route.meta?.doc_type_id === 1"
         v-model="editModal"
         v-model:document="document"
-        title="Редактировать служебную записку"
+        :title="t('document.memo.edit')"
       />
       <FreeModal
         v-else-if="route.meta?.doc_type_id === 2"
         v-model="editModal"
         v-model:document="document"
-        title="Редактировать свободный запрос"
+        :title="t('document.freeRequest.edit')"
       />
     </template>
   </div>

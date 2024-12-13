@@ -21,8 +21,6 @@ import { useCommonStore } from "@/stores/common.store";
 
 const authStore = useAuthStore();
 const route = useRoute();
-const router = useRouter();
-const kitchenStore = useKitchenStore();
 const settingsStore = useSettingsStore();
 const warehouseBasesStore = useWarehouseBasesStore();
 const commonStore = useCommonStore();

@@ -149,15 +149,6 @@ export const useLayoutStore = defineStore("layoutStore", () => {
             route: "/reference",
           },
           {
-            title: "Календарь",
-            icon: "calendar-2"
-          },
-          {
-            title: "Логи системы",
-            icon: "log",
-            route: "/personnel",
-          },
-          {
             title: "Настройки профиля",
             icon: "user",
             route: "/profile-settings/profile"

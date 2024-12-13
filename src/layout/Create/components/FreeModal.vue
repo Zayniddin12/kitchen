@@ -17,6 +17,7 @@ import { useDocumentStore } from "@/modules/Document/document.store";
 import { useCommonStore } from "@/stores/common.store";
 import { useSettingsStore } from "@/modules/Settings/store";
 import AppOverlay from "@/components/ui/app-overlay/AppOverlay.vue";
+import { useI18n } from "vue-i18n";
 
 const model = defineModel<ModalValueType>();
 
@@ -28,6 +29,8 @@ const authStore = useAuthStore();
 const documentStore = useDocumentStore();
 const commonStore = useCommonStore();
 const settingsStore = useSettingsStore();
+
+const { t } = useI18n();
 
 const form = reactive<DocumentCreateDataDocumentType>({
   doc_type_id: null,
@@ -65,7 +68,7 @@ const sendForm = async (status: DocumentStatusType) => {
   if (!v$.value) return;
 
   if (!(await v$.value.validate())) {
-    commonStore.errorToast("Validation Error");
+    commonStore.errorToast(t("error.validation"));
     return;
   }
 
@@ -203,14 +206,18 @@ watch(model, (newModel) => {
             alt="logo"
           >
           <div class="flex flex-col ml-3">
-            <b class="text-[#000D24] text-lg">NKMK</b>
-            <span class="text-[#CBCCCE]">Jamg‘armasi</span>
+            <b class="text-[#000D24] text-lg">{{ t("logo.title") }}</b>
+            <span class="text-[#CBCCCE]">{{ t("logo.subtitle") }}</span>
           </div>
         </header>
-        <h1 class="text-[#000D24] font-bold text-[20px] text-center mb-[24px]">ЗАПРОС</h1>
+        <h1 class="text-[#000D24] font-bold text-[20px] text-center mb-[24px] uppercase">
+          {{ t("document.freeRequest.title") }}
+        </h1>
 
         <div class="flex items-center mb-[8px]">
-          <h1 class="text-[#4F5662] text-[14px] font-semibold">Дата:</h1>
+          <h1 class="text-[#4F5662] text-[14px] font-semibold">
+            {{ t("common.date") }}:
+          </h1>
           <span class="ml-2 text-[#A8AAAE] text-[14px] font-medium block">{{ form.date }}</span>
         </div>
 
@@ -221,19 +228,21 @@ watch(model, (newModel) => {
 
         <div class="flex items-baseline mb-6">
           <h1 class=" text-sm font-medium">
-            <span class="text-[#4F5662] font-semibold">Тип запроса:</span>
-            <span class="text-[#A8AAAE] ml-2">Свободный запрос</span>
+            <span class="text-[#4F5662] font-semibold">
+              {{ t("document.freeRequest.type") }}:
+            </span>
+            <span class="text-[#A8AAAE] ml-2">{{ t("document.freeRequest.subtitle") }}</span>
           </h1>
         </div>
         <div class="flex items-baseline mb-[24px]">
           <h1 class=" text-[14px] font-medium">
-            <span class="text-[#4F5662] font-semibold">Получатель: </span>
+            <span class="text-[#4F5662] font-semibold">{{ t("common.recipient") }}: </span>
             <span class="text-[#A8AAAE] ml-2">{{ to }}</span>
           </h1>
         </div>
 
         <div class="flex items-center mb-[24px]">
-          <h1 class="text-[#4F5662] text-[14px] font-semibold">Тема:</h1>
+          <h1 class="text-[#4F5662] text-[14px] font-semibold">{{ t("common.theme") }}:</h1>
           <span class="ml-2 text-[#A8AAAE] text-[14px] font-medium block">{{ form.subject }}</span>
         </div>
 
@@ -244,7 +253,7 @@ watch(model, (newModel) => {
         <div class="mt-[40px] flex items-center gap-x-[100px] justify-between">
           <div class="flex items-baseline max-w-[200px]">
             <h1 class=" text-sm font-medium">
-              <span class="text-[#4F5662] font-semibold">Отправитель:</span>
+              <span class="text-[#4F5662] font-semibold">{{ t("common.sender") }}:</span>
               <span
                 v-if="from"
                 class="text-[#A8AAAE] ml-2"
@@ -252,10 +261,10 @@ watch(model, (newModel) => {
             </h1>
           </div>
 
-<!--          <img-->
-<!--            src="@/assets/images/icons/qr.svg"-->
-<!--            alt="qr"-->
-<!--          />-->
+          <!--          <img-->
+          <!--            src="@/assets/images/icons/qr.svg"-->
+          <!--            alt="qr"-->
+          <!--          />-->
 
           <h1 class="text-[#A8AAAE] text-sm">{{ authStore.userFullName }}</h1>
         </div>
@@ -269,14 +278,14 @@ watch(model, (newModel) => {
           @submit.prevent
         >
           <AppInput
-            label="Накладние"
-            placeholder="Запрос"
+            :label="t('document.overlay')"
+            :placeholder="t('document.freeRequest.title')"
             label-class="text-[#A8AAAE] text-xs font-medium"
             disabled
           />
           <AppInput
-            label="Тип запроса"
-            placeholder="Свободный запрос"
+            :label="t('document.freeRequest.type')"
+            :placeholder="t('document.freeRequest.subtitle')"
             label-class="text-[#A8AAAE] text-xs font-medium"
             disabled
           />
@@ -284,8 +293,7 @@ watch(model, (newModel) => {
           <AppSelect
             v-model="form.to"
             prop="to"
-            placeholder="Выберите"
-            label="Получатель"
+            :label="t('common.recipient')"
             label-class="text-[#A8AAAE] text-[12px] font-medium"
             :loading="settingsStore.respondentsLoading"
             @change="(value) => respondentChange(value as string, 'to')"
@@ -303,15 +311,15 @@ watch(model, (newModel) => {
           <AppInput
             v-model="form.subject"
             prop="subject"
-            placeholder="Тема"
-            label="Тема"
+            :placeholder="t('common.theme')"
+            :label="t('common.theme')"
             label-class="text-[#A8AAAE] text-xs font-medium"
             :required
             :max="100"
             :maxlength="100"
           />
           <AppDatePicker
-            label="Дата создания документа"
+            :label="t('document.creationDate')"
             :placeholder="form.date"
             label-class="text-[#A8AAAE] text-xs font-medium"
             disabled
@@ -319,8 +327,8 @@ watch(model, (newModel) => {
           <AppInput
             v-model="form.number"
             prop="number"
-            label="№ документа"
-            placeholder="Автоматически"
+            :label="t('document.number')"
+            :placeholder="t('common.automatically')"
             label-class="text-[#A8AAAE] text-xs font-medium"
             disabled
           />
@@ -328,21 +336,20 @@ watch(model, (newModel) => {
           <AppInput
             v-model="form.content"
             prop="content"
-            placeholder="Содержание запроса"
             type="textarea"
             :rows="5"
-            label="Содержание запроса"
+            :label="t('document.freeRequest.contents')"
+            :placeholder="t('document.freeRequest.contents')"
             label-class="text-[#A8AAAE] text-xs font-medium"
             :required
-            :maxlength="1000"
             :max="1000"
           />
 
           <AppSelect
             v-model="form.from"
             prop="from"
-            placeholder="Отправитель"
-            label="Отправитель"
+            :placeholder="t('common.sender')"
+            :label="t('common.sender')"
             label-class="text-[#A8AAAE] text-xs font-medium"
             :disabled="authStore.disabledUserWorkplace"
             @change="(value) => respondentChange(value as string, 'to')"
@@ -361,7 +368,7 @@ watch(model, (newModel) => {
             class="custom-cancel-btn"
             @click="closeModal"
           >
-            Отменить
+            {{ t("method.cancel") }}
           </button>
           <ElButton
             :loading="form.status ==='draft' ? loading : false"
@@ -370,7 +377,7 @@ watch(model, (newModel) => {
             @click="sendForm('draft')"
             class="custom-apply-btn h-[41px] w-[212px]"
           >
-            Сохранить как черновик
+            {{ t("method.saveAsDraft") }}
           </ElButton>
           <ElButton
             :loading="form.status ==='sent' ? loading : false"
@@ -379,7 +386,7 @@ watch(model, (newModel) => {
             @click="sendForm('sent')"
             class="custom-send-btn h-[41px] w-[116px] !ml-0"
           >
-            Отправить
+            {{ t("method.send") }}
           </ElButton>
         </div>
       </div>
