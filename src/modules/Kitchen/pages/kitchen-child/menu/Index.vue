@@ -213,7 +213,7 @@ const productsWrapperClassName = computed<string[]>(() => {
   const className = ["grid gap-6 mt-3"];
 
   if (!sideBarStore.childSideBarOpen && !ordersModal.value) {
-    className.push("grid-cols-9");
+    className.push("grid-cols-7");
   } else if (sideBarStore.childSideBarOpen && !ordersModal.value) {
     className.push("grid-cols-8");
   } else if (!sideBarStore.childSideBarOpen && ordersModal.value) {
@@ -750,29 +750,33 @@ const mealTextFilter = (index: string): string => {
                     <div
                       v-for="productItem in kitchenStore.menuTodaySales.elements.meal"
                       :key="productItem.id"
-                      class="menu__card"
+                      class="menu__card !p-[8px] !bg-white"
                     >
-                      <h5 class="menu__card-title">
-                        {{ productItem.name }}
-                      </h5>
+
                       <img
                         :src="ColaImg"
                         :alt="productItem.name"
-                        class="menu__card-img"
+                        class="object-cover rounded-[12px] w-full h-[120px]"
                       />
-                      <div class="menu__card-subtitles">
-                        <span>{{ productItem.unit_name }} </span>
-                        <span>{{ formatNumber(productItem.price) }} UZS</span>
+
+                      <div class="menu__card-subtitles text-start mt-[12px] mb-[16px]">
+                        <span class="text-[#000D24] font-semibold text-[20px] mb-[4px]">{{ formatNumber(productItem.price) }} UZS</span>
+                        <span class="text-[#000D24] font-medium text-[14px]">{{ productItem.name }} </span>
                       </div>
-                      <div class="menu__card__actions">
+
+                      <h5 class="text-start text-[#A8AAAE]">
+                        {{ productItem.unit_name }}
+                      </h5>
+
+                      <div class="menu__card__actions !justify-between  bg-[#E2E6F3] px-[24px] py-[14px] rounded-[12px]">
                         <button
                           @click="updateQuantity(productItem.id, false)"
                           :disabled="!orders.has(productItem.id)"
-                          class="menu__card__action-btn"
+                          class=""
                         >
                           <svg
                             :data-src="MinusIcon"
-                            class="menu__card__action-btn__icon"
+                            class="text-[#4F5662]"
                           />
                         </button>
                         <span>
@@ -780,12 +784,12 @@ const mealTextFilter = (index: string): string => {
                       </span>
                         <button
                           @click="updateQuantity(productItem.id)"
-                          class="menu__card__action-btn"
+                          class=""
                           :disabled="orders.has(productItem.id) && (orders.get(productItem.id) == productItem.amount)"
                         >
                           <svg
                             :data-src="Plus3Icon"
-                            class="menu__card__action-btn__icon"
+                            class=""
                           />
                         </button>
                       </div>
