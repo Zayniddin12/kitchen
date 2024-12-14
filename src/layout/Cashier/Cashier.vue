@@ -506,30 +506,18 @@ const clearBasket = () => {
                   пока пусто</span>
               </div>
             </div>
-            <div class="mt-6 px-8">
-              <div class="flex items-center justify-between gap-x-4 text-lg">
-                <span class="font-medium text-[#A8AAAE]">Общая сумма:</span>
-                <strong class="font-semibold text-dark">
-                  {{ formatNumber(ordersSum) }} сум
-                </strong>
-              </div>
-              <div class="grid grid-cols-2 mt-6">
-                <ElButton
-                  @click="clearOrders"
-                  class="!bg-[#E2E6F3] border-none text-sm !text-dark-gray"
-                  size="large"
-                >
-                  Отменить
-                </ElButton>
-                <ElButton
-                  type="primary"
-                  size="large"
-                  class="!bg-blue"
+            <div v-if="orders.size" class="mt-6 px-8">
+                <button
+                  class="!bg-blue w-full flex items-center justify-between px-[24px] py-[14px] rounded-[12px] text-white"
                   @click="createOrder"
                 >
-                  Продать
-                </ElButton>
-              </div>
+                  Далее
+
+                  <strong class="font-semibold ml-auto">
+                    {{ formatNumber(ordersSum) }} сум
+                  </strong>
+                </button>
+
             </div>
           </div>
         </Teleport>
