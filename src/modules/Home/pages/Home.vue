@@ -35,6 +35,7 @@ import { filterObjectValues } from "@/utils/helper";
 import AppForm from "@/components/ui/form/app-form/AppForm.vue";
 import GraphChart from "@/modules/Home/components/charts/graph-chart/GraphChart.vue";
 import PreparationsChart from "@/modules/Home/components/charts/preparations-chart/PreparationsChart.vue";
+import { useI18n } from "vue-i18n";
 
 use([
   CanvasRenderer,
@@ -48,6 +49,8 @@ use([
   GridComponent,
 ]);
 
+const { t } = useI18n();
+
 const route = useRoute();
 
 const statisticsStore = useStatisticsStore();
@@ -60,11 +63,11 @@ const form = reactive<WarehouseCapacityParamsType>({
 const warehouseCapacityData = computed<AnalyticsCardDataType[]>(() => {
   return [
     {
-      name: "Общая вместимость",
+      name: t("common.totalCapacity"),
       value: statisticsStore.warehouseCapacity?.total_capacity || 0,
     },
     {
-      name: "Занятое место",
+      name: t("common.occupiedSpace"),
       value: statisticsStore.warehouseCapacity?.total_exist || 0,
     },
   ];
@@ -73,11 +76,11 @@ const warehouseCapacityData = computed<AnalyticsCardDataType[]>(() => {
 const visitorsData = computed<AnalyticsCardDataType[]>(() => {
   return [
     {
-      name: "за свой счет",
+      name: t("common.yourOwnExpense"),
       value: statisticsStore.visitors?.paid || 0,
     },
     {
-      name: "с рационом",
+      name: t("common.withDiet"),
       value: statisticsStore.visitors?.free || 0,
     },
   ];
@@ -114,7 +117,8 @@ const { setBreadCrumb } = useBreadcrumb();
 const setBreadCrumbFn = () => {
   setBreadCrumb([
     {
-      label: "Главная",
+      label: "navigation.home",
+      isTranslate: true,
       isActionable: true,
     },
   ]);
@@ -239,7 +243,7 @@ onMounted(() => {
               { 'app-tab--active': !form.management_id },
             ]"
       >
-        Все
+        {{ t("common.all") }}
       </RouterLink>
       <RouterLink
         v-for="item in settingsStore.regional.managements"
@@ -259,23 +263,23 @@ onMounted(() => {
         <div class="grid grid-cols-2 gap-x-4 mb-10">
           <AnalyticsCard
             :icon="WarehouseIcon"
-            title="Занятость складов"
-            subtitle="Здесь будет текст"
+            :title="t('home.warehouseOccupancy')"
+            :subtitle="t('home.textWillGoHere')"
             :data="warehouseCapacityData"
             :legend-item-gap="160"
             :loading="statisticsStore.warehouseCapacityLoading"
           />
           <AnalyticsCard
-            title="Количество посетителей"
+            :title="t('home.visitorsNumber')"
             :icon="UsersIcon"
-            subtitle="Здесь будет текст"
+            :subtitle="t('home.textWillGoHere')"
             :legend-item-gap="220"
             :data="visitorsData"
             :loading="statisticsStore.visitorsLoading"
           />
         </div>
         <PreparationsChart
-          title="Приготовление"
+          :title="t('home.preparation')"
           :total_price="statisticsStore.kitchenPreparations?.total_price"
           :percent="5"
           :data="statisticsStore.kitchenPreparations?.kitchens ?? []"
@@ -291,7 +295,7 @@ onMounted(() => {
                 v-model="kitchenPreparationsForm.type_id"
                 prop="type_id"
                 size="large"
-                placeholder="Все типы"
+                :placeholder="t('home.allType')"
                 :items="settingsStore.kitchenWarehouseList"
                 item-label="name"
                 item-value="id"
@@ -315,13 +319,14 @@ onMounted(() => {
       </div>
       <div class="w-[45%]">
         <div class="p-6 bg-[#F8F9FC] rounded-t-[24px]">
-          <h6 class="text-dark text-lg font-semibold ">Продукты с низким запасом</h6>
+          <h6 class="text-dark text-lg font-semibold ">{{ t("home.lowStockProducts") }}</h6>
         </div>
 
         <ElTable
           v-loading="statisticsStore.productsLoading"
           :data="statisticsStore.products"
           :row-class-name="handleClass"
+          :empty-text="t('common.empty')"
         >
           <ElTableColumn
             prop="idx"
@@ -334,7 +339,7 @@ onMounted(() => {
           </ElTableColumn>
           <ElTableColumn
             prop="product_parent_name"
-            label="Тип продукта"
+            :label="t('product.type')"
           >
             <template #default="{row}:{row:ProductType}">
               <div
@@ -353,7 +358,7 @@ onMounted(() => {
           </ElTableColumn>
           <ElTableColumn
             prop="product_name"
-            label="Вид продукта"
+            :label="t('product.view')"
           >
             <template #default="{row}:{row: ProductType}">
               {{ row.product_name || "-" }}
@@ -361,7 +366,7 @@ onMounted(() => {
           </ElTableColumn>
           <ElTableColumn
             prop="quantity"
-            label="Количество"
+            :label="t('common.quantity')"
           >
             <template #default="{row}:{row: ProductType}">
               {{ row.quantity || "-" }}
@@ -369,7 +374,7 @@ onMounted(() => {
           </ElTableColumn>
           <ElTableColumn
             prop="base_name"
-            label="База"
+            :label="t('common.base')"
           >
             <template #default="{row}:{row: ProductType}">
               {{ row.base_name || "-" }}
@@ -379,8 +384,8 @@ onMounted(() => {
       </div>
     </div>
     <GraphChart
-      title="Приход продуктов"
-      subtitle="Здесь будет текст"
+      :title="t('product.arrival')"
+      :subtitle="t('home.textWillGoHere')"
       class="mb-10"
       :loading="statisticsStore.incomingGraphProductsLoading"
       :data="statisticsStore.incomingGraphProducts"
@@ -395,7 +400,7 @@ onMounted(() => {
             v-model="incomingGraphForm.type_id"
             prop="type_id"
             size="large"
-            placeholder="Все типы"
+            :placeholder="t('home.allType')"
             :items="settingsStore.kitchenTypesList"
             item-value="id"
             item-label="name"
@@ -417,8 +422,8 @@ onMounted(() => {
       </template>
     </GraphChart>
     <GraphChart
-      title="Остатки блюд"
-      subtitle="Здесь будет текст"
+      :title="t('home.leftoversFromDishes')"
+      :subtitle="t('home.textWillGoHere')"
       class="mb-10"
       :loading="statisticsStore.outgoingGraphProductsLoading"
       :data="statisticsStore.outgoingGraphProducts"
@@ -434,7 +439,7 @@ onMounted(() => {
             prop="type_id"
             size="large"
             clearable
-            placeholder="Все кухни"
+            :placeholder="t('kitchen.all')"
             :items="settingsStore.kitchenTypesList"
             item-value="id"
             item-label="name"
@@ -458,17 +463,17 @@ onMounted(() => {
 
     <div class="grid grid-cols-2 gap-x-4">
       <AnalyticsCard
-        title="Количество кухонь"
+        :title="t('home.numberOfKitchens')"
         :icon="KitchenIcon"
-        subtitle="Здесь будет текст"
+        :subtitle="t('home.textWillGoHere')"
         :data="kitchenData"
         :legend-item-gap="135"
         :loading="statisticsStore.kitchenCountLoading"
       />
       <AnalyticsCard
-        title="Количество складов"
+        :title="t('home.numberOfWarehouses')"
         :icon="BranchIcon"
-        subtitle="Здесь будет текст"
+        :subtitle="t('home.textWillGoHere')"
         :legend-item-gap="135"
         :data="warehouseData"
         :loading="statisticsStore.warehouseCountLoading"

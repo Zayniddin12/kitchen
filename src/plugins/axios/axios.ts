@@ -13,7 +13,6 @@ const axiosInstance: AxiosInstance = axios.create({
   timeout: 120000,
   headers: {
     Accept: "application/json",
-    "x-app-lang": activeLocale.value,
     "x-device-type": "web",
   },
 });
@@ -32,6 +31,7 @@ const addSubscriber = (callback) => {
 
 axiosInstance.interceptors.request.use(
   async (config: InternalAxiosRequestConfig<any>) => {
+    config.headers["x-app-lang"] = activeLocale.value;
     const accessToken = tokenManager.getAccessToken();
 
     if (accessToken && !config.headers.Authorization) config.headers["Authorization"] = `Bearer ${accessToken}`;
@@ -80,14 +80,12 @@ axiosInstance.interceptors.response.use(
           await authStore.refresh();
           onAccessTokenFetched();
           isAlreadyFetchingAccessToken = false;
-        }else if (error.config.url === "auth/refresh"){
+        } else if (error.config.url === "auth/refresh") {
           await authStore.clear();
         }
 
         return retryOriginalRequest;
-      }
-
-      else{
+      } else {
         // await commonStore.errorToast(message, "", id);
         await authStore.clear();
       }

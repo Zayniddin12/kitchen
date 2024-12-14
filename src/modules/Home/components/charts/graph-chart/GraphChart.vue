@@ -13,15 +13,6 @@ const props = defineProps<GraphChartPropsType>();
 
 const slots = useSlots();
 
-function formatDateToDDMM(dateString: string): string {
-  const date = new Date(dateString);
-
-  const day = date.getDate().toString().padStart(2, "0");
-  const month = (date.getMonth() + 1).toString().padStart(2, "0");
-
-  return `${day}.${month}`;
-}
-
 const option = computed(() => {
   return {
     xAxis: {
@@ -88,7 +79,3 @@ const option = computed(() => {
     </AppOverlay>
   </div>
 </template>
-
-<style lang="scss">
-
-</style>

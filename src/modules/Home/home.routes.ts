@@ -6,7 +6,8 @@ export default [
     name: "home",
     component: () => import("@/modules/Home/pages/Home.vue"),
     meta: {
-      title: 'Главная',
+      title: 'navigation.home',
+      isTranslate: true,
       uniqueKeys: {
         home: true
       }
