@@ -63,7 +63,7 @@ axiosInstance.interceptors.response.use(
     const message = response?.data?.error?.message ?? error?.message ?? "";
     const originalConfig = error.config;
 
-    if (response && response.status === 401 && commonStore.activeLayout === "MainLayout") {
+    if (response && response.status === 401 && commonStore.activeLayout !== "LoginLayout") {
       const refreshToken = tokenManager.getRefreshToken();
 
       if (refreshToken) {

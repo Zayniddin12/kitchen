@@ -552,7 +552,7 @@ export const useSettingsStore = defineStore("settingsStore", () => {
   const kitchenWarehouseList = ref<KitchenWarehouseListItemType[]>([]);
   const kitchenWarehouseListLoading = ref(false);
 
-  const fetchKitchenWarehouseList = async (params: KitchenWarehouseListParamsType) => {
+  const fetchKitchenWarehouseList = async (params: KitchenWarehouseListParamsType = {}) => {
     kitchenWarehouseListLoading.value = true;
 
     try {
