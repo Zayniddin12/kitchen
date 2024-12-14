@@ -1067,7 +1067,7 @@ const mealTextFilter = (index: string): string => {
             <h4 class="text-xl text-black font-semibold px-8">Корзина</h4>
             <div
               v-if="selectedProducts.length > 0"
-              class="grid gap-6 mt-6 px-8 h-[100vh] overflow-y-auto"
+              class="grid gap-6 mt-6 px-6 h-[100vh] overflow-y-auto"
             >
               <!--              menu__card-->
               <div
@@ -1089,7 +1089,7 @@ const mealTextFilter = (index: string): string => {
                       {{ formatNumber(productItem.price) }} UZS
                     </h5>
 
-                    <span class="text-[#A8AAAE]">{{ productItem.unit_name }} </span>
+                    <span class="text-[#A8AAAE] text-[14px]">{{ productItem.unit_name }} </span>
                   </div>
                   <h5 class="text-[#000D24] font-medium mt-[4px]">
                     {{ productItem.name }}
