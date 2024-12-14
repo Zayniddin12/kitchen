@@ -7,7 +7,9 @@ import { AnalyticsCardPropsType } from "@/modules/Home/components/charts/analyti
 import { computed } from "vue";
 import VChart from "vue-echarts";
 import AppOverlay from "@/components/ui/app-overlay/AppOverlay.vue";
+import { useI18n } from "vue-i18n";
 
+const { t } = useI18n();
 
 const props = defineProps<AnalyticsCardPropsType>();
 
@@ -77,7 +79,7 @@ const chartOption = computed(() => {
         left: "center",
         top: "45%",
         style: {
-          text: "Итого",
+          text: t("common.total"),
           textAlign: "center",
           font: "normal 16px Arial",
           fill: "#999",
@@ -115,7 +117,3 @@ const chartOption = computed(() => {
     />
   </AppOverlay>
 </template>
-
-<style lang="scss">
-
-</style>
