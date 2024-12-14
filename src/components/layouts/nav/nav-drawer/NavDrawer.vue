@@ -1,15 +1,21 @@
 <script
-    setup
-    lang="ts"
+  setup
+  lang="ts"
 >
 import {
-  AppNavDrawerItemType,
   NavDrawerItemType,
-  NavDrawerPropsType
+  NavDrawerPropsType,
 } from "@/components/layouts/nav/nav-drawer/nav-drawer.types";
 import { useRoute } from "vue-router";
-import { computed, ref, useTemplateRef, watch, watchEffect } from "vue";
+import { computed, ref, useTemplateRef, watch } from "vue";
 import NavList from "@/components/layouts/nav/nav-list/NavList.vue";
+import LogoutIcon from "@/assets/images/logout.svg";
+import { useI18n } from "vue-i18n";
+import { useAuthStore } from "@/modules/Auth/auth.store";
+
+const { t } = useI18n();
+
+const authStore = useAuthStore();
 
 const props = defineProps<NavDrawerPropsType>();
 
@@ -24,7 +30,6 @@ const appItems = ref<NavDrawerItemType[]>([]);
 const navDrawerItemClick = (item: NavDrawerItemType) => {
   if (item.to) return;
   item.itemsOpen = !item.itemsOpen;
-  console.log(item.itemsOpen);
 };
 
 const navDrawer = useTemplateRef<HTMLDivElement>("nav-drawer");
@@ -55,61 +60,76 @@ watch(() => props.items, (newItems) => {
 
 <template>
   <div
-      ref="nav-drawer"
-      class="nav-drawer nav-wrap px-3 ml-4"
+    ref="nav-drawer"
+    class="nav-drawer nav-wrap px-3 ml-4"
   >
-    <RouterLink
+    <div>
+      <RouterLink
         :to="{name: 'home'}"
         class="nav-drawer__logo mx-3 my-4 flex items-center justify-center"
-    >
-      <img
+      >
+        <img
           src="@/assets/images/logo.svg"
           alt="logo"
           class="size-10"
-      >
-    </RouterLink>
-    <div class="nav-drawer__items mt-10 flex flex-col gap-y-2">
-      <div
+        >
+      </RouterLink>
+      <div class="nav-drawer__items mt-10 flex flex-col gap-y-2">
+        <div
           v-for="item in appItems"
           :key="item.title"
           class="nav-drawer__item"
-      >
-        <component
+        >
+          <component
             :is="item.to ? 'RouterLink' :  'button'"
             :to="item.to"
             :class="['nav-drawer__item-link', {'nav-drawer__item-link--active': item.key && route.meta?.uniqueKeys?.[item.key]}]"
             @click="navDrawerItemClick(item)"
-        >
-          <svg
+          >
+            <svg
               v-if="item.icon"
               :data-src="item.icon"
               class="nav-drawer__item-link-icon"
-          />
-          <span
+            />
+            <span
               v-if="item.title"
               class="nav-drawer__item-link-title"
-          >
+            >
           {{ item.title }}
         </span>
-        </component>
+          </component>
           <NavList
-              v-if="item.items"
-              ref="nav-list"
-              v-model="item.itemsOpen"
-              :title="item.title"
-              :items="item.items"
-              class="nav-wrap"
-              :style="{left: `${navDrawerWidth}px`}"
-              @changeWidth="(value:number) => navListWidth=value"
+            v-if="item.items"
+            ref="nav-list"
+            v-model="item.itemsOpen"
+            :title="item.title"
+            :items="item.items"
+            class="nav-wrap"
+            :style="{left: `${navDrawerWidth}px`}"
+            @changeWidth="(value:number) => navListWidth=value"
           />
+        </div>
       </div>
+
     </div>
+    <button
+      @click="authStore.logout"
+      class="nav-drawer__item-link mb-6"
+    >
+      <svg
+        :data-src="LogoutIcon"
+        class="size-6"
+      />
+      <span class="font-medium text-sm text-[#EA5455]">
+        {{ t("auth.logout") }}
+      </span>
+    </button>
   </div>
 </template>
 
 <style lang="scss">
 .nav-wrap {
-  @apply fixed z-10 h-[calc(100%-32px)] rounded-2xl bg-[#F8F9FC] top-0 my-4;
+  @apply fixed z-10 h-[calc(100%-32px)] overflow-y-auto rounded-2xl bg-[#F8F9FC] top-0 my-4 flex flex-col justify-between gap-y-2;
 }
 
 .nav-drawer {
