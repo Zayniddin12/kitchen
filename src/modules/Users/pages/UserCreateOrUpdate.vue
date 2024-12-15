@@ -84,7 +84,7 @@ const sendForm = async () => {
   if (!v$.value || !data.value) return;
 
   if (!(await v$.value.validate())) {
-    commonStore.errorToast("Validation Error");
+   await commonStore.errorToast("Validation Error");
     return;
   }
 
@@ -544,6 +544,7 @@ const image = ref(null);
                   class="mb-1"
                 />
                 <AppSelect
+                  v-model="form.organization_id"
                   label="Место работы"
                   item-value="id"
                   item-label="name"
