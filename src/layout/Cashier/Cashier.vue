@@ -10,69 +10,7 @@ import { WarehouseCapacityParamsType } from "@/modules/Home/statistics.types";
 import { useRoute } from "vue-router";
 
 const products = ref([
-  {
-    id: 1,
-    name: "Глазунья",
-    price: 24000,
-    unit_name: "200 гр",
-    img: "/meal.png",
-  },
-  {
-    id: 2,
-    name: "Колбаса жареная",
-    price: 24000,
-    unit_name: "200 гр",
-    img: "/meal2.png",
-  },
-  {
-    id: 3,
-    name: "Рисовая каша",
-    price: 24000,
-    unit_name: "200 гр",
-    img: "/meal3.png",
-  },
-  {
-    id: 4,
-    name: "Каша Геркулес",
-    price: 24000,
-    unit_name: "200 гр",
-    img: "/meal4.png",
-  },
-  {
-    id: 5,
-    name: "Гренки из серого хлеба",
-    price: 24000,
-    unit_name: "200 гр",
-    img: "/meal5.png",
-  },
-  {
-    id: 6,
-    name: "Каша манная",
-    price: 24000,
-    unit_name: "200 гр",
-    img: "/meal6.png",
-  },
-  {
-    id: 7,
-    name: "Сырники с каймаком",
-    price: 24000,
-    unit_name: "200 гр",
-    img: "/meal7.png",
-  },
-  {
-    id: 8,
-    name: "Блинчик с мясом",
-    price: 24000,
-    unit_name: "200 гр",
-    img: "/meal8.png",
-  },
-  {
-    id: 9,
-    name: "Coca Cola",
-    price: 24000,
-    unit_name: "1.5 литр",
-    img: "/cola.png",
-  },
+
   {
     id: 1,
     name: "Глазунья",
@@ -300,8 +238,8 @@ const clearBasket = () => {
 </script>
 
 <template>
-  <div class="bg-[#F8F9FC] flex gap-4">
-    <div class="w-[75%] p-6">
+  <div class="bg-[#F8F9FC] flex gap-1 select-none">
+    <div class="w-[70%] p-4">
       <div
         class="inner"
       >
@@ -311,7 +249,7 @@ const clearBasket = () => {
           <div>
 
             <div>
-              <div class="flex items-center justify-between mb-[24px]">
+              <div class="flex items-center justify-between mb-[10px] xl:mb-[24px]">
                 <h4 class="text-[#000D24] text-[32px] font-semibold">
                   Меню
                 </h4>
@@ -336,7 +274,7 @@ const clearBasket = () => {
               </div>
 
               <!--              :class="productsWrapperClassName"-->
-              <div class="overflow-y-auto h-[79vh] pr-2">
+              <div class="overflow-y-auto h-[72vh] 2xl:h-[80vh] pr-2">
                 <div class="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6">
                   <div
                     v-for="productItem in products"
@@ -422,18 +360,18 @@ const clearBasket = () => {
       </div>
     </div>
 
-    <div class="w-[25%]">
+    <div class="w-[30%]">
       <div
         ref="ordersWrapper"
         class="pt-8 pb-6 flex flex-col justify-between bg-white shadow-[-32px_72px_96px_0_#0926450F] rounded-l-[32px] h-screen"
       >
         <div class="flex items-center justify-between mb-4">
           <h4 class="text-xl text-black font-semibold pl-8">Корзина</h4>
-          <button v-if="orders.size" @click="clearBasket" class="text-[#A8AAAE] text-[14px] pr-8">
+          <button v-if="orders.size" @click="clearBasket" class="text-[#A8AAAE] text-[14px] bg-red-500 mr-6 text-white px-2 py-1 rounded-[8px]">
             Очистить
           </button>
         </div>
-        <div class="h-full overflow-y-auto flex flex-col">
+        <div class="h-full overflow-y-auto overflow-x-hidden flex flex-col">
 
           <div
             v-if="selectedProducts.length > 0"
@@ -441,7 +379,7 @@ const clearBasket = () => {
           >
             <!--              menu__card-->
             <div
-              class="h-auto xl:h-[136px] p-[8px] flex gap-2 bg-[#F8F9FC] rounded-[16px]"
+              class="h-auto xl:h-[136px] p-[8px] flex items-center xl:items-stretch gap-2 bg-[#F8F9FC] rounded-[16px]"
               v-for="(productItem, productIndex) in selectedProducts"
               :key="productIndex"
             >
@@ -450,7 +388,7 @@ const clearBasket = () => {
               <img
                 :src="productItem.img"
                 :alt="productItem.name"
-                class="xl:w-[120px] w-[100px] object-cover rounded-[12px]"
+                class="lg:w-[80px] lg:h-[80px] xl:w-[100px] xl:h-[100px] 2xl:w-[120px] 2xl:h-[120px] w-[100px] object-cover rounded-[12px]"
               />
               <div class="w-full flex flex-col">
                 <div class="flex 2xl:items-center justify-between flex-col 2xl:flex-row">
