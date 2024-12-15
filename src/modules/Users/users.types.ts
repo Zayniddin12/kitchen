@@ -70,6 +70,7 @@ export interface UserCreateDiningLocationsType {
 
 export interface UserCreateOrUpdateDataType extends UserCreateOrUpdateDataPrefixType {
   firstname: string,
+  organization_id: string | null | number,
   lastname: string,
   patronymic: string,
   birthday: string,

@@ -21,6 +21,7 @@ import { usePositionStore } from "@/modules/Settings/components/Reference/Positi
 import { UserCreateOrUpdateDataType } from "@/modules/Users/users.types";
 import { useSettingsStore } from "@/modules/Settings/store";
 import { useI18n } from "vue-i18n";
+import { useKitchenStore } from "@/modules/Kitchen/kitchen.store";
 
 interface Tabs {
   title: string;
@@ -41,6 +42,7 @@ const commonStore = useCommonStore();
 const userStore = useUsersStore();
 const positionStore = usePositionStore();
 const settingsStore = useSettingsStore();
+const kitchenStore = useKitchenStore();
 
 const activeUserCreatePage = computed(() => {
   return route.meta.type === "create";
@@ -53,6 +55,7 @@ const activeUserUpdatePage = computed(() => {
 
 const form = ref<UserCreateOrUpdateDataType>({
   phone: "",
+  organization_id: null,
   is_oneid_enabled: false,
   firstname: "",
   lastname: "",
@@ -104,6 +107,12 @@ const sendForm = async () => {
         await userStore.updateUser(routeId.value, newForm);
       } else {
         await userStore.updateEmployee(routeId.value, newForm);
+        if (image.value) {
+          const formData = new FormData();
+          formData.append("_method", "PUT");
+          formData.append("face_image", image.value);
+          await userStore.updateEmployeePhoto({ id: routeId.value, data: formData });
+        }
       }
     }
 
@@ -208,6 +217,7 @@ const fetchSearchUser = () => {
 };
 
 const setData = () => {
+
   if (!data.value) return;
 
   if (userStore.activeUserPage) {
@@ -259,20 +269,24 @@ const gender = computed(() => {
   return commonStore.getGender(data.value.gender);
 });
 
-onMounted(() => {
+onMounted(async () => {
   setBreadCrumbFn();
-  fetchUser();
+  await fetchUser();
+  await settingsStore.GET_KITCHEN_WAREHOUSE();
+  await settingsStore.GET_ORGANIZATION()
   if (userStore.activeUserPage) {
-    positionStore.fetchPositions();
-    settingsStore.GET_REGIONAL({ per_page: 100 });
+    await positionStore.fetchPositions();
+    await settingsStore.GET_REGIONAL({ per_page: 100 });
   } else {
-    settingsStore.fetchKitchenWarehouseList({ is_paid: 0 });
+    await settingsStore.fetchKitchenWarehouseList({ is_paid: 0 });
   }
 });
 
 onBeforeRouteLeave(() => {
   userStore.clearSearchUser();
 });
+
+const image = ref(null);
 
 </script>
 
@@ -304,11 +318,12 @@ onBeforeRouteLeave(() => {
           class="w-full"
           v-if="activeTab === 1"
         >
+<!--          {{settingsStore.kitchenWarehouse.kitchen_warehouses}}-->
           <div class="py-[70px] bg-[#F8F9FC] px-[24px] relative mb-[90px]">
             <div class="top-[32px] absolute flex items-center">
               <div class="rounded-full overflow-hidden border-4 border-gray-100">
                 <img
-                  :src="data?.avatar ?? gender?.photo ?? Avatar"
+                  :src="data?.avatar_link ?? gender?.photo ?? Avatar"
                   alt="Profile Picture"
                   class="object-cover h-[160px] w-[160px] rounded-full"
                 >
@@ -493,7 +508,7 @@ onBeforeRouteLeave(() => {
               <template v-else-if="userStore.activeEmployeePage && form.dining_locations">
                 <AppSelect
                   v-model="form.dining_locations.permanent.kitchen_id"
-                  :items="settingsStore.kitchenWarehouseList"
+                  :items="settingsStore.kitchenWarehouse.kitchen_warehouses"
                   item-value="id"
                   item-label="name"
                   prop="dining_locations.permanent.kitchen_id"
@@ -505,36 +520,34 @@ onBeforeRouteLeave(() => {
                 />
                 <AppSelect
                   v-model="form.dining_locations.temporary.kitchen_id"
-                  :items="settingsStore.kitchenWarehouseList"
+                  :items="settingsStore.kitchenWarehouse.kitchen_warehouses"
                   item-value="id"
                   item-label="name"
-                  prop="dining_locations.temporary.kitchen_id"
                   label="Временная кухня"
                   label-class="text-[#A8AAAE] text-xs font-medium"
-                  required
                   class="mb-1"
                   clearable
                 />
                 <AppDatePicker
                   v-model="form.dining_locations.temporary.start_date"
-                  prop="dining_locations.temporary.start_date"
                   label="Период временной кухни с"
+                  range
                   label-class="text-[#A8AAAE] text-xs font-medium"
-                  required
                   value-format="YYYY-MM-DD"
                   class="mb-1"
                 />
                 <AppDatePicker
                   v-model="form.dining_locations.temporary.end_date"
-                  prop="dining_locations.temporary.end_date"
                   label="Период временной кухни по"
                   label-class="text-[#A8AAAE] text-xs font-medium"
                   value-format="YYYY-MM-DD"
-                  required
                   class="mb-1"
                 />
                 <AppSelect
                   label="Место работы"
+                  item-value="id"
+                  item-label="name"
+                  :items="settingsStore.organization.organizations"
                   label-class="text-[#A8AAAE] text-[12px] font-medium"
                   placeholder="Выберите"
                   class="mb-1"
@@ -564,10 +577,13 @@ onBeforeRouteLeave(() => {
         </div>
 
         <template v-else>
+          <!--          {{ image }}-->
           <AppMediaUploader
             class="m-6 w-full"
             :height="450"
+            v-model="image"
           />
+
 
         </template>
       </TransitionGroup>

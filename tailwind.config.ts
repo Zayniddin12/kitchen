@@ -7,6 +7,12 @@ export default {
     darkMode: "class",
     theme: {
         extend: {
+            screens: {
+                '3xl': '1880px', // Define your custom breakpoint
+            },
+            maxWidth: {
+                'screen-3xl': '1880px', // Replace '1200px' with your desired value
+            },
             boxShadow: {
                 "menu": "0px 1.5px 4px -1px #0A090B12"
             },

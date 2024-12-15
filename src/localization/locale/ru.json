@@ -21,9 +21,24 @@
   "logo": {
     "title": "NKMK",
     "subtitle": "Jamg‘armasi",
-    "name":"Фонд НГМК"
+    "name": "Фонд НГМК"
+  },
+  "navigation": {
+    "home": "Главная"
+  },
+  "home": {
+    "warehouseOccupancy": "Занятость складов",
+    "textWillGoHere": "Здесь будет текст",
+    "visitorsNumber": "Количество посетителей",
+    "preparation": "Приготовление",
+    "allType": "Все типы",
+    "lowStockProducts": "Продукты с низким запасом",
+    "leftoversFromDishes": "Остатки блюд",
+    "numberOfKitchens": "Количество кухонь",
+    "numberOfWarehouses": "Количество складов"
   },
   "common": {
+    "all": "Все",
     "fund": "Фонд",
     "filter": "Фильтр",
     "settings": "Настройки",
@@ -67,7 +82,14 @@
     "free": "Свободный",
     "monthly": "Месячный",
     "annual": "Годовой",
-    "status": "Статус"
+    "status": "Статус",
+    "total": "Итого",
+    "expenses": "Expenses",
+    "totalCapacity": "Общая вместимость",
+    "occupiedSpace": "Занятое место",
+    "yourOwnExpense": "за свой счет",
+    "withDiet": "с рационом",
+    "base": "База"
   },
   "status": {
     "active": "Активный",
@@ -275,7 +297,8 @@
     "quantity": "Количество продукта",
     "manufacturer": "Производитель продукта",
     "type": "Тип продукта",
-    "view": "Вид продукта"
+    "view": "Вид продукта",
+    "arrival": "Приход продуктов"
   },
   "position": {
     "list": "Должности",
@@ -305,6 +328,7 @@
     }
   },
   "kitchen": {
+    "all": "Все кухни",
     "title": "Кухня"
   },
   "gender": {

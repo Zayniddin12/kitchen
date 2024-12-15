@@ -422,7 +422,7 @@ export const useSettingsStore = defineStore("settingsStore", () => {
     return $axios.put(`/organizations/${id}/`, data);
   };
 
-  const GET_ORGANIZATION = async (params: any) => {
+  const GET_ORGANIZATION = async (params?: any) => {
     const { data } = await $axios.get("/organizations", { params });
     organization.value = data.data;
   };
@@ -544,15 +544,15 @@ export const useSettingsStore = defineStore("settingsStore", () => {
   };
 
   // Склады кухни
-  const GET_KITCHEN_WAREHOUSE = async (params: any) => {
+  const GET_KITCHEN_WAREHOUSE = async (params?: any) => {
     const { data } = await $axios.get("/kitchen-warehouses", { params });
     kitchenWarehouse.value = data.data;
   };
 
-  const kitchenWarehouseList = ref<KitchenWarehouseListItemType[]>([]);
+  const   kitchenWarehouseList = ref<KitchenWarehouseListItemType[]>([]);
   const kitchenWarehouseListLoading = ref(false);
 
-  const fetchKitchenWarehouseList = async (params: KitchenWarehouseListParamsType) => {
+  const fetchKitchenWarehouseList = async (params: KitchenWarehouseListParamsType = {}) => {
     kitchenWarehouseListLoading.value = true;
 
     try {
