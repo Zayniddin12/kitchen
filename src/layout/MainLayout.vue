@@ -117,14 +117,14 @@ const navDrawerWidth = ref<number>(0);
 
 <template>
   <div>
-    <!--    <SideBar-->
-    <!--        v-model:childSidebarPin="childSidebarPin"-->
-    <!--        v-model:childSidebar="childSidebar"-->
-    <!--    />-->
-    <NavDrawer
-      :items="navDrawerItems"
-      @changeWidth="(value:number) => navDrawerWidth = value"
+    <SideBar
+      v-model:childSidebarPin="childSidebarPin"
+      v-model:childSidebar="childSidebar"
     />
+    <!--    <NavDrawer-->
+    <!--      :items="navDrawerItems"-->
+    <!--      @changeWidth="(value:number) => navDrawerWidth = value"-->
+    <!--    />-->
     <div
       class="main-layout min-h-screen p-6 pr-7 pt-28 dark:bg-darkLayoutMain dark:bg-body-dark bg-white ml-[128px] transition-all flex flex-col justify-between"
       :class="childSidebarPin && childSidebar ? margin : ''"

@@ -192,7 +192,7 @@ export const useKitchenStore = defineStore("kitchenStore", () => {
     kitchenVid.value = data.data && data.data.kitchen_types;
   };
 
-  const GET_KITCHEN_TYPE = async (params: Params) => {
+  const GET_KITCHEN_TYPE = async (params?: Params) => {
     const { data } = await $axios.get("/kitchen-warehouses/list", { params });
 
     kitchenType.value = data.data && data.data.kitchen_warehouses;

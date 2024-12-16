@@ -110,6 +110,10 @@ export const useUsersStore = defineStore("usersStore", () => {
     const employees = ref<null | UsersType>(null);
     const employeesLoading = ref(false);
 
+    const updateEmployeePhoto = (data: any) => {
+        return employeeApi.updateUserPhoto(data)
+    }
+
     const fetchEmployees = async (params: UsersParamsType = {}) => {
         employeesLoading.value = true;
 
@@ -221,6 +225,7 @@ export const useUsersStore = defineStore("usersStore", () => {
         updateUserLoading,
         updateUser,
 
+        updateEmployeePhoto,
         employeeRoutesPrefix,
         activeEmployeePage,
         employees,
