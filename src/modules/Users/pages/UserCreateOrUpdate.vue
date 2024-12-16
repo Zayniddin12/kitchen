@@ -2,7 +2,7 @@
   setup
   lang="ts"
 >
-import { computed, onMounted, ref } from "vue";
+import { computed, onMounted, reactive, ref } from "vue";
 import AppInput from "@/components/ui/form/app-input/AppInput.vue";
 import AppDatePicker from "@/components/ui/form/app-date-picker/AppDatePicker.vue";
 import AppSelect from "@/components/ui/form/app-select/AppSelect.vue";
@@ -84,7 +84,7 @@ const sendForm = async () => {
   if (!v$.value || !data.value) return;
 
   if (!(await v$.value.validate())) {
-   await commonStore.errorToast("Validation Error");
+    await commonStore.errorToast("Validation Error");
     return;
   }
 
@@ -98,7 +98,8 @@ const sendForm = async () => {
       if (userStore.activeUserPage) {
         await userStore.createUser(newForm);
       } else {
-        await userStore.createEmployee(newForm);
+        const {data} = await userStore.createEmployee(newForm);
+        console.log(data);
       }
     } else if (activeUserUpdatePage.value) {
       if (typeof newForm.status === "boolean") newForm.status = setStatus(newForm.status);
@@ -149,7 +150,13 @@ const validRouteTab = (tab: string) => {
   return newTab === 1 || newTab === 2 ? newTab : defaultTab;
 };
 
-const activeTab = computed(() => validRouteTab(route.query.tab as string));
+const hasTab = computed(() => {
+  return userStore.activeEmployeePage;
+});
+
+const activeTab = computed(() => {
+  return hasTab.value ? validRouteTab(route.query.tab as string) : defaultTab;
+});
 
 const tabs = ref<Tabs[]>([
   {
@@ -273,7 +280,7 @@ onMounted(async () => {
   setBreadCrumbFn();
   await fetchUser();
   await settingsStore.GET_KITCHEN_WAREHOUSE();
-  await settingsStore.GET_ORGANIZATION()
+  await settingsStore.GET_ORGANIZATION();
   if (userStore.activeUserPage) {
     await positionStore.fetchPositions();
     await settingsStore.GET_REGIONAL({ per_page: 100 });
@@ -288,12 +295,26 @@ onBeforeRouteLeave(() => {
 
 const image = ref(null);
 
+const workingHours = reactive([
+  {
+    title: 12,
+    key: 12
+  },
+  {
+    title: 24,
+    key: 24
+  }
+]);
+
 </script>
 
 <template>
   <div>
     <h1 class="m-0 font-semibold text-[32px]">{{ route.meta?.title }}</h1>
-    <div class="app-tabs w-[345px] my-[24px]">
+    <div
+      v-if="hasTab"
+      class="app-tabs w-[345px] mt-6"
+    >
       <RouterLink
         v-for="item in tabs"
         :key="item.value"
@@ -307,7 +328,7 @@ const image = ref(null);
 
     <AppOverlay
       :loading
-      parent-class-name="border rounded-[24px] pb-[32px] overflow-hidden"
+      parent-class-name="border rounded-[24px] pb-[32px] overflow-hidden mt-6"
     >
       <TransitionGroup
         :name="activeTab>defaultTab ? 'nested' : 'nested-reverse'"
@@ -318,7 +339,7 @@ const image = ref(null);
           class="w-full"
           v-if="activeTab === 1"
         >
-<!--          {{settingsStore.kitchenWarehouse.kitchen_warehouses}}-->
+          <!--          {{settingsStore.kitchenWarehouse.kitchen_warehouses}}-->
           <div class="py-[70px] bg-[#F8F9FC] px-[24px] relative mb-[90px]">
             <div class="top-[32px] absolute flex items-center">
               <div class="rounded-full overflow-hidden border-4 border-gray-100">
@@ -556,6 +577,9 @@ const image = ref(null);
 
                 <AppSelect
                   label="График работы"
+                  :items="workingHours"
+                  item-value="value"
+                  item-label="title"
                   label-class="text-[#A8AAAE] text-[12px] font-medium"
                   placeholder="Выберите"
                   class="mb-1"
