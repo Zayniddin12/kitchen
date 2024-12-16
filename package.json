@@ -19,6 +19,7 @@
     "element-plus": "^2.9.0",
     "external-svg-loader": "^1.7.1",
     "maska": "^3.0.3",
+    "pdf-to-printer": "^5.6.0",
     "pinia": "^2.2.2",
     "qrcode": "^1.5.4",
     "sass": "^1.77.8",
