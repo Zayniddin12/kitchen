@@ -4,11 +4,15 @@
 >
 
 import { RouterLink, useRoute, useRouter } from "vue-router";
-import { computed, onMounted, reactive, ref } from "vue";
+import { computed, onMounted, reactive, watch } from "vue";
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 import { useI18n } from "vue-i18n";
 import AppInput from "@/components/ui/form/app-input/AppInput.vue";
 import { usePositionStore } from "@/modules/Settings/components/Reference/Position/position.store";
+import { filterObjectValues, setTableColumnIndex } from "@/utils/helper";
+import { PositionsParamsType, PositionType } from "@/modules/Settings/components/Reference/Position/position.types";
+import AppPagination from "@/components/ui/app-pagination/AppPagination.vue";
+import { watchDebounced } from "@vueuse/core";
 
 const { t } = useI18n();
 
@@ -47,60 +51,40 @@ const setBreadCrumbFn = () => {
   ]);
 };
 
-const tableData = ref([
-  {
-    idx: 1,
-    name: "Главный инженер",
-    "responsibility": "Зарафшан",
-    status: true,
-  },
-  {
-    idx: 2,
-    name: "Главный инженер",
-    "responsibility": "Зарафшан",
-    status: false,
-  },
-  {
-    idx: 3,
-    name: "Главный инженер",
-    "responsibility": "Зарафшан",
-    status: true,
-  },
-  {
-    idx: 4,
-    name: "Главный инженер",
-    "responsibility": "Зарафшан",
-    status: false,
-  },
-  {
-    idx: 5,
-    name: "Главный инженер",
-    "responsibility": "Зарафшан",
-    status: true,
-  },
-  {
-    idx: 6,
-    name: "Главный инженер",
-    "responsibility": "Зарафшан",
-    status: false,
-  },
-]);
 
-const tableCurrentChange = ({ idx }: { idx: number }) => {
-  router.push({ name: "position-show", params: { id: idx } });
+const tableCurrentChange = ({ id }: { id: number }) => {
+  router.push({ name: "position-show", params: { id } });
 };
 
-const form = reactive({
+const form = reactive<PositionsParamsType>({
   search: "",
+  page: null,
 });
 
 const fetchPositions = () => {
+  const query = route.query as Record<string, string>;
 
+  const page = parseInt(query.page);
+
+  form.page = !isNaN(page) ? page : null;
+  form.search = query.search ?? "";
+
+  positionStore.fetchPositions(filterObjectValues(form));
+};
+
+const changePage = (value: number) => {
+  router.replace({ query: { ...route.query, page: value } });
 };
 
 onMounted(() => {
   setBreadCrumbFn();
 });
+
+watchDebounced(() => form.search, () => {
+  router.push({ query: filterObjectValues({ search: form.search }) });
+}, { debounce: 1000, maxWait: 5000 });
+
+watch(() => route.query, fetchPositions, { immediate: true });
 
 </script>
 
@@ -132,7 +116,8 @@ onMounted(() => {
       </div>
     </div>
     <ElTable
-      :data="tableData"
+      v-loading="positionStore.positionsLoading"
+      :data="positionStore.positionsPagination?.positions ?? []"
       :empty-text="t('common.empty')"
       class="custom-element-table mt-6"
       stripe
@@ -144,6 +129,9 @@ onMounted(() => {
         label="№"
         width="80"
       >
+        <template #default="{$index}">
+          {{ setTableColumnIndex($index, form.page ?? 0, positionStore.positionsPagination?.pagination.per_page ?? 0) }}
+        </template>
       </ElTableColumn>
       <ElTableColumn
         prop="name"
@@ -151,24 +139,31 @@ onMounted(() => {
         sortable
         width="500"
       >
+        <template #default="{row}:{row: PositionType}">
+          {{ row.name || "-" }}
+        </template>
       </ElTableColumn>
       <ElTableColumn
-        prop="responsibility"
+        prop="work_place_name"
         :label="t('position.responsibility')"
         sortable
         width="500"
-      ></ElTableColumn>
+      >
+        <template #default="{row}:{row: PositionType}">
+          {{ row.work_place_name || "-" }}
+        </template>
+      </ElTableColumn>
       <ElTableColumn
         prop="status"
         :label="t('common.status')"
         sortable
         width="500"
       >
-        <template #default="{row}">
+        <template #default="{row}:{row: PositionType}">
           <div
-            :class="['py-2 px-4 rounded-full text-center text-sm font-medium inline-flex items-center justify-center w-[125px] min-h-10',row.status ? 'text-[#22A95E] bg-[#D4F4E2]' : 'text-[#8F9194] bg-[#EEEEEF]']"
+            :class="['py-2 px-4 rounded-full text-center text-sm font-medium inline-flex items-center justify-center w-[125px] min-h-10',row.status==='active' ? 'text-[#22A95E] bg-[#D4F4E2]' : 'text-[#8F9194] bg-[#EEEEEF]']"
           >
-            {{ row.status ? t("status.active") : t("status.completed") }}
+            {{ row.status === "active" ? t("status.active") : t("status.completed") }}
           </div>
         </template>
       </ElTableColumn>
@@ -178,9 +173,12 @@ onMounted(() => {
         align="right"
       >
         <template #default="{row}">
-          <div @click.stop class="flex items-center justify-end gap-x-2">
+          <div
+            @click.stop
+            class="flex items-center justify-end gap-x-2"
+          >
             <RouterLink
-              :to="{name: 'position-show', params:{id: row.idx}}"
+              :to="{name: 'position-show', params:{id: row.id}}"
               class="action-btn"
             >
               <img
@@ -190,7 +188,7 @@ onMounted(() => {
             </RouterLink>
 
             <RouterLink
-              :to="{name: 'position-edit', params: {id: row.idx}}"
+              :to="{name: 'position-edit', params: {id: row.id}}"
               class="action-btn"
             >
               <img
@@ -202,5 +200,12 @@ onMounted(() => {
         </template>
       </ElTableColumn>
     </ElTable>
+    <AppPagination
+      v-if="positionStore.positionsPagination"
+      v-model="form.page"
+      :pagination="positionStore.positionsPagination.pagination"
+      @current-change="changePage"
+      class="mt-6"
+    />
   </section>
 </template>

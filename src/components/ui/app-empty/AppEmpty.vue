@@ -19,7 +19,7 @@ const computedDescription = computed(() => {
 
 <template>
   <ElEmpty
-    class="h-[60vh]"
+    class="min-h-[60vh]"
     :description="computedDescription"
   />
 </template>

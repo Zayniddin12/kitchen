@@ -51,7 +51,7 @@ const sendForm = async () => {
 };
 
 onMounted(() => {
-  positionStore.fetchPositions();
+  positionStore.fetchPositions({ getAll: 1 });
 });
 
 watch(() => authStore.user, setForm, { immediate: true });

@@ -68,6 +68,7 @@ const form = ref<UserCreateOrUpdateDataType>({
   pass_given_at: "",
   pass_valid_until: "",
   pinfl: "",
+  avatar: ""
 });
 
 const oldForm = ref<UserCreateOrUpdateDataType | null>(null);
@@ -282,7 +283,7 @@ onMounted(async () => {
   await settingsStore.GET_KITCHEN_WAREHOUSE();
   await settingsStore.GET_ORGANIZATION();
   if (userStore.activeUserPage) {
-    await positionStore.fetchPositions();
+    await positionStore.fetchPositions({getAll: 1});
     await settingsStore.GET_REGIONAL({ per_page: 100 });
   } else {
     await settingsStore.fetchKitchenWarehouseList({ is_paid: 0 });
