@@ -6,7 +6,10 @@ export interface UserType {
   firstname: string,
   lastname: string,
   patronymic: null | string,
+  avatar_link: string,
   avatar: null | string,
+  face_image_link: string,
+  face_image: string,
   position: string,
   phone: string,
   is_oneid_enabled: boolean,
@@ -70,7 +73,7 @@ export interface UserCreateDiningLocationsType {
 
 export interface UserCreateOrUpdateDataType extends UserCreateOrUpdateDataPrefixType {
   firstname: string,
-  organization_id: string | null | number,
+  organization_id: string | number,
   lastname: string,
   patronymic: string,
   birthday: string,
@@ -83,8 +86,9 @@ export interface UserCreateOrUpdateDataType extends UserCreateOrUpdateDataPrefix
   avatar?: string | File,
   pinfl: string,
   position_id?: number | "",
+  role_id?: number | "",
   management_id?: number | "",
+  work_hours?: number | "",
   dining_locations?: UserCreateDiningLocationsType,
   status?: StatusType | boolean
-
 }

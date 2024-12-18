@@ -210,7 +210,7 @@ watch(() => route.name, () => {
                   placeholder="Начальник управления"
                   label-class="text-[#A8AAAE] font-medium text-[12px]"
                   class="w-[50%]"
-                  :disabled="isDisabled"
+                  disabled
               />
             </div>
 

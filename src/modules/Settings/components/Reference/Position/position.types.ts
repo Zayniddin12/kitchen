@@ -26,9 +26,11 @@ export interface PositionShowType extends Omit<PositionType, "name"> {
   work_place_type: string,
 }
 
+export type WorkPlaceType = "management" | "foodFactory" | "base" | "baseWarehouse" | "kitchenWarehouse" | "";
+
 export interface PositionDataType {
   name: NameType,
   work_place_id: number | "",
-  work_place_type: string,
+  work_place_type: WorkPlaceType,
   status: StatusType | boolean,
 }

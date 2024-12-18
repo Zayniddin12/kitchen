@@ -22,6 +22,11 @@ import { UserCreateOrUpdateDataType } from "@/modules/Users/users.types";
 import { useSettingsStore } from "@/modules/Settings/store";
 import { useI18n } from "vue-i18n";
 import { useKitchenStore } from "@/modules/Kitchen/kitchen.store";
+import { useRoleStore } from "@/modules/Settings/components/Reference/Role/role.store";
+import { AppMediaUploaderValueType } from "@/components/ui/form/app-media-uploader/app-media-uploader.type";
+import { AppSelectValueType } from "@/components/ui/form/app-select/app-select.type";
+import { WorkPlaceType } from "@/modules/Settings/components/Reference/Position/position.types";
+import { useListStore } from "@/List/list.store";
 
 interface Tabs {
   title: string;
@@ -42,7 +47,8 @@ const commonStore = useCommonStore();
 const userStore = useUsersStore();
 const positionStore = usePositionStore();
 const settingsStore = useSettingsStore();
-const kitchenStore = useKitchenStore();
+const roleStore = useRoleStore();
+const listStore = useListStore();
 
 const activeUserCreatePage = computed(() => {
   return route.meta.type === "create";
@@ -55,7 +61,7 @@ const activeUserUpdatePage = computed(() => {
 
 const form = ref<UserCreateOrUpdateDataType>({
   phone: "",
-  organization_id: null,
+  organization_id: "",
   is_oneid_enabled: false,
   firstname: "",
   lastname: "",
@@ -68,7 +74,7 @@ const form = ref<UserCreateOrUpdateDataType>({
   pass_given_at: "",
   pass_valid_until: "",
   pinfl: "",
-  avatar: ""
+  avatar: "",
 });
 
 const oldForm = ref<UserCreateOrUpdateDataType | null>(null);
@@ -80,6 +86,15 @@ const setValidation = (validation: ValidationType) => {
 };
 
 const validationErrors = ref<Record<string, any> | null>(null);
+
+const saveFaceIdImage = async (id: number) => {
+  if (!image.value) return;
+
+  const formData = new FormData();
+  formData.append("_method", "PUT");
+  formData.append("face_image", image.value as any);
+  await userStore.updateEmployeePhoto({ id, data: formData });
+};
 
 const sendForm = async () => {
   if (!v$.value || !data.value) return;
@@ -99,8 +114,8 @@ const sendForm = async () => {
       if (userStore.activeUserPage) {
         await userStore.createUser(newForm);
       } else {
-        const {data} = await userStore.createEmployee(newForm);
-        console.log(data);
+        const { data } = await userStore.createEmployee(newForm);
+        await saveFaceIdImage(data.data.user.id);
       }
     } else if (activeUserUpdatePage.value) {
       if (typeof newForm.status === "boolean") newForm.status = setStatus(newForm.status);
@@ -109,12 +124,7 @@ const sendForm = async () => {
         await userStore.updateUser(routeId.value, newForm);
       } else {
         await userStore.updateEmployee(routeId.value, newForm);
-        if (image.value) {
-          const formData = new FormData();
-          formData.append("_method", "PUT");
-          formData.append("face_image", image.value);
-          await userStore.updateEmployeePhoto({ id: routeId.value, data: formData });
-        }
+        await saveFaceIdImage(routeId.value);
       }
     }
 
@@ -126,6 +136,58 @@ const sendForm = async () => {
       validationErrors.value = error.meta.validation_errors;
     }
   }
+};
+
+const form2 = reactive({
+  management_id: "",
+  food_factory_id: "",
+  base_id: "",
+  baseWarehouse_id: "",
+  kitchenWarehouse_id: "",
+});
+
+const changeWorkPlace = (id: number, type: WorkPlaceType) => {
+  form.work_place_id = id;
+  form.work_place_type = type;
+};
+
+const changeManagement = (id: AppSelectValueType) => {
+  if (typeof id !== "number") return;
+  changeWorkPlace(id, "management");
+  listStore.fetchFoodFactories(id);
+  clearManagement();
+};
+
+const clearManagement = () => {
+  form2.food_factory_id = "";
+  form2.base_id = "";
+  form2.baseWarehouse_id = "";
+  form2.kitchenWarehouse_id = "";
+};
+
+const changeFoodFactory = (id: AppSelectValueType) => {
+  if (typeof id !== "number") return;
+  changeWorkPlace(id, "foodFactory");
+  listStore.fetchBases(id);
+  clearFoodFactory();
+};
+
+const clearFoodFactory = () => {
+  form2.base_id = "";
+  form2.baseWarehouse_id = "";
+  form2.kitchenWarehouse_id = "";
+};
+
+const changeBase = (id: AppSelectValueType) => {
+  if (typeof id !== "number") return;
+  listStore.fetchBaseWarehouses(id);
+  listStore.fetchKitchenWarehouses(id);
+  clearBase();
+};
+
+const clearBase = () => {
+  form2.baseWarehouse_id = "";
+  form2.kitchenWarehouse_id = "";
 };
 
 
@@ -231,7 +293,9 @@ const setData = () => {
   if (userStore.activeUserPage) {
     form.value.position_id = "";
     form.value.management_id = "";
+    form.value.role_id = "";
   } else {
+    form.value.work_hours = "";
     form.value.dining_locations = {
       permanent: {
         kitchen_id: "",
@@ -281,12 +345,14 @@ onMounted(async () => {
   setBreadCrumbFn();
   await fetchUser();
   await settingsStore.GET_KITCHEN_WAREHOUSE();
-  await settingsStore.GET_ORGANIZATION();
+  // await settingsStore.GET_ORGANIZATION();
   if (userStore.activeUserPage) {
-    await positionStore.fetchPositions({getAll: 1});
+    await positionStore.fetchPositions({ getAll: 1 });
     await settingsStore.GET_REGIONAL({ per_page: 100 });
+    await roleStore.fetchRoles();
   } else {
     await settingsStore.fetchKitchenWarehouseList({ is_paid: 0 });
+    await settingsStore.GET_ORGANIZATION({ per_page: 100 });
   }
 });
 
@@ -294,17 +360,17 @@ onBeforeRouteLeave(() => {
   userStore.clearSearchUser();
 });
 
-const image = ref(null);
+const image = ref<AppMediaUploaderValueType>("");
 
 const workingHours = reactive([
   {
-    title: 12,
-    key: 12
+    title: 8,
+    key: 8,
   },
   {
-    title: 24,
-    key: 24
-  }
+    title: 12,
+    key: 12,
+  },
 ]);
 
 </script>
@@ -338,7 +404,7 @@ const workingHours = reactive([
       >
         <div
           class="w-full"
-          v-if="activeTab === 1"
+          v-show="activeTab === 1"
         >
           <!--          {{settingsStore.kitchenWarehouse.kitchen_warehouses}}-->
           <div class="py-[70px] bg-[#F8F9FC] px-[24px] relative mb-[90px]">
@@ -522,9 +588,14 @@ const workingHours = reactive([
                   class="mb-1"
                 />
                 <AppSelect
+                  v-model="form.role_id"
+                  :items="roleStore.roles"
+                  item-value="id"
+                  item-label="name"
                   label="Роли (необязательно)"
                   label-class="text-[#A8AAAE] text-xs font-medium"
                   class="mb-1"
+                  required
                 />
               </template>
               <template v-else-if="userStore.activeEmployeePage && form.dining_locations">
@@ -557,6 +628,7 @@ const workingHours = reactive([
                   label-class="text-[#A8AAAE] text-xs font-medium"
                   value-format="YYYY-MM-DD"
                   class="mb-1"
+                  required
                 />
                 <AppDatePicker
                   v-model="form.dining_locations.temporary.end_date"
@@ -564,26 +636,31 @@ const workingHours = reactive([
                   label-class="text-[#A8AAAE] text-xs font-medium"
                   value-format="YYYY-MM-DD"
                   class="mb-1"
+                  required
                 />
                 <AppSelect
                   v-model="form.organization_id"
+                  prop="organization_id"
                   label="Место работы"
                   item-value="id"
                   item-label="name"
-                  :items="settingsStore.organization.organizations"
+                  :items="settingsStore.organization?.organization ?? []"
                   label-class="text-[#A8AAAE] text-[12px] font-medium"
                   placeholder="Выберите"
                   class="mb-1"
                 />
 
                 <AppSelect
+                  v-model="form.work_hours"
+                  prop="work_hours"
                   label="График работы"
                   :items="workingHours"
-                  item-value="value"
+                  item-value="key"
                   item-label="title"
                   label-class="text-[#A8AAAE] text-[12px] font-medium"
                   placeholder="Выберите"
                   class="mb-1"
+                  required
                 />
               </template>
             </div>
@@ -601,17 +678,13 @@ const workingHours = reactive([
             />
           </AppForm>
         </div>
-
-        <template v-else>
-          <!--          {{ image }}-->
-          <AppMediaUploader
-            class="m-6 w-full"
-            :height="450"
-            v-model="image"
-          />
-
-
-        </template>
+        <AppMediaUploader
+          v-show="activeTab === 2"
+          v-model="image"
+          :value="data?.face_image_link ?? data?.avatar_link ?? ''"
+          class="m-6 w-full"
+          :height="450"
+        />
       </TransitionGroup>
     </AppOverlay>
 

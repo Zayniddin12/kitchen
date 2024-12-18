@@ -10,6 +10,7 @@ import AppOverlay from "@/components/ui/app-overlay/AppOverlay.vue";
 import Avatar from "@/assets/images/avatar.png";
 import { formatDate2, phoneFormatter } from "@/utils/helper";
 import { useCommonStore } from "@/stores/common.store";
+import AppEmpty from "@/components/ui/app-empty/AppEmpty.vue";
 
 interface Tabs {
   title: string;
@@ -39,6 +40,8 @@ const gender = computed(() => {
 const routeId = computed(() => {
   return parseInt(route.params.id as string);
 });
+
+const faceIdImage = computed(() => data.value?.face_image_link ?? data.value?.avatar_link);
 
 const tabs = ref<Tabs[]>([
   {
@@ -142,7 +145,7 @@ onMounted(() => {
         <div class="top-[32px] absolute flex items-center">
           <div class="rounded-full overflow-hidden border-4 border-gray-100">
             <img
-              :src="data?.avatar ?? gender?.photo ?? Avatar"
+              :src="data?.avatar_link ?? gender?.photo ?? Avatar"
               alt="Profile Picture"
               class="object-cover size-40 rounded-full"
             >
@@ -157,62 +160,76 @@ onMounted(() => {
       <div class="px-[24px] mt-[90px]">
         <div class="bg-gray-50 p-6 rounded-[16px]">
           <h3 class="text-gray-500 mb-4">Основная информация</h3>
-          <div class="grid grid-cols-2 gap-8">
+          <div class="grid grid-cols-2 gap-x-8 gap-y-4 text-sm">
             <!-- Left Column -->
             <div>
-              <div class="mb-4">
-                <span class="text-blue-500">Дата рождения:</span>
-                <p>{{ data?.birthday ? formatDate2(new Date(data.birthday)) : "—" }}</p>
-              </div>
-              <div class="mb-4">
-                <span class="text-blue-500">Пол:</span>
-                <p>{{ gender?.name ?? "—" }}</p>
-              </div>
-              <div class="mb-4">
-                <span class="text-blue-500">Кем выдан:</span>
-                <p>{{ data?.pass_given_by ?? "—" }}</p>
-              </div>
-              <div class="mb-4">
-                <span class="text-blue-500">Срок действия:</span>
-                <p>{{ data?.pass_valid_until ?? "—" }}</p>
-              </div>
-              <div class="mb-4">
-                <span class="text-blue-500">Номер телефона:</span>
-                <p>{{ data?.phone ? phoneFormatter(data.phone) : "—" }}</p>
-              </div>
-              <div class="mb-4">
+              <span class="text-blue-500">Дата рождения:</span>
+              <p>{{ data?.birthday ? formatDate2(new Date(data.birthday)) : "—" }}</p>
+            </div>
+            <div>
+              <span class="text-blue-500">Национальность:</span>
+              <p>{{ data?.nationality || "—" }}</p>
+            </div>
+            <div>
+              <span class="text-blue-500">Пол:</span>
+              <p>{{ gender?.name ?? "—" }}</p>
+            </div>
+            <div>
+              <span class="text-blue-500">Серия и номер паспорта:</span>
+              <p>{{ data?.pass_number || "—" }}</p>
+            </div>
+            <div>
+              <span class="text-blue-500">Кем выдан:</span>
+              <p>{{ data?.pass_given_by ?? "—" }}</p>
+            </div>
+            <div>
+              <span class="text-blue-500">Дата выпуска:</span>
+              <p>{{ data?.pass_given_at || "—" }}</p>
+            </div>
+            <div>
+              <span class="text-blue-500">Срок действия:</span>
+              <p>{{ data?.pass_valid_until ?? "—" }}</p>
+            </div>
+            <div>
+              <span class="text-blue-500">ПИНФЛ:</span>
+              <p>{{ data?.pinfl || "—" }}</p>
+            </div>
+            <div>
+              <span class="text-blue-500">Номер телефона:</span>
+              <p>{{ data?.phone ? phoneFormatter(data.phone) : "—" }}</p>
+            </div>
+            <template v-if="usersStore.activeUserPage">
+              <div>
                 <span class="text-blue-500">OneID:</span>
                 <p>{{ data?.is_oneid_enabled ? "Есть" : "—" }}</p>
               </div>
-              <div class="mb-4">
-                <span class="text-blue-500">Роли:</span>
-                <p>{{ data?.responsible_name || "—" }}</p>
-              </div>
-            </div>
-
-            <!-- Right Column -->
-            <div>
-              <div class="mb-4">
-                <span class="text-blue-500">Национальность:</span>
-                <p>{{ data?.nationality || "—" }}</p>
-              </div>
-              <div class="mb-4">
-                <span class="text-blue-500">Серия и номер паспорта:</span>
-                <p>{{ data?.pass_number || "—" }}</p>
-              </div>
-              <div class="mb-4">
-                <span class="text-blue-500">Дата выпуска:</span>
-                <p>{{ data?.pass_given_at || "—" }}</p>
-              </div>
-              <div class="mb-4">
-                <span class="text-blue-500">ПИНФЛ:</span>
-                <p>{{ data?.pinfl || "—" }}</p>
-              </div>
-              <div class="mb-4">
+              <div>
                 <span class="text-blue-500">Должность в системе:</span>
                 <p>{{ data?.position || "—" }}</p>
               </div>
-            </div>
+              <div>
+                <span class="text-blue-500">Роли:</span>
+                <p>{{ data?.responsible_name || "—" }}</p>
+              </div>
+            </template>
+            <template v-else>
+              <div>
+                <span class="text-blue-500">
+                  График работы:
+                </span>
+                <p>
+                  —
+                </p>
+              </div>
+              <div>
+                <span class="text-blue-500">
+                  Место работы:
+                </span>
+                <p>
+                  —
+                </p>
+              </div>
+            </template>
           </div>
         </div>
 
@@ -247,18 +264,20 @@ onMounted(() => {
       <!--        Изменить фото-->
       <!--      </button>-->
       <img
-        src="@/assets/images/bigMan.png"
-        class="w-full h-[550px] object-contain rounded-lg"
-        alt="bigMan"
+        v-if="faceIdImage"
+        :src="faceIdImage"
+        class="w-full h-[550px] object-contain rounded-[24px]"
+        :alt="usersStore.employeeFullName ?? 'face id image'"
+      />
+      <AppEmpty
+        class="!min-h-[50vh]"
+        v-else
       />
     </AppOverlay>
   </div>
 </template>
 
-<style
-  scoped
-  lang="scss"
->
+<style lang="scss">
 .edit__btn {
   @apply bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 z-50;
 }

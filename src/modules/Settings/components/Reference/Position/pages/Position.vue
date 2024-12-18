@@ -44,7 +44,7 @@ const setBreadCrumbFn = () => {
       to: { name: "position-list" },
     },
     {
-      label: "method.add",
+      label: "common.view",
       isActionable: true,
       isTranslate: true,
     },

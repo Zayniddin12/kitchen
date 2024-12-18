@@ -8,7 +8,7 @@ export const useListStore = defineStore("listStore", () => {
   const foodFactoriesLoading = ref(false);
   const foodFactories = ref<ListType>([]);
 
-  const fetchFoodFactories = async (id: number) => {
+    const fetchFoodFactories = async (id: number) => {
     foodFactoriesLoading.value = true;
 
     try {
