@@ -6,26 +6,15 @@ import {
   AppMediaUploaderPropsType,
   AppMediaUploaderValueType,
 } from "@/components/ui/form/app-media-uploader/app-media-uploader.type";
-import { computed, onMounted, ref, useTemplateRef, watch } from "vue";
+import { computed, ref, useTemplateRef, watch } from "vue";
 import { generateRandomID } from "@/utils/helper";
 import UploadIcon from "@/assets/images/icons/upload.svg";
 import { useI18n } from "vue-i18n";
-import { useUsersStore } from "@/modules/Users/users.store";
-import { useRoute } from "vue-router";
 
-const route = useRoute();
 const id = generateRandomID();
-const userStore = useUsersStore();
+
 const model = defineModel<AppMediaUploaderValueType>({
   default: "",
-});
-
-const activeUserCreatePage = computed(() => {
-  return route.meta.type === "create";
-});
-
-const data = computed(() => {
-  return activeUserCreatePage.value ? userStore.searchUser : userStore.user;
 });
 
 const props = withDefaults(defineProps<AppMediaUploaderPropsType>(), {
@@ -56,20 +45,20 @@ const uploadImage = async (event: Event) => {
   const file: File = target.files[0];
 
   fileType.value = file.type.split("/")[0];
-
-  await readImage(file);
   model.value = file;
 };
 
-const readImage = async (file: File) => {
-  if (file instanceof File) {
+const readImage = async () => {
+  if (!model.value) return;
+
+  if (model.value instanceof File) {
     const reader = new FileReader();
 
     mediaFile.value = await new Promise<string | ArrayBuffer | null>(
       (resolve, reject) => {
         reader.onload = () => resolve(reader.result);
         reader.onerror = () => reject(reader.error);
-        reader.readAsDataURL(file);
+        reader.readAsDataURL(model.value as File);
       },
     );
   }
@@ -84,23 +73,19 @@ const clear = () => {
   emit("clear");
 };
 
-onMounted(() => {
-  setTimeout(() => {
-    mediaFile.value = data.value && data.value.face_image_link ? data.value.face_image_link : data.value.avatar_link;
-  },500);
-});
-
 watch(
   () => props.value,
   newValue => {
-    if (newValue && typeof newValue === "string") {
+    if (newValue && !model.value) {
       mediaFile.value = newValue;
     }
   },
   { immediate: true },
 );
 
-const setDefaultImage = (event) => {
+watch(model, readImage, {immediate: true});
+
+const setDefaultImage = (event: any) => {
   event.target.src = "https://www.landuse-ca.org/wp-content/uploads/2019/04/no-photo-available.png";
 };
 </script>

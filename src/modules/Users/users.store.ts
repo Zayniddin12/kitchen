@@ -197,10 +197,10 @@ export const useUsersStore = defineStore("usersStore", () => {
         removeSessionItem(searchUserStorageKey);
     };
 
-    const fetchSearchUser = async (url: UserApiUrlType, data: SearchUserDataType) => {
+    const fetchSearchUser = async (data: SearchUserDataType) => {
         searchUserLoading.value = true;
         try {
-            const response = await employeeApi.fetchSearchUser(data);
+            const response = await (activeUserPage ? userApi.fetchSearchUser(data) : employeeApi.fetchSearchUser(data));
             setSearchUser(response);
         } finally {
             searchUserLoading.value = false;

@@ -1,6 +1,6 @@
 <script
-    setup
-    lang="ts"
+  setup
+  lang="ts"
 >
 
 import { RouteRecordRaw, useRoute, useRouter } from "vue-router";
@@ -28,7 +28,7 @@ const commonStore = useCommonStore();
 const form = reactive<UsersParamsType>({
   page: null,
   search: "",
-  status: ""
+  status: "",
 });
 
 const v$ = ref<ValidationType | null>(null);
@@ -44,16 +44,16 @@ const statuses = computed<StatusTabType[]>(() => {
   return [
     {
       name: "Все",
-      value: ""
+      value: "",
     },
     {
       name: "Кадровый резерв",
-      value: "inactive"
+      value: "inactive",
     },
     {
       name: "Сотрудники",
-      value: "active"
-    }
+      value: "active",
+    },
   ];
 });
 
@@ -121,12 +121,12 @@ const setBreadCrumbFn = () => {
   setBreadCrumb([
     {
       label: "Кадры",
-      isActionable: false
+      isActionable: false,
     },
     {
       label: String(route.meta.title ?? ""),
-      isActionable: true
-    }
+      isActionable: true,
+    },
   ]);
 };
 
@@ -151,20 +151,20 @@ watch(() => route.name, () => {
     <div class="flex items-end justify-between">
       <div class="flex flex-col gap-y-6">
         <h1
-            v-if="route.meta?.title"
-            class="font-semibold text-[32px]"
+          v-if="route.meta?.title"
+          class="font-semibold text-[32px]"
         >
           {{ route.meta.title }}
         </h1>
         <div
-            v-if="route.meta?.hasTabs"
-            class="app-tabs"
+          v-if="route.meta?.hasTabs"
+          class="app-tabs"
         >
           <RouterLink
-              v-for="tab in statuses"
-              :key="tab.value"
-              :to="{query: statusTabUrl(tab.value)}"
-              :class="[
+            v-for="tab in statuses"
+            :key="tab.value"
+            :to="{query: statusTabUrl(tab.value)}"
+            :class="[
               'app-tab',
               { 'app-tab--active': form.status === tab.value },
             ]"
@@ -175,64 +175,64 @@ watch(() => route.name, () => {
       </div>
       <div class="flex items-start gap-x-4 -mb-4">
         <AppForm
-            :value="form"
-            :validation-errors
-            @validation="(value) => v$ = value"
+          :value="form"
+          :validation-errors
+          @validation="(value) => v$ = value"
         >
           <AppInput
-              v-model="form.search"
-              prop="search"
-              size="large"
-              class="h-[47px] w-[300px]"
-              placeholder="Поиск"
-              :prefix-icon="Search"
-              :min="3"
+            v-model="form.search"
+            prop="search"
+            size="large"
+            class="h-[47px] w-[300px]"
+            placeholder="Поиск"
+            :prefix-icon="Search"
+            :min="3"
           />
         </AppForm>
         <RouterLink
-            :to="{name: `${route.name as string}-fetch`}"
-            class="custom-apply-btn h-[47px]"
+          :to="{name: `${route.name as string}-fetch`}"
+          class="custom-apply-btn h-[47px]"
         >
           <img
-              src="@/assets/images/icons/plus.svg"
-              alt="add"
+            src="@/assets/images/icons/plus.svg"
+            alt="add"
           />
           Добавить
         </RouterLink>
       </div>
     </div>
     <ElTable
-        v-loading="loading"
-        :data="data?.users ?? []"
-        class="custom-element-table mt-6"
-        stripe
-        highlight-current-row
-        @current-change="tableCurrentChange"
+      v-loading="loading"
+      :data="data?.users ?? []"
+      class="custom-element-table mt-6"
+      stripe
+      highlight-current-row
+      @current-change="tableCurrentChange"
     >
       <ElTableColumn
-          prop="idx"
-          label="№"
-          width="80"
+        prop="idx"
+        label="№"
+        width="80"
       >
         <template #default="{$index}">
           {{ setTableColumnIndex($index, form.page as number, data?.pagination.per_page ?? 0) }}
         </template>
       </ElTableColumn>
       <ElTableColumn
-          label="Фамилия И.О."
-          prop="full_name"
-          sortable
+        label="Фамилия И.О."
+        prop="full_name"
+        sortable
       >
         <template #default="{row}:{row:UserType}">
           <div
-              v-if="row.avatar || row.firstname || row.lastname"
-              class="flex items-center gap-x-3"
+            v-if="row.avatar || row.firstname || row.lastname"
+            class="flex items-center gap-x-3"
           >
             <img
-                v-if="row.avatar"
-                :src="row.avatar"
-                :alt="userStore.getUserFullName(row)"
-                class="size-[32px] rounded-full"
+              v-if="row.avatar"
+              :src="row.avatar"
+              :alt="userStore.getUserFullName(row)"
+              class="rounded-full object-contain size-8"
             />
             <span class="text-[#4F5662] text-sm">
               {{ userStore.getUserFullName(row) }}
@@ -245,26 +245,26 @@ watch(() => route.name, () => {
       </ElTableColumn>
       <template v-if="userStore.activeUserPage">
         <ElTableColumn
-            label="Должность"
-            prop="position"
-            sortable
+          label="Должность"
+          prop="position"
+          sortable
         >
           <template #default="{row}:{row:UserType}">
             {{ row.position || "—" }}
           </template>
         </ElTableColumn>
         <ElTableColumn
-            label="Телефон"
-            prop="phone"
-            sortable
+          label="Телефон"
+          prop="phone"
+          sortable
         >
           <template #default="{row}:{row:UserType}">
             {{ row.phone ? phoneFormatter(row.phone) : "—" }}
           </template>
         </ElTableColumn>
         <ElTableColumn
-            label="OneID"
-            prop="is_oneid_enabled"
+          label="OneID"
+          prop="is_oneid_enabled"
         >
           <template #default="{row}:{row:UserType}">
             {{ row.is_oneid_enabled ? "Есть" : "—" }}
@@ -273,18 +273,18 @@ watch(() => route.name, () => {
       </template>
       <template v-else>
         <ElTableColumn
-            label="Место работы"
-            prop="work_place"
-            sortable
+          label="Место работы"
+          prop="work_place"
+          sortable
         >
           <template #default="{row}:{row:UserType}">
             {{ row.work_place || "—" }}
           </template>
         </ElTableColumn>
         <ElTableColumn
-            label="График работы"
-            prop="work_hours"
-            sortable
+          label="График работы"
+          prop="work_hours"
+          sortable
         >
           <template #default="{row}:{row:UserType}">
             {{ row.work_hours ? `${row.work_hours} часов` : "—" }}
@@ -292,12 +292,12 @@ watch(() => route.name, () => {
         </ElTableColumn>
       </template>
       <ElTableColumn
-          label="Статус"
-          prop="status"
+        label="Статус"
+        prop="status"
       >
         <template #default="{row}:{row:UserType}">
           <div
-              :class="['py-2 px-4 rounded-full text-center text-sm font-medium inline-flex items-center justify-center w-[125px] min-h-10',row.status === 'active' ? 'text-[#22A95E] bg-[#D4F4E2]' : 'text-[#8F9194] bg-[#EEEEEF]']"
+            :class="['py-2 px-4 rounded-full text-center text-sm font-medium inline-flex items-center justify-center w-[125px] min-h-10',row.status === 'active' ? 'text-[#22A95E] bg-[#D4F4E2]' : 'text-[#8F9194] bg-[#EEEEEF]']"
           >
             {{ row.status === "active" ? "Активный" : "Неактивный" }}
           </div>
@@ -305,24 +305,27 @@ watch(() => route.name, () => {
       </ElTableColumn>
       <ElTableColumn label="Действие">
         <template #default="{row}:{row:UserType}">
-          <div class="inline-flex items-center">
+          <div
+            @click.stop
+            class="inline-flex items-center"
+          >
             <RouterLink
-                class="action-btn mr-2"
-                :to="{name: `${route.name as string}-id`, params: {id: row.id}}"
+              class="action-btn mr-2"
+              :to="{name: `${route.name as string}-id`, params: {id: row.id}}"
             >
               <img
-                  src="@/assets/images/eye.svg"
-                  alt="eye"
+                src="@/assets/images/eye.svg"
+                alt="eye"
               />
             </RouterLink>
 
             <RouterLink
-                class="action-btn"
-                :to="{name: `${route.name as string}-edit`, params: {id: row.id}}"
+              class="action-btn"
+              :to="{name: `${route.name as string}-edit`, params: {id: row.id}}"
             >
               <img
-                  src="@/assets/images/icons/edit.svg"
-                  alt="eye"
+                src="@/assets/images/icons/edit.svg"
+                alt="eye"
               />
             </RouterLink>
           </div>
@@ -330,15 +333,11 @@ watch(() => route.name, () => {
       </ElTableColumn>
     </ElTable>
     <AppPagination
-        v-if="data"
-        v-model="form.page"
-        :pagination="data.pagination"
-        @currentChange="changePage"
-        class="mt-6"
+      v-if="data"
+      v-model="form.page"
+      :pagination="data.pagination"
+      @currentChange="changePage"
+      class="mt-6"
     />
   </div>
 </template>
-
-<style lang="scss">
-
-</style>
