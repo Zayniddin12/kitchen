@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, reactive, ref, watch } from "vue";
-import { filterObjectValues, formatNumber } from "@/utils/helper";
-import AppEmpty from "@/components/ui/app-empty/AppEmpty.vue";
+import { formatNumber } from "@/utils/helper";
 import useConfirm from "@/components/ui/app-confirm/useConfirm";
 import HeaderUser from "@/components/layouts/header-user/HeaderUser.vue";
 import { useAuthStore } from "@/modules/Auth/auth.store";
@@ -235,21 +234,41 @@ const clearBasket = () => {
     orders.clear();
   });
 };
+
+const currentDate = computed(() => {
+  const today = new Date();
+
+  const day = String(today.getDate()).padStart(2, "0");
+  const month = String(today.getMonth() + 1).padStart(2, "0"); // Months are 0-based
+  const year = today.getFullYear();
+
+  return `${day}.${month}.${year}`;
+});
+
+let receiptIndex = ref(0); // Initialize the counter
+
+function generateReceiptIndex() {
+  receiptIndex.value += 1; // Increment the counter
+  return receiptIndex.value;
+}
+
 </script>
 
 <template>
   <div>
 
-    <div class="text-left receipt w-[330px]">
+    <div class="text-left receipt">
       <p class="text-center">***Добро пожаловать!***</p>
 
       <div class="flex items-center flex-col my-[15px] justify-center">
         <img src="@/assets/images/logo.svg" alt="#" />
         <p class="text-center">NKMK JAMGARMASI</p>
       </div>
+      <div class="my-2 flex items-center justify-between">
+        <span>Қайси ошхона:</span>
+        <span>NKMK JAMGARMASI Yotxona OSHXONASI</span>
+      </div>
 
-      <!--      <p class="my-2">Қайси ошхона: Yotxona oshxonasi</p>-->
-      <p class="my-2">NKMK JAMGARMASI Yotxona OSHXONASI</p>
       <div class="my-2 flex items-center justify-between">
         <span>KASSIR:</span>
         <span>Begzod Rafiqov</span>
@@ -257,13 +276,31 @@ const clearBasket = () => {
 
       <span class="block border-[1px] border-dashed border-[#000]"></span>
 
-      <div class="my-2 flex items-center justify-between">
+      <div class="my-2 ">
         <span>Олинган махсулотлар рўйхати</span>
+        <table style="width: 100%;">
+          <thead>
+          <tr>
+            <th style="text-align: left;">Наименование</th>
+            <th style="text-align: right;">К-во</th>
+            <th style="text-align: right;">Сумма</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr v-for="item in selectedProducts" :key="item.name">
+            <td>{{ item.name }}</td>
+            <td style="text-align: right;">{{ orders.get(item.id) }}</td>
+            <td style="text-align: right;">{{ (item.price * Number(orders.get(item.id))).toLocaleString() }}</td>
+          </tr>
+          </tbody>
+        </table>
       </div>
-      <div class="my-2 flex items-center justify-between">
-        <span>Нархи:</span>
-        <span>34 000 UZS</span>
-      </div>
+
+      <!--      <div class="my-2 flex items-center justify-between">-->
+      <!--        <span>Нархи:</span>-->
+      <!--        <span>34 000 UZS</span>-->
+      <!--      </div>-->
+
       <div class="my-2 my-2 flex items-center justify-between">
         <span>QQS: НДС суммаси</span>
         <span>10%</span>
@@ -274,7 +311,7 @@ const clearBasket = () => {
       <h6 class="mt-[10px]">JAMI:</h6>
       <div class="my-2 flex items-center justify-between">
         <span>Умумий сумма:</span>
-        <span>120 000 UZS</span>
+        <span>{{ formatNumber(ordersSum) }} UZS</span>
       </div>
       <div class="my-2 flex items-center justify-between">
         <span>Умумий НДС:</span>
@@ -285,9 +322,9 @@ const clearBasket = () => {
 
       <div class="my-2 flex items-center justify-between">
         <span>Тўлов санаси вақти</span>
-        <span>17.12.2024</span>
+        <span>{{ currentDate }}</span>
       </div>
-      <div class="my-2 flex items-center justify-between">Chek Nº: чек номер (системада кетма-кетликда берилади)</div>
+      <div class="my-2 flex items-center justify-between">Chek Nº: чек номер {{ generateReceiptIndex() }}</div>
 
 
       <p class="text-center my-[20px]"> *Приходите снова!*</p>
