@@ -14,6 +14,8 @@ const products = ref([
     id: 1,
     name: "Глазунья",
     price: 24000,
+    qqs: "10",
+    qqs_sum: 1000,
     unit_name: "200 гр",
     img: "/meal.png",
   },
@@ -21,6 +23,8 @@ const products = ref([
     id: 2,
     name: "Колбаса жареная",
     price: 24000,
+    qqs: "10",
+    qqs_sum: 1000,
     unit_name: "200 гр",
     img: "/meal2.png",
   },
@@ -28,6 +32,8 @@ const products = ref([
     id: 3,
     name: "Рисовая каша",
     price: 24000,
+    qqs: "10",
+    qqs_sum: 1000,
     unit_name: "200 гр",
     img: "/meal3.png",
   },
@@ -35,6 +41,8 @@ const products = ref([
     id: 4,
     name: "Каша Геркулес",
     price: 24000,
+    qqs: "10",
+    qqs_sum: 1000,
     unit_name: "200 гр",
     img: "/meal4.png",
   },
@@ -42,6 +50,8 @@ const products = ref([
     id: 5,
     name: "Гренки из серого хлеба",
     price: 24000,
+    qqs: "10",
+    qqs_sum: 1000,
     unit_name: "200 гр",
     img: "/meal5.png",
   },
@@ -49,6 +59,8 @@ const products = ref([
     id: 6,
     name: "Каша манная",
     price: 24000,
+    qqs: "10",
+    qqs_sum: 1000,
     unit_name: "200 гр",
     img: "/meal6.png",
   },
@@ -56,6 +68,8 @@ const products = ref([
     id: 7,
     name: "Сырники с каймаком",
     price: 24000,
+    qqs: "10",
+    qqs_sum: 1000,
     unit_name: "200 гр",
     img: "/meal7.png",
   },
@@ -63,6 +77,8 @@ const products = ref([
     id: 8,
     name: "Блинчик с мясом",
     price: 24000,
+    qqs: "10",
+    qqs_sum: 1000,
     unit_name: "200 гр",
     img: "/meal8.png",
   },
@@ -70,6 +86,8 @@ const products = ref([
     id: 9,
     name: "Coca Cola",
     price: 24000,
+    qqs: "10",
+    qqs_sum: 1000,
     unit_name: "1.5 литр",
     img: "/cola.png",
   },
@@ -122,6 +140,20 @@ const selectedProducts = computed(() => {
   });
 
   return selected;
+});
+
+const ordersQQS = computed(() => {
+  let totalSum = 0;
+
+  orders.forEach((quantity, product_id) => {
+    selectedProducts.value.forEach(product => {
+      if (product.id === product_id) {
+        totalSum += product.qqs_sum * quantity;
+      }
+    });
+  });
+
+  return totalSum;
 });
 
 const ordersSum = computed(() => {
@@ -236,13 +268,17 @@ const clearBasket = () => {
 };
 
 const currentDate = computed(() => {
-  const today = new Date();
+  const now = new Date();
 
-  const day = String(today.getDate()).padStart(2, "0");
-  const month = String(today.getMonth() + 1).padStart(2, "0"); // Months are 0-based
-  const year = today.getFullYear();
+  const day = String(now.getDate()).padStart(2, "0");
+  const month = String(now.getMonth() + 1).padStart(2, "0"); // Months are 0-based
+  const year = now.getFullYear();
 
-  return `${day}.${month}.${year}`;
+  const hours = String(now.getHours()).padStart(2, "0");
+  const minutes = String(now.getMinutes()).padStart(2, "0");
+  const seconds = String(now.getSeconds()).padStart(2, "0");
+
+  return `${day}.${month}.${year} ${hours}:${minutes}:${seconds}`;
 });
 
 let receiptIndex = ref(0); // Initialize the counter
@@ -265,69 +301,62 @@ const generateReceiptIndex = computed(() => {
         <p class="text-center">NKMK JAMGARMASI</p>
       </div>
       <div class="my-2 flex items-center justify-between">
-        <span>Қайси ошхона:</span>
-        <span>NKMK JAMGARMASI Yotxona OSHXONASI</span>
+        <!--        <span>Қайси ошхона:</span>-->
+        <span class="text-sm">NKMK JAMGARMASI OSHXONASI</span>
       </div>
 
       <div class="my-2 flex items-center justify-between">
-        <span>KASSIR:</span>
-        <span>Begzod Rafiqov</span>
+        <span class="text-sm">KASSIR:</span>
+        <span class="text-sm">Begzod Rafiqov</span>
       </div>
 
       <span class="block border-[1px] border-dashed border-[#000]"></span>
 
       <div class="my-2 ">
-        <span>Олинган махсулотлар рўйхати</span>
+        <!--        <span>Олинган махсулотлар рўйхати</span>-->
         <table style="width: 100%;">
           <thead>
           <tr>
-            <th style="text-align: left;">Наименование</th>
-            <th style="text-align: right;">К-во</th>
-            <th style="text-align: right;">Сумма</th>
+            <th style="text-align: left; font-size: 14px; font-weight: normal">Nomi</th>
+            <th style="text-align: left; font-size: 14px; font-weight: normal">QQS</th>
+            <th style="text-align: right; font-size: 14px; font-weight: normal">Soni</th>
+            <th style="text-align: right; font-size: 14px; font-weight: normal">Summa</th>
           </tr>
           </thead>
           <tbody>
           <tr v-for="item in selectedProducts" :key="item.name">
-            <td>{{ item.name }}</td>
-            <td style="text-align: right;">{{ orders.get(item.id) }}</td>
-            <td style="text-align: right;">{{ (item.price * Number(orders.get(item.id))).toLocaleString() }}</td>
+            <td><small>{{ item.name && item.name }}</small></td>
+            <td><small>{{ item.qqs && item.qqs }}%</small></td>
+            <td style="text-align: right;"><small>{{ orders.get(item.id) }}</small></td>
+            <td style="text-align: right;"><small>{{ (item.price * Number(orders.get(item.id))).toLocaleString()
+              }}</small></td>
           </tr>
           </tbody>
         </table>
       </div>
 
-      <!--      <div class="my-2 flex items-center justify-between">-->
-      <!--        <span>Нархи:</span>-->
-      <!--        <span>34 000 UZS</span>-->
-      <!--      </div>-->
-
-      <div class="my-2 my-2 flex items-center justify-between">
-        <span>QQS: НДС суммаси</span>
-        <span>10%</span>
-      </div>
-
       <span class="block border-[1px] border-dashed border-[#000]"></span>
 
-      <h6 class="mt-[10px]">JAMI:</h6>
+      <h6 class="mt-[10px] text-sm">JAMI:</h6>
       <div class="my-2 flex items-center justify-between">
-        <span>Умумий сумма:</span>
-        <span>{{ formatNumber(ordersSum) }} UZS</span>
+        <span class="text-sm">Umumiy summa:</span>
+        <span class="text-sm">{{ formatNumber(ordersSum) }} UZS</span>
       </div>
       <div class="my-2 flex items-center justify-between">
-        <span>Умумий НДС:</span>
-        <span>10%</span>
+        <span class="text-sm">Umumiy QQS:</span>
+        <span class="text-sm">{{ formatNumber(ordersQQS) }} UZS</span>
       </div>
 
       <span class="block border-[1px] border-dashed border-[#000]"></span>
 
       <div class="my-2 flex items-center justify-between">
-        <span>Тўлов санаси вақти</span>
-        <span>{{ currentDate }}</span>
+        <span class="text-sm">To'lov sanasi:</span>
+        <span class="text-sm">{{ currentDate }}</span>
       </div>
-      <div class="my-2 flex items-center justify-between">Chek Nº: чек номер {{ generateReceiptIndex }}</div>
+      <div class="my-2 flex items-center justify-between text-sm">Chek Nº: {{ generateReceiptIndex }}</div>
 
 
-      <p class="text-center my-[20px]"> *Приходите снова!*</p>
+      <p class="text-center my-[20px]">***Приходите снова!***</p>
     </div>
 
     <div class="bg-[#F8F9FC] flex gap-1 select-none no-receipt">
@@ -628,7 +657,7 @@ const generateReceiptIndex = computed(() => {
 
 
   .receipt {
-    margin: 20px;
+    margin: 10px;
     display: block;
   }
 
