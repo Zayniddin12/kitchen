@@ -317,18 +317,18 @@ const generateReceiptIndex = computed(() => {
         <table style="width: 100%;">
           <thead>
           <tr>
-            <th style="text-align: left; font-size: 14px; font-weight: normal">Nomi</th>
-            <th style="text-align: left; font-size: 14px; font-weight: normal">QQS</th>
-            <th style="text-align: right; font-size: 14px; font-weight: normal">Soni</th>
-            <th style="text-align: right; font-size: 14px; font-weight: normal">Summa</th>
+            <th style="text-align: left; font-size: 12px; font-weight: normal; text-wrap: nowrap">Nomi</th>
+            <th style="text-align: left; font-size: 12px; font-weight: normal; text-wrap: nowrap">QQS</th>
+            <th style="text-align: right; font-size: 12px; font-weight: normal; text-wrap: nowrap">Soni</th>
+            <th style="text-align: right; font-size: 12px; font-weight: normal; text-wrap: nowrap">Summa</th>
           </tr>
           </thead>
           <tbody>
           <tr v-for="item in selectedProducts" :key="item.name">
-            <td><small>{{ item.name && item.name }}</small></td>
-            <td><small>{{ item.qqs && item.qqs }}%</small></td>
-            <td style="text-align: right;"><small>{{ orders.get(item.id) }}</small></td>
-            <td style="text-align: right;"><small>{{ (item.price * Number(orders.get(item.id))).toLocaleString()
+            <td><small class="text-xs">{{ item.name && item.name }}</small></td>
+            <td><small class="text-xs">{{ item.qqs && item.qqs }}%</small></td>
+            <td style="text-align: right;"><small class="text-xs">{{ orders.get(item.id) }}</small></td>
+            <td style="text-align: right;"><small class="text-xs">{{ (item.price * Number(orders.get(item.id))).toLocaleString()
               }}</small></td>
           </tr>
           </tbody>
@@ -337,23 +337,23 @@ const generateReceiptIndex = computed(() => {
 
       <span class="block border-[1px] border-dashed border-[#000]"></span>
 
-      <h6 class="mt-[10px] text-sm">JAMI:</h6>
+      <h6 class="mt-[10px] text-xs">JAMI:</h6>
       <div class="my-2 flex items-center justify-between">
-        <span class="text-sm">Umumiy summa:</span>
-        <span class="text-sm">{{ formatNumber(ordersSum) }} UZS</span>
+        <span class="text-xs">Umumiy summa:</span>
+        <span class="text-xs">{{ formatNumber(ordersSum) }} UZS</span>
       </div>
       <div class="my-2 flex items-center justify-between">
-        <span class="text-sm">Umumiy QQS:</span>
-        <span class="text-sm">{{ formatNumber(ordersQQS) }} UZS</span>
+        <span class="text-xs">Umumiy QQS:</span>
+        <span class="text-xs">{{ formatNumber(ordersQQS) }} UZS</span>
       </div>
 
       <span class="block border-[1px] border-dashed border-[#000]"></span>
 
       <div class="my-2 flex items-center justify-between">
-        <span class="text-sm">To'lov sanasi:</span>
-        <span class="text-sm">{{ currentDate }}</span>
+        <span class="text-xs">To'lov sanasi:</span>
+        <span class="text-xs">{{ currentDate }}</span>
       </div>
-      <div class="my-2 flex items-center justify-between text-sm">Chek Nº: {{ generateReceiptIndex }}</div>
+      <div class="my-2 flex items-center justify-between text-xs">Chek Nº: {{ generateReceiptIndex }}</div>
 
 
       <p class="text-center my-[20px]">***Приходите снова!***</p>
