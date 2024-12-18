@@ -114,6 +114,11 @@ const setData = async () => {
   form.status = getStatus(positionStore.position.status);
 };
 
+const deletePosition = async () => {
+  await positionStore.deletePosition(routeId.value);
+  router.push({ name: "position-list" });
+}
+
 const sendForm = async () => {
   if (!v$.value) return;
 
@@ -329,7 +334,7 @@ onMounted(() => {
           class="custom-danger-btn"
           size="large"
           type="danger"
-          @click="positionStore.deletePosition(routeId)"
+          @click="deletePosition"
         >
           {{ t("method.delete") }}
         </ElButton>

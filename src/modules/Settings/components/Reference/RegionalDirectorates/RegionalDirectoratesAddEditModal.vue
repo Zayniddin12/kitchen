@@ -17,7 +17,6 @@ interface Name {
 
 interface DataValue {
   name: Name,
-  responsible_position: string | number,
   status: boolean | string
 }
 
@@ -66,7 +65,6 @@ const dataValue = ref<DataValue>({
     ru: '',
     uz: ''
   },
-  responsible_position: '',
   status: 'active'
 })
 const loading = ref<boolean>(false)
@@ -126,7 +124,6 @@ const handleSubmit = async () => {
           data: {
             name: payload.name,
             status: payload.status,
-            responsible_position: payload.responsible_position,
           },
         })
       } else {
@@ -205,7 +202,6 @@ watch(() => route.name, () => {
 
             <div class="flex items-center gap-4">
               <app-input
-                  v-model="dataValue.responsible_position"
                   label="Подчинение"
                   placeholder="Начальник управления"
                   label-class="text-[#A8AAAE] font-medium text-[12px]"

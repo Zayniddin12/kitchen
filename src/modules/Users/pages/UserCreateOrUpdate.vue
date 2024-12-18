@@ -347,14 +347,13 @@ onMounted(async () => {
   setBreadCrumbFn();
   await fetchUser();
   await settingsStore.GET_KITCHEN_WAREHOUSE();
-  // await settingsStore.GET_ORGANIZATION();
+  await settingsStore.GET_ORGANIZATION({ per_page: 100 });
   if (userStore.activeUserPage) {
     await positionStore.fetchPositions({ getAll: 1 });
     await settingsStore.GET_REGIONAL({ per_page: 100 });
     await roleStore.fetchRoles();
   } else {
     await settingsStore.fetchKitchenWarehouseList({ is_paid: 0 });
-    await settingsStore.GET_ORGANIZATION({ per_page: 100 });
   }
 });
 
@@ -637,6 +636,11 @@ const workingHours = reactive([
                   required
                 />
                 <AppSelect
+                  v-model="form.organization_id"
+                  prop="organization_id"
+                  item-value="id"
+                  item-label="name"
+                  :items="settingsStore.organization?.organization ?? []"
                   label="Организация"
                   label-class="text-[#A8AAAE] text-xs font-medium"
                   class="mb-1"
@@ -685,10 +689,10 @@ const workingHours = reactive([
                 <AppSelect
                   v-model="form.organization_id"
                   prop="organization_id"
-                  label="Место работы"
                   item-value="id"
                   item-label="name"
                   :items="settingsStore.organization?.organization ?? []"
+                  label="Место работы"
                   label-class="text-[#A8AAAE] text-[12px] font-medium"
                   placeholder="Выберите"
                   class="mb-1"
