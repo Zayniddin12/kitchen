@@ -102,7 +102,7 @@ const fetchSearchUser = async () => {
   }
 
   try {
-    await userStore.fetchSearchUser(userStore.activeUserPage ? "users" : "employee", filterObjectValues(newForm));
+    await userStore.fetchSearchUser(filterObjectValues(newForm));
     validationErrors.value = null;
     router.push({ name: `${userStore.activeRoutePrefix}-create` });
   } catch (error: any) {
