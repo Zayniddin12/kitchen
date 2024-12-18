@@ -245,7 +245,7 @@ onMounted(() => {
                 disabled
               />
               <AppSelect
-                v-model="form2.management_id"
+                  v-model="form2.management_id"
                 :items="settingsStore.regional.managements"
                 item-value="id"
                 item-label="name"

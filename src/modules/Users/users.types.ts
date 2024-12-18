@@ -1,5 +1,6 @@
 import { GenderType, NameType, StatusType } from "@/types/common.type";
 import { PaginationParamsType, PaginationType } from "@/types/pagination.type";
+import { WorkPlaceType } from "@/modules/Settings/components/Reference/Position/position.types";
 
 export interface UserType {
   id: number,
@@ -90,5 +91,7 @@ export interface UserCreateOrUpdateDataType extends UserCreateOrUpdateDataPrefix
   management_id?: number | "",
   work_hours?: number | "",
   dining_locations?: UserCreateDiningLocationsType,
-  status?: StatusType | boolean
+  status?: StatusType | boolean,
+  work_place_id: number | "",
+  work_place_type: WorkPlaceType
 }

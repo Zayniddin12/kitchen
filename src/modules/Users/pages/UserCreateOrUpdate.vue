@@ -75,6 +75,8 @@ const form = ref<UserCreateOrUpdateDataType>({
   pass_valid_until: "",
   pinfl: "",
   avatar: "",
+  work_place_id: "",
+  work_place_type: "",
 });
 
 const oldForm = ref<UserCreateOrUpdateDataType | null>(null);
@@ -147,8 +149,8 @@ const form2 = reactive({
 });
 
 const changeWorkPlace = (id: number, type: WorkPlaceType) => {
-  form.work_place_id = id;
-  form.work_place_type = type;
+  form.value.work_place_id = id;
+  form.value.work_place_type = type;
 };
 
 const changeManagement = (id: AppSelectValueType) => {
@@ -545,7 +547,7 @@ const workingHours = reactive([
                   disabled
                 />
                 <AppSelect
-                  v-model="form.management_id"
+                  v-model="form2.management_id"
                   :items="settingsStore.regional.managements"
                   item-value="id"
                   item-label="name"
@@ -553,27 +555,64 @@ const workingHours = reactive([
                   :label="t('settings.regionalAdministration')"
                   label-class="text-[#A8AAAE] text-xs font-medium"
                   class="mb-1"
-                  required
+                  @change="changeManagement"
+                  @clear="clearManagement"
+                  clearable
                 />
                 <AppSelect
+                  v-model="form2.food_factory_id"
+                  :items="listStore.foodFactories"
+                  item-label="name"
+                  item-value="id"
                   :label="t('user.combine')"
                   label-class="text-[#A8AAAE] text-xs font-medium"
                   class="mb-1"
+                  :loading="listStore.foodFactoriesLoading"
+                  :disabled="!form2.management_id"
+                  @change="changeFoodFactory"
+                  @clear="clearFoodFactory"
+                  clearable
                 />
-                <AppInput
+                <AppSelect
+                  v-model="form2.base_id"
+                  prop="base_id"
+                  :items="listStore.bases"
+                  item-label="name"
+                  item-value="id"
+                  :loading="listStore.basesLoading"
                   :label="t('base.warehouse.title')"
                   label-class="text-[#A8AAAE] text-xs font-medium"
                   class="mb-1"
+                  :disabled="!form2.food_factory_id"
+                  @change="changeBase"
+                  @clear="clearBase"
+                  clearable
                 />
                 <AppSelect
+                  v-model="form2.baseWarehouse_id"
+                  prop="baseWarehouse_id"
+                  :items="listStore.baseWarehouses"
+                  item-value="id"
+                  item-label="name"
+                  :loading="listStore.baseWarehousesLoading"
                   :label="t('base.warehouse.reverseTitle')"
                   label-class="text-[#A8AAAE] text-xs font-medium"
                   class="mb-1"
+                  :disabled="!form2.base_id || !!form2.kitchenWarehouse_id"
+                  clearable
                 />
                 <AppSelect
+                  v-model="form2.kitchenWarehouse_id"
+                  prop="kitchenWarehouse_id"
+                  :items="listStore.kitchenWarehouses"
+                  item-label="name"
+                  item-value="id"
+                  :loading="listStore.kitchenWarehousesLoading"
                   :label="t('kitchen.title')"
                   label-class="text-[#A8AAAE] text-xs font-medium"
                   class="mb-1"
+                  :disabled="!form2.base_id || !!form2.baseWarehouse_id"
+                  clearable
                 />
                 <AppSelect
                   v-model="form.position_id"
@@ -596,6 +635,11 @@ const workingHours = reactive([
                   label-class="text-[#A8AAAE] text-xs font-medium"
                   class="mb-1"
                   required
+                />
+                <AppSelect
+                  label="Организация"
+                  label-class="text-[#A8AAAE] text-xs font-medium"
+                  class="mb-1"
                 />
               </template>
               <template v-else-if="userStore.activeEmployeePage && form.dining_locations">
