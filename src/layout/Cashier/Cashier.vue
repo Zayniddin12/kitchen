@@ -247,10 +247,10 @@ const currentDate = computed(() => {
 
 let receiptIndex = ref(0); // Initialize the counter
 
-function generateReceiptIndex() {
+const generateReceiptIndex = computed(() => {
   receiptIndex.value += 1; // Increment the counter
   return receiptIndex.value;
-}
+});
 
 </script>
 
@@ -324,7 +324,7 @@ function generateReceiptIndex() {
         <span>Тўлов санаси вақти</span>
         <span>{{ currentDate }}</span>
       </div>
-      <div class="my-2 flex items-center justify-between">Chek Nº: чек номер {{ generateReceiptIndex() }}</div>
+      <div class="my-2 flex items-center justify-between">Chek Nº: чек номер {{ generateReceiptIndex }}</div>
 
 
       <p class="text-center my-[20px]"> *Приходите снова!*</p>
@@ -633,7 +633,7 @@ function generateReceiptIndex() {
   }
 
   .no-receipt {
-    display: none;
+    display: none !important;
   }
 }
 

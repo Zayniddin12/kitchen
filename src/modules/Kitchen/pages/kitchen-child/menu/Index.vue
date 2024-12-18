@@ -1056,7 +1056,7 @@ const mealTextFilter = (index: string): string => {
             type="primary"
             size="large"
             tag="index-link"
-            :to="{ name: 'KitchenMenuCreate' }"
+            @click="$router.push({name: 'KitchenMenuCreate'})"
           >
             <div class="flex items-center gap-x-2">
               <svg
@@ -1198,7 +1198,7 @@ const mealTextFilter = (index: string): string => {
                 class="!bg-blue"
                 @click="createOrder"
               >
-                {{t("common.sell")}}
+                {{ t("common.sell") }}
               </ElButton>
             </div>
           </div>
