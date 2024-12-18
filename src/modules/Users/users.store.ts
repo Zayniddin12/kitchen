@@ -158,7 +158,7 @@ export const useUsersStore = defineStore("usersStore", () => {
     const createEmployee = async (data: UserCreateOrUpdateDataType) => {
         createEmployeeLoading.value = true;
 
-        await employeeApi.createUser(data).finally(() => {
+        return await employeeApi.createUser(data).finally(() => {
             createEmployeeLoading.value = false;
         });
     };

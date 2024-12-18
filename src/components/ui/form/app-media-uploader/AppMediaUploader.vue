@@ -107,8 +107,6 @@ const setDefaultImage = (event) => {
 
 <template>
   <div class="app-media-uploader">
-    {{ data }}
-    {{ mediaFile }}
     <input
       :id
       ref="input-file"

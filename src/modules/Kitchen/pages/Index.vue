@@ -1,6 +1,6 @@
 <script
-    setup
-    lang="ts"
+  setup
+  lang="ts"
 >
 
 import { computed, onMounted, watch, watchEffect } from "vue";
@@ -18,49 +18,7 @@ import AppEmpty from "@/components/ui/app-empty/AppEmpty.vue";
 const { setBreadCrumb } = useBreadcrumb();
 
 const route = useRoute();
-const router = useRouter();
 const kitchenStore = useKitchenStore();
-
-const boxes = computed(() => {
-  return [
-    {
-      id: 1,
-      icon: medicalKitchenIcon,
-      title: "Кухни ЛПП",
-      description: "4 кухни"
-    },
-    {
-      id: 2,
-      icon: kitchenIcon,
-      title: "Кухня",
-      description: "4 кухни"
-    },
-    {
-      id: 3,
-      icon: cookieIcon,
-      title: "Буфет",
-      description: "2 Буфета"
-    },
-    {
-      id: 4,
-      icon: buildingHospitalIcon,
-      title: "Больница",
-      description: "3 Больници"
-    },
-    {
-      id: 5,
-      icon: healthFoodIcon,
-      title: "Профилакторий",
-      description: "3 Профилактории"
-    },
-    {
-      id: 6,
-      icon: soupIcon,
-      title: "Лагерь",
-      description: "6 лагерей"
-    }
-  ];
-});
 
 // onMounted(async () => {
 //   console.log(route.params);
@@ -77,22 +35,23 @@ const setBreadcrumbFn = () => {
 
   setBreadCrumb([
     {
-      label: "Кухня"
+      label: "kitchen.title",
+      isTranslate: true
     },
     {
-      label: kitchenStore.part.title
+      label: kitchenStore.part.title,
     },
     {
       label: kitchenStore.part.department_name,
-      isActionable: true
-    }
+      isActionable: true,
+    },
   ]);
 };
 
 watch(() => route.params, async () => {
   await kitchenStore.GET_KITCHEN_VID({
     management_id: route.params.department_id as string,
-    is_paid: route.params.part_name == "free-kitchen" ? 0 : route.params.part_name == "sales" ? 1 : null
+    is_paid: route.params.part_name == "free-kitchen" ? 0 : route.params.part_name == "sales" ? 1 : null,
   });
   setBreadcrumbFn();
 }, { immediate: true });
@@ -112,19 +71,19 @@ watchEffect(() => {
   <section class="kitchen">
     <div>
       <div
-          v-if="kitchenStore.kitchenVid.length"
-          class="boxes"
+        v-if="kitchenStore.kitchenVid.length"
+        class="boxes"
       >
         <RouterLink
-            v-for="box in kitchenStore.kitchenVid"
-            :key="box?.id"
-            class="box"
-            :to="{name: 'KitchenShow', params: {kitchen_id: box?.id}}"
+          v-for="box in kitchenStore.kitchenVid"
+          :key="box?.id"
+          class="box"
+          :to="{name: 'KitchenShow', params: {kitchen_id: box?.id}}"
         >
           <img
-              :src="kitchenIcon"
-              :alt="box.name"
-              class="box__img"
+            :src="kitchenIcon"
+            :alt="box.name"
+            class="box__img"
           />
           <strong class="box__title">
             {{ box?.name }}
@@ -135,8 +94,8 @@ watchEffect(() => {
         </RouterLink>
       </div>
       <AppEmpty
-          v-else
-          class="h-[60vh]"
+        v-else
+        class="h-[60vh]"
       />
     </div>
   </section>

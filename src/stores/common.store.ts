@@ -25,8 +25,8 @@ export const useCommonStore = defineStore("commonStore", () => {
   const successToast = async (route?: RouteLocationRaw) => {
     if (route) await router.push(route);
     ElNotification({
-      title: t("toast.success"),
-      message: t("toast.success"),
+      title: t("status.success"),
+      message: t("status.success"),
       type: "success",
     });
   };

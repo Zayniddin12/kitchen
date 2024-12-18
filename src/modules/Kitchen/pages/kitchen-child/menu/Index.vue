@@ -20,6 +20,7 @@ import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 import useConfirm from "@/components/ui/app-confirm/useConfirm";
 import { useSidebarStore } from "@/layout/Bars/sidebar.store";
 import AppEmpty from "@/components/ui/app-empty/AppEmpty.vue";
+import { useI18n } from "vue-i18n";
 
 interface ProductItemType {
   id: number;
@@ -43,7 +44,9 @@ const { setBreadCrumb } = useBreadcrumb();
 
 const kitchenStore = useKitchenStore();
 const route = useRoute();
-const index = useRouter();
+const router = useRouter();
+
+const { t } = useI18n();
 
 enum TABS {
   CURRENT = 1,
@@ -52,8 +55,14 @@ enum TABS {
 
 const activeTab = ref<number>(TABS.CURRENT);
 const tabItems = computed(() => [
-  { value: TABS.CURRENT, name: "Текущее меню" },
-  { value: TABS.ALL, name: "Все меню" },
+  {
+    value: TABS.CURRENT,
+    name: t("kitchen.currentMenu"),
+  },
+  {
+    value: TABS.ALL,
+    name: t("kitchen.allMenu"),
+  },
 ]);
 
 const setBreadCrumbFn = () => {
@@ -65,7 +74,8 @@ const setBreadCrumbFn = () => {
 
   setBreadCrumb([
     {
-      label: "Кухня",
+      label: "kitchen.title",
+      isTranslate: true,
     },
     {
       label: kitchenStore.part.title,
@@ -85,18 +95,34 @@ const setBreadCrumbFn = () => {
       to: { name: "KitchenShowChildIndex" },
     },
     {
-      label: "Меню",
+      label: t("common.menu"),
+      isTranslate: true,
       isActionable: true,
     },
   ]);
 };
 
 const currentTabTableColumns = computed<TableColumnType[]>(() => [
-  { label: "Название", prop: "name" },
-  { label: "Количество", prop: "quantity" },
-  { label: "Ед. измерения", prop: "unit" },
-  { label: "Цена", prop: "price" },
-  { label: "Сумма", prop: "total_price" },
+  {
+    label: t("common.name"),
+    prop: "name",
+  },
+  {
+    label: t("common.quantity"),
+    prop: "quantity",
+  },
+  {
+    label: t("common.measurement"),
+    prop: "unit",
+  },
+  {
+    label: t("common.price"),
+    prop: "price",
+  },
+  {
+    label: t("common.sum"),
+    prop: "total_price",
+  },
 ]);
 
 const salesAllTabTableColumns = computed<TableColumnType[]>(() => [
@@ -106,30 +132,30 @@ const salesAllTabTableColumns = computed<TableColumnType[]>(() => [
     sortable: false,
   },
   {
-    label: "Тип рациона",
+    label: t("kitchen.rationType"),
     prop: "type",
     sortable: true,
   },
   {
-    label: "Порция",
+    label: t("kitchen.portion"),
     prop: "amount",
     sortable: true,
     align: "center",
   },
   {
-    label: "Дата",
+    label: t("common.date"),
     prop: "date",
     sortable: true,
     align: "center",
   },
   {
-    label: "Себестоимость",
+    label: t("common.costPrice"),
     prop: "net_price",
     sortable: true,
     align: "center",
   },
   {
-    label: "Цена",
+    label: t("common.price"),
     prop: "price",
     sortable: true,
     align: "center",
@@ -146,66 +172,8 @@ const salesTableCurrentChange = (value: Record<string, any>) => {
   router.push({ name: "KitchenMenuShow", params: { id: value.idx } });
 };
 
-const salesAllTabTableData = computed(() => {
-  const data = [];
-  for (let i = 1; i <= 4; i++) {
-    data.push({
-      idx: i,
-      type: "Плов",
-      time: "08:00-10:00",
-      portion: 20,
-      date: "23.08.2024",
-      cost_price: "18 000 сум",
-      price: "25 000 сум",
-      action: true,
-    });
-  }
-
-  return data;
-});
-
-const currentTabTableData = computed(() =>
-  Array.from({ length: 4 }, () => ({
-    name: "Кабачки",
-    quantity: 0.8,
-    unit_measurement: "грамм",
-    price: "1 800 сум",
-    sum: "15 000 сум",
-  })),
-);
-
-const allTabTableData = computed(() => [
-  {
-    id: 1,
-    idx: 1,
-    type: "Рацион 1",
-    time: "08:00-10:00",
-    date: "23.08.2024",
-    action: true,
-  },
-  {
-    id: 2,
-    idx: 2,
-    type: "Рацион 2",
-    time: "12:00-13:00",
-    date: "23.08.2024",
-    action: true,
-  },
-  {
-    id: 3,
-    idx: 3,
-    type: "Рацион 3",
-    time: "18:00-20:00",
-    date: "23.08.2024",
-    action: true,
-  },
-]);
-
 const activeDate = ref("");
 const activeListDate = ref("");
-
-const hasData = ref(true);
-
 
 const sideBarStore = useSidebarStore();
 
@@ -462,13 +430,13 @@ watch(activeDate, (newValue) => {
 const mealTextFilter = (index: string): string => {
   switch (index) {
     case "1":
-      return "Завтрак";
+      return t("mealTime.breakfast");
     case "2":
-      return "Обед";
+      return t("mealTime.dinner");
     case "3":
-      return "Ужин";
+      return t("mealTime.dinner2");
     case "4":
-      return "Сухой питания";
+      return t("mealTime.dryFood");
     default:
       return "";
   }
@@ -482,7 +450,7 @@ const mealTextFilter = (index: string): string => {
     ref="menuSection"
   >
     <div>
-      <h1 class="font-semibold text-[32px] text-dark">Меню</h1>
+      <h1 class="font-semibold text-[32px] text-dark">{{ t("common.menu") }}</h1>
       <div class="mt-6 flex items-center justify-between gap-x-5">
         <div class="app-tabs !inline-flex">
           <RouterLink
@@ -517,7 +485,7 @@ const mealTextFilter = (index: string): string => {
                   :data-src="PlusIcon"
                   class="size-6"
                 />
-                <span class="text-lg font-medium">Приготовить блюды</span>
+                <span class="text-lg font-medium">{{ t("kitchen.prepareDishes") }}</span>
               </div>
             </ElButton>
             <ElButton
@@ -532,7 +500,7 @@ const mealTextFilter = (index: string): string => {
                   :data-src="SellIcon"
                   class="size-6"
                 />
-                <span class="text-lg font-medium">Продать</span>
+                <span class="text-lg font-medium">{{ t("common.sell") }}</span>
               </div>
             </ElButton>
           </template>
@@ -549,7 +517,7 @@ const mealTextFilter = (index: string): string => {
                   class="size-6"
                 />
                 <span class="text-dark-gray font-medium text-lg">
-                  Редактировать
+                  {{ t("method.edit") }}
                 </span>
               </div>
             </ElButton>
@@ -606,7 +574,7 @@ const mealTextFilter = (index: string): string => {
                 </div>
                 <ElTable
                   :data="n.product"
-                  empty-text="Нет данных"
+                  :empty-text="t('common.empty')"
                   stripe
                   class="custom-element-table custom-element-table-normal mt-6"
                 >
@@ -761,8 +729,9 @@ const mealTextFilter = (index: string): string => {
 
                       <div class="menu__card-subtitles text-start mt-[12px] mb-[16px]">
                         <span
-                          class="text-[#000D24] font-semibold text-[20px] mb-[4px]">{{ formatNumber(productItem.price)
-                          }} UZS</span>
+                          class="text-[#000D24] font-semibold text-[20px] mb-[4px]"
+                        >
+                          {{ formatNumber(productItem.price) }} UZS</span>
                         <span class="text-[#000D24] font-medium text-[14px]">{{ productItem.name }} </span>
                       </div>
 
@@ -772,16 +741,27 @@ const mealTextFilter = (index: string): string => {
 
                       <div
                         v-if="orders.get(productItem.id)"
-                        class="menu__card__actions !justify-between  bg-[#E2E6F3] px-[24px] py-[14px] rounded-[12px]">
+                        class="menu__card__actions !justify-between  bg-[#E2E6F3] px-[24px] py-[14px] rounded-[12px]"
+                      >
                         <button
                           @click="updateQuantity(productItem.id, false)"
                           :disabled="!orders.has(productItem.id)"
                           class=""
                         >
-                          <svg width="20" height="20" viewBox="0 0 20 20" fill="none"
-                               xmlns="http://www.w3.org/2000/svg">
-                            <path d="M4.16602 9.99967H15.8327" stroke="#4F5662" stroke-width="1.2"
-                                  stroke-linecap="round" stroke-linejoin="round" />
+                          <svg
+                            width="20"
+                            height="20"
+                            viewBox="0 0 20 20"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <path
+                              d="M4.16602 9.99967H15.8327"
+                              stroke="#4F5662"
+                              stroke-width="1.2"
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                            />
                           </svg>
 
                         </button>
@@ -793,30 +773,61 @@ const mealTextFilter = (index: string): string => {
                           class=""
                           :disabled="productItem.amount == 0 || orders.has(productItem.id) && (orders.get(productItem.id) == productItem.amount)"
                         >
-                          <svg width="21" height="20" viewBox="0 0 21 20" fill="none"
-                               xmlns="http://www.w3.org/2000/svg">
-                            <path d="M10.5007 4.16699V15.8337" stroke="#4F5662" stroke-width="1.2"
-                                  stroke-linecap="round" stroke-linejoin="round" />
-                            <path d="M4.66602 9.99967H16.3327" stroke="#4F5662" stroke-width="1.2"
-                                  stroke-linecap="round" stroke-linejoin="round" />
+                          <svg
+                            width="21"
+                            height="20"
+                            viewBox="0 0 21 20"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <path
+                              d="M10.5007 4.16699V15.8337"
+                              stroke="#4F5662"
+                              stroke-width="1.2"
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                            />
+                            <path
+                              d="M4.66602 9.99967H16.3327"
+                              stroke="#4F5662"
+                              stroke-width="1.2"
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                            />
                           </svg>
 
                         </button>
                       </div>
                       <!--                      :disabled="productItem.amount == 0 || orders.has(productItem.id) && (orders.get(productItem.id) == productItem.amount)"-->
-                      <button v-else
-                              @click="updateQuantity(productItem.id)"
+                      <button
+                        v-else
+                        @click="updateQuantity(productItem.id)"
 
-                              class="menu__card__actions  bg-[#E2E6F3] px-[24px] py-[14px] rounded-[12px]">
-                        <svg width="21" height="20" viewBox="0 0 21 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                          <path d="M10.5007 4.16699V15.8337" stroke="#4F5662" stroke-width="1.2" stroke-linecap="round"
-                                stroke-linejoin="round" />
-                          <path d="M4.66602 9.99967H16.3327" stroke="#4F5662" stroke-width="1.2" stroke-linecap="round"
-                                stroke-linejoin="round" />
+                        class="menu__card__actions  bg-[#E2E6F3] px-[24px] py-[14px] rounded-[12px]"
+                      >
+                        <svg
+                          width="21"
+                          height="20"
+                          viewBox="0 0 21 20"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            d="M10.5007 4.16699V15.8337"
+                            stroke="#4F5662"
+                            stroke-width="1.2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                          />
+                          <path
+                            d="M4.66602 9.99967H16.3327"
+                            stroke="#4F5662"
+                            stroke-width="1.2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                          />
                         </svg>
-
-
-                        Добавить
+                        {{ t("method.add") }}
                       </button>
                     </div>
                   </div>
@@ -861,6 +872,7 @@ const mealTextFilter = (index: string): string => {
                   <ElTable
                     :data="kitchenStore.menuWeekly[activeListDate][index]"
                     stripe
+                    :empty-text="t('common.empty')"
                     class="custom-element-table custom-element-table-normal mt-4"
                   >
                     <ElTableColumn
@@ -873,21 +885,21 @@ const mealTextFilter = (index: string): string => {
                     </ElTableColumn>
                     <ElTableColumn
                       prop="name"
-                      label="Тип рациона"
+                      :label="t('kitchen.rationType')"
                       sortable
                     />
                     <ElTableColumn
                       prop="time"
-                      label="Время"
+                      :label="t('common.time')"
                       sortable
                     />
                     <ElTableColumn
                       prop="price"
-                      label="Сумма"
+                      :label="t('common.sum')"
                       sortable
                     >
                       <template #default="{row, $index}">
-                        <span>{{ row.price && row.price.toLocaleString() }} сум</span>
+                        <span>{{ row.price && row.price.toLocaleString() }} {{ t("currency.sum") }}</span>
                       </template>
                     </ElTableColumn>
                     <!--                    <ElTableColumn-->
@@ -922,13 +934,14 @@ const mealTextFilter = (index: string): string => {
                 </div>
               </div>
               <div v-else-if="kitchenStore.activeSalesPart">
-                <h4 class="font-semibold text-2xl text-black">Меню</h4>
+                <h4 class="font-semibold text-2xl text-black">{{ t("common.menu") }}</h4>
                 <ElTable
                   v-if="kitchenStore.menuWeekly && kitchenStore.menuWeekly[activeListDate] && kitchenStore.menuWeekly[activeListDate]"
                   :data="kitchenStore.menuWeekly[activeListDate].product ? kitchenStore.menuWeekly[activeListDate].product : kitchenStore.menuWeekly[activeListDate].meal"
                   stripe
                   class="custom-element-table custom-element-table-normal menu__sales-all-tab-table mt-4"
                   highlight-current-row
+                  :empty-text="t('common.empty')"
                   @current-change="salesTableCurrentChange"
                 >
                   <ElTableColumn
@@ -1036,7 +1049,7 @@ const mealTextFilter = (index: string): string => {
             class="w-full h-[264px]"
           />
           <p class="text-black font-medium text-sm mt-6">
-            План питания еще не составлен
+            {{ t("kitchen.theMealPlanHasNotBeenMadeYet") }}
           </p>
           <ElButton
             class="!bg-blue-500 mt-6"
@@ -1050,7 +1063,9 @@ const mealTextFilter = (index: string): string => {
                 :data-src="PlusIcon"
                 class="size-6"
               />
-              <span class="text-lg font-medium">Добавить</span>
+              <span class="text-lg font-medium">
+                {{ t("method.add") }}
+              </span>
             </div>
           </ElButton>
         </div>
@@ -1064,7 +1079,9 @@ const mealTextFilter = (index: string): string => {
           class="fixed top-0 right-0 pt-8 pb-6 w-[21%] h-screen flex flex-col justify-between z-10 bg-white shadow-[-32px_72px_96px_0_#0926450F] rounded-l-[32px]"
         >
           <div>
-            <h4 class="text-xl text-black font-semibold px-8">Корзина</h4>
+            <h4 class="text-xl text-black font-semibold px-8">
+              {{ t("common.basket") }}
+            </h4>
             <div
               v-if="selectedProducts.length > 0"
               class="grid gap-6 mt-6 px-6 h-[100vh] overflow-y-auto"
@@ -1097,16 +1114,27 @@ const mealTextFilter = (index: string): string => {
 
                   <div
                     v-if="orders.get(productItem.id)"
-                    class="menu__card__actions !justify-between !mt-[12px] bg-[#E2E6F3] px-[24px] py-[14px] rounded-[12px]">
+                    class="menu__card__actions !justify-between !mt-[12px] bg-[#E2E6F3] px-[24px] py-[14px] rounded-[12px]"
+                  >
                     <button
                       @click="updateQuantity(productItem.id, false)"
                       :disabled="!orders.has(productItem.id)"
                       class=""
                     >
-                      <svg width="20" height="20" viewBox="0 0 20 20" fill="none"
-                           xmlns="http://www.w3.org/2000/svg">
-                        <path d="M4.16602 9.99967H15.8327" stroke="#4F5662" stroke-width="1.2"
-                              stroke-linecap="round" stroke-linejoin="round" />
+                      <svg
+                        width="20"
+                        height="20"
+                        viewBox="0 0 20 20"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M4.16602 9.99967H15.8327"
+                          stroke="#4F5662"
+                          stroke-width="1.2"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        />
                       </svg>
 
                     </button>
@@ -1118,12 +1146,27 @@ const mealTextFilter = (index: string): string => {
                       class=""
                       :disabled="orders.has(productItem.id) && (orders.get(productItem.id) == productItem.amount)"
                     >
-                      <svg width="21" height="20" viewBox="0 0 21 20" fill="none"
-                           xmlns="http://www.w3.org/2000/svg">
-                        <path d="M10.5007 4.16699V15.8337" stroke="#4F5662" stroke-width="1.2"
-                              stroke-linecap="round" stroke-linejoin="round" />
-                        <path d="M4.66602 9.99967H16.3327" stroke="#4F5662" stroke-width="1.2"
-                              stroke-linecap="round" stroke-linejoin="round" />
+                      <svg
+                        width="21"
+                        height="20"
+                        viewBox="0 0 21 20"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M10.5007 4.16699V15.8337"
+                          stroke="#4F5662"
+                          stroke-width="1.2"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        />
+                        <path
+                          d="M4.66602 9.99967H16.3327"
+                          stroke="#4F5662"
+                          stroke-width="1.2"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        />
                       </svg>
 
                     </button>
@@ -1134,9 +1177,11 @@ const mealTextFilter = (index: string): string => {
           </div>
           <div class="mt-6 px-8">
             <div class="flex items-center justify-between gap-x-4 text-lg">
-              <span class="font-medium text-[#A8AAAE]">Общая сумма:</span>
+              <span class="font-medium text-[#A8AAAE]">
+                {{ t("common.totalSum") }}:
+              </span>
               <strong class="font-semibold text-dark">
-                {{ formatNumber(ordersSum) }} сум
+                {{ formatNumber(ordersSum) }} {{ t("currency.sum") }}
               </strong>
             </div>
             <div class="grid grid-cols-2 mt-6">
@@ -1145,7 +1190,7 @@ const mealTextFilter = (index: string): string => {
                 class="!bg-[#E2E6F3] border-none text-sm !text-dark-gray"
                 size="large"
               >
-                Отменить
+                {{ t("method.cancel") }}
               </ElButton>
               <ElButton
                 type="primary"
@@ -1153,7 +1198,7 @@ const mealTextFilter = (index: string): string => {
                 class="!bg-blue"
                 @click="createOrder"
               >
-                Продать
+                {{t("common.sell")}}
               </ElButton>
             </div>
           </div>

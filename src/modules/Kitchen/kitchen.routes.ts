@@ -54,8 +54,10 @@ export default [
                     name: "KitchenMenuCreate",
                     component: () => import("@/modules/Kitchen/pages/kitchen-child/menu/CreateOrEdit.vue"),
                     meta: {
-                      title: "Добавить меню",
-                      breadcrumbItemTitle: "Добавить",
+                      title: "kitchen.createMenu",
+                      isTranslate: true,
+                      breadcrumbItemTitle: "method.add",
+                      breadcrumbItemIsTranslate: true,
                     },
                   },
                   {
@@ -63,8 +65,10 @@ export default [
                     name: "KitchenMenuEdit",
                     component: () => import("@/modules/Kitchen/pages/kitchen-child/menu/CreateOrEdit.vue"),
                     meta: {
-                      title: "Редактировать",
-                      breadcrumbItemTitle: "Редактировать",
+                      title: "method.edit",
+                      isTranslate: true,
+                      breadcrumbItemTitle: "method.edit",
+                      breadcrumbItemIsTranslate: true,
                     },
                   },
                   {
@@ -108,7 +112,8 @@ export default [
                 name: "KitchenCalculator",
                 component: () => import("@/modules/Kitchen/pages/kitchen-child/KitchenCalculator.vue"),
                 meta: {
-                  title: "Калькулятор",
+                  title: "common.calculator",
+                  isTranslate: true,
                 },
               },
             ],

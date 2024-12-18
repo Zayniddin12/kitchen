@@ -549,7 +549,7 @@ export const useSettingsStore = defineStore("settingsStore", () => {
     kitchenWarehouse.value = data.data;
   };
 
-  const   kitchenWarehouseList = ref<KitchenWarehouseListItemType[]>([]);
+  const kitchenWarehouseList = ref<KitchenWarehouseListItemType[]>([]);
   const kitchenWarehouseListLoading = ref(false);
 
   const fetchKitchenWarehouseList = async (params: KitchenWarehouseListParamsType = {}) => {
