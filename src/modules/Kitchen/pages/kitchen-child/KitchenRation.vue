@@ -8,21 +8,17 @@ import { useKitchenStore } from "@/modules/Kitchen/kitchen.store";
 import { useRoute } from "vue-router";
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 import { useSettingsStore } from "@/modules/Settings/store";
+import { useI18n } from "vue-i18n";
+import { setTableColumnIndex } from "../../../../utils/helper";
+import AppPagination from "@/components/ui/app-pagination/AppPagination.vue";
+import { PaginationType } from "@/types/pagination.type";
 
 const settingsStore = useSettingsStore();
 const kitchenStore = useKitchenStore();
 const route = useRoute();
 const { setBreadCrumb } = useBreadcrumb();
 
-interface TableDataType {
-  id: number;
-  idx: number;
-  type: string;
-  unique_number: string;
-  price: string;
-  nd_price: string;
-  sum: string;
-}
+const { t } = useI18n();
 
 const params = ref({
   page: 1,
@@ -38,7 +34,8 @@ const setBreadCrumbFn = () => {
 
   setBreadCrumb([
     {
-      label: "Кухня",
+      label: "kitchen.title",
+      isTranslate: true,
     },
     {
       label: kitchenStore.part.title,
@@ -56,7 +53,8 @@ const setBreadCrumbFn = () => {
       to: { name: "KitchenShowChildIndex" },
     },
     {
-      label: "Рационы",
+      label: "kitchen.ration",
+      isTranslate: true,
       isActionable: true,
     },
   ]);
@@ -97,27 +95,28 @@ const changePage = () => {
 <template>
   <section class="kitchen-ration">
     <div>
-<!--      {{ settingsStore.rationList }}-->
+      <!--      {{ settingsStore.rationList }}-->
       <h1 class="font-semibold text-[32px] text-dark">
-        Рационы
+        {{ t("kitchen.ration") }}
       </h1>
       <ElTable
         :data="settingsStore.rationList.rations"
         stripe
         class="mt-6 custom-element-table custom-element-table-normal kitchen-ration__table"
+        :empty-text="t('common.empty')"
       >
         <ElTableColumn
           prop="id"
           label="№"
           :width="150"
         >
-          <template #default="{row,$index}">
-            <span>{{ $index + 1}}</span>
+          <template #default="{$index}">
+            {{ setTableColumnIndex($index, params.page, settingsStore.rationList.pagination?.per_page ?? 0) }}
           </template>
         </ElTableColumn>
         <ElTableColumn
           prop="type"
-          label="Тип рациона"
+          :label="t('kitchen.rationType')"
           sortable
           align="center"
         >
@@ -168,43 +167,35 @@ const changePage = () => {
         </ElTableColumn>
         <ElTableColumn
           prop="number"
-          label="Уникальный номер"
+          :label="t('common.uniqueNumber')"
           sortable
           align="center"
         />
         <ElTableColumn
           prop="price"
-          label="Цена"
+          :label="t('common.price')"
           sortable
           align="center"
         />
         <ElTableColumn
           prop="nd_price"
-          label="НДС"
+          :label="t('common.ndc')"
           sortable
           align="center"
         />
         <ElTableColumn
           prop="sum"
-          label="Сумма"
+          :label="t('common.sum')"
           sortable
           align="center"
         />
       </ElTable>
-      <div class="mt-6 flex items-center justify-between">
-        <div class="text-sm text-cool-gray">
-          Показано {{ params.page }}–{{ params.per_page }} из 100 результатов
-        </div>
-        <el-pagination
-          v-model:current-page="params.page"
-          @current-change="changePage"
-          :page-size="params.per_page"
-          class="float-right"
-          background
-          layout="prev, pager, next"
-          :total="settingsStore.rationList.pagination?.total_count"
-        />
-      </div>
+      <AppPagination
+        v-if="settingsStore.rationList"
+        v-model="params.page"
+        :pagination="settingsStore.rationList.pagination as PaginationType"
+        class="mt-6"
+      />
     </div>
   </section>
 </template>

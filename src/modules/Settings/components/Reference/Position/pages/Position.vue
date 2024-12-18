@@ -8,8 +8,11 @@ import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 import { computed, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 import AppOverlay from "@/components/ui/app-overlay/AppOverlay.vue";
+import { usePositionStore } from "@/modules/Settings/components/Reference/Position/position.store";
 
 const { t } = useI18n();
+
+const positionStore = usePositionStore();
 
 const route = useRoute();
 
@@ -50,6 +53,7 @@ const setBreadCrumbFn = () => {
 
 onMounted(() => {
   setBreadCrumbFn();
+  positionStore.fetchPosition(+route.params.id);
 });
 
 </script>
@@ -76,6 +80,7 @@ onMounted(() => {
     </div>
     <div class="mt-6 rounded-3xl border border-[#E2E6F3]  p-6 min-h-[65vh]">
       <AppOverlay
+        :loading="positionStore.positionLoading"
         :rounded="16"
         class="p-4 rounded-2xl bg-[#F8F9FC] grid grid-cols-2 gap-3 text-sm font-medium"
       >
@@ -84,7 +89,7 @@ onMounted(() => {
             {{ t("position.name", { lang: t("lang.ru") }) }}:
           </div>
           <div class="text-dark-gray mt-1">
-            Главный инженер
+            {{ positionStore.position?.name.ru ?? "-" }}
           </div>
         </div>
         <div>
@@ -92,7 +97,7 @@ onMounted(() => {
             {{ t("position.name", { lang: t("lang.uz") }) }}:
           </div>
           <div class="text-dark-gray mt-1">
-            Бош муҳандис
+            {{ positionStore.position?.name.uz ?? "-" }}
           </div>
         </div>
         <div>
@@ -100,14 +105,10 @@ onMounted(() => {
             {{ t("position.affiliation") }}:
           </div>
           <div class="text-dark-gray mt-1">
-            Паҳлавон
+            {{ positionStore.position?.work_place_name ?? "-" }}
           </div>
         </div>
       </AppOverlay>
     </div>
   </section>
 </template>
-
-<style lang="scss">
-
-</style>

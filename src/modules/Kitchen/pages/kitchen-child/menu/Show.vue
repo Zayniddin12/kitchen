@@ -8,26 +8,29 @@ import { useKitchenStore } from "@/modules/Kitchen/kitchen.store";
 import { useRoute, useRouter } from "vue-router";
 import { computed, watchEffect } from "vue";
 import { TableColumnType } from "@/types/common.type";
+import { useI18n } from "vue-i18n";
 
 const kitchenStore = useKitchenStore();
 const route = useRoute();
 const router = useRouter();
 
+const { t } = useI18n();
+
 const tableColumns = computed<TableColumnType[]>(() => [
   {
-    label: "Состав",
+    label: t("common.compound"),
     prop: "composition",
   },
   {
-    label: "Количество",
+    label: t("common.quantity"),
     prop: "quantity",
   },
   {
-    label: "Ед. измерения",
+    label: t("common.measurement"),
     prop: "unit_measurement",
   },
   {
-    label: "Цена",
+    label: t("common.price"),
     prop: "price",
     sortable: true,
   },
@@ -37,7 +40,7 @@ const tableData = Array.from({ length: 4 }, () => ({
   composition: "Рис",
   quantity: Math.floor(Math.random() * 11) + 90,
   unit_measurement: "грамм",
-  price: "25 000 сум",
+  price: `25 000 ${t("currency.sum")}`,
 }));
 
 const { setBreadCrumb } = useBreadcrumb();
@@ -49,7 +52,8 @@ const setBreadCrumbFn = async () => {
 
   setBreadCrumb([
     {
-      label: "Кухня",
+      label: "kitchen.title",
+      isTranslate: true,
     },
     {
       label: kitchenStore.part.name,
@@ -67,11 +71,13 @@ const setBreadCrumbFn = async () => {
       to: { name: "KitchenShowChildIndex" },
     },
     {
-      label: "Меню",
+      label: "common.menu",
+      isTranslate: true,
       to: { name: "KitchenMenuIndex", params: { part_name: "sales" }, query: { tab: 2 } },
     },
     {
-      label: "Просмотр",
+      label: "common.view",
+      isTranslate: true,
       isActionable: true,
     },
   ]);
@@ -91,11 +97,12 @@ watchEffect(() => {
       </h1>
       <div class="mt-6 rounded-3xl border border-[#E2E6F3] p-6 w-3/4 min-h-[70vh]">
         <h6 class="text-dark font-medium text-lg">
-          Состав рациона
+          {{ t("kitchen.compoundRation") }}
         </h6>
         <ElTable
           :data="tableData"
           stripe
+          :empty-text="t('common.empty')"
           class="mt-4 custom-element-table custom-element-table--has-append"
         >
           <ElTableColumn
@@ -109,26 +116,26 @@ watchEffect(() => {
             <div class="px-4 py-3.5 flex justify-end items-center gap-x-8">
               <div class="flex items-center gap-x-1 text-sm">
                 <span class="text-cool-gray">
-                  Цена:
+                  {{ t("common.price") }}:
                 </span>
                 <strong class="font-semibold text-dark">
-                  162 000 сум
+                  162 000 {{ t("currency.sum") }}
                 </strong>
               </div>
               <div class="flex items-center gap-x-1 text-sm">
                 <span class="text-cool-gray">
-                  НДС:
+                  {{ t("common.ndc") }}:
                 </span>
                 <strong class="font-semibold text-dark">
-                  19 440 сум
+                  19 440 {{ t("currency.sum") }}
                 </strong>
               </div>
               <div class="flex items-center gap-x-1 text-sm">
                 <span class="text-cool-gray">
-                  Общая сумма:
+                  {{ t("common.totalSum")}}:
                 </span>
                 <strong class="font-semibold text-dark">
-                  181 440 сум
+                  181 440 {{ t("currency.sum") }}
                 </strong>
               </div>
             </div>
@@ -138,10 +145,3 @@ watchEffect(() => {
     </div>
   </section>
 </template>
-
-<style
-  scoped
-  lang="scss"
->
-
-</style>

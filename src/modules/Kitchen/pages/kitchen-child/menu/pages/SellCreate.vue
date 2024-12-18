@@ -14,16 +14,6 @@ const { setBreadCrumb } = useBreadcrumb();
 
 const num = ref(1);
 
-interface TableData {
-  id: number;
-  num: string;
-  date: string;
-  doc: string;
-  theme: string;
-  send: string;
-  receive: string;
-}
-
 const tableData = ref<any>({});
 const activeData = ref<number | string | null>(null);
 
@@ -38,7 +28,8 @@ const setBreadCrumbFn = () => {
 
   setBreadCrumb([
     {
-      label: "Кухня",
+      label: "kitchen.title",
+      isTranslate: true,
     },
     {
       label: kitchenStore.part.title,
@@ -49,16 +40,15 @@ const setBreadCrumbFn = () => {
     },
     {
       label: kitchenStore.part.kitchen_vid as string,
-      isActionable: true,
       to: { name: "KitchenShow" },
     },
     {
       label: kitchenStore.part.kitchen_type as string,
-      isActionable: true,
     },
     {
-      label: "Меню",
-      isActionable: true,
+      label: "common.menu",
+      to: { name: "KitchenShow" },
+      isTranslate: true,
     },
     {
       label: "Продать",
@@ -134,16 +124,24 @@ const handleSubmit = async () => {
 
       <div class="flex items-center mb-[24px]">
         <div
-          v-for="(item, index) in kitchenStore.menuToday.elements" :key="index"
+          v-for="(item, index) in kitchenStore.menuToday.elements"
+          :key="index"
           :class="['bg-[#F8F9FC] rounded-[16px] p-[12px] mr-[24px] cursor-pointer w-[113px]', activeData == index && 'bg-[#F8F9FC] shadow-2xl !text-[#2E90FA]']"
 
           @click="setActiveData(item, index)"
         >
-          <span class="block text-[18px] text-[#4F5662] font-medium mb-[4px]"
-                :class="activeData == index && '!text-[#2E90FA]'">{{ item.product_name }}</span>
-          <span class="block text-[14px] text-[#8F9194] mb-[4px]"
-                :class="activeData == index && '!text-[#2E90FA]'">{{ item.product_number }}</span>
-          <span class="block text-[14px] text-[#8F9194]" :class="activeData == index && '!text-[#2E90FA]'">R-0000</span>
+          <span
+            class="block text-[18px] text-[#4F5662] font-medium mb-[4px]"
+            :class="activeData == index && '!text-[#2E90FA]'"
+          >{{ item.product_name }}</span>
+          <span
+            class="block text-[14px] text-[#8F9194] mb-[4px]"
+            :class="activeData == index && '!text-[#2E90FA]'"
+          >{{ item.product_number }}</span>
+          <span
+            class="block text-[14px] text-[#8F9194]"
+            :class="activeData == index && '!text-[#2E90FA]'"
+          >R-0000</span>
         </div>
       </div>
 
@@ -215,7 +213,11 @@ const handleSubmit = async () => {
 
       </div>
       <div class="flex justify-end">
-        <button @click="handleSubmit" class="custom-apply-btn">Продать</button>
+        <button
+          @click="handleSubmit"
+          class="custom-apply-btn"
+        >Продать
+        </button>
       </div>
 
     </div>

@@ -8,6 +8,9 @@ import DishesImg from "@/assets/images/kitchen/test/dishes.png";
 import { useRoute } from "vue-router";
 import { useKitchenStore } from "@/modules/Kitchen/kitchen.store";
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
+import { useI18n } from "vue-i18n";
+
+const { t } = useI18n();
 
 const route = useRoute();
 const kitchenStore = useKitchenStore();
@@ -16,7 +19,7 @@ const { setBreadCrumb } = useBreadcrumb();
 const categories = computed(() => [
   {
     id: 1,
-    name: "Блюди",
+    name: t("kitchen.dishes2"),
     products: [
       {
         id: 1,
@@ -95,7 +98,8 @@ const setBreadCrumbFn = () => {
 
   setBreadCrumb([
     {
-      label: "Кухня",
+      label: "kitchen.title",
+      isTranslate: true,
     },
     {
       label: kitchenStore.part.title,
@@ -115,7 +119,8 @@ const setBreadCrumbFn = () => {
       to: { name: "KitchenShowChildIndex" },
     },
     {
-      label: "Блюди",
+      label: "kitchen.dishes2",
+      isTranslate: true,
       isActionable: true,
     },
   ]);
@@ -147,7 +152,7 @@ watch(() => route.params, async () => {
   <section>
     <div>
       <div class="flex flex-col gap-y-6">
-        {{kitchenStore.mealsList  }}
+        {{ kitchenStore.mealsList }}
         <div
           v-for="category in categories"
           :key="category.id"
@@ -158,6 +163,7 @@ watch(() => route.params, async () => {
           <ElTable
             :data="category.products"
             stripe
+            :empty-text="t('common.empty')"
             class="custom-element-table custom-element-table-normal mt-6"
           >
             <ElTableColumn
@@ -171,7 +177,7 @@ watch(() => route.params, async () => {
             </ElTableColumn>
             <ElTableColumn
               prop="name"
-              label="Название"
+              :label="t('common.name')"
               align="center"
               sortable
             >
@@ -188,19 +194,19 @@ watch(() => route.params, async () => {
             </ElTableColumn>
             <ElTableColumn
               prop="price"
-              label="Цена"
+              :label="t('common.price')"
               align="center"
               sortable
             />
             <ElTableColumn
               prop="cost_price"
-              label="НДС"
+              :label="t('common.ndc')"
               align="center"
               sortable
             />
             <ElTableColumn
               prop="sum"
-              label="Сумма"
+              :label="t('common.sum')"
               align="center"
               sortable
             />

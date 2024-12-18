@@ -3,6 +3,7 @@ import { computed, ref } from "vue";
 import $axios from "@/plugins/axios/axios";
 import { useLayoutStore } from "@/navigation/index";
 import { useSettingsStore } from "@/modules/Settings/store";
+import { useI18n } from "vue-i18n";
 
 enum PARTS {
   MENU = "free-kitchen",
@@ -53,6 +54,8 @@ interface KitchenType {
 }
 
 export const useKitchenStore = defineStore("kitchenStore", () => {
+  const { t } = useI18n();
+
   const kitchenVid = ref<KitchenVid[] | []>([]);
   const kitchenType = ref<KitchenType[] | []>([]);
   const mealsList = ref({});
@@ -68,12 +71,12 @@ export const useKitchenStore = defineStore("kitchenStore", () => {
       newItem.children = [
         {
           id: "free-kitchen",
-          title: "Бесплатная кухня",
+          title: t("kitchen.free"),
           route: `/kitchen/${item.id}/free-kitchen`,
         },
         {
           id: "sales",
-          title: "Продажи",
+          title: t("kitchen.paid"),
           route: `/kitchen/${item.id}/sales`,
         },
       ];

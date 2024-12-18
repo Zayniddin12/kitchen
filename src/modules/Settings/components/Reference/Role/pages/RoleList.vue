@@ -8,8 +8,12 @@ import { computed, onMounted, reactive, ref } from "vue";
 import { useRoute } from "vue-router";
 import { useI18n } from "vue-i18n";
 import AppInput from "@/components/ui/form/app-input/AppInput.vue";
+import { useRoleStore } from "@/modules/Settings/components/Reference/Role/role.store";
+import { RoleType } from "@/modules/Settings/components/Reference/Role/role.types";
 
 const { t } = useI18n();
+
+const roleStore = useRoleStore();
 
 const route = useRoute();
 
@@ -51,27 +55,28 @@ const tableData = ref([
   {
     name: "Супер админ",
     ownership: "Фонд НГМК",
-    numberOfUses: 3
+    numberOfUses: 3,
   },
   {
     name: "Супер админ",
     ownership: "Фонд НГМК",
-    numberOfUses: 3
+    numberOfUses: 3,
   },
   {
     name: "Супер админ",
     ownership: "Фонд НГМК",
-    numberOfUses: 3
+    numberOfUses: 3,
   },
   {
     name: "Супер админ",
     ownership: "Фонд НГМК",
-    numberOfUses: 3
-  }
-])
+    numberOfUses: 3,
+  },
+]);
 
 onMounted(() => {
   setBreadCrumbFn();
+  roleStore.fetchRoles();
 });
 
 </script>
@@ -82,15 +87,16 @@ onMounted(() => {
       <h1 class="text-black-text font-semibold text-[32px]">
         {{ isTranslate ? t(title) : title }}
       </h1>
-      <AppInput
-        v-model="form.search"
-        class="w-[300px] mb-0"
-        custom-type="search"
-        input-style="height: 42px"
-      />
+<!--      <AppInput-->
+<!--        v-model="form.search"-->
+<!--        class="w-[300px] mb-0"-->
+<!--        custom-type="search"-->
+<!--        input-style="height: 42px"-->
+<!--      />-->
     </div>
     <ElTable
-      :data="tableData"
+      v-loading="roleStore.rolesLoading"
+      :data="roleStore.roles"
       class="custom-element-table mt-6"
       :empty-text="t('common.empty')"
       stripe
@@ -101,7 +107,7 @@ onMounted(() => {
         width="100"
       >
         <template #default="{$index}">
-          {{ $index }}
+          {{ $index + 1 }}
         </template>
       </ElTableColumn>
       <ElTableColumn
@@ -110,19 +116,28 @@ onMounted(() => {
         sortable
         width="670"
       >
+        <template #default="{row}:{row: RoleType}">
+          {{ row.name ?? "-" }}
+        </template>
       </ElTableColumn>
       <ElTableColumn
-        prop="ownership"
+        prop="parent_name"
         :label="t('role.ownership')"
         sortable
         width="670"
       >
+        <template #default="{row}:{row: RoleType}">
+          {{ row.parent_name ?? "-" }}
+        </template>
       </ElTableColumn>
       <ElTableColumn
-        prop="numberOfUses"
+        prop="users_count"
         :label="t('role.numberOfUses')"
         sortable
       >
+        <template #default="{row}:{row: RoleType}">
+          {{row.users_count ?? 0}}
+        </template>
       </ElTableColumn>
     </ElTable>
   </section>

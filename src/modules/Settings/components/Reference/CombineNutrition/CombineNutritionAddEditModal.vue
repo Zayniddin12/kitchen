@@ -121,7 +121,7 @@ const sendForm = async () => {
       await settingsStore.createFoodFactory(form);
     } else if (route.name === "reference-combine-nutrition-edit" && routeID.value) {
       const newForm = { ...form };
-      if (typeof newForm.status == "boolean") newForm.status = setStatus(newForm.status);
+      if (typeof newForm.status === "boolean") newForm.status = setStatus(newForm.status);
       await settingsStore.updateFoodFactory(routeID.value as number, newForm);
     }
 

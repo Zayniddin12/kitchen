@@ -18,6 +18,7 @@ import { useSettingsStore } from "@/modules/Settings/store";
 import AppForm from "@/components/ui/form/app-form/AppForm.vue";
 import type { ValidationType } from "@/components/ui/form/app-form/app-form.type";
 import { useCommonStore } from "@/stores/common.store";
+import { useI18n } from "vue-i18n";
 
 interface MealDataType {
   period: number;
@@ -56,6 +57,8 @@ interface ListDishesType {
   data: ListDataType[];
 }
 
+const { t } = useI18n();
+
 const route = useRoute();
 const router = useRouter();
 const { setBreadCrumb } = useBreadcrumb();
@@ -84,11 +87,30 @@ const kitchenDatav$ = ref<ValidationType | null>(null);
 
 // Table Columns
 const tableColumns: TableColumnType[] = [
-  { label: "Название", prop: "name" },
-  { label: "Количество", prop: "quantity", align: "center" },
-  { label: "Ед. измерения", prop: "unit", align: "center" },
-  { label: "Цена", prop: "net_price", align: "right" },
-  { label: "Сумма", prop: "total_price", align: "right" },
+  {
+    label: t("common.name"),
+    prop: "name",
+  },
+  {
+    label: t("common.quantity"),
+    prop: "quantity",
+    align: "center",
+  },
+  {
+    label: t("common.measurement"),
+    prop: "unit",
+    align: "center",
+  },
+  {
+    label: t("common.price"),
+    prop: "net_price",
+    align: "right",
+  },
+  {
+    label: t("common.sum"),
+    prop: "total_price",
+    align: "right",
+  },
 ];
 
 
@@ -153,7 +175,7 @@ watch(scheduledDates, async (newValue) => {
             data: [
               {
                 id: 1,
-                title: "Завтрак",
+                title: t("mealTime.breakfast"),
                 isChecked: kitchenStore.menuElement.elements[el.date.split(".").reverse().join("-")] && kitchenStore.menuElement.elements[el.date.split(".").reverse().join("-")]["1"] ? true : false,
                 mealData: kitchenStore.menuElement.elements[el.date.split(".").reverse().join("-")] && kitchenStore.menuElement.elements[el.date.split(".").reverse().join("-")]["1"] ? kitchenStore.menuElement.elements[el.date.split(".").reverse().join("-")]["1"].map(item => {
                   return {
@@ -183,7 +205,7 @@ watch(scheduledDates, async (newValue) => {
               },
               {
                 id: 2,
-                title: "Обед",
+                title: t("mealTime.dinner"),
                 isChecked: kitchenStore.menuElement.elements[el.date.split(".").reverse().join("-")] && kitchenStore.menuElement.elements[el.date.split(".").reverse().join("-")]["2"] ? true : false,
                 mealData: kitchenStore.menuElement.elements[el.date.split(".").reverse().join("-")] && kitchenStore.menuElement.elements[el.date.split(".").reverse().join("-")]["2"] ? kitchenStore.menuElement.elements[el.date.split(".").reverse().join("-")]["2"].map(item => {
                   return {
@@ -213,7 +235,7 @@ watch(scheduledDates, async (newValue) => {
               },
               {
                 id: 3,
-                title: "Ужин",
+                title: t("mealTime.dinner2"),
                 isChecked: kitchenStore.menuElement.elements[el.date.split(".").reverse().join("-")] && kitchenStore.menuElement.elements[el.date.split(".").reverse().join("-")]["3"] ? true : false,
                 mealData: kitchenStore.menuElement.elements[el.date.split(".").reverse().join("-")] && kitchenStore.menuElement.elements[el.date.split(".").reverse().join("-")]["3"] ? kitchenStore.menuElement.elements[el.date.split(".").reverse().join("-")]["3"].map(item => {
                   return {
@@ -243,7 +265,7 @@ watch(scheduledDates, async (newValue) => {
               },
               {
                 id: 4,
-                title: "Сухой питания",
+                title: t("mealTime.dryFood"),
                 isChecked: kitchenStore.menuElement.elements[el.date.split(".").reverse().join("-")] && kitchenStore.menuElement.elements[el.date.split(".").reverse().join("-")]["4"] ? true : false,
                 mealData: kitchenStore.menuElement.elements[el.date.split(".").reverse().join("-")] && kitchenStore.menuElement.elements[el.date.split(".").reverse().join("-")]["4"] ? kitchenStore.menuElement.elements[el.date.split(".").reverse().join("-")]["4"].map(item => {
                   return {
@@ -281,7 +303,7 @@ watch(scheduledDates, async (newValue) => {
             data: [
               {
                 id: 1,
-                title: "Завтрак",
+                title: t("mealTime.breakfast"),
                 isChecked: false,
                 mealData: [
                   {
@@ -296,7 +318,10 @@ watch(scheduledDates, async (newValue) => {
                 ],
               },
               {
-                id: 2, title: "Обед", isChecked: false, mealData: [
+                id: 2,
+                title: t("mealTime.dinner"),
+                isChecked: false,
+                mealData: [
                   {
                     period: 2,
                     start_time: null,
@@ -309,7 +334,10 @@ watch(scheduledDates, async (newValue) => {
                 ],
               },
               {
-                id: 3, title: "Ужин", isChecked: false, mealData: [
+                id: 3,
+                title: t("mealTime.dinner2"),
+                isChecked: false,
+                mealData: [
                   {
                     period: 3,
                     start_time: null,
@@ -322,7 +350,10 @@ watch(scheduledDates, async (newValue) => {
                 ],
               },
               {
-                id: 4, title: "Сухой питания", isChecked: false, mealData: [
+                id: 4,
+                title: t("mealTime.dryFood"),
+                isChecked: false,
+                mealData: [
                   {
                     period: 4,
                     start_time: null,
@@ -418,7 +449,8 @@ const setBreadCrumbFn = () => {
 
   setBreadCrumb([
     {
-      label: "Кухня",
+      label: "kitchen.title",
+      isTranslate: true,
     },
     {
       label: kitchenStore.part.title,
@@ -438,11 +470,13 @@ const setBreadCrumbFn = () => {
       to: { name: "KitchenShowChildIndex" },
     },
     {
-      label: "Меню",
+      label: "common.menu",
+      isTranslate: true,
       to: { name: "KitchenMenuIndex" },
     },
     {
       label: route.meta.breadcrumbItemTitle ?? "",
+      isTranslate: !!route.meta.breadcrumbItemIsTranslate,
       isActionable: true,
     },
   ]);
@@ -733,6 +767,11 @@ const addMeal = (parentIndex: number) => {
     },
   );
 };
+
+const title = computed(() => route.meta.title ?? "");
+
+const isTranslate = computed(() => !!route.meta.isTranslate);
+
 </script>
 
 
@@ -740,10 +779,10 @@ const addMeal = (parentIndex: number) => {
   <section class="meal-plan-create">
     <div>
       <h1
-        v-if="route.meta.title"
+        v-if="title"
         class="font-semibold text-[32px] text-dark"
       >
-        {{ route.meta.title }}
+        {{ isTranslate ? t(title) : title }}
       </h1>
       <div>
         <div class="p-6 rounded-3xl border border-[#E2E6F3] mt-6 min-h-[671px]">
@@ -752,11 +791,14 @@ const addMeal = (parentIndex: number) => {
             <!--            {{ kitchenData }}-->
             <!--            {{ kitchenStore.menuElement }}-->
             <h3 class="text-lg font-medium text-dark">
-              Введите дату!
+              {{ t("common.enterDate") }}
             </h3>
             <!--            {{ kitchenStore.menuItem }}-->
             <div>
-              <AppForm :value="kitchenData" @validation="value => kitchenDatav$ = value">
+              <AppForm
+                :value="kitchenData"
+                @validation="value => kitchenDatav$ = value"
+              >
                 <div class="flex items-center gap-4">
                   <AppDatePicker
                     v-model="kitchenData.startDate"
@@ -783,8 +825,8 @@ const addMeal = (parentIndex: number) => {
                 <ElSwitch
                   v-if="kitchenStore.activeMenuPart"
                   v-model="kitchenData.intermediateDate1"
-                  active-text="7 дней"
-                  inactive-text="10 дней"
+                  :active-text="t('common.days', {number: 7})"
+                  :inactive-text="t('common.days', {number: 10})"
                   class="app-switch"
                 />
 
@@ -813,11 +855,14 @@ const addMeal = (parentIndex: number) => {
             <!--            {{ data[0] }}-->
             <div v-if="kitchenStore.activeMenuPart && activeScheduledDate && data.length>0">
               <h3 class="text-lg font-medium text-dark">
-                Выбирайте время еды!
+                {{ t("kitchen.chooseYourMealTime") }}!
               </h3>
               <div v-for="(item, index) in data">
                 <!--              {{ mealTimes[0] }}-->
-                <div v-show="item.date === activeScheduledDate" class="mt-3 flex flex-col gap-y-3">
+                <div
+                  v-show="item.date === activeScheduledDate"
+                  class="mt-3 flex flex-col gap-y-3"
+                >
                   <div
                     v-for="(childItem, childIndex) in item.data"
                   >
@@ -832,7 +877,8 @@ const addMeal = (parentIndex: number) => {
                     >
                       <!--                    {{ item.mealData[activeScheduledDate] }}-->
                       <div
-                        v-for="(itemMeal, indexMeal) in childItem.mealData">
+                        v-for="(itemMeal, indexMeal) in childItem.mealData"
+                      >
                         <div class="flex items-center gap-x-6">
                           <!--                          {{ data[index].data[childIndex].mealData[indexMeal].start_time }}-->
                           <AppTimePicker
@@ -840,14 +886,14 @@ const addMeal = (parentIndex: number) => {
                             v-model="itemMeal.start_time"
                             class="max-w-[141px]"
                             value-format="HH:mm"
-                            label="Время начало"
+                            :label="t('common.timeToStart')"
                             label-class="text-[#A8AAAE] text-xs font-medium"
                           />
                           <AppTimePicker
                             v-model="itemMeal.end_time"
                             class="max-w-[141px]"
                             value-format="HH:mm"
-                            label="Время окончания"
+                            :label="t('common.endToTime')"
                             label-class="text-[#A8AAAE] text-xs font-medium"
                           />
 
@@ -855,7 +901,7 @@ const addMeal = (parentIndex: number) => {
                             v-model="itemMeal.amount"
                             type="number"
                             class="max-w-[141px]"
-                            label="Количество порции"
+                            :label="t('kitchen.servingQuantity')"
                             label-class="text-[#A8AAAE] text-xs font-medium"
                           />
                         </div>
@@ -866,9 +912,8 @@ const addMeal = (parentIndex: number) => {
                           @change="changeRation(itemMeal.product_id,index,childIndex,indexMeal)"
                           item-value="id"
                           item-label="name"
-                          label="Рацион"
+                          :label="t('kitchen.ration2')"
                           label-class="text-[#A8AAAE]"
-                          placeholder="Выберите"
                           class="w-[222px]"
                         />
                         <div
@@ -878,7 +923,7 @@ const addMeal = (parentIndex: number) => {
                           <ElTable
                             :data="itemMeal.rationsList.products"
                             stripe
-                            :empty-text="'Нет доступных данных'"
+                            :empty-text="t('common.empty')"
                             class="custom-element-table meal-plan-create__table"
                           >
                             <ElTableColumn
@@ -892,25 +937,25 @@ const addMeal = (parentIndex: number) => {
                             <template #append>
                               <div class="px-4 py-3.5 flex justify-end items-center gap-x-8">
                                 <div class="flex items-center gap-x-1 text-sm">
-                                                  <span class="text-cool-gray">
-                                                    Цена:
-                                                  </span>
+                                  <span class="text-cool-gray">
+                                    {{ t("common.price") }}:
+                                  </span>
                                   <strong class="font-semibold text-dark">
-                                    25 000 сум
+                                    25 000 {{ t("currency.sum") }}
                                   </strong>
                                 </div>
                                 <div class="flex items-center gap-x-1 text-sm">
-                                                  <span class="text-cool-gray">
-                                                    НДС:
-                                                  </span>
+                                  <span class="text-cool-gray">
+                                    {{ t("common.ndc") }}:
+                                  </span>
                                   <strong class="font-semibold text-dark">
-                                    3 000 сум
+                                    3 000 {{ t("currency.sum") }}
                                   </strong>
                                 </div>
                                 <div class="flex items-center gap-x-1 text-sm">
-                                                  <span class="text-cool-gray">
-                                                    Общая сумма:
-                                                  </span>
+                                  <span class="text-cool-gray">
+                                    {{ t("common.totalSum") }}:
+                                  </span>
                                   <strong class="font-semibold text-dark">
                                     {{ itemMeal.rationsList.total_price.toLocaleString() }}
                                   </strong>
@@ -934,7 +979,7 @@ const addMeal = (parentIndex: number) => {
                             class="size-4 meal-plan-create__plus-icon"
                           />
                           <span class="text-xs font-medium text-blue-500">
-                          Добавить еще
+                            {{ t("method.addMore") }}
                         </span>
                         </div>
                       </ElButton>
@@ -945,11 +990,14 @@ const addMeal = (parentIndex: number) => {
             </div>
             <div v-else-if="kitchenStore.activeSalesPart && list_dishes.length > 0">
               <h3 class="text-2xl font-medium text-dark">
-                Список блюды
+                {{ t("kitchen.listOfDishes") }}
               </h3>
               <!--              {{ list_dishes }}-->
               <!--              {{ activeScheduledDate }}-->
-              <div v-for="(meal, index) in list_dishes" class="">
+              <div
+                v-for="(meal, index) in list_dishes"
+                class=""
+              >
                 <!--        {{ tableData }}-->
                 <div v-show="meal.date == activeScheduledDate">
                   <div v-for="(item, childIndex) in meal.data">
@@ -963,18 +1011,17 @@ const addMeal = (parentIndex: number) => {
                         class="w-full"
                         item-value="id"
                         item-label="name"
-                        label="Блюды"
-                        label-class="text-[#A8AAAE] text-[12px] font-medium"
-                        placeholder="Выберите блюды"
+                        :label="t('kitchen.dishes')"
+                        :placeholder="t('kitchen.dishesPlaceholder')"
+                        label-class="text-[#A8AAAE] text-xs font-medium"
                         @input="changeInputMeals($event, index, childIndex)"
                       />
 
                       <app-select
                         v-model="item.product"
                         :disabled="item.meal"
-                        label="Тип продукта"
+                        :label="t('product.type')"
                         class="w-full"
-                        placeholder="Выберите"
                         label-class="text-[#A8AAAE] font-medium text-[12px]"
                         clearable
                         itemValue="id"
@@ -987,8 +1034,7 @@ const addMeal = (parentIndex: number) => {
                         v-model="item.vid_product"
                         :disabled="item.meal"
                         class="w-full"
-                        label="Вид продукта"
-                        placeholder="Выберите"
+                        :label="t('product.view')"
                         label-class="text-[#A8AAAE] font-medium text-[12px]"
                         itemValue="id"
                         itemLabel="name"
@@ -998,35 +1044,37 @@ const addMeal = (parentIndex: number) => {
                       <AppInput
                         v-model="item.amount"
                         class="w-full"
-                        placeholder=""
-                        label="Порция"
+                        :label="t('kitchen.portion')"
                         type="number"
                         label-class="text-[#A8AAAE] text-[12px] font-medium"
                       />
                     </div>
                     <!--                    {{ item }}-->
-                    <div v-if="item.meals_list && item.meals_list.compositions" class="mb-[24px]">
+                    <div
+                      v-if="item.meals_list && item.meals_list.compositions"
+                      class="mb-[24px]"
+                    >
                       <el-table
-                        empty-text="Нет данных"
+                        :empty-text="t('common.empty')"
                         :data="item.meals_list.compositions"
                         stripe
                         class="custom-element-table custom-element-table--has-append"
                       >
                         <el-table-column
                           prop="product_type_name"
-                          label="Ингредиенты"
+                          :label="t('kitchen.ingredients')"
                         />
                         <el-table-column
                           prop="quantity"
-                          label="Количество"
+                          :label="t('common.quantity')"
                         />
                         <el-table-column
                           prop="unit"
-                          label="Ед. измерения"
+                          :label="t('common.measurement')"
                         />
                         <el-table-column
                           prop="price"
-                          label="Сумма"
+                          :label="t('common.price')"
                         />
 
 
@@ -1035,26 +1083,29 @@ const addMeal = (parentIndex: number) => {
                             <div class="flex items-center gap-x-8">
                               <div class="flex items-center gap-x-1 text-sm">
                     <span class="text-cool-gray">
-                      Цена:
+                      {{ t("common.price") }}:
                     </span>
                                 <strong class="font-semibold text-dark">
-                                  {{ item.meals_list.net_price && item.meals_list.net_price.toLocaleString() }} сум
+                                  {{ item.meals_list.net_price && item.meals_list.net_price.toLocaleString() }}
+                                  {{ t("currency.sum") }}
                                 </strong>
                               </div>
                               <div class="flex items-center gap-x-1 text-sm">
                     <span class="text-cool-gray">
-                      НДС:
+                                     {{ t("common.ndc") }}:
                     </span>
                                 <strong class="font-semibold text-dark">
-                                  {{ item.meals_list.tax && item.meals_list.tax.toLocaleString() }} сум
+                                  {{ item.meals_list.tax && item.meals_list.tax.toLocaleString() }}
+                                  {{ t("currency.sum") }}
                                 </strong>
                               </div>
                               <div class="flex items-center gap-x-1 text-sm">
                     <span class="text-cool-gray">
-                      Общая сумма:
+                      {{ t("common.totalSum") }}:
                     </span>
                                 <strong class="font-semibold text-dark">
-                                  {{ item.meals_list.price && item.meals_list.price.toLocaleString() }} сум
+                                  {{ item.meals_list.price && item.meals_list.price.toLocaleString() }}
+                                  {{ t("currency.sum") }}
                                 </strong>
                               </div>
                             </div>
@@ -1075,7 +1126,7 @@ const addMeal = (parentIndex: number) => {
                         class="size-4 meal-plan-create__plus-icon"
                       />
                       <span class="text-xs font-medium text-blue-500">
-                    Добавить еще
+                      {{ t("method.addMore")}}
                   </span>
                     </div>
                   </ElButton>
@@ -1091,7 +1142,7 @@ const addMeal = (parentIndex: number) => {
             class="!bg-[#E2E6F3] !border-none !text-dark-gray"
             @click="cancel"
           >
-            Отменить
+            {{ t("method.cancel")}}
           </ElButton>
           <ElButton
             size="large"
@@ -1099,7 +1150,7 @@ const addMeal = (parentIndex: number) => {
             class="!bg-blue-500"
             @click="sendData"
           >
-            Далее
+            {{ t("common.next")}}
             <!--    send btn text => Применить-->
           </ElButton>
         </div>

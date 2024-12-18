@@ -3,14 +3,16 @@ import { LocationQuery } from "vue-router";
 import localization from "@/localization";
 
 export const formatDate = (date: Date) => {
+  const { t } = localization.global;
+
   const daysOfWeek = [
-    "Воскресенье",
-    "Понедельник",
-    "Вторник",
-    "Среда",
-    "Четверг",
-    "Пятница",
-    "Суббота",
+    t('weekDays.0'),
+    t('weekDays.1'),
+    t('weekDays.2'),
+    t('weekDays.3'),
+    t('weekDays.4'),
+    t('weekDays.5'),
+    t('weekDays.6'),
   ];
 
   const year = date.getFullYear();

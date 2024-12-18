@@ -89,7 +89,21 @@
     "occupiedSpace": "Занятое место",
     "yourOwnExpense": "за свой счет",
     "withDiet": "с рационом",
-    "base": "База"
+    "base": "База",
+    "calculator": "Калькулятор",
+    "uniqueNumber": "Уникальный номер",
+    "ndc": "НДС",
+    "menu": "Меню",
+    "compound": "Состав",
+    "costPrice": "Себестоимость",
+    "sell": "Продать",
+    "time": "Время",
+    "basket": "Корзина",
+    "enterDate": "Введите дату",
+    "days": "{number} дней",
+    "timeToStart": "Время начало",
+    "endToTime": "Время окончания",
+    "next": "Далее"
   },
   "status": {
     "active": "Активный",
@@ -329,7 +343,29 @@
   },
   "kitchen": {
     "all": "Все кухни",
-    "title": "Кухня"
+    "title": "Кухня",
+    "free": "Бесплатная кухня",
+    "paid": "Продажи",
+    "ration": "Рационы",
+    "ration2": "Рацион",
+    "rationType": "Тип рациона",
+    "rations": "{number} рационов",
+    "dishes": "Блюды",
+    "dishesPlaceholder": "Выберите блюды",
+    "portion": "Порция",
+    "ingredients": "Ингредиенты",
+    "calculation": "Расчет",
+    "therePlans": "Есть {number} плана",
+    "compoundRation": "Состав рациона",
+    "currentMenu": "Текущее меню",
+    "allMenu": "Все меню",
+    "prepareDishes": "Приготовить блюды",
+    "theMealPlanHasNotBeenMadeYet": "План питания еще не составлен",
+    "chooseYourMealTime": "Выбирайте время еды",
+    "servingQuantity": "Количество порции",
+    "listOfDishes": "Список блюды",
+    "createMenu": "Добавить меню",
+    "dishes2": "Блюди"
   },
   "gender": {
     "female": "Женский",
@@ -341,5 +377,20 @@
     "ownership": "Принадлежность роли",
     "numberOfUses": "Кол. использований"
   },
-  "footer": "Made by “Anysoft” software & solutions company"
+  "footer": "Made by “Anysoft” software & solutions company",
+  "weekDays": {
+    "0": "Воскресенье",
+    "1": "Понедельник",
+    "2": "Вторник",
+    "3": "Среда",
+    "4": "Четверг",
+    "5": "Пятница",
+    "6": "Суббота"
+  },
+  "mealTime": {
+    "breakfast": "Завтрак",
+    "dinner": "Обед",
+    "dinner2": "Ужин",
+    "dryFood": "Сухой питания"
+  }
 }

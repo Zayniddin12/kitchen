@@ -1,6 +1,6 @@
 <script
-    setup
-    lang="ts"
+  setup
+  lang="ts"
 >
 import { computed, onMounted, onUnmounted, provide, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
@@ -15,6 +15,9 @@ import HomeIcon from "@/assets/images/icons/nav/nav-drawer/home.svg";
 import DocumentsIcon from "@/assets/images/icons/nav/nav-drawer/documents.svg";
 import NotebookIcon from "@/assets/images/icons/nav/nav-list/notebook.svg";
 import MonitoringIcon from "@/assets/images/icons/nav/nav-drawer/monitoring.svg";
+import KitchenIcon from "@/assets/images/icons/kitchen/kitchen.svg";
+import WarehouseBasesIcon from "@/assets/images/icons/nav/nav-drawer/warehouse-bases.svg";
+import SettingsIcon from "@/assets/images/icons/nav/nav-drawer/settings.svg";
 import { useSettingsStore } from "@/modules/Settings/store";
 import { useWarehouseBasesStore } from "@/modules/WarehouseBases/warehouse-bases.store";
 import { useCommonStore } from "@/stores/common.store";
@@ -26,7 +29,7 @@ const settingsStore = useSettingsStore();
 const warehouseBasesStore = useWarehouseBasesStore();
 const commonStore = useCommonStore();
 
-const {t} = useI18n();
+const { t } = useI18n();
 
 const childSidebarPin = ref<boolean>(JSON.parse(localStorage.getItem("child-sidebar-pin" as string) || "false"));
 const childSidebar = ref<boolean>(JSON.parse(localStorage.getItem("child-sidebar" as string) || "false"));
@@ -45,7 +48,7 @@ onMounted(async () => {
 //   commonStore.removeTitles();
 // });
 
-watch(() => route.name, function (val) {
+watch(() => route.name, function(val) {
   if (val === "home") {
     localStorage.setItem("child-sidebar", JSON.stringify(false));
     childSidebar.value = false;
@@ -58,7 +61,7 @@ const navDrawerItems = computed(() => {
       title: "Главная",
       to: { name: "home" },
       key: "home",
-      icon: HomeIcon
+      icon: HomeIcon,
     },
     {
       title: "Документы",
@@ -73,17 +76,37 @@ const navDrawerItems = computed(() => {
             {
               title: "Входящие",
               key: "documentInbox",
-              to: { name: "inbox" }
-            }
-          ]
-        }
-      ]
+              to: { name: "inbox" },
+            },
+          ],
+        },
+      ],
     },
     {
       title: "Мониторинг",
       key: "monitoring",
-      icon: MonitoringIcon
-    }
+      icon: MonitoringIcon,
+    },
+    {
+      title: "Базы складов",
+      key: "warehouseBases",
+      icon: WarehouseBasesIcon,
+    },
+    {
+      title: "Склад кухни",
+      key: "kitchenWarehouse",
+      icon: WarehouseBasesIcon,
+    },
+    {
+      title: "Кухня",
+      key: "kitchen",
+      icon: KitchenIcon,
+    },
+    {
+      title: t("common.settings"),
+      key: "settings",
+      icon: SettingsIcon,
+    },
   ];
 });
 
@@ -95,31 +118,32 @@ const navDrawerWidth = ref<number>(0);
 <template>
   <div>
     <SideBar
-        v-model:childSidebarPin="childSidebarPin"
-        v-model:childSidebar="childSidebar"
+      v-model:childSidebarPin="childSidebarPin"
+      v-model:childSidebar="childSidebar"
     />
     <!--    <NavDrawer-->
-    <!--        :items="navDrawerItems"-->
-    <!--        @changeWidth="(value:number) => navDrawerWidth = value"-->
+    <!--      :items="navDrawerItems"-->
+    <!--      @changeWidth="(value:number) => navDrawerWidth = value"-->
     <!--    />-->
     <div
-        class="main-layout min-h-screen p-6 pr-7 pt-28 dark:bg-darkLayoutMain dark:bg-body-dark bg-white ml-[128px] transition-all flex flex-col justify-between"
-        :class="childSidebarPin && childSidebar ? margin : ''"
+      class="main-layout min-h-screen p-6 pr-7 pt-28 dark:bg-darkLayoutMain dark:bg-body-dark bg-white ml-[128px] transition-all flex flex-col justify-between"
+      :class="childSidebarPin && childSidebar ? margin : ''"
     >
 
       <div class="flex flex-col">
-        <AppBreadcrumb/>
+        <AppBreadcrumb />
         <RouterView />
       </div>
 
-      <span class="mt-[28px] bg-transparent !dark:body-dark w-full text-[#8F9194] text-[12px] select-none">{{ t("footer")}}</span>
+      <span class="mt-[28px] bg-transparent !dark:body-dark w-full text-[#8F9194] text-[12px] select-none">{{ t("footer")
+        }}</span>
     </div>
 
     <div
-        :class="childSidebarPin && childSidebar ? 'top-navbar-margin' : ''"
-        class="top-navbar bg-lightLayoutStorm dark:bg-body-dark text-white transition-all bg-[#fff]"
+      :class="childSidebarPin && childSidebar ? 'top-navbar-margin' : ''"
+      class="top-navbar bg-lightLayoutStorm dark:bg-body-dark text-white transition-all bg-[#fff]"
     >
-      <NavBar/>
+      <NavBar />
     </div>
   </div>
 </template>
