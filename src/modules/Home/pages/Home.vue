@@ -239,301 +239,260 @@ const totalPrice = computed(() =>
   items.value.reduce((total, item) => total + item.price, 0),
 );
 
-const printReceipt = () => {
-  const printContent = receipt.value.outerHTML;
-  const printWindow = window.open("", "", "");
-  printWindow.document.write("<html><head><title>Print Receipt</title></head><body>");
-  printWindow.document.write(printContent);
-  printWindow.document.write("</body></html>");
-  printWindow.document.close();
-  printWindow.focus();
-  printWindow.print();
-  // printWindow.close();
-};
 </script>
 
 <template>
-  <div id="app">
-    <div class="receipt" ref="receipt">
-      <div class="receipt-header">
-        <h2>Grocery Store</h2>
-        <p>Thank you for your purchase!</p>
+    <div>
+      <h1 class="m-0 font-semibold text-[32px] mb-[24px]">
+        Главная
+      </h1>
+      <div
+        v-if="settingsStore.regional.managements.length"
+        class="app-tabs !text-sm mb-6"
+      >
+        <RouterLink
+          :to="{name: route.name}"
+          :class="[
+                'app-tab',
+                { 'app-tab--active': !form.management_id },
+              ]"
+        >
+          {{ t("common.all") }}
+        </RouterLink>
+        <RouterLink
+          v-for="item in settingsStore.regional.managements"
+          :key="item.id"
+          :to="{ query: { ...route.query, ...{ management_id: item.id } } }"
+          :class="[
+                'app-tab',
+                { 'app-tab--active': form.management_id === item.id },
+              ]"
+        >
+          {{ item.name }}
+        </RouterLink>
       </div>
-      <div class="receipt-body">
-        <table style="width: 100%;">
-          <thead>
-          <tr>
-            <th style="text-align: left;">Item</th>
-            <th style="text-align: right;">Price</th>
-          </tr>
-          </thead>
-          <tbody>
-          <tr v-for="item in items" :key="item.name">
-            <td>{{ item.name }}</td>
-            <td style="text-align: right;">${{ item.price.toFixed(2) }}</td>
-          </tr>
-          </tbody>
-        </table>
+
+      <div class="flex items-start gap-4 mb-[40px]">
+        <div class="w-[55%]">
+          <div class="grid grid-cols-2 gap-x-4 mb-10">
+            <AnalyticsCard
+              :icon="WarehouseIcon"
+              :title="t('home.warehouseOccupancy')"
+              :subtitle="t('home.textWillGoHere')"
+              :data="warehouseCapacityData"
+              :legend-item-gap="160"
+              :loading="statisticsStore.warehouseCapacityLoading"
+            />
+            <AnalyticsCard
+              :title="t('home.visitorsNumber')"
+              :icon="UsersIcon"
+              :subtitle="t('home.textWillGoHere')"
+              :legend-item-gap="220"
+              :data="visitorsData"
+              :loading="statisticsStore.visitorsLoading"
+            />
+          </div>
+          <PreparationsChart
+            :title="t('home.preparation')"
+            :total_price="statisticsStore.kitchenPreparations?.total_price"
+            :percent="5"
+            :data="statisticsStore.kitchenPreparations?.kitchens ?? []"
+            :loading="statisticsStore.kitchenPreparationsLoading"
+          >
+            <template #form>
+              <AppForm
+                :value="kitchenPreparationsForm"
+                :validation-errors="kitchenPreparationsValidationErrors"
+                class="grid grid-cols-3 gap-x-2"
+              >
+                <AppSelect
+                  v-model="kitchenPreparationsForm.type_id"
+                  prop="type_id"
+                  size="large"
+                  :placeholder="t('home.allType')"
+                  :items="settingsStore.kitchenWarehouseList"
+                  item-label="name"
+                  item-value="id"
+                  @change="fetchKitchenPreparations"
+                />
+                <AppDatePicker
+                  v-model="kitchenPreparationsForm.from_date"
+                  prop="from_date"
+                  size="large"
+                  @change="fetchKitchenPreparations"
+                />
+                <AppDatePicker
+                  v-model="kitchenPreparationsForm.to_date"
+                  prop="to_date"
+                  size="large"
+                  @change="fetchKitchenPreparations"
+                />
+              </AppForm>
+            </template>
+          </PreparationsChart>
+        </div>
+        <div class="w-[45%]">
+          <div class="p-6 bg-[#F8F9FC] rounded-t-[24px]">
+            <h6 class="text-dark text-lg font-semibold ">{{ t("home.lowStockProducts") }}</h6>
+          </div>
+
+          <ElTable
+            v-loading="statisticsStore.productsLoading"
+            :data="statisticsStore.products"
+            :row-class-name="handleClass"
+            :empty-text="t('common.empty')"
+          >
+            <ElTableColumn
+              prop="idx"
+              label="№"
+              width="80"
+            >
+              <template #default="{$index}">
+                {{ $index + 1 }}
+              </template>
+            </ElTableColumn>
+            <ElTableColumn
+              prop="product_parent_name"
+              :label="t('product.type')"
+            >
+              <template #default="{row}:{row:ProductType}">
+                <div
+                  v-if="row.product_image || row.product_parent_name"
+                  class="flex items-center gap-x-3"
+                >
+                  <el-avatar
+                    v-if="row.product_image"
+                    :size="32"
+                    :src="row.product_image"
+                  />
+                  <span>{{ row.product_parent_name }}</span>
+                </div>
+                <template v-else>-</template>
+              </template>
+            </ElTableColumn>
+            <ElTableColumn
+              prop="product_name"
+              :label="t('product.view')"
+            >
+              <template #default="{row}:{row: ProductType}">
+                {{ row.product_name || "-" }}
+              </template>
+            </ElTableColumn>
+            <ElTableColumn
+              prop="quantity"
+              :label="t('common.quantity')"
+            >
+              <template #default="{row}:{row: ProductType}">
+                {{ row.quantity || "-" }}
+              </template>
+            </ElTableColumn>
+            <ElTableColumn
+              prop="base_name"
+              :label="t('common.base')"
+            >
+              <template #default="{row}:{row: ProductType}">
+                {{ row.base_name || "-" }}
+              </template>
+            </ElTableColumn>
+          </ElTable>
+        </div>
       </div>
-      <div class="receipt-footer">
-        <p>Total: ${{ totalPrice.toFixed(2) }}</p>
+      <GraphChart
+        :title="t('product.arrival')"
+        :subtitle="t('home.textWillGoHere')"
+        class="mb-10"
+        :loading="statisticsStore.incomingGraphProductsLoading"
+        :data="statisticsStore.incomingGraphProducts"
+      >
+        <template #form>
+          <AppForm
+            :value="incomingGraphForm"
+            :validation-errors="incomingGraphValidationErrors"
+            class="grid grid-cols-3 gap-x-4"
+          >
+            <AppSelect
+              v-model="incomingGraphForm.type_id"
+              prop="type_id"
+              size="large"
+              :placeholder="t('home.allType')"
+              :items="settingsStore.kitchenTypesList"
+              item-value="id"
+              item-label="name"
+              @change="fetchIncomingGraphProducts"
+            />
+            <AppDatePicker
+              v-model="incomingGraphForm.from_date"
+              prop="from_date"
+              size="large"
+              @change="fetchIncomingGraphProducts"
+            />
+            <AppDatePicker
+              v-model="incomingGraphForm.to_date"
+              prop="to_date"
+              size="large"
+              @change="fetchIncomingGraphProducts"
+            />
+          </AppForm>
+        </template>
+      </GraphChart>
+      <GraphChart
+        :title="t('home.leftoversFromDishes')"
+        :subtitle="t('home.textWillGoHere')"
+        class="mb-10"
+        :loading="statisticsStore.outgoingGraphProductsLoading"
+        :data="statisticsStore.outgoingGraphProducts"
+      >
+        <template #form>
+          <AppForm
+            :value="outgoingGraphForm"
+            :validation-errors="outgoingGraphValidationErrors"
+            class="grid grid-cols-3 gap-x-4"
+          >
+            <AppSelect
+              v-model="outgoingGraphForm.type_id"
+              prop="type_id"
+              size="large"
+              clearable
+              :placeholder="t('kitchen.all')"
+              :items="settingsStore.kitchenTypesList"
+              item-value="id"
+              item-label="name"
+              @change="fetchOutgoingGraphProducts"
+            />
+            <AppDatePicker
+              v-model="outgoingGraphForm.from_date"
+              prop="from_date"
+              size="large"
+              @change="fetchOutgoingGraphProducts"
+            />
+            <AppDatePicker
+              v-model="outgoingGraphForm.to_date"
+              prop="to_date"
+              size="large"
+              @change="fetchOutgoingGraphProducts"
+            />
+          </AppForm>
+        </template>
+      </GraphChart>
+
+      <div class="grid grid-cols-2 gap-x-4">
+        <AnalyticsCard
+          :title="t('home.numberOfKitchens')"
+          :icon="KitchenIcon"
+          :subtitle="t('home.textWillGoHere')"
+          :data="kitchenData"
+          :legend-item-gap="135"
+          :loading="statisticsStore.kitchenCountLoading"
+        />
+        <AnalyticsCard
+          :title="t('home.numberOfWarehouses')"
+          :icon="BranchIcon"
+          :subtitle="t('home.textWillGoHere')"
+          :legend-item-gap="135"
+          :data="warehouseData"
+          :loading="statisticsStore.warehouseCountLoading"
+        />
       </div>
     </div>
-
-    <button class="btn" @click="printReceipt">Print Receipt</button>
-  </div>
-
-  <!--  <div>-->
-  <!--    <h1 class="m-0 font-semibold text-[32px] mb-[24px]">-->
-  <!--      Главная-->
-  <!--    </h1>-->
-  <!--    <div-->
-  <!--      v-if="settingsStore.regional.managements.length"-->
-  <!--      class="app-tabs !text-sm mb-6"-->
-  <!--    >-->
-  <!--      <RouterLink-->
-  <!--        :to="{name: route.name}"-->
-  <!--        :class="[-->
-  <!--              'app-tab',-->
-  <!--              { 'app-tab&#45;&#45;active': !form.management_id },-->
-  <!--            ]"-->
-  <!--      >-->
-  <!--        {{ t("common.all") }}-->
-  <!--      </RouterLink>-->
-  <!--      <RouterLink-->
-  <!--        v-for="item in settingsStore.regional.managements"-->
-  <!--        :key="item.id"-->
-  <!--        :to="{ query: { ...route.query, ...{ management_id: item.id } } }"-->
-  <!--        :class="[-->
-  <!--              'app-tab',-->
-  <!--              { 'app-tab&#45;&#45;active': form.management_id === item.id },-->
-  <!--            ]"-->
-  <!--      >-->
-  <!--        {{ item.name }}-->
-  <!--      </RouterLink>-->
-  <!--    </div>-->
-
-  <!--    <div class="flex items-start gap-4 mb-[40px]">-->
-  <!--      <div class="w-[55%]">-->
-  <!--        <div class="grid grid-cols-2 gap-x-4 mb-10">-->
-  <!--          <AnalyticsCard-->
-  <!--            :icon="WarehouseIcon"-->
-  <!--            :title="t('home.warehouseOccupancy')"-->
-  <!--            :subtitle="t('home.textWillGoHere')"-->
-  <!--            :data="warehouseCapacityData"-->
-  <!--            :legend-item-gap="160"-->
-  <!--            :loading="statisticsStore.warehouseCapacityLoading"-->
-  <!--          />-->
-  <!--          <AnalyticsCard-->
-  <!--            :title="t('home.visitorsNumber')"-->
-  <!--            :icon="UsersIcon"-->
-  <!--            :subtitle="t('home.textWillGoHere')"-->
-  <!--            :legend-item-gap="220"-->
-  <!--            :data="visitorsData"-->
-  <!--            :loading="statisticsStore.visitorsLoading"-->
-  <!--          />-->
-  <!--        </div>-->
-  <!--        <PreparationsChart-->
-  <!--          :title="t('home.preparation')"-->
-  <!--          :total_price="statisticsStore.kitchenPreparations?.total_price"-->
-  <!--          :percent="5"-->
-  <!--          :data="statisticsStore.kitchenPreparations?.kitchens ?? []"-->
-  <!--          :loading="statisticsStore.kitchenPreparationsLoading"-->
-  <!--        >-->
-  <!--          <template #form>-->
-  <!--            <AppForm-->
-  <!--              :value="kitchenPreparationsForm"-->
-  <!--              :validation-errors="kitchenPreparationsValidationErrors"-->
-  <!--              class="grid grid-cols-3 gap-x-2"-->
-  <!--            >-->
-  <!--              <AppSelect-->
-  <!--                v-model="kitchenPreparationsForm.type_id"-->
-  <!--                prop="type_id"-->
-  <!--                size="large"-->
-  <!--                :placeholder="t('home.allType')"-->
-  <!--                :items="settingsStore.kitchenWarehouseList"-->
-  <!--                item-label="name"-->
-  <!--                item-value="id"-->
-  <!--                @change="fetchKitchenPreparations"-->
-  <!--              />-->
-  <!--              <AppDatePicker-->
-  <!--                v-model="kitchenPreparationsForm.from_date"-->
-  <!--                prop="from_date"-->
-  <!--                size="large"-->
-  <!--                @change="fetchKitchenPreparations"-->
-  <!--              />-->
-  <!--              <AppDatePicker-->
-  <!--                v-model="kitchenPreparationsForm.to_date"-->
-  <!--                prop="to_date"-->
-  <!--                size="large"-->
-  <!--                @change="fetchKitchenPreparations"-->
-  <!--              />-->
-  <!--            </AppForm>-->
-  <!--          </template>-->
-  <!--        </PreparationsChart>-->
-  <!--      </div>-->
-  <!--      <div class="w-[45%]">-->
-  <!--        <div class="p-6 bg-[#F8F9FC] rounded-t-[24px]">-->
-  <!--          <h6 class="text-dark text-lg font-semibold ">{{ t("home.lowStockProducts") }}</h6>-->
-  <!--        </div>-->
-
-  <!--        <ElTable-->
-  <!--          v-loading="statisticsStore.productsLoading"-->
-  <!--          :data="statisticsStore.products"-->
-  <!--          :row-class-name="handleClass"-->
-  <!--          :empty-text="t('common.empty')"-->
-  <!--        >-->
-  <!--          <ElTableColumn-->
-  <!--            prop="idx"-->
-  <!--            label="№"-->
-  <!--            width="80"-->
-  <!--          >-->
-  <!--            <template #default="{$index}">-->
-  <!--              {{ $index + 1 }}-->
-  <!--            </template>-->
-  <!--          </ElTableColumn>-->
-  <!--          <ElTableColumn-->
-  <!--            prop="product_parent_name"-->
-  <!--            :label="t('product.type')"-->
-  <!--          >-->
-  <!--            <template #default="{row}:{row:ProductType}">-->
-  <!--              <div-->
-  <!--                v-if="row.product_image || row.product_parent_name"-->
-  <!--                class="flex items-center gap-x-3"-->
-  <!--              >-->
-  <!--                <el-avatar-->
-  <!--                  v-if="row.product_image"-->
-  <!--                  :size="32"-->
-  <!--                  :src="row.product_image"-->
-  <!--                />-->
-  <!--                <span>{{ row.product_parent_name }}</span>-->
-  <!--              </div>-->
-  <!--              <template v-else>-</template>-->
-  <!--            </template>-->
-  <!--          </ElTableColumn>-->
-  <!--          <ElTableColumn-->
-  <!--            prop="product_name"-->
-  <!--            :label="t('product.view')"-->
-  <!--          >-->
-  <!--            <template #default="{row}:{row: ProductType}">-->
-  <!--              {{ row.product_name || "-" }}-->
-  <!--            </template>-->
-  <!--          </ElTableColumn>-->
-  <!--          <ElTableColumn-->
-  <!--            prop="quantity"-->
-  <!--            :label="t('common.quantity')"-->
-  <!--          >-->
-  <!--            <template #default="{row}:{row: ProductType}">-->
-  <!--              {{ row.quantity || "-" }}-->
-  <!--            </template>-->
-  <!--          </ElTableColumn>-->
-  <!--          <ElTableColumn-->
-  <!--            prop="base_name"-->
-  <!--            :label="t('common.base')"-->
-  <!--          >-->
-  <!--            <template #default="{row}:{row: ProductType}">-->
-  <!--              {{ row.base_name || "-" }}-->
-  <!--            </template>-->
-  <!--          </ElTableColumn>-->
-  <!--        </ElTable>-->
-  <!--      </div>-->
-  <!--    </div>-->
-  <!--    <GraphChart-->
-  <!--      :title="t('product.arrival')"-->
-  <!--      :subtitle="t('home.textWillGoHere')"-->
-  <!--      class="mb-10"-->
-  <!--      :loading="statisticsStore.incomingGraphProductsLoading"-->
-  <!--      :data="statisticsStore.incomingGraphProducts"-->
-  <!--    >-->
-  <!--      <template #form>-->
-  <!--        <AppForm-->
-  <!--          :value="incomingGraphForm"-->
-  <!--          :validation-errors="incomingGraphValidationErrors"-->
-  <!--          class="grid grid-cols-3 gap-x-4"-->
-  <!--        >-->
-  <!--          <AppSelect-->
-  <!--            v-model="incomingGraphForm.type_id"-->
-  <!--            prop="type_id"-->
-  <!--            size="large"-->
-  <!--            :placeholder="t('home.allType')"-->
-  <!--            :items="settingsStore.kitchenTypesList"-->
-  <!--            item-value="id"-->
-  <!--            item-label="name"-->
-  <!--            @change="fetchIncomingGraphProducts"-->
-  <!--          />-->
-  <!--          <AppDatePicker-->
-  <!--            v-model="incomingGraphForm.from_date"-->
-  <!--            prop="from_date"-->
-  <!--            size="large"-->
-  <!--            @change="fetchIncomingGraphProducts"-->
-  <!--          />-->
-  <!--          <AppDatePicker-->
-  <!--            v-model="incomingGraphForm.to_date"-->
-  <!--            prop="to_date"-->
-  <!--            size="large"-->
-  <!--            @change="fetchIncomingGraphProducts"-->
-  <!--          />-->
-  <!--        </AppForm>-->
-  <!--      </template>-->
-  <!--    </GraphChart>-->
-  <!--    <GraphChart-->
-  <!--      :title="t('home.leftoversFromDishes')"-->
-  <!--      :subtitle="t('home.textWillGoHere')"-->
-  <!--      class="mb-10"-->
-  <!--      :loading="statisticsStore.outgoingGraphProductsLoading"-->
-  <!--      :data="statisticsStore.outgoingGraphProducts"-->
-  <!--    >-->
-  <!--      <template #form>-->
-  <!--        <AppForm-->
-  <!--          :value="outgoingGraphForm"-->
-  <!--          :validation-errors="outgoingGraphValidationErrors"-->
-  <!--          class="grid grid-cols-3 gap-x-4"-->
-  <!--        >-->
-  <!--          <AppSelect-->
-  <!--            v-model="outgoingGraphForm.type_id"-->
-  <!--            prop="type_id"-->
-  <!--            size="large"-->
-  <!--            clearable-->
-  <!--            :placeholder="t('kitchen.all')"-->
-  <!--            :items="settingsStore.kitchenTypesList"-->
-  <!--            item-value="id"-->
-  <!--            item-label="name"-->
-  <!--            @change="fetchOutgoingGraphProducts"-->
-  <!--          />-->
-  <!--          <AppDatePicker-->
-  <!--            v-model="outgoingGraphForm.from_date"-->
-  <!--            prop="from_date"-->
-  <!--            size="large"-->
-  <!--            @change="fetchOutgoingGraphProducts"-->
-  <!--          />-->
-  <!--          <AppDatePicker-->
-  <!--            v-model="outgoingGraphForm.to_date"-->
-  <!--            prop="to_date"-->
-  <!--            size="large"-->
-  <!--            @change="fetchOutgoingGraphProducts"-->
-  <!--          />-->
-  <!--        </AppForm>-->
-  <!--      </template>-->
-  <!--    </GraphChart>-->
-
-  <!--    <div class="grid grid-cols-2 gap-x-4">-->
-  <!--      <AnalyticsCard-->
-  <!--        :title="t('home.numberOfKitchens')"-->
-  <!--        :icon="KitchenIcon"-->
-  <!--        :subtitle="t('home.textWillGoHere')"-->
-  <!--        :data="kitchenData"-->
-  <!--        :legend-item-gap="135"-->
-  <!--        :loading="statisticsStore.kitchenCountLoading"-->
-  <!--      />-->
-  <!--      <AnalyticsCard-->
-  <!--        :title="t('home.numberOfWarehouses')"-->
-  <!--        :icon="BranchIcon"-->
-  <!--        :subtitle="t('home.textWillGoHere')"-->
-  <!--        :legend-item-gap="135"-->
-  <!--        :data="warehouseData"-->
-  <!--        :loading="statisticsStore.warehouseCountLoading"-->
-  <!--      />-->
-  <!--    </div>-->
-  <!--  </div>-->
 </template>
 
