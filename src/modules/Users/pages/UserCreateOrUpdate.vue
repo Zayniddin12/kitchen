@@ -26,7 +26,7 @@ import { useRoleStore } from "@/modules/Settings/components/Reference/Role/role.
 import { AppMediaUploaderValueType } from "@/components/ui/form/app-media-uploader/app-media-uploader.type";
 import { AppSelectValueType } from "@/components/ui/form/app-select/app-select.type";
 import { WorkPlaceType } from "@/modules/Settings/components/Reference/Position/position.types";
-import { useListStore } from "@/List/list.store";
+import { useListStore } from "@/modules/List/list.store";
 
 interface Tabs {
   title: string;

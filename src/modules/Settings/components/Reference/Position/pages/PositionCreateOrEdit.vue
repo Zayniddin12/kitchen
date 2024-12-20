@@ -17,7 +17,7 @@ import { PositionDataType, WorkPlaceType } from "@/modules/Settings/components/R
 import AppForm from "@/components/ui/form/app-form/AppForm.vue";
 import { ValidationType } from "@/components/ui/form/app-form/app-form.type";
 import { useCommonStore } from "@/stores/common.store";
-import { useListStore } from "@/List/list.store";
+import { useListStore } from "@/modules/List/list.store";
 import { AppSelectValueType } from "@/components/ui/form/app-select/app-select.type";
 
 const { t } = useI18n();

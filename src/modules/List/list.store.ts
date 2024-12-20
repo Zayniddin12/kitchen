@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
-import { ListType } from "@/List/list.types";
-import listApi from "@/List/list.api";
+import { ListType } from "@/modules/List/list.types";
+import listApi from "@/modules/List/list.api";
 
 export const useListStore = defineStore("listStore", () => {
 
