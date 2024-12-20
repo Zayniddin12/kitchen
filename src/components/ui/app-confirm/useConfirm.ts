@@ -3,11 +3,13 @@ import {
   ConfirmInitParamsType,
   ConfirmParamsType,
   DefaultButtonType,
-  DefaultButtonTypes,
+  DefaultButtonTypes, DisabledBtnType,
   textType,
 } from "@/components/ui/app-confirm/app-confirm.type";
 import { ref } from "vue";
 import { filterObjectValues, togglePageScrolling } from "@/utils/helper";
+import { ButtonType } from "element-plus";
+import { useI18n } from "vue-i18n";
 
 const activeConfirm = ref<null | ConfirmInitParamsType>(null);
 const openConfirmModal = ref(false);
@@ -16,17 +18,19 @@ let resolvePromise: (value?: "confirm" | "save") => void;
 let rejectPromise: (reason?: "cancel") => void;
 
 export default function() {
+  const { t } = useI18n();
+
   const defaultButtons: DefaultButtonTypes = {
     cancel: [
-      { label: "Отменить", status: "secondary", action: "cancel" },
-      { label: "Выйти", status: "danger", action: "confirm" },
-      { label: "Сохранить", status: "primary", action: "save" },
+      { label: t("method.cancel"), status: "secondary", action: "cancel" },
+      { label: t("method.logout"), status: "danger", action: "confirm" },
+      { label: t("method.save"), status: "primary", action: "save" },
     ],
     delete: [
-      { label: "Отменить", status: "secondary", action: "cancel" },
-      { label: "Удалить", status: "danger", action: "confirm" },
+      { label: t("method.cancel"), status: "secondary", action: "cancel" },
+      { label: t("method.delete"), status: "danger", action: "confirm" },
     ],
-    show: [{ label: "Понятно", action: "confirm", status: "primary" }],
+    show: [{ label: t("method.understandable"), action: "confirm", status: "primary" }],
   };
 
   const init = (params: ConfirmInitParamsType = {}) =>
@@ -44,33 +48,40 @@ export default function() {
     title: textType,
     description: textType,
     disabledBody = false,
-  ) =>
-    init({
+    disabledBtn?: DisabledBtnType,
+  ) => {
+    let buttons = defaultButtons[type];
+    if (disabledBtn && buttons) {
+      buttons = buttons.filter(button => button.action !== disabledBtn);
+    }
+
+    return init({
       title,
       description,
-      buttons: defaultButtons[type],
+      buttons: buttons,
       disabledBody,
     });
+  };
 
   const confirm = {
     openModal,
     cancel: (params: ConfirmParamsType = {}) =>
       openModal(
         "cancel",
-        params.title || "<div class='max-w-[279px]'>Вы уверены что хотите отменить?</div>",
-        params.description || "Все не сохраненные изменения будут потеряны",
+        params.title || `<div class="max-w-[279px]">${t("confirm.cancel.title")}?</div>`,
+        params.description || t("confirm.cancel.description"),
         !!params.disabledBody,
+        params.disabledBtn || "",
       ),
     delete: (params: ConfirmParamsType = {}) =>
       openModal(
         "delete",
-        params.title || "<div class='max-w-[360px]'>Вы уверены, что хотите удалить эту запись?</div>",
-        params.description ||
-        "Это действие необратимо, и запись будет полностью удалена из системы",
+        params.title || `<div class="max-w-[360px]">${t("confirm.delete.title")}?</div>`,
+        params.description || t("confirm.delete.description"),
         !!params.disabledBody,
       ),
     show: (
-      description: textType = "Вы не можете деактивировать эту запись, так как она имеет связи с другими записями в системе. Пожалуйста, сначала удалите или измените записи, с которыми она связана.",
+      description: textType = t("confirm.show.description"),
       disabledBody = false,
     ) => openModal("show", "", description, disabledBody),
   };
@@ -90,5 +101,6 @@ export default function() {
     openConfirmModal,
     activeConfirm,
     sendAction,
+    init,
   };
 }

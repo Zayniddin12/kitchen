@@ -6,7 +6,7 @@ import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 interface MenuInterface {
   title: string;
   subTitle: string;
-  router?: string;
+  index?: string;
 }
 
 interface UlItems {
@@ -14,7 +14,7 @@ interface UlItems {
   menu: MenuInterface[];
 }
 
-const router = useRouter();
+const index = useRouter();
 
 const ulItems = ref<UlItems[]>([
   {
@@ -101,12 +101,14 @@ const ulItems = ref<UlItems[]>([
     title: "Должности и роли",
     menu: [
       {
-        title: "Типы документов",
-        subTitle: "Типы документов",
+        title: "Должности",
+        subTitle: "Должности",
+        router: {name: "position"}
       },
       {
-        title: "Виды документов",
-        subTitle: "Виды документов",
+        title: "Роли",
+        subTitle: "Роли",
+        router: {name: "role"}
       },
     ],
   },

@@ -3,9 +3,15 @@
   lang="ts"
 >
 
+import { setSessionItem } from "@/utils/sessionStorage";
+import { useI18n } from "vue-i18n";
+
 const backToHome = () => {
-  sessionStorage.setItem("current-menu", "0");
+  setSessionItem("current-menu", "0");
 };
+
+const { t } = useI18n();
+
 </script>
 
 <template>
@@ -17,17 +23,16 @@ const backToHome = () => {
     />
 
     <div class="flex flex-col items-center">
-      <div class="text-dark font-bold text-[32px]">Страница не найдена</div>
+      <div class="text-dark font-bold text-[32px]">{{ t("notFound.title")}}</div>
       <p class="text-base text-[#A8AAAE] font-[400] mt-[8px] mb-[24px] lg:w-[30%] md:lg:w-[30%] w-full m-auto text-center">
-        Извините, запрошенная вами страница не найдена пожалуйста, вернитесь на
-        главную страницу
+        {{ t("notFound.description")}}
       </p>
       <RouterLink
         :to="{name: 'home'}"
         class="bg-[#2E90FA] w-[200px] py-[10px] rounded-lg text-white m-auto px-2 flex justify-center"
         @click="backToHome"
       >
-        Вернуться на главную
+        {{ t("notFound.redirectHome")}}
       </RouterLink>
     </div>
   </div>

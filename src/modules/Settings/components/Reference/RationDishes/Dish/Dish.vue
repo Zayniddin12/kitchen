@@ -1,10 +1,13 @@
-<script setup lang="ts">
-import {onMounted, ref} from "vue";
-import {Search} from "@element-plus/icons-vue";
-import {useRouter} from "vue-router";
+<script
+    setup
+    lang="ts"
+>
+import { onMounted, ref } from "vue";
+import { Search } from "@element-plus/icons-vue";
+import { useRouter } from "vue-router";
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
-import {useSettingsStore} from "@/modules/Settings/store";
-import {ElNotification} from "element-plus";
+import { useSettingsStore } from "@/modules/Settings/store";
+import { ElNotification } from "element-plus";
 
 
 interface Params {
@@ -13,26 +16,26 @@ interface Params {
   per_page: number;
 }
 
-const store = useSettingsStore()
+const store = useSettingsStore();
 const router = useRouter();
-const {setBreadCrumb} = useBreadcrumb();
+const { setBreadCrumb } = useBreadcrumb();
 const setBreadCrumbFn = () => {
   setBreadCrumb([
     {
-      label: "Настройки",
+      label: "Настройки"
     },
     {
       label: "Справочники",
-      to: {name: "reference"},
+      to: { name: "reference" }
     },
     {
       label: "Рационы и блюда",
-      to: {name: "reference"},
+      to: { name: "reference" }
     },
     {
       label: "Блюда",
-      isActionable: true,
-    },
+      isActionable: true
+    }
   ]);
 };
 
@@ -40,28 +43,28 @@ const params = ref<Params>({
   search: null,
   page: 1,
   per_page: 10
-})
-const loading = ref<boolean>(false)
-let debounceTimeout: ReturnType<typeof setTimeout>
+});
+const loading = ref<boolean>(false);
+let debounceTimeout: ReturnType<typeof setTimeout>;
 
 onMounted(() => {
   setBreadCrumbFn();
 
-  refresh()
-})
+  refresh();
+});
 
 const refresh = async () => {
-  loading.value = true
+  loading.value = true;
 
   try {
-    await store.GET_MEALS(params.value)
+    await store.GET_MEALS(params.value);
   } catch (e) {
-    loading.value = false
-    ElNotification({title: e, type: 'error'})
+    loading.value = false;
+    ElNotification({ title: e as string, type: "error" });
   } finally {
-    loading.value = false
+    loading.value = false;
   }
-}
+};
 
 const handleSearch = (): void => {
   clearTimeout(debounceTimeout);
@@ -77,13 +80,18 @@ const handleSearch = (): void => {
 const changePagination = (event: any) => {
   params.value.page = event;
 
-  refresh()
+  refresh();
+};
+
+
+const setDefaultImage = (event: any) => {
+  event.target.src = "https://www.landuse-ca.org/wp-content/uploads/2019/04/no-photo-available.png";
+};
+
+const tableCurrentChange = (value:Record<string, any>) => {
+  router.push(`/reference-dish-view/${value.id}`)
 }
 
-
-const setDefaultImage = (event) => {
-  event.target.src = 'https://www.landuse-ca.org/wp-content/uploads/2019/04/no-photo-available.png';
-};
 </script>
 
 <template>
@@ -101,8 +109,15 @@ const setDefaultImage = (event) => {
             @input="handleSearch"
         />
 
-        <button class="custom-apply-btn ml-[16px]" @click="router.push('/reference-dish-create')">
-          <img src="@/assets/images/icons/plus.svg" alt="plus" class="mr-[8px]"/>
+        <button
+            class="custom-apply-btn ml-[16px]"
+            @click="router.push('/reference-dish-create')"
+        >
+          <img
+              src="@/assets/images/icons/plus.svg"
+              alt="plus"
+              class="mr-[8px]"
+          />
           Добавить
         </button>
       </div>
@@ -110,32 +125,81 @@ const setDefaultImage = (event) => {
 
     <el-table
         :data="store.meals.meals"
-        stripe class="custom-element-table mt-[24px]"
+        stripe
+        class="custom-element-table mt-[24px]"
         v-loading="loading"
         :empty-text="'Нет доступных данных'"
+        highlight-current-row
+        @current-change="tableCurrentChange"
     >
-      <el-table-column prop="idx" label="№" width="80">
-        <template #default="{$index}" v-if="store.rationList.rations">
-          {{params.page >1 ? store.meals.pagination.per_page * (params.page - 1) + $index + 1 : $index +1 }}
+      <el-table-column
+          prop="idx"
+          label="№"
+          width="80"
+      >
+        <template
+            #default="{$index}"
+            v-if="store.rationList.rations"
+        >
+          {{ params.page > 1 ? store.meals.pagination.per_page * (params.page - 1) + $index + 1 : $index + 1 }}
         </template>
       </el-table-column>
-      <el-table-column prop="image" label="Картинка блюды" sortable>
+      <el-table-column
+          prop="image"
+          label="Картинка блюды"
+          sortable
+      >
         <template #default="scope">
-          <img @error="setDefaultImage" :src="scope.row.image" v-if="scope.row.image" class="h-[32px] w-[32px] object-cover rounded-full" alt="photo"/>
-          <img v-else src="https://www.landuse-ca.org/wp-content/uploads/2019/04/no-photo-available.png" class="h-[32px] w-[32px] object-cover rounded-full" alt="photo"/>
+          <img
+              @error="setDefaultImage"
+              :src="scope.row.image"
+              v-if="scope.row.image"
+              class="h-[32px] w-[32px] object-cover rounded-full"
+              alt="photo"
+          />
+          <img
+              v-else
+              src="https://www.landuse-ca.org/wp-content/uploads/2019/04/no-photo-available.png"
+              class="h-[32px] w-[32px] object-cover rounded-full"
+              alt="photo"
+          />
         </template>
       </el-table-column>
-      <el-table-column prop="name" label="Наименование блюда" sortable/>
-      <el-table-column prop="number" label="Уникальный номер" sortable/>
-      <el-table-column prop="unit" label="Ед. измерения" sortable/>
+      <el-table-column
+          prop="name"
+          label="Наименование блюда"
+          sortable
+      />
+      <el-table-column
+          prop="number"
+          label="Уникальный номер"
+          sortable
+      />
+      <el-table-column
+          prop="unit"
+          label="Ед. измерения"
+          sortable
+      />
       <el-table-column label="Действие">
         <template #default="scope">
-          <button class="action-btn" @click="router.push(`/reference-dish-view/${scope.row.id}`)">
-            <img src="@/assets/images/eye.svg" alt="eye"/>
+          <button
+              class="action-btn"
+              @click.stop="router.push(`/reference-dish-view/${scope.row.id}`)"
+          >
+            <img
+                src="@/assets/images/eye.svg"
+                alt="eye"
+            />
           </button>
 
-          <button class="action-btn ml-[8px]" @click="router.push(`/reference-dish-edit/${scope.row.id}`)">
-            <img src="@/assets/images/icons/edit.svg" alt="edit"/>
+          <button
+              class="action-btn ml-[8px]"
+              @click.stop="router.push(`/reference-dish-edit/${scope.row.id}`)"
+          >
+            <img
+                src="@/assets/images/icons/edit.svg"
+                alt="edit"
+            />
           </button>
         </template>
       </el-table-column>

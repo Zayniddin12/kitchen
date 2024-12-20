@@ -1,20 +1,23 @@
-<script setup lang="ts">
-import {computed, onMounted, ref, watch} from "vue";
-import {useRoute, useRouter} from "vue-router";
+<script
+  setup
+  lang="ts"
+>
+import { computed, onMounted, ref, watch } from "vue";
+import { useRoute, useRouter } from "vue-router";
 import AppInput from "@/components/ui/form/app-input/AppInput.vue";
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 import useConfirm from "@/components/ui/app-confirm/useConfirm";
-import {useSettingsStore} from "@/modules/Settings/store";
-import {ElNotification} from "element-plus";
+import { useSettingsStore } from "@/modules/Settings/store";
+import { ElNotification } from "element-plus";
 import AppForm from "@/components/ui/form/app-form/AppForm.vue";
-import {ValidationType} from "@/components/ui/form/app-form/app-form.type";
+import { ValidationType } from "@/components/ui/form/app-form/app-form.type";
 import AppOverlay from "@/components/ui/app-overlay/AppOverlay.vue";
 
 interface DataValue {
   name: string;
   address: string;
   tin: string;
-  status: string
+  status: string;
 }
 
 const v$ = ref<ValidationType | null>(null);
@@ -22,11 +25,11 @@ const setValidation = (value: ValidationType) => {
   v$.value = value;
 };
 
-const store = useSettingsStore()
+const store = useSettingsStore();
 const route = useRoute();
 const router = useRouter();
-const {setBreadCrumb} = useBreadcrumb();
-const {confirm} = useConfirm();
+const { setBreadCrumb } = useBreadcrumb();
+const { confirm } = useConfirm();
 const setBreadCrumbFn = () => {
   setBreadCrumb([
     {
@@ -34,17 +37,17 @@ const setBreadCrumbFn = () => {
     },
     {
       label: "Справочники",
-      to: {name: "reference"},
+      to: { name: "reference" },
     },
 
     {
       label: "Поставщики и организации",
-      to: {name: "reference"},
+      to: { name: "reference" },
     },
 
     {
       label: "Организации",
-      to: {name: "reference-organization"},
+      to: { name: "reference-organization" },
     },
     {
       label: String(route?.meta?.breadcrumbItemTitle ?? ""),
@@ -53,43 +56,43 @@ const setBreadCrumbFn = () => {
   ]);
 };
 
-const status = ref<boolean>(true)
+const status = ref<boolean>(true);
 const dataValue = ref<DataValue>({
-  name: '',
-  address: '',
-  tin: '',
-  status: "active"
-})
-const loading = ref<boolean>(false)
+  name: "",
+  address: "",
+  tin: "",
+  status: "active",
+});
+const loading = ref<boolean>(false);
 
 onMounted(async () => {
   if (route.params.id) {
-    loading.value = true
+    loading.value = true;
     try {
-      const data = await store.GET_ORGANIZATION_DETAIL(route.params.id as string | number)
+      const data = await store.GET_ORGANIZATION_DETAIL(route.params.id as string | number);
       if (data && data.organization) {
         dataValue.value = data.organization;
 
-        status.value = data.organization.status === 'active'
+        status.value = data.organization.status === "active";
       }
     } catch (e) {
-      loading.value = false
+      loading.value = false;
     }
-    loading.value = false
+    loading.value = false;
   }
-})
+});
 
 const cancelFn = () => {
   confirm.cancel().then(response => {
-    router.push({name: "reference-organization"});
+    router.push({ name: "reference-organization" });
   });
 };
 
 const deleteFn = () => {
   confirm.delete().then(() => {
-    store.DELETE_ORGANIZATION(route.params.id)
-    router.push('/reference-organization');
-    ElNotification({title: 'Success', type: 'success'});
+    store.DELETE_ORGANIZATION(route.params.id);
+    router.push("/reference-organization");
+    ElNotification({ title: "Success", type: "success" });
   });
 };
 
@@ -107,7 +110,7 @@ const handleSubmit = async () => {
 
   if ((await v$.value.validate())) {
     try {
-      const payload = dataValue.value as DataValue
+      const payload = dataValue.value as DataValue;
 
       if (route.params.id) {
         await store.UPDATE_ORGANIZATION({
@@ -117,130 +120,143 @@ const handleSubmit = async () => {
             address: payload.address,
             tin: payload.tin,
             status: dataValue.value.status,
-          }
-        })
+          },
+        });
       } else {
-        await store.CREATE_ORGANIZATION(payload)
+        await store.CREATE_ORGANIZATION(payload);
       }
-      ElNotification({title: 'Success', type: 'success'});
-      await router.push('/reference-organization')
+      ElNotification({ title: "Success", type: "success" });
+      await router.push("/reference-organization");
     } catch (e) {
-      ElNotification({title: 'Error', type: 'error'});
+      ElNotification({ title: "Error", type: "error" });
     }
   }
-}
+};
 
 const changeStatus = () => {
   if (status.value) {
-    dataValue.value.status = 'active'
+    dataValue.value.status = "active";
   } else {
-    dataValue.value.status = 'inactive'
+    dataValue.value.status = "inactive";
   }
-}
+};
 
 const isDisabled = computed(() => {
-  return route.name === 'reference-organization-view'
-})
+  return route.name === "reference-organization-view";
+});
 
 watch(() => route.name, () => {
   setBreadCrumbFn();
-}, {immediate: true});
+}, { immediate: true });
 </script>
 
 <template>
   <div>
-    <AppOverlay
-        :loading="loading"
-    >
-      <div class="flex items-center justify-between mb-[24px]">
-        <h1 class="m-0 font-semibold text-[32px] leading-[48px]">{{ route.meta.title }}</h1>
-      </div>
+    <div class="flex items-center justify-between mb-[24px]">
+      <h1 class="m-0 font-semibold text-[32px] leading-[48px]">{{ route.meta.title }}</h1>
+    </div>
 
-      <div class="flex gap-6">
-        <div class="w-[70%]">
-          <AppForm
-              :value="dataValue"
-              @validation="setValidation"
+    <div class="flex gap-6">
+      <div class="w-[70%]">
+        <AppForm
+          :value="dataValue"
+          @validation="setValidation"
+        >
+          <AppOverlay
+            :loading
+            :rounded="16"
+            parent-class-name="border border-[#E2E6F3] rounded-2xl p-[24px]"
+            class="flex flex-col min-h-[55vh]"
           >
-            <div class="border border-[#E2E6F3] rounded-[24px] p-[24px] h-[65vh] flex flex-col">
-              <div class="grid grid-cols-2 gap-4">
-                <app-input
-                    v-model="dataValue.name"
-                    label="Наименование"
-                    placeholder="Введите"
-                    label-class="text-[#A8AAAE] font-medium text-[12px]"
-                    class="w-full"
-                    required
-                    prop="name"
-                    :disabled="isDisabled"
-                />
-
-                <app-input
-                    v-model="dataValue.address"
-                    label="Юр. адрес"
-                    placeholder="Введите"
-                    label-class="text-[#A8AAAE] font-medium text-[12px]"
-                    class="w-full"
-                    required
-                    prop="address"
-                    :disabled="isDisabled"
-                />
-              </div>
-
-              <div class="grid grid-cols-2 gap-4">
-                <app-input
-                    v-model="dataValue.tin"
-                    label="ИНН"
-                    maxlength="9"
-                    placeholder="Выберите"
-                    label-class="text-[#A8AAAE] font-medium text-[12px]"
-                    class="w-full"
-                    required
-                    prop="tin"
-                    :disabled="isDisabled"
-                />
-              </div>
-
-              <ElSwitch
-                  v-if="route.params.id && !route.query.type"
-                  active-text="Деактивация"
-                  class="app-switch mt-auto"
-                  @change="changeStatus"
-                  v-model="status"
+            <div class="grid grid-cols-2 gap-4">
+              <app-input
+                v-model="dataValue.name"
+                label="Наименование"
+                placeholder="Введите"
+                label-class="text-[#A8AAAE] font-medium text-[12px]"
+                class="w-full"
+                required
+                prop="name"
+                :disabled="isDisabled"
               />
-<!--              :before-change="switchChange"-->
-            </div>
-          </AppForm>
 
-          <div v-if="!route.query.type"
-               class="flex items-center mt-[24px] "
-               :class="!route.params.id ? 'justify-end' : 'justify-between'"
+              <app-input
+                v-model="dataValue.address"
+                label="Юр. адрес"
+                placeholder="Введите"
+                label-class="text-[#A8AAAE] font-medium text-[12px]"
+                class="w-full"
+                required
+                prop="address"
+                :disabled="isDisabled"
+              />
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+              <app-input
+                v-model="dataValue.tin"
+                label="ИНН"
+                maxlength="9"
+                placeholder="Выберите"
+                label-class="text-[#A8AAAE] font-medium text-[12px]"
+                class="w-full"
+                required
+                prop="tin"
+                :disabled="isDisabled"
+              />
+            </div>
+
+            <ElSwitch
+              v-if="route.params.id && !route.query.type"
+              active-text="Деактивация"
+              class="app-switch mt-auto"
+              @change="changeStatus"
+              v-model="status"
+            />
+            <!--              :before-change="switchChange"-->
+          </AppOverlay>
+        </AppForm>
+
+        <div
+          v-if="!route.query.type"
+          class="flex items-center mt-[24px] "
+          :class="!route.params.id ? 'justify-end' : 'justify-between'"
+        >
+          <button
+            v-if="route.params.id"
+            class="custom-danger-btn"
+            @click="deleteFn"
           >
-            <button v-if="route.params.id" class="custom-danger-btn" @click="deleteFn">
-              Удалить
+            Удалить
+          </button>
+
+
+          <div class="flex items-center gap-4">
+            <button
+              @click="cancelFn"
+              class="custom-cancel-btn"
+            >
+              Отменить
             </button>
 
-
-            <div class="flex items-center gap-4">
-              <button @click="cancelFn" class="custom-cancel-btn">
-                Отменить
-              </button>
-
-              <button class="custom-apply-btn" @click="handleSubmit">
-                {{ $route.params.id ? "Сохранить" : "Добавить" }}
-              </button>
-            </div>
+            <button
+              class="custom-apply-btn"
+              @click="handleSubmit"
+            >
+              {{ $route.params.id ? "Сохранить" : "Добавить" }}
+            </button>
           </div>
         </div>
+      </div>
 
-        <div class="w-[30%]">
-          <button
-              @click="router.push({name: 'reference-organization-edit', params: {id: route.params.id}})"
-              v-if="route.query.type == 'view'"
-              class="flex items-center gap-4 bg-[#F8F9FC] py-[10px] px-[20px] rounded-[8px]"
-          >
-            <li
-                :style="{
+      <div class="w-[30%]">
+        <button
+          @click="router.push({name: 'reference-organization-edit', params: {id: route.params.id}})"
+          v-if="route.query.type == 'view'"
+          class="flex items-center gap-4 bg-[#F8F9FC] py-[10px] px-[20px] rounded-[8px]"
+        >
+          <li
+            :style="{
                   maskImage: 'url(/icons/edit.svg)',
                   backgroundColor: '#8F9194',
                   color: '#8F9194',
@@ -250,12 +266,11 @@ watch(() => route.name, () => {
                   maskPosition: 'center',
                   maskRepeat: 'no-repeat'
                    }"
-            ></li>
-            Редактировать
-          </button>
-        </div>
+          ></li>
+          Редактировать
+        </button>
       </div>
-    </AppOverlay>
+    </div>
   </div>
 </template>
 

@@ -121,7 +121,7 @@ const sendForm = async () => {
       await settingsStore.createFoodFactory(form);
     } else if (route.name === "reference-combine-nutrition-edit" && routeID.value) {
       const newForm = { ...form };
-      newForm.status = setStatus(form.status);
+      if (typeof newForm.status === "boolean") newForm.status = setStatus(newForm.status);
       await settingsStore.updateFoodFactory(routeID.value as number, newForm);
     }
 
@@ -168,7 +168,7 @@ const disabled = computed(() => {
       <div class="w-[70%]">
         <AppOverlay
             :loading="settingsStore.foodFactoryLoading"
-            :rounded="24"
+            :rounded="16"
             class="border border-[#E2E6F3] p-[24px] min-h-[60vh] flex flex-col gap-y-6 justify-between"
         >
           <AppForm

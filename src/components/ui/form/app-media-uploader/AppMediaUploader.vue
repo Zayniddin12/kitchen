@@ -1,4 +1,7 @@
-<script setup lang="ts">
+<script
+  setup
+  lang="ts"
+>
 import {
   AppMediaUploaderPropsType,
   AppMediaUploaderValueType,
@@ -6,6 +9,7 @@ import {
 import { computed, ref, useTemplateRef, watch } from "vue";
 import { generateRandomID } from "@/utils/helper";
 import UploadIcon from "@/assets/images/icons/upload.svg";
+import { useI18n } from "vue-i18n";
 
 const id = generateRandomID();
 
@@ -27,6 +31,8 @@ const emit = defineEmits<{
   (event: "clear"): void;
 }>();
 
+const { t } = useI18n();
+
 const inputFile = useTemplateRef<HTMLInputElement>("input-file");
 const fileType = ref<string>("");
 const mediaFile = ref<string | ArrayBuffer | null>("");
@@ -39,21 +45,21 @@ const uploadImage = async (event: Event) => {
   const file: File = target.files[0];
 
   fileType.value = file.type.split("/")[0];
-
-  await readImage(file);
   model.value = file;
 };
 
-const readImage = async (file: File) => {
-  if (file instanceof File) {
+const readImage = async () => {
+  if (!model.value) return;
+
+  if (model.value instanceof File) {
     const reader = new FileReader();
 
     mediaFile.value = await new Promise<string | ArrayBuffer | null>(
       (resolve, reject) => {
         reader.onload = () => resolve(reader.result);
         reader.onerror = () => reject(reader.error);
-        reader.readAsDataURL(file);
-      }
+        reader.readAsDataURL(model.value as File);
+      },
     );
   }
 };
@@ -70,15 +76,17 @@ const clear = () => {
 watch(
   () => props.value,
   newValue => {
-    if (newValue && typeof newValue === "string") {
+    if (newValue && !model.value) {
       mediaFile.value = newValue;
     }
   },
-  { immediate: true }
+  { immediate: true },
 );
 
-const setDefaultImage = (event) => {
-  event.target.src = 'https://www.landuse-ca.org/wp-content/uploads/2019/04/no-photo-available.png';
+watch(model, readImage, {immediate: true});
+
+const setDefaultImage = (event: any) => {
+  event.target.src = "https://www.landuse-ca.org/wp-content/uploads/2019/04/no-photo-available.png";
 };
 </script>
 
@@ -115,7 +123,7 @@ const setDefaultImage = (event) => {
         class="relative cursor-pointer z-1 group w-full"
       >
         <img
-            @error="setDefaultImage"
+          @error="setDefaultImage"
           :src="mediaFile as string"
           alt="file img"
           :class="['w-full rounded-2xl object-contain h-full p-2']"
@@ -124,7 +132,7 @@ const setDefaultImage = (event) => {
         <button
           class="cursor-pointer pointer-events-none absolute top-1/2 right-1/2 translate-x-1/2 -translate-y-1/2 bg-blue-500 text-white px-4 py-2 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300"
         >
-          Изменить фото
+          {{ t("mediaUploader.editPhoto") }}
         </button>
       </span>
       <span
@@ -138,15 +146,15 @@ const setDefaultImage = (event) => {
           />
         </span>
         <span class="text-gray-700 text-sm mt-6">
-          Перетащите фотографию для загрузки
+          {{ t("mediaUploader.title") }}
         </span>
         <span class="text-gray-400 text-xs mt-1">
-          Максимальный размер фотографии 10 МБ
+          {{ t("mediaUploader.description") }}
         </span>
         <button
           class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 mt-6 pointer-events-none"
         >
-          Выбрать фото
+          {{ t("mediaUploader.selectPhoto") }}
         </button>
       </span>
     </label>

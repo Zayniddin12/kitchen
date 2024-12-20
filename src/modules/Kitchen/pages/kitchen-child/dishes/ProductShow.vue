@@ -4,13 +4,16 @@
 >
 
 import { watchEffect } from "vue";
-import { useKitchenStore } from "@/modules/Kitchen/store/kitchen.store";
+import { useKitchenStore } from "@/modules/Kitchen/kitchen.store";
 import { useRoute } from "vue-router";
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
+import { useI18n } from "vue-i18n";
 
 const kitchenStore = useKitchenStore();
 const route = useRoute();
 const { setBreadCrumb } = useBreadcrumb();
+
+const { t } = useI18n();
 
 const tableData = Array(4).fill({
   compound: "Рис",
@@ -26,7 +29,8 @@ const setBreadCrumbFn = () => {
 
   setBreadCrumb([
     {
-      label: "Кухня",
+      label: "kitchen.title",
+      isTranslate: true,
     },
     {
       label: kitchenStore.part.name,
@@ -44,11 +48,12 @@ const setBreadCrumbFn = () => {
       to: { name: "KitchenShowChildIndex" },
     },
     {
-      label: "Блюди",
+      label: "kitchen.dishes2",
       to: { name: "KitchenDishesIndex" },
     },
     {
-      label: "Просмотр",
+      label: "common.view",
+      isTranslate: true,
       isActionable: true,
     },
   ]);
@@ -68,27 +73,28 @@ watchEffect(() => {
       </h1>
       <div class="min-h-[67vh] max-w-[792px] rounded-3xl border border-[#E2E6F3] p-6 mt-6">
         <h6 class="text-dark font-medium text-lg">
-          Состав рациона
+          {{ t("kitchen.compoundRation") }}
         </h6>
         <ElTable
           :data="tableData"
           stripe
+          :empty-text="t('common.empty')"
           class="custom-element-table-normal custom-element-table mt-4 custom-element-table--has-append"
         >
           <ElTableColumn
-            label="Состав"
+            :label="t('common.compound')"
             prop="compound"
           ></ElTableColumn>
           <ElTableColumn
-            label="Количество"
+            :label="t('common.quantity')"
             prop="quantity"
           ></ElTableColumn>
           <ElTableColumn
-            label="Ед. измерения"
+            :label="t('common.measurement')"
             prop="unit_measurement"
           ></ElTableColumn>
           <ElTableColumn
-            label="Цена"
+            :label="t('common.price')"
             prop="price"
             sortable
           ></ElTableColumn>

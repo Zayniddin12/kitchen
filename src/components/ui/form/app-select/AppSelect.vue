@@ -3,28 +3,52 @@
   lang="ts"
 >
 import { AppSelectPropsType, AppSelectValueType } from "@/components/ui/form/app-select/app-select.type";
-import { computed, onMounted, useSlots } from "vue";
+import { computed, inject, onMounted, ref, Ref, useSlots, watch } from "vue";
 import { getRules, setRules } from "@/components/ui/form/validate";
+import { ValidationErrorsType } from "@/components/ui/form/form.type";
+import { AppDatePickerValueType } from "@/components/ui/form/app-date-picker/app-date-picker.type";
+import { useI18n } from "vue-i18n";
 
 const model = defineModel<AppSelectValueType>({
   default: "",
-})
+});
 
 const emit = defineEmits<{
   change: [value: AppSelectValueType]
+  input: [value: AppSelectValueType]
   clear: [value: AppSelectValueType]
-}>()
+}>();
 
 const props = withDefaults(defineProps<AppSelectPropsType>(), {
   labelPosition: "top",
   itemValue: "",
   itemLabel: "",
   labelClass: "",
-  placeholder: "Выбирать",
-  persistent: true
+  persistent: true,
+});
+
+const { t } = useI18n();
+
+const computedPlaceholder = computed(() => {
+  return props.placeholder ?? t("form.select");
 });
 
 const slots = useSlots();
+
+const validationErrors = inject<Ref<ValidationErrorsType>>("validation-errors", ref(null));
+const ignoreValidationError = ref(false);
+
+const computedError = computed(() => {
+  if (props.error) return props.error;
+
+  else if (ignoreValidationError.value) return "";
+
+  else if (validationErrors.value && props.prop && typeof (props.prop) === "string" && validationErrors.value[props.prop]) {
+    return validationErrors.value[props.prop];
+  }
+
+  return "";
+});
 
 const appSelectClasses = computed<string[]>(() => {
   const classes = ["app-select app-form-item"];
@@ -36,12 +60,30 @@ const appSelectClasses = computed<string[]>(() => {
   return classes;
 });
 
-const change = (value: any) => {
+const change = (value: AppSelectValueType): void => {
+  ignoreValidationError.value = !!validationErrors.value;
   emit("change", value);
-}
+};
+
+const input = (value: AppSelectValueType) => {
+  ignoreValidationError.value = !!validationErrors.value;
+  emit("input", value);
+};
 const clear = (value: any) => {
   emit("clear", value);
-}
+};
+
+watch(validationErrors, (newErrors) => {
+  ignoreValidationError.value = false;
+}, {
+  deep: true,
+});
+
+watch(model, (val) => {
+  input(val);
+}, {
+  immediate: true,
+});
 </script>
 
 <template>
@@ -51,7 +93,7 @@ const clear = (value: any) => {
     :class="appSelectClasses"
     :size
     :prop
-    :error
+    :error="computedError"
     :rules="setRules(getRules(props))"
   >
     <template
@@ -72,7 +114,7 @@ const clear = (value: any) => {
       v-model="model"
       :value-key="itemValue"
       :size
-      :placeholder
+      :placeholder="computedPlaceholder"
       :readonly
       :disabled
       :clearable
@@ -96,24 +138,27 @@ const clear = (value: any) => {
       :placement
       class="app-select__select"
       @change="change"
+      @input="input"
       @clear="clear"
+      :remote-method
+      :remote-show-suffix
+      :remote
     >
-      <template v-if="(items && items.length && itemLabel && itemValue) && !slots.default">
+      <template v-if="!slots.default">
         <ElOption
-            v-for="item in items"
-            :key="item[itemValue]"
-            :label="item[itemLabel]"
-            :value="item[itemValue]"
+          v-for="item in items"
+          :key="item[itemValue]"
+          :label="item[itemLabel]"
+          :value="item[itemValue]"
         >
           <slot
-              v-if="slots.option"
-              name="option"
-              v-bind="item"
+            v-if="slots.option"
+            name="option"
+            v-bind="item"
           />
-
         </ElOption>
       </template>
-      <slot/>
+      <slot />
       <template
         #footer
         v-if="slots.footer"

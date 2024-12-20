@@ -1,3 +1,399 @@
 {
-  "Войти в аккаунт": "Войти в аккаунт"
+  "title": "Склад",
+  "auth": {
+    "login": {
+      "title": "Войти в аккаунт",
+      "btn": "Войти",
+      "oneId": "Войти через ONE ID"
+    },
+    "loginSubtitle": "Введите свои учетные данные для доступа к вашей учетной записи",
+    "logout": "Выход",
+    "resetPassword": {
+      "title": "Сброс пароля",
+      "description": "На данной странице Вы можете восстановить доступ к своему аккаунту. Введите Ваш номер телефона и система автоматически отправит Вам временный код для сброса пароля.",
+      "enterSentCode": "Введите отправленный код"
+    },
+    "forgotPassword": "Забыли пароль",
+    "newPassword": "Новый пароль",
+    "confirmPassword": "Подтвердите пароль",
+    "sendCode": "Отправить код"
+  },
+  "logo": {
+    "title": "NKMK",
+    "subtitle": "Jamg‘armasi",
+    "name": "Фонд НГМК"
+  },
+  "navigation": {
+    "home": "Главная"
+  },
+  "home": {
+    "warehouseOccupancy": "Занятость складов",
+    "textWillGoHere": "Здесь будет текст",
+    "visitorsNumber": "Количество посетителей",
+    "preparation": "Приготовление",
+    "allType": "Все типы",
+    "lowStockProducts": "Продукты с низким запасом",
+    "leftoversFromDishes": "Остатки блюд",
+    "numberOfKitchens": "Количество кухонь",
+    "numberOfWarehouses": "Количество складов"
+  },
+  "common": {
+    "all": "Все",
+    "fund": "Фонд",
+    "filter": "Фильтр",
+    "settings": "Настройки",
+    "language": "Язык",
+    "back": "назад",
+    "empty": "Нет информации",
+    "and": "и",
+    "name": "Название",
+    "name2": "Наименование",
+    "quantity": "Количество",
+    "measurement": "Ед. измерения",
+    "unitMeasurement": "Единица измерения",
+    "price": "Цена",
+    "sum": "Сумма",
+    "totalSum": "Общая сумма",
+    "date": "Дата",
+    "supplier": "Поставщик",
+    "recipient": "Получатель",
+    "transport": "Транспорт",
+    "automatically": "Автоматически",
+    "legalAddress": "Юр. адрес",
+    "oked": "ОКЭД",
+    "tin": "ИНН",
+    "certificate": "Сертификат",
+    "certificateDuration": "Срок сертификата",
+    "supervisor": "Руководитель",
+    "contact": "Контакты",
+    "theme": "Тема",
+    "sender": "Отправитель",
+    "message": "Сообщения",
+    "phone": "Номер телефона",
+    "password": "Пароль",
+    "or": "или",
+    "code": "Код",
+    "fromDate": "С этой даты",
+    "endDate": "По эту дату",
+    "found": "Найдено",
+    "action": "Действие",
+    "view": "Просмотр",
+    "from": "от",
+    "free": "Свободный",
+    "monthly": "Месячный",
+    "annual": "Годовой",
+    "status": "Статус",
+    "total": "Итого",
+    "expenses": "Expenses",
+    "totalCapacity": "Общая вместимость",
+    "occupiedSpace": "Занятое место",
+    "yourOwnExpense": "за свой счет",
+    "withDiet": "с рационом",
+    "base": "База",
+    "calculator": "Калькулятор",
+    "uniqueNumber": "Уникальный номер",
+    "ndc": "НДС",
+    "menu": "Меню",
+    "compound": "Состав",
+    "costPrice": "Себестоимость",
+    "sell": "Продать",
+    "time": "Время",
+    "basket": "Корзина",
+    "enterDate": "Введите дату",
+    "days": "{number} дней",
+    "timeToStart": "Время начало",
+    "endToTime": "Время окончания",
+    "next": "Далее"
+  },
+  "status": {
+    "active": "Активный",
+    "completed": "Завершено",
+    "success": "Успешно",
+    "deactivation": "Деактивация",
+    "activation": "Активация"
+  },
+  "system": {
+    "number": "№ в системе",
+    "date": "Дата в системе"
+  },
+  "licence": {
+    "numberAndDate": "Номер и дата лицензии",
+    "number": "Номер лицензии",
+    "date": "Дата лицензии"
+  },
+  "currency": {
+    "sum": "сум"
+  },
+  "time": {
+    "hour": "ч"
+  },
+  "notification": {
+    "title": "Уведомление"
+  },
+  "notFound": {
+    "title": "Страница не найдена",
+    "description": "Извините, запрошенная вами страница не найдена пожалуйста, вернитесь на главную страницу",
+    "redirectHome": "Вернуться на главную",
+    "toast": "Error 404"
+  },
+  "method": {
+    "cancel": "Отменить",
+    "logout": "Выйти",
+    "add": "Добавить",
+    "edit": "Редактировать",
+    "addMore": "Добавить еще",
+    "save": "Сохранить",
+    "saveAsDraft": "Сохранить как черновик",
+    "delete": "Удалить",
+    "understandable": "Понятно",
+    "reject": "Отклонить",
+    "accept": "Принять",
+    "recall": "Отозвать",
+    "send": "Отправить",
+    "reset": "Сбросить",
+    "apply": "Применить",
+    "seal": "Печать",
+    "download": "Скачать"
+  },
+  "confirm": {
+    "cancel": {
+      "title": "Вы уверены что хотите отменить",
+      "description": "Все не сохраненные изменения будут потеряны"
+    },
+    "delete": {
+      "title": "Вы уверены, что хотите удалить эту запись",
+      "description": "Это действие необратимо, и запись будет полностью удалена из системы"
+    },
+    "show": {
+      "description": "Вы не можете деактивировать эту запись, так как она имеет связи с другими записями в системе. Пожалуйста, сначала удалите или измените записи, с которыми она связана."
+    }
+  },
+  "pagination": {
+    "description": "Показано {start}–{end} из {count} результатов"
+  },
+  "form": {
+    "enter": "Введите",
+    "select": "Выберите",
+    "create": "Создать",
+    "search": "Поиск",
+    "validate": {
+      "required": "Обязательное поле",
+      "email": "Неправильный email",
+      "confirmPassword": "Пароль проверки неверен",
+      "symbol": {
+        "length": "Длина должна быть {length} символов",
+        "min": "не менее {length} символов",
+        "max": "не более {length} символов"
+      },
+      "number": {
+        "incorrect": "Неверный номер",
+        "length": "Число должно быть равно {length}",
+        "min": "Число не должно быть меньше {length}",
+        "max": "Число не должно быть больше {length}"
+      }
+    },
+    "enterPhone": "Введите номер телефона"
+  },
+  "mediaUploader": {
+    "title": "Перетащите фотографию для загрузки",
+    "description": "Максимальный размер фотографии 10 МБ",
+    "editPhoto": "Изменить фото",
+    "selectPhoto": "Выбрать фото"
+  },
+  "document": {
+    "title1": "Документы",
+    "title": "Название документа",
+    "number": "№ документа",
+    "shortNum": "№ док...",
+    "number2": "Номер документа",
+    "creationDate": "Дата создания документа",
+    "memos": "Служебные записки",
+    "memo": {
+      "edit": "Редактировать служебную записку",
+      "create": "Создать служебную записку",
+      "title": "Служебная записка",
+      "message": "Отображение сообщения служебки"
+    },
+    "requests": "Запросы",
+    "freeRequest": {
+      "edit": "Редактировать свободный запрос",
+      "create": "Создать свободный запрос",
+      "title": "Запрос",
+      "subtitle": "Свободный запрос",
+      "type": "Тип запроса",
+      "contents": "Содержание запроса"
+    },
+    "monthlyRequest": {
+      "create": "Создать месячный запрос",
+      "title": "Месячный запрос"
+    },
+    "annualRequest": {
+      "create": "Создать годовой запрос",
+      "title": "Годовой запрос"
+    },
+    "coming": {
+      "createComing": "Создать приход",
+      "createConsumption": "Создать расход",
+      "incomingConsignment": "Входящий накладной"
+    },
+    "act": {
+      "title": "АКТ",
+      "title2": "Акты",
+      "numberAgreement": "Номер договора о поставке",
+      "dateAgreement": "Дата договора о поставке",
+      "numberDateAgreement": "Номер и дата договора о поставке",
+      "number": "№ Акта",
+      "contents": "Содержание акта",
+      "specifiedContentText": "Поле ввода текст содержания акта с выводом шаблонного заданного текста"
+    },
+    "consignmentNumberDate": "Номер и дата накладной",
+    "overhead": "НАКЛАДНОЙ",
+    "overhead2": "Накладные",
+    "dateCreatedSystem": "Дата создания в системе",
+    "invoiceNumberSystem": "№ накладной в системе",
+    "invoiceDate": "Дата накладной",
+    "shortInvoiceDate": "Дата нак...",
+    "invoiceNumber": "№ накладной",
+    "type": "Вид документа",
+    "whom": {
+      "from": "От кого",
+      "to": "Кому",
+      "through": "Через кого"
+    },
+    "base": "Основание",
+    "shippingMethod": "Способ отправления",
+    "shortShippingMethod": "Способ отп...",
+    "commission": {
+      "title": "Состав комиссии приема продуктов",
+      "storekeeper": "Кладовщик",
+      "commodityExpert": "Товаровед",
+      "forwarder": "Экспедитор",
+      "warehouseManager": "Зав. склад",
+      "baseChief": "Начальник базы"
+    },
+    "numberAndDateOfTheConclusionOfTheSanitaryAndEpidemiologicalCenter": "Номер и дата заключение Санитарно-эпидемиологического центра",
+    "numberAndDateOfVeterinaryCertificate": "Номер и дата удостоверения ветеринарии",
+    "numberAndDateOfQualityCertificate": "Номер и дата удостоверения качества",
+    "tableReceivedProducts": "Таблица получаемых продуктов",
+    "sanitaryConclusion": {
+      "number": "Номер заключения Санитарно",
+      "date": "Дата заключения Санитарно"
+    },
+    "veterinaryCertificate": {
+      "number": "Номер удостоверения ветеринарии",
+      "date": "Дата удостоверения ветеринарии"
+    },
+    "qualityCertificate": {
+      "number": "Номер удостоверения качества",
+      "date": "Дата удостоверения качества"
+    },
+    "supplier": {
+      "createTitle": "Добавить нового поставщика"
+    },
+    "overlay": "Накладние",
+    "potatoDelivery": "Доставка картофеля",
+    "incoming": "Входящие",
+    "outgoing": "Исходящие",
+    "drafts": "Черновики",
+    "received": "Полученные",
+    "sent": "Отправленные",
+    "contract": "Контракты",
+    "contractNumber": "№ контракта",
+    "contractTotalSum": "Общая сумма контракта",
+    "consignmentNote": "Накладной документ"
+  },
+  "error": {
+    "title": "Error",
+    "validation": "Validation Error"
+  },
+  "product": {
+    "name": "Название продукта",
+    "quantity": "Количество продукта",
+    "manufacturer": "Производитель продукта",
+    "type": "Тип продукта",
+    "view": "Вид продукта",
+    "arrival": "Приход продуктов"
+  },
+  "position": {
+    "list": "Должности",
+    "show": "Просмотреть должность",
+    "create": "Добавить новую должность",
+    "edit": "Редактировать должность",
+    "name": "Наименование должности {lang}",
+    "responsibility": "Принадлежность",
+    "affiliation": "Принадлежность должности"
+  },
+  "settings": {
+    "directories": "Справочники",
+    "positionsAndRoles": "Должности и роли",
+    "regionalAdministration": "Региональное управление"
+  },
+  "lang": {
+    "ru": "РУС",
+    "uz": "ЎЗБ"
+  },
+  "user": {
+    "combine": "Комбинат"
+  },
+  "base": {
+    "warehouse": {
+      "title": "База склад",
+      "reverseTitle": "Склад базы"
+    }
+  },
+  "kitchen": {
+    "all": "Все кухни",
+    "title": "Кухня",
+    "free": "Бесплатная кухня",
+    "paid": "Продажи",
+    "ration": "Рационы",
+    "ration2": "Рацион",
+    "rationType": "Тип рациона",
+    "rations": "{number} рационов",
+    "dishes": "Блюды",
+    "dishesPlaceholder": "Выберите блюды",
+    "portion": "Порция",
+    "ingredients": "Ингредиенты",
+    "calculation": "Расчет",
+    "therePlans": "Есть {number} плана",
+    "compoundRation": "Состав рациона",
+    "currentMenu": "Текущее меню",
+    "allMenu": "Все меню",
+    "prepareDishes": "Приготовить блюды",
+    "theMealPlanHasNotBeenMadeYet": "План питания еще не составлен",
+    "chooseYourMealTime": "Выбирайте время еды",
+    "servingQuantity": "Количество порции",
+    "listOfDishes": "Список блюды",
+    "createMenu": "Добавить меню",
+    "dishes2": "Блюди"
+  },
+  "gender": {
+    "female": "Женский",
+    "male": "Мужской"
+  },
+  "role": {
+    "name": "Роли",
+    "name2": "Наименование роли",
+    "ownership": "Принадлежность роли",
+    "numberOfUses": "Кол. использований"
+  },
+  "footer": "Made by “Anysoft” software & solutions company",
+  "weekDays": {
+    "0": "Воскресенье",
+    "1": "Понедельник",
+    "2": "Вторник",
+    "3": "Среда",
+    "4": "Четверг",
+    "5": "Пятница",
+    "6": "Суббота"
+  },
+  "mealTime": {
+    "breakfast": "Завтрак",
+    "first": "Первое",
+    "second": "Второе",
+    "salads": "Салаты",
+    "desserts": "Десерты",
+    "supplements": "Добавки",
+    "drinks": "Напитки"
+  }
 }

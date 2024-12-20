@@ -3,11 +3,14 @@
   lang="ts"
 >
 
-import { computed, watchEffect } from "vue";
+import { computed, watch, watchEffect } from "vue";
 import DishesImg from "@/assets/images/kitchen/test/dishes.png";
 import { useRoute } from "vue-router";
-import { useKitchenStore } from "@/modules/Kitchen/store/kitchen.store";
+import { useKitchenStore } from "@/modules/Kitchen/kitchen.store";
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
+import { useI18n } from "vue-i18n";
+
+const { t } = useI18n();
 
 const route = useRoute();
 const kitchenStore = useKitchenStore();
@@ -16,7 +19,7 @@ const { setBreadCrumb } = useBreadcrumb();
 const categories = computed(() => [
   {
     id: 1,
-    name: "Блюди",
+    name: t("kitchen.dishes2"),
     products: [
       {
         id: 1,
@@ -88,30 +91,36 @@ const categories = computed(() => [
 
 const setBreadCrumbFn = () => {
   kitchenStore.fetchPart(+route.params.department_id, route.params.part_name as string);
+  kitchenStore.fetchPart2(+route.params.kitchen_id);
+  kitchenStore.fetchPart3(+route.params.child_id);
 
   if (!kitchenStore.part) return;
 
   setBreadCrumb([
     {
-      label: "Кухня",
+      label: "kitchen.title",
+      isTranslate: true,
     },
     {
-      label: kitchenStore.part.name,
+      label: kitchenStore.part.title,
     },
     {
       label: kitchenStore.part.department_name,
       to: { name: "KitchenIndex" },
     },
     {
-      label: "Лагерь",
-      to: { name: "KitchenShowIndex" },
+      label: kitchenStore.part.kitchen_vid as string,
+      isActionable: false,
+      to: { name: "KitchenShow" },
     },
     {
-      label: "Паҳлавон",
+      label: kitchenStore.part.kitchen_type as string,
+      isActionable: false,
       to: { name: "KitchenShowChildIndex" },
     },
     {
-      label: "Блюди",
+      label: "kitchen.dishes2",
+      isTranslate: true,
       isActionable: true,
     },
   ]);
@@ -121,12 +130,29 @@ watchEffect(() => {
   setBreadCrumbFn();
 });
 
+watch(() => route.params, async () => {
+  await kitchenStore.GET_KITCHEN_VID({
+    management_id: route.params.department_id as string,
+    is_paid: route.params.part_name == "free-kitchen" ? 0 : route.params.part_name == "sales" ? 1 : null,
+  });
+  await kitchenStore.GET_KITCHEN_TYPE({
+    management_id: route.params.department_id as string,
+    is_paid: route.params.part_name == "free-kitchen" ? 0 : route.params.part_name == "sales" ? 1 : null,
+    kitchen_type_id: route.params.kitchen_id as string,
+  });
+
+  await kitchenStore.GET_MEALS_LIST({ kitchen_id: route.params.child_id });
+
+  setBreadCrumbFn();
+}, { immediate: true });
+
 </script>
 
 <template>
   <section>
     <div>
       <div class="flex flex-col gap-y-6">
+        {{ kitchenStore.mealsList }}
         <div
           v-for="category in categories"
           :key="category.id"
@@ -137,6 +163,7 @@ watchEffect(() => {
           <ElTable
             :data="category.products"
             stripe
+            :empty-text="t('common.empty')"
             class="custom-element-table custom-element-table-normal mt-6"
           >
             <ElTableColumn
@@ -150,7 +177,7 @@ watchEffect(() => {
             </ElTableColumn>
             <ElTableColumn
               prop="name"
-              label="Название"
+              :label="t('common.name')"
               align="center"
               sortable
             >
@@ -167,19 +194,19 @@ watchEffect(() => {
             </ElTableColumn>
             <ElTableColumn
               prop="price"
-              label="Цена"
+              :label="t('common.price')"
               align="center"
               sortable
             />
             <ElTableColumn
               prop="cost_price"
-              label="НДС"
+              :label="t('common.ndc')"
               align="center"
               sortable
             />
             <ElTableColumn
               prop="sum"
-              label="Сумма"
+              :label="t('common.sum')"
               align="center"
               sortable
             />

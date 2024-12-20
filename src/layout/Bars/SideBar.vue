@@ -1,13 +1,17 @@
 <script
-    setup
-    lang="ts"
+  setup
+  lang="ts"
 >
-import { onMounted, onUnmounted, ref, watch } from "vue";
+import { onMounted, onUnmounted, ref, watch, watchEffect } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useLayoutStore } from "@/navigation";
 import ChildSidebar from "@/layout/Bars/ChildSidebar.vue";
 import { useSidebarStore } from "@/layout/Bars/sidebar.store";
 import { useAuthStore } from "@/modules/Auth/auth.store";
+import { useKitchenStore } from "@/modules/Kitchen/kitchen.store";
+import { removeItem } from "@/utils/localStorage";
+import { getSessionItem, removeSessionItem, setSessionItem } from "@/utils/sessionStorage";
+import { useI18n } from "vue-i18n";
 
 const emit = defineEmits<{
   (e: "update:childSidebarPin", value: boolean): void;
@@ -18,6 +22,8 @@ const store = useLayoutStore();
 const sidebarStore = useSidebarStore();
 const router = useRouter();
 let route = useRoute();
+
+const { t } = useI18n();
 
 const childSidebar = ref<boolean>(false);
 let currentIndex = ref<number>(0);
@@ -34,17 +40,16 @@ interface MenuItem {
 }
 
 watch(
-    childIsOpenPin,
-    newValue => {
-      sidebarStore.setChildSideBarOpen(newValue);
-    },
-    { immediate: true }
+  childIsOpenPin,
+  newValue => {
+    sidebarStore.setChildSideBarOpen(newValue);
+  },
+  { immediate: true },
 );
 
 onMounted(() => {
-  const storedMenu: number = sessionStorage.getItem("current-menu") | 0;
+  const storedMenu: string = getSessionItem("current-menu") || "0";
   const storedSidebar = localStorage.getItem("child-sidebar");
-
   if (childIsOpenPin.value) {
     currentIndex.value = Number(storedMenu);
   } else {
@@ -65,17 +70,17 @@ onUnmounted(() => {
 });
 
 watch(
-    () => route.path,
-    () => {
-      const storedMenu = sessionStorage.getItem("current-menu");
-      currentMenu.value = storedMenu ? (JSON.parse(storedMenu) as number) : 0;
-    }
+  () => route.path,
+  () => {
+    const storedMenu = getSessionItem("current-menu");
+    currentMenu.value = storedMenu ? (JSON.parse(storedMenu) as number) : 0;
+  },
 );
 
 const activeMenu = (index: number, item: MenuItem) => {
   currentIndex.value = index;
   currentMenu.value = index;
-  sessionStorage.setItem("current-menu", currentMenu.value.toString());
+  setSessionItem("current-menu", currentMenu.value.toString());
   if (item.route == "/") {
     localStorage.setItem("child-sidebar", JSON.stringify(false));
     emit("update:childSidebar", false);
@@ -129,13 +134,13 @@ const closeChildSidebar = (value: string) => {
 
 const pinSidebar = () => {
   localStorage.setItem(
-      "child-sidebar-pin",
-      JSON.stringify(
-          !JSON.parse(localStorage.getItem("child-sidebar-pin") || "false")
-      )
+    "child-sidebar-pin",
+    JSON.stringify(
+      !JSON.parse(localStorage.getItem("child-sidebar-pin") || "false"),
+    ),
   );
   childIsOpenPin.value = JSON.parse(
-      localStorage.getItem("child-sidebar-pin") || "false"
+    localStorage.getItem("child-sidebar-pin") || "false",
   );
   closeChildSidebar("toggle");
 };
@@ -143,8 +148,8 @@ const pinSidebar = () => {
 const authStore = useAuthStore();
 
 const logOut = () => {
-  localStorage.removeItem("child-sidebar");
-  sessionStorage.removeItem("current-menu");
+  removeItem("child-sidebar");
+  removeSessionItem("current-menu");
 
   if (authStore.isAuth) authStore.logout();
   else router.push({ name: "login" });
@@ -154,27 +159,26 @@ const logOut = () => {
 <template>
   <div class="sidebar w-[128px] z-10">
     <div
-        class="sidebar-wrapper bg-white-blue dark:bg-dark text-center relative flex flex-col justify-between"
+      class="sidebar-wrapper bg-white-blue dark:bg-dark text-center relative flex flex-col justify-between"
     >
       <div class="overflow-auto">
         <img
-            src="@/assets/images/logo.svg"
-            class="m-auto pt-[16px] pb-[40px]"
-            alt="logo"
+          src="@/assets/images/logo.svg"
+          class="m-auto pt-[16px] pb-[40px]"
+          alt="logo"
         />
-
         <div
-            v-for="(item, index) in store.menuItems"
-            :key="index"
-            class="px-[11px]"
-            @click.stop="activeMenu(index, item)"
+          v-for="(item, index) in store.menuItems"
+          :key="index"
+          class="px-[11px] mt-2 last:mt-0"
+          @click.stop="activeMenu(index, item)"
         >
           <div
-              :class="{ activeListItem: currentMenu == index }"
-              class="h-[88px] flex flex-col justify-center items-center cursor-pointer p-[12px] hover:bg-white dark:hover:bg-body-dark hover:shadow-menu hover:font-medium rounded-lg"
+            :class="{ activeListItem: currentMenu == index }"
+            class="h-[88px] flex flex-col justify-center items-center cursor-pointer p-[12px] hover:bg-white dark:hover:bg-body-dark hover:shadow-menu hover:font-medium rounded-lg"
           >
             <li
-                :style="{
+              :style="{
                 maskImage: `url(/sidebar/${item.icon}.svg)`,
                 backgroundColor: '#8F9194',
                 color: '#8F9194',
@@ -187,7 +191,7 @@ const logOut = () => {
             />
 
             <h1
-                class="text-[13px] font-medium font-500 mt-[4px] text-[#4F5662] dark:text-white"
+              class="text-[13px] font-medium font-500 mt-[4px] text-[#4F5662] dark:text-white"
             >
               {{ item.title }}
             </h1>
@@ -196,16 +200,16 @@ const logOut = () => {
           <!-----------------------------------child sidebar----------------------------------->
           <Transition name="nested-reverse">
             <div
-                v-if="currentIndex === index && item.children"
-                class="w-[260px] dark:bg-dark bg-white-blue rounded-[16px] h-[100%] absolute top-0 left-[120px] transition overflow-auto"
+              v-if="currentIndex === index && item.children"
+              class="w-[260px] dark:bg-dark bg-white-blue rounded-[16px] h-[100%] absolute top-0 left-[120px] transition overflow-auto"
             >
               <ChildSidebar
-                  :childSidebar="childSidebar"
-                  :childIsOpenPin="childIsOpenPin"
-                  :children="item.children as any"
-                  :header="item.title"
-                  @closeSidebar="closeChildSidebar"
-                  @toggleSidebarPin="pinSidebar"
+                :childSidebar="childSidebar"
+                :childIsOpenPin="childIsOpenPin"
+                :children="item.children as any"
+                :header="item.title"
+                @closeSidebar="closeChildSidebar"
+                @toggleSidebarPin="pinSidebar"
               />
             </div>
           </Transition>
@@ -213,20 +217,21 @@ const logOut = () => {
       </div>
 
       <!------------------------log out---------------------------->
-      <ElButton
-          class="mb-[10px] h-[45px] "
-          @click.stop="logOut"
-          plain
-          type="text"
+      <button
+        class="mb-[10px] h-[45px] "
+        @click.stop="logOut"
+        plain
       >
-        <div class="flex flex-col items-center">
+        <span class="flex flex-col items-center">
           <img
-              src="@/assets/images/logout.svg"
-              alt="logout"
+            src="@/assets/images/logout.svg"
+            alt="logout"
           />
-          <span class="text-[#EA5455] text-[14px] font-medium block">Выход</span>
-        </div>
-      </ElButton>
+          <span class="text-[#EA5455] text-[14px] font-medium block">
+            {{ t("auth.logout") }}
+          </span>
+        </span>
+      </button>
     </div>
   </div>
 </template>

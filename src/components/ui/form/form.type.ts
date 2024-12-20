@@ -17,6 +17,7 @@ export interface RulesType {
 
 export interface ValidateRulesType extends RulesType {
   message?: string;
+  validator?: any;
 }
 
 export type ElFormItemSize = "large" | "small";
@@ -32,3 +33,5 @@ export interface ElFormItemType extends FormItemType, RulesType {
   error?: string,
   labelClass?: string | string[] | {},
 }
+
+export type ValidationErrorsType = Record<string, any> | null;

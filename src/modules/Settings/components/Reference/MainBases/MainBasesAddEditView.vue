@@ -1,6 +1,6 @@
 <script
-    setup
-    lang="ts"
+  setup
+  lang="ts"
 >
 import { computed, onMounted, reactive, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
@@ -32,7 +32,7 @@ const form = reactive<BaseWarehouseDataType>({
   base_id: null,
   capacity: null,
   measure_id: null,
-  product_ids: []
+  product_ids: [],
 });
 
 const oldForm = ref<null | BaseWarehouseDataType>(null);
@@ -46,12 +46,12 @@ const setValidation = (validation: ValidationType) => {
 const tableData = ref([
   {
     id: 1,
-    name: "Овощи"
+    name: "Овощи",
   },
   {
     id: 2,
-    name: "Фрукты"
-  }
+    name: "Фрукты",
+  },
 ]);
 
 const { setBreadCrumb } = useBreadcrumb();
@@ -59,26 +59,26 @@ const { setBreadCrumb } = useBreadcrumb();
 const setBreadCrumbFn = () => {
   setBreadCrumb([
     {
-      label: "Настройки"
+      label: "Настройки",
     },
     {
       label: "Справочники",
-      to: { name: "reference" }
+      to: { name: "reference" },
     },
 
     {
       label: "Управ, комбинаты и склады",
-      to: { name: "reference" }
+      to: { name: "reference" },
     },
 
     {
       label: "Склады базы",
-      to: { name: "reference-main-bases" }
+      to: { name: "reference-main-bases" },
     },
     {
       label: String(route?.meta?.breadcrumbItemTitle ?? ""),
-      isActionable: true
-    }
+      isActionable: true,
+    },
   ]);
 };
 
@@ -175,136 +175,134 @@ const disabledFormItems = computed<boolean>(() => {
 
 <template>
   <div>
-    <div class="flex items-center justify-between mb-[24px]">
-      <h1 class="m-0 font-semibold text-[32px] leading-[48px]">{{ route.meta.title }}</h1>
-    </div>
-    <div class="flex gap-6">
+    <h1 class="m-0 font-semibold text-[32px] leading-[48px]">{{ route.meta.title }}</h1>
+    <div class="flex items-start gap-6 mt-6">
       <div class="w-[70%]">
         <AppOverlay
-            :loading="settingsStore.baseWarehouseLoading"
-            :rounded="24"
-            class="border border-[#E2E6F3] p-[24px] min-h-[60vh]"
+          :loading="settingsStore.baseWarehouseLoading"
+          :rounded="16"
+          class="border border-[#E2E6F3] p-[24px] min-h-[60vh]"
         >
           <AppForm
-              :value="form"
-              @validation="setValidation"
-              class="gap-x-4 gap-y-1 grid grid-cols-3"
+            :value="form"
+            @validation="setValidation"
+            class="gap-x-4 gap-y-1 grid grid-cols-3"
           >
             <app-input
-                v-model="form.name.ru"
-                prop="name.ru"
-                label="Наименование (RU)"
-                placeholder="Введите"
-                label-class="text-[#A8AAAE] font-medium text-xs"
-                required
-                :disabled="disabledFormItems"
+              v-model="form.name.ru"
+              prop="name.ru"
+              label="Наименование (RU)"
+              placeholder="Введите"
+              label-class="text-[#A8AAAE] font-medium text-xs"
+              required
+              :disabled="disabledFormItems"
             />
 
             <app-input
-                v-model="form.name.uz"
-                prop="name.uz"
-                label="Наименование (UZ)"
-                placeholder="Введите"
-                label-class="text-[#A8AAAE] font-medium text-xs"
-                required
-                :disabled="disabledFormItems"
+              v-model="form.name.uz"
+              prop="name.uz"
+              label="Наименование (UZ)"
+              placeholder="Введите"
+              label-class="text-[#A8AAAE] font-medium text-xs"
+              required
+              :disabled="disabledFormItems"
             />
 
             <app-select
-                v-model="form.base_id"
-                :items="settingsStore.wareHouseList.bases"
-                item-value="id"
-                item-label="name"
-                prop="base_id"
-                label="База складов"
-                placeholder="Введите"
-                label-class="text-[#A8AAAE] font-medium text-xs"
-                required
-                :disabled="disabledFormItems"
+              v-model="form.base_id"
+              :items="settingsStore.wareHouseList.bases"
+              item-value="id"
+              item-label="name"
+              prop="base_id"
+              label="База складов"
+              placeholder="Введите"
+              label-class="text-[#A8AAAE] font-medium text-xs"
+              required
+              :disabled="disabledFormItems"
             >
             </app-select>
             <app-input
-                v-model.number="form.capacity"
-                type="number"
-                prop="capacity"
-                label="Вместимость склада"
-                placeholder="Выберите"
-                label-class="text-[#A8AAAE] font-medium text-xs"
-                required
-                :disabled="disabledFormItems"
+              v-model="form.capacity"
+              custom-type="number"
+              prop="capacity"
+              label="Вместимость склада"
+              placeholder="Выберите"
+              label-class="text-[#A8AAAE] font-medium text-xs"
+              required
+              :disabled="disabledFormItems"
             />
             <app-select
-                v-model="form.measure_id"
-                prop="measure_id"
-                :items="settingsStore.units.units"
-                item-value="id"
-                item-label="name"
-                label="Единица измерения"
-                placeholder="тонна"
-                label-class="text-[#A8AAAE] font-medium text-[12px]"
-                required
-                :disabled="disabledFormItems"
+              v-model="form.measure_id"
+              prop="measure_id"
+              :items="settingsStore.units.units"
+              item-value="id"
+              item-label="name"
+              label="Единица измерения"
+              placeholder="тонна"
+              label-class="text-[#A8AAAE] font-medium text-[12px]"
+              required
+              :disabled="disabledFormItems"
             >
 
             </app-select>
             <app-select
-                v-if="route.name !== 'reference-main-bases-view'"
-                v-model="form.product_ids"
-                :items="settingsStore.typeProduct.product_categories"
-                item-value="id"
-                item-label="name"
-                prop="product_ids"
-                multiple
-                label="Типы продуктов хранения"
-                placeholder="Мясные"
-                label-class="text-[#A8AAAE] font-medium text-[12px]"
-                required
-                :disabled="disabledFormItems"
+              v-if="route.name !== 'reference-main-bases-view'"
+              v-model="form.product_ids"
+              :items="settingsStore.typeProduct.product_categories"
+              item-value="id"
+              item-label="name"
+              prop="product_ids"
+              multiple
+              label="Типы продуктов хранения"
+              placeholder="Мясные"
+              label-class="text-[#A8AAAE] font-medium text-[12px]"
+              required
+              :disabled="disabledFormItems"
             />
           </AppForm>
 
           <div v-if="route.name === 'reference-main-bases-view'">
             <el-table
-                :data="settingsStore.baseWarehouse?.warehouseProducts ?? []"
-                class="custom-element-table"
-                stripe
+              :data="settingsStore.baseWarehouse?.warehouseProducts ?? []"
+              class="custom-element-table"
+              stripe
             >
               <el-table-column
-                  prop="idx"
-                  label="№"
-                  width="100"
+                prop="idx"
+                label="№"
+                width="100"
               >
                 <template #default="{$index}">
                   {{ $index + 1 }}
                 </template>
               </el-table-column>
               <el-table-column
-                  prop="name"
-                  label="Наименование базы"
+                prop="name"
+                label="Наименование базы"
               />
             </el-table>
           </div>
 
 
           <ElSwitch
-              v-if="route.name === 'reference-main-bases-edit' && form.status !== undefined"
-              v-model="form.status"
-              :active-text="getStatusText(form.status)"
-              class="app-switch mt-auto"
+            v-if="route.name === 'reference-main-bases-edit' && form.status !== undefined"
+            v-model="form.status"
+            :active-text="getStatusText(form.status)"
+            class="app-switch mt-auto"
           />
         </AppOverlay>
 
         <div
-            v-if="route.name !== 'reference-main-bases-view'"
-            class="flex items-center mt-6 justify-between"
+          v-if="route.name !== 'reference-main-bases-view'"
+          class="flex items-center mt-6 justify-between"
         >
           <ElButton
-              type="danger"
-              size="large"
-              :loading="deleteLoading"
-              v-if="route.name === 'reference-main-bases-edit'"
-              class="custom-danger-btn"
-              @click="deleteFn"
+            type="danger"
+            size="large"
+            :loading="deleteLoading"
+            v-if="route.name === 'reference-main-bases-edit'"
+            class="custom-danger-btn"
+            @click="deleteFn"
           >
             Удалить
           </ElButton>
@@ -312,18 +310,18 @@ const disabledFormItems = computed<boolean>(() => {
 
           <div class="flex items-center gap-x-4 ml-auto">
             <button
-                @click="cancelFn"
-                class="custom-cancel-btn flex items-center justify-center"
+              @click="cancelFn"
+              class="custom-cancel-btn flex items-center justify-center"
             >
               Отменить
             </button>
 
             <ElButton
-                :loading
-                @click="sendForm"
-                type="primary"
-                size="large"
-                class="custom-apply-btn"
+              :loading
+              @click="sendForm"
+              type="primary"
+              size="large"
+              class="custom-apply-btn"
             >
               {{ route.params.id ? "Сохранить" : "Добавить" }}
             </ElButton>
@@ -333,14 +331,14 @@ const disabledFormItems = computed<boolean>(() => {
 
       <div class="w-[30%]">
         <RouterLink
-            v-if="route.name === 'reference-main-bases-view'"
-            :to="{name: 'reference-main-bases-edit', params: {id: routeID}}"
-            class="inline-flex items-center justify-center gap-4 bg-[#F8F9FC] py-[10px] px-[20px] rounded-[8px] min-w-[260px]"
+          v-if="route.name === 'reference-main-bases-view'"
+          :to="{name: 'reference-main-bases-edit', params: {id: routeID}}"
+          class="inline-flex items-center justify-center gap-4 bg-[#F8F9FC] py-[10px] px-[20px] rounded-[8px] min-w-[260px]"
         >
           <img
-              src="/icons/edit.svg"
-              alt="edit icon"
-              class="size-5"
+            src="/icons/edit.svg"
+            alt="edit icon"
+            class="size-5"
           />
           Редактировать
         </RouterLink>

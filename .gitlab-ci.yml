@@ -1,0 +1,50 @@
+stages:
+  - build
+  - deploy
+
+before_script:
+  - docker login $CI_REGISTRY --username $CI_REGISTRY_USER --password $CI_REGISTRY_PASSWORD
+
+variables:
+  KUBE_NAMESPACE: nkmk
+  KUBE_DEPLOYMENT_NAME: wms
+
+.build_image:
+  stage: build
+  image: git.gettest.uz:5050/docker/docker:latest
+  script:
+    - docker login $CI_REGISTRY --username $CI_REGISTRY_USER --password $CI_REGISTRY_PASSWORD
+    - docker build -t ${CI_REGISTRY}/${CI_PROJECT_NAMESPACE}/${CI_PROJECT_NAME}:${CI_PIPELINE_IID} .
+    - docker tag ${CI_REGISTRY}/${CI_PROJECT_NAMESPACE}/${CI_PROJECT_NAME}:${CI_PIPELINE_IID} ${CI_REGISTRY}/${CI_PROJECT_NAMESPACE}/${CI_PROJECT_NAME}:$ENV_TAG
+    - docker push ${CI_REGISTRY}/${CI_PROJECT_NAMESPACE}/${CI_PROJECT_NAME}:${CI_PIPELINE_IID}
+    - docker push ${CI_REGISTRY}/${CI_PROJECT_NAMESPACE}/${CI_PROJECT_NAME}:$ENV_TAG
+
+.deploy_to_k8s:
+  image: git.gettest.uz:5050/docker/docker:latest
+  stage: deploy
+  script:
+    - mkdir -p ~/.kube
+    - cp $KUBECONFIG ~/.kube/config
+    - kubectl get namespace $KUBE_NAMESPACE || kubectl create namespace $KUBE_NAMESPACE
+    - kubectl apply -f k8s/deployment.yaml
+    - kubectl apply -f k8s/ingress.yaml
+    - kubectl apply -f k8s/service.yaml
+    - kubectl set image -n $NAMESPACE deployment/$DEPLOYMENT $DEPLOYMENT=$CI_REGISTRY/$CI_PROJECT_NAMESPACE/$CI_PROJECT_NAME:$CI_PIPELINE_IID
+    - kubectl rollout status deployment/$KUBE_DEPLOYMENT_NAME -n $KUBE_NAMESPACE
+    - rm -rf ~/.kube
+
+build_image:
+  extends: .build_image
+  variables:
+    ENV_TAG: latest
+  only:
+    - master
+
+deploy_to_prod:
+  extends: .deploy_to_k8s
+  variables:
+    NAMESPACE: $KUBE_NAMESPACE
+    DEPLOYMENT: $KUBE_DEPLOYMENT_NAME
+    KUBECONFIG: $ENV_KUBECONFIG
+  only:
+    - master

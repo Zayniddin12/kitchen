@@ -3,107 +3,129 @@
   lang="ts"
 >
 
-import { computed, watchEffect } from "vue";
-import { useKitchenStore } from "@/modules/Kitchen/store/kitchen.store";
+import { computed, onMounted, ref, watch, watchEffect } from "vue";
+import { useKitchenStore } from "@/modules/Kitchen/kitchen.store";
 import { useRoute } from "vue-router";
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
+import { useSettingsStore } from "@/modules/Settings/store";
+import { useI18n } from "vue-i18n";
+import { setTableColumnIndex } from "../../../../utils/helper";
+import AppPagination from "@/components/ui/app-pagination/AppPagination.vue";
+import { PaginationType } from "@/types/pagination.type";
 
+const settingsStore = useSettingsStore();
 const kitchenStore = useKitchenStore();
 const route = useRoute();
 const { setBreadCrumb } = useBreadcrumb();
 
-interface TableDataType {
-  id: number;
-  idx: number;
-  type: string;
-  unique_number: string;
-  price: string;
-  nd_price: string;
-  sum: string;
-}
+const { t } = useI18n();
 
-const tableData = computed<TableDataType[]>(() => {
-  const data: TableDataType[] = [];
-
-  for (let i = 1; i <= 12; i++) {
-    data.push({
-      id: i,
-      idx: i,
-      type: `Рацион ${i}`,
-      unique_number: "R-00000",
-      price: "25 000 сум",
-      nd_price: "3 000 сум",
-      sum: "28 000 сум",
-    });
-  }
-
-  return data;
+const params = ref({
+  page: 1,
+  per_page: 10,
 });
 
 const setBreadCrumbFn = () => {
   kitchenStore.fetchPart(+route.params.department_id, route.params.part_name as string);
+  kitchenStore.fetchPart2(+route.params.kitchen_id);
+  kitchenStore.fetchPart3(+route.params.child_id);
 
   if (!kitchenStore.part) return;
 
   setBreadCrumb([
     {
-      label: "Кухня",
+      label: "kitchen.title",
+      isTranslate: true,
     },
     {
-      label: kitchenStore.part.name,
+      label: kitchenStore.part.title,
     },
     {
       label: kitchenStore.part.department_name,
       to: { name: "KitchenIndex" },
     },
     {
-      label: "Лагерь",
-      to: { name: "KitchenShowIndex" },
+      label: kitchenStore.part.kitchen_vid as string,
+      to: { name: "KitchenShow" },
     },
     {
-      label: "Паҳлавон",
+      label: kitchenStore.part.kitchen_type as string,
       to: { name: "KitchenShowChildIndex" },
     },
     {
-      label: "Рационы",
+      label: "kitchen.ration",
+      isTranslate: true,
       isActionable: true,
     },
   ]);
 };
 
+watch(() => route.params, async () => {
+  await kitchenStore.GET_KITCHEN_VID({
+    management_id: route.params.department_id as string,
+    is_paid: route.params.part_name == "free-kitchen" ? 0 : route.params.part_name == "sales" ? 1 : null,
+  });
+  await kitchenStore.GET_KITCHEN_TYPE({
+    management_id: route.params.department_id as string,
+    is_paid: route.params.part_name == "free-kitchen" ? 0 : route.params.part_name == "sales" ? 1 : null,
+    kitchen_type_id: route.params.kitchen_id as string,
+  });
+
+  setBreadCrumbFn();
+}, { immediate: true });
+
+
+const refresh = async () => {
+  await settingsStore.GET_RATION_LIST(params.value);
+};
+
+onMounted(() => {
+  refresh();
+});
+
 watchEffect(() => {
   setBreadCrumbFn();
 });
+
+const changePage = () => {
+  refresh();
+};
 </script>
 
 <template>
   <section class="kitchen-ration">
     <div>
+      <!--      {{ settingsStore.rationList }}-->
       <h1 class="font-semibold text-[32px] text-dark">
-        Рационы
+        {{ t("kitchen.ration") }}
       </h1>
       <ElTable
-        :data="tableData"
+        :data="settingsStore.rationList.rations"
         stripe
         class="mt-6 custom-element-table custom-element-table-normal kitchen-ration__table"
+        :empty-text="t('common.empty')"
       >
         <ElTableColumn
-          prop="idx"
+          prop="id"
           label="№"
           :width="150"
-        />
+        >
+          <template #default="{$index}">
+            {{ setTableColumnIndex($index, params.page, settingsStore.rationList.pagination?.per_page ?? 0) }}
+          </template>
+        </ElTableColumn>
         <ElTableColumn
           prop="type"
-          label="Тип рациона"
+          :label="t('kitchen.rationType')"
           sortable
           align="center"
         >
-          <template #default="{row}: {row: TableDataType}">
+          <template #default="{row,$index}">
             <ElDropdown
               placement="bottom"
               class="kitchen-ration__table__dropdown"
             >
-              {{ row.type }}
+              {{ row.name }}
               <template #dropdown>
                 <ElDropdownMenu class="min-w-[140px] p-4 rounded-lg bg-white flex flex-col gap-y-3">
                   <div class="text-sm flex gap-x-2 w-full">
@@ -144,41 +166,36 @@ watchEffect(() => {
           </template>
         </ElTableColumn>
         <ElTableColumn
-          prop="unique_number"
-          label="Уникальный номер"
+          prop="number"
+          :label="t('common.uniqueNumber')"
           sortable
           align="center"
         />
         <ElTableColumn
           prop="price"
-          label="Цена"
+          :label="t('common.price')"
           sortable
           align="center"
         />
         <ElTableColumn
           prop="nd_price"
-          label="НДС"
+          :label="t('common.ndc')"
           sortable
           align="center"
         />
         <ElTableColumn
           prop="sum"
-          label="Сумма"
+          :label="t('common.sum')"
           sortable
           align="center"
         />
       </ElTable>
-      <div class="mt-6 flex items-center justify-between">
-        <div class="text-sm text-cool-gray">
-          Показано 1–12 из 100 результатов
-        </div>
-        <el-pagination
-          class="float-right"
-          background
-          layout="prev, pager, next"
-          :total="1000"
-        />
-      </div>
+      <AppPagination
+        v-if="settingsStore.rationList"
+        v-model="params.page"
+        :pagination="settingsStore.rationList.pagination as PaginationType"
+        class="mt-6"
+      />
     </div>
   </section>
 </template>
