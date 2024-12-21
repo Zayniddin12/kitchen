@@ -163,7 +163,10 @@ watch(() => kitchenData.value.startDate, (newValue, oldValue) => {
 // Watch
 watch(scheduledDates, async (newValue) => {
   if (newValue.length > 0) {
-    await kitchenStore.GET_ELEMENT_LIST(route.params.child_id as string);
+    if (route.name === "KitchenMenuEdit") {
+      await kitchenStore.GET_ELEMENT_LIST(route.params.child_id as string);
+    }
+
     if (kitchenStore.activeMenuPart) {
       data.value = [];
 
@@ -993,10 +996,10 @@ const sendData = async () => {
     // }).flat();
 
 
-    kitchenElementPayload.forEach(item => {
-      item.amount = Number(item.amount);
-      delete item.rationsList;
-    });
+    // kitchenElementPayload.forEach(item => {
+    //   item.amount = Number(item.amount);
+    //   delete item.rationsList;
+    // });
 
     if (route.name !== "KitchenMenuEdit") {
       const kitchenResponse = await kitchenStore.CREATE_KITCHEN(kitchenPayload);

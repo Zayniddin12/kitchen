@@ -432,11 +432,17 @@ const mealTextFilter = (index: string): string => {
     case "1":
       return t("mealTime.breakfast");
     case "2":
-      return t("mealTime.dinner");
+      return t("mealTime.first");
     case "3":
-      return t("mealTime.dinner2");
+      return t("mealTime.second");
     case "4":
-      return t("mealTime.dryFood");
+      return t("mealTime.salads");
+    case "5":
+      return t("mealTime.desserts");
+    case "6":
+      return t("mealTime.supplements");
+    case "7":
+      return t("mealTime.drinks");
     default:
       return "";
   }
