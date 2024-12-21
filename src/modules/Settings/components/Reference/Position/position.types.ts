@@ -20,7 +20,15 @@ export interface PositionsPaginationType {
   pagination: PaginationType
 }
 
-export interface PositionShowType extends Omit<PositionType, "name"> {
+export interface PositionShowCommonType {
+  management_id: number | "",
+  food_factory_id: number | "",
+  base_id: number | "",
+  kitchen_warehouse_id: number | "",
+  base_warehouse_id: number | "",
+}
+
+export interface PositionShowType extends Omit<PositionType, "name">, PositionShowCommonType {
   name: NameType,
   work_place_id: number,
   work_place_type: string,

@@ -13,6 +13,18 @@ const model = defineModel<AppSelectValueType>({
   default: "",
 });
 
+const computedModel = computed<AppSelectValueType>({
+  get() {
+    if (props.itemValue && model.value){
+      return props.items?.find(el=> el[props.itemValue] === model.value) ? model.value : "";
+    }
+    return "";
+  },
+  set(value: AppSelectValueType) {
+    model.value = value;
+  },
+});
+
 const emit = defineEmits<{
   change: [value: AppSelectValueType]
   input: [value: AppSelectValueType]
@@ -28,6 +40,10 @@ const props = withDefaults(defineProps<AppSelectPropsType>(), {
 });
 
 const { t } = useI18n();
+
+const computedNoDataText = computed(() => {
+  return props.noDataText ?? t("common.empty");
+});
 
 const computedPlaceholder = computed(() => {
   return props.placeholder ?? t("form.select");
@@ -79,7 +95,7 @@ watch(validationErrors, (newErrors) => {
   deep: true,
 });
 
-watch(model, (val) => {
+watch(computedModel, (val) => {
   input(val);
 }, {
   immediate: true,
@@ -111,7 +127,7 @@ watch(model, (val) => {
       </span>
     </template>
     <ElSelect
-      v-model="model"
+      v-model="computedModel"
       :value-key="itemValue"
       :size
       :placeholder="computedPlaceholder"

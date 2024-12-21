@@ -144,8 +144,8 @@ const form2 = reactive({
   management_id: "",
   food_factory_id: "",
   base_id: "",
-  baseWarehouse_id: "",
-  kitchenWarehouse_id: "",
+  base_warehouse_id: "",
+  kitchen_warehouse_id: "",
 });
 
 const changeWorkPlace = (id: number, type: WorkPlaceType) => {
@@ -163,8 +163,8 @@ const changeManagement = (id: AppSelectValueType) => {
 const clearManagement = () => {
   form2.food_factory_id = "";
   form2.base_id = "";
-  form2.baseWarehouse_id = "";
-  form2.kitchenWarehouse_id = "";
+  form2.base_warehouse_id = "";
+  form2.kitchen_warehouse_id = "";
 };
 
 const changeFoodFactory = (id: AppSelectValueType) => {
@@ -176,8 +176,8 @@ const changeFoodFactory = (id: AppSelectValueType) => {
 
 const clearFoodFactory = () => {
   form2.base_id = "";
-  form2.baseWarehouse_id = "";
-  form2.kitchenWarehouse_id = "";
+  form2.base_warehouse_id = "";
+  form2.kitchen_warehouse_id = "";
 };
 
 const changeBase = (id: AppSelectValueType) => {
@@ -188,8 +188,8 @@ const changeBase = (id: AppSelectValueType) => {
 };
 
 const clearBase = () => {
-  form2.baseWarehouse_id = "";
-  form2.kitchenWarehouse_id = "";
+  form2.base_warehouse_id = "";
+  form2.kitchen_warehouse_id = "";
 };
 
 
@@ -294,8 +294,8 @@ const setData = () => {
 
   if (userStore.activeUserPage) {
     form.value.position_id = "";
-    form.value.management_id = "";
     form.value.role_id = "";
+
   } else {
     form.value.work_hours = "";
     form.value.dining_locations = {
@@ -318,6 +318,7 @@ const setData = () => {
   //   form.value.position_id = form.value.position_id ?? "";
   //   form.value.management_id = form.value.management_id ?? "";
   // }
+
 
   oldForm.value = JSON.parse(JSON.stringify(form.value));
 };
@@ -588,8 +589,8 @@ const workingHours = reactive([
                   clearable
                 />
                 <AppSelect
-                  v-model="form2.baseWarehouse_id"
-                  prop="baseWarehouse_id"
+                  v-model="form2.base_warehouse_id"
+                  prop="base_warehouse_id"
                   :items="listStore.baseWarehouses"
                   item-value="id"
                   item-label="name"
@@ -597,12 +598,12 @@ const workingHours = reactive([
                   :label="t('base.warehouse.reverseTitle')"
                   label-class="text-[#A8AAAE] text-xs font-medium"
                   class="mb-1"
-                  :disabled="!form2.base_id || !!form2.kitchenWarehouse_id"
+                  :disabled="!form2.base_id || !!form2.kitchen_warehouse_id"
                   clearable
                 />
                 <AppSelect
-                  v-model="form2.kitchenWarehouse_id"
-                  prop="kitchenWarehouse_id"
+                  v-model="form2.kitchen_warehouse_id"
+                  prop="kitchen_warehouse_id"
                   :items="listStore.kitchenWarehouses"
                   item-label="name"
                   item-value="id"
@@ -610,7 +611,7 @@ const workingHours = reactive([
                   :label="t('kitchen.title')"
                   label-class="text-[#A8AAAE] text-xs font-medium"
                   class="mb-1"
-                  :disabled="!form2.base_id || !!form2.baseWarehouse_id"
+                  :disabled="!form2.base_id || !!form2.base_warehouse_id"
                   clearable
                 />
                 <AppSelect
