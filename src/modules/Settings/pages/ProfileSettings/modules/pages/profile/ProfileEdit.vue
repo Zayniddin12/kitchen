@@ -47,6 +47,8 @@ const v$ = ref<ValidationType | null>(null);
 const setForm = () => {
   if (!authStore.user) return;
 
+  console.log(authStore.user);
+
   form.phone = formatPhone(authStore.user.phone);
   form.position_id = authStore.user?.position_id ?? "";
   form.organization_id = authStore.user?.organization_id ?? "";

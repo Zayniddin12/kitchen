@@ -10,7 +10,8 @@ import { onBeforeRouteLeave, useRoute, useRouter } from "vue-router";
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 import AppMediaUploader from "@/components/ui/form/app-media-uploader/AppMediaUploader.vue";
 import useConfirm from "@/components/ui/app-confirm/useConfirm";
-import Avatar from "@/assets/images/avatar.png";
+
+;
 import { useUsersStore } from "@/modules/Users/users.store";
 import AppOverlay from "@/components/ui/app-overlay/AppOverlay.vue";
 import { ValidationType } from "@/components/ui/form/app-form/app-form.type";
@@ -28,6 +29,7 @@ import { AppMediaUploaderValueType } from "@/components/ui/form/app-media-upload
 import { AppSelectValueType } from "@/components/ui/form/app-select/app-select.type";
 import { WorkPlaceType } from "@/modules/Settings/components/Reference/Position/position.types";
 import { useListStore } from "@/modules/List/list.store";
+import { useAuthStore } from "@/modules/Auth/auth.store";
 
 interface Tabs {
   title: string;
@@ -50,6 +52,7 @@ const positionStore = usePositionStore();
 const settingsStore = useSettingsStore();
 const roleStore = useRoleStore();
 const listStore = useListStore();
+const authStore = useAuthStore();
 
 const activeUserCreatePage = computed(() => {
   return route.meta.type === "create";
@@ -139,8 +142,10 @@ const sendForm = async () => {
     }
 
     validationErrors.value = null;
+    if(userStore.activeUserPage && activeUserUpdatePage.value && routeId.value === authStore.user?.id){
+      authStore.me();
+    }
     commonStore.successToast({ name: userStore.activeRoutePrefix });
-
   } catch (error: any) {
     if(error?.error?.code === 422) {
       validationErrors.value = error.meta.validation_errors;
@@ -352,8 +357,9 @@ const avatar = computed(() => {
 });
 
 const fullName = computed(() => {
+  if(activeUserCreatePage.value) return userStore.searchUserFullName;
   return userStore.activeUserPage ? userStore.userFullName : userStore.employeeFullName;
-})
+});
 
 watch(() => form.value.work_place_id, () => fetchRoles());
 

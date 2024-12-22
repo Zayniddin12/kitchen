@@ -218,7 +218,7 @@ onMounted(() => {
               </div>
               <div>
                 <span class="text-blue-500">Роли:</span>
-                <p>{{ data?.responsible_name || "—" }}</p>
+                <p>{{ data?.role_title || "—" }}</p>
               </div>
             </template>
             <template v-else>
@@ -227,7 +227,7 @@ onMounted(() => {
                   График работы:
                 </span>
                 <p>
-                  —
+                  {{ data?.work_hours ?? "—" }}
                 </p>
               </div>
               <div>
@@ -235,7 +235,7 @@ onMounted(() => {
                   Место работы:
                 </span>
                 <p>
-                  —
+                {{data?.organization_name ?? "—"}}
                 </p>
               </div>
             </template>

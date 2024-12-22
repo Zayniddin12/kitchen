@@ -267,7 +267,7 @@ watch(() => route.name, () => {
             <div class="grid grid-cols-3 gap-5">
               <app-input
                 v-model="dataValue.name.ru"
-                label="Наименование (RU)"
+                label="Наименование (Рус)"
                 placeholder="Введите"
                 label-class="text-[#A8AAAE] font-medium text-[12px]"
                 required
@@ -276,7 +276,7 @@ watch(() => route.name, () => {
               />
               <app-input
                 v-model="dataValue.name.uz"
-                label="Наименование (UZ)"
+                label="Наименование (Ўзб)"
                 placeholder="Введите"
                 label-class="text-[#A8AAAE] font-medium text-[12px]"
                 required

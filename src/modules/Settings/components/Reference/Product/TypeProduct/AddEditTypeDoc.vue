@@ -143,14 +143,14 @@ watch(() => route.name, () => {
         <div class="grid grid-cols-2 border rounded-[24px] p-[24px] gap-5 h-[50vh] w-[70%]">
           <app-input
             v-model="dataValue.name.ru"
-            label="Наименование (RU)"
+            label="Наименование (Рус)"
             placeholder="Введите"
             label-class="text-[#A8AAAE] text-[12px]"
           />
 
           <app-input
             v-model="dataValue.name.uz"
-            label="Наименование (UZ)"
+            label="Наименование (Ўзб)"
             placeholder="Введите"
             label-class="text-[#A8AAAE] text-[12px]"
           />

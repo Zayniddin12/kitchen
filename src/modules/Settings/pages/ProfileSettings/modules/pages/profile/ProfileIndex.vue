@@ -42,7 +42,7 @@ const personalData = computed<PersonalDataType>(() => {
     },
     {
       title: "Место работы",
-      value: "Фонд НГМК",
+      value: authStore.user.organization_name,
     },
     {
       title: "Язык интерфейса",

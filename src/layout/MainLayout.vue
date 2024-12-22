@@ -22,6 +22,8 @@ import { useSettingsStore } from "@/modules/Settings/store";
 import { useWarehouseBasesStore } from "@/modules/WarehouseBases/warehouse-bases.store";
 import { useCommonStore } from "@/stores/common.store";
 import { useI18n } from "vue-i18n";
+import { useFaceStore } from "@/modules/FaceId/store";
+import AppFaceId from "@/modules/FaceId/Pages/Index.vue";
 
 const authStore = useAuthStore();
 const route = useRoute();
@@ -54,6 +56,45 @@ watch(() => route.name, function(val) {
     childSidebar.value = false;
   }
 }, { immediate: true });
+
+const faceStore = useFaceStore();
+
+const model = ref<boolean>(false);
+
+const interval = setInterval(async () => {
+  const data = await faceStore.FETCH_FACE_ID();
+  if (data) {
+    if (data && data.user_id) {
+      model.value = !model.value;
+    }
+  }
+}, 5000);
+
+watch(() => model.value, (value) => {
+  if (value) {
+    clearInterval(interval);
+  }
+});
+
+
+watch(() => model.value, async (newValue) => {
+  if (!newValue) {
+    const interval = setInterval(async () => {
+      const data = await faceStore.FETCH_FACE_ID();
+      if (data) {
+        if (data && data.user_id) {
+          model.value = !model.value;
+        }
+      }
+    }, 5000);
+
+    watch(() => model.value, (value) => {
+      if (value) {
+        clearInterval(interval);
+      }
+    });
+  }
+});
 
 const navDrawerItems = computed(() => {
   return [
@@ -117,6 +158,8 @@ const navDrawerWidth = ref<number>(0);
 
 <template>
   <div>
+  <AppFaceId v-model="model" />
+
     <SideBar
       v-model:childSidebarPin="childSidebarPin"
       v-model:childSidebar="childSidebar"

@@ -175,6 +175,10 @@ export const useUsersStore = defineStore("usersStore", () => {
   const searchUserLoading = ref(false);
   const searchUserStorageKey = "search-user";
 
+  const searchUserFullName = computed(() => {
+    return getUserFullName(searchUser.value);
+  });
+
   const setSearchUser = (user: UserShowType) => {
     searchUser.value = user;
     setSessionItem(searchUserStorageKey, JSON.stringify(user));
@@ -239,6 +243,7 @@ export const useUsersStore = defineStore("usersStore", () => {
 
     activeRoutePrefix,
     searchUser,
+    searchUserFullName,
     searchUserLoading,
     fetchSearchUser,
     initializeSearchUser,

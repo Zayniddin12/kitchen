@@ -10,7 +10,6 @@ import ResetPasswordLayout from "@/modules/Auth/pages/ResetPassword.vue";
 import AppConfirm from "@/components/ui/app-confirm/AppConfirm.vue";
 import AppFaceId from "@/modules/FaceId/Pages/Index.vue";
 
-const store = useFaceStore();
 const route = useRoute();
 const layout = computed(() => route.meta.layout);
 
@@ -21,50 +20,10 @@ const layouts = {
   CashierLayout,
   ResetPasswordLayout,
 };
-
-const model = ref<boolean>(false);
-
-
-const interval = setInterval(async () => {
-  const data = await store.FETCH_FACE_ID();
-  if (data) {
-    if (data && data.user_id) {
-      model.value = !model.value;
-    }
-  }
-}, 5000);
-
-watch(() => model.value, (value) => {
-  if (value) {
-    clearInterval(interval);
-  }
-});
-
-
-watch(() => model.value, async (newValue) => {
-  if (!newValue) {
-    const interval = setInterval(async () => {
-      const data = await store.FETCH_FACE_ID();
-      if (data) {
-        if (data && data.user_id) {
-          model.value = !model.value;
-        }
-      }
-    }, 5000);
-
-    watch(() => model.value, (value) => {
-      if (value) {
-        clearInterval(interval);
-      }
-    });
-  }
-});
 </script>
 
 <template>
   <AppConfirm />
-
-  <AppFaceId v-model="model" />
 
   <component
     v-if="layout"
