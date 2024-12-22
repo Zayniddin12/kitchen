@@ -111,13 +111,13 @@ onMounted(() => {
         </template>
       </ElTableColumn>
       <ElTableColumn
-        prop="name"
+        prop="title"
         :label="t('role.name2')"
         sortable
         width="670"
       >
         <template #default="{row}:{row: RoleType}">
-          {{ row.name ?? "-" }}
+          {{ row.title ?? "-" }}
         </template>
       </ElTableColumn>
       <ElTableColumn
@@ -127,7 +127,7 @@ onMounted(() => {
         width="670"
       >
         <template #default="{row}:{row: RoleType}">
-          {{ row.parent_name ?? "-" }}
+          {{ row.parent_name || "-" }}
         </template>
       </ElTableColumn>
       <ElTableColumn

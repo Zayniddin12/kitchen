@@ -41,8 +41,14 @@ export interface UserType {
     image: null | string;
     firstname: string;
     lastname: string;
-    patronymic: null | string;
+    patronymic: string;
+    role_id: number;
+    role_name: string;
+    role_title: string;
     position: PositionType;
+    position_id: number;
+    organization_id: number;
+    organization_name: string;
     workplaces: UserWorkplaceType[]
 }
 

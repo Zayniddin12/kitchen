@@ -109,7 +109,7 @@ export const useSettingsStore = defineStore("settingsStore", () => {
     paginator: {} as any,
   });
   const organization = ref({
-    organization: [] as any,
+    organizations: [] as any,
     paginator: {} as any,
   });
   const kitchenTypes = ref({
