@@ -24,7 +24,7 @@ const layouts = {
 
 const model = ref<boolean>(false);
 
-
+//Face id
 const interval = setInterval(async () => {
   const data = await store.FETCH_FACE_ID();
   if (data) {
