@@ -517,53 +517,204 @@ watch(scheduledDates, async (newValue) => {
     if (kitchenStore.activeSalesPart) {
       list_dishes.value = [];
       if (route.name === "KitchenMenuEdit") {
-
         newValue.forEach(el => {
+          console.log(el.date);
+          console.log(kitchenStore.menuElement.elements[el.date.split(".").reverse().join("-")]);
+
           list_dishes.value.push({
             date: el.date,
             data: [
               {
                 id: 1,
                 title: t("mealTime.breakfast"),
-                isChecked: true,
-                mealData: [],
-              },
-            ],
-          });
-
-          if (kitchenStore.menuElement.elements[el.date.split(".").reverse().join("-")]) {
-            Object.keys(kitchenStore.menuElement.elements[el.date.split(".").reverse().join("-")]).forEach(key => {
-              list_dishes.value.push({
-                date: el.date,
-                data: kitchenStore.menuElement.elements[el.date.split(".").reverse().join("-")][key].map(item => {
+                isChecked: kitchenStore.menuElement.elements[el.date.split(".").reverse().join("-")] && kitchenStore.menuElement.elements[el.date.split(".").reverse().join("-")]["1"] ? true : false,
+                mealData: kitchenStore.menuElement.elements[el.date.split(".").reverse().join("-")] && kitchenStore.menuElement.elements[el.date.split(".").reverse().join("-")]["1"] ? kitchenStore.menuElement.elements[el.date.split(".").reverse().join("-")]["1"].map(item => {
                   return {
                     id: item.id,
-                    product: key == "product" ? item.parent_id : null,
-                    vid_product: key == "product" ? item.product_id : null,
-                    meal: key == "meal" ? item.product_id : null,
+                    period: 1,
+                    product: item.parent_id ? item.parent_id : null,
+                    vid_product: item.parent_id ? item.product_id : null,
+                    meal: !item.parent_id ? item.product_id : null,
                     amount: item.amount,
                     vid_list: [],
                     meals_list: {},
                   };
-                }),
-              });
-
-            });
-          } else {
-            list_dishes.value.push({
-              date: el.date,
-              data: [
-                {
-                  product: null,
-                  vid_product: null,
-                  meal: null,
-                  amount: null,
-                  vid_list: [],
-                  meals_list: {},
-                },
-              ],
-            });
-          }
+                }) : [
+                  {
+                    period: 1,
+                    product: null,
+                    vid_product: null,
+                    meal: null,
+                    amount: null,
+                    vid_list: [],
+                    meals_list: [],
+                  },
+                ],
+              },
+              {
+                id: 2,
+                title: t("mealTime.first"),
+                isChecked: kitchenStore.menuElement.elements[el.date.split(".").reverse().join("-")] && kitchenStore.menuElement.elements[el.date.split(".").reverse().join("-")]["2"] ? true : false,
+                mealData: kitchenStore.menuElement.elements[el.date.split(".").reverse().join("-")] && kitchenStore.menuElement.elements[el.date.split(".").reverse().join("-")]["2"] ? kitchenStore.menuElement.elements[el.date.split(".").reverse().join("-")]["2"].map(item => {
+                  return {
+                    id: item.id,
+                    period: 2,
+                    product: item.parent_id ? item.parent_id : null,
+                    vid_product: item.parent_id ? item.product_id : null,
+                    meal: !item.parent_id ? item.product_id : null,
+                    amount: item.amount,
+                    vid_list: [],
+                    meals_list: {},
+                  };
+                }) : [
+                  {
+                    period: 2,
+                    product: null,
+                    vid_product: null,
+                    meal: null,
+                    amount: null,
+                    vid_list: [],
+                    meals_list: [],
+                  },
+                ],
+              },
+              {
+                id: 3,
+                title: t("mealTime.second"),
+                isChecked: kitchenStore.menuElement.elements[el.date.split(".").reverse().join("-")] && kitchenStore.menuElement.elements[el.date.split(".").reverse().join("-")]["3"] ? true : false,
+                mealData: kitchenStore.menuElement.elements[el.date.split(".").reverse().join("-")] && kitchenStore.menuElement.elements[el.date.split(".").reverse().join("-")]["3"] ? kitchenStore.menuElement.elements[el.date.split(".").reverse().join("-")]["3"].map(item => {
+                  return {
+                    id: item.id,
+                    period: 3,
+                    product: item.parent_id ? item.parent_id : null,
+                    vid_product: item.parent_id ? item.product_id : null,
+                    meal: !item.parent_id ? item.product_id : null,
+                    amount: item.amount,
+                    vid_list: [],
+                    meals_list: {},
+                  };
+                }) : [
+                  {
+                    period: 3,
+                    product: null,
+                    vid_product: null,
+                    meal: null,
+                    amount: null,
+                    vid_list: [],
+                    meals_list: [],
+                  },
+                ],
+              },
+              {
+                id: 4,
+                title: t("mealTime.salads"),
+                isChecked: kitchenStore.menuElement.elements[el.date.split(".").reverse().join("-")] && kitchenStore.menuElement.elements[el.date.split(".").reverse().join("-")]["4"] ? true : false,
+                mealData: kitchenStore.menuElement.elements[el.date.split(".").reverse().join("-")] && kitchenStore.menuElement.elements[el.date.split(".").reverse().join("-")]["4"] ? kitchenStore.menuElement.elements[el.date.split(".").reverse().join("-")]["4"].map(item => {
+                  return {
+                    id: item.id,
+                    period: 4,
+                    product: item.parent_id ? item.parent_id : null,
+                    vid_product: item.parent_id ? item.product_id : null,
+                    meal: !item.parent_id ? item.product_id : null,
+                    amount: item.amount,
+                    vid_list: [],
+                    meals_list: {},
+                  };
+                }) : [
+                  {
+                    period: 4,
+                    product: null,
+                    vid_product: null,
+                    meal: null,
+                    amount: null,
+                    vid_list: [],
+                    meals_list: [],
+                  },
+                ],
+              },
+              {
+                id: 5,
+                title: t("mealTime.desserts"),
+                isChecked: kitchenStore.menuElement.elements[el.date.split(".").reverse().join("-")] && kitchenStore.menuElement.elements[el.date.split(".").reverse().join("-")]["5"] ? true : false,
+                mealData: kitchenStore.menuElement.elements[el.date.split(".").reverse().join("-")] && kitchenStore.menuElement.elements[el.date.split(".").reverse().join("-")]["5"] ? kitchenStore.menuElement.elements[el.date.split(".").reverse().join("-")]["5"].map(item => {
+                  return {
+                    id: item.id,
+                    period: 5,
+                    product: item.parent_id ? item.parent_id : null,
+                    vid_product: item.parent_id ? item.product_id : null,
+                    meal: !item.parent_id ? item.product_id : null,
+                    amount: item.amount,
+                    vid_list: [],
+                    meals_list: {},
+                  };
+                }) : [
+                  {
+                    period: 5,
+                    product: null,
+                    vid_product: null,
+                    meal: null,
+                    amount: null,
+                    vid_list: [],
+                    meals_list: [],
+                  },
+                ],
+              },
+              {
+                id: 6,
+                title: t("mealTime.supplements"),
+                isChecked: kitchenStore.menuElement.elements[el.date.split(".").reverse().join("-")] && kitchenStore.menuElement.elements[el.date.split(".").reverse().join("-")]["6"] ? true : false,
+                mealData: kitchenStore.menuElement.elements[el.date.split(".").reverse().join("-")] && kitchenStore.menuElement.elements[el.date.split(".").reverse().join("-")]["6"] ? kitchenStore.menuElement.elements[el.date.split(".").reverse().join("-")]["6"].map(item => {
+                  return {
+                    id: item.id,
+                    period: 6,
+                    product: item.parent_id ? item.parent_id : null,
+                    vid_product: item.parent_id ? item.product_id : null,
+                    meal: !item.parent_id ? item.product_id : null,
+                    amount: item.amount,
+                    vid_list: [],
+                    meals_list: {},
+                  };
+                }) : [
+                  {
+                    period: 6,
+                    product: null,
+                    vid_product: null,
+                    meal: null,
+                    amount: null,
+                    vid_list: [],
+                    meals_list: [],
+                  },
+                ],
+              },
+              {
+                id: 7,
+                title: t("mealTime.drinks"),
+                isChecked: kitchenStore.menuElement.elements[el.date.split(".").reverse().join("-")] && kitchenStore.menuElement.elements[el.date.split(".").reverse().join("-")]["7"] ? true : false,
+                mealData: kitchenStore.menuElement.elements[el.date.split(".").reverse().join("-")] && kitchenStore.menuElement.elements[el.date.split(".").reverse().join("-")]["7"] ? kitchenStore.menuElement.elements[el.date.split(".").reverse().join("-")]["7"].map(item => {
+                  return {
+                    id: item.id,
+                    period: 7,
+                    product: item.parent_id ? item.parent_id : null,
+                    vid_product: item.parent_id ? item.product_id : null,
+                    meal: !item.parent_id ? item.product_id : null,
+                    amount: item.amount,
+                    vid_list: [],
+                    meals_list: {},
+                  };
+                }) : [
+                  {
+                    period: 7,
+                    product: null,
+                    vid_product: null,
+                    meal: null,
+                    amount: null,
+                    vid_list: [],
+                    meals_list: [],
+                  },
+                ],
+              },
+            ],
+          });
         });
       } else {
         newValue.forEach(item => {
@@ -1001,6 +1152,8 @@ const sendData = async () => {
     //   delete item.rationsList;
     // });
 
+    console.log(kitchenPayload, "kitchenPayload");
+    console.log(kitchenElementPayload, "kitchenElementPayload");
     if (route.name !== "KitchenMenuEdit") {
       const kitchenResponse = await kitchenStore.CREATE_KITCHEN(kitchenPayload);
 
