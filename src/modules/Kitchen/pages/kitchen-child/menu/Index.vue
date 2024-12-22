@@ -1105,7 +1105,7 @@ const mealTextFilter = (index: string): string => {
                   :alt="productItem.name"
                   class="w-[120px]"
                 />
-                <div class="w-full">
+                <div class="w-full flex flex-col justify-between">
                   <div class="flex items-center justify-between">
                     <!--                    menu__card-title-->
                     <h5 class="text-[#000D24] text-[20px] font-semibold">
@@ -1114,7 +1114,7 @@ const mealTextFilter = (index: string): string => {
 
                     <span class="text-[#A8AAAE] text-[14px]">{{ productItem.unit_name }} </span>
                   </div>
-                  <h5 class="text-[#000D24] font-medium mt-[4px]">
+                  <h5 class="text-[#000D24] text-sm font-medium mt-[4px] truncate w-[200px]">
                     {{ productItem.name }}
                   </h5>
 

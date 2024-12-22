@@ -213,6 +213,19 @@ watch(computedModel, (val) => {
         height: var(--app-select-height);
         display: flex;
         align-items: center;
+        transition: 0.2s all ease-in-out;
+
+        &.is-hovering, &.is-selected{
+          color: white;
+        }
+
+        &.is-selected{
+          background-color: var(--blue-500);
+        }
+
+        &.is-hovering{
+          background-color: var(--blue-400);
+        }
       }
     }
   }
