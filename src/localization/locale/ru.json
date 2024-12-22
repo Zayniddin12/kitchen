@@ -389,8 +389,11 @@
   },
   "mealTime": {
     "breakfast": "Завтрак",
-    "dinner": "Обед",
-    "dinner2": "Ужин",
-    "dryFood": "Сухой питания"
+    "first": "Первое",
+    "second": "Второе",
+    "salads": "Салаты",
+    "desserts": "Десерты",
+    "supplements": "Добавки",
+    "drinks": "Напитки"
   }
 }

@@ -23,14 +23,26 @@ html {
   color: #fff;
 }
 
+
 ::-webkit-scrollbar {
-  width: 12px;
-  height: 12px;
+  width: 8px !important;
+  height: 12px
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: transparent;
+  border-radius: 6px;
+  border: 2px solid #ffffff;
+}
+
+::-webkit-scrollbar-track {
+  background-color: #f1f1f1;
+  border-radius: 6px;
 }
 
 * {
   scrollbar-width: thin;
-  scrollbar-color: #F8F9FC #f1f1f1;
+  scrollbar-color: transparent transparent;
 }
 
 .dark .custom-filter-btn {
