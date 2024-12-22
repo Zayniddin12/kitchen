@@ -352,7 +352,7 @@ const avatar = computed(() => {
 });
 
 const fullName = computed(() => {
-  return userStore.getUserFullName(data.value);
+  return userStore.activeUserPage ? userStore.userFullName : userStore.employeeFullName;
 })
 
 watch(() => form.value.work_place_id, () => fetchRoles());

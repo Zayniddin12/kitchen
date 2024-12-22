@@ -37,6 +37,14 @@ const gender = computed(() => {
   return commonStore.getGender(data.value.gender);
 });
 
+const avatar = computed(() => {
+  return data.value?.avatar_link ?? gender.value?.photo ?? "";
+});
+
+const fullName = computed(() => {
+  return usersStore.activeUserPage ? usersStore.userFullName : usersStore.employeeFullName;
+})
+
 const routeId = computed(() => {
   return parseInt(route.params.id as string);
 });
@@ -145,14 +153,15 @@ onMounted(() => {
         <div class="top-[32px] absolute flex items-center">
           <div class="rounded-full overflow-hidden border-4 border-gray-100">
             <img
-              :src="data?.avatar_link ?? gender?.photo ?? Avatar"
-              alt="Profile Picture"
+              v-if="avatar"
+              :src="avatar"
+              :alt="fullName || 'Profile Picture'"
               class="object-cover size-40 rounded-full"
             >
           </div>
 
           <div class="text-xl font-semibold text-gray-900 ml-[24px]">
-            {{ usersStore.employeeFullName || "—" }}
+            {{ fullName || "—" }}
           </div>
         </div>
       </div>

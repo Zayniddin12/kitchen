@@ -208,22 +208,25 @@ watch(computedModel, (val) => {
         color: #4f4d55;
       }
 
-      &-dropdown__item {
-        height: var(--app-select-height);
-        display: flex;
-        align-items: center;
-        transition: 0.2s all ease-in-out;
+      &-dropdown {
 
-        &.is-hovering, &.is-selected {
-          color: white;
-        }
+        &__item {
+          height: var(--app-select-height);
+          display: flex;
+          align-items: center;
+          transition: 0.2s all ease-in-out;
 
-        &.is-selected {
-          background-color: var(--blue-500);
-        }
+          &.is-hovering, &.is-selected {
+            color: white;
+          }
 
-        &.is-hovering {
-          background-color: var(--blue-400);
+          &.is-hovering {
+            background-color: var(--blue-400);
+          }
+
+          &.is-selected {
+            background-color: var(--blue-500);
+          }
         }
       }
     }
