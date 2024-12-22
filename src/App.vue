@@ -25,41 +25,40 @@ const layouts = {
 const model = ref<boolean>(false);
 
 
-// shuni ochsa face id modal chiqadi har 5 sikda req ketadi
-// const interval = setInterval(async () => {
-//   const data = await store.FETCH_FACE_ID();
-//   if (data) {
-//     if (data && data.user_id) {
-//       model.value = !model.value;
-//     }
-//   }
-// }, 5000);
-//
-// watch(() => model.value, (value) => {
-//   if (value) {
-//     clearInterval(interval);
-//   }
-// });
-//
-//
-// watch(() => model.value, async (newValue) => {
-//   if (!newValue) {
-//     const interval = setInterval(async () => {
-//       const data = await store.FETCH_FACE_ID();
-//       if (data) {
-//         if (data && data.user_id) {
-//           model.value = !model.value;
-//         }
-//       }
-//     }, 5000);
-//
-//     watch(() => model.value, (value) => {
-//       if (value) {
-//         clearInterval(interval);
-//       }
-//     });
-//   }
-// });
+const interval = setInterval(async () => {
+  const data = await store.FETCH_FACE_ID();
+  if (data) {
+    if (data && data.user_id) {
+      model.value = !model.value;
+    }
+  }
+}, 5000);
+
+watch(() => model.value, (value) => {
+  if (value) {
+    clearInterval(interval);
+  }
+});
+
+
+watch(() => model.value, async (newValue) => {
+  if (!newValue) {
+    const interval = setInterval(async () => {
+      const data = await store.FETCH_FACE_ID();
+      if (data) {
+        if (data && data.user_id) {
+          model.value = !model.value;
+        }
+      }
+    }, 5000);
+
+    watch(() => model.value, (value) => {
+      if (value) {
+        clearInterval(interval);
+      }
+    });
+  }
+});
 </script>
 
 <template>
