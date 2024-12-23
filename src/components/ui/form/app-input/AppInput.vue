@@ -73,7 +73,7 @@ const computedMin = computed(() => {
 
   if (computedType.value === "passport") return 10;
 
-  if (computedType.value === "number") return 0.1;
+  if (computedType.value === "number") return 0.001;
 });
 
 const computedMax = computed(() => {

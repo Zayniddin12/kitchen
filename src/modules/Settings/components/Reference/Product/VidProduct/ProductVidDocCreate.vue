@@ -23,8 +23,9 @@ interface Name {
 interface DataValue {
   name: Name;
   image: File | null;
-  parent_id: string | number | null;
-  measurement_unit_id: string | number | null;
+  parent_id: string | number;
+  measurement_unit_id: string | number;
+  place_occupied: string;
   is_active: boolean | number;
 }
 
@@ -47,6 +48,7 @@ const dataValue = ref<DataValue>({
   image: "",
   parent_id: "",
   measurement_unit_id: "",
+  place_occupied: "",
   is_active: true,
 });
 const existingImage = ref<string>("");
@@ -152,16 +154,12 @@ const handleSubmit = async () => {
   }
 };
 
-watch(() => dataValue.value.parent_id, (newID) => {
-  console.log(newID);
-});
-
 watchEffect(() => {
   setBreadCrumbFn();
 });
 </script>
 
-<template>`
+<template>
   <div>
       <h1 class="m-0 font-semibold text-[32px] leading-[48px]">{{ route.meta.title }}</h1>
 
@@ -226,6 +224,8 @@ watchEffect(() => {
                 class="mb-0"
               />
               <AppInput
+                v-model="dataValue.place_occupied"
+                prop="place_occupied"
                 custom-type="number"
                 label="Занимаемое место"
                 label-class="text-[#A8AAAE] text-xs"
@@ -233,11 +233,10 @@ watchEffect(() => {
               />
 
               <app-input
-                disabled
-                label="Занимаемое место"
-                type="number"
+                label="Ед. изм. занимаемого места"
                 label-class="text-[#A8AAAE] text-[12px]"
-                placeholder="Введите"
+                disabled
+                placeholder="кг"
               />
             </div>
           </AppForm>

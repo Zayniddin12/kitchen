@@ -157,11 +157,6 @@ const tableCurrentChange = (value: Record<string, any>) => {
             width="400"
         />
         <el-table-column
-            prop="responsible_position"
-            label="Подчинение"
-            sortable
-        />
-        <el-table-column
             label="Действие"
             align="right"
         >
