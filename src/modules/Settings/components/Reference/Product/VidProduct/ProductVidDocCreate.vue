@@ -214,6 +214,14 @@ watchEffect(() => {
                 required
                 prop="measurement_unit_id"
               />
+
+              <app-input
+                disabled
+                label="Занимаемое место"
+                type="number"
+                label-class="text-[#A8AAAE] text-[12px]"
+                placeholder="Введите"
+              />
             </div>
           </AppForm>
 
