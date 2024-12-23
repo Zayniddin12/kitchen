@@ -2,7 +2,7 @@
   setup
   lang="ts"
 >
-import { computed, nextTick, reactive, ref, useTemplateRef, watch, watchEffect } from "vue";
+import { computed, nextTick, onMounted, reactive, ref, useTemplateRef, watch, watchEffect } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useKitchenStore } from "@/modules/Kitchen/kitchen.store";
 import { TableColumnType } from "@/types/common.type";
@@ -21,6 +21,8 @@ import useConfirm from "@/components/ui/app-confirm/useConfirm";
 import { useSidebarStore } from "@/layout/Bars/sidebar.store";
 import AppEmpty from "@/components/ui/app-empty/AppEmpty.vue";
 import { useI18n } from "vue-i18n";
+import { WarehouseCapacityParamsType } from "@/modules/Home/statistics.types";
+import tokenManager from "@/utils/token.manager";
 
 interface ProductItemType {
   id: number;
@@ -204,18 +206,8 @@ const selectedProducts = computed(() => {
 
   const productMap = new Map<number, ProductItemType>();
 
-  Object.keys(kitchenStore.menuTodaySales.elements).forEach(key => {
-    if (key == "product") {
-      Object.keys(kitchenStore.menuTodaySales.elements.product).forEach((key2) => {
-        kitchenStore.menuTodaySales.elements.product[key2].forEach(product => {
-          productMap.set(product.id, product);
-        });
-      });
-    } else {
-      kitchenStore.menuTodaySales.elements.meal.forEach(product => {
-        productMap.set(product.id, product);
-      });
-    }
+  kitchenStore.menuTodaySales.elements.forEach(product => {
+    productMap.set(product.id, product);
   });
 
   orders.forEach((quantity, product_id) => {
@@ -288,7 +280,10 @@ const createOrder = async () => {
     });
 
     await kitchenStore.CREATE_ORDER(payload);
-    await kitchenStore.GET_CURRENT_MENU_SALES_LIST(route.params.child_id as string);
+    await kitchenStore.GET_CURRENT_MENU_SALES_LIST({
+      id: route.params.child_id as string,
+      params: { period: route.query.management_id ? route.query.management_id : form.management_id },
+    });
     orders.clear();
     ordersModal.value = false;
   } catch (error) {
@@ -368,7 +363,10 @@ watch(() => route.params, async () => {
   });
 
   if (kitchenStore.activeSalesPart) {
-    await kitchenStore.GET_CURRENT_MENU_SALES_LIST(route.params.child_id as string);
+    await kitchenStore.GET_CURRENT_MENU_SALES_LIST({
+      id: route.params.child_id as string,
+      params: { period: route.query.management_id ? route.query.management_id : form.management_id },
+    });
   }
 
   if (kitchenStore.activeMenuPart) {
@@ -446,6 +444,74 @@ const mealTextFilter = (index: string): string => {
     default:
       return "";
   }
+};
+
+const form = reactive<WarehouseCapacityParamsType>({
+  management_id: 1,
+});
+
+
+watch(() => route.query.management_id, (newId) => {
+  setTimeout(() => {
+    if (kitchenStore.activeSalesPart) {
+      if (newId) {
+
+        const management_id = newId ? parseInt(newId as string) : null;
+        form.management_id = management_id && !isNaN(management_id) ? management_id : null;
+      } else {
+        console.log("ishladi");
+        router.replace({
+          ...route, // Keep the current route details
+          query: {
+            ...route.query,
+            management_id: form.management_id,
+          },
+        });
+      }
+    }
+  }, 500);
+
+
+}, { immediate: true });
+
+
+const managements = ref<object[]>([
+  {
+    id: 1,
+    name: "Завтрак",
+  },
+  {
+    id: 2,
+    name: "Первое",
+  },
+  {
+    id: 3,
+    name: "Второе",
+  },
+  {
+    id: 4,
+    name: "Салаты",
+  },
+  {
+    id: 5,
+    name: "Десерты",
+  },
+  {
+    id: 6,
+    name: "Добавки",
+  },
+  {
+    id: 7,
+    name: "Напитки",
+  },
+
+]);
+
+const clearBasket = () => {
+  confirm.delete().then(response => {
+    orders.clear();
+    ordersModal.value = false;
+  });
 };
 </script>
 
@@ -533,7 +599,7 @@ const mealTextFilter = (index: string): string => {
       <div class="mt-6">
 
         <TransitionGroup
-          v-if="(kitchenStore.menuToday.elements && kitchenStore.menuToday.elements.length) || (kitchenStore.menuTodaySales.elements && Object.keys(kitchenStore.menuTodaySales.elements).length || (kitchenStore.menuWeekly && Object.keys(kitchenStore.menuWeekly).length))"
+          v-if="(kitchenStore.menuToday.elements && kitchenStore.menuToday.elements.length) || (kitchenStore.menuTodaySales.elements && kitchenStore.menuTodaySales.elements.length || (kitchenStore.menuWeekly && Object.keys(kitchenStore.menuWeekly).length))"
           name="nested"
           :duration="{ enter: 500, leave: 1500 }"
           tag="div"
@@ -653,76 +719,34 @@ const mealTextFilter = (index: string): string => {
             </div>
             <div
               v-else-if="kitchenStore.activeSalesPart"
-              class="flex flex-col gap-y-6"
+              class="flex flex-col items-start gap-y-6"
             >
+
               <div
-                v-if="kitchenStore.menuTodaySales.elements && Object.keys(kitchenStore.menuTodaySales.elements).length"
-                v-for="(dishe) in Object.keys(kitchenStore.menuTodaySales.elements)"
+                class="app-tabs2 !text-sm mb-6"
+              >
+                <RouterLink
+                  v-for="item in managements"
+                  :key="item.id"
+                  :to="{ query: { ...route.query, ...{ management_id: item.id } } }"
+                  :class="[
+                           'app-tab',
+                           { 'app-tab--active': form.management_id == item.id },
+                         ]"
+                >
+                  {{ item.name }}
+                </RouterLink>
+              </div>
+
+              <div
+                v-if="kitchenStore.menuTodaySales.elements && kitchenStore.menuTodaySales.elements.length"
               >
 
-                <div
-                  v-if="dishe == 'product'"
-                  v-for="(product, index) in Object.keys(kitchenStore.menuTodaySales.elements.product)"
-                  :key="index"
-                >
-                  <h4 class="text-dark-gray font-semibold text-xl">
-                    {{ product }}
-                  </h4>
+                <div>
+
                   <div :class="productsWrapperClassName">
                     <div
-                      v-for="productItem in kitchenStore.menuTodaySales.elements.product[product]"
-                      :key="productItem.id"
-                      class="menu__card"
-                    >
-                      <h5 class="menu__card-title">
-                        {{ productItem.name }}
-                      </h5>
-                      <img
-                        :src="ColaImg"
-                        :alt="productItem.name"
-                        class="menu__card-img"
-                      />
-                      <div class="menu__card-subtitles">
-                        <span>{{ productItem.unit_name }} </span>
-                        <span>{{ formatNumber(productItem.price) }} UZS</span>
-                      </div>
-                      <div class="menu__card__actions">
-                        <button
-                          @click="updateQuantity(productItem.id, false)"
-                          :disabled="!orders.has(productItem.id)"
-                          class="menu__card__action-btn"
-                        >
-                          <svg
-                            :data-src="MinusIcon"
-                            class="menu__card__action-btn__icon"
-                          />
-                        </button>
-                        <span>
-                        {{ orders.get(productItem.id) ?? 0 }}
-                      </span>
-                        <button
-                          @click="updateQuantity(productItem.id)"
-                          class="menu__card__action-btn"
-                          :disabled="orders.has(productItem.id) && (orders.get(productItem.id) == productItem.amount)"
-                        >
-                          <svg
-                            :data-src="Plus3Icon"
-                            class="menu__card__action-btn__icon"
-                          />
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div
-                  v-if="dishe == 'meal'"
-                >
-                  <h4 class="text-dark-gray font-semibold text-xl">
-                    Блюда
-                  </h4>
-                  <div :class="productsWrapperClassName">
-                    <div
-                      v-for="productItem in kitchenStore.menuTodaySales.elements.meal"
+                      v-for="productItem in kitchenStore.menuTodaySales.elements"
                       :key="productItem.id"
                       class="menu__card !p-[8px] !bg-white"
                     >
@@ -735,9 +759,8 @@ const mealTextFilter = (index: string): string => {
 
                       <div class="menu__card-subtitles text-start mt-[12px] mb-[16px]">
                         <span
-                          class="text-[#000D24] font-semibold text-[20px] mb-[4px]"
-                        >
-                          {{ formatNumber(productItem.price) }} UZS</span>
+                          class="text-[#000D24] font-semibold text-[20px] mb-[4px]">{{ formatNumber(productItem.price)
+                          }} UZS</span>
                         <span class="text-[#000D24] font-medium text-[14px]">{{ productItem.name }} </span>
                       </div>
 
@@ -747,27 +770,16 @@ const mealTextFilter = (index: string): string => {
 
                       <div
                         v-if="orders.get(productItem.id)"
-                        class="menu__card__actions !justify-between  bg-[#E2E6F3] px-[24px] py-[14px] rounded-[12px]"
-                      >
+                        class="menu__card__actions !justify-between  bg-[#E2E6F3] px-[24px] py-[14px] rounded-[12px]">
                         <button
                           @click="updateQuantity(productItem.id, false)"
                           :disabled="!orders.has(productItem.id)"
                           class=""
                         >
-                          <svg
-                            width="20"
-                            height="20"
-                            viewBox="0 0 20 20"
-                            fill="none"
-                            xmlns="http://www.w3.org/2000/svg"
-                          >
-                            <path
-                              d="M4.16602 9.99967H15.8327"
-                              stroke="#4F5662"
-                              stroke-width="1.2"
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                            />
+                          <svg width="20" height="20" viewBox="0 0 20 20" fill="none"
+                               xmlns="http://www.w3.org/2000/svg">
+                            <path d="M4.16602 9.99967H15.8327" stroke="#4F5662" stroke-width="1.2"
+                                  stroke-linecap="round" stroke-linejoin="round" />
                           </svg>
 
                         </button>
@@ -779,69 +791,81 @@ const mealTextFilter = (index: string): string => {
                           class=""
                           :disabled="productItem.amount == 0 || orders.has(productItem.id) && (orders.get(productItem.id) == productItem.amount)"
                         >
-                          <svg
-                            width="21"
-                            height="20"
-                            viewBox="0 0 21 20"
-                            fill="none"
-                            xmlns="http://www.w3.org/2000/svg"
-                          >
-                            <path
-                              d="M10.5007 4.16699V15.8337"
-                              stroke="#4F5662"
-                              stroke-width="1.2"
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                            />
-                            <path
-                              d="M4.66602 9.99967H16.3327"
-                              stroke="#4F5662"
-                              stroke-width="1.2"
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                            />
+                          <svg width="21" height="20" viewBox="0 0 21 20" fill="none"
+                               xmlns="http://www.w3.org/2000/svg">
+                            <path d="M10.5007 4.16699V15.8337" stroke="#4F5662" stroke-width="1.2"
+                                  stroke-linecap="round" stroke-linejoin="round" />
+                            <path d="M4.66602 9.99967H16.3327" stroke="#4F5662" stroke-width="1.2"
+                                  stroke-linecap="round" stroke-linejoin="round" />
                           </svg>
 
                         </button>
                       </div>
                       <!--                      :disabled="productItem.amount == 0 || orders.has(productItem.id) && (orders.get(productItem.id) == productItem.amount)"-->
-                      <button
-                        v-else
-                        @click="updateQuantity(productItem.id)"
+                      <button v-else
+                              @click="updateQuantity(productItem.id)"
 
-                        class="menu__card__actions  bg-[#E2E6F3] px-[24px] py-[14px] rounded-[12px]"
-                      >
-                        <svg
-                          width="21"
-                          height="20"
-                          viewBox="0 0 21 20"
-                          fill="none"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path
-                            d="M10.5007 4.16699V15.8337"
-                            stroke="#4F5662"
-                            stroke-width="1.2"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                          />
-                          <path
-                            d="M4.66602 9.99967H16.3327"
-                            stroke="#4F5662"
-                            stroke-width="1.2"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                          />
+                              class="menu__card__actions  bg-[#E2E6F3] px-[24px] py-[14px] rounded-[12px]">
+                        <svg width="21" height="20" viewBox="0 0 21 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M10.5007 4.16699V15.8337" stroke="#4F5662" stroke-width="1.2" stroke-linecap="round"
+                                stroke-linejoin="round" />
+                          <path d="M4.66602 9.99967H16.3327" stroke="#4F5662" stroke-width="1.2" stroke-linecap="round"
+                                stroke-linejoin="round" />
                         </svg>
-                        {{ t("method.add") }}
+
+
+                        Добавить
                       </button>
                     </div>
+                    <!--                    <div-->
+                    <!--                      v-for="productItem in kitchenStore.menuTodaySales.elements.product[product]"-->
+                    <!--                      :key="productItem.id"-->
+                    <!--                      class="menu__card"-->
+                    <!--                    >-->
+                    <!--                      <h5 class="menu__card-title">-->
+                    <!--                        {{ productItem.name }}-->
+                    <!--                      </h5>-->
+                    <!--                      <img-->
+                    <!--                        :src="ColaImg"-->
+                    <!--                        :alt="productItem.name"-->
+                    <!--                        class="menu__card-img"-->
+                    <!--                      />-->
+                    <!--                      <div class="menu__card-subtitles">-->
+                    <!--                        <span>{{ productItem.unit_name }} </span>-->
+                    <!--                        <span>{{ formatNumber(productItem.price) }} UZS</span>-->
+                    <!--                      </div>-->
+                    <!--                      <div class="menu__card__actions">-->
+                    <!--                        <button-->
+                    <!--                          @click="updateQuantity(productItem.id, false)"-->
+                    <!--                          :disabled="!orders.has(productItem.id)"-->
+                    <!--                          class="menu__card__action-btn"-->
+                    <!--                        >-->
+                    <!--                          <svg-->
+                    <!--                            :data-src="MinusIcon"-->
+                    <!--                            class="menu__card__action-btn__icon"-->
+                    <!--                          />-->
+                    <!--                        </button>-->
+                    <!--                        <span>-->
+                    <!--                        {{ orders.get(productItem.id) ?? 0 }}-->
+                    <!--                      </span>-->
+                    <!--                        <button-->
+                    <!--                          @click="updateQuantity(productItem.id)"-->
+                    <!--                          class="menu__card__action-btn"-->
+                    <!--                          :disabled="orders.has(productItem.id) && (orders.get(productItem.id) == productItem.amount)"-->
+                    <!--                        >-->
+                    <!--                          <svg-->
+                    <!--                            :data-src="Plus3Icon"-->
+                    <!--                            class="menu__card__action-btn__icon"-->
+                    <!--                          />-->
+                    <!--                        </button>-->
+                    <!--                      </div>-->
+                    <!--                    </div>-->
                   </div>
                 </div>
               </div>
               <AppEmpty
                 v-else
-                class="h-[60vh]"
+                class="h-[60vh] mx-auto"
               />
             </div>
           </div>
@@ -1085,16 +1109,20 @@ const mealTextFilter = (index: string): string => {
           class="fixed top-0 right-0 pt-8 pb-6 w-[21%] h-screen flex flex-col justify-between z-10 bg-white shadow-[-32px_72px_96px_0_#0926450F] rounded-l-[32px]"
         >
           <div>
-            <h4 class="text-xl text-black font-semibold px-8">
-              {{ t("common.basket") }}
-            </h4>
+            <div class="flex items-center justify-between mb-4">
+              <h4 class="text-xl text-black font-semibold pl-8">Корзина</h4>
+              <button v-if="orders.size" @click="clearBasket"
+                      class="text-[#A8AAAE] text-[14px] bg-red-500 mr-6 text-white px-2 py-1 rounded-[8px]">
+                Очистить
+              </button>
+            </div>
             <div
               v-if="selectedProducts.length > 0"
-              class="grid gap-6 mt-6 px-6 h-[100vh] overflow-y-auto"
+              class="grid gap-2 px-6"
             >
               <!--              menu__card-->
               <div
-                class="h-[136px] p-[8px] flex gap-2 bg-[#F8F9FC] rounded-[16px]"
+                class="h-auto xl:h-[136px] p-[8px] flex items-center xl:items-stretch gap-2 bg-[#F8F9FC] rounded-[16px]"
                 v-for="(productItem, productIndex) in selectedProducts"
                 :key="productIndex"
               >
@@ -1103,44 +1131,34 @@ const mealTextFilter = (index: string): string => {
                 <img
                   :src="ColaImg"
                   :alt="productItem.name"
-                  class="w-[120px]"
+                  class="lg:w-[80px] lg:h-[80px] xl:w-[100px] xl:h-[100px] 2xl:w-[120px] 2xl:h-[120px] w-[100px] object-cover rounded-[12px]"
                 />
-                <div class="w-full flex flex-col justify-between">
-                  <div class="flex items-center justify-between">
+                <div class="w-full flex flex-col">
+                  <div class="flex 2xl:items-center justify-between flex-col 2xl:flex-row">
                     <!--                    menu__card-title-->
-                    <h5 class="text-[#000D24] text-[20px] font-semibold">
+                    <h5 class="text-[#000D24] xl:text-[14px] 2xl:text-[20px] font-semibold">
                       {{ formatNumber(productItem.price) }} UZS
                     </h5>
 
-                    <span class="text-[#A8AAAE] text-[14px]">{{ productItem.unit_name }} </span>
+                    <span class="text-[#A8AAAE]">{{ productItem.unit_name }} </span>
                   </div>
-                  <h5 class="text-[#000D24] text-sm font-medium mt-[4px] truncate w-[200px]">
+                  <h5
+                    class="text-[#000D24] truncate w-full max-w-[200px] font-medium text-[12px] xl:text-[14px] mt-[4px]">
                     {{ productItem.name }}
                   </h5>
 
                   <div
                     v-if="orders.get(productItem.id)"
-                    class="menu__card__actions !justify-between !mt-[12px] bg-[#E2E6F3] px-[24px] py-[14px] rounded-[12px]"
-                  >
+                    class="menu__card__actions !justify-between  bg-[#E2E6F3] 2xl:px-[24px] 2xl:py-[14px] xl:px-[20px] xl:py-[10px] px-[16px] py-[6px] rounded-[12px] !mt-auto">
                     <button
                       @click="updateQuantity(productItem.id, false)"
                       :disabled="!orders.has(productItem.id)"
                       class=""
                     >
-                      <svg
-                        width="20"
-                        height="20"
-                        viewBox="0 0 20 20"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          d="M4.16602 9.99967H15.8327"
-                          stroke="#4F5662"
-                          stroke-width="1.2"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                        />
+                      <svg width="20" height="20" viewBox="0 0 20 20" fill="none"
+                           xmlns="http://www.w3.org/2000/svg">
+                        <path d="M4.16602 9.99967H15.8327" stroke="#4F5662" stroke-width="1.2"
+                              stroke-linecap="round" stroke-linejoin="round" />
                       </svg>
 
                     </button>
@@ -1152,27 +1170,12 @@ const mealTextFilter = (index: string): string => {
                       class=""
                       :disabled="orders.has(productItem.id) && (orders.get(productItem.id) == productItem.amount)"
                     >
-                      <svg
-                        width="21"
-                        height="20"
-                        viewBox="0 0 21 20"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          d="M10.5007 4.16699V15.8337"
-                          stroke="#4F5662"
-                          stroke-width="1.2"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                        />
-                        <path
-                          d="M4.66602 9.99967H16.3327"
-                          stroke="#4F5662"
-                          stroke-width="1.2"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                        />
+                      <svg width="21" height="20" viewBox="0 0 21 20" fill="none"
+                           xmlns="http://www.w3.org/2000/svg">
+                        <path d="M10.5007 4.16699V15.8337" stroke="#4F5662" stroke-width="1.2"
+                              stroke-linecap="round" stroke-linejoin="round" />
+                        <path d="M4.66602 9.99967H16.3327" stroke="#4F5662" stroke-width="1.2"
+                              stroke-linecap="round" stroke-linejoin="round" />
                       </svg>
 
                     </button>
@@ -1181,32 +1184,46 @@ const mealTextFilter = (index: string): string => {
               </div>
             </div>
           </div>
-          <div class="mt-6 px-8">
-            <div class="flex items-center justify-between gap-x-4 text-lg">
-              <span class="font-medium text-[#A8AAAE]">
-                {{ t("common.totalSum") }}:
-              </span>
-              <strong class="font-semibold text-dark">
-                {{ formatNumber(ordersSum) }} {{ t("currency.sum") }}
+          <!--          <div class="mt-6 px-8">-->
+          <!--            <div class="flex items-center justify-between gap-x-4 text-lg">-->
+          <!--              <span class="font-medium text-[#A8AAAE]">-->
+          <!--                {{ t("common.totalSum") }}:-->
+          <!--              </span>-->
+          <!--              <strong class="font-semibold text-dark">-->
+          <!--                {{ formatNumber(ordersSum) }} {{ t("currency.sum") }}-->
+          <!--              </strong>-->
+          <!--            </div>-->
+          <!--            <div class="grid grid-cols-2 mt-6">-->
+          <!--              <ElButton-->
+          <!--                @click="clearOrders"-->
+          <!--                class="!bg-[#E2E6F3] border-none text-sm !text-dark-gray"-->
+          <!--                size="large"-->
+          <!--              >-->
+          <!--                {{ t("method.cancel") }}-->
+          <!--              </ElButton>-->
+          <!--              <ElButton-->
+          <!--                type="primary"-->
+          <!--                size="large"-->
+          <!--                class="!bg-blue"-->
+          <!--                @click="createOrder"-->
+          <!--              >-->
+          <!--                {{ t("common.sell") }}-->
+          <!--              </ElButton>-->
+          <!--            </div>-->
+          <!--          </div>-->
+
+          <div v-if="orders.size" class="mt-6 px-8">
+            <button
+              class="!bg-blue w-full flex items-center justify-between px-[24px] py-[14px] rounded-[12px] text-white"
+              @click="createOrder"
+            >
+              Далее
+
+              <strong class="font-semibold ml-auto">
+                {{ formatNumber(ordersSum) }} сум
               </strong>
-            </div>
-            <div class="grid grid-cols-2 mt-6">
-              <ElButton
-                @click="clearOrders"
-                class="!bg-[#E2E6F3] border-none text-sm !text-dark-gray"
-                size="large"
-              >
-                {{ t("method.cancel") }}
-              </ElButton>
-              <ElButton
-                type="primary"
-                size="large"
-                class="!bg-blue"
-                @click="createOrder"
-              >
-                {{ t("common.sell") }}
-              </ElButton>
-            </div>
+            </button>
+
           </div>
         </div>
       </Teleport>

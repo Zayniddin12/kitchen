@@ -386,10 +386,10 @@ const generateReceiptIndex = computed(() => {
                     :key="item.id"
                     :to="{ query: { ...route.query, ...{ management_id: item.id } } }"
                     :class="[
-              'app-tab',
-              { 'app-tab--active': form.management_id == item.id },
-            ]"
-                  >
+                           'app-tab',
+                           { 'app-tab--active': form.management_id == item.id },
+                         ]"
+                        >
                     {{ item.name }}
                   </RouterLink>
                 </div>

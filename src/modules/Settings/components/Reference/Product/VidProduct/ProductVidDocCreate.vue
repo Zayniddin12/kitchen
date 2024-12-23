@@ -231,6 +231,14 @@ watchEffect(() => {
                 label-class="text-[#A8AAAE] text-xs"
                 class="mb-0"
               />
+
+              <app-input
+                disabled
+                label="Занимаемое место"
+                type="number"
+                label-class="text-[#A8AAAE] text-[12px]"
+                placeholder="Введите"
+              />
             </div>
           </AppForm>
 

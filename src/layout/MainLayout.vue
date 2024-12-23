@@ -57,6 +57,7 @@ watch(() => route.name, function(val) {
   }
 }, { immediate: true });
 
+
 const faceStore = useFaceStore();
 
 const model = ref<boolean>(false);
@@ -176,7 +177,8 @@ const navDrawerWidth = ref<number>(0);
         <RouterView />
       </div>
 
-      <span class="mt-[28px] bg-transparent !dark:body-dark w-full text-[#8F9194] text-[12px] select-none">{{ t("footer")
+      <span
+        class="mt-[28px] bg-transparent !dark:body-dark w-full text-[#8F9194] text-[12px] select-none">{{ t("footer")
         }}</span>
     </div>
 
