@@ -78,3 +78,13 @@ export interface ForgotPasswordDataType extends VerifyCodeDataType {
 }
 
 export type CodeType = string;
+
+export interface UpdateUserDataType {
+    phone: string;
+    avatar?: File | null,
+}
+
+export interface UpdatePasswordDataType {
+    old_password: string;
+    new_password: string;
+}

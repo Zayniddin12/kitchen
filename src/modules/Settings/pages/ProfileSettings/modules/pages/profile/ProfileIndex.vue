@@ -14,7 +14,7 @@ const route = useRoute();
 
 const authStore = useAuthStore();
 
-const userImg = computed(() => authStore.user?.image ?? Avatar);
+const userImg = computed(() => authStore.user?.image || Avatar);
 
 type PersonalDataType = {
   title: string;

@@ -78,7 +78,7 @@ watch(() => model.value, (value) => {
 
 
 watch(() => model.value, async (newValue) => {
-  if (!newValue) {
+  if (!newValue && tokenManager.getAccessToken()) {
     const interval = setInterval(async () => {
       const data = await faceStore.FETCH_FACE_ID();
       if (data) {
