@@ -148,8 +148,8 @@ export const useKitchenStore = defineStore("kitchenStore", () => {
     return data.data;
   };
 
-  const GET_CURRENT_MENU_SALES_LIST = async (id: number | string) => {
-    const { data } = await $axios.get(`/kitchen-sales/${id}/sell-menu-today`);
+  const GET_CURRENT_MENU_SALES_LIST = async ({ id, params }: { id: number | string, params: any }) => {
+    const { data } = await $axios.get(`/kitchen-sales/${id}/sell-menu-today`, { params });
     menuTodaySales.value = data.data;
     return data;
   };

@@ -206,18 +206,8 @@ const selectedProducts = computed(() => {
 
   const productMap = new Map<number, ProductItemType>();
 
-  Object.keys(kitchenStore.menuTodaySales.elements).forEach(key => {
-    if (key == "product") {
-      Object.keys(kitchenStore.menuTodaySales.elements.product).forEach((key2) => {
-        kitchenStore.menuTodaySales.elements.product[key2].forEach(product => {
-          productMap.set(product.id, product);
-        });
-      });
-    } else {
-      kitchenStore.menuTodaySales.elements.meal.forEach(product => {
-        productMap.set(product.id, product);
-      });
-    }
+  kitchenStore.menuTodaySales.elements.forEach(product => {
+    productMap.set(product.id, product);
   });
 
   orders.forEach((quantity, product_id) => {
@@ -370,7 +360,10 @@ watch(() => route.params, async () => {
   });
 
   if (kitchenStore.activeSalesPart) {
-    await kitchenStore.GET_CURRENT_MENU_SALES_LIST(route.params.child_id as string);
+    await kitchenStore.GET_CURRENT_MENU_SALES_LIST({
+      id: route.params.child_id as string,
+      params: { period: form.management_id },
+    });
   }
 
   if (kitchenStore.activeMenuPart) {
@@ -454,13 +447,23 @@ const form = reactive<WarehouseCapacityParamsType>({
   management_id: 1,
 });
 
-onMounted(() => {
-  route.query.management_id = form.management_id ? form.management_id.toString() : null;
-});
 
 watch(() => route.query.management_id, (newId) => {
-  const management_id = newId ? parseInt(newId as string) : null;
-  form.management_id = management_id && !isNaN(management_id) ? management_id : null;
+  if (kitchenStore.activeSalesPart) {
+    if (newId) {
+      const management_id = newId ? parseInt(newId as string) : null;
+      form.management_id = management_id && !isNaN(management_id) ? management_id : null;
+    } else {
+      router.replace({
+        ...route, // Keep the current route details
+        query: {
+          ...route.query,
+          management_id: form.management_id,
+        },
+      });
+    }
+  }
+
 
 }, { immediate: true });
 
@@ -589,7 +592,7 @@ const clearBasket = () => {
       <div class="mt-6">
 
         <TransitionGroup
-          v-if="(kitchenStore.menuToday.elements && kitchenStore.menuToday.elements.length) || (kitchenStore.menuTodaySales.elements && Object.keys(kitchenStore.menuTodaySales.elements).length || (kitchenStore.menuWeekly && Object.keys(kitchenStore.menuWeekly).length))"
+          v-if="(kitchenStore.menuToday.elements && kitchenStore.menuToday.elements.length) || (kitchenStore.menuTodaySales.elements && kitchenStore.menuTodaySales.elements.length || (kitchenStore.menuWeekly && Object.keys(kitchenStore.menuWeekly).length))"
           name="nested"
           :duration="{ enter: 500, leave: 1500 }"
           tag="div"
@@ -729,21 +732,14 @@ const clearBasket = () => {
               </div>
 
               <div
-                v-if="kitchenStore.menuTodaySales.elements && Object.keys(kitchenStore.menuTodaySales.elements).length"
-                v-for="(dishe) in Object.keys(kitchenStore.menuTodaySales.elements)"
+                v-if="kitchenStore.menuTodaySales.elements && kitchenStore.menuTodaySales.elements.length"
               >
 
-                <div
-                  v-if="dishe == 'product'"
-                  v-for="(product, index) in Object.keys(kitchenStore.menuTodaySales.elements.product)"
-                  :key="index"
-                >
-                  <h4 class="text-dark-gray font-semibold text-xl">
-                    {{ product }}
-                  </h4>
+                <div>
+
                   <div :class="productsWrapperClassName">
                     <div
-                      v-for="productItem in kitchenStore.menuTodaySales.elements.product[product]"
+                      v-for="productItem in kitchenStore.menuTodaySales.elements"
                       :key="productItem.id"
                       class="menu__card !p-[8px] !bg-white"
                     >
@@ -814,179 +810,55 @@ const clearBasket = () => {
                         Добавить
                       </button>
                     </div>
-<!--                    <div-->
-<!--                      v-for="productItem in kitchenStore.menuTodaySales.elements.product[product]"-->
-<!--                      :key="productItem.id"-->
-<!--                      class="menu__card"-->
-<!--                    >-->
-<!--                      <h5 class="menu__card-title">-->
-<!--                        {{ productItem.name }}-->
-<!--                      </h5>-->
-<!--                      <img-->
-<!--                        :src="ColaImg"-->
-<!--                        :alt="productItem.name"-->
-<!--                        class="menu__card-img"-->
-<!--                      />-->
-<!--                      <div class="menu__card-subtitles">-->
-<!--                        <span>{{ productItem.unit_name }} </span>-->
-<!--                        <span>{{ formatNumber(productItem.price) }} UZS</span>-->
-<!--                      </div>-->
-<!--                      <div class="menu__card__actions">-->
-<!--                        <button-->
-<!--                          @click="updateQuantity(productItem.id, false)"-->
-<!--                          :disabled="!orders.has(productItem.id)"-->
-<!--                          class="menu__card__action-btn"-->
-<!--                        >-->
-<!--                          <svg-->
-<!--                            :data-src="MinusIcon"-->
-<!--                            class="menu__card__action-btn__icon"-->
-<!--                          />-->
-<!--                        </button>-->
-<!--                        <span>-->
-<!--                        {{ orders.get(productItem.id) ?? 0 }}-->
-<!--                      </span>-->
-<!--                        <button-->
-<!--                          @click="updateQuantity(productItem.id)"-->
-<!--                          class="menu__card__action-btn"-->
-<!--                          :disabled="orders.has(productItem.id) && (orders.get(productItem.id) == productItem.amount)"-->
-<!--                        >-->
-<!--                          <svg-->
-<!--                            :data-src="Plus3Icon"-->
-<!--                            class="menu__card__action-btn__icon"-->
-<!--                          />-->
-<!--                        </button>-->
-<!--                      </div>-->
-<!--                    </div>-->
-                  </div>
-                </div>
-                <div
-                  v-if="dishe == 'meal'"
-                >
-                  <h4 class="text-dark-gray font-semibold text-xl">
-                    Блюда
-                  </h4>
-                  <div :class="productsWrapperClassName">
-                    <div
-                      v-for="productItem in kitchenStore.menuTodaySales.elements.meal"
-                      :key="productItem.id"
-                      class="menu__card !p-[8px] !bg-white"
-                    >
-
-                      <img
-                        :src="ColaImg"
-                        :alt="productItem.name"
-                        class="object-cover rounded-[12px] w-full h-[120px]"
-                      />
-
-                      <div class="menu__card-subtitles text-start mt-[12px] mb-[16px]">
-                        <span
-                          class="text-[#000D24] font-semibold text-[20px] mb-[4px]"
-                        >
-                          {{ formatNumber(productItem.price) }} UZS</span>
-                        <span class="text-[#000D24] font-medium text-[14px]">{{ productItem.name }} </span>
-                      </div>
-
-                      <h5 class="text-start text-[#A8AAAE]">
-                        {{ productItem.unit_name }}
-                      </h5>
-
-                      <div
-                        v-if="orders.get(productItem.id)"
-                        class="menu__card__actions !justify-between  bg-[#E2E6F3] px-[24px] py-[14px] rounded-[12px]"
-                      >
-                        <button
-                          @click="updateQuantity(productItem.id, false)"
-                          :disabled="!orders.has(productItem.id)"
-                          class=""
-                        >
-                          <svg
-                            width="20"
-                            height="20"
-                            viewBox="0 0 20 20"
-                            fill="none"
-                            xmlns="http://www.w3.org/2000/svg"
-                          >
-                            <path
-                              d="M4.16602 9.99967H15.8327"
-                              stroke="#4F5662"
-                              stroke-width="1.2"
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                            />
-                          </svg>
-
-                        </button>
-                        <span>
-                        {{ orders.get(productItem.id) ?? 0 }}
-                        </span>
-                        <button
-                          @click="updateQuantity(productItem.id)"
-                          class=""
-                          :disabled="productItem.amount == 0 || orders.has(productItem.id) && (orders.get(productItem.id) == productItem.amount)"
-                        >
-                          <svg
-                            width="21"
-                            height="20"
-                            viewBox="0 0 21 20"
-                            fill="none"
-                            xmlns="http://www.w3.org/2000/svg"
-                          >
-                            <path
-                              d="M10.5007 4.16699V15.8337"
-                              stroke="#4F5662"
-                              stroke-width="1.2"
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                            />
-                            <path
-                              d="M4.66602 9.99967H16.3327"
-                              stroke="#4F5662"
-                              stroke-width="1.2"
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                            />
-                          </svg>
-
-                        </button>
-                      </div>
-                      <!--                      :disabled="productItem.amount == 0 || orders.has(productItem.id) && (orders.get(productItem.id) == productItem.amount)"-->
-                      <button
-                        v-else
-                        @click="updateQuantity(productItem.id)"
-
-                        class="menu__card__actions  bg-[#E2E6F3] px-[24px] py-[14px] rounded-[12px]"
-                      >
-                        <svg
-                          width="21"
-                          height="20"
-                          viewBox="0 0 21 20"
-                          fill="none"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path
-                            d="M10.5007 4.16699V15.8337"
-                            stroke="#4F5662"
-                            stroke-width="1.2"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                          />
-                          <path
-                            d="M4.66602 9.99967H16.3327"
-                            stroke="#4F5662"
-                            stroke-width="1.2"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                          />
-                        </svg>
-                        {{ t("method.add") }}
-                      </button>
-                    </div>
+                    <!--                    <div-->
+                    <!--                      v-for="productItem in kitchenStore.menuTodaySales.elements.product[product]"-->
+                    <!--                      :key="productItem.id"-->
+                    <!--                      class="menu__card"-->
+                    <!--                    >-->
+                    <!--                      <h5 class="menu__card-title">-->
+                    <!--                        {{ productItem.name }}-->
+                    <!--                      </h5>-->
+                    <!--                      <img-->
+                    <!--                        :src="ColaImg"-->
+                    <!--                        :alt="productItem.name"-->
+                    <!--                        class="menu__card-img"-->
+                    <!--                      />-->
+                    <!--                      <div class="menu__card-subtitles">-->
+                    <!--                        <span>{{ productItem.unit_name }} </span>-->
+                    <!--                        <span>{{ formatNumber(productItem.price) }} UZS</span>-->
+                    <!--                      </div>-->
+                    <!--                      <div class="menu__card__actions">-->
+                    <!--                        <button-->
+                    <!--                          @click="updateQuantity(productItem.id, false)"-->
+                    <!--                          :disabled="!orders.has(productItem.id)"-->
+                    <!--                          class="menu__card__action-btn"-->
+                    <!--                        >-->
+                    <!--                          <svg-->
+                    <!--                            :data-src="MinusIcon"-->
+                    <!--                            class="menu__card__action-btn__icon"-->
+                    <!--                          />-->
+                    <!--                        </button>-->
+                    <!--                        <span>-->
+                    <!--                        {{ orders.get(productItem.id) ?? 0 }}-->
+                    <!--                      </span>-->
+                    <!--                        <button-->
+                    <!--                          @click="updateQuantity(productItem.id)"-->
+                    <!--                          class="menu__card__action-btn"-->
+                    <!--                          :disabled="orders.has(productItem.id) && (orders.get(productItem.id) == productItem.amount)"-->
+                    <!--                        >-->
+                    <!--                          <svg-->
+                    <!--                            :data-src="Plus3Icon"-->
+                    <!--                            class="menu__card__action-btn__icon"-->
+                    <!--                          />-->
+                    <!--                        </button>-->
+                    <!--                      </div>-->
+                    <!--                    </div>-->
                   </div>
                 </div>
               </div>
               <AppEmpty
                 v-else
-                class="h-[60vh]"
+                class="h-[60vh] mx-auto"
               />
             </div>
           </div>
@@ -1305,33 +1177,33 @@ const clearBasket = () => {
               </div>
             </div>
           </div>
-<!--          <div class="mt-6 px-8">-->
-<!--            <div class="flex items-center justify-between gap-x-4 text-lg">-->
-<!--              <span class="font-medium text-[#A8AAAE]">-->
-<!--                {{ t("common.totalSum") }}:-->
-<!--              </span>-->
-<!--              <strong class="font-semibold text-dark">-->
-<!--                {{ formatNumber(ordersSum) }} {{ t("currency.sum") }}-->
-<!--              </strong>-->
-<!--            </div>-->
-<!--            <div class="grid grid-cols-2 mt-6">-->
-<!--              <ElButton-->
-<!--                @click="clearOrders"-->
-<!--                class="!bg-[#E2E6F3] border-none text-sm !text-dark-gray"-->
-<!--                size="large"-->
-<!--              >-->
-<!--                {{ t("method.cancel") }}-->
-<!--              </ElButton>-->
-<!--              <ElButton-->
-<!--                type="primary"-->
-<!--                size="large"-->
-<!--                class="!bg-blue"-->
-<!--                @click="createOrder"-->
-<!--              >-->
-<!--                {{ t("common.sell") }}-->
-<!--              </ElButton>-->
-<!--            </div>-->
-<!--          </div>-->
+          <!--          <div class="mt-6 px-8">-->
+          <!--            <div class="flex items-center justify-between gap-x-4 text-lg">-->
+          <!--              <span class="font-medium text-[#A8AAAE]">-->
+          <!--                {{ t("common.totalSum") }}:-->
+          <!--              </span>-->
+          <!--              <strong class="font-semibold text-dark">-->
+          <!--                {{ formatNumber(ordersSum) }} {{ t("currency.sum") }}-->
+          <!--              </strong>-->
+          <!--            </div>-->
+          <!--            <div class="grid grid-cols-2 mt-6">-->
+          <!--              <ElButton-->
+          <!--                @click="clearOrders"-->
+          <!--                class="!bg-[#E2E6F3] border-none text-sm !text-dark-gray"-->
+          <!--                size="large"-->
+          <!--              >-->
+          <!--                {{ t("method.cancel") }}-->
+          <!--              </ElButton>-->
+          <!--              <ElButton-->
+          <!--                type="primary"-->
+          <!--                size="large"-->
+          <!--                class="!bg-blue"-->
+          <!--                @click="createOrder"-->
+          <!--              >-->
+          <!--                {{ t("common.sell") }}-->
+          <!--              </ElButton>-->
+          <!--            </div>-->
+          <!--          </div>-->
 
           <div v-if="orders.size" class="mt-6 px-8">
             <button
