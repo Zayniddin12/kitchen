@@ -70,7 +70,7 @@ export const useWarehouseBasesStore = defineStore("warehouseBasesStore", () => {
         fillingPercentageLoading.value = true;
 
         try {
-            await warehouseBasesApi.fetchFillingPercentage(id);
+            fillingPercentage.value = await warehouseBasesApi.fetchFillingPercentage(id);
         } finally {
             fillingPercentageLoading.value = false;
         }

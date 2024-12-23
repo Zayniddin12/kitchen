@@ -1,7 +1,8 @@
-import { PaginationParamsType } from "@/types/pagination.type";
 
 export interface RolesParamsType {
   search?: string;
+  depend_id?: number | "";
+  depend_type?: string;
 }
 
 export interface RoleType {

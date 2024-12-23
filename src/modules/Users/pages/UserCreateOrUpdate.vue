@@ -2,7 +2,7 @@
   setup
   lang="ts"
 >
-import { computed, onMounted, reactive, ref } from "vue";
+import { computed, onMounted, reactive, ref, watch } from "vue";
 import AppInput from "@/components/ui/form/app-input/AppInput.vue";
 import AppDatePicker from "@/components/ui/form/app-date-picker/AppDatePicker.vue";
 import AppSelect from "@/components/ui/form/app-select/AppSelect.vue";
@@ -10,23 +10,26 @@ import { onBeforeRouteLeave, useRoute, useRouter } from "vue-router";
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 import AppMediaUploader from "@/components/ui/form/app-media-uploader/AppMediaUploader.vue";
 import useConfirm from "@/components/ui/app-confirm/useConfirm";
-import Avatar from "@/assets/images/avatar.png";
+
+;
 import { useUsersStore } from "@/modules/Users/users.store";
 import AppOverlay from "@/components/ui/app-overlay/AppOverlay.vue";
 import { ValidationType } from "@/components/ui/form/app-form/app-form.type";
 import AppForm from "@/components/ui/form/app-form/AppForm.vue";
-import { deepEqual, formatPhone, getStatus, getStatusText, mergeCommonKeys, setStatus } from "@/utils/helper";
+import {
+  deepEqual, filterObjectValues, formatPhone, getStatus, getStatusText, mergeCommonKeys, setStatus,
+} from "@/utils/helper";
 import { useCommonStore } from "@/stores/common.store";
 import { usePositionStore } from "@/modules/Settings/components/Reference/Position/position.store";
 import { UserCreateOrUpdateDataType } from "@/modules/Users/users.types";
 import { useSettingsStore } from "@/modules/Settings/store";
 import { useI18n } from "vue-i18n";
-import { useKitchenStore } from "@/modules/Kitchen/kitchen.store";
 import { useRoleStore } from "@/modules/Settings/components/Reference/Role/role.store";
 import { AppMediaUploaderValueType } from "@/components/ui/form/app-media-uploader/app-media-uploader.type";
 import { AppSelectValueType } from "@/components/ui/form/app-select/app-select.type";
 import { WorkPlaceType } from "@/modules/Settings/components/Reference/Position/position.types";
-import { useListStore } from "@/List/list.store";
+import { useListStore } from "@/modules/List/list.store";
+import { useAuthStore } from "@/modules/Auth/auth.store";
 
 interface Tabs {
   title: string;
@@ -38,7 +41,7 @@ const { t } = useI18n();
 const router = useRouter();
 const route = useRoute();
 
-const routeId = computed(() => {
+const routeId = computed<number>(() => {
   const { id } = route.params;
   return id ? parseInt(id as string) : 0;
 });
@@ -49,6 +52,7 @@ const positionStore = usePositionStore();
 const settingsStore = useSettingsStore();
 const roleStore = useRoleStore();
 const listStore = useListStore();
+const authStore = useAuthStore();
 
 const activeUserCreatePage = computed(() => {
   return route.meta.type === "create";
@@ -90,39 +94,46 @@ const setValidation = (validation: ValidationType) => {
 const validationErrors = ref<Record<string, any> | null>(null);
 
 const saveFaceIdImage = async (id: number) => {
-  if (!image.value) return;
+  if(!image.value) return;
 
   const formData = new FormData();
   formData.append("_method", "PUT");
   formData.append("face_image", image.value as any);
-  await userStore.updateEmployeePhoto({ id, data: formData });
+  await userStore.updateEmployeePhoto({
+    id,
+    data: formData,
+  });
 };
 
 const sendForm = async () => {
-  if (!v$.value || !data.value) return;
+  if(!v$.value || !data.value) return;
 
-  if (!(await v$.value.validate())) {
+  if(!(await v$.value.validate())) {
     await commonStore.errorToast("Validation Error");
     return;
   }
 
-  const newForm: UserCreateOrUpdateDataType = { ...form.value };
+  const newForm: UserCreateOrUpdateDataType = JSON.parse(JSON.stringify(form.value));
+
+  if(userStore.activeEmployeePage && !newForm?.dining_locations?.temporary.kitchen_id) {
+    delete newForm.dining_locations.temporary;
+  }
 
   newForm.phone = `998${newForm.phone.replace(/\D/g, "")}`;
 
   try {
-    if (activeUserCreatePage.value) {
+    if(activeUserCreatePage.value) {
       newForm.status = "active";
-      if (userStore.activeUserPage) {
+      if(userStore.activeUserPage) {
         await userStore.createUser(newForm);
       } else {
         const { data } = await userStore.createEmployee(newForm);
         await saveFaceIdImage(data.data.user.id);
       }
-    } else if (activeUserUpdatePage.value) {
-      if (typeof newForm.status === "boolean") newForm.status = setStatus(newForm.status);
+    } else if(activeUserUpdatePage.value) {
+      if(typeof newForm.status === "boolean") newForm.status = setStatus(newForm.status);
 
-      if (userStore.activeUserPage) {
+      if(userStore.activeUserPage) {
         await userStore.updateUser(routeId.value, newForm);
       } else {
         await userStore.updateEmployee(routeId.value, newForm);
@@ -131,10 +142,12 @@ const sendForm = async () => {
     }
 
     validationErrors.value = null;
+    if(userStore.activeUserPage && activeUserUpdatePage.value && routeId.value === authStore.user?.id){
+      authStore.me();
+    }
     commonStore.successToast({ name: userStore.activeRoutePrefix });
-
   } catch (error: any) {
-    if (error?.error?.code === 422) {
+    if(error?.error?.code === 422) {
       validationErrors.value = error.meta.validation_errors;
     }
   }
@@ -144,8 +157,8 @@ const form2 = reactive({
   management_id: "",
   food_factory_id: "",
   base_id: "",
-  baseWarehouse_id: "",
-  kitchenWarehouse_id: "",
+  base_warehouse_id: "",
+  kitchen_warehouse_id: "",
 });
 
 const changeWorkPlace = (id: number, type: WorkPlaceType) => {
@@ -154,7 +167,7 @@ const changeWorkPlace = (id: number, type: WorkPlaceType) => {
 };
 
 const changeManagement = (id: AppSelectValueType) => {
-  if (typeof id !== "number") return;
+  if(typeof id !== "number") return;
   changeWorkPlace(id, "management");
   listStore.fetchFoodFactories(id);
   clearManagement();
@@ -163,12 +176,12 @@ const changeManagement = (id: AppSelectValueType) => {
 const clearManagement = () => {
   form2.food_factory_id = "";
   form2.base_id = "";
-  form2.baseWarehouse_id = "";
-  form2.kitchenWarehouse_id = "";
+  form2.base_warehouse_id = "";
+  form2.kitchen_warehouse_id = "";
 };
 
 const changeFoodFactory = (id: AppSelectValueType) => {
-  if (typeof id !== "number") return;
+  if(typeof id !== "number") return;
   changeWorkPlace(id, "foodFactory");
   listStore.fetchBases(id);
   clearFoodFactory();
@@ -176,36 +189,36 @@ const changeFoodFactory = (id: AppSelectValueType) => {
 
 const clearFoodFactory = () => {
   form2.base_id = "";
-  form2.baseWarehouse_id = "";
-  form2.kitchenWarehouse_id = "";
+  form2.base_warehouse_id = "";
+  form2.kitchen_warehouse_id = "";
 };
 
 const changeBase = (id: AppSelectValueType) => {
-  if (typeof id !== "number") return;
+  if(typeof id !== "number") return;
   listStore.fetchBaseWarehouses(id);
   listStore.fetchKitchenWarehouses(id);
   clearBase();
 };
 
 const clearBase = () => {
-  form2.baseWarehouse_id = "";
-  form2.kitchenWarehouse_id = "";
+  form2.base_warehouse_id = "";
+  form2.kitchen_warehouse_id = "";
 };
 
 
 const data = computed(() => {
-  return activeUserCreatePage.value ? userStore.searchUser : userStore.user;
+  if(activeUserCreatePage.value) return userStore.searchUser;
+
+  return userStore.activeUserPage ? userStore.user : userStore.employee;
 });
 
 const loading = computed(() => {
-  return activeUserUpdatePage.value ? userStore.userLoading : false;
+  return userStore.activeUserPage ? userStore.userLoading : userStore.employeeLoading;
 });
 
 const sendLoading = computed(() => {
 
-  return userStore.activeUserPage
-    ? (activeUserCreatePage.value ? userStore.createUserLoading : userStore.updateUserLoading)
-    : (activeUserCreatePage.value ? userStore.createEmployeeLoading : userStore.updateEmployeeLoading);
+  return userStore.activeUserPage ? (activeUserCreatePage.value ? userStore.createUserLoading : userStore.updateUserLoading) : (activeUserCreatePage.value ? userStore.createEmployeeLoading : userStore.updateEmployeeLoading);
 });
 
 const defaultTab = 1;
@@ -223,33 +236,26 @@ const activeTab = computed(() => {
   return hasTab.value ? validRouteTab(route.query.tab as string) : defaultTab;
 });
 
-const tabs = ref<Tabs[]>([
-  {
-    title: "Данные кандидата",
-    value: 1,
-  },
-  {
-    title: "Фотография для Face ID",
-    value: 2,
-  },
-]);
+const tabs = ref<Tabs[]>([{
+  title: "Данные кандидата",
+  value: 1,
+}, {
+  title: "Фотография для Face ID",
+  value: 2,
+}]);
 
 const { setBreadCrumb } = useBreadcrumb();
 
 const setBreadCrumbFn = () => {
-  setBreadCrumb([
-    {
-      label: "Кадры",
-    },
-    {
-      label: String(route.meta?.parentRouteTitle ?? ""),
-      to: route.meta?.parentRouteUrl,
-    },
-    {
-      label: String(route.meta?.title ?? ""),
-      isActionable: true,
-    },
-  ]);
+  setBreadCrumb([{
+    label: "Кадры",
+  }, {
+    label: String(route.meta?.parentRouteTitle ?? ""),
+    to: route.meta?.parentRouteUrl,
+  }, {
+    label: String(route.meta?.title ?? ""),
+    isActionable: true,
+  }]);
 };
 
 const { confirm } = useConfirm();
@@ -259,7 +265,7 @@ const deleteLoading = computed(() => {
 });
 
 const deleteFn = () => {
-  if (!activeUserUpdatePage.value) return;
+  if(!activeUserUpdatePage.value) return;
 
   confirm.delete().then(async () => {
     await (userStore.activeUserPage ? userStore.deleteUser(routeId.value as number) : userStore.deleteEmployee(routeId.value as number));
@@ -270,32 +276,32 @@ const deleteFn = () => {
 const cancelFn = async () => {
   const isChange = oldForm.value && !deepEqual(form.value, oldForm.value);
 
-  if (isChange) {
+  if(isChange) {
     const response = await confirm.cancel();
 
-    if (response === "save") {
+    if(response === "save") {
       await sendForm();
       return;
     }
   }
 
-  await v$.value?.clear();
+  v$.value?.clear();
   router.push({ name: userStore.activeRoutePrefix });
 };
 
 const fetchSearchUser = () => {
   userStore.initializeSearchUser();
-  if (!userStore.searchUser) router.replace({ name: `${userStore.activeRoutePrefix}-fetch` });
+  if(!userStore.searchUser) router.replace({ name: `${userStore.activeRoutePrefix}-fetch` });
 };
 
 const setData = () => {
 
-  if (!data.value) return;
+  if(!data.value) return;
 
-  if (userStore.activeUserPage) {
+  if(userStore.activeUserPage) {
     form.value.position_id = "";
-    form.value.management_id = "";
     form.value.role_id = "";
+
   } else {
     form.value.work_hours = "";
     form.value.dining_locations = {
@@ -314,23 +320,19 @@ const setData = () => {
   form.value.phone = formatPhone(data.value.phone);
   form.value.status = getStatus(data.value.status);
 
-  // if (userStore.activeUserPage) {
-  //   form.value.position_id = form.value.position_id ?? "";
-  //   form.value.management_id = form.value.management_id ?? "";
-  // }
 
   oldForm.value = JSON.parse(JSON.stringify(form.value));
 };
 
 const fetchUser = async () => {
-  if (activeUserCreatePage.value) {
+  if(activeUserCreatePage.value) {
     fetchSearchUser();
-  } else if (activeUserUpdatePage.value) {
+  } else if(activeUserUpdatePage.value) {
     try {
-      await userStore.fetchUser(routeId.value as number);
+      if(userStore.activeUserPage) await userStore.fetchUser(routeId.value as number); else await userStore.fetchEmployee(routeId.value as number);
     } catch (error: any) {
-      if (error.error.code === 404) {
-        router.replace({ name: userStore.activeRoutePrefix });
+      if(error.error.code === 404) {
+        await router.replace({ name: userStore.activeRoutePrefix });
       }
     }
   }
@@ -338,20 +340,38 @@ const fetchUser = async () => {
 };
 
 const gender = computed(() => {
-  if (!data.value) return null;
+  if(!data.value) return null;
 
   return commonStore.getGender(data.value.gender);
 });
+
+const fetchRoles = () => {
+  roleStore.fetchRoles(filterObjectValues({
+    depend_id: form.value.work_place_id,
+    depend_type_id: form.value.work_place_type,
+  }));
+};
+
+const avatar = computed(() => {
+  return data.value?.avatar_link || gender.value?.photo;
+});
+
+const fullName = computed(() => {
+  if(activeUserCreatePage.value) return userStore.searchUserFullName;
+  return userStore.activeUserPage ? userStore.userFullName : userStore.employeeFullName;
+});
+
+watch(() => form.value.work_place_id, () => fetchRoles());
 
 onMounted(async () => {
   setBreadCrumbFn();
   await fetchUser();
   await settingsStore.GET_KITCHEN_WAREHOUSE();
   await settingsStore.GET_ORGANIZATION({ per_page: 100 });
-  if (userStore.activeUserPage) {
+  if(userStore.activeUserPage) {
     await positionStore.fetchPositions({ getAll: 1 });
     await settingsStore.GET_REGIONAL({ per_page: 100 });
-    await roleStore.fetchRoles();
+    fetchRoles();
   } else {
     await settingsStore.fetchKitchenWarehouseList({ is_paid: 0 });
   }
@@ -363,16 +383,13 @@ onBeforeRouteLeave(() => {
 
 const image = ref<AppMediaUploaderValueType>("");
 
-const workingHours = reactive([
-  {
-    title: 8,
-    key: 8,
-  },
-  {
-    title: 12,
-    key: 12,
-  },
-]);
+const workingHours = reactive([{
+  title: 8,
+  key: 8,
+}, {
+  title: 12,
+  key: 12,
+}]);
 
 </script>
 
@@ -412,14 +429,15 @@ const workingHours = reactive([
             <div class="top-[32px] absolute flex items-center">
               <div class="rounded-full overflow-hidden border-4 border-gray-100">
                 <img
-                  :src="data?.avatar_link ?? gender?.photo ?? Avatar"
-                  alt="Profile Picture"
+                  v-if="avatar"
+                  :src="avatar"
+                  :alt="fullName || 'Profile Picture'"
                   class="object-cover h-[160px] w-[160px] rounded-full"
                 >
               </div>
 
               <div class="text-xl font-semibold text-gray-900 ml-[24px]">
-                {{ userStore.getUserFullName(data) || "—" }}
+                {{ fullName || "—" }}
               </div>
             </div>
           </div>
@@ -588,8 +606,8 @@ const workingHours = reactive([
                   clearable
                 />
                 <AppSelect
-                  v-model="form2.baseWarehouse_id"
-                  prop="baseWarehouse_id"
+                  v-model="form2.base_warehouse_id"
+                  prop="base_warehouse_id"
                   :items="listStore.baseWarehouses"
                   item-value="id"
                   item-label="name"
@@ -597,12 +615,12 @@ const workingHours = reactive([
                   :label="t('base.warehouse.reverseTitle')"
                   label-class="text-[#A8AAAE] text-xs font-medium"
                   class="mb-1"
-                  :disabled="!form2.base_id || !!form2.kitchenWarehouse_id"
+                  :disabled="!form2.base_id || !!form2.kitchen_warehouse_id"
                   clearable
                 />
                 <AppSelect
-                  v-model="form2.kitchenWarehouse_id"
-                  prop="kitchenWarehouse_id"
+                  v-model="form2.kitchen_warehouse_id"
+                  prop="kitchen_warehouse_id"
                   :items="listStore.kitchenWarehouses"
                   item-label="name"
                   item-value="id"
@@ -610,7 +628,7 @@ const workingHours = reactive([
                   :label="t('kitchen.title')"
                   label-class="text-[#A8AAAE] text-xs font-medium"
                   class="mb-1"
-                  :disabled="!form2.base_id || !!form2.baseWarehouse_id"
+                  :disabled="!form2.base_id || !!form2.base_warehouse_id"
                   clearable
                 />
                 <AppSelect
@@ -629,18 +647,19 @@ const workingHours = reactive([
                   v-model="form.role_id"
                   :items="roleStore.roles"
                   item-value="id"
-                  item-label="name"
+                  item-label="title"
                   label="Роли (необязательно)"
                   label-class="text-[#A8AAAE] text-xs font-medium"
                   class="mb-1"
                   required
                 />
                 <AppSelect
+                  v-if="form.role_id === 18"
                   v-model="form.organization_id"
                   prop="organization_id"
                   item-value="id"
                   item-label="name"
-                  :items="settingsStore.organization?.organization ?? []"
+                  :items="settingsStore.organization?.organizations ?? []"
                   label="Организация"
                   label-class="text-[#A8AAAE] text-xs font-medium"
                   class="mb-1"
@@ -661,6 +680,7 @@ const workingHours = reactive([
                 />
                 <AppSelect
                   v-model="form.dining_locations.temporary.kitchen_id"
+                  prop="dining_locations.temporary.kitchen_id"
                   :items="settingsStore.kitchenWarehouse.kitchen_warehouses"
                   item-value="id"
                   item-label="name"
@@ -671,27 +691,31 @@ const workingHours = reactive([
                 />
                 <AppDatePicker
                   v-model="form.dining_locations.temporary.start_date"
+                  prop="dining_locations.temporary.start_date"
                   label="Период временной кухни с"
                   range
                   label-class="text-[#A8AAAE] text-xs font-medium"
                   value-format="YYYY-MM-DD"
                   class="mb-1"
-                  required
+                  :required="!!form.dining_locations.temporary.kitchen_id"
+                  :disabled="!form.dining_locations.temporary.kitchen_id"
                 />
                 <AppDatePicker
                   v-model="form.dining_locations.temporary.end_date"
+                  prop="dining_locations.temporary.end_date"
                   label="Период временной кухни по"
                   label-class="text-[#A8AAAE] text-xs font-medium"
                   value-format="YYYY-MM-DD"
                   class="mb-1"
-                  required
+                  :required="!!form.dining_locations.temporary.kitchen_id"
+                  :disabled="!form.dining_locations.temporary.kitchen_id"
                 />
                 <AppSelect
                   v-model="form.organization_id"
                   prop="organization_id"
                   item-value="id"
                   item-label="name"
-                  :items="settingsStore.organization?.organization ?? []"
+                  :items="settingsStore.organization?.organizations ?? []"
                   label="Место работы"
                   label-class="text-[#A8AAAE] text-[12px] font-medium"
                   placeholder="Выберите"
@@ -713,6 +737,7 @@ const workingHours = reactive([
               </template>
             </div>
             <ElCheckbox
+              v-if="userStore.activeUserPage"
               v-model="form.is_oneid_enabled"
               label="OneID"
               class="app-checkbox mt-4"

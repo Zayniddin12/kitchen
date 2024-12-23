@@ -15,20 +15,31 @@ import { usePositionStore } from "@/modules/Settings/components/Reference/Positi
 import { formatPhone } from "@/utils/helper";
 import { ValidationType } from "@/components/ui/form/app-form/app-form.type";
 import { useCommonStore } from "@/stores/common.store";
+import { useI18n } from "vue-i18n";
+import { LOCALES } from "@/localization/localization.type";
+import { useSettingsStore } from "@/modules/Settings/store";
 
 const route = useRoute();
+
+const {t} = useI18n();
 
 const authStore = useAuthStore();
 const positionStore = usePositionStore();
 const commonStore = useCommonStore();
+const settingsStore = useSettingsStore();
 
 const userImg = computed(() => authStore.user?.image ?? Avatar);
 
-const form = reactive({
-  firstname: "",
-  lastname: "",
+interface FormType {
+  phone: string;
+  position_id: number | "";
+  organization_id: number | "";
+}
+
+const form = reactive<FormType>({
   phone: "",
-  position: "",
+  position_id: "",
+  organization_id: "",
 });
 
 const v$ = ref<ValidationType | null>(null);
@@ -36,22 +47,25 @@ const v$ = ref<ValidationType | null>(null);
 const setForm = () => {
   if (!authStore.user) return;
 
-  form.firstname = authStore.user.firstname;
-  form.lastname = authStore.user.lastname;
+  console.log(authStore.user);
+
   form.phone = formatPhone(authStore.user.phone);
+  form.position_id = authStore.user?.position_id ?? "";
+  form.organization_id = authStore.user?.organization_id ?? "";
 };
 
 const sendForm = async () => {
   if (!v$.value) return;
 
   if (!(await v$.value.validate())) {
-    commonStore.errorToast("Validation Error");
+    commonStore.errorToast(t("error.validation"));
     return;
   }
 };
 
 onMounted(() => {
   positionStore.fetchPositions({ getAll: 1 });
+  settingsStore.GET_ORGANIZATION({ per_page: 100 });
 });
 
 watch(() => authStore.user, setForm, { immediate: true });
@@ -93,22 +107,19 @@ watch(() => authStore.user, setForm, { immediate: true });
         class="grid grid-cols-2 mt-4 gap-4 w-[81.4%]"
       >
         <AppInput
-          v-model="form.firstname"
           label="Имя"
-          placeholder="Имя"
+          :placeholder="authStore.user?.firstname || 'Имя'"
           prop="firstname"
-          required
           class="mb-0"
           label-class="font-medium text-xs text-black-sub"
+          disabled
         />
         <AppInput
-          v-model="form.lastname"
-          prop="lastname"
           label="Фамилия"
-          placeholder="Фамилия"
-          required
+          :placeholder="authStore.user?.lastname || 'Фамилия'"
           class="mb-0"
           label-class="font-medium text-xs text-black-sub"
+          disabled
         />
         <AppInput
           v-model="form.phone"
@@ -121,31 +132,37 @@ watch(() => authStore.user, setForm, { immediate: true });
           label-class="font-medium text-xs text-black-sub"
         />
         <AppSelect
-          v-model="form.position"
-          prop="position"
+          v-model="form.position_id"
+          prop="position_id"
           :items="positionStore.positions"
           item-label="name"
           item-value="id"
           label="Должность"
           placeholder="Должность"
-          required
           class="mb-0"
           label-class="font-medium text-xs text-black-sub"
+          disabled
         />
-        <AppInput
+        <AppSelect
+          v-model="form.organization_id"
+          prop="organization_id"
+          item-value="id"
+          item-label="name"
+          :items="settingsStore.organization?.organizations ?? []"
           label="Название организации"
           placeholder="Название организации"
           class="mb-0"
           label-class="font-medium text-xs text-black-sub"
+          disabled
         />
         <AppSelect
-          :model-value="activeLocale"
+          v-model="activeLocale"
           :items="languages"
           item-value="value"
           item-label="title"
           label="Язык интерфейса"
           placeholder="Язык интерфейса"
-          @change="changeLocale"
+          @change="value => changeLocale(value as LOCALES)"
           class="mb-0"
           label-class="font-medium text-xs text-black-sub"
         />

@@ -1,5 +1,5 @@
 import axios from "@/plugins/axios/axios";
-import { ListParamsType, ListType } from "@/List/list.types";
+import { ListParamsType, ListType } from "@/modules/List/list.types";
 
 export default {
   async fetchList(params: ListParamsType) {

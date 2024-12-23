@@ -86,11 +86,11 @@ onMounted(() => {
         class="grid grid-cols-2 gap-6"
       >
         <div>
-          <span class="app-card__item-title">Наименование (RU)</span>
+          <span class="app-card__item-title">Наименование (Рус)</span>
           <p>{{ dataValue.name.ru ?? "—" }}</p>
         </div>
         <div>
-          <span class="app-card__item-title">Наименование (UZ)</span>
+          <span class="app-card__item-title">Наименование (Ўзб)</span>
           <p>{{ dataValue.name.uz ?? "—" }}</p>
         </div>
       </AppOverlay>

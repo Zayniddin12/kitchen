@@ -175,7 +175,7 @@ watchEffect(() => {
             <div class="grid grid-cols-2 gap-4 mt-[24px]">
               <app-input
                 v-model="dataValue.name.ru"
-                label="Наименование (RU)"
+                label="Наименование (Рус)"
                 label-class="text-[#A8AAAE] text-[12px]"
                 placeholder="Введите"
                 required
@@ -184,7 +184,7 @@ watchEffect(() => {
 
               <app-input
                 v-model="dataValue.name.uz"
-                label="Наименование (UZ)"
+                label="Наименование (Ўзб)"
                 label-class="text-[#A8AAAE] text-[12px]"
                 placeholder="Введите"
                 required
@@ -213,6 +213,14 @@ watchEffect(() => {
                 :items="store.units.units"
                 required
                 prop="measurement_unit_id"
+              />
+
+              <app-input
+                disabled
+                label="Занимаемое место"
+                type="number"
+                label-class="text-[#A8AAAE] text-[12px]"
+                placeholder="Введите"
               />
             </div>
           </AppForm>

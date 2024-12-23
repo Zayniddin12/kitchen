@@ -179,7 +179,7 @@ const disabled = computed(() => {
             <AppInput
                 v-model="form.name.ru"
                 prop="name.ru"
-                label="Наименование (RU)"
+                label="Наименование (Рус)"
                 placeholder="Введите"
                 label-class="text-[#A8AAAE] font-medium text-[12px]"
                 required
@@ -188,7 +188,7 @@ const disabled = computed(() => {
             <AppInput
                 v-model="form.name.uz"
                 prop="name.uz"
-                label="Наименование (UZ)"
+                label="Наименование (Ўзб)"
                 placeholder="Введите"
                 label-class="text-[#A8AAAE] font-medium text-[12px]"
                 required
