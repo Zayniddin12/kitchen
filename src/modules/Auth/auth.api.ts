@@ -1,9 +1,6 @@
 import {
-  AuthCreateDataType,
-  AuthLoginDataType,
-  AuthLoginResponseType, CodeType, ForgotPasswordDataType,
-  SendCodeDataType,
-  UserType, VerifyCodeDataType,
+	AuthCreateDataType, AuthLoginDataType, AuthLoginResponseType, CodeType, ForgotPasswordDataType, SendCodeDataType,
+	UpdatePasswordDataType, UpdateUserDataType, UserType, VerifyCodeDataType,
 } from "@/modules/Auth/auth.types";
 import axios from "@/plugins/axios/axios";
 import tokenManager from "@/utils/token.manager";
@@ -11,55 +8,66 @@ import tokenManager from "@/utils/token.manager";
 const prefix = "auth";
 
 export default {
-  async create(data: AuthCreateDataType) {
-    const { data: createResponse } = await axios.post("/admin", data);
-    return createResponse.data;
-  },
+	async create(data: AuthCreateDataType) {
+		const { data: createResponse } = await axios.post("/admin", data);
+		return createResponse.data;
+	},
 
-  async login(data: AuthLoginDataType): Promise<AuthLoginResponseType> {
-    const { data: loginResponse } = await axios.post(`${prefix}/login`, data);
-    return loginResponse.data;
-  },
+	async login(data: AuthLoginDataType): Promise<AuthLoginResponseType> {
+		const { data: loginResponse } = await axios.post(`${prefix}/login`, data);
+		return loginResponse.data;
+	},
 
-  async refresh(): Promise<AuthLoginResponseType | null> {
-    const refreshToken = tokenManager.getRefreshToken();
+	async refresh(): Promise<AuthLoginResponseType | null> {
+		const refreshToken = tokenManager.getRefreshToken();
 
-    if (!refreshToken) return Promise.reject(null);
+		if(!refreshToken) return Promise.reject(null);
 
-    const { data } = await axios.get(`${prefix}/refresh`, {
-      headers: {
-        Authorization: `Bearer ${refreshToken}`,
-      },
-    });
-    return data.data;
-  },
+		const { data } = await axios.get(`${prefix}/refresh`, {
+			headers: {
+				Authorization: `Bearer ${refreshToken}`,
+			},
+		});
+		return data.data;
+	},
 
-  logout() {
-    return axios.post(`${prefix}/logout`);
-  },
+	logout() {
+		return axios.post(`${prefix}/logout`);
+	},
 
-  async me(): Promise<UserType> {
-    const { data } = await axios.get(`${prefix}/me`);
+	async me(): Promise<UserType> {
+		const { data } = await axios.get(`${prefix}/me`);
 
-    return data.data.user;
-  },
+		return data.data.user;
+	},
 
-  async sendCode(data: SendCodeDataType) {
-    const { data: sendCodeData } = await axios.post("/otp/send-code", data);
-    return sendCodeData.data;
-  },
+	async sendCode(data: SendCodeDataType) {
+		const { data: sendCodeData } = await axios.post("/otp/send-code", data);
+		return sendCodeData.data;
+	},
 
-  verifyCode(data: VerifyCodeDataType) {
-    return axios.post(`${prefix}/verify-code`, data);
-  },
+	verifyCode(data: VerifyCodeDataType) {
+		return axios.post(`${prefix}/verify-code`, data);
+	},
 
-  forgotPassword(data: ForgotPasswordDataType) {
-    return axios.post(`${prefix}/forgot-password`, data);
-  },
+	forgotPassword(data: ForgotPasswordDataType) {
+		return axios.post(`${prefix}/forgot-password`, data);
+	},
 
-  async loginOneId(code: CodeType): Promise<AuthLoginResponseType> {
-    const { data } = await axios.post(`${prefix}/login-via-oneid`, { code });
-    return data.data;
-  },
+	async loginOneId(code: CodeType): Promise<AuthLoginResponseType> {
+		const { data } = await axios.post(`${prefix}/login-via-oneid`, { code });
+		return data.data;
+	},
 
+	updateUser(data: UpdateUserDataType) {
+    return axios.post(`${prefix}/update-me`, data);
+	},
+
+	updatePassword(data: UpdatePasswordDataType) {
+		return axios.post(`${prefix}/update-password`, data,{
+			headers: {
+				"Content-Type": "multipart/form-data",
+			}
+		});
+	}
 };

@@ -8,23 +8,24 @@ import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 import { computed, onMounted, watch } from "vue";
 import ProfileIcon from "@/assets/images/icons/profile.svg";
 import KeyIcon from "@/assets/images/icons/key.svg";
+import { useAuthStore } from "@/modules/Auth/auth.store";
+import AppOverlay from "@/components/ui/app-overlay/AppOverlay.vue";
 
 const route = useRoute();
+
+const authStore = useAuthStore();
 
 const { setBreadCrumb } = useBreadcrumb();
 
 const routeTitle = computed(() => route.meta.title ?? "");
 
 const setBreadCrumbFn = () => {
-  setBreadCrumb([
-    {
-      label: "Настройки",
-    },
-    {
-      label: routeTitle.value,
-      isActionable: true,
-    },
-  ]);
+  setBreadCrumb([{
+    label: "Настройки",
+  }, {
+    label: routeTitle.value,
+    isActionable: true,
+  }]);
 };
 
 interface NavigationLinkType {
@@ -35,20 +36,17 @@ interface NavigationLinkType {
 }
 
 const navigationLinks = computed<NavigationLinkType[]>(() => {
-  return [
-    {
-      to: { name: "profile-settings-profile" },
-      uniqueKey: "settingsProfileProfile",
-      title: "Мой профиль",
-      icon: ProfileIcon,
-    },
-    {
-      to: { name: "profile-settings-password" },
-      uniqueKey: "settingsProfilePassword",
-      title: "Пароль",
-      icon: KeyIcon,
-    },
-  ];
+  return [{
+    to: { name: "profile-settings-profile" },
+    uniqueKey: "settingsProfileProfile",
+    title: "Мой профиль",
+    icon: ProfileIcon,
+  }, {
+    to: { name: "profile-settings-password" },
+    uniqueKey: "settingsProfilePassword",
+    title: "Пароль",
+    icon: KeyIcon,
+  }];
 });
 
 const navigationLinkIsActive = (key: string): boolean => {
@@ -84,7 +82,13 @@ onMounted(() => {
         </RouterLink>
       </div>
       <div class="w-[calc(100%-309px)]">
-        <RouterView />
+        <RouterView v-show="!authStore.userLoading" />
+        <AppOverlay
+          v-if="authStore.userLoading"
+          loading
+          class="w-full min-h-[40vh] "
+          :rounded="16"
+        />
       </div>
     </div>
   </section>

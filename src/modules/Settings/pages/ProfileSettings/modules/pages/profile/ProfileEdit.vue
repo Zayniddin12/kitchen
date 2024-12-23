@@ -3,7 +3,7 @@
   lang="ts"
 >
 
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { useAuthStore } from "@/modules/Auth/auth.store";
 import { computed, onMounted, reactive, ref, watch } from "vue";
 import Avatar from "@/assets/images/avatar.png";
@@ -12,55 +12,128 @@ import AppInput from "@/components/ui/form/app-input/AppInput.vue";
 import AppSelect from "@/components/ui/form/app-select/AppSelect.vue";
 import { activeLocale, changeLocale, languages } from "@/localization";
 import { usePositionStore } from "@/modules/Settings/components/Reference/Position/position.store";
-import { formatPhone } from "@/utils/helper";
+import { deepEqual, formatPhone } from "@/utils/helper";
 import { ValidationType } from "@/components/ui/form/app-form/app-form.type";
 import { useCommonStore } from "@/stores/common.store";
 import { useI18n } from "vue-i18n";
 import { LOCALES } from "@/localization/localization.type";
 import { useSettingsStore } from "@/modules/Settings/store";
+import useConfirm from "@/components/ui/app-confirm/useConfirm";
+import { UpdateUserDataType } from "@/modules/Auth/auth.types";
 
 const route = useRoute();
+const router = useRouter();
 
-const {t} = useI18n();
+const { t } = useI18n();
+
+const { confirm } = useConfirm();
 
 const authStore = useAuthStore();
 const positionStore = usePositionStore();
 const commonStore = useCommonStore();
 const settingsStore = useSettingsStore();
 
-const userImg = computed(() => authStore.user?.image ?? Avatar);
+const avatarUrl = ref("");
 
 interface FormType {
+  avatar: File | null,
   phone: string;
   position_id: number | "";
   organization_id: number | "";
 }
 
 const form = reactive<FormType>({
+  avatar: null,
   phone: "",
   position_id: "",
   organization_id: "",
 });
 
+const oldForm = ref<FormType | null>(null);
+
+const isChangeForm = computed<boolean>(() => {
+  return !!oldForm.value && !deepEqual(form, oldForm.value);
+});
+
 const v$ = ref<ValidationType | null>(null);
 
-const setForm = () => {
-  if (!authStore.user) return;
+const validationErrors = ref<Record<string, any> | null>(null);
 
-  console.log(authStore.user);
+const setForm = () => {
+  if(!authStore.user) return;
 
   form.phone = formatPhone(authStore.user.phone);
-  form.position_id = authStore.user?.position_id ?? "";
-  form.organization_id = authStore.user?.organization_id ?? "";
+  form.position_id = authStore.user.position_id ?? "";
+  form.organization_id = authStore.user.organization_id ?? "";
+
+  avatarUrl.value = authStore.user.image || Avatar;
+
+  oldForm.value = {...form};
 };
 
 const sendForm = async () => {
-  if (!v$.value) return;
+  if(!v$.value) return;
 
-  if (!(await v$.value.validate())) {
+  if(!(await v$.value.validate())) {
     commonStore.errorToast(t("error.validation"));
     return;
   }
+
+  const newForm = new FormData();
+
+  newForm.append("_method", "PUT");
+
+  newForm.append("phone", `998${form.phone.replace(/\D/g, "")}`);
+
+  if(form.avatar) {
+    newForm.append("avatar", form.avatar);
+  }
+
+  try {
+    await authStore.updateUser(newForm as any);
+    authStore.me();
+    redirectParentPage();
+    validationErrors.value = null;
+  }catch (error:any){
+    if (error?.error?.code === 422) {
+      const {validation_errors} = error.meta;
+      validationErrors.value = validation_errors;
+      if(validation_errors.avatar){
+        commonStore.errorToast(validation_errors.avatar);
+      }
+    }
+  }
+};
+
+const uploadAvatar = (event: Event) => {
+  const target = event.target as HTMLInputElement;
+  if(target.files && target.files[0]) {
+    const file = target.files[0];
+    form.avatar = file;
+    avatarUrl.value = URL.createObjectURL(file);
+    target.value = "";
+  }
+};
+
+const removeAvatar = () => {
+  avatarUrl.value = authStore.user?.image || Avatar;
+  form.avatar = null;
+};
+
+const redirectParentPage = () => {
+  router.push({name: "profile-settings-profile"});
+}
+
+const cancelFn = async () => {
+  if(isChangeForm.value) {
+    const response = await confirm.cancel();
+
+    if(response === "save") {
+      await sendForm();
+      return;
+    }
+  }
+  redirectParentPage();
 };
 
 onMounted(() => {
@@ -78,12 +151,23 @@ watch(() => authStore.user, setForm, { immediate: true });
       {{ route.meta.childTitle ?? "" }}
     </h5>
     <div class="mt-4 rounded-2xl border border-[#EEEEEF] p-4 flex items-center">
-      <img
-        :src="userImg"
-        :alt="authStore.userFullName ?? 'user img'"
-        class="size-20 object-contain"
+      <input
+        id="avatar-uploader"
+        type="file"
+        accept="image/*"
+        @input="uploadAvatar"
+        hidden
       />
+      <div class="size-20">
+        <img
+          :src="avatarUrl"
+          :alt="authStore.userFullName ?? 'user img'"
+          class="size-full object-contain"
+        />
+      </div>
       <ElButton
+        tag="label"
+        for="avatar-uploader"
         type="primary"
         class="ml-6 py-2.5 px-5"
         size="large"
@@ -91,8 +175,10 @@ watch(() => authStore.user, setForm, { immediate: true });
         Cменить картинку
       </ElButton>
       <ElButton
+        @click="removeAvatar"
         class="py-2.5 px-5 !bg-[#E2E6F3] !border-none !text-dark-gray"
         size="large"
+        :disabled="!form.avatar"
       >
         Удалить картинку
       </ElButton>
@@ -104,6 +190,7 @@ watch(() => authStore.user, setForm, { immediate: true });
       <AppForm
         :value="form"
         @validation="value => v$ = value"
+        :validation-errors
         class="grid grid-cols-2 mt-4 gap-4 w-[81.4%]"
       >
         <AppInput
@@ -172,14 +259,17 @@ watch(() => authStore.user, setForm, { immediate: true });
       <ElButton
         class="py-2.5 px-5 !bg-[#E2E6F3] !border-none !text-dark-gray"
         size="large"
+        @click="cancelFn"
       >
         Отменить
       </ElButton>
       <ElButton
+        :loading="authStore.updateUserLoading"
         @click="sendForm"
         type="primary"
         class="ml-6 py-2.5 px-5"
         size="large"
+        :disabled="!isChangeForm"
       >
         Сохранить
       </ElButton>
