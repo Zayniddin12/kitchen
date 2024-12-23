@@ -280,7 +280,10 @@ const createOrder = async () => {
     });
 
     await kitchenStore.CREATE_ORDER(payload);
-    await kitchenStore.GET_CURRENT_MENU_SALES_LIST(route.params.child_id as string);
+    await kitchenStore.GET_CURRENT_MENU_SALES_LIST({
+      id: route.params.child_id as string,
+      params: { period: route.query.management_id ? route.query.management_id : form.management_id },
+    });
     orders.clear();
     ordersModal.value = false;
   } catch (error) {
@@ -362,7 +365,7 @@ watch(() => route.params, async () => {
   if (kitchenStore.activeSalesPart) {
     await kitchenStore.GET_CURRENT_MENU_SALES_LIST({
       id: route.params.child_id as string,
-      params: { period: form.management_id },
+      params: { period: route.query.management_id ? route.query.management_id : form.management_id },
     });
   }
 
@@ -449,20 +452,24 @@ const form = reactive<WarehouseCapacityParamsType>({
 
 
 watch(() => route.query.management_id, (newId) => {
-  if (kitchenStore.activeSalesPart) {
-    if (newId) {
-      const management_id = newId ? parseInt(newId as string) : null;
-      form.management_id = management_id && !isNaN(management_id) ? management_id : null;
-    } else {
-      router.replace({
-        ...route, // Keep the current route details
-        query: {
-          ...route.query,
-          management_id: form.management_id,
-        },
-      });
+  setTimeout(() => {
+    if (kitchenStore.activeSalesPart) {
+      if (newId) {
+
+        const management_id = newId ? parseInt(newId as string) : null;
+        form.management_id = management_id && !isNaN(management_id) ? management_id : null;
+      } else {
+        console.log("ishladi");
+        router.replace({
+          ...route, // Keep the current route details
+          query: {
+            ...route.query,
+            management_id: form.management_id,
+          },
+        });
+      }
     }
-  }
+  }, 500);
 
 
 }, { immediate: true });
