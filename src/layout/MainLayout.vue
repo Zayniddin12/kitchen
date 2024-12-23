@@ -153,46 +153,6 @@ const navDrawerItems = computed(() => {
 
 const navDrawerWidth = ref<number>(0);
 
-const store = useFaceStore();
-
-const model = ref<boolean>(false);
-
-//Face id
-const interval = setInterval(async () => {
-  const data = await store.FETCH_FACE_ID();
-  if (data) {
-    if (data && data.user_id) {
-      model.value = !model.value;
-    }
-  }
-}, 5000);
-
-watch(() => model.value, (value) => {
-  if (value) {
-    clearInterval(interval);
-  }
-});
-
-
-watch(() => model.value, async (newValue) => {
-  if (!newValue) {
-    const interval = setInterval(async () => {
-      const data = await store.FETCH_FACE_ID();
-      if (data) {
-        if (data && data.user_id) {
-          model.value = !model.value;
-        }
-      }
-    }, 5000);
-
-    watch(() => model.value, (value) => {
-      if (value) {
-        clearInterval(interval);
-      }
-    });
-  }
-});
-
 </script>
 
 <template>
