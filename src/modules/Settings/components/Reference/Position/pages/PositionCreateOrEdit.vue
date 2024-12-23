@@ -13,11 +13,15 @@ import AppSelect from "@/components/ui/form/app-select/AppSelect.vue";
 import { useSettingsStore } from "@/modules/Settings/store";
 import { getStatus, getStatusText, setStatus } from "@/utils/helper";
 import { usePositionStore } from "@/modules/Settings/components/Reference/Position/position.store";
-import { PositionDataType, WorkPlaceType } from "@/modules/Settings/components/Reference/Position/position.types";
+import {
+  PositionDataType,
+  PositionShowCommonType,
+  WorkPlaceType,
+} from "@/modules/Settings/components/Reference/Position/position.types";
 import AppForm from "@/components/ui/form/app-form/AppForm.vue";
 import { ValidationType } from "@/components/ui/form/app-form/app-form.type";
 import { useCommonStore } from "@/stores/common.store";
-import { useListStore } from "@/List/list.store";
+import { useListStore } from "@/modules/List/list.store";
 import { AppSelectValueType } from "@/components/ui/form/app-select/app-select.type";
 
 const { t } = useI18n();
@@ -87,12 +91,13 @@ const form = reactive<PositionDataType>({
 
 const validationErrors = ref<Record<string, any> | null>(null);
 
-const form2 = reactive({
+
+const form2 = reactive<PositionShowCommonType>({
   management_id: "",
   food_factory_id: "",
   base_id: "",
-  baseWarehouse_id: "",
-  kitchenWarehouse_id: "",
+  base_warehouse_id: "",
+  kitchen_warehouse_id: "",
 });
 
 const v$ = ref<null | ValidationType>(null);
@@ -112,12 +117,26 @@ const setData = async () => {
   form.work_place_id = positionStore.position.work_place_id;
   form.work_place_type = positionStore.position.work_place_type as WorkPlaceType;
   form.status = getStatus(positionStore.position.status);
+  if (positionStore.position.management_id) {
+    form2.management_id = positionStore.position.management_id;
+    changeManagement(form2.management_id);
+  }
+  if (positionStore.position.food_factory_id) {
+    form2.food_factory_id = positionStore.position.food_factory_id;
+    changeFoodFactory(form2.food_factory_id);
+  }
+  if (positionStore.position.base_id) {
+    form2.base_id = positionStore.position.base_id;
+    changeBase(form2.base_id);
+  }
+  form2.base_warehouse_id = positionStore.position.base_warehouse_id ?? "";
+  form2.kitchen_warehouse_id = positionStore.position.kitchen_warehouse_id ?? "";
 };
 
 const deletePosition = async () => {
   await positionStore.deletePosition(routeId.value);
   router.push({ name: "position-list" });
-}
+};
 
 const sendForm = async () => {
   if (!v$.value) return;
@@ -130,8 +149,8 @@ const sendForm = async () => {
   if (form2.management_id) changeWorkPlace(+form2.management_id, "management");
   if (form2.food_factory_id) changeWorkPlace(+form2.food_factory_id, "foodFactory");
   if (form2.base_id) changeWorkPlace(+form2.base_id, "base");
-  if (form2.baseWarehouse_id) changeWorkPlace(+form2.baseWarehouse_id, "baseWarehouse");
-  if (form2.kitchenWarehouse_id) changeWorkPlace(+form2.kitchenWarehouse_id, "kitchenWarehouse");
+  if (form2.base_warehouse_id) changeWorkPlace(+form2.base_warehouse_id, "baseWarehouse");
+  if (form2.kitchen_warehouse_id) changeWorkPlace(+form2.kitchen_warehouse_id, "kitchenWarehouse");
 
   const newForm = { ...form };
   newForm.status = setStatus(newForm.status as boolean);
@@ -163,8 +182,8 @@ const changeManagement = (id: AppSelectValueType) => {
 const clearManagement = () => {
   form2.food_factory_id = "";
   form2.base_id = "";
-  form2.baseWarehouse_id = "";
-  form2.kitchenWarehouse_id = "";
+  form2.base_warehouse_id = "";
+  form2.kitchen_warehouse_id = "";
 };
 
 const changeFoodFactory = (id: AppSelectValueType) => {
@@ -176,8 +195,8 @@ const changeFoodFactory = (id: AppSelectValueType) => {
 
 const clearFoodFactory = () => {
   form2.base_id = "";
-  form2.baseWarehouse_id = "";
-  form2.kitchenWarehouse_id = "";
+  form2.base_warehouse_id = "";
+  form2.kitchen_warehouse_id = "";
 };
 
 const changeBase = (id: AppSelectValueType) => {
@@ -188,8 +207,8 @@ const changeBase = (id: AppSelectValueType) => {
 };
 
 const clearBase = () => {
-  form2.baseWarehouse_id = "";
-  form2.kitchenWarehouse_id = "";
+  form2.base_warehouse_id = "";
+  form2.kitchen_warehouse_id = "";
 };
 
 onMounted(() => {
@@ -250,7 +269,7 @@ onMounted(() => {
                 disabled
               />
               <AppSelect
-                  v-model="form2.management_id"
+                v-model="form2.management_id"
                 :items="settingsStore.regional.managements"
                 item-value="id"
                 item-label="name"
@@ -292,8 +311,8 @@ onMounted(() => {
                 clearable
               />
               <AppSelect
-                v-model="form2.baseWarehouse_id"
-                prop="baseWarehouse_id"
+                v-model="form2.base_warehouse_id"
+                prop="base_warehouse_id"
                 :items="listStore.baseWarehouses"
                 item-value="id"
                 item-label="name"
@@ -301,12 +320,12 @@ onMounted(() => {
                 :label="t('base.warehouse.reverseTitle')"
                 label-class="text-[#A8AAAE] text-xs font-medium"
                 class="mb-0"
-                :disabled="!form2.base_id || !!form2.kitchenWarehouse_id"
+                :disabled="!form2.base_id || !!form2.kitchen_warehouse_id"
                 clearable
               />
               <AppSelect
-                v-model="form2.kitchenWarehouse_id"
-                prop="kitchenWarehouse_id"
+                v-model="form2.kitchen_warehouse_id"
+                prop="kitchen_warehouse_id"
                 :items="listStore.kitchenWarehouses"
                 item-label="name"
                 item-value="id"
@@ -314,7 +333,7 @@ onMounted(() => {
                 :label="t('kitchen.title')"
                 label-class="text-[#A8AAAE] text-xs font-medium"
                 class="mb-0"
-                :disabled="!form2.base_id || !!form2.baseWarehouse_id"
+                :disabled="!form2.base_id || !!form2.base_warehouse_id"
                 clearable
               />
             </div>

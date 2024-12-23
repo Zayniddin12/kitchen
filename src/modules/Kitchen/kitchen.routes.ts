@@ -76,13 +76,11 @@ export default [
                     name: "KitchenMenuSellCreate",
                     component: () => import("@/modules/Kitchen/pages/kitchen-child/menu/pages/SellCreate.vue"),
                   },
-
                   {
                     path: "cooking-dish-create",
                     name: "KitchenMenuCookingDishCreate",
                     component: () => import("@/modules/Kitchen/pages/kitchen-child/menu/pages/CookingDishCreate.vue"),
                   },
-
                 ],
               },
               {

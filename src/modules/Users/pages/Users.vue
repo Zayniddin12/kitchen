@@ -274,11 +274,11 @@ watch(() => route.name, () => {
       <template v-else>
         <ElTableColumn
           label="Место работы"
-          prop="work_place"
+          prop="organization_name"
           sortable
         >
           <template #default="{row}:{row:UserType}">
-            {{ row.work_place || "—" }}
+            {{ row.organization_name || "—" }}
           </template>
         </ElTableColumn>
         <ElTableColumn

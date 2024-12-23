@@ -57,6 +57,45 @@ watch(() => route.name, function(val) {
   }
 }, { immediate: true });
 
+const faceStore = useFaceStore();
+
+const model = ref<boolean>(false);
+
+const interval = setInterval(async () => {
+  const data = await faceStore.FETCH_FACE_ID();
+  if (data) {
+    if (data && data.user_id) {
+      model.value = !model.value;
+    }
+  }
+}, 5000);
+
+watch(() => model.value, (value) => {
+  if (value) {
+    clearInterval(interval);
+  }
+});
+
+
+watch(() => model.value, async (newValue) => {
+  if (!newValue) {
+    const interval = setInterval(async () => {
+      const data = await faceStore.FETCH_FACE_ID();
+      if (data) {
+        if (data && data.user_id) {
+          model.value = !model.value;
+        }
+      }
+    }, 5000);
+
+    watch(() => model.value, (value) => {
+      if (value) {
+        clearInterval(interval);
+      }
+    });
+  }
+});
+
 const navDrawerItems = computed(() => {
   return [
     {

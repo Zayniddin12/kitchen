@@ -12,7 +12,6 @@ import { setRules } from "@/components/ui/form/validate";
 import { ValidationErrorsType } from "@/components/ui/form/form.type";
 import { useI18n } from "vue-i18n";
 import SearchIcon from "@/assets/images/icons/search.svg";
-import CalendarIcon from "@/assets/images/icons/calendar.svg";
 
 const [model, modifiers] = defineModel<AppInputValueType>();
 

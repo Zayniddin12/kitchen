@@ -2,7 +2,7 @@
   setup
   lang="ts"
 >
-import { computed, inject, onMounted, provide, reactive, useTemplateRef, watch, watchEffect } from "vue";
+import { computed, onMounted, provide, reactive, useTemplateRef } from "vue";
 import {
   AppFormPropsType,
   ValidationType,
@@ -43,8 +43,8 @@ const validation = reactive<ValidationType>({
   },
 
   clear: async function(): void {
-    await this.resetForm();
-    await this.clearValidate();
+    this.resetForm();
+    this.clearValidate();
   },
 });
 
@@ -63,13 +63,13 @@ const submit = () => {
 </script>
 <template>
   <ElForm
-      ref="app-form"
-      class="app-form"
-      :model="props.value"
-      :label-position
-      :size
-      :status-icon
-      @submit.prevent="submit"
+    ref="app-form"
+    class="app-form"
+    :model="props.value"
+    :label-position
+    :size
+    :status-icon
+    @submit.prevent="submit"
   >
     <slot />
   </ElForm>

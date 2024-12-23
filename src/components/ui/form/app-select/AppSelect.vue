@@ -3,14 +3,27 @@
   lang="ts"
 >
 import { AppSelectPropsType, AppSelectValueType } from "@/components/ui/form/app-select/app-select.type";
-import { computed, inject, onMounted, ref, Ref, useSlots, watch } from "vue";
+import { computed, inject, ref, Ref, useSlots, watch } from "vue";
 import { getRules, setRules } from "@/components/ui/form/validate";
 import { ValidationErrorsType } from "@/components/ui/form/form.type";
-import { AppDatePickerValueType } from "@/components/ui/form/app-date-picker/app-date-picker.type";
 import { useI18n } from "vue-i18n";
 
 const model = defineModel<AppSelectValueType>({
   default: "",
+});
+
+const slots = useSlots();
+
+const computedModel = computed<AppSelectValueType>({
+  get() {
+    if(props.itemValue && model.value) {
+      return props.items?.find(el => el[props.itemValue] === model.value) ? model.value : "";
+    }
+    return slots.default ? model.value : "";
+  },
+  set(value: AppSelectValueType) {
+    model.value = value;
+  },
 });
 
 const emit = defineEmits<{
@@ -29,21 +42,23 @@ const props = withDefaults(defineProps<AppSelectPropsType>(), {
 
 const { t } = useI18n();
 
+const computedNoDataText = computed(() => {
+  return props.noDataText ?? t("common.empty");
+});
+
 const computedPlaceholder = computed(() => {
   return props.placeholder ?? t("form.select");
 });
-
-const slots = useSlots();
 
 const validationErrors = inject<Ref<ValidationErrorsType>>("validation-errors", ref(null));
 const ignoreValidationError = ref(false);
 
 const computedError = computed(() => {
-  if (props.error) return props.error;
+  if(props.error) return props.error;
 
-  else if (ignoreValidationError.value) return "";
+  else if(ignoreValidationError.value) return "";
 
-  else if (validationErrors.value && props.prop && typeof (props.prop) === "string" && validationErrors.value[props.prop]) {
+  else if(validationErrors.value && props.prop && typeof (props.prop) === "string" && validationErrors.value[props.prop]) {
     return validationErrors.value[props.prop];
   }
 
@@ -53,7 +68,7 @@ const computedError = computed(() => {
 const appSelectClasses = computed<string[]>(() => {
   const classes = ["app-select app-form-item"];
 
-  if (props.size) {
+  if(props.size) {
     classes.push(`app-select--${props.size} app-form-item--${props.size}`);
   }
 
@@ -73,13 +88,13 @@ const clear = (value: any) => {
   emit("clear", value);
 };
 
-watch(validationErrors, (newErrors) => {
+watch(validationErrors, () => {
   ignoreValidationError.value = false;
 }, {
   deep: true,
 });
 
-watch(model, (val) => {
+watch(computedModel, (val) => {
   input(val);
 }, {
   immediate: true,
@@ -111,7 +126,7 @@ watch(model, (val) => {
       </span>
     </template>
     <ElSelect
-      v-model="model"
+      v-model="computedModel"
       :value-key="itemValue"
       :size
       :placeholder="computedPlaceholder"
@@ -129,7 +144,7 @@ watch(model, (val) => {
       :loading-text
       :filterable
       :no-match-text
-      :no-data-text
+      :no-data-text="computedNoDataText"
       :popper-class
       :default-first-option
       :teleported
@@ -193,10 +208,26 @@ watch(model, (val) => {
         color: #4f4d55;
       }
 
-      &-dropdown__item {
-        height: var(--app-select-height);
-        display: flex;
-        align-items: center;
+      &-dropdown {
+
+        &__item {
+          height: var(--app-select-height);
+          display: flex;
+          align-items: center;
+          transition: 0.2s all ease-in-out;
+
+          &.is-hovering, &.is-selected {
+            color: white;
+          }
+
+          &.is-hovering {
+            background-color: var(--blue-400);
+          }
+
+          &.is-selected {
+            background-color: var(--blue-500);
+          }
+        }
       }
     }
   }
