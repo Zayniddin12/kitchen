@@ -58,7 +58,7 @@ const salesBoxes = computed(() => {
     {
       id: 2,
       icon: kitchenIcon,
-      title: t("kitchen.ration"),
+      title: t("kitchen.dishes2"),
       description: t("kitchen.rations", {number: 80}),
       link: { name: "KitchenDishesIndex" },
     },
