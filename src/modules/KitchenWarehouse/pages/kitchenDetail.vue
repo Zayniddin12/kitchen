@@ -14,9 +14,8 @@ import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 import { useKitchenWarehouseStore } from "@/modules/KitchenWarehouse/kitchen-warehouse.store";
 import { useCommonStore } from "@/stores/common.store";
 import {
-  GroupProductType,
-  ListInvoicesParamsType, ListInvoiceType,
-  ListProductsParamsType, ListProductType, UpdatePriceDataType,
+  GroupProductType, ListInvoicesParamsType, ListInvoiceType, ListProductsParamsType, ListProductType,
+  UpdatePriceDataType,
 } from "@/modules/KitchenWarehouse/kitchen-warehouse.types";
 import AppForm from "@/components/ui/form/app-form/AppForm.vue";
 import { useSettingsStore } from "@/modules/Settings/store";
@@ -24,6 +23,7 @@ import { filterObjectValues, getRouteQuery, setTableColumnIndex } from "@/utils/
 import { ValidationType } from "@/components/ui/form/app-form/app-form.type";
 import AppPagination from "@/components/ui/app-pagination/AppPagination.vue";
 import AppEmpty from "@/components/ui/app-empty/AppEmpty.vue";
+import { useI18n } from "vue-i18n";
 
 interface Tabs {
   title: string;
@@ -33,27 +33,25 @@ interface Tabs {
 const route = useRoute();
 const router = useRouter();
 
+const { t } = useI18n();
+
 const commonStore = useCommonStore();
 const kitchenWarehouseStore = useKitchenWarehouseStore();
 const settingsStore = useSettingsStore();
 
 enum TABS {
-  PRODUCTS = 1,
-  INVOICES,
+  PRODUCTS = 1, INVOICES,
 }
 
 const defaultTab = TABS.PRODUCTS;
 
-const tabs = ref<Tabs[]>([
-  {
-    title: "По продуктам",
-    value: TABS.PRODUCTS,
-  },
-  {
-    title: "По накладным",
-    value: TABS.INVOICES,
-  },
-]);
+const tabs = computed<Tabs[]>(() => [{
+  title: t("kitchenWarehouse.byProducts"),
+  value: TABS.PRODUCTS,
+}, {
+  title: t("kitchenWarehouse.byInvoices"),
+  value: TABS.INVOICES,
+}]);
 
 const validTabs = tabs.value.map(tab => tab.value);
 
@@ -62,14 +60,10 @@ const validRouteTab = (tab: string | null): TABS => {
   return validTabs.includes(newTab as TABS) ? (newTab as TABS) : defaultTab;
 };
 
-const activeTab = computed(() =>
-  validRouteTab(route.query.tab as string | null),
-);
+const activeTab = computed(() => validRouteTab(route.query.tab as string | null));
 
 const getQueryTab = (tab: TABS) => {
-  const form = filterObjectValues(
-    tab === TABS.PRODUCTS ? productsForm : invoicesForm,
-  );
+  const form = filterObjectValues(tab === TABS.PRODUCTS ? productsForm : invoicesForm);
 
   return { tab, ...form };
 };
@@ -99,17 +93,13 @@ const fetchListProducts = async () => {
   });
 
   for (const key of Object.keys(productsForm)) {
-    if (typeof key === "string" && query[key])
-      productsForm[key] = query[key] as any;
+    if(typeof key === "string" && query[key]) productsForm[key] = query[key] as any;
   }
 
   try {
-    kitchenWarehouseStore.fetchListProducts(
-      id.value,
-      filterObjectValues(productsForm),
-    );
+    kitchenWarehouseStore.fetchListProducts(id.value, filterObjectValues(productsForm));
   } catch (error: any) {
-    if (error?.error?.code === 422) {
+    if(error?.error?.code === 422) {
       productsFormErrors.value = error.meta.validation_errors;
     }
   }
@@ -127,13 +117,13 @@ const activeProductFormErrors = ref<Record<string, string> | null>(null);
 const activeProductFormV$ = ref<ValidationType | null>(null);
 
 const permissionProductEdit = (product: ListProductType, group_product: GroupProductType) => {
-  if (!kitchenWarehouseStore.listProducts) return;
+  if(!kitchenWarehouseStore.listProducts) return;
 
   const activeEditProduct = group_product.products.find(el => el?.isEdit);
-  if (activeEditProduct) activeEditProduct.isEdit = false;
+  if(activeEditProduct) activeEditProduct.isEdit = false;
 
   for (const key in activeProductForm) {
-    if (Object.prototype.hasOwnProperty.call(product, key)) {
+    if(Object.prototype.hasOwnProperty.call(product, key)) {
       activeProductForm[key] = product[key];
     }
   }
@@ -144,10 +134,10 @@ const permissionProductEdit = (product: ListProductType, group_product: GroupPro
 
 const updateProductPrice = async (product: ListProductType | ListInvoiceType) => {
 
-  if (!activeProductFormV$.value) return;
+  if(!activeProductFormV$.value) return;
 
-  if (!(await activeProductFormV$.value.validate())) {
-    commonStore.errorToast("Validation Errors");
+  if(!(await activeProductFormV$.value.validate())) {
+    commonStore.errorToast(t("error.validation"));
     return;
   }
 
@@ -156,7 +146,7 @@ const updateProductPrice = async (product: ListProductType | ListInvoiceType) =>
     product.isEdit = false;
 
     for (const key in activeProductForm) {
-      if (Object.prototype.hasOwnProperty.call(product, key)) {
+      if(Object.prototype.hasOwnProperty.call(product, key)) {
         product[key] = activeProductForm[key];
       }
     }
@@ -164,7 +154,7 @@ const updateProductPrice = async (product: ListProductType | ListInvoiceType) =>
     commonStore.successToast();
 
   } catch (error: any) {
-    if (error?.error?.code === 422) {
+    if(error?.error?.code === 422) {
       activeProductFormErrors.value = error.meta.validation_errors;
     }
   }
@@ -201,26 +191,22 @@ const fetchListInvoices = async () => {
   });
 
   for (const key of Object.keys(invoicesForm)) {
-    if (typeof key === "string" && query[key])
-      invoicesForm[key] = query[key] as any;
+    if(typeof key === "string" && query[key]) invoicesForm[key] = query[key] as any;
   }
 
   try {
-    kitchenWarehouseStore.fetchListInvoices(
-      id.value,
-      filterObjectValues(invoicesForm),
-    );
+    kitchenWarehouseStore.fetchListInvoices(id.value, filterObjectValues(invoicesForm));
   } catch (error: any) {
-    if (error?.error?.code === 422) {
+    if(error?.error?.code === 422) {
       invoicesFormErrors.value = error.meta.validation_errors;
     }
   }
 };
 
 const permissionInvoiceEdit = (invoice: ListInvoiceType) => {
-  if (!kitchenWarehouseStore.listInvoices?.invoices.length) return;
+  if(!kitchenWarehouseStore.listInvoices?.invoices.length) return;
   const activeInvoice = kitchenWarehouseStore.listInvoices.invoices.find(el => el?.isEdit);
-  if (activeInvoice) activeInvoice.isEdit = false;
+  if(activeInvoice) activeInvoice.isEdit = false;
 
   invoice.isEdit = true;
 };
@@ -234,13 +220,17 @@ const filterForm = (data: ListProductsParamsType | ListInvoicesParamsType) => {
 
 const clearForm = async () => {
   filterFormOpened.value = false;
-  if (activeTab.value === TABS.PRODUCTS && productsFormV$.value) await productsFormV$.value.resetForm();
-  else if (activeTab.value === TABS.INVOICES && invoicesFormV$.value) await invoicesFormV$.value.resetForm();
+  if(activeTab.value === TABS.PRODUCTS && productsFormV$.value) await productsFormV$.value.resetForm(); else if(activeTab.value === TABS.INVOICES && invoicesFormV$.value) await invoicesFormV$.value.resetForm();
   router.push({ query: { tab: activeTab.value } });
 };
 
 const changePage = (value: number) => {
-  router.push({ query: { ...route.query, page: value } });
+  router.push({
+    query: {
+      ...route.query,
+      page: value,
+    },
+  });
 };
 
 const { setBreadCrumb } = useBreadcrumb();
@@ -252,28 +242,24 @@ const title = computed(() => {
 const setBreadCrumbFn = () => {
   kitchenWarehouseStore.fetchDynamicItemState(+route.params.id);
 
-  if (!kitchenWarehouseStore.dynamicItemState) return;
+  if(!kitchenWarehouseStore.dynamicItemState) return;
 
   const title1 = commonStore.getTitle(`kitchen_type_id-${route.params.id3}`);
 
-  setBreadCrumb([
-    {
-      label: "Склад кухни",
-      isActionable: false,
-    },
-    {
-      label: kitchenWarehouseStore.dynamicItemState.title,
-      to: { name: "kitchen-warehouse-title-id" },
-    },
-    {
-      label: title1,
-      to: { name: "kitchen-warehouse-id-id3" },
-    },
-    {
-      label: title.value,
-      isActionable: true,
-    },
-  ]);
+  setBreadCrumb([{
+    label: "kitchenWarehouse.title",
+    isTranslate: true,
+    isActionable: false,
+  }, {
+    label: kitchenWarehouseStore.dynamicItemState.title,
+    to: { name: "kitchen-warehouse-title-id" },
+  }, {
+    label: title1,
+    to: { name: "kitchen-warehouse-id-id3" },
+  }, {
+    label: title.value,
+    isActionable: true,
+  }]);
 };
 
 watchEffect(() => {
@@ -281,20 +267,16 @@ watchEffect(() => {
 });
 
 const fetchData = () => {
-  if (activeTab.value === TABS.PRODUCTS) {
+  if(activeTab.value === TABS.PRODUCTS) {
     fetchListProducts();
   } else {
     fetchListInvoices();
   }
 };
 
-watch(
-  () => route.query,
-  () => {
-    fetchData();
-  },
-  { immediate: true },
-);
+watch(() => route.query, () => {
+  fetchData();
+}, { immediate: true });
 
 watch(() => route.params.id4, () => {
   kitchenWarehouseStore.fetchFillingPercentage(id.value);
@@ -310,7 +292,7 @@ onMounted(() => {
   <div>
     <h1 class="m-0 font-semibold text-[32px]">{{ title }}</h1>
     <div class="rounded-2xl py-3 px-4 border mt-6">
-      <h3 class="text-dark font-medium text-lg">Заполнение склада</h3>
+      <h3 class="text-dark font-medium text-lg">{{ t("kitchenWarehouse.filling") }}</h3>
       <h2 class="text-dark text-[32px] font-semibold mt-3">
         {{ kitchenWarehouseStore.fillingPercentage?.percentage ?? 0 }}%
       </h2>
@@ -322,8 +304,7 @@ onMounted(() => {
         class="mt-2"
       />
       <p class="mt-4 text-xs text-[#A8AAAE]">
-        Этот элемент показывает процент заполненности склада, помогая вам
-        следить за остатками и эффективно управлять запасами.
+        {{ t("kitchenWarehouse.description") }}
       </p>
     </div>
 
@@ -355,7 +336,7 @@ onMounted(() => {
                 class="size-5"
                 alt="download img"
               />
-              <span class="font-medium text-dark-gray">Скачать</span>
+              <span class="font-medium text-dark-gray">{{ t("method.download") }}</span>
             </div>
           </ElButton>
           <template #dropdown>
@@ -368,7 +349,9 @@ onMounted(() => {
                   alt="pdf"
                   class="w-[13px] h-[17px]"
                 />
-                <span class="text-sm text-dark-gray font-medium">PDF файл</span>
+                <span class="text-sm text-dark-gray font-medium">
+                  {{ t("common.файл", { format: "PDF" }) }}
+                </span>
               </ElDropdownItem>
               <ElDropdownItem
                 class="flex items-center gap-x-4 rounded-lg px-3 py-2.5"
@@ -379,7 +362,7 @@ onMounted(() => {
                   class="w-[13px] h-[17px]"
                 />
                 <span class="text-sm text-dark-gray font-medium">
-                  Excel файл
+                  {{ t("common.файл", { format: "Excel" }) }}
                 </span>
               </ElDropdownItem>
               <ElDropdownItem
@@ -390,7 +373,9 @@ onMounted(() => {
                   alt="pdf"
                   class="w-[13px] h-[17px]"
                 />
-                <span class="text-sm text-dark-gray font-medium">1C файл</span>
+                <span class="text-sm text-dark-gray font-medium">
+                  {{ t("common.файл", { format: "1C" }) }}
+                </span>
               </ElDropdownItem>
             </ElDropdownMenu>
           </template>
@@ -412,7 +397,9 @@ onMounted(() => {
               :data-src="filterIcon"
               class="app-filter-btn__icon"
             />
-            <span class="text-sm font-medium">Фильтр</span>
+            <span class="text-sm font-medium">
+              {{ t("common.filter") }}
+            </span>
           </div>
         </ElButton>
       </div>
@@ -436,8 +423,8 @@ onMounted(() => {
                 <AppSelect
                   v-model="productsForm.product_type_id"
                   prop="product_type_id"
-                  placeholder="Название продукта"
-                  label="Название продукта"
+                  :placeholder="t('product.name')"
+                  :label="t('product.name')"
                   label-class="text-[#7F7D83]"
                   :items="settingsStore.vidProduct.product_types"
                   item-label="name"
@@ -447,15 +434,15 @@ onMounted(() => {
                   v-model="productsForm.quantity"
                   prop="quantity"
                   custom-type="number"
-                  placeholder="Количество"
-                  label="Количество"
+                  :label="t('common.quantity')"
+                  :placeholder="t('common.quantity')"
                   label-class="text-[#7F7D83]"
                 />
                 <AppSelect
                   v-model="productsForm.unit_id"
                   prop="unit_id"
-                  placeholder="Ед. измерения"
-                  label="Ед. измерения"
+                  :label="t('common.measurement')"
+                  :placeholder="t('common.measurement')"
                   label-class="text-[#7F7D83]"
                   :items="settingsStore.units.units"
                   item-label="name"
@@ -465,17 +452,16 @@ onMounted(() => {
                   v-model.number="productsForm.total_price"
                   prop="total_price"
                   type="number"
-                  placeholder="Сумма"
-                  label="Сумма"
+                  :label="t('common.sum')"
+                  :placeholder="t('common.sum')"
                   label-class="text-[#7F7D83]"
                 />
               </AppForm>
               <div class="flex items-center mt-2.5 justify-between">
                 <div class="text-[#8F9194] text-sm">
-                  Найдено:
+                  {{ t("common.found") }}:
                   {{
-                    kitchenWarehouseStore.listProducts?.pagination
-                      .total_count ?? 0
+                    kitchenWarehouseStore.listProducts?.pagination.total_count ?? 0
                   }}
                 </div>
                 <div class="flex items-center gap-x-4">
@@ -483,13 +469,13 @@ onMounted(() => {
                     @click="clearForm"
                     class="custom-reset-btn"
                   >
-                    Сбросить
+                    {{ t("method.reset") }}
                   </button>
                   <button
                     @click="filterForm(productsForm)"
                     class="custom-apply-btn"
                   >
-                    Применить
+                    {{ t("method.apply") }}
                   </button>
                 </div>
               </div>
@@ -504,38 +490,38 @@ onMounted(() => {
                 <AppDatePicker
                   v-model="invoicesForm.from_date"
                   prop="from_date"
-                  placeholder="С этой даты"
-                  label="С этой даты"
+                  :placeholder="t('common.fromDate')"
+                  :label="t('common.fromDate')"
                   label-class="text-[#7F7D83]"
                 />
                 <AppDatePicker
                   v-model="invoicesForm.to_date"
                   prop="to_date"
-                  placeholder="По эту дату"
-                  label="По эту дату"
+                  :placeholder="t('common.endDate')"
+                  :label="t('common.endDate')"
                   label-class="text-[#7F7D83]"
                 />
 
                 <AppInput
                   v-model="invoicesForm.doc_number"
                   prop="doc_number"
-                  placeholder="Номер накладной"
-                  label="Номер накладной"
+                  :placeholder="t('document.invoiceNumber2')"
+                  :label="t('document.invoiceNumber2')"
                   label-class="text-[#7F7D83]"
                 />
                 <AppInput
                   v-model.number="invoicesForm.total_price"
                   prop="total_price"
                   type="number"
-                  placeholder="Сумма"
-                  label="Сумма"
+                  :placeholder="t('common.sum')"
+                  :label="t('common.sum')"
                   label-class="text-[#7F7D83]"
                 />
                 <AppSelect
                   v-model="invoicesForm.product_type_id"
                   prop="product_type_id"
-                  placeholder="Название продукта"
-                  label="Название продукта"
+                  :placeholder="t('product.name')"
+                  :label="t('product.name')"
                   label-class="text-[#7F7D83]"
                   :items="settingsStore.vidProduct.product_types"
                   item-label="name"
@@ -545,15 +531,15 @@ onMounted(() => {
                   v-model="invoicesForm.quantity"
                   prop="quantity"
                   custom-type="number"
-                  placeholder="Количество"
-                  label="Количество"
+                  :placeholder="t('common.quantity')"
+                  :label="t('common.quantity')"
                   label-class="text-[#7F7D83]"
                 />
                 <AppSelect
                   v-model="invoicesForm.unit_id"
                   prop="unit_id"
-                  placeholder="Ед. измерения"
-                  label="Ед. измерения"
+                  :placeholder="t('common.measurement')"
+                  :label="t('common.measurement')"
                   label-class="text-[#7F7D83]"
                   :items="settingsStore.units.units"
                   item-label="name"
@@ -563,17 +549,16 @@ onMounted(() => {
                   v-model.number="invoicesForm.price"
                   prop="price"
                   type="number"
-                  placeholder="Цена"
-                  label="Цена"
+                  :placeholder="t('common.price')"
+                  :label="t('common.price')"
                   label-class="text-[#7F7D83]"
                 />
               </AppForm>
               <div class="flex items-center mt-2.5 justify-between">
                 <div class="text-[#8F9194] text-sm">
-                  Найдено:
+                  {{ t("common.found") }}:
                   {{
-                    kitchenWarehouseStore.listInvoices?.pagination
-                      .total_count ?? 0
+                    kitchenWarehouseStore.listInvoices?.pagination.total_count ?? 0
                   }}
                 </div>
                 <div class="flex items-center gap-x-4">
@@ -581,13 +566,13 @@ onMounted(() => {
                     @click="clearForm"
                     class="custom-reset-btn"
                   >
-                    Сбросить
+                    {{ t("method.reset") }}
                   </button>
                   <button
                     @click="filterForm(invoicesForm)"
                     class="custom-apply-btn"
                   >
-                    Применить
+                    {{ t("method.apply") }}
                   </button>
                 </div>
               </div>
@@ -626,13 +611,13 @@ onMounted(() => {
                   <ElTableColumn
                     prop="idx"
                     label="№"
-                    width="80"
+                    width="100"
                   >
                     <template #default="{ $index }">{{ $index + 1 }}</template>
                   </ElTableColumn>
                   <ElTableColumn
                     prop="product_name"
-                    label="Название продукта"
+                    :label="t('product.name')"
                   >
                     <template #default="{ row }: { row: ListProductType }">
                       {{ row.product_name || "—" }}
@@ -640,7 +625,7 @@ onMounted(() => {
                   </ElTableColumn>
                   <ElTableColumn
                     prop="quantity"
-                    label="Количество"
+                    :label="t('common.quantity')"
                   >
                     <template #default="{ row }: { row: ListProductType }">
                       {{ row.quantity || "—" }}
@@ -648,7 +633,7 @@ onMounted(() => {
                   </ElTableColumn>
                   <ElTableColumn
                     prop="unit_name"
-                    label="Ед. изм"
+                    :label="t('common.measurement')"
                   >
                     <template #default="{ row }: { row: ListProductType }">
                       {{ row.unit_name || "—" }}
@@ -656,7 +641,7 @@ onMounted(() => {
                   </ElTableColumn>
                   <ElTableColumn
                     prop="transportation_costs_percent"
-                    label="ТЗР"
+                    :label="t('common.tzr')"
                     width="130"
                   >
                     <template #default="{ row }: { row: ListProductType }">
@@ -674,7 +659,7 @@ onMounted(() => {
                   </ElTableColumn>
                   <ElTableColumn
                     prop="markup_percent"
-                    label="Наценка"
+                    :label="t('kitchenWarehouse.markup')"
                     width="130"
                   >
                     <template #default="{ row }: { row: ListProductType }">
@@ -692,7 +677,7 @@ onMounted(() => {
                   </ElTableColumn>
                   <ElTableColumn
                     prop="profitability_percent"
-                    label="Рентаб..."
+                    :label="t('kitchenWarehouse.rentab')"
                     width="120"
                   >
                     <template #default="{ row }: { row: ListProductType }">
@@ -710,7 +695,7 @@ onMounted(() => {
                   </ElTableColumn>
                   <ElTableColumn
                     prop="vat_percent"
-                    label="НДС"
+                    :label="t('common.ndc')"
                   >
                     <template #default="{ row }: { row: ListProductType }">
                       <AppInput
@@ -727,13 +712,13 @@ onMounted(() => {
                   </ElTableColumn>
                   <ElTableColumn
                     prop="total_price"
-                    label="Сумма"
+                    :label="t('common.sum')"
                   >
                     <template #default="{ row }: { row: ListProductType }">
-                      {{ row.total_price ? `${row.total_price} сум` : "—" }}
+                      {{ row.total_price ? `${row.total_price} ${t("currency.sum")}` : "—" }}
                     </template>
                   </ElTableColumn>
-                  <ElTableColumn label="Действие">
+                  <ElTableColumn :label="t('common.action')">
                     <template #default="{ row }: { row: ListProductType }">
                       <template v-if="row.isEdit">
                         <button
@@ -776,7 +761,10 @@ onMounted(() => {
                 @current-change="changePage"
               />
             </template>
-            <AppEmpty class="min-h-0" v-else />
+            <AppEmpty
+              class="min-h-0"
+              v-else
+            />
           </div>
           <div v-else-if="activeTab === TABS.INVOICES">
             <ElTable
@@ -798,7 +786,7 @@ onMounted(() => {
               </ElTableColumn>
               <ElTableColumn
                 prop="product_name"
-                label="Название продукта"
+                :label="t('product.name')"
               >
                 <template #default="{row}:{row: ListInvoiceType}">
                   {{ row.product_name || "—" }}
@@ -806,7 +794,7 @@ onMounted(() => {
               </ElTableColumn>
               <ElTableColumn
                 prop="quantity"
-                label="Количество"
+                :label="t('common.quantity')"
               >
                 <template #default="{row}:{row: ListInvoiceType}">
                   {{ row.quantity || "—" }}
@@ -814,7 +802,7 @@ onMounted(() => {
               </ElTableColumn>
               <ElTableColumn
                 prop="unit_name"
-                label="Ед. изм"
+                :label="t('common.measurement')"
               >
                 <template #default="{row}:{row: ListInvoiceType}">
                   {{ row.unit_name || "—" }}
@@ -822,7 +810,7 @@ onMounted(() => {
               </ElTableColumn>
               <ElTableColumn
                 prop="transportation_costs_percent"
-                label="ТЗР"
+                :label="t('common.tzr')"
                 width="130"
               >
                 <template #default="{row}:{row: ListInvoiceType}">
@@ -840,7 +828,7 @@ onMounted(() => {
               </ElTableColumn>
               <ElTableColumn
                 prop="markup_percent"
-                label="Наценка"
+                :label="t('kitchenWarehouse.markup')"
                 width="130"
               >
                 <template #default="{ row }: { row: ListInvoiceType }">
@@ -858,7 +846,7 @@ onMounted(() => {
               </ElTableColumn>
               <ElTableColumn
                 prop="profitability_percent"
-                label="Рентаб..."
+                :label="t('kitchenWarehouse.rentab')"
                 width="120"
               >
                 <template #default="{ row }: { row: ListInvoiceType }">
@@ -876,7 +864,7 @@ onMounted(() => {
               </ElTableColumn>
               <ElTableColumn
                 prop="vat_percent"
-                label="НДС"
+                :label="t('common.ndc')"
               >
                 <template #default="{ row }: { row: ListInvoiceType }">
                   <AppInput
@@ -893,13 +881,13 @@ onMounted(() => {
               </ElTableColumn>
               <ElTableColumn
                 prop="total_price"
-                label="Сумма"
+                :label="t('common.sum')"
               >
                 <template #default="{ row }: { row: ListProductType }">
-                  {{ row.total_price ? `${row.total_price} сум` : "—" }}
+                  {{ row.total_price ? `${row.total_price} ${t("currency.sum")}` : "—" }}
                 </template>
               </ElTableColumn>
-              <ElTableColumn label="Действие">
+              <ElTableColumn :label="t('common.action')">
                 <template #default="{ row }: { row: ListInvoiceType }">
                   <template v-if="row.isEdit">
                     <button

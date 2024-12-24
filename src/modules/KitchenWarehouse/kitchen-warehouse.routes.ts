@@ -6,7 +6,8 @@ export default [
         name: "kitchen-warehouse-title-id",
         component: () => import("@/modules/KitchenWarehouse/pages/index.vue"),
         meta: {
-            title: "Склад кухни"
+            title: "kitchenWarehouse.title",
+            isTranslate: true
         }
     },
     {
@@ -14,7 +15,8 @@ export default [
         name: "kitchen-warehouse-id-id3",
         component: () => import("@/modules/KitchenWarehouse/pages/kitchen.vue"),
         meta: {
-            title: "Склад кухни"
+            title: "kitchenWarehouse.title",
+            isTranslate: true
         }
     },
     {
@@ -22,7 +24,8 @@ export default [
         name: "kitchen-warehouse-id-id3-id4",
         component: () => import("@/modules/KitchenWarehouse/pages/kitchenDetail.vue"),
         meta: {
-            title: "Склад кухни"
+            title: "kitchenWarehouse.title",
+            isTranslate: true
         }
     }
 ] as RouteRecordRaw[];

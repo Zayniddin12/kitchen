@@ -9,6 +9,7 @@ import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 import { useKitchenStore } from "@/modules/Kitchen/kitchen.store";
 import { useCommonStore } from "@/stores/common.store";
 import AppEmpty from "@/components/ui/app-empty/AppEmpty.vue";
+import { useI18n } from "vue-i18n";
 
 const router = useRouter();
 const route = useRoute();
@@ -16,46 +17,14 @@ const kitchenWarehouseStore = useKitchenWarehouseStore();
 const kitchenStore = useKitchenStore();
 const commonStore = useCommonStore();
 
+const {t} = useI18n();
+
 
 interface Kitchen {
   title: string;
   subTitle: string;
   id: number;
 }
-
-
-const kitchen = ref<Kitchen[]>([
-  {
-    id: 1,
-    title: "Кухни ЛПП",
-    subTitle: "4 кухни"
-  },
-  {
-    id: 2,
-    title: "Кухня",
-    subTitle: "6 кухни"
-  },
-  {
-    id: 3,
-    title: "Буфет",
-    subTitle: "2 Буфета"
-  },
-  {
-    id: 4,
-    title: "Больница",
-    subTitle: "3 Больници"
-  },
-  {
-    id: 5,
-    title: "Профилакторий",
-    subTitle: "3 Профилактории"
-  },
-  {
-    id: 6,
-    title: "Лагерь",
-    subTitle: "6 лагерей"
-  }
-]);
 
 const { setBreadCrumb } = useBreadcrumb();
 
@@ -68,7 +37,8 @@ const setBreadCrumbFn = () => {
 
   setBreadCrumb([
     {
-      label: "Склад кухни",
+      label: "kitchenWarehouse.title",
+      isTranslate: true,
       isActionable: false
     },
     {
@@ -217,7 +187,7 @@ watch(() => route.params.id, (newId) => {
         />
       </svg>
       <h1 class="text-[#4F5662] text-sm font-medium">{{ item.name }}</h1>
-      <h5 class="text-[#A8AAAE] text-xs">{{ `${item.kitchens_count} кухни` }}</h5>
+      <h5 class="text-[#A8AAAE] text-xs">{{ `${item.kitchens_count} ${t("common.kitchens")}` }}</h5>
     </RouterLink>
   </div>
   <AppEmpty

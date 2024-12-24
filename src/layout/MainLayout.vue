@@ -35,7 +35,7 @@ const { t } = useI18n();
 
 const childSidebarPin = ref<boolean>(JSON.parse(localStorage.getItem("child-sidebar-pin" as string) || "false"));
 const childSidebar = ref<boolean>(JSON.parse(localStorage.getItem("child-sidebar" as string) || "false"));
-const margin = ref("ml-[396px]");
+const margin = ref("ml-[414px]");
 
 onMounted(async () => {
   if (tokenManager.getAccessToken()) authStore.me();

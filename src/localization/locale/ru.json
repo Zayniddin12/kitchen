@@ -50,6 +50,7 @@
     "and": "и",
     "name": "Название",
     "name2": "Наименование",
+    "name2Lang": "Наименование {lang}",
     "quantity": "Количество",
     "measurement": "Ед. измерения",
     "unitMeasurement": "Единица измерения",
@@ -106,7 +107,11 @@
     "timeToStart": "Время начало",
     "endToTime": "Время окончания",
     "next": "Далее",
-    "clear": "Очистить"
+    "clear": "Очистить",
+    "file": "{format} файл",
+    "tzr": "ТЗР",
+    "places": "мест",
+    "kitchens": "кухни"
   },
   "status": {
     "active": "Активный",
@@ -258,6 +263,7 @@
     "invoiceDate": "Дата накладной",
     "shortInvoiceDate": "Дата нак...",
     "invoiceNumber": "№ накладной",
+    "invoiceNumber2": "Номер накладной",
     "type": "Вид документа",
     "whom": {
       "from": "От кого",
@@ -330,11 +336,12 @@
   "settings": {
     "directories": "Справочники",
     "positionsAndRoles": "Должности и роли",
-    "regionalAdministration": "Региональное управление"
+    "regionalAdministration": "Региональное управление",
+    "profile": "Настройки профиля"
   },
   "lang": {
-    "ru": "РУС",
-    "uz": "ЎЗБ"
+    "ru": "Рус",
+    "uz": "Ўзб"
   },
   "user": {
     "combine": "Комбинат"
@@ -377,7 +384,19 @@
     "error": {
       "atLeastOnePeriodMustBeAdded": "At least one period must be added.",
       "noValidDateInputFound": "No valid date input found."
-    }
+    },
+    "cookingDish": "Приготовление блюда",
+    "uniqueDishNumber": "Уникальный номер блюда",
+    "compositionDish": "Состав блюда"
+  },
+  "kitchenWarehouse": {
+    "title": "Склад кухни",
+    "byProducts": "По продуктам",
+    "byInvoices": "По накладным",
+    "filling": "Заполнение склада",
+    "description": "Этот элемент показывает процент заполненности склада, помогая вам следить за остатками и эффективно управлять запасами",
+    "markup": "Наценка",
+    "rentab": "Рентаб..."
   },
   "gender": {
     "female": "Женский",
@@ -407,5 +426,18 @@
     "desserts": "Десерты",
     "supplements": "Добавки",
     "drinks": "Напитки"
+  },
+  "monitoring": {
+    "title": "Мониторинг",
+    "remainingGoods": "Остатка товаров",
+    "kitchenReport": "Отчет о кухне"
+  },
+  "warehouseBases": {
+    "title": "Базы складов"
+  },
+  "users": {
+    "title": "Кадры",
+    "personalDatabase": "База кадров",
+    "visitors": "Посетители"
   }
 }
