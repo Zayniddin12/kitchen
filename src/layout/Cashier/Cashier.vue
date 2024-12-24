@@ -7,6 +7,7 @@ import { useAuthStore } from "@/modules/Auth/auth.store";
 import tokenManager from "@/utils/token.manager";
 import { WarehouseCapacityParamsType } from "@/modules/Home/statistics.types";
 import { useRoute } from "vue-router";
+import QRCode from 'qrcode';
 
 const products = ref([
 
@@ -216,6 +217,14 @@ onMounted(async () => {
   if (tokenManager.getAccessToken()) authStore.me();
 
   route.query.management_id = form.management_id ? form.management_id : null;
+
+  // Generate QR code on canvas
+  QRCode.toCanvas(qrCanvas.value, qrData.value, {
+    width: 200,
+    errorCorrectionLevel: 'H',
+  }, (error) => {
+    if (error) console.error('QR Code generation error:', error);
+  });
 });
 
 const form = reactive<WarehouseCapacityParamsType>({
@@ -288,6 +297,13 @@ const generateReceiptIndex = computed(() => {
   return receiptIndex.value;
 });
 
+
+const qrCanvas = ref(null);
+const orderId = ref('12345');
+const total = ref('$99.99');
+
+const qrData = ref(JSON.stringify(selectedProducts.value));
+
 </script>
 
 <template>
@@ -357,6 +373,12 @@ const generateReceiptIndex = computed(() => {
 
 
       <p class="text-center my-[20px]">***Приходите снова!***</p>
+
+      <div class="flex flex-col items-center justify-center">
+        <h2>QR Code</h2>
+        <!-- Canvas for the QR code -->
+        <canvas ref="qrCanvas"></canvas>
+      </div>
     </div>
 
     <div class="bg-[#F8F9FC] flex gap-1 select-none no-receipt">

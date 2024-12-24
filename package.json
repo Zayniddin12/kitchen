@@ -22,6 +22,7 @@
     "pdf-to-printer": "^5.6.0",
     "pinia": "^2.2.2",
     "qrcode": "^1.5.4",
+    "qrcode.vue": "^3.6.0",
     "sass": "^1.77.8",
     "vue": "^3.5.11",
     "vue-echarts": "^7.0.3",
