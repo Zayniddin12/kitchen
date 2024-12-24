@@ -16,13 +16,24 @@ const slots = useSlots();
 
 const computedModel = computed<AppSelectValueType>({
   get() {
-    if(props.itemValue && model.value) {
-      return props.items?.find(el => el[props.itemValue] === model.value) ? model.value : "";
+    if(!props.itemValue || !model.value) {
+      return slots.default ? model.value : "";
     }
-    return slots.default ? model.value : "";
+
+    if(props.multiple && Array.isArray(model.value)) {
+      return model.value.filter(value => props.items?.some(item => item[props.itemValue] === value));
+    }
+
+    const isValidValue = props.items?.some(item => item[props.itemValue] === model.value);
+    return isValidValue ? model.value : "";
   },
   set(value: AppSelectValueType) {
-    model.value = value;
+    if(props.multiple && Array.isArray(value)) {
+      model.value = value.filter(el => props.items?.some(item => item[props.itemValue] === el));
+    } else {
+      const isValidValue = props.items?.some(item => item[props.itemValue] === value);
+      model.value = isValidValue ? value : "";
+    }
   },
 });
 

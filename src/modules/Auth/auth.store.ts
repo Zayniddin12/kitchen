@@ -9,10 +9,13 @@ import tokenManager from "@/utils/token.manager";
 import { useRouter } from "vue-router";
 import { useCommonStore } from "@/stores/common.store";
 import { getSessionItem, removeSessionItem, setSessionItem } from "@/utils/sessionStorage";
+import { useI18n } from "vue-i18n";
 
 export const useAuthStore = defineStore("authStore", () => {
 	const router = useRouter();
 	const commonStore = useCommonStore();
+
+	const {t} = useI18n();
 
 	const isAuth = ref(false);
 
@@ -101,7 +104,7 @@ export const useAuthStore = defineStore("authStore", () => {
 		try {
 			await authApi.logout();
 			await clear();
-			commonStore.successToast();
+			commonStore.successToast(undefined, t("auth.logoutToast"));
 		} finally {
 			userLoading.value = false;
 		}
