@@ -159,7 +159,7 @@ const logOut = () => {
 <template>
   <div class="sidebar z-10">
     <div
-      class="sidebar-wrapper w-[128px] bg-white-blue py-4 dark:bg-dark text-center relative flex flex-col justify-between"
+      class="sidebar-wrapper w-[128px] bg-white-blue pt-4 pb-5 dark:bg-dark text-center relative flex flex-col justify-between"
     >
       <div class="overflow-auto">
         <img
@@ -215,7 +215,7 @@ const logOut = () => {
           </Transition>
         </div>
       <button
-        class="mb-[10px] h-[45px] "
+        class="mb-[10px] h-[45px] mt-4"
         @click.stop="logOut"
         plain
       >
