@@ -24,7 +24,6 @@ const dropdown = useTemplateRef("dropdown");
 
 const userImg = computed(() => authStore.user?.image ?? AvatarIcon);
 
-const userFullName = computed(() => authStore.userFullName ?? "-");
 
 const userPosition = computed(() => authStore.user?.position || "-");
 
@@ -74,7 +73,7 @@ const languages = computed<LanguagesType>(() => {
       <div class="flex flex-col">
         <div class="flex justify-between gap-x-3">
           <strong class="text-sm font-medium text-dark dark:text-white">
-            {{ userFullName }}
+            {{ authStore.userShortName || "-" }}
           </strong>
           <svg
             :data-src="ArrowDownIcon"
@@ -93,7 +92,7 @@ const languages = computed<LanguagesType>(() => {
         />
         <div class="mt-2 w-[80%] mx-auto text-center flex flex-col gap-y-1">
           <p class="text-sm font-medium text-dark dark:text-white max-h-[80%] mx-auto">
-            {{ userFullName }}
+            {{ authStore.userFullName || "-" }}
           </p>
           <p class="text-[#A8AAAE] text-sm">
             {{ userPosition }}
