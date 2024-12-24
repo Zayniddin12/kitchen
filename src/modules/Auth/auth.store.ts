@@ -9,10 +9,13 @@ import tokenManager from "@/utils/token.manager";
 import { useRouter } from "vue-router";
 import { useCommonStore } from "@/stores/common.store";
 import { getSessionItem, removeSessionItem, setSessionItem } from "@/utils/sessionStorage";
+import { useI18n } from "vue-i18n";
 
 export const useAuthStore = defineStore("authStore", () => {
 	const router = useRouter();
 	const commonStore = useCommonStore();
+
+	const { t } = useI18n();
 
 	const isAuth = ref(false);
 
@@ -57,12 +60,37 @@ export const useAuthStore = defineStore("authStore", () => {
 		const {
 			firstname,
 			lastname,
+			patronymic,
 		} = user.value;
 
-		if(!firstname) return lastname || "";
-		if(!lastname) return firstname;
+		if(!lastname) return "";
 
-		return `${firstname} ${lastname}`;
+		if(firstname && patronymic) {
+			return `${lastname} ${firstname} ${patronymic}`;
+		}
+
+		if(firstname && !patronymic) {
+			return `${lastname} ${firstname}`;
+		}
+
+		if(!firstname && patronymic) {
+			return `${lastname} ${patronymic}`;
+		}
+
+		return lastname;
+	});
+
+	const userShortName = computed(() => {
+		if (!user.value) return "";
+
+		const { firstname, lastname, patronymic } = user.value;
+
+		if (!lastname) return "";
+
+		const firstInitial = firstname ? `${firstname[0].toUpperCase()}.` : "";
+		const patronymicInitial = patronymic ? `${patronymic[0].toUpperCase()}.` : "";
+
+		return `${lastname} ${firstInitial}${patronymicInitial}`;
 	});
 
 	const disabledUserWorkplace = computed<boolean>(() => {
@@ -101,7 +129,7 @@ export const useAuthStore = defineStore("authStore", () => {
 		try {
 			await authApi.logout();
 			await clear();
-			commonStore.successToast();
+			commonStore.successToast(undefined, t("auth.logoutToast"));
 		} finally {
 			userLoading.value = false;
 		}
@@ -281,6 +309,7 @@ export const useAuthStore = defineStore("authStore", () => {
 		forgotPassword,
 		isAuth,
 		userFullName,
+		userShortName,
 		oneIdLoading,
 		loginOneId,
 		updateUserLoading,

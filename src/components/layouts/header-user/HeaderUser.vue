@@ -24,7 +24,6 @@ const dropdown = useTemplateRef("dropdown");
 
 const userImg = computed(() => authStore.user?.image ?? AvatarIcon);
 
-const userFullName = computed(() => authStore.userFullName ?? "-");
 
 const userPosition = computed(() => authStore.user?.position || "-");
 
@@ -74,7 +73,7 @@ const languages = computed<LanguagesType>(() => {
       <div class="flex flex-col">
         <div class="flex justify-between gap-x-3">
           <strong class="text-sm font-medium text-dark dark:text-white">
-            {{ userFullName }}
+            {{ authStore.userShortName || "-" }}
           </strong>
           <svg
             :data-src="ArrowDownIcon"
@@ -93,7 +92,7 @@ const languages = computed<LanguagesType>(() => {
         />
         <div class="mt-2 w-[80%] mx-auto text-center flex flex-col gap-y-1">
           <p class="text-sm font-medium text-dark dark:text-white max-h-[80%] mx-auto">
-            {{ userFullName }}
+            {{ authStore.userFullName || "-" }}
           </p>
           <p class="text-[#A8AAAE] text-sm">
             {{ userPosition }}
@@ -102,7 +101,7 @@ const languages = computed<LanguagesType>(() => {
         <div class="flex flex-col gap-y-2 mt-3">
           <RouterLink
             v-if="$route.name !== 'cashier'"
-            :to="{name: 'reference'}"
+            :to="{name: 'profile-settings'}"
             class="px-3 py-2.5 w-full flex justify-between rounded-lg items-center gap-x-4 transition duration-200 ease-in bg-white hover:shadow-[0px_1.5px_4px_-1px_#0A090B12]"
             @click="redirectSettingsModule"
           >

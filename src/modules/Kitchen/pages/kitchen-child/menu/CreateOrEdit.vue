@@ -131,9 +131,7 @@ const scheduledDates = computed(() => {
     const intermediate = kitchenData.value.intermediateDate1 ? 7 : 10;
     const formattedDates = [];
     for (let i = 0; i < intermediate; i++) {
-      console.log(kitchenData.value.startDate);
       const date = new Date(kitchenData.value.startDate.split(".").reverse().join("-"));
-      console.log(date, "date");
       date.setDate(date.getDate() + i);
       const formattedDate = formatDate(date);
       formattedDates.push({ date: formattedDate.date, title: `${formattedDate.week} - ${formattedDate.date}` });
@@ -974,7 +972,6 @@ const addMealItem = (index: number, childIndex: string | number) => {
 };
 
 const changeRation = async (val: number, parentIndex: number, childIndex: number, indexMeal: number): Promise<void> => {
-  console.log(val, parentIndex, childIndex);
   if (val) {
     const responseData = await kitchenStore.GET_RATION_LIST_IN_MENU(val);
     // console.log(data);
@@ -1004,21 +1001,18 @@ const checkIsEmpty = (data: any[]): boolean => {
 
         if (kitchenStore.activeSalesPart) {
           if (!meal["amount"]) {
-            console.log("This field is empty:", "amount");
-            commonStore.errorToast("This field is empty:" + "amount");
+            commonStore.errorToast(t("form.validate.emptyField") + ": amount");
             return false;
           }
           if (!meal["meal"] && !meal["vid_product"]) {
-            console.log("This field are empty:", "meal or vid_product");
-            commonStore.errorToast("This field are empty:" + "meal or vid_product");
+            commonStore.errorToast(t("form.validate.emptyField") + ": meal or vid_product");
             return false;
           }
         } else {
           // Check if all required fields in mealData are set
           for (let key of Object.keys(meal)) {
             if (!meal[key]) {
-              console.log("This field is empty:", key);
-              commonStore.errorToast("This field is empty:" + key);
+              commonStore.errorToast(t("form.validate.emptyField") + `: ${key}`);
               return false;
             }
           }
@@ -1031,15 +1025,13 @@ const checkIsEmpty = (data: any[]): boolean => {
     }
 
     if (!userChecked) {
-      commonStore.errorToast("At least one period must be added.");
-      console.log("At least one period must be added.");
+      commonStore.errorToast(t("kitchen.error.atLeastOnePeriodMustBeAdded"));
       return false;
     }
   }
 
   if (!dateInput) {
-    commonStore.errorToast("No valid date input found.");
-    console.log("No valid date input found.");
+    commonStore.errorToast(t("kitchen.error.noValidDateInputFound"));
     return false;
   }
 
@@ -1051,7 +1043,7 @@ const sendData = async () => {
     if (!kitchenDatav$.value) return;
 
     if (!(await kitchenDatav$.value.validate())) {
-      await commonStore.errorToast("Validation Error");
+      await commonStore.errorToast(t("error.validation"));
       return;
     }
 
@@ -1105,7 +1097,7 @@ const sendData = async () => {
     if (!kitchenDatav$.value) return;
 
     if (!await kitchenDatav$.value.validate()) {
-      await commonStore.errorToast("Validation Error");
+      await commonStore.errorToast(t("error.validation"));
       return;
     }
 
@@ -1152,8 +1144,6 @@ const sendData = async () => {
     //   delete item.rationsList;
     // });
 
-    console.log(kitchenPayload, "kitchenPayload");
-    console.log(kitchenElementPayload, "kitchenElementPayload");
     if (route.name !== "KitchenMenuEdit") {
       const kitchenResponse = await kitchenStore.CREATE_KITCHEN(kitchenPayload);
 

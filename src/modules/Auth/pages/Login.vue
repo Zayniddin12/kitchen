@@ -43,7 +43,7 @@ const onSubmit = async () => {
     newForm.phone = `998${newForm.phone.replace(/\D/g, "")}`;
     await authStore.login(newForm).then(() => {
 
-      commonStore.successToast("/");
+      commonStore.successToast("/", t("auth.loginToast"));
       setSessionItem("current-menu", "0");
     });
   }

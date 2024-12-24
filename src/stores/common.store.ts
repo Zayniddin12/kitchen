@@ -22,11 +22,11 @@ export const useCommonStore = defineStore("commonStore", () => {
     router.replace({ name: "notFound" });
   };
 
-  const successToast = async (route?: RouteLocationRaw) => {
+  const successToast = async (route?: RouteLocationRaw, message?: string) => {
     if (route) await router.push(route);
     ElNotification({
       title: t("status.success"),
-      message: t("status.success"),
+      message: message || t("status.success"),
       type: "success",
     });
   };

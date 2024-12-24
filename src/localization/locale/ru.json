@@ -6,8 +6,10 @@
       "btn": "Войти",
       "oneId": "Войти через ONE ID"
     },
+    "loginToast": "Вы успешно вошли в систему",
     "loginSubtitle": "Введите свои учетные данные для доступа к вашей учетной записи",
     "logout": "Выход",
+    "logoutToast": "Вы успешно вышли из системы",
     "resetPassword": {
       "title": "Сброс пароля",
       "description": "На данной странице Вы можете восстановить доступ к своему аккаунту. Введите Ваш номер телефона и система автоматически отправит Вам временный код для сброса пароля.",
@@ -103,7 +105,8 @@
     "days": "{number} дней",
     "timeToStart": "Время начало",
     "endToTime": "Время окончания",
-    "next": "Далее"
+    "next": "Далее",
+    "clear": "Очистить"
   },
   "status": {
     "active": "Активный",
@@ -177,6 +180,7 @@
     "create": "Создать",
     "search": "Поиск",
     "validate": {
+      "emptyField": "This field is empty",
       "required": "Обязательное поле",
       "email": "Неправильный email",
       "confirmPassword": "Пароль проверки неверен",
@@ -365,7 +369,15 @@
     "servingQuantity": "Количество порции",
     "listOfDishes": "Список блюды",
     "createMenu": "Добавить меню",
-    "dishes2": "Блюди"
+    "dishes2": "Блюди",
+    "totalServings": "Всего порций",
+    "issue": "Выданние",
+    "selling": "Проданние",
+    "leftoverPortions": "Остатки порций",
+    "error": {
+      "atLeastOnePeriodMustBeAdded": "At least one period must be added.",
+      "noValidDateInputFound": "No valid date input found."
+    }
   },
   "gender": {
     "female": "Женский",

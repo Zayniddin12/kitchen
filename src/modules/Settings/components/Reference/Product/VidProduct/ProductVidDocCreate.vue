@@ -2,7 +2,7 @@
   setup
   lang="ts"
 >
-import { computed, onMounted, ref, watchEffect } from "vue";
+import { computed, onMounted, ref, watch, watchEffect } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import AppInput from "@/components/ui/form/app-input/AppInput.vue";
 import AppSelect from "@/components/ui/form/app-select/AppSelect.vue";
@@ -23,8 +23,9 @@ interface Name {
 interface DataValue {
   name: Name;
   image: File | null;
-  parent_id: string | number | null;
-  measurement_unit_id: string | number | null;
+  parent_id: string | number;
+  measurement_unit_id: string | number;
+  place_occupied: string;
   is_active: boolean | number;
 }
 
@@ -47,17 +48,18 @@ const dataValue = ref<DataValue>({
   image: "",
   parent_id: "",
   measurement_unit_id: "",
+  place_occupied: "",
   is_active: true,
 });
 const existingImage = ref<string>("");
 const loading = ref<boolean>(false);
 
 onMounted(async () => {
-  if (route.params.id) {
+  if(route.params.id) {
     loading.value = true;
     try {
       const detail = await store.GET_TYPE_PRODUCT_DETAIL(route.params.id as string | number);
-      if (detail && detail.data) {
+      if(detail && detail.data) {
         dataValue.value = detail.data.product_type;
         existingImage.value = dataValue.value.image;
       }
@@ -73,23 +75,18 @@ onMounted(async () => {
 
 
 const setBreadCrumbFn = () => {
-  setBreadCrumb([
-    {
-      label: "Настройки",
-    },
-    {
-      label: "Продукты",
-      to: { name: "reference" },
-    },
-    {
-      label: "Виды продуктов",
-      to: { name: "reference-vid-product" },
-    },
-    {
-      label: String(route?.meta?.breadcrumbItemTitle ?? ""),
-      isActionable: true,
-    },
-  ]);
+  setBreadCrumb([{
+    label: "Настройки",
+  }, {
+    label: "Продукты",
+    to: { name: "reference" },
+  }, {
+    label: "Виды продуктов",
+    to: { name: "reference-vid-product" },
+  }, {
+    label: String(route?.meta?.breadcrumbItemTitle ?? ""),
+    isActionable: true,
+  }]);
 };
 
 const cancelFn = () => {
@@ -99,7 +96,8 @@ const cancelFn = () => {
 };
 
 const deleteFn = () => {
-  confirm.delete().then(() => {
+  confirm.delete().then(async () => {
+    await store.DELETE_TYPE_PRODUCT(+route.params.id);
     router.push("/reference-vid-product");
   });
 };
@@ -114,26 +112,26 @@ const deleteFn = () => {
 // };
 
 const handleSubmit = async () => {
-  if (!v$.value) return;
+  if(!v$.value) return;
 
-  if ((await v$.value.validate())) {
+  if((await v$.value.validate())) {
     try {
       const formData = new FormData();
       formData.append("name[uz]", dataValue.value.name.uz);
       formData.append("name[ru]", dataValue.value.name.ru);
       formData.append("parent_id", dataValue.value.parent_id);
       formData.append("measurement_unit_id", Number(dataValue.value.measurement_unit_id));
-      if (route.params.id) formData.append("_method", "PUT");
+      if(route.params.id) formData.append("_method", "PUT");
 
-      if (dataValue.value.image && dataValue.value.image !== existingImage.value) {
+      if(dataValue.value.image && dataValue.value.image !== existingImage.value) {
         formData.append("image", dataValue.value.image);
       }
 
-      if (dataValue.value.is_active) {
+      if(dataValue.value.is_active) {
         formData.append("is_active", +dataValue.value.is_active);
       }
 
-      if (route.params.id) {
+      if(route.params.id) {
         await store.UPDATE_VID_PRODUCT({
           id: route.params.id as string | number,
           data: formData,
@@ -142,10 +140,16 @@ const handleSubmit = async () => {
         await store.CREATE_VID_PRODUCT(formData);
       }
 
-      ElNotification({ title: "Success", type: "success" });
+      ElNotification({
+        title: "Success",
+        type: "success",
+      });
       await router.push("/reference-vid-product");
     } catch (e) {
-      ElNotification({ title: "Error", type: "error" });
+      ElNotification({
+        title: "Error",
+        type: "error",
+      });
     }
   }
 };
@@ -157,13 +161,14 @@ watchEffect(() => {
 
 <template>
   <div>
-    <AppOverlay
-      :loading="loading"
-    >
       <h1 class="m-0 font-semibold text-[32px] leading-[48px]">{{ route.meta.title }}</h1>
 
       <div class="flex items-start mt-[24px]">
-        <div class="border rounded-[24px] p-[24px] w-[70%]  min-h-[65vh]">
+        <AppOverlay
+          :loading
+          :rounded="24"
+          parent-class-name="border rounded-[24px] p-[24px] w-[70%]  min-h-[65vh]"
+        >
           <AppMediaUploader
             v-model="dataValue.image"
             :value="existingImage"
@@ -172,55 +177,66 @@ watchEffect(() => {
             :value="dataValue"
             @validation="setValidation"
           >
-            <div class="grid grid-cols-2 gap-4 mt-[24px]">
-              <app-input
+            <div class="grid grid-cols-2 gap-4 mt-6">
+              <AppInput
                 v-model="dataValue.name.ru"
                 label="Наименование (Рус)"
-                label-class="text-[#A8AAAE] text-[12px]"
+                label-class="text-[#A8AAAE] text-xs"
                 placeholder="Введите"
                 required
                 prop="name.ru"
+                class="mb-0"
               />
 
-              <app-input
+              <AppInput
                 v-model="dataValue.name.uz"
                 label="Наименование (Ўзб)"
-                label-class="text-[#A8AAAE] text-[12px]"
+                label-class="text-[#A8AAAE] text-xs"
                 placeholder="Введите"
                 required
                 prop="name.uz"
+                class="mb-0"
               />
 
-              <app-select
+              <AppSelect
                 v-model="dataValue.parent_id"
                 label="Тип продукта"
-                label-class="text-[#A8AAAE] text-[12px]"
+                label-class="text-[#A8AAAE] text-xs"
                 placeholder="Введите"
                 itemValue="id"
                 itemLabel="name"
                 :items="store.typeProduct.product_categories"
                 required
                 prop="parent_id"
+                class="mb-0"
               />
 
-              <app-select
+              <AppSelect
                 v-model="dataValue.measurement_unit_id"
                 label="Единица измерения"
-                label-class="text-[#A8AAAE] text-[12px]"
+                label-class="text-[#A8AAAE] text-xs"
                 placeholder="Введите"
                 itemValue="id"
                 itemLabel="name"
                 :items="store.units.units"
                 required
                 prop="measurement_unit_id"
+                class="mb-0"
+              />
+              <AppInput
+                v-model="dataValue.place_occupied"
+                prop="place_occupied"
+                custom-type="number"
+                label="Занимаемое место"
+                label-class="text-[#A8AAAE] text-xs"
+                class="mb-0"
               />
 
               <app-input
-                disabled
-                label="Занимаемое место"
-                type="number"
+                label="Ед. изм. занимаемого места"
                 label-class="text-[#A8AAAE] text-[12px]"
-                placeholder="Введите"
+                disabled
+                placeholder="кг"
               />
             </div>
           </AppForm>
@@ -231,7 +247,7 @@ watchEffect(() => {
             :active-text="dataValue.is_active ? 'Активация' : 'Деактивация'"
           />
           <!--          :before-change="switchChange"-->
-        </div>
+        </AppOverlay>
       </div>
 
       <div class="flex items-center justify-between mt-[24px] w-[70%]">
@@ -259,7 +275,6 @@ watchEffect(() => {
           </button>
         </div>
       </div>
-    </AppOverlay>
   </div>
 </template>
 

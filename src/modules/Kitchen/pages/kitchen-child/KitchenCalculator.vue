@@ -39,7 +39,8 @@ const setBreadCrumbFn = () => {
 
   setBreadCrumb([
     {
-      label: "Кухня",
+      label: "kitchen.title",
+      isTranslate: true,
     },
     {
       label: kitchenStore.part.title,
@@ -81,7 +82,6 @@ watch(() => route.params, async () => {
 const changeRation = async (val: string | number) => {
   if (val) {
     const response = await kitchenStore.GET_RATION_LIST_IN_MENU(val);
-
     tableData.value = response;
   } else {
     tableData.value = {};

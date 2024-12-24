@@ -152,7 +152,6 @@ watch(() => route.params, async () => {
   <section>
     <div>
       <div class="flex flex-col gap-y-6">
-        {{ kitchenStore.mealsList }}
         <div
           v-for="category in categories"
           :key="category.id"
