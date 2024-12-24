@@ -459,7 +459,6 @@ watch(() => route.query.management_id, (newId) => {
         const management_id = newId ? parseInt(newId as string) : null;
         form.management_id = management_id && !isNaN(management_id) ? management_id : null;
       } else {
-        console.log("ishladi");
         router.replace({
           ...route, // Keep the current route details
           query: {
@@ -475,36 +474,35 @@ watch(() => route.query.management_id, (newId) => {
 }, { immediate: true });
 
 
-const managements = ref<object[]>([
+const managements = computed(() => [
   {
     id: 1,
-    name: "Завтрак",
+    name: t("mealTime.breakfast"), // "Завтрак"
   },
   {
     id: 2,
-    name: "Первое",
+    name: t("mealTime.first"), // "Первое"
   },
   {
     id: 3,
-    name: "Второе",
+    name: t("mealTime.second"), // "Второе"
   },
   {
     id: 4,
-    name: "Салаты",
+    name: t("mealTime.salads"), // "Салаты"
   },
   {
     id: 5,
-    name: "Десерты",
+    name: t("mealTime.desserts"), // "Десерты"
   },
   {
     id: 6,
-    name: "Добавки",
+    name: t("mealTime.supplements"), // "Добавки"
   },
   {
     id: 7,
-    name: "Напитки",
+    name: t("mealTime.drinks"), // "Напитки"
   },
-
 ]);
 
 const clearBasket = () => {
@@ -624,9 +622,8 @@ const clearBasket = () => {
                 <div class="flex justify-between gap-x-5">
                   <div class="flex flex-col gap-y-2">
                     <h3 class="font-semibold text-lg text-dark">
-                      {{ n.product_name }} {{
-                        n.product_number
-                      }}
+                      {{ n.product_name }}
+                      {{ n.product_number }}
                     </h3>
                     <div
                       class="flex items-center gap-x-3 font-medium text-sm text-cool-gray"
@@ -662,11 +659,11 @@ const clearBasket = () => {
                 >
                   <div class="flex flex-col gap-y-2 text-sm">
                     <p>
-                      <span class="text-cool-gray mr-2">Всего порций:</span>
+                      <span class="text-cool-gray mr-2">{{t("kitchen.totalServings")}}:</span>
                       <strong class="font-semibold text-dark">{{ n.amount }}</strong>
                     </p>
                     <p>
-                      <span class="text-cool-gray mr-2">Сумма:</span>
+                      <span class="text-cool-gray mr-2">{{t("common.sum")}}:</span>
                       <strong class="font-semibold text-dark">
                         {{ n.total_price && n.total_price.toLocaleString() }} UZS
                       </strong>
@@ -674,11 +671,11 @@ const clearBasket = () => {
                   </div>
                   <div class="flex flex-col gap-y-2 text-sm">
                     <p>
-                      <span class="text-cool-gray mr-2">Выданние:</span>
+                      <span class="text-cool-gray mr-2">{{t("kitchen.issue")}}:</span>
                       <strong class="font-semibold text-dark">{{ n.amount_served && n.amount_served }}</strong>
                     </p>
                     <p>
-                      <span class="text-cool-gray mr-2">Сумма:</span>
+                      <span class="text-cool-gray mr-2">{{t("common.sum")}}:</span>
                       <strong class="font-semibold text-dark">
                         {{ n.price_served && n.price_served.toLocaleString() }} UZS
                       </strong>
@@ -687,11 +684,11 @@ const clearBasket = () => {
 
                   <div class="flex flex-col gap-y-2 text-sm">
                     <p>
-                      <span class="text-cool-gray mr-2">Проданние:</span>
+                      <span class="text-cool-gray mr-2">{{t("kitchen.selling")}}:</span>
                       <strong class="font-semibold text-dark">{{ n.amount_sold && n.amount_sold }}</strong>
                     </p>
                     <p>
-                      <span class="text-cool-gray mr-2">Сумма:</span>
+                      <span class="text-cool-gray mr-2">{{t("common.sum")}}:</span>
                       <strong class="font-semibold text-dark">
                         {{ n.price_sold && n.price_sold.toLocaleString() }} UZS
                       </strong>
@@ -699,11 +696,11 @@ const clearBasket = () => {
                   </div>
                   <div class="flex flex-col gap-y-2 text-sm">
                     <p>
-                      <span class="text-cool-gray mr-2">Остатки порций:</span>
+                      <span class="text-cool-gray mr-2">{{t("kitchen.leftoverPortions")}}:</span>
                       <strong class="font-semibold text-[#EA5455]">{{ n.amount_left && n.amount_left }}</strong>
                     </p>
                     <p>
-                      <span class="text-cool-gray mr-2">Сумма:</span>
+                      <span class="text-cool-gray mr-2">{{t("common.sum")}}:</span>
                       <strong class="font-semibold text-dark">
                         {{ n.price_left && n.price_left.toLocaleString() }} UZS
                       </strong>
@@ -812,9 +809,7 @@ const clearBasket = () => {
                           <path d="M4.66602 9.99967H16.3327" stroke="#4F5662" stroke-width="1.2" stroke-linecap="round"
                                 stroke-linejoin="round" />
                         </svg>
-
-
-                        Добавить
+                        {{t("method.add")}}
                       </button>
                     </div>
                     <!--                    <div-->
@@ -1110,10 +1105,10 @@ const clearBasket = () => {
         >
           <div>
             <div class="flex items-center justify-between mb-4">
-              <h4 class="text-xl text-black font-semibold pl-8">Корзина</h4>
+              <h4 class="text-xl text-black font-semibold pl-8">{{t("common.basket")}}</h4>
               <button v-if="orders.size" @click="clearBasket"
                       class="text-[#A8AAAE] text-[14px] bg-red-500 mr-6 text-white px-2 py-1 rounded-[8px]">
-                Очистить
+                {{t("common.clear")}}
               </button>
             </div>
             <div
@@ -1217,10 +1212,9 @@ const clearBasket = () => {
               class="!bg-blue w-full flex items-center justify-between px-[24px] py-[14px] rounded-[12px] text-white"
               @click="createOrder"
             >
-              Далее
-
+            {{t("common.next")}}
               <strong class="font-semibold ml-auto">
-                {{ formatNumber(ordersSum) }} сум
+                {{ formatNumber(ordersSum) }} {{t("currency.sum")}}
               </strong>
             </button>
 

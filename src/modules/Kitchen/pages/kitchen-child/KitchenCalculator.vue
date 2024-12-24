@@ -21,9 +21,10 @@ const settingsStore = useSettingsStore();
 const kitchenStore = useKitchenStore();
 
 
-const num = ref(1);
+const mealData = ref({ compositions: [] });
+const rationData = ref({});
 
-const tableData = ref({ products: [] });
+const tableData = ref([]);
 
 const title = computed(() => route.meta.title ?? "");
 
@@ -38,7 +39,8 @@ const setBreadCrumbFn = () => {
 
   setBreadCrumb([
     {
-      label: "Кухня",
+      label: "kitchen.title",
+      isTranslate: true,
     },
     {
       label: kitchenStore.part.title,
@@ -80,7 +82,6 @@ watch(() => route.params, async () => {
 const changeRation = async (val: string | number) => {
   if (val) {
     const response = await kitchenStore.GET_RATION_LIST_IN_MENU(val);
-    console.log(response);
     tableData.value = response;
   } else {
     tableData.value = {};
@@ -89,9 +90,11 @@ const changeRation = async (val: string | number) => {
 
 const changeMeal = async (val: string | number) => {
   if (val) {
-    tableData.value = await settingsStore.GET_MEALS_DETAIL(val);
+    const response: any = await settingsStore.GET_MEALS_DETAIL(val);
+    mealData.value = response.meal && response.meal;
+    tableData.value = response.meal && response.meal.compositions ? response.meal.compositions : [];
   } else {
-    tableData.value = {};
+    tableData.value = [];
   }
 };
 
@@ -162,9 +165,9 @@ const params = ref({
 
         <div class="mb-[24px]">
           <el-table
-            v-if="tableData && tableData.products"
+            v-if="params.ration_id"
             :empty-text="t('common.empty')"
-            :data="tableData && tableData.products"
+            :data="tableData"
             stripe
             class="custom-element-table custom-element-table--has-append w-full"
           >
@@ -198,7 +201,7 @@ const params = ref({
                       {{ t("common.price") }}:
                     </span>
                     <strong class="font-semibold text-dark">
-                      25 000 {{ t("currency.sum") }}
+                      {{ t("currency.sum") }}
                     </strong>
                   </div>
                   <div class="flex items-center gap-x-1 text-sm">
@@ -206,7 +209,7 @@ const params = ref({
                       {{ t("common.ndc") }}:
                     </span>
                     <strong class="font-semibold text-dark">
-                      3 000 {{ t("currency.sum") }}
+                      {{ t("currency.sum") }}
                     </strong>
                   </div>
                   <div class="flex items-center gap-x-1 text-sm">
@@ -215,6 +218,74 @@ const params = ref({
                     </span>
                     <strong class="font-semibold text-dark">
                       {{ tableData?.total_price && tableData?.total_price.toLocaleString() }} {{ t("currency.sum") }}
+                    </strong>
+                  </div>
+                </div>
+              </div>
+            </template>
+          </el-table>
+          <el-table
+            v-else
+            :empty-text="t('common.empty')"
+            :data="mealData.compositions"
+            stripe
+            class="custom-element-table custom-element-table--has-append w-full"
+          >
+            <el-table-column
+              prop="product_type_name"
+              :label="t('kitchen.ingredients')"
+            />
+            <el-table-column
+              prop="quantity"
+              :label="t('common.quantity')"
+            />
+            <el-table-column
+              prop="unit"
+              :label="t('common.measurement')"
+            />
+            <el-table-column
+              prop="price"
+              :label="t('common.price')"
+            >
+              <template #default="{row, $index}">
+                {{ (row.price && row.price.toLocaleString()) }} сум
+              </template>
+            </el-table-column>
+
+            <el-table-column
+              prop="net_price"
+              :label="t('common.sum')"
+            >
+              <template #default="{row, $index}">
+                {{ (row.price * parseInt(row.quantity)).toLocaleString() }} сум
+              </template>
+            </el-table-column>
+
+            <template #append>
+              <div class="px-4 py-3.5 flex justify-end items-center ">
+                <div class="flex items-center gap-x-8">
+                  <div class="flex items-center gap-x-1 text-sm">
+                    <span class="text-cool-gray">
+                      {{ t("common.price") }}:
+                    </span>
+                    <strong class="font-semibold text-dark">
+                      {{ mealData.net_price && mealData.net_price.toLocaleString() }} {{ t("currency.sum") }}
+                    </strong>
+                  </div>
+                  <div class="flex items-center gap-x-1 text-sm">
+                    <span class="text-cool-gray">
+                       {{ t("common.ndc") }}:
+                    </span>
+                    <strong class="font-semibold text-dark">
+                      {{ mealData.tax && mealData.tax.toLocaleString() }} {{ t("currency.sum") }}
+                    </strong>
+                  </div>
+                  <div class="flex items-center gap-x-1 text-sm">
+                    <span class="text-cool-gray">
+                      {{ t("common.totalSum") }}:
+                    </span>
+                    <strong class="font-semibold text-dark">
+                      {{ mealData.price && mealData.price.toLocaleString() }} {{ t("currency.sum") }}
                     </strong>
                   </div>
                 </div>

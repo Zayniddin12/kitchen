@@ -43,17 +43,6 @@ const setValidation = (validation: ValidationType) => {
   v$.value = validation;
 };
 
-const tableData = ref([
-  {
-    id: 1,
-    name: "Овощи",
-  },
-  {
-    id: 2,
-    name: "Фрукты",
-  },
-]);
-
 const { setBreadCrumb } = useBreadcrumb();
 
 const setBreadCrumbFn = () => {
@@ -180,7 +169,7 @@ const disabledFormItems = computed<boolean>(() => {
       <div class="w-[70%]">
         <AppOverlay
           :loading="settingsStore.baseWarehouseLoading"
-          :rounded="16"
+          :rounded="24"
           class="border border-[#E2E6F3] p-[24px] min-h-[60vh]"
         >
           <AppForm
@@ -237,11 +226,10 @@ const disabledFormItems = computed<boolean>(() => {
               :items="settingsStore.units.units"
               item-value="id"
               item-label="name"
-              label="Единица измерения"
+              label="Ед. изм. вместимости склада"
               placeholder="тонна"
               label-class="text-[#A8AAAE] font-medium text-[12px]"
-              required
-              :disabled="disabledFormItems"
+              disabled
             >
 
             </app-select>

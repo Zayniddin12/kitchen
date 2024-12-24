@@ -6,11 +6,13 @@ import { useRoute, useRouter } from "vue-router";
 import { onMounted, ref, watch, watchEffect } from "vue";
 import { useKitchenStore } from "@/modules/Kitchen/kitchen.store";
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
+import { useI18n } from "vue-i18n";
 
 const kitchenStore = useKitchenStore();
 const route = useRoute();
 const router = useRouter();
 const { setBreadCrumb } = useBreadcrumb();
+const { t } = useI18n();
 
 const num = ref(1);
 
@@ -22,39 +24,32 @@ const setBreadCrumbFn = () => {
   kitchenStore.fetchPart2(+route.params.kitchen_id);
   kitchenStore.fetchPart3(+route.params.child_id);
 
-  if (!kitchenStore.part) return;
+  if(!kitchenStore.part) return;
 
   console.log(kitchenStore.part.kitchen_vid);
 
-  setBreadCrumb([
-    {
-      label: "kitchen.title",
-      isTranslate: true,
-    },
-    {
-      label: kitchenStore.part.title,
-    },
-    {
-      label: kitchenStore.part.department_name,
-      to: { name: "KitchenIndex" },
-    },
-    {
-      label: kitchenStore.part.kitchen_vid as string,
-      to: { name: "KitchenShow" },
-    },
-    {
-      label: kitchenStore.part.kitchen_type as string,
-    },
-    {
-      label: "common.menu",
-      to: { name: "KitchenShow" },
-      isTranslate: true,
-    },
-    {
-      label: "Продать",
-      isActionable: true,
-    },
-  ]);
+  setBreadCrumb([{
+    label: "kitchen.title",
+    isTranslate: true,
+  }, {
+    label: kitchenStore.part.title,
+  }, {
+    label: kitchenStore.part.department_name,
+    to: { name: "KitchenIndex" },
+  }, {
+    label: kitchenStore.part.kitchen_vid as string,
+    to: { name: "KitchenShow" },
+  }, {
+    label: kitchenStore.part.kitchen_type as string,
+  }, {
+    label: "common.menu",
+    to: { name: "KitchenShow" },
+    isTranslate: true,
+  }, {
+    label: "common.sell",
+    isTranslate: true,
+    isActionable: true,
+  }]);
 };
 
 onMounted(async () => {
@@ -92,13 +87,12 @@ const handleSubmit = async () => {
   try {
     let data = {
       kitchen_id: Number(route.params.child_id),
-      rations: [
-        {
-          id: tableData.value.product_id,
-          price: tableData.value.price,
-          menu_id: tableData.value.id,
-          quantity: num.value,
-        },
+      rations: [{
+        id: tableData.value.product_id,
+        price: tableData.value.price,
+        menu_id: tableData.value.id,
+        quantity: num.value,
+      },
 
       ],
 
@@ -115,7 +109,7 @@ const handleSubmit = async () => {
 <template>
   <div>
     <h1 class="mb-6 text-[32px] text-[#000D24] font-semibold">
-      Продать
+      {{ t("common.sell") }}
       <!--      {{kitchenStore.part}}-->
 
     </h1>
@@ -133,11 +127,15 @@ const handleSubmit = async () => {
           <span
             class="block text-[18px] text-[#4F5662] font-medium mb-[4px]"
             :class="activeData == index && '!text-[#2E90FA]'"
-          >{{ item.product_name }}</span>
+          >
+            {{ item.product_name }}
+          </span>
           <span
             class="block text-[14px] text-[#8F9194] mb-[4px]"
             :class="activeData == index && '!text-[#2E90FA]'"
-          >{{ item.product_number }}</span>
+          >
+            {{ item.product_number }}
+          </span>
           <span
             class="block text-[14px] text-[#8F9194]"
             :class="activeData == index && '!text-[#2E90FA]'"
@@ -148,28 +146,30 @@ const handleSubmit = async () => {
       <div class="mb-[24px]">
         <!--        {{ tableData }} {{ activeData }}-->
         <el-table
-          empty-text="Нет данных"
           :data="tableData.product"
+          :empty-text="t('common.empty')"
           stripe
           class="custom-element-table"
         >
           <el-table-column
             prop="name"
-            label="Название"
+            :label="t('common.name')"
           />
           <el-table-column
             prop="quantity"
-            label="Количество"
+            :label="t('common.quantity')"
           />
           <el-table-column
             prop="unit"
-            label="Ед. измерения"
+            :label="t('common.measurement')"
           />
 
           <template #append>
             <div class="px-4 py-3.5 flex justify-between items-center ">
               <div class="flex items-center">
-                <span class="text-[#8F9194] text-[14px] font-medium mr-[16px]">Количество порции</span>
+                <span class="text-[#8F9194] text-[14px] font-medium mr-[16px]">
+                  {{ t("kitchen.servingQuantity") }}
+                </span>
                 <!--                {{ num }}-->
                 <el-input-number
                   class="order-kitchen"
@@ -182,26 +182,26 @@ const handleSubmit = async () => {
               <div class="flex items-center gap-x-8">
                 <div class="flex items-center gap-x-1 text-sm">
                   <span class="text-cool-gray">
-                    Цена:
+                    {{ t("common.price") }}:
                   </span>
                   <strong class="font-semibold text-dark">
                     {{ tableData.price && tableData.price.toLocaleString() }} сум
                   </strong>
                 </div>
                 <div class="flex items-center gap-x-1 text-sm">
-                          <span class="text-cool-gray">
-                            НДС:
-                          </span>
+                  <span class="text-cool-gray">
+                    {{ t("common.ndc") }}:
+                  </span>
                   <strong class="font-semibold text-dark">
-                    3 000 сум
+                    3 000 {{t("currency.sum")}}
                   </strong>
                 </div>
                 <div class="flex items-center gap-x-1 text-sm">
-                          <span class="text-cool-gray">
-                            Общая сумма:
-                          </span>
+                  <span class="text-cool-gray">
+                    {{t("common.totalSum")}}:
+                  </span>
                   <strong class="font-semibold text-dark">
-                    28 000 сум
+                    28 000 {{t("currency.sum")}}
                   </strong>
                 </div>
               </div>
@@ -216,7 +216,8 @@ const handleSubmit = async () => {
         <button
           @click="handleSubmit"
           class="custom-apply-btn"
-        >Продать
+        >
+          {{t("common.sell")}}
         </button>
       </div>
 
