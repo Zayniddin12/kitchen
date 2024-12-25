@@ -10,8 +10,6 @@ import { onBeforeRouteLeave, useRoute, useRouter } from "vue-router";
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 import AppMediaUploader from "@/components/ui/form/app-media-uploader/AppMediaUploader.vue";
 import useConfirm from "@/components/ui/app-confirm/useConfirm";
-
-;
 import { useUsersStore } from "@/modules/Users/users.store";
 import AppOverlay from "@/components/ui/app-overlay/AppOverlay.vue";
 import { ValidationType } from "@/components/ui/form/app-form/app-form.type";
@@ -142,7 +140,7 @@ const sendForm = async () => {
     }
 
     validationErrors.value = null;
-    if(userStore.activeUserPage && activeUserUpdatePage.value && routeId.value === authStore.user?.id){
+    if(userStore.activeUserPage && activeUserUpdatePage.value && routeId.value === authStore.user?.id) {
       authStore.me();
     }
     commonStore.successToast({ name: userStore.activeRoutePrefix });
@@ -153,7 +151,15 @@ const sendForm = async () => {
   }
 };
 
-const form2 = reactive({
+interface Form2Type {
+  management_id: number | "",
+  food_factory_id: number | "",
+  base_id: number | "",
+  base_warehouse_id: number | "",
+  kitchen_warehouse_id: number | "",
+}
+
+const form2 = reactive<Form2Type>({
   management_id: "",
   food_factory_id: "",
   base_id: "",
@@ -166,10 +172,10 @@ const changeWorkPlace = (id: number, type: WorkPlaceType) => {
   form.value.work_place_type = type;
 };
 
-const changeManagement = (id: AppSelectValueType) => {
+const changeManagement = async (id: AppSelectValueType) => {
   if(typeof id !== "number") return;
   changeWorkPlace(id, "management");
-  listStore.fetchFoodFactories(id);
+  await listStore.fetchFoodFactories(id);
   clearManagement();
 };
 
@@ -180,10 +186,10 @@ const clearManagement = () => {
   form2.kitchen_warehouse_id = "";
 };
 
-const changeFoodFactory = (id: AppSelectValueType) => {
+const changeFoodFactory = async (id: AppSelectValueType) => {
   if(typeof id !== "number") return;
   changeWorkPlace(id, "foodFactory");
-  listStore.fetchBases(id);
+  await listStore.fetchBases(id);
   clearFoodFactory();
 };
 
@@ -193,11 +199,12 @@ const clearFoodFactory = () => {
   form2.kitchen_warehouse_id = "";
 };
 
-const changeBase = (id: AppSelectValueType) => {
+const changeBase = async (id: AppSelectValueType) => {
   if(typeof id !== "number") return;
-  listStore.fetchBaseWarehouses(id);
-  listStore.fetchKitchenWarehouses(id);
+  await listStore.fetchBaseWarehouses(id);
+   await listStore.fetchKitchenWarehouses(id);
   clearBase();
+  changeWorkPlace(id, "base");
 };
 
 const clearBase = () => {
@@ -294,7 +301,7 @@ const fetchSearchUser = () => {
   if(!userStore.searchUser) router.replace({ name: `${userStore.activeRoutePrefix}-fetch` });
 };
 
-const setData = () => {
+const setData = async () => {
 
   if(!data.value) return;
 
@@ -320,6 +327,20 @@ const setData = () => {
   form.value.phone = formatPhone(data.value.phone);
   form.value.status = getStatus(data.value.status);
 
+  if(data.value.management_id){
+    form2.management_id = data.value.management_id ?? "";
+    await changeManagement(form2.management_id);
+  }
+  if (data.value.food_factory_id) {
+    form2.food_factory_id = data.value.food_factory_id;
+    await changeFoodFactory(form2.food_factory_id);
+  }
+  if (data.value.base_id) {
+    form2.base_id = data.value.base_id;
+    await changeBase(form2.base_id);
+  }
+  form2.base_warehouse_id = data.value.base_warehouse_id ?? "";
+  form2.kitchen_warehouse_id = data.value.kitchen_warehouse_id ?? "";
 
   oldForm.value = JSON.parse(JSON.stringify(form.value));
 };
@@ -616,6 +637,7 @@ const workingHours = reactive([{
                   label-class="text-[#A8AAAE] text-xs font-medium"
                   class="mb-1"
                   :disabled="!form2.base_id || !!form2.kitchen_warehouse_id"
+                  @change="id => changeWorkPlace(id, 'baseWarehouse')"
                   clearable
                 />
                 <AppSelect
@@ -629,6 +651,7 @@ const workingHours = reactive([{
                   label-class="text-[#A8AAAE] text-xs font-medium"
                   class="mb-1"
                   :disabled="!form2.base_id || !!form2.base_warehouse_id"
+                  @change="id => changeWorkPlace(id, 'kitchenWarehouse')"
                   clearable
                 />
                 <AppSelect

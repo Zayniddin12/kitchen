@@ -6,9 +6,10 @@
 import { useRoute } from "vue-router";
 import { useSettingsStore } from "@/modules/Settings/store";
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
-import { onMounted } from "vue";
+import { computed, onMounted } from "vue";
 import AppOverlay from "@/components/ui/app-overlay/AppOverlay.vue";
 import { activeLocale } from "@/localization";
+import { useI18n } from "vue-i18n";
 
 const route = useRoute();
 
@@ -16,34 +17,40 @@ const settingsStore = useSettingsStore();
 
 const { setBreadCrumb } = useBreadcrumb();
 
+const { t } = useI18n();
+
+const title = computed(() => route.meta.title ?? "");
+const isTranslate = computed(() => !!route.meta.isTranslate);
+
 const setBreadCrumbFn = () => {
-  setBreadCrumb([
+  setBreadCrumb([{
+    label: "common.settings",
+    isTranslate: true,
+    isActionable: false,
+  }, {
+    label: "settings.directories",
+    isTranslate: true,
+    isActionable: false,
+    to: { name: "reference" },
+  },
+
     {
-      label: "Настройки",
-      isActionable: false,
-    },
-    {
-      label: "Справочники",
+      label: "settings.managementFactoriesAndWarehouses",
+      isTranslate: true,
       isActionable: false,
       to: { name: "reference" },
     },
 
     {
-      label: "Управ, комбинаты и склады",
-      isActionable: false,
-      to: { name: "reference" },
-    },
-
-    {
-      label: "Региональные управления",
+      label: "regionalDirectorates.title",
+      isTranslate: true,
       isActionable: false,
       to: { name: "reference-regional-directorates" },
-    },
-    {
-      label: "Просмотр",
+    }, {
+      label: "common.view",
+      isTranslate: true,
       isActionable: true,
-    },
-  ]);
+    }]);
 };
 
 onMounted(() => {
@@ -55,7 +62,9 @@ onMounted(() => {
 
 <template>
   <section>
-    <h1 class="m-0 font-semibold text-[32px] leading-[48px]">{{ route.meta.title }}</h1>
+    <h1 class="m-0 font-semibold text-[32px] leading-[48px]">
+      {{ isTranslate ? t(title) : title }}
+    </h1>
     <div class="flex items-start mt-6">
       <AppOverlay
         :loading="settingsStore.regionalDetailLoading"
@@ -67,7 +76,7 @@ onMounted(() => {
         <template v-if="settingsStore.regionalDetail">
           <div>
             <span class="app-card__item-title">
-              Наименование
+              {{ t("common.name2") }}
             </span>
             <p>
               {{ settingsStore.regionalDetail.name[activeLocale] }}
@@ -75,7 +84,7 @@ onMounted(() => {
           </div>
           <div>
             <span class="app-card__item-title">
-              Подчинение
+              {{ t("common.subordination") }}
             </span>
             <p>
               {{ settingsStore.regionalDetail.responsible_position }}
@@ -92,12 +101,8 @@ onMounted(() => {
           alt="edit"
           class="size-5"
         />
-        Редактировать
+        {{t("method.edit")}}
       </RouterLink>
     </div>
   </section>
 </template>
-
-<style lang="scss">
-
-</style>

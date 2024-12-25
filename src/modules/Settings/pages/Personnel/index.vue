@@ -10,7 +10,8 @@ const { setBreadCrumb } = useBreadcrumb();
 const setBreadCrumbFn = () => {
   setBreadCrumb([
     {
-      label: "Главная",
+      label: "navigation.home",
+      isTranslate: true,
       isActionable: true,
     },
   ]);
@@ -24,7 +25,3 @@ watchEffect(() => {
 <template>
   <div>логи</div>
 </template>
-
-<style lang="scss">
-
-</style>

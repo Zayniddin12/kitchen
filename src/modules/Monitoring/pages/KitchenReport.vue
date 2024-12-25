@@ -28,7 +28,7 @@ const tabItems = computed(() => {
     label: t("monitoring.attendance"),
   }, {
     value: TABS.DISHES,
-    label: "Блюда",
+    label: t("monitoring.dishes"),
   }];
 });
 
@@ -48,35 +48,35 @@ const attendanceTableColumns = computed<TableColumnType[]>(() => {
     width: 150,
     sortable: false,
   }, {
-    label: "Регионы",
+    label: t("common.regions"),
     prop: "region",
     sortable: true,
   }, {
-    label: "Посетители",
+    label: t("users.visitors"),
     prop: "visitors",
     sortable: true,
   }, {
-    label: "Кухни ЛПП",
+    label: t("kitchen.lpp"),
     prop: "kitchens",
     sortable: true,
   }, {
-    label: "Св. продажа",
+    label: t("monitoring.holySale"),
     prop: "holy_sale",
     sortable: true,
   }, {
-    label: "Буфет",
+    label: t("monitoring.buffet"),
     prop: "buffet",
     sortable: true,
   }, {
-    label: "Поликлиника",
+    label: t("monitoring.polyclinic"),
     prop: "polyclinic",
     sortable: true,
   }, {
-    label: "Профилакторий",
+    label: t("monitoring.healthResort"),
     prop: "health_resort",
     sortable: true,
   }, {
-    label: "Лагерь",
+    label: t("monitoring.camp"),
     prop: "camp",
     sortable: true,
   }];
@@ -111,35 +111,35 @@ const dishesTableColumns = computed<TableColumnType[]>(() => {
     width: 150,
     sortable: false,
   }, {
-    label: "Регионы",
+    label: t("common.regions"),
     prop: "region",
     sortable: true,
   }, {
-    label: "Всего порций",
+    label: t("kitchen.totalServings"),
     prop: "total_servings",
     sortable: true,
   }, {
-    label: "Кухни ЛПП",
+    label: t("kitchen.lpp"),
     prop: "lpp_kitchens",
     sortable: true,
   }, {
-    label: "Св. продажа",
+    label: t("monitoring.holySale"),
     prop: "holy_sale",
     sortable: true,
   }, {
-    label: "Буфет",
+    label: t("monitoring.buffet"),
     prop: "buffet",
     sortable: true,
   }, {
-    label: "Поликлиника",
+    label: t("monitoring.polyclinic"),
     prop: "polyclinic",
     sortable: true,
   }, {
-    label: "Профилакторий",
+    label: t("monitoring.healthResort"),
     prop: "health_resort",
     sortable: true,
   }, {
-    label: "Лагерь",
+    label: t("monitoring.camp"),
     prop: "camp",
     sortable: true,
   }];
@@ -169,9 +169,11 @@ const dishesTableData = computed(() => {
 
 const setBreadCrumbFn = () => {
   setBreadCrumb([{
-    label: "Мониторинг",
+    label: "monitoring.title",
+    isTranslate: true,
   }, {
-    label: "Отчет о кухне",
+    label: "monitoring.kitchenReport",
+    isTranslate: true,
     isActionable: true,
   }]);
 };
@@ -189,7 +191,7 @@ watchEffect(() => {
   <section class="kitchen-report">
     <div>
       <h1 class="font-semibold text-[32px] text-dark">
-        Отчет о кухне
+        {{ t("monitoring.kitchenReport") }}
       </h1>
       <div class="flex justify-between items-start gap-5 mt-6">
         <div class="app-tabs">
@@ -223,7 +225,9 @@ watchEffect(() => {
                   class="size-5"
                   alt="download img"
                 />
-                <span class="font-medium text-dark-gray">Скачать</span>
+                <span class="font-medium text-dark-gray">
+                  {{ t("method.download") }}
+                </span>
               </div>
             </ElButton>
             <template #dropdown>
@@ -237,7 +241,7 @@ watchEffect(() => {
                     class="w-[13px] h-[17px]"
                   />
                   <span class="text-sm text-dark-gray font-medium">
-                    PDF файл
+                    {{ t("common.file", { format: "PDF" }) }}
                   </span>
                 </ElDropdownItem>
                 <ElDropdownItem
@@ -249,7 +253,7 @@ watchEffect(() => {
                     class="w-[13px] h-[17px]"
                   />
                   <span class="text-sm text-dark-gray font-medium">
-                    Excel файл
+                    {{ t("common.file", { format: "Excel" }) }}
                   </span>
                 </ElDropdownItem>
                 <ElDropdownItem
@@ -261,7 +265,7 @@ watchEffect(() => {
                     class="w-[13px] h-[17px]"
                   />
                   <span class="text-sm text-dark-gray font-medium">
-                    1C файл
+                    {{ t("common.file", { format: "1C" }) }}
                   </span>
                 </ElDropdownItem>
               </ElDropdownMenu>
@@ -276,7 +280,9 @@ watchEffect(() => {
                 src="@/assets/images/icons/share.svg"
                 class="size-5"
               />
-              <span class="font-medium text-dark-gray">Поделиться</span>
+              <span class="font-medium text-dark-gray">
+                {{ t("method.share") }}
+              </span>
             </div>
           </ElButton>
         </div>
@@ -295,6 +301,7 @@ watchEffect(() => {
             :data="attendanceTableData"
             class="custom-element-table"
             stripe
+            :empty-text="t('common.empty')"
           >
             <ElTableColumn
               v-for="column in attendanceTableColumns"
@@ -317,12 +324,13 @@ watchEffect(() => {
         >
           <div>
             <h2 class="font-semibold text-black text-2xl">
-              Приготовленных
+              {{ t("monitoring.prepared") }}
             </h2>
             <ElTable
               :data="dishesTableData"
               stripe
               class="custom-element-table mt-4"
+              :empty-text="t('common.empty')"
             >
               <ElTableColumn
                 v-for="column in dishesTableColumns"
@@ -341,12 +349,13 @@ watchEffect(() => {
           </div>
           <div class="mt-6">
             <h2 class="font-semibold text-black text-2xl">
-              Раздаваемых
+              {{ t("monitoring.distributed") }}
             </h2>
             <ElTable
               stripe
               :data="dishesTableData"
               class="custom-element-table mt-4"
+              :empty-text="t('common.empty')"
             >
               <ElTableColumn
                 v-for="column in dishesTableColumns"

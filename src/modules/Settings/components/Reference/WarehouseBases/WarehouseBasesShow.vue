@@ -5,40 +5,48 @@
 import { useRoute } from "vue-router";
 import { useSettingsStore } from "@/modules/Settings/store";
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
-import { onMounted } from "vue";
+import { computed, onMounted } from "vue";
 import AppOverlay from "@/components/ui/app-overlay/AppOverlay.vue";
 import { activeLocale } from "@/localization";
+import { useI18n } from "vue-i18n";
+
+const { t } = useI18n();
 
 const route = useRoute();
+
+const title = computed(() => route.meta.title || "");
+
+const isTranslate = computed(() => !!route.meta.isTranslate);
 
 const settingsStore = useSettingsStore();
 
 const { setBreadCrumb } = useBreadcrumb();
 
 const setBreadCrumbFn = () => {
-  setBreadCrumb([
+  setBreadCrumb([{
+    label: "common.settings",
+    isTranslate: true,
+  }, {
+    label: "settings.directories",
+    isTranslate: true,
+    to: { name: "reference" },
+  },
+
     {
-      label: "Настройки",
-    },
-    {
-      label: "Справочники",
+      label: "settings.managementFactoriesAndWarehouses",
+      isTranslate: true,
       to: { name: "reference" },
     },
 
     {
-      label: "Управ, комбинаты и склады",
-      to: { name: "reference" },
-    },
-
-    {
-      label: "Базы складов",
+      label: "warehouseBases.title",
+      isTranslate: true,
       to: { name: "reference-warehouse-bases" },
-    },
-    {
+    }, {
       label: String(route?.meta?.breadcrumbItemTitle ?? ""),
+      isTranslate: !!route.meta.breadcrumbItemIsTranslate,
       isActionable: true,
-    },
-  ]);
+    }]);
 };
 
 onMounted(() => {
@@ -50,7 +58,9 @@ onMounted(() => {
 
 <template>
   <section>
-    <h1 class="m-0 font-semibold text-[32px] leading-[48px]">{{ route.meta.title }}</h1>
+    <h1 class="m-0 font-semibold text-[32px] leading-[48px]">
+      {{ isTranslate ? t(title) : title }}
+    </h1>
     <div class="flex items-start mt-6">
       <AppOverlay
         :loading="settingsStore.wareHouseItemLoading"
@@ -61,31 +71,31 @@ onMounted(() => {
         <template v-if="settingsStore.wareHouseItem">
           <div>
             <span class="app-card__item-title">
-              Наименование
+              {{ t("common.name2") }}
             </span>
             <p>
-              {{ settingsStore.wareHouseItem.name[activeLocale]}}
+              {{ settingsStore.wareHouseItem.name[activeLocale] }}
             </p>
           </div>
           <div>
             <span class="app-card__item-title">
-              Юр. адрес базы
+              {{ t("common.legalAddressDatabase") }}
             </span>
             <p>
-              {{ settingsStore.wareHouseItem.address}}
+              {{ settingsStore.wareHouseItem.address }}
             </p>
           </div>
           <div>
             <span class="app-card__item-title">
-              Уникальный код базы
+              {{ t("common.uniqueDatabaseCode") }}
             </span>
             <p>
-              {{ settingsStore.wareHouseItem.code}}
+              {{ settingsStore.wareHouseItem.code }}
             </p>
           </div>
           <div>
             <span class="app-card__item-title">
-             Комбинаты питания
+             {{ t("combineNutrition.title") }}
             </span>
             <p>
               -
@@ -102,12 +112,8 @@ onMounted(() => {
           alt="edit"
           class="size-5"
         />
-        Редактировать
+          {{ t("method.edit") }}
       </RouterLink>
     </div>
   </section>
 </template>
-
-<style lang="scss">
-
-</style>

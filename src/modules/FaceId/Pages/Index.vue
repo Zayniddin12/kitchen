@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import { ref, watch } from "vue";
 import { useFaceStore } from "@/modules/FaceId/store";
+import { useI18n } from "vue-i18n";
 
 
 const model = defineModel();
 const store = useFaceStore();
+const {t} = useI18n();
 
 const count = ref<string | number>("00:00");
 let timer: ReturnType<typeof setInterval> | null = null;
@@ -71,14 +73,14 @@ watch(() => count.value, (val) => {
           <h1 class="font-bold text-[45px] text-[#000D24]">{{ store.faceId.user_name }}</h1>
 
           <ul class="mt-[54px]">
-            <li class="text-[24px] text-[#8F9194]">Место работы:</li>
+            <li class="text-[24px] text-[#8F9194]">{{t("common.workPlace")}}:</li>
             <li class="text-[#000D24] text-[32px] mb-[35px]">{{ store.faceId.work_place_name }}</li>
 
-            <li class="text-[24px] text-[#8F9194]">Рацион:</li>
+            <li class="text-[24px] text-[#8F9194]">{{t("kitchen.ration2")}}:</li>
             <li class="text-[#000D24] text-[32px] mb-[35px]">{{ store.faceId.ration }}</li>
 
-            <li class="text-[24px] text-[#8F9194]">График работы:</li>
-            <li class="text-[#000D24] text-[32px]">{{ store.faceId.work_hours }} ч.</li>
+            <li class="text-[24px] text-[#8F9194]">{{t("common.workingHours")}}:</li>
+            <li class="text-[#000D24] text-[32px]">{{ store.faceId.work_hours }} {{t("time.hour")}}.</li>
           </ul>
         </div>
       </div>

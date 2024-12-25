@@ -12,15 +12,19 @@ import { ValidationType } from "@/components/ui/form/app-form/app-form.type";
 import { useSettingsStore } from "@/modules/Settings/store";
 import { ElNotification } from "element-plus";
 import AppSelect from "@/components/ui/form/app-select/AppSelect.vue";
-import { filterObjectValues } from "@/utils/helper";
+import { filterObjectValues, getStatusText } from "@/utils/helper";
 import { maska } from "maska/dist/svelte";
 import AppOverlay from "@/components/ui/app-overlay/AppOverlay.vue";
+import { useCommonStore } from "@/stores/common.store";
+import { useI18n } from "vue-i18n";
 
 const settingsStore = useSettingsStore();
+const commonStore = useCommonStore();
 
 const route = useRoute();
 const router = useRouter();
 const { confirm } = useConfirm();
+const { t } = useI18n();
 
 interface Name {
   uz: string;
@@ -61,37 +65,38 @@ const setValidation = (value: ValidationType) => {
 };
 
 const setBreadCrumbFn = () => {
-  setBreadCrumb([
+  setBreadCrumb([{
+    label: "common.settings",
+    isTranslate: true,
+  }, {
+    label: "settings.directories",
+    isTranslate: true,
+    to: { name: "reference" },
+  },
+
     {
-      label: "Настройки",
-    },
-    {
-      label: "Справочники",
+      label: "settings.managementFactoriesAndWarehouses",
+      isTranslate: true,
       to: { name: "reference" },
     },
 
     {
-      label: "Управ, комбинаты и склады",
-      to: { name: "reference" },
-    },
-
-    {
-      label: "Базы складов",
+      label: "warehouseBases.title",
+      isTranslate: true,
       to: { name: "reference-warehouse-bases" },
-    },
-    {
+    }, {
       label: String(route?.meta?.breadcrumbItemTitle ?? ""),
+      isTranslate: !!route.meta.breadcrumbItemTitle,
       isActionable: true,
-    },
-  ]);
+    }]);
 };
 
 onMounted(async () => {
   await settingsStore.fetchFoodFactories({ per_page: 100 });
-  if (route.params.id) {
+  if(route.params.id) {
     const data = await settingsStore.GET_WAREHOUSE_BASES_ITEM(route.params.id as string | number);
 
-    if (data && data.base) {
+    if(data && data.base) {
       warehouseData.value = data.base;
       status.value = data.base.status == "active";
     }
@@ -116,13 +121,13 @@ const deleteFn = () => {
 };
 
 const handleSubmit = async () => {
-  if (!v$.value) return;
+  if(!v$.value) return;
 
-  if ((await v$.value.validate())) {
+  if((await v$.value.validate())) {
 
     try {
 
-      if (route.params.id) {
+      if(route.params.id) {
         await settingsStore.UPDATE_WAREHOUSE_BASES({
           id: route.params.id as string | number,
           data: warehouseData.value,
@@ -130,16 +135,15 @@ const handleSubmit = async () => {
       } else {
         await settingsStore.CRETE_WAREHOUSE_BASES(warehouseData.value);
       }
-      ElNotification({ title: "Success", type: "success" });
-      await router.push("/reference-warehouse-bases");
+      await commonStore.successToast("/reference-warehouse-bases");
     } catch (e) {
-      ElNotification({ title: "Error", type: "error" });
+      // ElNotification({ title: "Error", type: "error" });
     }
   }
 };
 
 const switchChange2 = async (e: any): Promise<boolean> => {
-  if (status.value) {
+  if(status.value) {
     warehouseData.value.status = "active";
   } else {
     warehouseData.value.status = "inactive";
@@ -150,13 +154,18 @@ const isDisabled = computed<boolean>(() => {
   return route.name == "reference-warehouse-bases-view";
 });
 
+const title = computed(() => route.meta.title ?? "");
+
+const isTranslate = computed(() => !!route.meta.isTranslate);
+
 </script>
 
 <template>
   <div>
     <div class="flex items-center justify-between mb-[24px]">
-      <h1 class="m-0 font-semibold text-[32px] leading-[48px]">{{ route.meta.title }}</h1>
-
+      <h1 class="m-0 font-semibold text-[32px] leading-[48px]">
+        {{ isTranslate ? t(title) : title }}
+      </h1>
     </div>
 
     <div class="flex gap-6">
@@ -174,8 +183,7 @@ const isDisabled = computed<boolean>(() => {
             <div class="flex items-center gap-4">
               <app-input
                 v-model="warehouseData.name.ru"
-                label="Наименование (Рус)"
-                placeholder="Введите"
+                :label="t('common.name2Lang', {lang: t('lang.ru')})"
                 label-class="text-[#A8AAAE] font-medium text-[12px]"
                 class="w-full"
                 required
@@ -185,8 +193,7 @@ const isDisabled = computed<boolean>(() => {
 
               <app-input
                 v-model="warehouseData.name.uz"
-                label="Наименование (Ўзб)"
-                placeholder="Введите"
+                :label="t('common.name2Lang', {lang: t('lang.uz')})"
                 label-class="text-[#A8AAAE] font-medium text-[12px]"
                 class="w-full"
                 required
@@ -198,8 +205,7 @@ const isDisabled = computed<boolean>(() => {
             <div class="flex items-center gap-4">
               <app-input
                 v-model="warehouseData.address"
-                label="Юр. адрес базы"
-                placeholder="Введите"
+                :label="t('common.legalAddressDatabase')"
                 label-class="text-[#A8AAAE] font-medium text-[12px]"
                 class="w-full"
                 required
@@ -208,8 +214,7 @@ const isDisabled = computed<boolean>(() => {
               />
               <app-input
                 v-model="warehouseData.code"
-                label="Уникальный код базы"
-                placeholder="Введите"
+                :label="t('common.uniqueDatabaseCode')"
                 label-class="text-[#A8AAAE] font-medium text-[12px]"
                 class="w-full"
                 required
@@ -239,8 +244,7 @@ const isDisabled = computed<boolean>(() => {
                 item-label="name"
                 prop="factory_id"
                 trigger="change"
-                label="Комбинаты питания"
-                placeholder="Выберите"
+                :label="t('combineNutrition.title')"
                 label-class="text-[#A8AAAE] font-medium text-[12px]"
                 required
                 :disabled
@@ -250,7 +254,7 @@ const isDisabled = computed<boolean>(() => {
             <ElSwitch
               v-model="status"
               v-if="route.params.id && !route.query.type"
-              :active-text="status ? 'Активация' : 'Деактивация'"
+              :active-text="getStatusText(status)"
               class="app-switch mt-auto"
               @change="switchChange2"
               :disabled="isDisabled"
@@ -267,23 +271,20 @@ const isDisabled = computed<boolean>(() => {
             class="custom-danger-btn"
             @click="deleteFn"
           >
-            Удалить
+            {{t("method.delete")}}
           </button>
-
-
           <div class="flex items-center gap-4">
             <button
               @click="cancelFn"
               class="custom-cancel-btn"
             >
-              Отменить
+              {{t("method.cancel")}}
             </button>
-
             <button
               class="custom-apply-btn"
               @click="handleSubmit"
             >
-              {{ $route.params.id ? "Сохранить" : "Добавить" }}
+              {{t(route.params.id ? 'method.save' : 'method.add')}}
             </button>
           </div>
         </div>
@@ -296,10 +297,10 @@ const isDisabled = computed<boolean>(() => {
           class="flex items-center gap-4 bg-[#F8F9FC] py-[10px] px-[20px] rounded-[8px]"
         >
           <img
-            src="../../../../../assets/images/icons/edit.svg"
+            src="@/assets/images/icons/edit.svg"
             alt="edit"
           />
-          Редактировать
+          {{t("method.edit")}}
         </button>
       </div>
     </div>

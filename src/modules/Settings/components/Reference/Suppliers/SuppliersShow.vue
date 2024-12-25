@@ -6,9 +6,10 @@
 import { useRoute } from "vue-router";
 import { useSettingsStore } from "@/modules/Settings/store";
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
-import { onMounted } from "vue";
+import { computed, onMounted } from "vue";
 import AppOverlay from "@/components/ui/app-overlay/AppOverlay.vue";
 import { phoneFormatter } from "@/utils/helper";
+import { useI18n } from "vue-i18n";
 
 const route = useRoute();
 
@@ -16,30 +17,36 @@ const settingsStore = useSettingsStore();
 
 const { setBreadCrumb } = useBreadcrumb();
 
+const { t } = useI18n();
+
+const title = computed(() => route.meta.title ?? "");
+const isTranslate = computed(() => !!route.meta.isTranslate);
+
 const setBreadCrumbFn = () => {
-  setBreadCrumb([
+  setBreadCrumb([{
+    label: "common.settings",
+    isTranslate: true,
+  }, {
+    label: "settings.directories",
+    isTranslate: true,
+    to: { name: "reference" },
+  },
+
     {
-      label: "Настройки",
-    },
-    {
-      label: "Справочники",
+      label: "settings.suppliersAndOrganizations",
+      isTranslate: true,
       to: { name: "reference" },
     },
 
     {
-      label: "Поставщики и организации",
-      to: { name: "reference" },
-    },
-
-    {
-      label: "Поставщики",
+      label: "suppliers.title",
+      isTranslate: true,
       to: { name: "reference-suppliers" },
-    },
-    {
+    }, {
       label: String(route?.meta?.breadcrumbItemTitle ?? ""),
+      isTranslate: !!route.meta.breadcrumbItemIsTranslate,
       isActionable: true,
-    },
-  ]);
+    }]);
 };
 
 onMounted(() => {
@@ -50,7 +57,9 @@ onMounted(() => {
 </script>
 <template>
   <section>
-    <h1 class="m-0 font-semibold text-[32px] leading-[48px]">{{ route.meta.title }}</h1>
+    <h1 class="m-0 font-semibold text-[32px] leading-[48px]">
+      {{ route.meta.title }}
+    </h1>
     <div class="flex items-start mt-6">
       <AppOverlay
         :loading="settingsStore.providerDetailLoading"
@@ -62,7 +71,7 @@ onMounted(() => {
         <template v-if="settingsStore.providerDetail">
           <div>
             <span class="app-card__item-title">
-              Наименование
+              {{ t("common.name2") }}
             </span>
             <p>
               {{ settingsStore.providerDetail.name || "-" }}
@@ -70,7 +79,7 @@ onMounted(() => {
           </div>
           <div>
             <span class="app-card__item-title">
-              Юр. адрес
+              {{ t("common.legalAddress") }}
             </span>
             <p>
               {{ settingsStore.providerDetail.address || "-" }}
@@ -78,7 +87,7 @@ onMounted(() => {
           </div>
           <div>
             <span class="app-card__item-title">
-              ОКЭД
+              {{ t("common.oked") }}
             </span>
             <p>
               {{ settingsStore.providerDetail.oked || "-" }}
@@ -86,7 +95,7 @@ onMounted(() => {
           </div>
           <div>
             <span class="app-card__item-title">
-              ИНН
+              {{ t("common.tin") }}
             </span>
             <p>
               {{ settingsStore.providerDetail.tin || "-" }}
@@ -94,7 +103,7 @@ onMounted(() => {
           </div>
           <div>
             <span class="app-card__item-title">
-              Номер лицензии
+              {{ t("licence.number") }}
             </span>
             <p>
               {{ settingsStore.providerDetail.license || "-" }}
@@ -102,7 +111,7 @@ onMounted(() => {
           </div>
           <div>
             <span class="app-card__item-title">
-              Сертификат
+              {{ t("common.certificate") }}
             </span>
             <p>
               {{ settingsStore.providerDetail.sertificate || "-" }}
@@ -110,7 +119,7 @@ onMounted(() => {
           </div>
           <div>
             <span class="app-card__item-title">
-              Срок сертификата
+              {{ t("common.certificateDuration") }}
             </span>
             <p>
               {{ settingsStore.providerDetail.sert_end_date || "-" }}
@@ -118,7 +127,7 @@ onMounted(() => {
           </div>
           <div>
             <span class="app-card__item-title">
-              Руководитель
+              {{ t("common.supervisor") }}
             </span>
             <p>
               {{ settingsStore.providerDetail.director || "-" }}
@@ -126,7 +135,7 @@ onMounted(() => {
           </div>
           <div>
             <span class="app-card__item-title">
-              Контакты
+              {{ t("common.contact") }}
             </span>
             <p>
               {{ settingsStore.providerDetail.phone ? phoneFormatter(settingsStore.providerDetail.phone) : "-" }}
@@ -143,12 +152,8 @@ onMounted(() => {
           alt="edit"
           class="size-5"
         />
-        Редактировать
+        {{ t("method.edit") }}
       </RouterLink>
     </div>
   </section>
 </template>
-
-<style lang="scss">
-
-</style>

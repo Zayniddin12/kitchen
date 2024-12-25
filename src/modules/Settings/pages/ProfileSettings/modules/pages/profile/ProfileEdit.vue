@@ -68,7 +68,7 @@ const setForm = () => {
 
   avatarUrl.value = authStore.user.image || Avatar;
 
-  oldForm.value = {...form};
+  oldForm.value = { ...form };
 };
 
 const sendForm = async () => {
@@ -94,11 +94,11 @@ const sendForm = async () => {
     authStore.me();
     redirectParentPage();
     validationErrors.value = null;
-  }catch (error:any){
-    if (error?.error?.code === 422) {
-      const {validation_errors} = error.meta;
+  } catch (error: any) {
+    if(error?.error?.code === 422) {
+      const { validation_errors } = error.meta;
       validationErrors.value = validation_errors;
-      if(validation_errors.avatar){
+      if(validation_errors.avatar) {
         commonStore.errorToast(validation_errors.avatar);
       }
     }
@@ -121,8 +121,8 @@ const removeAvatar = () => {
 };
 
 const redirectParentPage = () => {
-  router.push({name: "profile-settings-profile"});
-}
+  router.push({ name: "profile-settings-profile" });
+};
 
 const cancelFn = async () => {
   if(isChangeForm.value) {
@@ -136,6 +136,8 @@ const cancelFn = async () => {
   redirectParentPage();
 };
 
+const title = computed(() => route.meta.childTitle ?? "");
+
 onMounted(() => {
   positionStore.fetchPositions({ getAll: 1 });
   settingsStore.GET_ORGANIZATION({ per_page: 100 });
@@ -148,7 +150,7 @@ watch(() => authStore.user, setForm, { immediate: true });
 <template>
   <div>
     <h5 class="text-lg text-black-text font-semibold">
-      {{ route.meta.childTitle ?? "" }}
+      {{ route.meta.childIsTranslate ? t(title) : title }}
     </h5>
     <div class="mt-4 rounded-2xl border border-[#EEEEEF] p-4 flex items-center">
       <input
@@ -172,7 +174,7 @@ watch(() => authStore.user, setForm, { immediate: true });
         class="ml-6 py-2.5 px-5"
         size="large"
       >
-        Cменить картинку
+        {{ t("common.changePicture") }}
       </ElButton>
       <ElButton
         @click="removeAvatar"
@@ -180,12 +182,12 @@ watch(() => authStore.user, setForm, { immediate: true });
         size="large"
         :disabled="!form.avatar"
       >
-        Удалить картинку
+        {{ t("common.deletePicture") }}
       </ElButton>
     </div>
     <div class="mt-6 rounded-2xl border border-[#EEEEEF] p-4">
       <h6 class="font-medium text-black-text text-lg">
-        Персональная информация
+        {{ t("common.personalInformation") }}
       </h6>
       <AppForm
         :value="form"
@@ -194,7 +196,7 @@ watch(() => authStore.user, setForm, { immediate: true });
         class="grid grid-cols-2 mt-4 gap-4 w-[81.4%]"
       >
         <AppInput
-          label="Имя"
+          :label="t('user.name')"
           :placeholder="authStore.user?.firstname || 'Имя'"
           prop="firstname"
           class="mb-0"
@@ -202,8 +204,8 @@ watch(() => authStore.user, setForm, { immediate: true });
           disabled
         />
         <AppInput
-          label="Фамилия"
-          :placeholder="authStore.user?.lastname || 'Фамилия'"
+          :label="t('user.fullName')"
+          :placeholder="authStore.user?.lastname || t('user.fullName')"
           class="mb-0"
           label-class="font-medium text-xs text-black-sub"
           disabled
@@ -212,8 +214,8 @@ watch(() => authStore.user, setForm, { immediate: true });
           v-model="form.phone"
           prop="phone"
           type="tel"
-          label="Номер телефона"
-          placeholder="Номер телефона"
+          :label="t('common.phone')"
+          :placeholder="t('common.phone')"
           required
           class="mb-0"
           label-class="font-medium text-xs text-black-sub"
@@ -224,8 +226,8 @@ watch(() => authStore.user, setForm, { immediate: true });
           :items="positionStore.positions"
           item-label="name"
           item-value="id"
-          label="Должность"
-          placeholder="Должность"
+          :label="t('common.job')"
+          :placeholder="t('common.job')"
           class="mb-0"
           label-class="font-medium text-xs text-black-sub"
           disabled
@@ -236,8 +238,8 @@ watch(() => authStore.user, setForm, { immediate: true });
           item-value="id"
           item-label="name"
           :items="settingsStore.organization?.organizations ?? []"
-          label="Название организации"
-          placeholder="Название организации"
+          :label="t('organization.name')"
+          :placeholder="t('organization.name')"
           class="mb-0"
           label-class="font-medium text-xs text-black-sub"
           disabled
@@ -247,8 +249,8 @@ watch(() => authStore.user, setForm, { immediate: true });
           :items="languages"
           item-value="value"
           item-label="title"
-          label="Язык интерфейса"
-          placeholder="Язык интерфейса"
+          :label="t('common.lang')"
+          :placeholder="t('common.lang')"
           @change="value => changeLocale(value as LOCALES)"
           class="mb-0"
           label-class="font-medium text-xs text-black-sub"
@@ -261,7 +263,7 @@ watch(() => authStore.user, setForm, { immediate: true });
         size="large"
         @click="cancelFn"
       >
-        Отменить
+        {{ t("method.cancel") }}
       </ElButton>
       <ElButton
         :loading="authStore.updateUserLoading"
@@ -271,12 +273,8 @@ watch(() => authStore.user, setForm, { immediate: true });
         size="large"
         :disabled="!isChangeForm"
       >
-        Сохранить
+        {{ t("method.save") }}
       </ElButton>
     </div>
   </div>
 </template>
-
-<style lang="scss">
-
-</style>

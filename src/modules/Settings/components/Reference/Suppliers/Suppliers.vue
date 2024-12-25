@@ -1,17 +1,24 @@
 <script
-    setup
-    lang="ts"
+  setup
+  lang="ts"
 >
-import { onMounted, ref } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { Search } from "@element-plus/icons-vue";
 import { useRoute, useRouter } from "vue-router";
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 import { useSettingsStore } from "@/modules/Settings/store";
 import { ElNotification } from "element-plus";
+import { useI18n } from "vue-i18n";
+import AppPagination from "@/components/ui/app-pagination/AppPagination.vue";
 
 const store = useSettingsStore();
 const route = useRoute();
 const router = useRouter();
+
+const { t } = useI18n();
+
+const title = computed(() => route.meta.title ?? "");
+const isTranslate = computed(() => !!route.meta.isTranslate);
 
 interface ParamsInterface {
   search: string | null;
@@ -22,7 +29,7 @@ interface ParamsInterface {
 const params = ref<ParamsInterface>({
   search: null,
   per_page: 10,
-  page: 1
+  page: 1,
 });
 const loading = ref<boolean>(false);
 let debounceTimeout: ReturnType<typeof setTimeout>;
@@ -30,25 +37,26 @@ let debounceTimeout: ReturnType<typeof setTimeout>;
 const { setBreadCrumb } = useBreadcrumb();
 
 const setBreadCrumbFn = () => {
-  setBreadCrumb([
+  setBreadCrumb([{
+    label: "common.settings",
+    isTranslate: true,
+  }, {
+    label: "settings.directories",
+    isTranslate: true,
+    to: { name: "reference" },
+  },
+
     {
-      label: "Настройки"
-    },
-    {
-      label: "Справочники",
-      to: { name: "reference" }
+      label: "settings.suppliersAndOrganizations",
+      isTranslate: true,
+      to: { name: "reference" },
     },
 
     {
-      label: "Поставщики и организации",
-      to: { name: "reference" }
-    },
-
-    {
-      label: "Поставщики",
-      isActionable: true
-    }
-  ]);
+      label: title.value,
+      isTranslate: isTranslate.value,
+      isActionable: true,
+    }]);
 };
 
 onMounted(() => {
@@ -61,11 +69,9 @@ const refresh = async () => {
   loading.value = true;
   try {
     await store.GET_PROVIDERS(params.value);
-  } catch (e: any) {
-    ElNotification({ title: e, type: "error" });
+  } finally {
     loading.value = false;
   }
-  loading.value = false;
 };
 
 const handleSearch = (): void => {
@@ -86,7 +92,11 @@ const changePagination = (event: any) => {
 };
 
 const tableCurrentChange = (value: Record<string, any>) => {
-  router.push({ name: "reference-suppliers-view", query: { type: "view" }, params: { id: value.id } });
+  router.push({
+    name: "reference-suppliers-view",
+    query: { type: "view" },
+    params: { id: value.id },
+  });
 };
 
 </script>
@@ -94,24 +104,24 @@ const tableCurrentChange = (value: Record<string, any>) => {
 <template>
   <div>
     <div class="flex items-center justify-between">
-      <h1 class="m-0 font-semibold text-[32px] leading-[48px]">{{ route.meta.title }}</h1>
+      <h1 class="m-0 font-semibold text-[32px] leading-[48px]">{{ isTranslate ? t(title) : title }}</h1>
 
       <div class="flex items-center">
         <el-input
-            v-model="params.search"
-            size="large"
-            placeholder="Поиск"
-            :prefix-icon="Search"
-            class="w-[300px] mr-[16px]"
-            @input="handleSearch"
+          v-model="params.search"
+          size="large"
+          :placeholder="t('form.search')"
+          :prefix-icon="Search"
+          class="w-[300px] mr-[16px]"
+          @input="handleSearch"
         />
 
         <button
-            @click="router.push({name: 'reference-suppliers-add'})"
-            class="flex items-center justify-center gap-3 custom-apply-btn"
+          @click="router.push({name: 'reference-suppliers-add'})"
+          class="flex items-center justify-center gap-3 custom-apply-btn"
         >
           <span
-              :style="{
+            :style="{
                   maskImage: 'url(/icons/plusIcon.svg)',
                   backgroundColor: '#fff',
                   color: '#fff',
@@ -122,101 +132,87 @@ const tableCurrentChange = (value: Record<string, any>) => {
                   maskRepeat: 'no-repeat'
                    }"
           ></span>
-          Добавить
-        </button>
-
-        <button>
-
+          {{ t("method.add") }}
         </button>
       </div>
     </div>
 
-    <div class="mt-[24px]">
+    <div class="mt-6">
       <el-table
-          :data="store.providers.providers"
-          stripe
-          class="custom-element-table"
-          v-loading="loading"
-          :empty-text="'Нет доступных данных'"
-          @current-change="tableCurrentChange"
-          highlight-current-row
+        :data="store.providers.providers"
+        stripe
+        class="custom-element-table"
+        v-loading="loading"
+        :empty-text="t('common.empty')"
+        @current-change="tableCurrentChange"
+        highlight-current-row
       >
         <el-table-column
-            prop="idx"
-            label="№"
-            width="80"
+          prop="idx"
+          label="№"
+          width="80"
         >
           <template
-              #default="{$index}"
-              v-if="store.rationList.rations"
+            #default="{$index}"
+            v-if="store.rationList.rations"
           >
             {{ params.page > 1 ? store.providers.paginator.per_page * (params.page - 1) + $index + 1 : $index + 1 }}
           </template>
         </el-table-column>
         <el-table-column
-            prop="name"
-            label="Наименование"
-            sortable
-            width="400"
+          prop="name"
+          :label="t('common.name2')"
+          sortable
+          width="400"
         />
         <el-table-column
-            prop="tin"
-            label="ИНН"
-            sortable
+          prop="tin"
+          :label="t('common.tin')"
+          sortable
         />
         <el-table-column
-            prop="address"
-            label="Юр. адрес"
-            sortable
+          prop="address"
+          :label="t('common.legalAddress')"
+          sortable
         />
         <el-table-column
-            prop="oked"
-            label="ОКЭД"
-            sortable
+          prop="oked"
+          :label="t('common.oked')"
+          sortable
         />
         <el-table-column
-            label="Действие"
-            align="right"
+          :label="t('common.action')"
+          align="right"
         >
           <template #default="scope">
             <button
-                class="action-btn mr-[8px]"
-                @click.stop="router.push({name: 'reference-suppliers-view', query: {type: 'view'}, params: {id: scope.row.id}})"
+              class="action-btn mr-[8px]"
+              @click.stop="router.push({name: 'reference-suppliers-view', query: {type: 'view'}, params: {id: scope.row.id}})"
             >
               <img
-                  src="@/assets/images/eye.svg"
-                  alt="eye"
+                src="@/assets/images/eye.svg"
+                alt="eye"
               />
             </button>
 
             <button
-                class="action-btn"
-                @click.stop="router.push({name: 'reference-suppliers-edit', params: {id: scope.row.id}})"
+              class="action-btn"
+              @click.stop="router.push({name: 'reference-suppliers-edit', params: {id: scope.row.id}})"
             >
               <img
-                  src="@/assets/images/icons/edit.svg"
-                  alt="eye"
+                src="@/assets/images/icons/edit.svg"
+                alt="eye"
               />
             </button>
           </template>
         </el-table-column>
       </el-table>
-
-      <div class="mt-[24px] flex items-center justify-between">
-        <div class="text-cool-gray text-[14px]">
-          Показано 1–10 из {{ store.providers.paginator.total_count }} результатов
-        </div>
-
-        <el-pagination
-            v-model:current-page="params.page"
-            :page-size="params.per_page"
-            class="float-right"
-            background
-            layout="prev, pager, next"
-            :total="store.providers.paginator.total_count"
-            @change="changePagination"
-        />
-      </div>
+      <AppPagination
+        v-model="params.page"
+        :pagination="store.providers.paginator"
+        class="mt-6"
+        @current-change="changePagination"
+      />
     </div>
   </div>
 </template>

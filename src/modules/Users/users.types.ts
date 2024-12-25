@@ -37,6 +37,11 @@ export interface UserShowType extends UserType {
 	responsible_type: string,
 	role_id: number | null,
 	role_title?: string | null,
+	food_factory_id?: number | null,
+	management_id?: number | null,
+	base_id?: number | null,
+	base_warehouse_id?: number | null,
+	kitchen_warehouse_id?: number| null
 }
 
 export interface UsersType {

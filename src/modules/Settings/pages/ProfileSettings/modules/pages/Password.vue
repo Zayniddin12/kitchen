@@ -66,7 +66,7 @@ const sendForm = async () => {
   try {
     await authStore.updatePassword({
       old_password: form.old_password,
-      new_password: form.new_password
+      new_password: form.new_password,
     });
     validationErrors.value = {};
     redirectParentPage();
@@ -98,7 +98,7 @@ onMounted(() => {
 <template>
   <div>
     <h5 class="text-lg text-black-text font-semibold">
-      {{ route.meta.childTitle ?? "" }}
+      {{ route.meta.childIsTranslate ? t(route.meta.childTitle) : route.meta.childTitle ?? "" }}
     </h5>
     <AppForm
       :value="form"
@@ -110,8 +110,7 @@ onMounted(() => {
         v-model="form.old_password"
         prop="old_password"
         type="password"
-        label="Старый пароль"
-        placeholder="Введите"
+        :label="t('common.oldPassword')"
         label-class="font-medium text-xs text-black-sub"
         class="mb-0"
         required
@@ -121,8 +120,7 @@ onMounted(() => {
         v-model="form.new_password"
         prop="new_password"
         type="password"
-        label="Новый пароль"
-        placeholder="Введите"
+        :label="t('auth.newPassword')"
         label-class="font-medium text-xs text-black-sub"
         class="mb-0"
         required
@@ -131,8 +129,7 @@ onMounted(() => {
         v-model="form.new_password_confirm"
         prop="new_password_confirm"
         type="password"
-        label="Повторите новый пароль"
-        placeholder="Введите"
+        :label="t('auth.repeatNewPassword')"
         label-class="font-medium text-xs text-black-sub"
         class="mb-0"
         required
@@ -144,7 +141,7 @@ onMounted(() => {
         class="py-2.5 px-5 !bg-[#E2E6F3] !border-none !text-dark-gray"
         size="large"
       >
-        Отменить
+        {{t("method.cancel")}}
       </ElButton>
       <ElButton
         @click="sendForm"
@@ -153,12 +150,8 @@ onMounted(() => {
         size="large"
         :disabled="!isChangeForm"
       >
-        Сохранить
+        {{t("method.save")}}
       </ElButton>
     </div>
   </div>
 </template>
-
-<style lang="scss">
-
-</style>
