@@ -21,8 +21,7 @@ const { setBreadCrumb } = useBreadcrumb();
 const { t } = useI18n();
 
 const params = ref({
-  page: 1,
-  per_page: 10,
+  per_page: 100,
 });
 
 const setBreadCrumbFn = () => {
@@ -172,23 +171,35 @@ const changePage = () => {
           align="center"
         />
         <ElTableColumn
-          prop="price"
+          prop="net_price"
           :label="t('common.price')"
           sortable
           align="center"
-        />
+        >
+          <template #default="{row}">
+            {{ row.net_price && row.net_price.toLocaleString() }} {{ t("currency.sum") }}
+          </template>
+        </ElTableColumn>
         <ElTableColumn
-          prop="nd_price"
+          prop="vat"
           :label="t('common.ndc')"
           sortable
           align="center"
-        />
+        >
+          <template #default="{row}">
+            {{ row.vat && row.vat.toLocaleString() }} {{ t("currency.sum") }}
+          </template>
+        </ElTableColumn>
         <ElTableColumn
-          prop="sum"
+          prop="price"
           :label="t('common.sum')"
           sortable
           align="center"
-        />
+        >
+          <template #default="{row}">
+            {{ row.price && row.price.toLocaleString() }} {{ t("currency.sum") }}
+          </template>
+        </ElTableColumn>
       </ElTable>
       <AppPagination
         v-if="settingsStore.rationList"
