@@ -430,7 +430,9 @@
   "monitoring": {
     "title": "Мониторинг",
     "remainingGoods": "Остатка товаров",
-    "kitchenReport": "Отчет о кухне"
+    "kitchenReport": "Отчет о кухне",
+    "attendance": "Посещаемость",
+    "dishes": "Блюда"
   },
   "warehouseBases": {
     "title": "Базы складов"

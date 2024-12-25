@@ -7,13 +7,15 @@ import { TableColumnType } from "@/types/common.type";
 import { computed, ref, watch, watchEffect } from "vue";
 import { useRoute } from "vue-router";
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
+import { useI18n } from "vue-i18n";
 
 const route = useRoute();
 const { setBreadCrumb } = useBreadcrumb();
 
+const { t } = useI18n();
+
 enum TABS {
-  ATTENDANCE = 1,
-  DISHES
+  ATTENDANCE = 1, DISHES
 }
 
 const defaultTab = TABS.ATTENDANCE;
@@ -21,16 +23,13 @@ const defaultTab = TABS.ATTENDANCE;
 const activeTab = ref<number | null>(null);
 
 const tabItems = computed(() => {
-  return [
-    {
-      value: TABS.ATTENDANCE,
-      label: "Посещаемость",
-    },
-    {
-      value: TABS.DISHES,
-      label: "Блюда",
-    },
-  ];
+  return [{
+    value: TABS.ATTENDANCE,
+    label: t("monitoring.attendance"),
+  }, {
+    value: TABS.DISHES,
+    label: "Блюда",
+  }];
 });
 
 const getActiveTab = () => {
@@ -43,54 +42,44 @@ const getActiveTab = () => {
 
 
 const attendanceTableColumns = computed<TableColumnType[]>(() => {
-  return [
-    {
-      label: "№",
-      prop: "num",
-      width: 150,
-      sortable: false,
-    },
-    {
-      label: "Регионы",
-      prop: "region",
-      sortable: true,
-    },
-    {
-      label: "Посетители",
-      prop: "visitors",
-      sortable: true,
-    },
-    {
-      label: "Кухни ЛПП",
-      prop: "kitchens",
-      sortable: true,
-    },
-    {
-      label: "Св. продажа",
-      prop: "holy_sale",
-      sortable: true,
-    },
-    {
-      label: "Буфет",
-      prop: "buffet",
-      sortable: true,
-    },
-    {
-      label: "Поликлиника",
-      prop: "polyclinic",
-      sortable: true,
-    },
-    {
-      label: "Профилакторий",
-      prop: "health_resort",
-      sortable: true,
-    },
-    {
-      label: "Лагерь",
-      prop: "camp",
-      sortable: true,
-    },
-  ];
+  return [{
+    label: "№",
+    prop: "num",
+    width: 150,
+    sortable: false,
+  }, {
+    label: "Регионы",
+    prop: "region",
+    sortable: true,
+  }, {
+    label: "Посетители",
+    prop: "visitors",
+    sortable: true,
+  }, {
+    label: "Кухни ЛПП",
+    prop: "kitchens",
+    sortable: true,
+  }, {
+    label: "Св. продажа",
+    prop: "holy_sale",
+    sortable: true,
+  }, {
+    label: "Буфет",
+    prop: "buffet",
+    sortable: true,
+  }, {
+    label: "Поликлиника",
+    prop: "polyclinic",
+    sortable: true,
+  }, {
+    label: "Профилакторий",
+    prop: "health_resort",
+    sortable: true,
+  }, {
+    label: "Лагерь",
+    prop: "camp",
+    sortable: true,
+  }];
 });
 
 const attendanceTableData = computed(() => {
@@ -116,54 +105,44 @@ const attendanceTableData = computed(() => {
 });
 
 const dishesTableColumns = computed<TableColumnType[]>(() => {
-  return [
-    {
-      label: "№",
-      prop: "num",
-      width: 150,
-      sortable: false,
-    },
-    {
-      label: "Регионы",
-      prop: "region",
-      sortable: true,
-    },
-    {
-      label: "Всего порций",
-      prop: "total_servings",
-      sortable: true,
-    },
-    {
-      label: "Кухни ЛПП",
-      prop: "lpp_kitchens",
-      sortable: true,
-    },
-    {
-      label: "Св. продажа",
-      prop: "holy_sale",
-      sortable: true,
-    },
-    {
-      label: "Буфет",
-      prop: "buffet",
-      sortable: true,
-    },
-    {
-      label: "Поликлиника",
-      prop: "polyclinic",
-      sortable: true,
-    },
-    {
-      label: "Профилакторий",
-      prop: "health_resort",
-      sortable: true,
-    },
-    {
-      label: "Лагерь",
-      prop: "camp",
-      sortable: true,
-    },
-  ];
+  return [{
+    label: "№",
+    prop: "num",
+    width: 150,
+    sortable: false,
+  }, {
+    label: "Регионы",
+    prop: "region",
+    sortable: true,
+  }, {
+    label: "Всего порций",
+    prop: "total_servings",
+    sortable: true,
+  }, {
+    label: "Кухни ЛПП",
+    prop: "lpp_kitchens",
+    sortable: true,
+  }, {
+    label: "Св. продажа",
+    prop: "holy_sale",
+    sortable: true,
+  }, {
+    label: "Буфет",
+    prop: "buffet",
+    sortable: true,
+  }, {
+    label: "Поликлиника",
+    prop: "polyclinic",
+    sortable: true,
+  }, {
+    label: "Профилакторий",
+    prop: "health_resort",
+    sortable: true,
+  }, {
+    label: "Лагерь",
+    prop: "camp",
+    sortable: true,
+  }];
 });
 
 const dishesTableData = computed(() => {
@@ -189,15 +168,12 @@ const dishesTableData = computed(() => {
 });
 
 const setBreadCrumbFn = () => {
-  setBreadCrumb([
-    {
-      label: "Мониторинг",
-    },
-    {
-      label: "Отчет о кухне",
-      isActionable: true,
-    },
-  ]);
+  setBreadCrumb([{
+    label: "Мониторинг",
+  }, {
+    label: "Отчет о кухне",
+    isActionable: true,
+  }]);
 };
 
 watch(() => route.query, () => {
@@ -368,7 +344,7 @@ watchEffect(() => {
               Раздаваемых
             </h2>
             <ElTable
-                stripe
+              stripe
               :data="dishesTableData"
               class="custom-element-table mt-4"
             >
