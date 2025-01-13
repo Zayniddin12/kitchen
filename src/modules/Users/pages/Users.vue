@@ -203,6 +203,7 @@ watch(() => route.name, () => {
     </div>
     <ElTable
       v-loading="loading"
+      :empty-text="'Нет до   ступных данных'"
       :data="data?.users ?? []"
       class="custom-element-table mt-6"
       stripe

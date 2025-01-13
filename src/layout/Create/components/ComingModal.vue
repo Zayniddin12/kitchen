@@ -487,6 +487,8 @@ watch(providerCreateModal, newMProviderModal => {
 });
 
 
+const activeProduct = ref(1);
+
 </script>
 
 <template>
@@ -503,10 +505,10 @@ watch(providerCreateModal, newMProviderModal => {
         {{ t(activeComingModal ? "document.coming.createComing" : "document.coming.createConsumption") }}
       </div>
     </template>
-    <div class="flex gap-x-6 flex-wrap">
+    <div class="flex gap-x-6 flex-wrap mb-4">
       <div class="w-[60%] flex flex-col gap-y-10">
         <div
-          :class="['border-[#E2E6F3] bg-[#fff] border rounded-[15px]', `${activeComingModal ? 'min-h-[1258.63px]' : 'min-h-[1753.56px]'}`]"
+          :class="['border-[#E2E6F3] bg-[#fff] border rounded-[15px] grow', `${activeComingModal ? 'min-h-[1258.63px]' : 'min-h-[1753.56px]'}`]"
         >
           <div class="px-[72px] pb-[150px]">
             <header class="flex items-center justify-center my-[24px] mb-6">
@@ -757,6 +759,296 @@ watch(providerCreateModal, newMProviderModal => {
             </template>
           </div>
         </div>
+
+      </div>
+      <div :class="['min-w-[403px] w-[calc(40%-24px)] flex flex-col', `${activeComingModal ? 'gap-y-10' : 'gap-y-6'}`]">
+        <AppForm
+          :value="form"
+          @validation="setValidation"
+          @submit.prevent
+          :validation-errors="validationErrors?.Document ?? null"
+          :class="[{'min-h-[830px]': activeComingModal}]"
+        >
+          <AppInput
+            :placeholder="t('document.coming.incomingConsignment')"
+            :label="t('document.title')"
+            label-class="text-[#A8AAAE] text-xs font-medium"
+            disabled
+          />
+          <AppDatePicker
+            :placeholder="date"
+            :label="t('document.creationDate')"
+            label-class="text-[#A8AAAE] text-xs font-medium"
+            disabled
+          />
+          <AppInput
+            :placeholder="t('common.automatically')"
+            :label="t('document.invoiceNumberSystem')"
+            label-class="text-[#A8AAAE] text-xs font-medium"
+            disabled
+          />
+          <AppInput
+            v-model="form.number"
+            prop="number"
+            :placeholder="t('document.invoiceNumber')"
+            :label="t('document.invoiceNumber')"
+            label-class="text-[#A8AAAE] text-xs font-medium"
+            required
+            :max="20"
+            :maxlength="20"
+          />
+          <AppDatePicker
+            v-model="form.date"
+            prop="date"
+            :placeholder="t('document.invoiceDate')"
+            :label="t('document.invoiceDate')"
+            label-class="text-[#A8AAAE] text-xs font-medium"
+            required
+          />
+          <AppSelect
+            v-model="form.from"
+            prop="from"
+            :placeholder="t('document.whom.from')"
+            :label="t('document.whom.from')"
+            :items="settingsStore.respondents"
+            :loading="settingsStore.respondentsLoading"
+            label-class="text-[#A8AAAE] text-xs font-medium"
+            @change="(value) => respondentChange(value as string, 'from')"
+            required
+            :disabled="authStore.disabledUserWorkplace && !activeComingModal"
+            trigger="blur"
+          >
+            <template v-if="activeComingModal">
+              <ElOption
+                v-for="item in settingsStore.respondents"
+                :key="`${item.id}_${item.model_type}`"
+                :value="`${item.id}_${item.model_type}`"
+                :label="item.name"
+              />
+            </template>
+            <template v-else-if="authStore.user">
+              <ElOption
+                v-for="item in authStore.user.workplaces"
+                :key="`${item.workplace_type}_${item.workplace_type}`"
+                :value="`${item.workplace_id}_${item.workplace_type}`"
+                :label="item.workplace"
+              />
+            </template>
+            <template
+              v-if="activeComingModal"
+              #footer
+            >
+              <button
+                @click.stop="providerCreateModal = true"
+                class="flex items-center justify-center gap-3 border-[1px] border-[#2E90FA] rounded-[8px] w-full text-[#2E90FA] text-sm font-medium py-[10px]"
+              >
+                  <span
+                    :style="{
+                      maskImage: 'url(/icons/plusIcon.svg)',
+                      backgroundColor: '#2E90FA',
+                      color: '#2E90FA',
+                      width: '20px',
+                      height: '20px',
+                      maskSize: '20px',
+                      maskPosition: 'center',
+                      maskRepeat: 'no-repeat',
+                    }"
+                  ></span>
+                {{ t("method.add") }}
+              </button>
+            </template>
+          </AppSelect>
+          <AppSelect
+            v-model="form.to"
+            prop="to"
+            :placeholder="t('document.whom.to')"
+            :label="t('document.whom.to')"
+            :loading="authStore.userLoading"
+            label-class="text-[#A8AAAE] text-xs font-medium"
+            @change="(value) => respondentChange(value as string, 'to')"
+            required
+            trigger="blur"
+            :disabled="authStore.disabledUserWorkplace && activeComingModal"
+          >
+            <template v-if="activeComingModal">
+              <ElOption
+                v-for="item in settingsStore.respondents"
+                :key="`${item.id}_${item.model_type}`"
+                :value="`${item.id}_${item.model_type}`"
+                :label="item.name"
+              />
+            </template>
+            <template v-else>
+              <ElOption
+                v-for="item in authStore.user.workplaces"
+                :key="`${item.workplace_type}_${item.workplace_type}`"
+                :value="`${item.workplace_id}_${item.workplace_type}`"
+                :label="item.workplace"
+              />
+            </template>
+            <!--            <template #footer>-->
+            <!--              <button-->
+            <!--                @click.stop="providerCreateModal = true"-->
+            <!--                class="flex items-center justify-center gap-3 border-[1px] border-[#2E90FA] rounded-[8px] w-full text-[#2E90FA] text-sm font-medium py-[10px]"-->
+            <!--              >-->
+            <!--                  <span-->
+            <!--                    :style="{-->
+            <!--                      maskImage: 'url(/icons/plusIcon.svg)',-->
+            <!--                      backgroundColor: '#2E90FA',-->
+            <!--                      color: '#2E90FA',-->
+            <!--                      width: '20px',-->
+            <!--                      height: '20px',-->
+            <!--                      maskSize: '20px',-->
+            <!--                      maskPosition: 'center',-->
+            <!--                      maskRepeat: 'no-repeat',-->
+            <!--                    }"-->
+            <!--                  ></span>-->
+            <!--                Добавить-->
+            <!--              </button>-->
+            <!--            </template>-->
+          </AppSelect>
+          <AppInput
+            v-model="form.through_whom"
+            prop="through_whom"
+            :placeholder="t('document.whom.through')"
+            :label="t('document.whom.through')"
+            label-class="text-[#A8AAAE] text-xs font-medium"
+          />
+          <AppInput
+            v-model="form.basis"
+            prop="basis"
+            :placeholder="t('document.base')"
+            :label="t('document.base')"
+            label-class="text-[#A8AAAE] text-xs font-medium"
+            required
+          />
+          <AppInput
+            v-model="form.shipping_method"
+            prop="shipping_method"
+            :placeholder="t('document.shippingMethod')"
+            :label="t('document.shippingMethod')"
+            label-class="text-[#A8AAAE] text-xs font-medium"
+            required
+          />
+          <div class="bg-[#FFFFFF] rounded-[8px] p-[12px]">
+            <el-collapse class="border-none" v-model="activeProduct" accordion>
+              <el-collapse-item class="border-none relative" v-for="(product, index) in form.products"
+                                :key="index + 1" :name="index + 1">
+                <template #title>
+                  <div
+                    class="flex items-center justify-between mb-[16px] text-sm font-medium"
+                  >
+                    <strong class="text-[#4F5662]">
+                      <template v-if="form.products && form.products.length > 1">
+                        {{ index + 1 }}.
+                      </template>
+                      {{ t("document.tableReceivedProducts") }}
+                    </strong>
+                    <button
+                      v-if="form.products && form.products.length > 1"
+                      @click.stop="deleteProduct(index)"
+                      class="flex items-center gap-x-1 absolute right-0"
+                    >
+                      <svg
+                        :data-src="deleteIcon"
+                        class="size-5"
+                      />
+                      <!--                      <span class="text-[#EA5455]">-->
+                      <!--                    {{ t("method.delete") }}-->
+                      <!--                  </span>-->
+                    </button>
+                  </div>
+                </template>
+                <div>
+                  <AppSelect
+                    v-model="product.category_id"
+                    :prop="`products[${index}].category_id`"
+                    :items="settingsStore.typeProduct.product_categories"
+                    item-value="id"
+                    item-label="name"
+                    :label="t('product.type')"
+                    :placeholder="t('product.type')"
+                    label-class="text-[#A8AAAE] text-xs font-medium"
+                    @change="fetchVidProductsList(product)"
+                    required
+                    trigger="blur"
+                  />
+                  <AppSelect
+                    v-model="product.product_type_id"
+                    :prop="`products[${index}].product_type_id`"
+                    :items="vidProducts.get(product.category_id as number)"
+                    item-label="name"
+                    item-value="id"
+                    :label="t('product.view')"
+                    :placeholder="t('product.view')"
+                    label-class="text-[#A8AAAE] text-xs font-medium"
+                    required
+                    :disabled="!product.category_id"
+                    @change="changeProduct(product)"
+                  />
+                  <div class="grid grid-cols-2 gap-x-4">
+                    <AppInput
+                      v-model="product.quantity"
+                      custom-type="number"
+                      :prop="`products[${index}].quantity`"
+                      :placeholder="t('common.quantity')"
+                      :label="t('common.quantity')"
+                      label-class="text-[#A8AAAE] text-xs font-medium"
+                      required
+                    />
+                    <AppSelect
+                      v-model="product.unit_id"
+                      :prop="`products[${index}].unit_id`"
+                      :items="settingsStore.units.units ?? []"
+                      item-label="name"
+                      item-value="id"
+                      :placeholder="t('common.measurement')"
+                      :label="t('common.measurement')"
+                      label-class="text-[#A8AAAE] text-xs font-medium"
+                      required
+                      disabled
+                    />
+                  </div>
+                  <AppInput
+                    v-model.number="product.price"
+                    type="number"
+                    :prop="`products[${index}].price`"
+                    :placeholder="t('common.price')"
+                    :label="t('common.price')"
+                    label-class="text-[#A8AAAE] text-xs font-medium"
+                    required
+                  />
+                </div>
+              </el-collapse-item>
+            </el-collapse>
+
+            <button
+              @click.stop="createProduct"
+              class="mt-6 flex items-center justify-center gap-3 border-[1px] border-[#2E90FA] rounded-[8px] w-full text-[#2E90FA] text-sm font-medium py-[10px]"
+            >
+                <span
+                  :style="{
+                    maskImage: 'url(/icons/plusIcon.svg)',
+                    backgroundColor: '#2E90FA',
+                    color: '#2E90FA',
+                    width: '20px',
+                    height: '20px',
+                    maskSize: '20px',
+                    maskPosition: 'center',
+                    maskRepeat: 'no-repeat',
+                  }"
+                ></span>
+              {{ t("method.add") }}
+            </button>
+          </div>
+
+        </AppForm>
+
+      </div>
+    </div>
+
+    <div class="flex gap-x-6 flex-wrap">
+      <div class="w-[60%] flex flex-col gap-y-10">
         <div
           v-if="activeComingModal"
           class="border-[#E2E6F3] bg-[#fff] border rounded-[15px] min-h-[2249.5px]"
@@ -960,283 +1252,8 @@ watch(providerCreateModal, newMProviderModal => {
           </div>
         </div>
       </div>
-      <div :class="['min-w-[403px] w-[calc(40%-24px)] flex flex-col', `${activeComingModal ? 'gap-y-10' : 'gap-y-6'}`]">
-        <AppForm
-          :value="form"
-          @validation="setValidation"
-          @submit.prevent
-          :validation-errors="validationErrors?.Document ?? null"
-          :class="[{'min-h-[830px]': activeComingModal}]"
-        >
-          <AppInput
-            :placeholder="t('document.coming.incomingConsignment')"
-            :label="t('document.title')"
-            label-class="text-[#A8AAAE] text-xs font-medium"
-            disabled
-          />
-          <AppDatePicker
-            :placeholder="date"
-            :label="t('document.creationDate')"
-            label-class="text-[#A8AAAE] text-xs font-medium"
-            disabled
-          />
-          <AppInput
-            :placeholder="t('common.automatically')"
-            :label="t('document.invoiceNumberSystem')"
-            label-class="text-[#A8AAAE] text-xs font-medium"
-            disabled
-          />
-          <AppInput
-            v-model="form.number"
-            prop="number"
-            :placeholder="t('document.invoiceNumber')"
-            :label="t('document.invoiceNumber')"
-            label-class="text-[#A8AAAE] text-xs font-medium"
-            required
-            :max="20"
-            :maxlength="20"
-          />
-          <AppDatePicker
-            v-model="form.date"
-            prop="date"
-            :placeholder="t('document.invoiceDate')"
-            :label="t('document.invoiceDate')"
-            label-class="text-[#A8AAAE] text-xs font-medium"
-            required
-          />
-          <AppSelect
-            v-model="form.from"
-            prop="from"
-            :placeholder="t('document.whom.from')"
-            :label="t('document.whom.from')"
-            :items="settingsStore.respondents"
-            :loading="settingsStore.respondentsLoading"
-            label-class="text-[#A8AAAE] text-xs font-medium"
-            @change="(value) => respondentChange(value as string, 'from')"
-            required
-            :disabled="authStore.disabledUserWorkplace && !activeComingModal"
-            trigger="blur"
-          >
-            <template v-if="activeComingModal">
-              <ElOption
-                v-for="item in settingsStore.respondents"
-                :key="`${item.id}_${item.model_type}`"
-                :value="`${item.id}_${item.model_type}`"
-                :label="item.name"
-              />
-            </template>
-            <template v-else-if="authStore.user">
-              <ElOption
-                v-for="item in authStore.user.workplaces"
-                :key="`${item.workplace_type}_${item.workplace_type}`"
-                :value="`${item.workplace_id}_${item.workplace_type}`"
-                :label="item.workplace"
-              />
-            </template>
-            <template
-              v-if="activeComingModal"
-              #footer
-            >
-              <button
-                @click.stop="providerCreateModal = true"
-                class="flex items-center justify-center gap-3 border-[1px] border-[#2E90FA] rounded-[8px] w-full text-[#2E90FA] text-sm font-medium py-[10px]"
-              >
-                  <span
-                    :style="{
-                      maskImage: 'url(/icons/plusIcon.svg)',
-                      backgroundColor: '#2E90FA',
-                      color: '#2E90FA',
-                      width: '20px',
-                      height: '20px',
-                      maskSize: '20px',
-                      maskPosition: 'center',
-                      maskRepeat: 'no-repeat',
-                    }"
-                  ></span>
-                {{ t("method.add") }}
-              </button>
-            </template>
-          </AppSelect>
-          <AppSelect
-            v-model="form.to"
-            prop="to"
-            :placeholder="t('document.whom.to')"
-            :label="t('document.whom.to')"
-            :loading="authStore.userLoading"
-            label-class="text-[#A8AAAE] text-xs font-medium"
-            @change="(value) => respondentChange(value as string, 'to')"
-            required
-            trigger="blur"
-            :disabled="authStore.disabledUserWorkplace && activeComingModal"
-          >
-            <template v-if="activeComingModal">
-              <ElOption
-                v-for="item in settingsStore.respondents"
-                :key="`${item.id}_${item.model_type}`"
-                :value="`${item.id}_${item.model_type}`"
-                :label="item.name"
-              />
-            </template>
-            <template v-else>
-              <ElOption
-                v-for="item in authStore.user.workplaces"
-                :key="`${item.workplace_type}_${item.workplace_type}`"
-                :value="`${item.workplace_id}_${item.workplace_type}`"
-                :label="item.workplace"
-              />
-            </template>
-            <!--            <template #footer>-->
-            <!--              <button-->
-            <!--                @click.stop="providerCreateModal = true"-->
-            <!--                class="flex items-center justify-center gap-3 border-[1px] border-[#2E90FA] rounded-[8px] w-full text-[#2E90FA] text-sm font-medium py-[10px]"-->
-            <!--              >-->
-            <!--                  <span-->
-            <!--                    :style="{-->
-            <!--                      maskImage: 'url(/icons/plusIcon.svg)',-->
-            <!--                      backgroundColor: '#2E90FA',-->
-            <!--                      color: '#2E90FA',-->
-            <!--                      width: '20px',-->
-            <!--                      height: '20px',-->
-            <!--                      maskSize: '20px',-->
-            <!--                      maskPosition: 'center',-->
-            <!--                      maskRepeat: 'no-repeat',-->
-            <!--                    }"-->
-            <!--                  ></span>-->
-            <!--                Добавить-->
-            <!--              </button>-->
-            <!--            </template>-->
-          </AppSelect>
-          <AppInput
-            v-model="form.through_whom"
-            prop="through_whom"
-            :placeholder="t('document.whom.through')"
-            :label="t('document.whom.through')"
-            label-class="text-[#A8AAAE] text-xs font-medium"
-          />
-          <AppInput
-            v-model="form.basis"
-            prop="basis"
-            :placeholder="t('document.base')"
-            :label="t('document.base')"
-            label-class="text-[#A8AAAE] text-xs font-medium"
-            required
-          />
-          <AppInput
-            v-model="form.shipping_method"
-            prop="shipping_method"
-            :placeholder="t('document.shippingMethod')"
-            :label="t('document.shippingMethod')"
-            label-class="text-[#A8AAAE] text-xs font-medium"
-            required
-          />
-          <div class="bg-[#FFFFFF] rounded-[8px] p-[12px]">
-            <template
-              v-for="(product, index) in form.products"
-              :key="index + 1"
-            >
-              <div
-                class="flex items-center justify-between mb-[16px] text-sm font-medium"
-              >
-                <strong class="text-[#4F5662]">
-                  <template v-if="form.products && form.products.length > 1">
-                    {{ index + 1 }}.
-                  </template>
-                  {{ t("document.tableReceivedProducts") }}
-                </strong>
-                <button
-                  v-if="form.products && form.products.length > 1"
-                  @click.stop="deleteProduct(index)"
-                  class="flex items-center gap-x-1"
-                >
-                  <svg
-                    :data-src="deleteIcon"
-                    class="size-5"
-                  />
-                  <span class="text-[#EA5455]">
-                    {{ t("method.delete") }}
-                  </span>
-                </button>
-              </div>
-              <AppSelect
-                v-model="product.category_id"
-                :prop="`products[${index}].category_id`"
-                :items="settingsStore.typeProduct.product_categories"
-                item-value="id"
-                item-label="name"
-                :label="t('product.type')"
-                :placeholder="t('product.type')"
-                label-class="text-[#A8AAAE] text-xs font-medium"
-                @change="fetchVidProductsList(product)"
-                required
-                trigger="blur"
-              />
-              <AppSelect
-                v-model="product.product_type_id"
-                :prop="`products[${index}].product_type_id`"
-                :items="vidProducts.get(product.category_id as number)"
-                item-label="name"
-                item-value="id"
-                :label="t('product.view')"
-                :placeholder="t('product.view')"
-                label-class="text-[#A8AAAE] text-xs font-medium"
-                required
-                :disabled="!product.category_id"
-                @change="changeProduct(product)"
-              />
-              <div class="grid grid-cols-2 gap-x-4">
-                <AppInput
-                  v-model="product.quantity"
-                  custom-type="number"
-                  :prop="`products[${index}].quantity`"
-                  :placeholder="t('common.quantity')"
-                  :label="t('common.quantity')"
-                  label-class="text-[#A8AAAE] text-xs font-medium"
-                  required
-                />
-                <AppSelect
-                  v-model="product.unit_id"
-                  :prop="`products[${index}].unit_id`"
-                  :items="settingsStore.units.units ?? []"
-                  item-label="name"
-                  item-value="id"
-                  :placeholder="t('common.measurement')"
-                  :label="t('common.measurement')"
-                  label-class="text-[#A8AAAE] text-xs font-medium"
-                  required
-                  disabled
-                />
-              </div>
-              <AppInput
-                v-model.number="product.price"
-                type="number"
-                :prop="`products[${index}].price`"
-                :placeholder="t('common.price')"
-                :label="t('common.price')"
-                label-class="text-[#A8AAAE] text-xs font-medium"
-                required
-              />
-            </template>
-            <button
-              @click.stop="createProduct"
-              class="mt-6 flex items-center justify-center gap-3 border-[1px] border-[#2E90FA] rounded-[8px] w-full text-[#2E90FA] text-sm font-medium py-[10px]"
-            >
-                <span
-                  :style="{
-                    maskImage: 'url(/icons/plusIcon.svg)',
-                    backgroundColor: '#2E90FA',
-                    color: '#2E90FA',
-                    width: '20px',
-                    height: '20px',
-                    maskSize: '20px',
-                    maskPosition: 'center',
-                    maskRepeat: 'no-repeat',
-                  }"
-                ></span>
-              {{ t("method.add") }}
-            </button>
-          </div>
 
-        </AppForm>
+      <div :class="['min-w-[403px] w-[calc(40%-24px)] flex flex-col', `${activeComingModal ? 'gap-y-10' : 'gap-y-6'}`]">
         <AppForm
           :value="actForm"
           @validation="setActValidation"
@@ -1244,32 +1261,34 @@ watch(providerCreateModal, newMProviderModal => {
           :validation-errors="validationErrors?.Act ?? null"
         >
           <template v-if="activeComingModal">
-            <AppInput
-              :placeholder="t('document.act.title')"
-              :label="t('document.act.title')"
-              label-class="text-[#A8AAAE] text-xs font-medium"
-              disabled
-            />
-
-            <AppInput
-              :placeholder="t('common.automatically')"
-              :label="t('document.invoiceNumberSystem')"
-              label-class="text-[#A8AAAE] text-xs font-medium"
-              disabled
-            />
-
-            <AppInput
-              v-model="actForm.number"
-              prop="number"
-              placeholder="АКТ-00000"
-              :label="t('document.act.number')"
-              label-class="text-[#A8AAAE] text-xs font-medium"
-              required
-              :max="20"
-              :maxlength="20"
-            />
-
             <div class="bg-[#FFFFFF] rounded-[8px] p-[12px] mb-[24px]">
+              <div class="grid grid-cols-2 gap-x-4">
+                <AppInput
+                  :placeholder="t('document.act.title')"
+                  :label="t('document.act.title')"
+                  label-class="text-[#A8AAAE] text-xs font-medium"
+                  disabled
+                />
+
+                <AppInput
+                  :placeholder="t('common.automatically')"
+                  :label="t('document.invoiceNumberSystem')"
+                  label-class="text-[#A8AAAE] text-xs font-medium"
+                  disabled
+                />
+              </div>
+
+              <AppInput
+                v-model="actForm.number"
+                prop="number"
+                placeholder="АКТ-00000"
+                :label="t('document.act.number')"
+                label-class="text-[#A8AAAE] text-xs font-medium"
+                required
+                :max="20"
+                :maxlength="20"
+              />
+
               <span class="block text-[#4F5662] text-sm font-medium mb-[16px]">
                 {{ t("document.act.contents") }}
               </span>
@@ -1285,6 +1304,12 @@ watch(providerCreateModal, newMProviderModal => {
                 :max="1000"
               />
 
+            </div>
+
+            <div class="bg-[#FFFFFF] rounded-[8px] p-[12px] mb-[24px]">
+
+              {{ actForm.products }}
+              <!--              {{selectedProductTypes}}-->
               <AppSelect
                 v-model="actForm.products[0]"
                 :items="selectedProductTypes"
@@ -1531,6 +1556,7 @@ watch(providerCreateModal, newMProviderModal => {
         </AppForm>
       </div>
     </div>
+
     <div class="flex items-start justify-end gap-2 mt-[24px]">
       <button
         class="custom-cancel-btn"
@@ -1674,5 +1700,9 @@ watch(providerCreateModal, newMProviderModal => {
 
 .table-my tr:last-child td {
   border-bottom: 0;
+}
+
+.el-collapse-item__arrow {
+  margin: 0 0 15px;
 }
 </style>
