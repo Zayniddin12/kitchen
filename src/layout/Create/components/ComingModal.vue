@@ -99,6 +99,27 @@ const validationErrors = ref<Record<string, any> | null>({
 
 const oldForm = ref<null | DocumentCreateDataDocumentType>(null);
 
+const actList = reactive<any[]>([
+  {
+    product: {},
+    count_product: null,
+    contract_details: null,
+    contract_details_date: null,
+    formNumberAndDate: null,
+    manufacturer: null,
+    from: null,
+    shipping_method: null,
+    licence: null,
+    licence_date: null,
+    sanitary: null,
+    sanitary_date: null,
+    vetirinary: null,
+    vetirinary_date: null,
+    quality: null,
+    quality_date: null,
+  },
+]);
+
 const actForm = reactive<DocumentCreateDataActType>({
   number: "",
   subject: "",
@@ -295,6 +316,25 @@ const productsTotalSum = computed(() => {
 });
 
 const createProduct = () => {
+  actList.push({
+    product: {},
+    count_product: null,
+    contract_details: null,
+    contract_details_date: null,
+    formNumberAndDate: null,
+    manufacturer: null,
+    from: null,
+    shipping_method: null,
+    licence: null,
+    licence_date: null,
+    sanitary: null,
+    sanitary_date: null,
+    vetirinary: null,
+    vetirinary_date: null,
+    quality: null,
+    quality_date: null,
+
+  });
   form.products?.push({
     category_id: "",
     product_type_id: "",
@@ -931,7 +971,7 @@ const activeProduct = ref(1);
             required
           />
           <div class="bg-[#FFFFFF] rounded-[8px] p-[12px]">
-            <el-collapse class="border-none" v-model="activeProduct" accordion>
+            <el-collapse class="border-none product" v-model="activeProduct" accordion>
               <el-collapse-item class="border-none relative" v-for="(product, index) in form.products"
                                 :key="index + 1" :name="index + 1">
                 <template #title>
@@ -1089,121 +1129,243 @@ const activeProduct = ref(1);
               {{ actForm.content }}
             </span>
             <div class="overflow-x-auto mb-[24px]">
-              <table
-                class="min-w-full border border-gray-300 bg-white text-left text-sm text-gray-900 rounded-[8px] border-separate table-my border-spacing-0"
-              >
-                <colgroup>
-                  <col class="w-[60%]">
-                </colgroup>
-                <tbody>
-                <tr class="border-gray-300">
-                  <td class="border-r border-b p-2 font-medium">
-                    {{ t("product.name") }}
-                  </td>
-                  <td class="p-2 border-b border-gray-300">{{ activeProductType?.name }}</td>
-                </tr>
+              <el-collapse accordion class="border-none">
+                <el-collapse-item class="w-full mb-4 !border-0 !bg-[#F8F9FC] rounded-[8px] overflow-hidden act-left"
+                                  v-for="(item, index) in actList"
+                                  :title="'Продукт ' + (index + 1)"
+                                  :name="index">
+                  <table
+                    class="mt-4 min-w-full border border-gray-300 bg-white text-left text-sm text-gray-900 rounded-[8px] border-separate table-my border-spacing-0"
+                  >
+                    <colgroup>
+                      <col class="w-[60%]">
+                    </colgroup>
+                    <tbody>
+                    <tr class="border-gray-300">
+                      <td class="border-r border-b p-2 font-medium">
+                        {{ t("product.name") }}
+                      </td>
+                      <td class="p-2 border-b border-gray-300">{{ activeProductType?.name }}</td>
+                    </tr>
 
-                <tr class="border-gray-300">
-                  <td class="border-r border-b p-2 font-medium">
-                    {{ t("product.quantity") }}
-                  </td>
-                  <td class="p-2 border-b border-gray-300">
-                    {{ actForm.products[0]?.quantity ? formatNumber(actForm.products[0].quantity) : "" }}
-                  </td>
-                </tr>
+                    <tr class="border-gray-300">
+                      <td class="border-r border-b p-2 font-medium">
+                        {{ t("product.quantity") }}
+                      </td>
+                      <td class="p-2 border-b border-gray-300">
+                        {{ actForm.products[0]?.quantity ? formatNumber(actForm.products[0].quantity) : "" }}
+                      </td>
+                    </tr>
 
-                <tr class="border-gray-300">
-                  <td class="border-r border-b p-2 font-medium">
-                    {{ t("common.unitMeasurement") }}
-                  </td>
-                  <td class="p-2 border-b border-gray-300">
-                    {{ actForm.products[0]?.unit_id ? getProductMeasurement(actForm.products[0].unit_id) : "" }}
-                  </td>
-                </tr>
+                    <tr class="border-gray-300">
+                      <td class="border-r border-b p-2 font-medium">
+                        {{ t("common.unitMeasurement") }}
+                      </td>
+                      <td class="p-2 border-b border-gray-300">
+                        {{ actForm.products[0]?.unit_id ? getProductMeasurement(actForm.products[0].unit_id) : "" }}
+                      </td>
+                    </tr>
 
-                <tr class="border-gray-300">
-                  <td class="border-r border-b p-2 font-medium">
-                    {{ t("document.act.numberDateAgreement") }}
-                  </td>
-                  <td class="p-2 border-b border-gray-300">
-                    {{ actForm.doc_details.contract_details }}
-                  </td>
-                </tr>
+                    <tr class="border-gray-300">
+                      <td class="border-r border-b p-2 font-medium">
+                        {{ t("document.act.numberDateAgreement") }}
+                      </td>
+                      <td class="p-2 border-b border-gray-300">
+                        {{ actForm.doc_details.contract_details }}
+                      </td>
+                    </tr>
 
-                <tr class="border-gray-300">
-                  <td class="border-r border-b p-2 font-medium">
-                    {{ t("document.consignmentNumberDate") }}
-                  </td>
-                  <td class="p-2 border-b border-gray-300">
-                    {{ formNumberAndDate }}
-                  </td>
-                </tr>
+                    <tr class="border-gray-300">
+                      <td class="border-r border-b p-2 font-medium">
+                        {{ t("document.consignmentNumberDate") }}
+                      </td>
+                      <td class="p-2 border-b border-gray-300">
+                        {{ formNumberAndDate }}
+                      </td>
+                    </tr>
 
-                <tr class="border-gray-300">
-                  <td class="border-r border-b p-2 font-medium">
-                    {{ t("product.manufacturer") }}
-                  </td>
-                  <td class="p-2 border-b border-gray-300">{{ actForm.doc_details.manufacturer }}</td>
-                </tr>
+                    <tr class="border-gray-300">
+                      <td class="border-r border-b p-2 font-medium">
+                        {{ t("product.manufacturer") }}
+                      </td>
+                      <td class="p-2 border-b border-gray-300">{{ actForm.doc_details.manufacturer }}</td>
+                    </tr>
 
-                <tr class="border-gray-300">
-                  <td class="border-r border-b p-2 font-medium">{{ t("common.supplier") }}</td>
-                  <td class="p-2 border-b border-gray-300">
-                    {{ from }}
-                  </td>
-                </tr>
+                    <tr class="border-gray-300">
+                      <td class="border-r border-b p-2 font-medium">{{ t("common.supplier") }}</td>
+                      <td class="p-2 border-b border-gray-300">
+                        {{ from }}
+                      </td>
+                    </tr>
 
-                <tr class="border-gray-300">
-                  <td class="border-r border-b p-2 font-medium">
-                    {{ t("common.recipient") }}
-                  </td>
-                  <td class="p-2 border-b border-gray-300">{{ to }}</td>
-                </tr>
+                    <tr class="border-gray-300">
+                      <td class="border-r border-b p-2 font-medium">
+                        {{ t("common.recipient") }}
+                      </td>
+                      <td class="p-2 border-b border-gray-300">{{ to }}</td>
+                    </tr>
 
-                <tr class="border-gray-300">
-                  <td class="border-r border-b p-2 font-medium">
-                    {{ t("common.transport") }}
-                  </td>
-                  <td class="p-2 border-b border-gray-300">{{ actForm.shipping_method }}</td>
-                </tr>
+                    <tr class="border-gray-300">
+                      <td class="border-r border-b p-2 font-medium">
+                        {{ t("common.transport") }}
+                      </td>
+                      <td class="p-2 border-b border-gray-300">{{ actForm.shipping_method }}</td>
+                    </tr>
 
-                <tr class="border-gray-300">
-                  <td class="border-r border-b p-2 font-medium">
-                    {{ t("licence.numberAndDate") }}
-                  </td>
-                  <td class="p-2 border-b border-gray-300">
-                    {{ actForm.doc_details.licence }}
-                  </td>
-                </tr>
+                    <tr class="border-gray-300">
+                      <td class="border-r border-b p-2 font-medium">
+                        {{ t("licence.numberAndDate") }}
+                      </td>
+                      <td class="p-2 border-b border-gray-300">
+                        {{ actForm.doc_details.licence }}
+                      </td>
+                    </tr>
 
-                <tr class="border-gray-300">
-                  <td class="border-r border-b p-2 font-medium">
-                    {{ t("document.numberAndDateOfTheConclusionOfTheSanitaryAndEpidemiologicalCenter") }}
-                  </td>
-                  <td class="p-2 border-b border-gray-300">
-                    {{ actForm.doc_details.sanitary }}
-                  </td>
-                </tr>
+                    <tr class="border-gray-300">
+                      <td class="border-r border-b p-2 font-medium">
+                        {{ t("document.numberAndDateOfTheConclusionOfTheSanitaryAndEpidemiologicalCenter") }}
+                      </td>
+                      <td class="p-2 border-b border-gray-300">
+                        {{ actForm.doc_details.sanitary }}
+                      </td>
+                    </tr>
 
-                <tr class="border-gray-300">
-                  <td class="border-r border-b p-2 font-medium">
-                    {{ t("document.numberAndDateOfVeterinaryCertificate") }}
-                  </td>
-                  <td class="p-2 border-b border-gray-300">
-                    {{ actForm.doc_details.vetirinary }}
-                  </td>
-                </tr>
+                    <tr class="border-gray-300">
+                      <td class="border-r border-b p-2 font-medium">
+                        {{ t("document.numberAndDateOfVeterinaryCertificate") }}
+                      </td>
+                      <td class="p-2 border-b border-gray-300">
+                        {{ actForm.doc_details.vetirinary }}
+                      </td>
+                    </tr>
 
-                <tr class="border-gray-300">
-                  <td class="border-r border-b p-2 font-medium">
-                    {{ t("document.numberAndDateOfQualityCertificate") }}
-                  </td>
-                  <td class="p-2 border-b border-gray-300">
-                    {{ actForm.doc_details.quality }}
-                  </td>
-                </tr>
-                </tbody>
-              </table>
+                    <tr class="border-gray-300">
+                      <td class="border-r border-b p-2 font-medium">
+                        {{ t("document.numberAndDateOfQualityCertificate") }}
+                      </td>
+                      <td class="p-2 border-b border-gray-300">
+                        {{ actForm.doc_details.quality }}
+                      </td>
+                    </tr>
+                    </tbody>
+                  </table>
+                </el-collapse-item>
+              </el-collapse>
+              <!--              <table-->
+              <!--                class="min-w-full border border-gray-300 bg-white text-left text-sm text-gray-900 rounded-[8px] border-separate table-my border-spacing-0"-->
+              <!--              >-->
+              <!--                <colgroup>-->
+              <!--                  <col class="w-[60%]">-->
+              <!--                </colgroup>-->
+              <!--                <tbody>-->
+              <!--                <tr class="border-gray-300">-->
+              <!--                  <td class="border-r border-b p-2 font-medium">-->
+              <!--                    {{ t("product.name") }}-->
+              <!--                  </td>-->
+              <!--                  <td class="p-2 border-b border-gray-300">{{ activeProductType?.name }}</td>-->
+              <!--                </tr>-->
+
+              <!--                <tr class="border-gray-300">-->
+              <!--                  <td class="border-r border-b p-2 font-medium">-->
+              <!--                    {{ t("product.quantity") }}-->
+              <!--                  </td>-->
+              <!--                  <td class="p-2 border-b border-gray-300">-->
+              <!--                    {{ actForm.products[0]?.quantity ? formatNumber(actForm.products[0].quantity) : "" }}-->
+              <!--                  </td>-->
+              <!--                </tr>-->
+
+              <!--                <tr class="border-gray-300">-->
+              <!--                  <td class="border-r border-b p-2 font-medium">-->
+              <!--                    {{ t("common.unitMeasurement") }}-->
+              <!--                  </td>-->
+              <!--                  <td class="p-2 border-b border-gray-300">-->
+              <!--                    {{ actForm.products[0]?.unit_id ? getProductMeasurement(actForm.products[0].unit_id) : "" }}-->
+              <!--                  </td>-->
+              <!--                </tr>-->
+
+              <!--                <tr class="border-gray-300">-->
+              <!--                  <td class="border-r border-b p-2 font-medium">-->
+              <!--                    {{ t("document.act.numberDateAgreement") }}-->
+              <!--                  </td>-->
+              <!--                  <td class="p-2 border-b border-gray-300">-->
+              <!--                    {{ actForm.doc_details.contract_details }}-->
+              <!--                  </td>-->
+              <!--                </tr>-->
+
+              <!--                <tr class="border-gray-300">-->
+              <!--                  <td class="border-r border-b p-2 font-medium">-->
+              <!--                    {{ t("document.consignmentNumberDate") }}-->
+              <!--                  </td>-->
+              <!--                  <td class="p-2 border-b border-gray-300">-->
+              <!--                    {{ formNumberAndDate }}-->
+              <!--                  </td>-->
+              <!--                </tr>-->
+
+              <!--                <tr class="border-gray-300">-->
+              <!--                  <td class="border-r border-b p-2 font-medium">-->
+              <!--                    {{ t("product.manufacturer") }}-->
+              <!--                  </td>-->
+              <!--                  <td class="p-2 border-b border-gray-300">{{ actForm.doc_details.manufacturer }}</td>-->
+              <!--                </tr>-->
+
+              <!--                <tr class="border-gray-300">-->
+              <!--                  <td class="border-r border-b p-2 font-medium">{{ t("common.supplier") }}</td>-->
+              <!--                  <td class="p-2 border-b border-gray-300">-->
+              <!--                    {{ from }}-->
+              <!--                  </td>-->
+              <!--                </tr>-->
+
+              <!--                <tr class="border-gray-300">-->
+              <!--                  <td class="border-r border-b p-2 font-medium">-->
+              <!--                    {{ t("common.recipient") }}-->
+              <!--                  </td>-->
+              <!--                  <td class="p-2 border-b border-gray-300">{{ to }}</td>-->
+              <!--                </tr>-->
+
+              <!--                <tr class="border-gray-300">-->
+              <!--                  <td class="border-r border-b p-2 font-medium">-->
+              <!--                    {{ t("common.transport") }}-->
+              <!--                  </td>-->
+              <!--                  <td class="p-2 border-b border-gray-300">{{ actForm.shipping_method }}</td>-->
+              <!--                </tr>-->
+
+              <!--                <tr class="border-gray-300">-->
+              <!--                  <td class="border-r border-b p-2 font-medium">-->
+              <!--                    {{ t("licence.numberAndDate") }}-->
+              <!--                  </td>-->
+              <!--                  <td class="p-2 border-b border-gray-300">-->
+              <!--                    {{ actForm.doc_details.licence }}-->
+              <!--                  </td>-->
+              <!--                </tr>-->
+
+              <!--                <tr class="border-gray-300">-->
+              <!--                  <td class="border-r border-b p-2 font-medium">-->
+              <!--                    {{ t("document.numberAndDateOfTheConclusionOfTheSanitaryAndEpidemiologicalCenter") }}-->
+              <!--                  </td>-->
+              <!--                  <td class="p-2 border-b border-gray-300">-->
+              <!--                    {{ actForm.doc_details.sanitary }}-->
+              <!--                  </td>-->
+              <!--                </tr>-->
+
+              <!--                <tr class="border-gray-300">-->
+              <!--                  <td class="border-r border-b p-2 font-medium">-->
+              <!--                    {{ t("document.numberAndDateOfVeterinaryCertificate") }}-->
+              <!--                  </td>-->
+              <!--                  <td class="p-2 border-b border-gray-300">-->
+              <!--                    {{ actForm.doc_details.vetirinary }}-->
+              <!--                  </td>-->
+              <!--                </tr>-->
+
+              <!--                <tr class="border-gray-300">-->
+              <!--                  <td class="border-r border-b p-2 font-medium">-->
+              <!--                    {{ t("document.numberAndDateOfQualityCertificate") }}-->
+              <!--                  </td>-->
+              <!--                  <td class="p-2 border-b border-gray-300">-->
+              <!--                    {{ actForm.doc_details.quality }}-->
+              <!--                  </td>-->
+              <!--                </tr>-->
+              <!--                </tbody>-->
+              <!--              </table>-->
             </div>
 
             <div class="flex items-center justify-between mb-[24px]">
@@ -1306,158 +1468,312 @@ const activeProduct = ref(1);
 
             </div>
 
-            <div class="bg-[#FFFFFF] rounded-[8px] p-[12px] mb-[24px]">
+            <div class="mb-4">
+              <el-collapse class="border-0" accordion>
+                <el-collapse-item class=" w-full mb-4 !border-0 " v-for="(item, index) in actList"
+                                  :title="'Продукт ' + (index + 1)"
+                                  :name="index">
+                  <div class="bg-[#FFFFFF] rounded-[8px] p-[12px] mb-[24px]">
 
-              {{ actForm.products }}
-              <!--              {{selectedProductTypes}}-->
-              <AppSelect
-                v-model="actForm.products[0]"
-                :items="selectedProductTypes"
-                item-label="name"
-                item-value="id"
-                prop="products[0]"
-                :placeholder="t('product.name')"
-                :label="t('product.name')"
-                label-class="text-[#A8AAAE] text-xs font-medium"
-                @change="actProductTypeChange"
-                required
-                trigger="blur"
-              >
-              </AppSelect>
-              <AppInput
-                :modelValue="actForm.products[0]?.quantity ?? ''"
-                label-class="text-[#A8AAAE] text-xs font-medium"
-                :placeholder="t('product.quantity')"
-                :label="t('product.quantity')"
-                disabled
-              />
-              <AppInput
-                :model-value="actForm.products[0]?.unit_id ? getProductMeasurement(actForm.products[0].unit_id) : ''"
-                label-class="text-[#A8AAAE] text-xs font-medium"
-                :label="t('common.unitMeasurement')"
-                :placeholder="t('common.unitMeasurement')"
-                disabled
-              />
-              <AppInput
-                v-model="actForm.doc_details.contract_details"
-                prop="doc_details.contract_details"
-                :placeholder="t('document.act.numberAgreement')"
-                :label="t('document.act.numberAgreement')"
-                label-class="text-[#A8AAAE] text-xs font-medium"
-                required
-                :maxlength="20"
-                :max="20"
-              />
-              <AppDatePicker
-                v-model="actForm.doc_details.contract_details_date"
-                prop="doc_details.contract_details_date"
-                :placeholder="t('document.act.dateAgreement')"
-                :label="t('document.act.dateAgreement')"
-                label-class="text-[#A8AAAE] text-xs font-medium"
-                required
-              />
-              <AppInput
-                v-model="formNumberAndDate"
-                :placeholder="t('document.consignmentNumberDate')"
-                :label="t('document.consignmentNumberDate')"
-                label-class="text-[#A8AAAE] text-xs font-medium"
-                disabled
-              />
-              <AppInput
-                v-model="actForm.doc_details.manufacturer"
-                prop="doc_details.manufacturer"
-                :placeholder="t('product.manufacturer')"
-                :label="t('product.manufacturer')"
-                label-class="text-[#A8AAAE] text-xs font-medium"
-                required
-              />
-              <AppInput
-                :model-value="from"
-                :label="t('common.supplier')"
-                :placeholder="t('common.supplier')"
-                label-class="text-[#A8AAAE] text-xs font-medium"
-                disabled
-              />
+                    <!--              {{ actForm.products }}-->
+                    {{ selectedProductTypes }}
+                    <AppInput
+                      :modelValue="item.product"
+                      label-class="text-[#A8AAAE] text-xs font-medium"
+                      :placeholder="t('product.name')"
+                      :label="t('product.name')"
+                      disabled
+                    />
+                    <AppInput
+                      :modelValue="item.quantity"
+                      label-class="text-[#A8AAAE] text-xs font-medium"
+                      :placeholder="t('product.quantity')"
+                      :label="t('product.quantity')"
+                      disabled
+                    />
+                    <AppInput
+                      :model-value="item.unit_id"
+                      label-class="text-[#A8AAAE] text-xs font-medium"
+                      :label="t('common.unitMeasurement')"
+                      :placeholder="t('common.unitMeasurement')"
+                      disabled
+                    />
+                    <AppInput
+                      v-model="item.contract_details"
+                      prop="doc_details.contract_details"
+                      :placeholder="t('document.act.numberAgreement')"
+                      :label="t('document.act.numberAgreement')"
+                      label-class="text-[#A8AAAE] text-xs font-medium"
+                      required
+                      :maxlength="20"
+                      :max="20"
+                    />
+                    <AppDatePicker
+                      v-model="item.contract_details_date"
+                      prop="doc_details.contract_details_date"
+                      :placeholder="t('document.act.dateAgreement')"
+                      :label="t('document.act.dateAgreement')"
+                      label-class="text-[#A8AAAE] text-xs font-medium"
+                      required
+                    />
+                    <AppInput
+                      v-model="item.formNumberAndDate"
+                      :placeholder="t('document.consignmentNumberDate')"
+                      :label="t('document.consignmentNumberDate')"
+                      label-class="text-[#A8AAAE] text-xs font-medium"
+                      disabled
+                    />
+                    <AppInput
+                      v-model="item.manufacturer"
+                      prop="doc_details.manufacturer"
+                      :placeholder="t('product.manufacturer')"
+                      :label="t('product.manufacturer')"
+                      label-class="text-[#A8AAAE] text-xs font-medium"
+                      required
+                    />
+                    <AppInput
+                      :model-value="item.from"
+                      :label="t('common.supplier')"
+                      :placeholder="t('common.supplier')"
+                      label-class="text-[#A8AAAE] text-xs font-medium"
+                      disabled
+                    />
 
-              <AppInput
-                v-model="actForm.shipping_method"
-                prop="shipping_method"
-                :placeholder="t('common.transport')"
-                :label="t('common.transport')"
-                label-class="text-[#A8AAAE] text-xs font-medium"
-                required
-              />
-              <AppInput
-                v-model="actForm.doc_details.licence"
-                prop="doc_details.licence"
-                :placeholder="t('licence.number')"
-                :label="t('licence.number')"
-                label-class="text-[#A8AAAE] text-xs font-medium"
-                required
-                :max="20"
-                :maxlength="20"
-              />
-              <AppDatePicker
-                v-model="actForm.doc_details.licence_date"
-                prop="doc_details.licence_date"
-                :placeholder="t('licence.date')"
-                :label="t('licence.date')"
-                label-class="text-[#A8AAAE] text-xs font-medium"
-                required
-              />
-              <AppInput
-                v-model="actForm.doc_details.sanitary"
-                prop="doc_details.sanitary"
-                :placeholder="t('document.sanitaryConclusion.number')"
-                :label="t('document.sanitaryConclusion.number')"
-                label-class="text-[#A8AAAE] text-xs font-medium"
-                required
-                :max="20"
-              />
-              <AppDatePicker
-                v-model="actForm.doc_details.sanitary_date"
-                prop="doc_details.sanitary_date"
-                :placeholder="t('document.sanitaryConclusion.date')"
-                :label="t('document.sanitaryConclusion.date')"
-                label-class="text-[#A8AAAE] text-xs font-medium"
-                required
-              />
-              <AppInput
-                v-model="actForm.doc_details.vetirinary"
-                prop="doc_details.vetirinary"
-                :placeholder="t('document.veterinaryCertificate.number')"
-                :label="t('document.veterinaryCertificate.number')"
-                label-class="text-[#A8AAAE] text-xs font-medium"
-                required
-                :max="20"
-              />
-              <AppDatePicker
-                v-model="actForm.doc_details.vetirinary_date"
-                prop="doc_details.vetirinary_date"
-                :placeholder="t('document.veterinaryCertificate.date')"
-                :label="t('document.veterinaryCertificate.date')"
-                label-class="text-[#A8AAAE] text-xs font-medium"
-                required
-              />
-              <AppInput
-                v-model="actForm.doc_details.quality"
-                prop="doc_details.quality"
-                :placeholder="t('document.qualityCertificate.number')"
-                :label="t('document.qualityCertificate.number')"
-                label-class="text-[#A8AAAE] text-xs font-medium"
-                required
-                :max="20"
-                :maxlength="20"
-              />
-              <AppDatePicker
-                v-model="actForm.doc_details.quality_date"
-                prop="doc_details.quality_date"
-                :placeholder="t('document.qualityCertificate.date')"
-                :label="t('document.qualityCertificate.date')"
-                label-class="text-[#A8AAAE] text-xs font-medium"
-                required
-              />
+                    <AppInput
+                      v-model="item.shipping_method"
+                      prop="shipping_method"
+                      :placeholder="t('common.transport')"
+                      :label="t('common.transport')"
+                      label-class="text-[#A8AAAE] text-xs font-medium"
+                      required
+                    />
+                    <AppInput
+                      v-model="item.licence"
+                      prop="doc_details.licence"
+                      :placeholder="t('licence.number')"
+                      :label="t('licence.number')"
+                      label-class="text-[#A8AAAE] text-xs font-medium"
+                      required
+                      :max="20"
+                      :maxlength="20"
+                    />
+                    <AppDatePicker
+                      v-model="item.licence_date"
+                      prop="doc_details.licence_date"
+                      :placeholder="t('licence.date')"
+                      :label="t('licence.date')"
+                      label-class="text-[#A8AAAE] text-xs font-medium"
+                      required
+                    />
+                    <AppInput
+                      v-model="item.sanitary"
+                      prop="doc_details.sanitary"
+                      :placeholder="t('document.sanitaryConclusion.number')"
+                      :label="t('document.sanitaryConclusion.number')"
+                      label-class="text-[#A8AAAE] text-xs font-medium"
+                      required
+                      :max="20"
+                    />
+                    <AppDatePicker
+                      v-model="item.sanitary_date"
+                      prop="doc_details.sanitary_date"
+                      :placeholder="t('document.sanitaryConclusion.date')"
+                      :label="t('document.sanitaryConclusion.date')"
+                      label-class="text-[#A8AAAE] text-xs font-medium"
+                      required
+                    />
+                    <AppInput
+                      v-model="item.vetirinary"
+                      prop="doc_details.vetirinary"
+                      :placeholder="t('document.veterinaryCertificate.number')"
+                      :label="t('document.veterinaryCertificate.number')"
+                      label-class="text-[#A8AAAE] text-xs font-medium"
+                      required
+                      :max="20"
+                    />
+                    <AppDatePicker
+                      v-model="item.vetirinary_date"
+                      prop="doc_details.vetirinary_date"
+                      :placeholder="t('document.veterinaryCertificate.date')"
+                      :label="t('document.veterinaryCertificate.date')"
+                      label-class="text-[#A8AAAE] text-xs font-medium"
+                      required
+                    />
+                    <AppInput
+                      v-model="item.quality"
+                      prop="doc_details.quality"
+                      :placeholder="t('document.qualityCertificate.number')"
+                      :label="t('document.qualityCertificate.number')"
+                      label-class="text-[#A8AAAE] text-xs font-medium"
+                      required
+                      :max="20"
+                      :maxlength="20"
+                    />
+                    <AppDatePicker
+                      v-model="item.quality_date"
+                      prop="doc_details.quality_date"
+                      :placeholder="t('document.qualityCertificate.date')"
+                      :label="t('document.qualityCertificate.date')"
+                      label-class="text-[#A8AAAE] text-xs font-medium"
+                      required
+                    />
+                  </div>
+                </el-collapse-item>
+              </el-collapse>
             </div>
+
+            <!--            <div class="bg-[#FFFFFF] rounded-[8px] p-[12px] mb-[24px]">-->
+
+            <!--              &lt;!&ndash;              {{ actForm.products }}&ndash;&gt;-->
+            <!--              {{ selectedProductTypes }}-->
+            <!--              <AppSelect-->
+            <!--                v-model="actForm.products[0]"-->
+            <!--                :items="selectedProductTypes"-->
+            <!--                item-label="name"-->
+            <!--                item-value="id"-->
+            <!--                prop="products[0]"-->
+            <!--                :placeholder="t('product.name')"-->
+            <!--                :label="t('product.name')"-->
+            <!--                label-class="text-[#A8AAAE] text-xs font-medium"-->
+            <!--                @change="actProductTypeChange"-->
+            <!--                required-->
+            <!--                trigger="blur"-->
+            <!--              >-->
+            <!--              </AppSelect>-->
+            <!--              <AppInput-->
+            <!--                :modelValue="actForm.products[0]?.quantity ?? ''"-->
+            <!--                label-class="text-[#A8AAAE] text-xs font-medium"-->
+            <!--                :placeholder="t('product.quantity')"-->
+            <!--                :label="t('product.quantity')"-->
+            <!--                disabled-->
+            <!--              />-->
+            <!--              <AppInput-->
+            <!--                :model-value="actForm.products[0]?.unit_id ? getProductMeasurement(actForm.products[0].unit_id) : ''"-->
+            <!--                label-class="text-[#A8AAAE] text-xs font-medium"-->
+            <!--                :label="t('common.unitMeasurement')"-->
+            <!--                :placeholder="t('common.unitMeasurement')"-->
+            <!--                disabled-->
+            <!--              />-->
+            <!--              <AppInput-->
+            <!--                v-model="actForm.doc_details.contract_details"-->
+            <!--                prop="doc_details.contract_details"-->
+            <!--                :placeholder="t('document.act.numberAgreement')"-->
+            <!--                :label="t('document.act.numberAgreement')"-->
+            <!--                label-class="text-[#A8AAAE] text-xs font-medium"-->
+            <!--                required-->
+            <!--                :maxlength="20"-->
+            <!--                :max="20"-->
+            <!--              />-->
+            <!--              <AppDatePicker-->
+            <!--                v-model="actForm.doc_details.contract_details_date"-->
+            <!--                prop="doc_details.contract_details_date"-->
+            <!--                :placeholder="t('document.act.dateAgreement')"-->
+            <!--                :label="t('document.act.dateAgreement')"-->
+            <!--                label-class="text-[#A8AAAE] text-xs font-medium"-->
+            <!--                required-->
+            <!--              />-->
+            <!--              <AppInput-->
+            <!--                v-model="formNumberAndDate"-->
+            <!--                :placeholder="t('document.consignmentNumberDate')"-->
+            <!--                :label="t('document.consignmentNumberDate')"-->
+            <!--                label-class="text-[#A8AAAE] text-xs font-medium"-->
+            <!--                disabled-->
+            <!--              />-->
+            <!--              <AppInput-->
+            <!--                v-model="actForm.doc_details.manufacturer"-->
+            <!--                prop="doc_details.manufacturer"-->
+            <!--                :placeholder="t('product.manufacturer')"-->
+            <!--                :label="t('product.manufacturer')"-->
+            <!--                label-class="text-[#A8AAAE] text-xs font-medium"-->
+            <!--                required-->
+            <!--              />-->
+            <!--              <AppInput-->
+            <!--                :model-value="from"-->
+            <!--                :label="t('common.supplier')"-->
+            <!--                :placeholder="t('common.supplier')"-->
+            <!--                label-class="text-[#A8AAAE] text-xs font-medium"-->
+            <!--                disabled-->
+            <!--              />-->
+
+            <!--              <AppInput-->
+            <!--                v-model="actForm.shipping_method"-->
+            <!--                prop="shipping_method"-->
+            <!--                :placeholder="t('common.transport')"-->
+            <!--                :label="t('common.transport')"-->
+            <!--                label-class="text-[#A8AAAE] text-xs font-medium"-->
+            <!--                required-->
+            <!--              />-->
+            <!--              <AppInput-->
+            <!--                v-model="actForm.doc_details.licence"-->
+            <!--                prop="doc_details.licence"-->
+            <!--                :placeholder="t('licence.number')"-->
+            <!--                :label="t('licence.number')"-->
+            <!--                label-class="text-[#A8AAAE] text-xs font-medium"-->
+            <!--                required-->
+            <!--                :max="20"-->
+            <!--                :maxlength="20"-->
+            <!--              />-->
+            <!--              <AppDatePicker-->
+            <!--                v-model="actForm.doc_details.licence_date"-->
+            <!--                prop="doc_details.licence_date"-->
+            <!--                :placeholder="t('licence.date')"-->
+            <!--                :label="t('licence.date')"-->
+            <!--                label-class="text-[#A8AAAE] text-xs font-medium"-->
+            <!--                required-->
+            <!--              />-->
+            <!--              <AppInput-->
+            <!--                v-model="actForm.doc_details.sanitary"-->
+            <!--                prop="doc_details.sanitary"-->
+            <!--                :placeholder="t('document.sanitaryConclusion.number')"-->
+            <!--                :label="t('document.sanitaryConclusion.number')"-->
+            <!--                label-class="text-[#A8AAAE] text-xs font-medium"-->
+            <!--                required-->
+            <!--                :max="20"-->
+            <!--              />-->
+            <!--              <AppDatePicker-->
+            <!--                v-model="actForm.doc_details.sanitary_date"-->
+            <!--                prop="doc_details.sanitary_date"-->
+            <!--                :placeholder="t('document.sanitaryConclusion.date')"-->
+            <!--                :label="t('document.sanitaryConclusion.date')"-->
+            <!--                label-class="text-[#A8AAAE] text-xs font-medium"-->
+            <!--                required-->
+            <!--              />-->
+            <!--              <AppInput-->
+            <!--                v-model="actForm.doc_details.vetirinary"-->
+            <!--                prop="doc_details.vetirinary"-->
+            <!--                :placeholder="t('document.veterinaryCertificate.number')"-->
+            <!--                :label="t('document.veterinaryCertificate.number')"-->
+            <!--                label-class="text-[#A8AAAE] text-xs font-medium"-->
+            <!--                required-->
+            <!--                :max="20"-->
+            <!--              />-->
+            <!--              <AppDatePicker-->
+            <!--                v-model="actForm.doc_details.vetirinary_date"-->
+            <!--                prop="doc_details.vetirinary_date"-->
+            <!--                :placeholder="t('document.veterinaryCertificate.date')"-->
+            <!--                :label="t('document.veterinaryCertificate.date')"-->
+            <!--                label-class="text-[#A8AAAE] text-xs font-medium"-->
+            <!--                required-->
+            <!--              />-->
+            <!--              <AppInput-->
+            <!--                v-model="actForm.doc_details.quality"-->
+            <!--                prop="doc_details.quality"-->
+            <!--                :placeholder="t('document.qualityCertificate.number')"-->
+            <!--                :label="t('document.qualityCertificate.number')"-->
+            <!--                label-class="text-[#A8AAAE] text-xs font-medium"-->
+            <!--                required-->
+            <!--                :max="20"-->
+            <!--                :maxlength="20"-->
+            <!--              />-->
+            <!--              <AppDatePicker-->
+            <!--                v-model="actForm.doc_details.quality_date"-->
+            <!--                prop="doc_details.quality_date"-->
+            <!--                :placeholder="t('document.qualityCertificate.date')"-->
+            <!--                :label="t('document.qualityCertificate.date')"-->
+            <!--                label-class="text-[#A8AAAE] text-xs font-medium"-->
+            <!--                required-->
+            <!--              />-->
+            <!--            </div>-->
           </template>
 
           <div class="bg-[#FFFFFF] rounded-[8px] p-[12px]">
@@ -1702,7 +2018,12 @@ const activeProduct = ref(1);
   border-bottom: 0;
 }
 
-.el-collapse-item__arrow {
+.product .el-collapse-item__arrow {
   margin: 0 0 15px;
+}
+
+.act-left .el-collapse-item__header {
+  background-color: #F8F9FC;
+  padding: 12px;
 }
 </style>
