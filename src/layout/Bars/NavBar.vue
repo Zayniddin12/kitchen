@@ -7,6 +7,7 @@ import { onMounted, ref } from "vue";
 import Language from "@/components/language/index.vue";
 import MemoModal from "@/layout/Create/components/MemoModal.vue";
 import ComingModal from "@/layout/Create/components/ComingModal.vue";
+import KitchenModal from "@/layout/Create/components/KitchenModal.vue";
 import FreeModal from "@/layout/Create/components/FreeModal.vue";
 import MonthlyModal from "@/layout/Create/components/MonthlyModal.vue";
 import ThemeToggler from "@/layout/Bars/ThemeToggler.vue";
@@ -20,6 +21,7 @@ const { t } = useI18n();
 
 const editModal = ref<boolean>(false);
 const editModal2 = ref<boolean>(false);
+const kitchenModal = ref<boolean>(false);
 const freeModal = ref<boolean>(false);
 const monthlyModal = ref<boolean>(false);
 const dropdown = ref<any>(null);
@@ -44,6 +46,9 @@ const openModal = (item: DocTypeListType) => {
       // case 11:
       // editConsumptionModal.value = true;
       break;
+    case 8:
+      kitchenModal.value = true;
+      break;
     case 3:
       freeModal.value = true;
       docTypeTitle.value = t("document.freeRequest.create");
@@ -64,8 +69,10 @@ const openModal = (item: DocTypeListType) => {
   dropdown.value.handleClose();
 };
 
-onMounted(() => {
-  settingsStore.getDocTypeList();
+onMounted(async () => {
+  await settingsStore.getDocTypeList();
+
+  console.log(settingsStore.docTypeList);
 });
 </script>
 
@@ -103,6 +110,7 @@ onMounted(() => {
 
     <!----------Создать modal---------->
     <div class="flex items-center gap-6">
+
       <el-dropdown
         trigger="click"
         :hide-on-click="false"
@@ -121,7 +129,7 @@ onMounted(() => {
           />
 
           <span class="text-white vertical-mid">
-            {{ t("form.create")}}
+            {{ t("form.create") }}
           </span>
         </ElButton>
         <template
@@ -212,6 +220,11 @@ onMounted(() => {
     />
     <ComingModal
       v-model="editModal2"
+      :id="docTypeId"
+      :name="docTypeName"
+    />
+    <kitchenModal
+      v-model="kitchenModal"
       :id="docTypeId"
       :name="docTypeName"
     />
