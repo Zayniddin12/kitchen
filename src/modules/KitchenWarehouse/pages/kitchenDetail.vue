@@ -301,7 +301,6 @@ const packagingPage = () => {
 
 <template>
   <div>
-    <pre>{{ route.params }}</pre>
     <div class="flex items-center justify-between">
       <h1 class="m-0 font-semibold text-[32px]">{{ title }}</h1>
 
