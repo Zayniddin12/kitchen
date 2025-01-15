@@ -1,6 +1,6 @@
 <script
-    setup
-    lang="ts"
+  setup
+  lang="ts"
 >
 
 import { RouterLink, useRoute, useRouter } from "vue-router";
@@ -14,7 +14,7 @@ import AppDatePicker from "@/components/ui/form/app-date-picker/AppDatePicker.vu
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 import {
   WarehouseBasesInvoicesParamsType, WarehouseBasesInvoiceType,
-  WarehouseBasesProductsParamsType, WarehouseBasesProductType
+  WarehouseBasesProductsParamsType, WarehouseBasesProductType,
 } from "@/modules/WarehouseBases/warehouse-bases.types";
 import { filterObjectValues, getRouteQuery, setTableColumnIndex } from "@/utils/helper";
 import { useSettingsStore } from "@/modules/Settings/store";
@@ -40,12 +40,12 @@ const tabItems = computed(() => {
   return [
     {
       value: TABS.PRODUCTS,
-      name: "По продуктам"
+      name: "По продуктам",
     },
     {
       value: TABS.INVOICES,
-      name: "По накладным"
-    }
+      name: "По накладным",
+    },
   ];
 });
 
@@ -61,12 +61,12 @@ const validRouteTab = (tab: string | null): TABS => {
 };
 
 const activeTab = computed(() =>
-    validRouteTab(route.query.tab as string | null)
+  validRouteTab(route.query.tab as string | null),
 );
 
 const getQueryTab = (tab: TABS) => {
   const form = filterObjectValues(
-      tab === TABS.PRODUCTS ? productsForm : invoicesForm
+    tab === TABS.PRODUCTS ? productsForm : invoicesForm,
   );
 
   return { tab, ...form };
@@ -81,7 +81,7 @@ const productsForm = reactive<WarehouseBasesProductsParamsType>({
   product_id: "",
   measurement_unit_id: "",
   quantity: null,
-  price: null
+  price: null,
 });
 
 const productsFormV$ = ref<ValidationType | null>(null);
@@ -94,7 +94,7 @@ const fetchProducts = async () => {
     product_id: "number",
     measurement_unit_id: "number",
     quantity: "number",
-    price: "number"
+    price: "number",
   });
 
   productsForm.price = query.price ?? null;
@@ -121,7 +121,7 @@ const invoicesForm = reactive<WarehouseBasesInvoicesParamsType>({
   net_price: null,
   to: "",
   from: "",
-  document_id: ""
+  document_id: "",
 });
 
 const invoicesFormV$ = ref<ValidationType | null>(null);
@@ -138,7 +138,7 @@ const fetchInvoices = async () => {
     net_price: "number",
     to: "string",
     from: "string",
-    document_id: "number"
+    document_id: "number",
   });
 
   invoicesForm.net_price = query.net_price ?? null;
@@ -204,15 +204,15 @@ const setBreadCrumbFn = async () => {
 
   setBreadCrumb([
     {
-      label: "Базы складов"
+      label: "Базы складов",
     },
     {
-      label: warehouseBasesStore.activeManagementBase?.name ?? ""
+      label: warehouseBasesStore.activeManagementBase?.name ?? "",
     },
     {
       label: warehouseBasesStore.activeManagementBase?.base?.name ?? "",
-      isActionable: true
-    }
+      isActionable: true,
+    },
   ]);
 };
 
@@ -221,11 +221,11 @@ watchEffect(() => {
 });
 
 watch(
-    () => route.query,
-    () => {
-      fetchData();
-    },
-    { immediate: true }
+  () => route.query,
+  () => {
+    fetchData();
+  },
+  { immediate: true },
 );
 
 watch(() => route.params.product_id, async () => {
@@ -246,14 +246,25 @@ onMounted(() => {
   documentStore.fetchDrafts("received", { doc_type: "invoice", per_page: 100 });
 });
 
+const enterToFactory = () => {
+  router.push({
+    name: "warehouse-factory",
+    params: { district_id: route.params.district_id, product_id: route.params.product_id },
+  });
+};
+
 </script>
 
 <template>
   <section class="warehouse">
     <div v-if="warehouseBasesStore.activeManagementBase?.base">
-      <h1 class="font-semibold text-[32px] text-dark">
-        {{ warehouseBasesStore.product?.title ?? "" }}
-      </h1>
+      <div class="flex items-center justify-between">
+        <h1 class="font-semibold text-[32px] text-dark">
+          {{ warehouseBasesStore.product?.title ?? "" }}
+        </h1>
+
+        <button class="custom-light-btn" @click="enterToFactory">Мясной цех</button>
+      </div>
       <div class="rounded-2xl py-3 px-4 border mt-6">
         <h3 class="text-dark font-medium text-lg">
           Заполнение склада
@@ -262,12 +273,12 @@ onMounted(() => {
           {{ warehouseBasesStore.fillingPercentage?.percentage ?? 0 }}%
         </h2>
         <ElProgress
-            :stroke-width="16"
-            :percentage="warehouseBasesStore.fillingPercentage?.percentage ?? 0"
-            :show-text="false"
-            status="success"
-            class="mt-2"
-            striped
+          :stroke-width="16"
+          :percentage="warehouseBasesStore.fillingPercentage?.percentage ?? 0"
+          :show-text="false"
+          status="success"
+          class="mt-2"
+          striped
         />
         <p class="mt-4 text-xs text-black-sub">
           Этот элемент показывает процент заполненности склада, помогая вам следить за остатками и эффективно управлять
@@ -278,36 +289,36 @@ onMounted(() => {
         <div class="flex items-center gap-4 justify-between">
           <div class="app-tabs">
             <RouterLink
-                v-for="item in tabItems"
-                :key="item.value"
-                :class="['app-tab', {'app-tab--active': activeTab === item.value}]"
-                :to="{ query: getQueryTab(item.value) }"
+              v-for="item in tabItems"
+              :key="item.value"
+              :class="['app-tab', {'app-tab--active': activeTab === item.value}]"
+              :to="{ query: getQueryTab(item.value) }"
             >
               {{ item.name }}
             </RouterLink>
           </div>
           <div class="grid grid-cols-3 gap-4 w-[486px]">
             <AppSelect
-                v-model="id"
-                size="large"
-                class="mb-0"
-                :items="settingsStore.baseWarehouses?.base_warehouses ?? []"
-                item-value="id"
-                item-label="name"
+              v-model="id"
+              size="large"
+              class="mb-0"
+              :items="settingsStore.baseWarehouses?.base_warehouses ?? []"
+              item-value="id"
+              item-label="name"
             />
             <ElDropdown
-                placement="bottom"
-                class="block w-full"
+              placement="bottom"
+              class="block w-full"
             >
               <ElButton
-                  size="large"
-                  class="h-12 !bg-white-blue w-full !border-white-blue"
+                size="large"
+                class="h-12 !bg-white-blue w-full !border-white-blue"
               >
                 <div class="flex items-center gap-x-2">
                   <img
-                      src="@/assets/images/download.svg"
-                      class="size-5"
-                      alt="download img"
+                    src="@/assets/images/download.svg"
+                    class="size-5"
+                    alt="download img"
                   />
                   <span class="font-medium text-dark-gray">Скачать</span>
                 </div>
@@ -315,36 +326,36 @@ onMounted(() => {
               <template #dropdown>
                 <ElDropdownMenu class="p-3 rounded-lg">
                   <ElDropdownItem
-                      class="flex items-center gap-x-4 rounded-lg px-3 py-2.5"
+                    class="flex items-center gap-x-4 rounded-lg px-3 py-2.5"
                   >
                     <img
-                        src="@/assets/images/icons/pdf.svg"
-                        alt="pdf"
-                        class="w-[13px] h-[17px]"
+                      src="@/assets/images/icons/pdf.svg"
+                      alt="pdf"
+                      class="w-[13px] h-[17px]"
                     />
                     <span class="text-sm text-dark-gray font-medium">
                     PDF файл
                   </span>
                   </ElDropdownItem>
                   <ElDropdownItem
-                      class="flex items-center gap-x-4 rounded-lg px-3 py-2.5"
+                    class="flex items-center gap-x-4 rounded-lg px-3 py-2.5"
                   >
                     <img
-                        src="@/assets/images/icons/excel.svg"
-                        alt="pdf"
-                        class="w-[13px] h-[17px]"
+                      src="@/assets/images/icons/excel.svg"
+                      alt="pdf"
+                      class="w-[13px] h-[17px]"
                     />
                     <span class="text-sm text-dark-gray font-medium">
                     Excel файл
                   </span>
                   </ElDropdownItem>
                   <ElDropdownItem
-                      class="flex items-center gap-x-4 rounded-lg px-3 py-2.5"
+                    class="flex items-center gap-x-4 rounded-lg px-3 py-2.5"
                   >
                     <img
-                        src="@/assets/images/icons/1c.svg"
-                        alt="pdf"
-                        class="w-[13px] h-[17px]"
+                      src="@/assets/images/icons/1c.svg"
+                      alt="pdf"
+                      class="w-[13px] h-[17px]"
                     />
                     <span class="text-sm text-dark-gray font-medium">
                     1C файл
@@ -354,14 +365,14 @@ onMounted(() => {
               </template>
             </ElDropdown>
             <ElButton
-                @click="filterFormOpened = !filterFormOpened"
-                size="large"
-                :class="['app-filter-btn h-12 w-full', `${filterFormOpened ? '!bg-blue !text-white app-filter-btn--active' : '!bg-white-blue !border-white-blue !text-dark-gray'}`]"
+              @click="filterFormOpened = !filterFormOpened"
+              size="large"
+              :class="['app-filter-btn h-12 w-full', `${filterFormOpened ? '!bg-blue !text-white app-filter-btn--active' : '!bg-white-blue !border-white-blue !text-dark-gray'}`]"
             >
               <div class="flex items-center gap-x-3">
                 <svg
-                    :data-src="filterIcon"
-                    class="app-filter-btn__icon"
+                  :data-src="filterIcon"
+                  class="app-filter-btn__icon"
                 />
                 <span class="text-sm font-medium">
                   Фильтр
@@ -374,20 +385,99 @@ onMounted(() => {
       <CollapseFilter v-model="filterFormOpened">
         <template #body>
           <TransitionGroup
-              name="nested"
-              :duration="{ enter: 500, leave: 1500 }"
-              tag="div"
-              class="mt-4 relative"
+            name="nested"
+            :duration="{ enter: 500, leave: 1500 }"
+            tag="div"
+            class="mt-4 relative"
           >
             <AppForm
-                v-if="activeTab === TABS.PRODUCTS"
-                :value="productsForm"
-                @validation="value => productsFormV$ = value"
-                :validation-errors="productsFormErrors"
-                class="grid gap-x-4 grid-cols-4"
+              v-if="activeTab === TABS.PRODUCTS"
+              :value="productsForm"
+              @validation="value => productsFormV$ = value"
+              :validation-errors="productsFormErrors"
+              class="grid gap-x-4 grid-cols-4"
             >
               <AppSelect
-                  v-model="productsForm.product_id"
+                v-model="productsForm.product_id"
+                :items="settingsStore.vidProduct.product_types"
+                item-label="name"
+                item-value="id"
+                label="Название продукта"
+                placeholder="Название продукта"
+                label-class="text-[#A8AAAE] text-xs font-medium"
+                clearable
+              />
+              <AppInput
+                v-model="productsForm.quantity"
+                property="quantity"
+                custom-type="number"
+                label="Количество"
+                placeholder="Количество"
+                label-class="text-[#A8AAAE] text-xs font-medium"
+              />
+              <AppSelect
+                v-model="productsForm.measurement_unit_id"
+                :items="settingsStore.units.units"
+                item-label="name"
+                item-value="id"
+                property="measurement_unit_id"
+                label="Ед. измерения"
+                placeholder="Ед. измерения"
+                label-class="text-[#A8AAAE] text-xs font-medium"
+                clearable
+              />
+              <AppInput
+                v-model.number="productsForm.price"
+                prop="price"
+                label="Сумма"
+                placeholder="Сумма"
+                label-class="text-[#A8AAAE] text-xs font-medium"
+              />
+            </AppForm>
+            <AppForm
+              v-else
+              :value="invoicesForm"
+              @validation="(value) => invoicesFormV$ = value"
+              :validation-errors="invoicesFormErrors"
+            >
+              <div class="grid gap-4 grid-cols-6">
+                <AppDatePicker
+                  v-model="invoicesForm.from"
+                  property="from"
+                  label="С этой даты"
+                  placeholder="С этой даты"
+                  label-class="text-[#A8AAAE] text-xs font-medium"
+                />
+                <AppDatePicker
+                  v-model="invoicesForm.to"
+                  prop="to"
+                  label="По эту дату"
+                  placeholder="По эту дату"
+                  label-class="text-[#A8AAAE] text-xs font-medium"
+                />
+                <AppSelect
+                  v-model="invoicesForm.document_id"
+                  :items="documentStore.drafts?.documents ?? []"
+                  item-label="number"
+                  item-value="id"
+                  class="col-span-2"
+                  label="№ накладной"
+                  placeholder="№ накладной"
+                  label-class="text-[#A8AAAE] text-xs font-medium"
+                  clearable
+                />
+                <AppInput
+                  v-model.number="invoicesForm.price"
+                  type="number"
+                  class="col-span-2"
+                  placeholder="Сумма"
+                  label="Сумма"
+                  label-class="text-[#A8AAAE] text-xs font-medium"
+                />
+              </div>
+              <div class="grid grid-cols-4 gap-4 mt-1">
+                <AppSelect
+                  v-model="invoicesForm.product_id"
                   :items="settingsStore.vidProduct.product_types"
                   item-label="name"
                   item-value="id"
@@ -395,17 +485,17 @@ onMounted(() => {
                   placeholder="Название продукта"
                   label-class="text-[#A8AAAE] text-xs font-medium"
                   clearable
-              />
-              <AppInput
-                  v-model="productsForm.quantity"
-                  property="quantity"
+                />
+                <AppInput
+                  v-model="invoicesForm.quantity"
+                  prop="quantity"
                   custom-type="number"
                   label="Количество"
                   placeholder="Количество"
                   label-class="text-[#A8AAAE] text-xs font-medium"
-              />
-              <AppSelect
-                  v-model="productsForm.measurement_unit_id"
+                />
+                <AppSelect
+                  v-model="invoicesForm.measurement_unit_id"
                   :items="settingsStore.units.units"
                   item-label="name"
                   item-value="id"
@@ -414,93 +504,14 @@ onMounted(() => {
                   placeholder="Ед. измерения"
                   label-class="text-[#A8AAAE] text-xs font-medium"
                   clearable
-              />
-              <AppInput
-                  v-model.number="productsForm.price"
-                  prop="price"
-                  label="Сумма"
-                  placeholder="Сумма"
+                />
+                <AppInput
+                  v-model="invoicesForm.net_price"
+                  prop="net_price"
+                  type="number"
+                  label="Цена"
+                  placeholder="Цена"
                   label-class="text-[#A8AAAE] text-xs font-medium"
-              />
-            </AppForm>
-            <AppForm
-                v-else
-                :value="invoicesForm"
-                @validation="(value) => invoicesFormV$ = value"
-                :validation-errors="invoicesFormErrors"
-            >
-              <div class="grid gap-4 grid-cols-6">
-                <AppDatePicker
-                    v-model="invoicesForm.from"
-                    property="from"
-                    label="С этой даты"
-                    placeholder="С этой даты"
-                    label-class="text-[#A8AAAE] text-xs font-medium"
-                />
-                <AppDatePicker
-                    v-model="invoicesForm.to"
-                    prop="to"
-                    label="По эту дату"
-                    placeholder="По эту дату"
-                    label-class="text-[#A8AAAE] text-xs font-medium"
-                />
-                <AppSelect
-                    v-model="invoicesForm.document_id"
-                    :items="documentStore.drafts?.documents ?? []"
-                    item-label="number"
-                    item-value="id"
-                    class="col-span-2"
-                    label="№ накладной"
-                    placeholder="№ накладной"
-                    label-class="text-[#A8AAAE] text-xs font-medium"
-                    clearable
-                />
-                <AppInput
-                    v-model.number="invoicesForm.price"
-                    type="number"
-                    class="col-span-2"
-                    placeholder="Сумма"
-                    label="Сумма"
-                    label-class="text-[#A8AAAE] text-xs font-medium"
-                />
-              </div>
-              <div class="grid grid-cols-4 gap-4 mt-1">
-                <AppSelect
-                    v-model="invoicesForm.product_id"
-                    :items="settingsStore.vidProduct.product_types"
-                    item-label="name"
-                    item-value="id"
-                    label="Название продукта"
-                    placeholder="Название продукта"
-                    label-class="text-[#A8AAAE] text-xs font-medium"
-                    clearable
-                />
-                <AppInput
-                    v-model="invoicesForm.quantity"
-                    prop="quantity"
-                    custom-type="number"
-                    label="Количество"
-                    placeholder="Количество"
-                    label-class="text-[#A8AAAE] text-xs font-medium"
-                />
-                <AppSelect
-                    v-model="invoicesForm.measurement_unit_id"
-                    :items="settingsStore.units.units"
-                    item-label="name"
-                    item-value="id"
-                    property="measurement_unit_id"
-                    label="Ед. измерения"
-                    placeholder="Ед. измерения"
-                    label-class="text-[#A8AAAE] text-xs font-medium"
-                    clearable
-                />
-                <AppInput
-                    v-model="invoicesForm.net_price"
-                    prop="net_price"
-                    type="number"
-                    label="Цена"
-                    placeholder="Цена"
-                    label-class="text-[#A8AAAE] text-xs font-medium"
                 />
               </div>
             </AppForm>
@@ -513,14 +524,14 @@ onMounted(() => {
             </div>
             <div class="flex items-center">
               <button
-                  @click="clearForm"
-                  class="custom-reset-btn"
+                @click="clearForm"
+                class="custom-reset-btn"
               >
                 Сбросить
               </button>
               <button
-                  @click="filterForm"
-                  class="custom-apply-btn ml-[16px]"
+                @click="filterForm"
+                class="custom-apply-btn ml-[16px]"
               >
                 Применить
               </button>
@@ -529,25 +540,25 @@ onMounted(() => {
         </template>
       </CollapseFilter>
       <TransitionGroup
-          name="nested"
-          :duration="{ enter: 500, leave: 1500 }"
-          tag="div"
-          class="relative overflow-x-hidden"
+        name="nested"
+        :duration="{ enter: 500, leave: 1500 }"
+        tag="div"
+        class="relative overflow-x-hidden"
       >
         <div
-            v-if="activeTab === TABS.PRODUCTS"
-            class="inner"
+          v-if="activeTab === TABS.PRODUCTS"
+          class="inner"
         >
           <ElTable
-              v-loading="warehouseBasesStore.productsLoading"
-              :data="warehouseBasesStore.products?.warehouse_products"
-              stripe
-              class="custom-element-table"
+            v-loading="warehouseBasesStore.productsLoading"
+            :data="warehouseBasesStore.products?.warehouse_products"
+            stripe
+            class="custom-element-table"
           >
             <ElTableColumn
-                prop="idx"
-                label="№"
-                :width="150"
+              prop="idx"
+              label="№"
+              :width="150"
             >
               <template #default="{$index}">
                 {{
@@ -556,78 +567,78 @@ onMounted(() => {
               </template>
             </ElTableColumn>
             <ElTableColumn
-                prop="product_name"
-                label="Название продукта"
-                width="360"
+              prop="product_name"
+              label="Название продукта"
+              width="360"
             >
               <template #default="{row}:{row:WarehouseBasesProductType}">
                 {{ row.product.name || "—" }}
               </template>
             </ElTableColumn>
             <ElTableColumn
-                prop="quantity"
-                label="Количество"
-                width="360"
+              prop="quantity"
+              label="Количество"
+              width="360"
             >
               <template #default="{row}:{row:WarehouseBasesProductType}">
                 {{ row.quantity || "—" }}
               </template>
             </ElTableColumn>
             <ElTableColumn
-                prop="measure"
-                label="Ед. измерения"
-                width="360"
+              prop="measure"
+              label="Ед. измерения"
+              width="360"
             >
               <template #default="{row}:{row:WarehouseBasesProductType}">
                 {{ row.product.measure || "—" }}
               </template>
             </ElTableColumn>
             <ElTableColumn
-                prop="price_formatted"
-                label="Сумма"
-                width="360"
+              prop="price_formatted"
+              label="Сумма"
+              width="360"
             >
               <template #default="{row}:{row:WarehouseBasesProductType}">
                 {{ row.price_formatted || "—" }}
               </template>
             </ElTableColumn>
             <ElTableColumn
-                prop="action"
-                align="right"
-                label="Действие"
+              prop="action"
+              align="right"
+              label="Действие"
             >
               <template #default="{row}">
                 <button class="action-btn">
                   <img
-                      src="@/assets/images/download.svg"
-                      alt="download"
+                    src="@/assets/images/download.svg"
+                    alt="download"
                   />
                 </button>
               </template>
             </ElTableColumn>
           </ElTable>
           <AppPagination
-              v-if="warehouseBasesStore.products"
-              v-model="productsForm.page"
-              :pagination="warehouseBasesStore.products.paginator"
-              class="mt-6"
-              @current-change="changePage"
+            v-if="warehouseBasesStore.products"
+            v-model="productsForm.page"
+            :pagination="warehouseBasesStore.products.paginator"
+            class="mt-6"
+            @current-change="changePage"
           />
         </div>
         <div
-            v-else-if="activeTab === TABS.INVOICES"
-            class="inner"
+          v-else-if="activeTab === TABS.INVOICES"
+          class="inner"
         >
           <ElTable
-              v-loading="warehouseBasesStore.invoicesLoading"
-              :data="warehouseBasesStore.invoices?.invoices ?? []"
-              class="custom-element-table"
-              stripe
+            v-loading="warehouseBasesStore.invoicesLoading"
+            :data="warehouseBasesStore.invoices?.invoices ?? []"
+            class="custom-element-table"
+            stripe
           >
             <ElTableColumn
-                prop="idx"
-                label="№"
-                :width="150"
+              prop="idx"
+              label="№"
+              :width="150"
             >
               <template #default="{$index}">
                 {{
@@ -636,56 +647,56 @@ onMounted(() => {
               </template>
             </ElTableColumn>
             <ElTableColumn
-                prop="product"
-                label="Название продукта"
+              prop="product"
+              label="Название продукта"
             >
               <template #default="{row}:{row: WarehouseBasesInvoiceType}">
                 {{ row.product.name || "—" }}
               </template>
             </ElTableColumn>
             <ElTableColumn
-                prop="number"
-                label="№ накладной"
+              prop="number"
+              label="№ накладной"
             >
               <template #default="{row}:{row: WarehouseBasesInvoiceType}">
                 {{ row.document.number || "—" }}
               </template>
             </ElTableColumn>
             <ElTableColumn
-                prop="date"
-                label="Дата накладной"
+              prop="date"
+              label="Дата накладной"
             >
               <template #default="{row}:{row: WarehouseBasesInvoiceType}">
                 {{ row.document.created_at_formatted || "—" }}
               </template>
             </ElTableColumn>
             <ElTableColumn
-                prop="quantity"
-                label="Количество"
+              prop="quantity"
+              label="Количество"
             >
               <template #default="{row}:{row: WarehouseBasesInvoiceType}">
                 {{ row.quantity || "—" }}
               </template>
             </ElTableColumn>
             <ElTableColumn
-                prop="measurement_unit"
-                label="Ед. измерения"
+              prop="measurement_unit"
+              label="Ед. измерения"
             >
               <template #default="{row}:{row: WarehouseBasesInvoiceType}">
                 {{ row.product.measurement_unit.name || "—" }}
               </template>
             </ElTableColumn>
             <ElTableColumn
-                prop="price_formatted"
-                label="Цена"
+              prop="price_formatted"
+              label="Цена"
             >
               <template #default="{row}:{row: WarehouseBasesInvoiceType}">
                 {{ row.price_formatted || "—" }}
               </template>
             </ElTableColumn>
             <ElTableColumn
-                prop="total_price_formatted"
-                label="Сумма"
+              prop="total_price_formatted"
+              label="Сумма"
             >
               <template #default="{row}:{row: WarehouseBasesInvoiceType}">
                 {{ row.total_price_formatted || "—" }}
@@ -693,11 +704,11 @@ onMounted(() => {
             </ElTableColumn>
           </ElTable>
           <AppPagination
-              v-if="warehouseBasesStore.invoices"
-              v-model="invoicesForm.page"
-              :pagination="warehouseBasesStore.invoices.pagination"
-              class="mt-6"
-              @current-change="changePage"
+            v-if="warehouseBasesStore.invoices"
+            v-model="invoicesForm.page"
+            :pagination="warehouseBasesStore.invoices.pagination"
+            class="mt-6"
+            @current-change="changePage"
           />
         </div>
       </TransitionGroup>

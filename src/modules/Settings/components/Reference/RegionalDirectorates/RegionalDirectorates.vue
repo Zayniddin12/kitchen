@@ -96,7 +96,7 @@ const tableCurrentChange = (value: Record<string, any>) => {
 <template>
   <div>
     <div class="flex items-center justify-between">
-      <h1 class="m-0 font-semibold text-[32px] leading-[48px]">{{ route.meta.title }}</h1>
+      <h1 class="m-0 font-semibold text-[32px] leading-[48px]">{{ $t(route.meta.title) }}</h1>
 
       <div class="flex items-center">
         <el-input

@@ -156,7 +156,7 @@ watch(() => route.name, () => {
 
 <template>
   <section>
-    <h1 class="m-0 font-semibold text-[32px] leading-[48px] mb-[24px]">{{ route.meta.title }}</h1>
+    <h1 class="m-0 font-semibold text-[32px] leading-[48px] mb-[24px]">{{ $t(route.meta.title) }}</h1>
 
     <div class="flex gap-6">
       <div class="w-[70%]">

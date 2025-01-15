@@ -27,5 +27,14 @@ export default [
             title: "kitchenWarehouse.title",
             isTranslate: true
         }
+    },
+    {
+        path: "/kitchen-warehouse-packaging/:id(\\d+)/:id3(\\d+)/:id4(\\d+)",
+        name: "kitchen-warehouse-packaging-id-id3-id4",
+        component: () => import("@/modules/KitchenWarehouse/pages/packaging.vue"),
+        meta: {
+            title: "kitchenWarehouse.title",
+            isTranslate: true
+        }
     }
 ] as RouteRecordRaw[];

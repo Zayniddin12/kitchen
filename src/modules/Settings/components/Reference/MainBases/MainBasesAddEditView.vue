@@ -34,6 +34,7 @@ const form = reactive<BaseWarehouseDataType>({
   measure_id: null,
   product_ids: [],
 });
+const factory = ref<boolean>(false)
 
 const oldForm = ref<null | BaseWarehouseDataType>(null);
 
@@ -164,7 +165,7 @@ const disabledFormItems = computed<boolean>(() => {
 
 <template>
   <div>
-    <h1 class="m-0 font-semibold text-[32px] leading-[48px]">{{ route.meta.title }}</h1>
+    <h1 class="m-0 font-semibold text-[32px] leading-[48px]">{{ $t(route.meta.title) }}</h1>
     <div class="flex items-start gap-6 mt-6">
       <div class="w-[70%]">
         <AppOverlay
@@ -278,6 +279,36 @@ const disabledFormItems = computed<boolean>(() => {
             :active-text="getStatusText(form.status)"
             class="app-switch mt-auto"
           />
+          <br/>
+
+
+          <ElSwitch
+            v-model="factory"
+            active-text="цех"
+            class="app-switch mt-5"
+          />
+
+          <div class="grid grid-cols-2 gap-4 mt-2" v-if="factory">
+            <app-input
+              v-model="form.name.ru"
+              prop="name.ru"
+              label="Наименование (Рус)"
+              placeholder="Введите"
+              label-class="text-[#A8AAAE] font-medium text-xs"
+              required
+              :disabled="disabledFormItems"
+            />
+
+            <app-input
+              v-model="form.name.uz"
+              prop="name.uz"
+              label="Наименование (Ўзб)"
+              placeholder="Введите"
+              label-class="text-[#A8AAAE] font-medium text-xs"
+              required
+              :disabled="disabledFormItems"
+            />
+          </div>
         </AppOverlay>
 
         <div
