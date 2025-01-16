@@ -17,7 +17,7 @@ export interface DocumentCreateDataDocumentType {
     doc_type_id?: number | null,
     date?: string,
     number?: string,
-    from?: string,
+    from?: string | number,
     from_id?: number | null,
     from_type?: string,
     to?: string,

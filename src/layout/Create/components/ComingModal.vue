@@ -133,9 +133,7 @@ const actForm = reactive<any>({
       count_product: null,
       contract_details: null,
       contract_details_date: null,
-      formNumberAndDate: null,
       manufacturer: null,
-      from: null,
       shipping_method: null,
       licence: null,
       licence_date: null,
@@ -230,6 +228,14 @@ const sendForm = async () => {
     return;
   }
 
+  form.products.forEach((formProduct, formIndex) => {
+    actForm.products[formIndex] = {
+      ...actForm.products[formIndex],
+      ...formProduct,
+    };
+  });
+
+
   const newForm: DocumentCreateDataType = {
     Document: JSON.parse(JSON.stringify(form)),
   };
@@ -238,6 +244,10 @@ const sendForm = async () => {
   delete newForm.Document.to;
 
   newForm.Act = JSON.parse(JSON.stringify(actForm));
+
+  newForm.Act && newForm.Act.products && newForm.Act.products.forEach(item => {
+    delete item.product;
+  });
 
   if (newForm.Act && newForm.Act.doc_signer_obj) {
     const signerKeys = ["signer_id_1", "signer_id_2", "signer_id_3", "signer_id_4", "signer_id_5"] as const;
@@ -261,6 +271,7 @@ const sendForm = async () => {
     delete newForm.Act?.subject;
   }
 
+  console.log(newForm);
   await documentStore.create(filterObjectValues(newForm)).then(() => {
     commonStore.successToast();
     model.value = false;
@@ -350,9 +361,7 @@ const createProduct = () => {
     count_product: null,
     contract_details: null,
     contract_details_date: null,
-    formNumberAndDate: null,
     manufacturer: null,
-    from: null,
     shipping_method: null,
     licence: null,
     licence_date: null,
@@ -456,6 +465,7 @@ const openModal = () => {
   fetchRespondents();
 
   if (authStore.disabledUserWorkplace) {
+    console.log(authStore.user);
     const activeWorkplace = authStore.user.workplaces[0];
     const type = activeComingModal.value ? "to" : "from";
     form[`${type}_id`] = activeWorkplace.workplace_id;
@@ -480,7 +490,9 @@ watch(model, newValue => {
 });
 
 const respondentChange = (value: string, type: "from" | "to") => {
+  console.log(value);
   const values = value.split("_");
+  form.from = value;
   form[`${type}_id`] = Number(values[0]);
   form[`${type}_type`] = values[1];
 };
@@ -558,6 +570,12 @@ watch(providerCreateModal, newMProviderModal => {
 
 
 const activeProduct = ref(1);
+const value = ref(null);
+
+const changeUser = (val, key) => {
+  console.log(val);
+  actForm.doc_signer_obj[key] = val;
+};
 
 </script>
 
@@ -928,6 +946,7 @@ const activeProduct = ref(1);
               </button>
             </template>
           </AppSelect>
+          <!--{{settingsStore.respondents}}-->
           <AppSelect
             v-model="form.to"
             prop="to"
@@ -1211,7 +1230,7 @@ const activeProduct = ref(1);
                         {{ t("document.consignmentNumberDate") }}
                       </td>
                       <td class="p-2 border-b border-gray-300">
-                        {{ item.formNumberAndDate }}
+                        {{ formNumberAndDate }}
                       </td>
                     </tr>
 
@@ -1282,121 +1301,6 @@ const activeProduct = ref(1);
                   </table>
                 </el-collapse-item>
               </el-collapse>
-              <!--              <table-->
-              <!--                class="min-w-full border border-gray-300 bg-white text-left text-sm text-gray-900 rounded-[8px] border-separate table-my border-spacing-0"-->
-              <!--              >-->
-              <!--                <colgroup>-->
-              <!--                  <col class="w-[60%]">-->
-              <!--                </colgroup>-->
-              <!--                <tbody>-->
-              <!--                <tr class="border-gray-300">-->
-              <!--                  <td class="border-r border-b p-2 font-medium">-->
-              <!--                    {{ t("product.name") }}-->
-              <!--                  </td>-->
-              <!--                  <td class="p-2 border-b border-gray-300">{{ activeProductType?.name }}</td>-->
-              <!--                </tr>-->
-
-              <!--                <tr class="border-gray-300">-->
-              <!--                  <td class="border-r border-b p-2 font-medium">-->
-              <!--                    {{ t("product.quantity") }}-->
-              <!--                  </td>-->
-              <!--                  <td class="p-2 border-b border-gray-300">-->
-              <!--                    {{ actForm.products[0]?.quantity ? formatNumber(actForm.products[0].quantity) : "" }}-->
-              <!--                  </td>-->
-              <!--                </tr>-->
-
-              <!--                <tr class="border-gray-300">-->
-              <!--                  <td class="border-r border-b p-2 font-medium">-->
-              <!--                    {{ t("common.unitMeasurement") }}-->
-              <!--                  </td>-->
-              <!--                  <td class="p-2 border-b border-gray-300">-->
-              <!--                    {{ actForm.products[0]?.unit_id ? getProductMeasurement(actForm.products[0].unit_id) : "" }}-->
-              <!--                  </td>-->
-              <!--                </tr>-->
-
-              <!--                <tr class="border-gray-300">-->
-              <!--                  <td class="border-r border-b p-2 font-medium">-->
-              <!--                    {{ t("document.act.numberDateAgreement") }}-->
-              <!--                  </td>-->
-              <!--                  <td class="p-2 border-b border-gray-300">-->
-              <!--                    {{ actForm.doc_details.contract_details }}-->
-              <!--                  </td>-->
-              <!--                </tr>-->
-
-              <!--                <tr class="border-gray-300">-->
-              <!--                  <td class="border-r border-b p-2 font-medium">-->
-              <!--                    {{ t("document.consignmentNumberDate") }}-->
-              <!--                  </td>-->
-              <!--                  <td class="p-2 border-b border-gray-300">-->
-              <!--                    {{ formNumberAndDate }}-->
-              <!--                  </td>-->
-              <!--                </tr>-->
-
-              <!--                <tr class="border-gray-300">-->
-              <!--                  <td class="border-r border-b p-2 font-medium">-->
-              <!--                    {{ t("product.manufacturer") }}-->
-              <!--                  </td>-->
-              <!--                  <td class="p-2 border-b border-gray-300">{{ actForm.doc_details.manufacturer }}</td>-->
-              <!--                </tr>-->
-
-              <!--                <tr class="border-gray-300">-->
-              <!--                  <td class="border-r border-b p-2 font-medium">{{ t("common.supplier") }}</td>-->
-              <!--                  <td class="p-2 border-b border-gray-300">-->
-              <!--                    {{ from }}-->
-              <!--                  </td>-->
-              <!--                </tr>-->
-
-              <!--                <tr class="border-gray-300">-->
-              <!--                  <td class="border-r border-b p-2 font-medium">-->
-              <!--                    {{ t("common.recipient") }}-->
-              <!--                  </td>-->
-              <!--                  <td class="p-2 border-b border-gray-300">{{ to }}</td>-->
-              <!--                </tr>-->
-
-              <!--                <tr class="border-gray-300">-->
-              <!--                  <td class="border-r border-b p-2 font-medium">-->
-              <!--                    {{ t("common.transport") }}-->
-              <!--                  </td>-->
-              <!--                  <td class="p-2 border-b border-gray-300">{{ actForm.shipping_method }}</td>-->
-              <!--                </tr>-->
-
-              <!--                <tr class="border-gray-300">-->
-              <!--                  <td class="border-r border-b p-2 font-medium">-->
-              <!--                    {{ t("licence.numberAndDate") }}-->
-              <!--                  </td>-->
-              <!--                  <td class="p-2 border-b border-gray-300">-->
-              <!--                    {{ actForm.doc_details.licence }}-->
-              <!--                  </td>-->
-              <!--                </tr>-->
-
-              <!--                <tr class="border-gray-300">-->
-              <!--                  <td class="border-r border-b p-2 font-medium">-->
-              <!--                    {{ t("document.numberAndDateOfTheConclusionOfTheSanitaryAndEpidemiologicalCenter") }}-->
-              <!--                  </td>-->
-              <!--                  <td class="p-2 border-b border-gray-300">-->
-              <!--                    {{ actForm.doc_details.sanitary }}-->
-              <!--                  </td>-->
-              <!--                </tr>-->
-
-              <!--                <tr class="border-gray-300">-->
-              <!--                  <td class="border-r border-b p-2 font-medium">-->
-              <!--                    {{ t("document.numberAndDateOfVeterinaryCertificate") }}-->
-              <!--                  </td>-->
-              <!--                  <td class="p-2 border-b border-gray-300">-->
-              <!--                    {{ actForm.doc_details.vetirinary }}-->
-              <!--                  </td>-->
-              <!--                </tr>-->
-
-              <!--                <tr class="border-gray-300">-->
-              <!--                  <td class="border-r border-b p-2 font-medium">-->
-              <!--                    {{ t("document.numberAndDateOfQualityCertificate") }}-->
-              <!--                  </td>-->
-              <!--                  <td class="p-2 border-b border-gray-300">-->
-              <!--                    {{ actForm.doc_details.quality }}-->
-              <!--                  </td>-->
-              <!--                </tr>-->
-              <!--                </tbody>-->
-              <!--              </table>-->
             </div>
 
             <div class="flex items-center justify-between mb-[24px]">
@@ -1551,7 +1455,7 @@ const activeProduct = ref(1);
                       required
                     />
                     <AppInput
-                      v-model="item.formNumberAndDate"
+                      v-model="formNumberAndDate"
                       :placeholder="t('document.consignmentNumberDate')"
                       :label="t('document.consignmentNumberDate')"
                       label-class="text-[#A8AAAE] text-xs font-medium"
@@ -1566,7 +1470,7 @@ const activeProduct = ref(1);
                       required
                     />
                     <AppInput
-                      :model-value="item.from"
+                      :model-value="from"
                       :label="t('common.supplier')"
                       :placeholder="t('common.supplier')"
                       label-class="text-[#A8AAAE] text-xs font-medium"
@@ -1658,172 +1562,21 @@ const activeProduct = ref(1);
               </el-collapse>
             </div>
 
-            <!--            <div class="bg-[#FFFFFF] rounded-[8px] p-[12px] mb-[24px]">-->
-
-            <!--              &lt;!&ndash;              {{ actForm.products }}&ndash;&gt;-->
-            <!--              {{ selectedProductTypes }}-->
-            <!--              <AppSelect-->
-            <!--                v-model="actForm.products[0]"-->
-            <!--                :items="selectedProductTypes"-->
-            <!--                item-label="name"-->
-            <!--                item-value="id"-->
-            <!--                prop="products[0]"-->
-            <!--                :placeholder="t('product.name')"-->
-            <!--                :label="t('product.name')"-->
-            <!--                label-class="text-[#A8AAAE] text-xs font-medium"-->
-            <!--                @change="actProductTypeChange"-->
-            <!--                required-->
-            <!--                trigger="blur"-->
-            <!--              >-->
-            <!--              </AppSelect>-->
-            <!--              <AppInput-->
-            <!--                :modelValue="actForm.products[0]?.quantity ?? ''"-->
-            <!--                label-class="text-[#A8AAAE] text-xs font-medium"-->
-            <!--                :placeholder="t('product.quantity')"-->
-            <!--                :label="t('product.quantity')"-->
-            <!--                disabled-->
-            <!--              />-->
-            <!--              <AppInput-->
-            <!--                :model-value="actForm.products[0]?.unit_id ? getProductMeasurement(actForm.products[0].unit_id) : ''"-->
-            <!--                label-class="text-[#A8AAAE] text-xs font-medium"-->
-            <!--                :label="t('common.unitMeasurement')"-->
-            <!--                :placeholder="t('common.unitMeasurement')"-->
-            <!--                disabled-->
-            <!--              />-->
-            <!--              <AppInput-->
-            <!--                v-model="actForm.doc_details.contract_details"-->
-            <!--                prop="doc_details.contract_details"-->
-            <!--                :placeholder="t('document.act.numberAgreement')"-->
-            <!--                :label="t('document.act.numberAgreement')"-->
-            <!--                label-class="text-[#A8AAAE] text-xs font-medium"-->
-            <!--                required-->
-            <!--                :maxlength="20"-->
-            <!--                :max="20"-->
-            <!--              />-->
-            <!--              <AppDatePicker-->
-            <!--                v-model="actForm.doc_details.contract_details_date"-->
-            <!--                prop="doc_details.contract_details_date"-->
-            <!--                :placeholder="t('document.act.dateAgreement')"-->
-            <!--                :label="t('document.act.dateAgreement')"-->
-            <!--                label-class="text-[#A8AAAE] text-xs font-medium"-->
-            <!--                required-->
-            <!--              />-->
-            <!--              <AppInput-->
-            <!--                v-model="formNumberAndDate"-->
-            <!--                :placeholder="t('document.consignmentNumberDate')"-->
-            <!--                :label="t('document.consignmentNumberDate')"-->
-            <!--                label-class="text-[#A8AAAE] text-xs font-medium"-->
-            <!--                disabled-->
-            <!--              />-->
-            <!--              <AppInput-->
-            <!--                v-model="actForm.doc_details.manufacturer"-->
-            <!--                prop="doc_details.manufacturer"-->
-            <!--                :placeholder="t('product.manufacturer')"-->
-            <!--                :label="t('product.manufacturer')"-->
-            <!--                label-class="text-[#A8AAAE] text-xs font-medium"-->
-            <!--                required-->
-            <!--              />-->
-            <!--              <AppInput-->
-            <!--                :model-value="from"-->
-            <!--                :label="t('common.supplier')"-->
-            <!--                :placeholder="t('common.supplier')"-->
-            <!--                label-class="text-[#A8AAAE] text-xs font-medium"-->
-            <!--                disabled-->
-            <!--              />-->
-
-            <!--              <AppInput-->
-            <!--                v-model="actForm.shipping_method"-->
-            <!--                prop="shipping_method"-->
-            <!--                :placeholder="t('common.transport')"-->
-            <!--                :label="t('common.transport')"-->
-            <!--                label-class="text-[#A8AAAE] text-xs font-medium"-->
-            <!--                required-->
-            <!--              />-->
-            <!--              <AppInput-->
-            <!--                v-model="actForm.doc_details.licence"-->
-            <!--                prop="doc_details.licence"-->
-            <!--                :placeholder="t('licence.number')"-->
-            <!--                :label="t('licence.number')"-->
-            <!--                label-class="text-[#A8AAAE] text-xs font-medium"-->
-            <!--                required-->
-            <!--                :max="20"-->
-            <!--                :maxlength="20"-->
-            <!--              />-->
-            <!--              <AppDatePicker-->
-            <!--                v-model="actForm.doc_details.licence_date"-->
-            <!--                prop="doc_details.licence_date"-->
-            <!--                :placeholder="t('licence.date')"-->
-            <!--                :label="t('licence.date')"-->
-            <!--                label-class="text-[#A8AAAE] text-xs font-medium"-->
-            <!--                required-->
-            <!--              />-->
-            <!--              <AppInput-->
-            <!--                v-model="actForm.doc_details.sanitary"-->
-            <!--                prop="doc_details.sanitary"-->
-            <!--                :placeholder="t('document.sanitaryConclusion.number')"-->
-            <!--                :label="t('document.sanitaryConclusion.number')"-->
-            <!--                label-class="text-[#A8AAAE] text-xs font-medium"-->
-            <!--                required-->
-            <!--                :max="20"-->
-            <!--              />-->
-            <!--              <AppDatePicker-->
-            <!--                v-model="actForm.doc_details.sanitary_date"-->
-            <!--                prop="doc_details.sanitary_date"-->
-            <!--                :placeholder="t('document.sanitaryConclusion.date')"-->
-            <!--                :label="t('document.sanitaryConclusion.date')"-->
-            <!--                label-class="text-[#A8AAAE] text-xs font-medium"-->
-            <!--                required-->
-            <!--              />-->
-            <!--              <AppInput-->
-            <!--                v-model="actForm.doc_details.vetirinary"-->
-            <!--                prop="doc_details.vetirinary"-->
-            <!--                :placeholder="t('document.veterinaryCertificate.number')"-->
-            <!--                :label="t('document.veterinaryCertificate.number')"-->
-            <!--                label-class="text-[#A8AAAE] text-xs font-medium"-->
-            <!--                required-->
-            <!--                :max="20"-->
-            <!--              />-->
-            <!--              <AppDatePicker-->
-            <!--                v-model="actForm.doc_details.vetirinary_date"-->
-            <!--                prop="doc_details.vetirinary_date"-->
-            <!--                :placeholder="t('document.veterinaryCertificate.date')"-->
-            <!--                :label="t('document.veterinaryCertificate.date')"-->
-            <!--                label-class="text-[#A8AAAE] text-xs font-medium"-->
-            <!--                required-->
-            <!--              />-->
-            <!--              <AppInput-->
-            <!--                v-model="actForm.doc_details.quality"-->
-            <!--                prop="doc_details.quality"-->
-            <!--                :placeholder="t('document.qualityCertificate.number')"-->
-            <!--                :label="t('document.qualityCertificate.number')"-->
-            <!--                label-class="text-[#A8AAAE] text-xs font-medium"-->
-            <!--                required-->
-            <!--                :max="20"-->
-            <!--                :maxlength="20"-->
-            <!--              />-->
-            <!--              <AppDatePicker-->
-            <!--                v-model="actForm.doc_details.quality_date"-->
-            <!--                prop="doc_details.quality_date"-->
-            <!--                :placeholder="t('document.qualityCertificate.date')"-->
-            <!--                :label="t('document.qualityCertificate.date')"-->
-            <!--                label-class="text-[#A8AAAE] text-xs font-medium"-->
-            <!--                required-->
-            <!--              />-->
-            <!--            </div>-->
           </template>
 
           <div class="bg-[#FFFFFF] rounded-[8px] p-[12px]">
             <strong class="block text-[#4F5662] text-sm font-medium mb-4">
               {{ t("document.commission.title") }}
             </strong>
+            <!--            {{ actForm.doc_signer_obj }}-->
             <div class="flex flex-col">
               <AppSelect
                 v-model="actForm.doc_signer_obj.signer_id_1"
                 prop="doc_signer_obj.signer_id_1"
                 :placeholder="t('document.commission.storekeeper')"
-                :label="t('document.commission.storekeeper')"
                 label-class="text-[#A8AAAE] text-xs font-medium"
                 required
+                @change="changeUser($event, 'signer_id_1')"
               >
                 <template v-if="usersStore.users">
                   <ElOption
@@ -1841,6 +1594,7 @@ const activeProduct = ref(1);
                 :label="t('document.commission.commodityExpert')"
                 label-class="text-[#A8AAAE] text-xs font-medium"
                 required
+                @change="changeUser($event, 'signer_id_2')"
               >
                 <template v-if="usersStore.users">
                   <ElOption
@@ -1859,6 +1613,7 @@ const activeProduct = ref(1);
                 :label="t('document.commission.forwarder')"
                 label-class="text-[#A8AAAE] text-xs font-medium"
                 required
+                @change="changeUser($event, 'signer_id_3')"
               >
                 <template v-if="usersStore.users">
                   <ElOption
@@ -1876,6 +1631,7 @@ const activeProduct = ref(1);
                 :label="t('document.commission.warehouseManager')"
                 label-class="text-[#A8AAAE] text-xs font-medium"
                 required
+                @change="changeUser($event, 'signer_id_4')"
               >
                 <template v-if="usersStore.users">
                   <ElOption
@@ -1893,6 +1649,7 @@ const activeProduct = ref(1);
                 :label="t('document.commission.baseChief')"
                 label-class="text-[#A8AAAE] text-xs font-medium"
                 required
+                @change="changeUser($event, 'signer_id_5')"
               >
                 <template v-if="usersStore.users">
                   <ElOption
