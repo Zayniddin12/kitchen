@@ -250,6 +250,7 @@ const enterToFactory = () => {
   router.push({
     name: "warehouse-factory",
     params: { district_id: route.params.district_id, product_id: route.params.product_id },
+    query: {id: id.value}
   });
 };
 
@@ -263,7 +264,13 @@ const enterToFactory = () => {
           {{ warehouseBasesStore.product?.title ?? "" }}
         </h1>
 
-        <button class="custom-light-btn" @click="enterToFactory">Мясной цех</button>
+        <button
+          v-if="!!settingsStore.baseWarehouses?.base_warehouses.find((e) => e.id == id)?.workshop_name"
+          class="custom-light-btn"
+          @click="enterToFactory"
+        >
+          {{ settingsStore.baseWarehouses?.base_warehouses.find((e) => e.id == id)?.workshop_name }}
+        </button>
       </div>
       <div class="rounded-2xl py-3 px-4 border mt-6">
         <h3 class="text-dark font-medium text-lg">

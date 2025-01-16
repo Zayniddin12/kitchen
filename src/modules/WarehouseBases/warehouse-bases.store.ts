@@ -9,6 +9,7 @@ import {
     WarehouseBasesProductsResponseType
 } from "@/modules/WarehouseBases/warehouse-bases.types";
 import warehouseBasesApi from "@/modules/WarehouseBases/warehouse-bases.api";
+import axios from "@/plugins/axios/axios";
 
 export const useWarehouseBasesStore = defineStore("warehouseBasesStore", () => {
     const settingsStore = useSettingsStore();
@@ -149,6 +150,10 @@ export const useWarehouseBasesStore = defineStore("warehouseBasesStore", () => {
         }
     };
 
+    const CREATE_FACTORY = ({id, data }) => {
+        return axios.post(`base-warehouses/${id}/make-composite`, data)
+    }
+
     return {
         districts,
         district,
@@ -170,6 +175,8 @@ export const useWarehouseBasesStore = defineStore("warehouseBasesStore", () => {
         fetchManagementBases,
         managementBasesMenu,
         activeManagementBase,
-        getManagementBase
+        getManagementBase,
+
+        CREATE_FACTORY
     };
 });

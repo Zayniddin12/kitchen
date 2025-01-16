@@ -34,7 +34,9 @@ const form = reactive<BaseWarehouseDataType>({
   measure_id: null,
   product_ids: [],
 });
-const factory = ref<boolean>(false)
+const factory = ref<boolean>(false);
+const workshop_name_uz = ref(null);
+const workshop_name_ru = ref(null);
 
 const oldForm = ref<null | BaseWarehouseDataType>(null);
 
@@ -72,6 +74,7 @@ const setBreadCrumbFn = () => {
   ]);
 };
 
+
 watch(() => route.name, () => {
   setBreadCrumbFn();
 }, { immediate: true });
@@ -105,9 +108,21 @@ const sendForm = async () => {
 
   try {
     if (route.name === "reference-main-bases-add") {
-      await settingsStore.createBaseWarehouse(form);
+      await settingsStore.createBaseWarehouse({
+        ...form,
+        workshop_name: {
+          uz: workshop_name_uz.value,
+          ru: workshop_name_ru.value,
+        },
+      });
     } else if (route.name === "reference-main-bases-edit" && routeID.value) {
-      const newForm = { ...form };
+      const newForm = {
+        ...form,
+        workshop_name: {
+          uz: workshop_name_uz.value,
+          ru: workshop_name_ru.value,
+        },
+      };
       newForm.status = setStatus(form.status);
       await settingsStore.updateBaseWarehouse(routeID.value as number, newForm);
     }
@@ -145,6 +160,12 @@ const setForm = async () => {
   form.measure_id = settingsStore.baseWarehouse.measure_id;
   form.status = getStatus(settingsStore.baseWarehouse.status);
   form.product_ids = settingsStore.baseWarehouse.warehouseProducts.map(item => item.id);
+
+  if (settingsStore.baseWarehouse?.workshop_name.uz || settingsStore.baseWarehouse?.workshop_name.ru) {
+    factory.value = true
+    workshop_name_uz.value = settingsStore.baseWarehouse?.workshop_name.uz;
+    workshop_name_ru.value = settingsStore.baseWarehouse?.workshop_name.ru;
+  }
 };
 
 onMounted(async () => {
@@ -279,7 +300,7 @@ const disabledFormItems = computed<boolean>(() => {
             :active-text="getStatusText(form.status)"
             class="app-switch mt-auto"
           />
-          <br/>
+          <br />
 
 
           <ElSwitch
@@ -290,22 +311,18 @@ const disabledFormItems = computed<boolean>(() => {
 
           <div class="grid grid-cols-2 gap-4 mt-2" v-if="factory">
             <app-input
-              v-model="form.name.ru"
-              prop="name.ru"
+              v-model="workshop_name_ru"
               label="Наименование (Рус)"
               placeholder="Введите"
               label-class="text-[#A8AAAE] font-medium text-xs"
-              required
               :disabled="disabledFormItems"
             />
 
             <app-input
-              v-model="form.name.uz"
-              prop="name.uz"
+              v-model="workshop_name_uz"
               label="Наименование (Ўзб)"
               placeholder="Введите"
               label-class="text-[#A8AAAE] font-medium text-xs"
-              required
               :disabled="disabledFormItems"
             />
           </div>

@@ -72,20 +72,7 @@ onMounted(() => {
 <template>
   <div class="flex justify-between items-start">
     <div class="relative">
-      <div class="relative">
-        <el-icon
-          class="absolute top-[50%] translate-y-[-50%] left-[19px]"
-          color="#8F9194"
-        >
-          <Search />
-        </el-icon>
-        <input
-          v-model="input1"
-          class="bg-white-blue dark:bg-dark w-[552px] rounded-2xl text-black px-[16px] py-[12px] pl-[50px] outline-none"
-          :placeholder="t('form.search')"
-        />
-      </div>
-
+      <div class="text-gray-900 font-semibold text-[25px] leading-[48px]">ФОНД НГМК</div>
       <div
         class="bg-[#F8F9FC] text-gray-900 shadow-md border absolute w-full rounded-md mt-[5px]"
         v-if="input1 && input1.length > 0"
