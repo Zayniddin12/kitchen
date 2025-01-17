@@ -62,6 +62,7 @@ const { t } = useI18n();
 const date = ref(formatDate2(new Date()));
 
 const form = reactive<DocumentCreateDataDocumentType>({
+  comment: "",
   doc_type_id: null,
   date: "",
   number: "",
@@ -85,6 +86,11 @@ const form = reactive<DocumentCreateDataDocumentType>({
       price: null,
     },
   ],
+  doc_signer_obj: {
+    signer_id_1: "",
+    signer_id_2: "",
+    signer_id_3: "",
+  },
 });
 
 const formNumberAndDate = computed(() => {
@@ -223,57 +229,92 @@ const sendForm = async () => {
   if (!v$.value || (activeComingModal.value && !actV$.value)) return;
 
   const isMainValid = await v$.value.validate();
-  const isModalValid = activeComingModal.value ? await actV$.value?.validate() : true;
+  const isModalValid = activeComingModal.value && !typeSwitch.value ? await actV$.value?.validate() : true;
 
   if (!isMainValid || !isModalValid) {
     commonStore.errorToast(t("error.validation"));
     return;
   }
 
-  const newForm: DocumentCreateDataType = {
-    Document: JSON.parse(JSON.stringify(form)),
-  };
+  if (typeSwitch.value) {
 
-  delete newForm.Document.from;
-  delete newForm.Document.to;
-
-  newForm.Act = JSON.parse(JSON.stringify(actForm));
-
-  if (newForm.Act && newForm.Act.doc_signer_obj) {
-    const signerKeys = ["signer_id_1", "signer_id_2", "signer_id_3", "signer_id_4", "signer_id_5"] as const;
-
-    newForm.Act.doc_signers = signerKeys
-      .filter((key) => newForm.Act!.doc_signer_obj![key]) // Faqat qiymati borlarini olish
-      .map((key) => ({
-        signer_id: +newForm.Act!.doc_signer_obj![key] as number,
-      }));
-
-    delete newForm.Act.doc_signer_obj;
-  }
-
-  if (!activeComingModal.value) {
-    delete newForm.Document.subject;
-    delete newForm.Document.status;
-    delete newForm.Act?.content;
-    delete newForm.Act?.number;
-    delete newForm.Act?.products;
-    delete newForm.Act?.shipping_method;
-    delete newForm.Act?.subject;
-  }
-
-  await documentStore.create(filterObjectValues(newForm)).then(() => {
-    commonStore.successToast();
-    model.value = false;
-    clearValidations();
-    validationErrors.value = {
-      Document: {},
-      Act: {},
+    const newForm: DocumentCreateDataType = {
+      Document: JSON.parse(JSON.stringify(form)),
     };
-  }).catch((error: any) => {
-    if (error?.error?.code === 422) {
-      validationErrors.value = error.meta.validation_errors;
+
+    delete newForm.Document.from;
+    delete newForm.Document.to;
+
+    newForm.Act = JSON.parse(JSON.stringify(actForm));
+
+    if (newForm.Act && newForm.Act.doc_signer_obj) {
+      const signerKeys = ["signer_id_1", "signer_id_2", "signer_id_3", "signer_id_4", "signer_id_5"] as const;
+
+      newForm.Act.doc_signers = signerKeys
+        .filter((key) => newForm.Act!.doc_signer_obj![key]) // Faqat qiymati borlarini olish
+        .map((key) => ({
+          signer_id: +newForm.Act!.doc_signer_obj![key] as number,
+        }));
+
+      delete newForm.Act.doc_signer_obj;
     }
-  });
+
+    if (!activeComingModal.value) {
+      delete newForm.Document.subject;
+      delete newForm.Document.status;
+      delete newForm.Act?.content;
+      delete newForm.Act?.number;
+      delete newForm.Act?.products;
+      delete newForm.Act?.shipping_method;
+      delete newForm.Act?.subject;
+    }
+
+  } else {
+    const newForm: DocumentCreateDataType = {
+      Document: JSON.parse(JSON.stringify(form)),
+    };
+
+    delete newForm.Document.from;
+    delete newForm.Document.to;
+
+    newForm.Act = JSON.parse(JSON.stringify(actForm));
+
+    if (newForm.Act && newForm.Act.doc_signer_obj) {
+      const signerKeys = ["signer_id_1", "signer_id_2", "signer_id_3", "signer_id_4", "signer_id_5"] as const;
+
+      newForm.Act.doc_signers = signerKeys
+        .filter((key) => newForm.Act!.doc_signer_obj![key]) // Faqat qiymati borlarini olish
+        .map((key) => ({
+          signer_id: +newForm.Act!.doc_signer_obj![key] as number,
+        }));
+
+      delete newForm.Act.doc_signer_obj;
+    }
+
+    if (!activeComingModal.value) {
+      delete newForm.Document.subject;
+      delete newForm.Document.status;
+      delete newForm.Act?.content;
+      delete newForm.Act?.number;
+      delete newForm.Act?.products;
+      delete newForm.Act?.shipping_method;
+      delete newForm.Act?.subject;
+    }
+  }
+
+  // await documentStore.create(filterObjectValues(newForm)).then(() => {
+  //   commonStore.successToast();
+  //   model.value = false;
+  //   clearValidations();
+  //   validationErrors.value = {
+  //     Document: {},
+  //     Act: {},
+  //   };
+  // }).catch((error: any) => {
+  //   if (error?.error?.code === 422) {
+  //     validationErrors.value = error.meta.validation_errors;
+  //   }
+  // });
 };
 
 const vidProducts = ref<Map<number, Record<string, any>[]>>(new Map);
@@ -564,8 +605,11 @@ const activeProduct = ref(1);
 const typeSwitch = ref(false);
 
 const changeUser = (val, key) => {
-  console.log(val);
-  actForm.doc_signer_obj[key] = val;
+  if (typeSwitch.value) {
+    form.doc_signer_obj[key] = val;
+  } else {
+    actForm.doc_signer_obj[key] = val;
+  }
 };
 </script>
 
@@ -779,61 +823,39 @@ const changeUser = (val, key) => {
                 </div>
               </template>
             </el-table>
-            <template v-if="!activeComingModal">
+            <template v-if="typeSwitch">
               <div class="flex items-center justify-between mb-[24px]">
                 <h2 class="text-[#4F5662] text-sm font-semibold">
-                  {{ t("document.commission.storekeeper") }}:
+                  {{ t("document.commission.head_KP") }}:
                 </h2>
                 <span class="ml-2 text-[#A8AAAE] text-sm font-medium block">
                 {{
-                    actForm.doc_signer_obj.signer_id_1 && typeof (actForm.doc_signer_obj.signer_id_1) === "number" ? usersStore.getUserFullName(getUser(actForm.doc_signer_obj.signer_id_1)) : ""
+                    form.doc_signer_obj.signer_id_1 && typeof (form.doc_signer_obj.signer_id_1) === "number" ? usersStore.getUserFullName(getUser(form.doc_signer_obj.signer_id_1)) : ""
                   }}
               </span>
               </div>
 
               <div class="flex items-center justify-between mb-[24px]">
                 <h2 class="text-[#4F5662] text-sm font-semibold">
-                  {{ t("document.commission.commodityExpert") }}:
+                  {{ t("document.commission.chef") }}:
                 </h2>
                 <span class="ml-2 text-[#A8AAAE] text-sm font-medium block">
                 {{
-                    actForm.doc_signer_obj.signer_id_2 && typeof (actForm.doc_signer_obj.signer_id_2) === "number" ? usersStore.getUserFullName(getUser(actForm.doc_signer_obj.signer_id_2)) : ""
+                    form.doc_signer_obj.signer_id_2 && typeof (form.doc_signer_obj.signer_id_2) === "number" ? usersStore.getUserFullName(getUser(form.doc_signer_obj.signer_id_2)) : ""
                   }}
               </span>
               </div>
               <div class="flex items-center justify-between mb-[24px]">
                 <h2 class="text-[#4F5662] text-sm font-semibold">
-                  {{ t("document.commission.forwarder") }}:
+                  {{ t("document.commission.accountant") }}:
                 </h2>
                 <span class="ml-2 text-[#A8AAAE] text-sm font-medium block">
                {{
-                    actForm.doc_signer_obj.signer_id_3 && typeof (actForm.doc_signer_obj.signer_id_3) === "number" ? usersStore.getUserFullName(getUser(actForm.doc_signer_obj.signer_id_3)) : ""
+                    form.doc_signer_obj.signer_id_3 && typeof (form.doc_signer_obj.signer_id_3) === "number" ? usersStore.getUserFullName(getUser(form.doc_signer_obj.signer_id_3)) : ""
                   }}
               </span>
               </div>
 
-
-              <div class="flex items-center justify-between mb-[24px]">
-                <h2 class="text-[#4F5662] text-sm font-semibold">
-                  {{ t("document.commission.warehouseManager") }}:
-                </h2>
-                <span class="ml-2 text-[#A8AAAE] text-sm font-medium block">
-               {{
-                    actForm.doc_signer_obj.signer_id_4 && typeof (actForm.doc_signer_obj.signer_id_4) === "number" ? usersStore.getUserFullName(getUser(actForm.doc_signer_obj.signer_id_4)) : ""
-                  }}
-              </span>
-              </div>
-
-              <div class="flex items-center justify-between mb-[24px]">
-                <h2 class="text-[#4F5662] text-sm font-semibold">
-                  {{ t("document.commission.baseChief") }}:
-                </h2>
-                <span class="ml-2 text-[#A8AAAE] text-sm font-medium block">
-                {{
-                    actForm.doc_signer_obj.signer_id_5 && typeof (actForm.doc_signer_obj.signer_id_5) === "number" ? usersStore.getUserFullName(getUser(actForm.doc_signer_obj.signer_id_5)) : ""
-                  }}
-              </span>
-              </div>
             </template>
           </div>
         </div>
@@ -942,79 +964,79 @@ const changeUser = (val, key) => {
             </template>
           </AppSelect>
 
-          <AppSelect
-            prop="to"
-            :placeholder="t('base.warehouse.title') + ' Навои'"
-            :label="t('base.warehouse.title')"
-            :loading="authStore.userLoading"
-            label-class="text-[#A8AAAE] text-xs font-medium"
-            required
-            trigger="blur"
-          >
+          <!--          <AppSelect-->
+          <!--            prop="to"-->
+          <!--            :placeholder="t('base.warehouse.title') + ' Навои'"-->
+          <!--            :label="t('base.warehouse.title')"-->
+          <!--            :loading="authStore.userLoading"-->
+          <!--            label-class="text-[#A8AAAE] text-xs font-medium"-->
+          <!--            required-->
+          <!--            trigger="blur"-->
+          <!--          >-->
 
-          </AppSelect>
-
-          <AppSelect
-            v-model="form.to"
-            prop="to"
-            :label="t('kitchenWarehouse.title')"
-            :loading="authStore.userLoading"
-            label-class="text-[#A8AAAE] text-xs font-medium"
-            required
-            trigger="blur"
-          >
-
-          </AppSelect>
+          <!--          </AppSelect>-->
 
           <!--          <AppSelect-->
           <!--            v-model="form.to"-->
           <!--            prop="to"-->
-          <!--            :placeholder="t('document.whom.to')"-->
-          <!--            :label="t('document.whom.to')"-->
+          <!--            :label="t('kitchenWarehouse.title')"-->
           <!--            :loading="authStore.userLoading"-->
           <!--            label-class="text-[#A8AAAE] text-xs font-medium"-->
-          <!--            @change="(value) => respondentChange(value as string, 'to')"-->
           <!--            required-->
           <!--            trigger="blur"-->
-          <!--            :disabled="authStore.disabledUserWorkplace && activeComingModal"-->
           <!--          >-->
-          <!--            <template v-if="activeComingModal">-->
-          <!--              <ElOption-->
-          <!--                v-for="item in settingsStore.respondents"-->
-          <!--                :key="`${item.id}_${item.model_type}`"-->
-          <!--                :value="`${item.id}_${item.model_type}`"-->
-          <!--                :label="item.name"-->
-          <!--              />-->
-          <!--            </template>-->
-          <!--            <template v-else>-->
-          <!--              <ElOption-->
-          <!--                v-for="item in authStore.user.workplaces"-->
-          <!--                :key="`${item.workplace_type}_${item.workplace_type}`"-->
-          <!--                :value="`${item.workplace_id}_${item.workplace_type}`"-->
-          <!--                :label="item.workplace"-->
-          <!--              />-->
-          <!--            </template>-->
-          <!--            &lt;!&ndash;            <template #footer>&ndash;&gt;-->
-          <!--            &lt;!&ndash;              <button&ndash;&gt;-->
-          <!--            &lt;!&ndash;                @click.stop="providerCreateModal = true"&ndash;&gt;-->
-          <!--            &lt;!&ndash;                class="flex items-center justify-center gap-3 border-[1px] border-[#2E90FA] rounded-[8px] w-full text-[#2E90FA] text-sm font-medium py-[10px]"&ndash;&gt;-->
-          <!--            &lt;!&ndash;              >&ndash;&gt;-->
-          <!--            &lt;!&ndash;                  <span&ndash;&gt;-->
-          <!--            &lt;!&ndash;                    :style="{&ndash;&gt;-->
-          <!--            &lt;!&ndash;                      maskImage: 'url(/icons/plusIcon.svg)',&ndash;&gt;-->
-          <!--            &lt;!&ndash;                      backgroundColor: '#2E90FA',&ndash;&gt;-->
-          <!--            &lt;!&ndash;                      color: '#2E90FA',&ndash;&gt;-->
-          <!--            &lt;!&ndash;                      width: '20px',&ndash;&gt;-->
-          <!--            &lt;!&ndash;                      height: '20px',&ndash;&gt;-->
-          <!--            &lt;!&ndash;                      maskSize: '20px',&ndash;&gt;-->
-          <!--            &lt;!&ndash;                      maskPosition: 'center',&ndash;&gt;-->
-          <!--            &lt;!&ndash;                      maskRepeat: 'no-repeat',&ndash;&gt;-->
-          <!--            &lt;!&ndash;                    }"&ndash;&gt;-->
-          <!--            &lt;!&ndash;                  ></span>&ndash;&gt;-->
-          <!--            &lt;!&ndash;                Добавить&ndash;&gt;-->
-          <!--            &lt;!&ndash;              </button>&ndash;&gt;-->
-          <!--            &lt;!&ndash;            </template>&ndash;&gt;-->
+
           <!--          </AppSelect>-->
+
+          <AppSelect
+            v-model="form.to"
+            prop="to"
+            :placeholder="t('document.whom.to')"
+            :label="t('document.whom.to')"
+            :loading="authStore.userLoading"
+            label-class="text-[#A8AAAE] text-xs font-medium"
+            @change="(value) => respondentChange(value as string, 'to')"
+            required
+            trigger="blur"
+            :disabled="authStore.disabledUserWorkplace && activeComingModal"
+          >
+            <template v-if="activeComingModal">
+              <ElOption
+                v-for="item in settingsStore.respondents"
+                :key="`${item.id}_${item.model_type}`"
+                :value="`${item.id}_${item.model_type}`"
+                :label="item.name"
+              />
+            </template>
+            <template v-else>
+              <ElOption
+                v-for="item in authStore.user.workplaces"
+                :key="`${item.workplace_type}_${item.workplace_type}`"
+                :value="`${item.workplace_id}_${item.workplace_type}`"
+                :label="item.workplace"
+              />
+            </template>
+            <!--            <template #footer>-->
+            <!--              <button-->
+            <!--                @click.stop="providerCreateModal = true"-->
+            <!--                class="flex items-center justify-center gap-3 border-[1px] border-[#2E90FA] rounded-[8px] w-full text-[#2E90FA] text-sm font-medium py-[10px]"-->
+            <!--              >-->
+            <!--                  <span-->
+            <!--                    :style="{-->
+            <!--                      maskImage: 'url(/icons/plusIcon.svg)',-->
+            <!--                      backgroundColor: '#2E90FA',-->
+            <!--                      color: '#2E90FA',-->
+            <!--                      width: '20px',-->
+            <!--                      height: '20px',-->
+            <!--                      maskSize: '20px',-->
+            <!--                      maskPosition: 'center',-->
+            <!--                      maskRepeat: 'no-repeat',-->
+            <!--                    }"-->
+            <!--                  ></span>-->
+            <!--                Добавить-->
+            <!--              </button>-->
+            <!--            </template>-->
+          </AppSelect>
           <AppInput
             v-model="form.through_whom"
             prop="through_whom"
@@ -1174,16 +1196,16 @@ const changeUser = (val, key) => {
           </div>
 
 
-          <div class="bg-[#FFFFFF] rounded-[8px] p-[12px] mt-4">
+          <div v-if="typeSwitch" class="bg-[#FFFFFF] rounded-[8px] p-[12px] mt-4">
             <strong class="block text-[#4F5662] text-sm font-medium mb-4">
               {{ t("document.commission.title") }}
             </strong>
             <div class="flex flex-col">
               <AppSelect
-                v-model="actForm.doc_signer_obj.signer_id_1"
+                v-model="form.doc_signer_obj.signer_id_1"
                 prop="doc_signer_obj.signer_id_1"
-                :placeholder="t('document.commission.storekeeper')"
-                :label="t('document.commission.storekeeper')"
+                :placeholder="t('document.commission.head_KP')"
+                :label="t('document.commission.head_KP')"
                 label-class="text-[#A8AAAE] text-xs font-medium"
                 required
                 @change="changeUser($event, 'signer_id_1')"
@@ -1198,10 +1220,10 @@ const changeUser = (val, key) => {
                 </template>
               </AppSelect>
               <AppSelect
-                v-model="actForm.doc_signer_obj.signer_id_2"
+                v-model="form.doc_signer_obj.signer_id_2"
                 prop="doc_signer_obj.signer_id_2"
-                :placeholder="t('document.commission.commodityExpert')"
-                :label="t('document.commission.commodityExpert')"
+                :placeholder="t('document.commission.chef')"
+                :label="t('document.commission.chef')"
                 label-class="text-[#A8AAAE] text-xs font-medium"
                 required
                 @change="changeUser($event, 'signer_id_2')"
@@ -1216,51 +1238,13 @@ const changeUser = (val, key) => {
                 </template>
               </AppSelect>
               <AppSelect
-                v-if="!activeComingModal"
-                v-model="actForm.doc_signer_obj.signer_id_3"
+                v-model="form.doc_signer_obj.signer_id_3"
                 prop="doc_signer_obj.signer_id_3"
-                :placeholder="t('document.commission.forwarder')"
-                :label="t('document.commission.forwarder')"
+                :placeholder="t('document.commission.accountant')"
+                :label="t('document.commission.accountant')"
                 label-class="text-[#A8AAAE] text-xs font-medium"
                 required
                 @change="changeUser($event, 'signer_id_3')"
-              >
-                <template v-if="usersStore.users">
-                  <ElOption
-                    v-for="item in usersStore.users.users"
-                    :key="item.id"
-                    :label="usersStore.getUserFullName(item)"
-                    :value="item.id"
-                  />
-                </template>
-              </AppSelect>
-
-              <AppSelect
-                v-model="actForm.doc_signer_obj.signer_id_4"
-                prop="doc_signer_obj.signer_id_4"
-                :placeholder="t('document.commission.warehouseManager')"
-                :label="t('document.commission.warehouseManager')"
-                label-class="text-[#A8AAAE] text-xs font-medium"
-                required
-                @change="changeUser($event, 'signer_id_4')"
-              >
-                <template v-if="usersStore.users">
-                  <ElOption
-                    v-for="item in usersStore.users.users"
-                    :key="item.id"
-                    :label="usersStore.getUserFullName(item)"
-                    :value="item.id"
-                  />
-                </template>
-              </AppSelect>
-              <AppSelect
-                v-model="actForm.doc_signer_obj.signer_id_5"
-                prop="doc_signer_obj.signer_id_5"
-                :placeholder="t('document.commission.baseChief')"
-                :label="t('document.commission.baseChief')"
-                label-class="text-[#A8AAAE] text-xs font-medium"
-                required
-                @change="changeUser($event, 'signer_id_5')"
               >
                 <template v-if="usersStore.users">
                   <ElOption
@@ -1279,7 +1263,7 @@ const changeUser = (val, key) => {
       </div>
     </div>
 
-    <div v-if="typeSwitch" class="flex gap-x-6 flex-wrap">
+    <div v-if="!typeSwitch" class="flex gap-x-6 flex-wrap">
       <div class="w-[60%] flex flex-col gap-y-10">
         <div
           v-if="activeComingModal"
@@ -1562,7 +1546,7 @@ const changeUser = (val, key) => {
 
             <div class="flex items-center justify-between mb-[24px]">
               <h2 class="text-[#4F5662] text-sm font-semibold">
-                {{ t("document.commission.storekeeper") }}:
+                {{ t("document.commission.chef") }}:
               </h2>
               <span class="ml-2 text-[#A8AAAE] text-sm font-medium block">
                 {{
@@ -1588,18 +1572,18 @@ const changeUser = (val, key) => {
               </h2>
               <span class="ml-2 text-[#A8AAAE] text-sm font-medium block">
                {{
-                  actForm.doc_signer_obj.signer_id_4 && typeof (actForm.doc_signer_obj.signer_id_4) === "number" ? usersStore.getUserFullName(getUser(actForm.doc_signer_obj.signer_id_4)) : ""
+                  actForm.doc_signer_obj.signer_id_3 && typeof (actForm.doc_signer_obj.signer_id_3) === "number" ? usersStore.getUserFullName(getUser(actForm.doc_signer_obj.signer_id_3)) : ""
                 }}
               </span>
             </div>
 
             <div class="flex items-center justify-between mb-[24px]">
               <h2 class="text-[#4F5662] text-sm font-semibold">
-                {{ t("document.commission.baseChief") }}:
+                {{ t("document.commission.accountant_base") }}:
               </h2>
               <span class="ml-2 text-[#A8AAAE] text-sm font-medium block">
                 {{
-                  actForm.doc_signer_obj.signer_id_5 && typeof (actForm.doc_signer_obj.signer_id_5) === "number" ? usersStore.getUserFullName(getUser(actForm.doc_signer_obj.signer_id_5)) : ""
+                  actForm.doc_signer_obj.signer_id_4 && typeof (actForm.doc_signer_obj.signer_id_4) === "number" ? usersStore.getUserFullName(getUser(actForm.doc_signer_obj.signer_id_4)) : ""
                 }}
               </span>
             </div>
@@ -1712,7 +1696,7 @@ const changeUser = (val, key) => {
                       required
                     />
                     <AppInput
-                      v-model="item.formNumberAndDate"
+                      v-model="formNumberAndDate"
                       :placeholder="t('document.consignmentNumberDate')"
                       :label="t('document.consignmentNumberDate')"
                       label-class="text-[#A8AAAE] text-xs font-medium"
@@ -1727,7 +1711,7 @@ const changeUser = (val, key) => {
                       required
                     />
                     <AppInput
-                      :model-value="item.from"
+                      :model-value="from"
                       :label="t('common.supplier')"
                       :placeholder="t('common.supplier')"
                       label-class="text-[#A8AAAE] text-xs font-medium"
@@ -1981,10 +1965,11 @@ const changeUser = (val, key) => {
               <AppSelect
                 v-model="actForm.doc_signer_obj.signer_id_1"
                 prop="doc_signer_obj.signer_id_1"
-                :placeholder="t('document.commission.storekeeper')"
-                :label="t('document.commission.storekeeper')"
+                :placeholder="t('document.commission.chef')"
+                :label="t('document.commission.chef')"
                 label-class="text-[#A8AAAE] text-xs font-medium"
                 required
+                @change="changeUser($event, 'signer_id_1')"
               >
                 <template v-if="usersStore.users">
                   <ElOption
@@ -2002,6 +1987,7 @@ const changeUser = (val, key) => {
                 :label="t('document.commission.commodityExpert')"
                 label-class="text-[#A8AAAE] text-xs font-medium"
                 required
+                @change="changeUser($event, 'signer_id_2')"
               >
                 <template v-if="usersStore.users">
                   <ElOption
@@ -2013,13 +1999,13 @@ const changeUser = (val, key) => {
                 </template>
               </AppSelect>
               <AppSelect
-                v-if="!activeComingModal"
                 v-model="actForm.doc_signer_obj.signer_id_3"
                 prop="doc_signer_obj.signer_id_3"
-                :placeholder="t('document.commission.forwarder')"
-                :label="t('document.commission.forwarder')"
+                :placeholder="t('document.commission.warehouseManager')"
+                :label="t('document.commission.warehouseManager')"
                 label-class="text-[#A8AAAE] text-xs font-medium"
                 required
+                @change="changeUser($event, 'signer_id_3')"
               >
                 <template v-if="usersStore.users">
                   <ElOption
@@ -2033,27 +2019,11 @@ const changeUser = (val, key) => {
               <AppSelect
                 v-model="actForm.doc_signer_obj.signer_id_4"
                 prop="doc_signer_obj.signer_id_4"
-                :placeholder="t('document.commission.warehouseManager')"
-                :label="t('document.commission.warehouseManager')"
+                :placeholder="t('document.commission.accountant_base')"
+                :label="t('document.commission.accountant_base')"
                 label-class="text-[#A8AAAE] text-xs font-medium"
                 required
-              >
-                <template v-if="usersStore.users">
-                  <ElOption
-                    v-for="item in usersStore.users.users"
-                    :key="item.id"
-                    :label="usersStore.getUserFullName(item)"
-                    :value="item.id"
-                  />
-                </template>
-              </AppSelect>
-              <AppSelect
-                v-model="actForm.doc_signer_obj.signer_id_5"
-                prop="doc_signer_obj.signer_id_5"
-                :placeholder="t('document.commission.baseChief')"
-                :label="t('document.commission.baseChief')"
-                label-class="text-[#A8AAAE] text-xs font-medium"
-                required
+                @change="changeUser($event, 'signer_id_4')"
               >
                 <template v-if="usersStore.users">
                   <ElOption

@@ -293,7 +293,11 @@
     "shortShippingMethod": "Способ отп...",
     "commission": {
       "title": "Состав комиссии приема продуктов",
+      "accountant_base": "Бухгалтер база",
+      "accountant": "Бухгалтер",
+      "head_KP": "Начальник КП",
       "storekeeper": "Кладовщик",
+      "chef": "Шеф повар",
       "commodityExpert": "Товаровед",
       "forwarder": "Экспедитор",
       "warehouseManager": "Зав. склад",
