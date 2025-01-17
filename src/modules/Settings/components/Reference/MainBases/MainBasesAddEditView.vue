@@ -34,6 +34,9 @@ const form = reactive<BaseWarehouseDataType>({
   measure_id: null,
   product_ids: [],
 });
+const factory = ref<boolean>(false);
+const workshop_name_uz = ref(null);
+const workshop_name_ru = ref(null);
 
 const oldForm = ref<null | BaseWarehouseDataType>(null);
 
@@ -71,6 +74,7 @@ const setBreadCrumbFn = () => {
   ]);
 };
 
+
 watch(() => route.name, () => {
   setBreadCrumbFn();
 }, { immediate: true });
@@ -104,9 +108,21 @@ const sendForm = async () => {
 
   try {
     if (route.name === "reference-main-bases-add") {
-      await settingsStore.createBaseWarehouse(form);
+      await settingsStore.createBaseWarehouse({
+        ...form,
+        workshop_name: {
+          uz: workshop_name_uz.value,
+          ru: workshop_name_ru.value,
+        },
+      });
     } else if (route.name === "reference-main-bases-edit" && routeID.value) {
-      const newForm = { ...form };
+      const newForm = {
+        ...form,
+        workshop_name: {
+          uz: workshop_name_uz.value,
+          ru: workshop_name_ru.value,
+        },
+      };
       newForm.status = setStatus(form.status);
       await settingsStore.updateBaseWarehouse(routeID.value as number, newForm);
     }
@@ -144,6 +160,12 @@ const setForm = async () => {
   form.measure_id = settingsStore.baseWarehouse.measure_id;
   form.status = getStatus(settingsStore.baseWarehouse.status);
   form.product_ids = settingsStore.baseWarehouse.warehouseProducts.map(item => item.id);
+
+  if (settingsStore.baseWarehouse?.workshop_name.uz || settingsStore.baseWarehouse?.workshop_name.ru) {
+    factory.value = true
+    workshop_name_uz.value = settingsStore.baseWarehouse?.workshop_name.uz;
+    workshop_name_ru.value = settingsStore.baseWarehouse?.workshop_name.ru;
+  }
 };
 
 onMounted(async () => {
@@ -164,7 +186,7 @@ const disabledFormItems = computed<boolean>(() => {
 
 <template>
   <div>
-    <h1 class="m-0 font-semibold text-[32px] leading-[48px]">{{ route.meta.title }}</h1>
+    <h1 class="m-0 font-semibold text-[32px] leading-[48px]">{{ $t(route.meta.title) }}</h1>
     <div class="flex items-start gap-6 mt-6">
       <div class="w-[70%]">
         <AppOverlay
@@ -278,6 +300,32 @@ const disabledFormItems = computed<boolean>(() => {
             :active-text="getStatusText(form.status)"
             class="app-switch mt-auto"
           />
+          <br />
+
+
+          <ElSwitch
+            v-model="factory"
+            active-text="цех"
+            class="app-switch mt-5"
+          />
+
+          <div class="grid grid-cols-2 gap-4 mt-2" v-if="factory">
+            <app-input
+              v-model="workshop_name_ru"
+              label="Наименование (Рус)"
+              placeholder="Введите"
+              label-class="text-[#A8AAAE] font-medium text-xs"
+              :disabled="disabledFormItems"
+            />
+
+            <app-input
+              v-model="workshop_name_uz"
+              label="Наименование (Ўзб)"
+              placeholder="Введите"
+              label-class="text-[#A8AAAE] font-medium text-xs"
+              :disabled="disabledFormItems"
+            />
+          </div>
         </AppOverlay>
 
         <div

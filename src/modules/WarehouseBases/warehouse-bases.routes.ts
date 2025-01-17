@@ -8,5 +8,13 @@ export default [
         meta: {
             title: "Базы складов"
         }
+    },
+    {
+        path: "/warehouse-factory/:district_id(\\d+)/:product_id(\\d+)/:",
+        name: "warehouse-factory",
+        component: () => import("@/modules/WarehouseBases/pages/factory.vue"),
+        meta: {
+            title: "Базы складов"
+        }
     }
 ] as RouteRecordRaw[];

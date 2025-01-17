@@ -93,13 +93,13 @@ const fetchListProducts = async () => {
   });
 
   for (const key of Object.keys(productsForm)) {
-    if(typeof key === "string" && query[key]) productsForm[key] = query[key] as any;
+    if (typeof key === "string" && query[key]) productsForm[key] = query[key] as any;
   }
 
   try {
     kitchenWarehouseStore.fetchListProducts(id.value, filterObjectValues(productsForm));
   } catch (error: any) {
-    if(error?.error?.code === 422) {
+    if (error?.error?.code === 422) {
       productsFormErrors.value = error.meta.validation_errors;
     }
   }
@@ -117,13 +117,13 @@ const activeProductFormErrors = ref<Record<string, string> | null>(null);
 const activeProductFormV$ = ref<ValidationType | null>(null);
 
 const permissionProductEdit = (product: ListProductType, group_product: GroupProductType) => {
-  if(!kitchenWarehouseStore.listProducts) return;
+  if (!kitchenWarehouseStore.listProducts) return;
 
   const activeEditProduct = group_product.products.find(el => el?.isEdit);
-  if(activeEditProduct) activeEditProduct.isEdit = false;
+  if (activeEditProduct) activeEditProduct.isEdit = false;
 
   for (const key in activeProductForm) {
-    if(Object.prototype.hasOwnProperty.call(product, key)) {
+    if (Object.prototype.hasOwnProperty.call(product, key)) {
       activeProductForm[key] = product[key];
     }
   }
@@ -134,9 +134,9 @@ const permissionProductEdit = (product: ListProductType, group_product: GroupPro
 
 const updateProductPrice = async (product: ListProductType | ListInvoiceType) => {
 
-  if(!activeProductFormV$.value) return;
+  if (!activeProductFormV$.value) return;
 
-  if(!(await activeProductFormV$.value.validate())) {
+  if (!(await activeProductFormV$.value.validate())) {
     commonStore.errorToast(t("error.validation"));
     return;
   }
@@ -146,7 +146,7 @@ const updateProductPrice = async (product: ListProductType | ListInvoiceType) =>
     product.isEdit = false;
 
     for (const key in activeProductForm) {
-      if(Object.prototype.hasOwnProperty.call(product, key)) {
+      if (Object.prototype.hasOwnProperty.call(product, key)) {
         product[key] = activeProductForm[key];
       }
     }
@@ -154,7 +154,7 @@ const updateProductPrice = async (product: ListProductType | ListInvoiceType) =>
     commonStore.successToast();
 
   } catch (error: any) {
-    if(error?.error?.code === 422) {
+    if (error?.error?.code === 422) {
       activeProductFormErrors.value = error.meta.validation_errors;
     }
   }
@@ -191,22 +191,22 @@ const fetchListInvoices = async () => {
   });
 
   for (const key of Object.keys(invoicesForm)) {
-    if(typeof key === "string" && query[key]) invoicesForm[key] = query[key] as any;
+    if (typeof key === "string" && query[key]) invoicesForm[key] = query[key] as any;
   }
 
   try {
     kitchenWarehouseStore.fetchListInvoices(id.value, filterObjectValues(invoicesForm));
   } catch (error: any) {
-    if(error?.error?.code === 422) {
+    if (error?.error?.code === 422) {
       invoicesFormErrors.value = error.meta.validation_errors;
     }
   }
 };
 
 const permissionInvoiceEdit = (invoice: ListInvoiceType) => {
-  if(!kitchenWarehouseStore.listInvoices?.invoices.length) return;
+  if (!kitchenWarehouseStore.listInvoices?.invoices.length) return;
   const activeInvoice = kitchenWarehouseStore.listInvoices.invoices.find(el => el?.isEdit);
-  if(activeInvoice) activeInvoice.isEdit = false;
+  if (activeInvoice) activeInvoice.isEdit = false;
 
   invoice.isEdit = true;
 };
@@ -220,7 +220,7 @@ const filterForm = (data: ListProductsParamsType | ListInvoicesParamsType) => {
 
 const clearForm = async () => {
   filterFormOpened.value = false;
-  if(activeTab.value === TABS.PRODUCTS && productsFormV$.value) await productsFormV$.value.resetForm(); else if(activeTab.value === TABS.INVOICES && invoicesFormV$.value) await invoicesFormV$.value.resetForm();
+  if (activeTab.value === TABS.PRODUCTS && productsFormV$.value) await productsFormV$.value.resetForm(); else if (activeTab.value === TABS.INVOICES && invoicesFormV$.value) await invoicesFormV$.value.resetForm();
   router.push({ query: { tab: activeTab.value } });
 };
 
@@ -242,7 +242,7 @@ const title = computed(() => {
 const setBreadCrumbFn = () => {
   kitchenWarehouseStore.fetchDynamicItemState(+route.params.id);
 
-  if(!kitchenWarehouseStore.dynamicItemState) return;
+  if (!kitchenWarehouseStore.dynamicItemState) return;
 
   const title1 = commonStore.getTitle(`kitchen_type_id-${route.params.id3}`);
 
@@ -267,7 +267,7 @@ watchEffect(() => {
 });
 
 const fetchData = () => {
-  if(activeTab.value === TABS.PRODUCTS) {
+  if (activeTab.value === TABS.PRODUCTS) {
     fetchListProducts();
   } else {
     fetchListInvoices();
@@ -286,11 +286,26 @@ onMounted(() => {
   settingsStore.GET_VID_PRODUCT({ per_page: 100 });
   settingsStore.GET_UNITS();
 });
+
+const packagingPage = () => {
+  router.push({
+    name: "kitchen-warehouse-packaging-id-id3-id4",
+    params: {
+      id: route.params.id,
+      id3: route.params.id3,
+      id4: route.params.id4,
+    },
+  });
+};
 </script>
 
 <template>
   <div>
-    <h1 class="m-0 font-semibold text-[32px]">{{ title }}</h1>
+    <div class="flex items-center justify-between">
+      <h1 class="m-0 font-semibold text-[32px]">{{ title }}</h1>
+
+      <button class="custom-light-btn" @click="packagingPage">Расфасовка</button>
+    </div>
     <div class="rounded-2xl py-3 px-4 border mt-6">
       <h3 class="text-dark font-medium text-lg">{{ t("kitchenWarehouse.filling") }}</h3>
       <h2 class="text-dark text-[32px] font-semibold mt-3">
