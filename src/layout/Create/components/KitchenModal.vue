@@ -373,7 +373,7 @@ const createProduct = () => {
   });
 };
 
-const activeComingModal = computed(() => props.id === 8);
+const activeComingModal = computed(() => props.id === 14);
 
 const deleteProduct = (index: number) => {
   form.products?.splice(index, 1);
@@ -480,7 +480,10 @@ watch(model, newValue => {
 });
 
 const respondentChange = (value: string, type: "from" | "to") => {
+  console.log(value);
+  form.from = value;
   const values = value.split("_");
+
   form[`${type}_id`] = Number(values[0]);
   form[`${type}_type`] = values[1];
 };
@@ -559,6 +562,11 @@ watch(providerCreateModal, newMProviderModal => {
 
 const activeProduct = ref(1);
 const typeSwitch = ref(false);
+
+const changeUser = (val, key) => {
+  console.log(val);
+  actForm.doc_signer_obj[key] = val;
+};
 </script>
 
 <template>
@@ -879,6 +887,7 @@ const typeSwitch = ref(false);
               required
             />
           </div>
+          <!--          {{ form }}-->
           <AppSelect
             v-model="form.from"
             prop="from"
@@ -946,6 +955,7 @@ const typeSwitch = ref(false);
           </AppSelect>
 
           <AppSelect
+            v-model="form.to"
             prop="to"
             :label="t('kitchenWarehouse.title')"
             :loading="authStore.userLoading"
@@ -1176,6 +1186,7 @@ const typeSwitch = ref(false);
                 :label="t('document.commission.storekeeper')"
                 label-class="text-[#A8AAAE] text-xs font-medium"
                 required
+                @change="changeUser($event, 'signer_id_1')"
               >
                 <template v-if="usersStore.users">
                   <ElOption
@@ -1193,6 +1204,7 @@ const typeSwitch = ref(false);
                 :label="t('document.commission.commodityExpert')"
                 label-class="text-[#A8AAAE] text-xs font-medium"
                 required
+                @change="changeUser($event, 'signer_id_2')"
               >
                 <template v-if="usersStore.users">
                   <ElOption
@@ -1211,6 +1223,7 @@ const typeSwitch = ref(false);
                 :label="t('document.commission.forwarder')"
                 label-class="text-[#A8AAAE] text-xs font-medium"
                 required
+                @change="changeUser($event, 'signer_id_3')"
               >
                 <template v-if="usersStore.users">
                   <ElOption
@@ -1221,22 +1234,7 @@ const typeSwitch = ref(false);
                   />
                 </template>
               </AppSelect>
-              <AppSelect
-                prop="doc_signer_obj.signer_id_4"
-                :placeholder="t('document.commission.warehouseManager')"
-                :label="t('document.commission.forwarder')"
-                label-class="text-[#A8AAAE] text-xs font-medium"
-                required
-              >
-                <template v-if="usersStore.users">
-                  <ElOption
-                    v-for="item in usersStore.users.users"
-                    :key="item.id"
-                    :label="usersStore.getUserFullName(item)"
-                    :value="item.id"
-                  />
-                </template>
-              </AppSelect>
+
               <AppSelect
                 v-model="actForm.doc_signer_obj.signer_id_4"
                 prop="doc_signer_obj.signer_id_4"
@@ -1244,6 +1242,7 @@ const typeSwitch = ref(false);
                 :label="t('document.commission.warehouseManager')"
                 label-class="text-[#A8AAAE] text-xs font-medium"
                 required
+                @change="changeUser($event, 'signer_id_4')"
               >
                 <template v-if="usersStore.users">
                   <ElOption
@@ -1261,6 +1260,7 @@ const typeSwitch = ref(false);
                 :label="t('document.commission.baseChief')"
                 label-class="text-[#A8AAAE] text-xs font-medium"
                 required
+                @change="changeUser($event, 'signer_id_5')"
               >
                 <template v-if="usersStore.users">
                   <ElOption

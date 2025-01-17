@@ -46,7 +46,7 @@ const openModal = (item: DocTypeListType) => {
       // case 11:
       // editConsumptionModal.value = true;
       break;
-    case 8:
+    case 14:
       kitchenModal.value = true;
       break;
     case 3:
