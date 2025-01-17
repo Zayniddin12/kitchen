@@ -66,12 +66,12 @@ watchDebounced(search, () => {
 <template>
   <div>
     <div class="flex items-center justify-between">
-      <h1 class="m-0 font-semibold text-[32px] leading-[48px]">Типы документов</h1>
+      <h1 class="m-0 font-semibold text-[32px] leading-[48px]">{{ $t("document.typeDoc") }}</h1>
 
       <el-input
         v-model="search"
         size="large"
-        placeholder="Поиск"
+        :placeholder="$t('form.search')"
         :prefix-icon="Search"
         class="w-[300px]"
       />
@@ -79,10 +79,10 @@ watchDebounced(search, () => {
 
     <div class="mt-[24px]">
       <el-table v-loading="loading"
-                :empty-text="'Нет доступных данных'" :data="settingsStore.typeDocument.document_categories" stripe
+                :empty-text="$t('Нет доступных данных')" :data="settingsStore.typeDocument.document_categories" stripe
                 class="custom-element-table">
         <el-table-column prop="id" label="№" width="80" />
-        <el-table-column prop="name" label="Наименование типа" sortable />
+        <el-table-column prop="name" :label="$t('Наименование типа')" sortable />
       </el-table>
     </div>
   </div>

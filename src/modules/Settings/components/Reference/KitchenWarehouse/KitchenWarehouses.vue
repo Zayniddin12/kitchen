@@ -121,7 +121,7 @@ const tableCurrentChange = (value: Record<string, any>) => {
     <el-table
         :data="store.kitchenWarehouse.kitchen_warehouses"
         v-loading="loading"
-        empty-text="Нет доступных данных"
+        :empty-text="$t('Нет доступных данных')"
         stripe
         class="custom-element-table mt-[24px]"
         highlight-current-row
@@ -196,7 +196,7 @@ const tableCurrentChange = (value: Record<string, any>) => {
 
     <div class="mt-[24px] flex items-center justify-between">
       <div class="text-cool-gray text-[14px]">
-        Показано 1–10 из {{ store.kitchenWarehouse.paginator.total_count }} результатов
+        {{$t('Показано 1–10 из')}} {{ store.kitchenWarehouse.paginator.total_count }} {{$t('результатов')}}
       </div>
 
       <el-pagination

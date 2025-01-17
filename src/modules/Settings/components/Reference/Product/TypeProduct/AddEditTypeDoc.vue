@@ -120,12 +120,7 @@ const handleSubmitProduct = async (): Promise<void> => {
   } catch (error) {
     ElNotification({ title: "Error", type: "error" });
   }
-};
-
-
-const setDisabled = computed(() => {
-  return route.name === "reference-type-product-view-id";
-});
+}
 
 watch(() => route.name, () => {
   setBreadCrumbFn();
@@ -137,7 +132,7 @@ watch(() => route.name, () => {
     <AppOverlay
       :loading="loading"
     >
-      <h1 class="m-0 font-semibold text-[32px] leading-[48px]">{{ route.meta.title }}</h1>
+      <h1 class="m-0 font-semibold text-[32px] leading-[48px]">{{ $t(route.meta.title) }}</h1>
 
       <div class="flex items-start mt-[24px]">
         <div class="grid grid-cols-2 border rounded-[24px] p-[24px] gap-5 h-[50vh] w-[70%]">
@@ -150,15 +145,15 @@ watch(() => route.name, () => {
 
           <app-input
             v-model="dataValue.name.uz"
-            label="Наименование (Ўзб)"
-            placeholder="Введите"
+            :label="$t('Наименование (Ўзб)')"
+            :placeholder="$t('form.enter')"
             label-class="text-[#A8AAAE] text-[12px]"
           />
 
           <el-switch
             v-model="dataValue.is_active"
             class="mt-auto"
-            :active-text="dataValue.is_active ? 'Активация' : 'Деактивация'"
+            :active-text="dataValue.is_active ? $t('status.activation') : $t('status.deactivation')"
             v-if="route.name === 'reference-type-product-edit-id'"
           />
           <!--        :before-change="switchChange"-->
@@ -173,7 +168,7 @@ watch(() => route.name, () => {
             src="@/assets/images/icons/edit.svg"
             alt="edit"
           />
-          Редактировать
+          {{$t('method.edit')}}
         </button>
       </div>
 
@@ -183,7 +178,7 @@ watch(() => route.name, () => {
           v-if="route.name === 'reference-type-product-edit-id'"
           @click="deleteFn"
         >
-          Удалить
+          {{$t('method.delete')}}
         </button>
 
         <div class="flex items-start justify-end ml-auto">
@@ -191,14 +186,14 @@ watch(() => route.name, () => {
             class="custom-cancel-btn"
             @click="cancelFn"
           >
-            Отменить
+            {{ $t('method.cancel') }}
           </button>
 
           <button
             class="custom-apply-btn ml-[8px]"
             @click="handleSubmitProduct"
           >
-            {{ route.name === "reference-type-product-edit-id" ? "Сохранить" : "Добавить" }}
+            {{ route.name === "reference-type-product-edit-id" ? $t('method.save') : $t('method.add') }}
           </button>
         </div>
       </div>

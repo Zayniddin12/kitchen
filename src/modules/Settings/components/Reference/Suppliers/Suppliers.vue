@@ -207,6 +207,7 @@ const tableCurrentChange = (value: Record<string, any>) => {
           </template>
         </el-table-column>
       </el-table>
+
       <AppPagination
         v-model="params.page"
         :pagination="store.providers.paginator"
