@@ -12,6 +12,9 @@ import AppMediaUploader from "@/components/ui/form/app-media-uploader/AppMediaUp
 import useConfirm from "@/components/ui/app-confirm/useConfirm";
 import AppForm from "@/components/ui/form/app-form/AppForm.vue";
 import AppOverlay from "@/components/ui/app-overlay/AppOverlay.vue";
+import { useI18n } from "vue-i18n";
+
+const { t } = useI18n();
 
 interface Repeater {
   product_type_parent_id: string;
@@ -56,7 +59,7 @@ const setBreadCrumbFn = () => {
       to: { name: "reference-dish" },
     },
     {
-      label: String(route?.meta?.breadcrumbItemTitle ?? ""),
+      label: t(String(route?.meta?.breadcrumbItemTitle ?? "")),
       isActionable: true,
     },
   ]);
@@ -210,7 +213,7 @@ const changeInputProduct = (val, index) => {
 
 <template>
   <AppOverlay :loading="loading">
-    <h1 class="m-0 font-semibold text-[32px] leading-[48px]">{{ route.meta.title }}</h1>
+    <h1 class="m-0 font-semibold text-[32px] leading-[48px]">{{ t(route.meta.title) }}</h1>
 
     <div class="mt-[24px] flex items-start">
       <div class="w-[70%]">
