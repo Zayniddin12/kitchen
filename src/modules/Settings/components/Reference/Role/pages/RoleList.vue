@@ -114,17 +114,16 @@ onMounted(() => {
         prop="title"
         :label="t('role.name2')"
         sortable
-        width="670"
       >
         <template #default="{row}:{row: RoleType}">
           {{ row.title ?? "-" }}
         </template>
       </ElTableColumn>
       <ElTableColumn
+        align="center"
         prop="parent_name"
         :label="t('role.ownership')"
         sortable
-        width="670"
       >
         <template #default="{row}:{row: RoleType}">
           {{ row.parent_name || "-" }}
@@ -134,6 +133,7 @@ onMounted(() => {
         prop="users_count"
         :label="t('role.numberOfUses')"
         sortable
+        align="center"
       >
         <template #default="{row}:{row: RoleType}">
           {{row.users_count ?? 0}}

@@ -312,6 +312,7 @@ export const useSettingsStore = defineStore("settingsStore", () => {
   const GET_VID_PRODUCT = async (params: any) => {
     const { data } = await $axios.get("/product-types", { params });
     vidProduct.value = data.data;
+    return data.data
   };
 
   const CREATE_VID_PRODUCT = (data: any) => {

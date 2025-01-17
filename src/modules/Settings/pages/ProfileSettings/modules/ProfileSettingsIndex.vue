@@ -10,6 +10,7 @@ import ProfileIcon from "@/assets/images/icons/profile.svg";
 import KeyIcon from "@/assets/images/icons/key.svg";
 import { useAuthStore } from "@/modules/Auth/auth.store";
 import AppOverlay from "@/components/ui/app-overlay/AppOverlay.vue";
+import { useI18n } from "vue-i18n";
 
 const route = useRoute();
 
@@ -17,13 +18,18 @@ const authStore = useAuthStore();
 
 const { setBreadCrumb } = useBreadcrumb();
 
+const { t } = useI18n();
+
 const routeTitle = computed(() => route.meta.title ?? "");
+const isTranslate = computed(() => !!route.meta.isTranslate);
 
 const setBreadCrumbFn = () => {
   setBreadCrumb([{
-    label: "Настройки",
+    label: "common.settings",
+    isTranslate: true,
   }, {
     label: routeTitle.value,
+    isTranslate: isTranslate.value,
     isActionable: true,
   }]);
 };
@@ -39,12 +45,12 @@ const navigationLinks = computed<NavigationLinkType[]>(() => {
   return [{
     to: { name: "profile-settings-profile" },
     uniqueKey: "settingsProfileProfile",
-    title: "Мой профиль",
+    title: t("common.myProfile"),
     icon: ProfileIcon,
   }, {
     to: { name: "profile-settings-password" },
     uniqueKey: "settingsProfilePassword",
-    title: "Пароль",
+    title: t("common.password"),
     icon: KeyIcon,
   }];
 });
@@ -62,7 +68,7 @@ onMounted(() => {
 <template>
   <section class="profile-settings">
     <h1 class="text-dark font-semibold text-[32px]">
-      {{ routeTitle }}
+      {{ isTranslate ? t(routeTitle) : routeTitle }}
     </h1>
     <div class="flex items-start gap-x-6 mt-6">
       <div class="sticky pr-6 pb-6 border-r border-[#EEEEEF] flex flex-col gap-y-1 min-h-[68vh] w-[285px]">

@@ -179,6 +179,6 @@ export const useDocumentStore = defineStore("documentStore", () => {
     cancel,
     changeDocumentStatus,
     documentsIsRefresh,
-    setDocumentsIsRefresh
+    setDocumentsIsRefresh,
   };
 });

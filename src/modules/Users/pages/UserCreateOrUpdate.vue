@@ -10,8 +10,6 @@ import { onBeforeRouteLeave, useRoute, useRouter } from "vue-router";
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 import AppMediaUploader from "@/components/ui/form/app-media-uploader/AppMediaUploader.vue";
 import useConfirm from "@/components/ui/app-confirm/useConfirm";
-
-;
 import { useUsersStore } from "@/modules/Users/users.store";
 import AppOverlay from "@/components/ui/app-overlay/AppOverlay.vue";
 import { ValidationType } from "@/components/ui/form/app-form/app-form.type";
@@ -94,7 +92,7 @@ const setValidation = (validation: ValidationType) => {
 const validationErrors = ref<Record<string, any> | null>(null);
 
 const saveFaceIdImage = async (id: number) => {
-  if(!image.value) return;
+  if (!image.value) return;
 
   const formData = new FormData();
   formData.append("_method", "PUT");
@@ -106,34 +104,34 @@ const saveFaceIdImage = async (id: number) => {
 };
 
 const sendForm = async () => {
-  if(!v$.value || !data.value) return;
+  if (!v$.value || !data.value) return;
 
-  if(!(await v$.value.validate())) {
+  if (!(await v$.value.validate())) {
     await commonStore.errorToast("Validation Error");
     return;
   }
 
   const newForm: UserCreateOrUpdateDataType = JSON.parse(JSON.stringify(form.value));
 
-  if(userStore.activeEmployeePage && !newForm?.dining_locations?.temporary.kitchen_id) {
+  if (userStore.activeEmployeePage && !newForm?.dining_locations?.temporary.kitchen_id) {
     delete newForm.dining_locations.temporary;
   }
 
   newForm.phone = `998${newForm.phone.replace(/\D/g, "")}`;
 
   try {
-    if(activeUserCreatePage.value) {
+    if (activeUserCreatePage.value) {
       newForm.status = "active";
-      if(userStore.activeUserPage) {
+      if (userStore.activeUserPage) {
         await userStore.createUser(newForm);
       } else {
         const { data } = await userStore.createEmployee(newForm);
         await saveFaceIdImage(data.data.user.id);
       }
-    } else if(activeUserUpdatePage.value) {
-      if(typeof newForm.status === "boolean") newForm.status = setStatus(newForm.status);
+    } else if (activeUserUpdatePage.value) {
+      if (typeof newForm.status === "boolean") newForm.status = setStatus(newForm.status);
 
-      if(userStore.activeUserPage) {
+      if (userStore.activeUserPage) {
         await userStore.updateUser(routeId.value, newForm);
       } else {
         await userStore.updateEmployee(routeId.value, newForm);
@@ -142,18 +140,26 @@ const sendForm = async () => {
     }
 
     validationErrors.value = null;
-    if(userStore.activeUserPage && activeUserUpdatePage.value && routeId.value === authStore.user?.id){
+    if (userStore.activeUserPage && activeUserUpdatePage.value && routeId.value === authStore.user?.id) {
       authStore.me();
     }
     commonStore.successToast({ name: userStore.activeRoutePrefix });
   } catch (error: any) {
-    if(error?.error?.code === 422) {
+    if (error?.error?.code === 422) {
       validationErrors.value = error.meta.validation_errors;
     }
   }
 };
 
-const form2 = reactive({
+interface Form2Type {
+  management_id: number | "",
+  food_factory_id: number | "",
+  base_id: number | "",
+  base_warehouse_id: number | "",
+  kitchen_warehouse_id: number | "",
+}
+
+const form2 = reactive<Form2Type>({
   management_id: "",
   food_factory_id: "",
   base_id: "",
@@ -166,10 +172,10 @@ const changeWorkPlace = (id: number, type: WorkPlaceType) => {
   form.value.work_place_type = type;
 };
 
-const changeManagement = (id: AppSelectValueType) => {
-  if(typeof id !== "number") return;
+const changeManagement = async (id: AppSelectValueType) => {
+  if (typeof id !== "number") return;
   changeWorkPlace(id, "management");
-  listStore.fetchFoodFactories(id);
+  await listStore.fetchFoodFactories(id);
   clearManagement();
 };
 
@@ -180,10 +186,10 @@ const clearManagement = () => {
   form2.kitchen_warehouse_id = "";
 };
 
-const changeFoodFactory = (id: AppSelectValueType) => {
-  if(typeof id !== "number") return;
+const changeFoodFactory = async (id: AppSelectValueType) => {
+  if (typeof id !== "number") return;
   changeWorkPlace(id, "foodFactory");
-  listStore.fetchBases(id);
+  await listStore.fetchBases(id);
   clearFoodFactory();
 };
 
@@ -193,11 +199,12 @@ const clearFoodFactory = () => {
   form2.kitchen_warehouse_id = "";
 };
 
-const changeBase = (id: AppSelectValueType) => {
-  if(typeof id !== "number") return;
-  listStore.fetchBaseWarehouses(id);
-  listStore.fetchKitchenWarehouses(id);
+const changeBase = async (id: AppSelectValueType) => {
+  if (typeof id !== "number") return;
+  await listStore.fetchBaseWarehouses(id);
+  await listStore.fetchKitchenWarehouses(id);
   clearBase();
+  changeWorkPlace(id, "base");
 };
 
 const clearBase = () => {
@@ -207,7 +214,7 @@ const clearBase = () => {
 
 
 const data = computed(() => {
-  if(activeUserCreatePage.value) return userStore.searchUser;
+  if (activeUserCreatePage.value) return userStore.searchUser;
 
   return userStore.activeUserPage ? userStore.user : userStore.employee;
 });
@@ -265,7 +272,7 @@ const deleteLoading = computed(() => {
 });
 
 const deleteFn = () => {
-  if(!activeUserUpdatePage.value) return;
+  if (!activeUserUpdatePage.value) return;
 
   confirm.delete().then(async () => {
     await (userStore.activeUserPage ? userStore.deleteUser(routeId.value as number) : userStore.deleteEmployee(routeId.value as number));
@@ -276,10 +283,10 @@ const deleteFn = () => {
 const cancelFn = async () => {
   const isChange = oldForm.value && !deepEqual(form.value, oldForm.value);
 
-  if(isChange) {
+  if (isChange) {
     const response = await confirm.cancel();
 
-    if(response === "save") {
+    if (response === "save") {
       await sendForm();
       return;
     }
@@ -291,14 +298,14 @@ const cancelFn = async () => {
 
 const fetchSearchUser = () => {
   userStore.initializeSearchUser();
-  if(!userStore.searchUser) router.replace({ name: `${userStore.activeRoutePrefix}-fetch` });
+  if (!userStore.searchUser) router.replace({ name: `${userStore.activeRoutePrefix}-fetch` });
 };
 
-const setData = () => {
+const setData = async () => {
 
-  if(!data.value) return;
+  if (!data.value) return;
 
-  if(userStore.activeUserPage) {
+  if (userStore.activeUserPage) {
     form.value.position_id = "";
     form.value.role_id = "";
 
@@ -320,18 +327,32 @@ const setData = () => {
   form.value.phone = formatPhone(data.value.phone);
   form.value.status = getStatus(data.value.status);
 
+  if (data.value.management_id) {
+    form2.management_id = data.value.management_id ?? "";
+    await changeManagement(form2.management_id);
+  }
+  if (data.value.food_factory_id) {
+    form2.food_factory_id = data.value.food_factory_id;
+    await changeFoodFactory(form2.food_factory_id);
+  }
+  if (data.value.base_id) {
+    form2.base_id = data.value.base_id;
+    await changeBase(form2.base_id);
+  }
+  form2.base_warehouse_id = data.value.base_warehouse_id ?? "";
+  form2.kitchen_warehouse_id = data.value.kitchen_warehouse_id ?? "";
 
   oldForm.value = JSON.parse(JSON.stringify(form.value));
 };
 
 const fetchUser = async () => {
-  if(activeUserCreatePage.value) {
+  if (activeUserCreatePage.value) {
     fetchSearchUser();
-  } else if(activeUserUpdatePage.value) {
+  } else if (activeUserUpdatePage.value) {
     try {
-      if(userStore.activeUserPage) await userStore.fetchUser(routeId.value as number); else await userStore.fetchEmployee(routeId.value as number);
+      if (userStore.activeUserPage) await userStore.fetchUser(routeId.value as number); else await userStore.fetchEmployee(routeId.value as number);
     } catch (error: any) {
-      if(error.error.code === 404) {
+      if (error.error.code === 404) {
         await router.replace({ name: userStore.activeRoutePrefix });
       }
     }
@@ -340,7 +361,7 @@ const fetchUser = async () => {
 };
 
 const gender = computed(() => {
-  if(!data.value) return null;
+  if (!data.value) return null;
 
   return commonStore.getGender(data.value.gender);
 });
@@ -357,7 +378,7 @@ const avatar = computed(() => {
 });
 
 const fullName = computed(() => {
-  if(activeUserCreatePage.value) return userStore.searchUserFullName;
+  if (activeUserCreatePage.value) return userStore.searchUserFullName;
   return userStore.activeUserPage ? userStore.userFullName : userStore.employeeFullName;
 });
 
@@ -368,7 +389,7 @@ onMounted(async () => {
   await fetchUser();
   await settingsStore.GET_KITCHEN_WAREHOUSE();
   await settingsStore.GET_ORGANIZATION({ per_page: 100 });
-  if(userStore.activeUserPage) {
+  if (userStore.activeUserPage) {
     await positionStore.fetchPositions({ getAll: 1 });
     await settingsStore.GET_REGIONAL({ per_page: 100 });
     fetchRoles();
@@ -616,6 +637,7 @@ const workingHours = reactive([{
                   label-class="text-[#A8AAAE] text-xs font-medium"
                   class="mb-1"
                   :disabled="!form2.base_id || !!form2.kitchen_warehouse_id"
+                  @change="id => changeWorkPlace(id, 'baseWarehouse')"
                   clearable
                 />
                 <AppSelect
@@ -629,6 +651,7 @@ const workingHours = reactive([{
                   label-class="text-[#A8AAAE] text-xs font-medium"
                   class="mb-1"
                   :disabled="!form2.base_id || !!form2.base_warehouse_id"
+                  @change="id => changeWorkPlace(id, 'kitchenWarehouse')"
                   clearable
                 />
                 <AppSelect

@@ -13,6 +13,8 @@ import AppDatePicker from "@/components/ui/form/app-date-picker/AppDatePicker.vu
 import AppForm from "@/components/ui/form/app-form/AppForm.vue";
 import { ValidationType } from "@/components/ui/form/app-form/app-form.type";
 import AppOverlay from "@/components/ui/app-overlay/AppOverlay.vue";
+import { useI18n } from "vue-i18n";
+import { getStatusText } from "@/utils/helper";
 
 interface DataValue {
   name?: string;
@@ -30,32 +32,36 @@ interface DataValue {
 const store = useSettingsStore();
 const route = useRoute();
 const router = useRouter();
+
 const { confirm } = useConfirm();
 const { setBreadCrumb } = useBreadcrumb();
+const { t } = useI18n();
+
 const setBreadCrumbFn = () => {
-  setBreadCrumb([
+  setBreadCrumb([{
+    label: "common.settings",
+    isTranslate: true,
+  }, {
+    label: "settings.directories",
+    isTranslate: true,
+    to: { name: "reference" },
+  },
+
     {
-      label: "Настройки",
-    },
-    {
-      label: "Справочники",
+      label: "settings.suppliersAndOrganizations",
+      isTranslate: true,
       to: { name: "reference" },
     },
 
     {
-      label: "Поставщики и организации",
-      to: { name: "reference" },
-    },
-
-    {
-      label: "Поставщики",
+      label: "suppliers.title",
+      isTranslate: true,
       to: { name: "reference-suppliers" },
-    },
-    {
+    }, {
       label: String(route?.meta?.breadcrumbItemTitle ?? ""),
+      isTranslate: !!route.meta.breadcrumbItemIsTranslate,
       isActionable: true,
-    },
-  ]);
+    }]);
 };
 
 const v$ = ref<ValidationType | null>(null);
@@ -79,11 +85,11 @@ const dataValue = ref<DataValue>({
 const status = ref<boolean>(true);
 
 onMounted(async () => {
-  if (route.params.id) {
+  if(route.params.id) {
     loading.value = true;
     try {
       const providerData: DataValue = await store.GET_PROVIDERS_DETAIL(route.params.id as string | number);
-      if (providerData && providerData.provider) {
+      if(providerData && providerData.provider) {
         dataValue.value = providerData.provider;
 
         status.value = providerData.provider.status === "active";
@@ -102,7 +108,7 @@ const cancelFn = () => {
 };
 
 const changeStatus = () => {
-  if (status.value) {
+  if(status.value) {
     dataValue.value.status = "active";
   } else {
     dataValue.value.status = "inactive";
@@ -113,18 +119,21 @@ const deleteFn = () => {
   confirm.delete().then(() => {
     store.DELETE_PROVIDERS(+route.params.id as number);
     router.push("/reference-suppliers");
-    ElNotification({ title: "Success", type: "success" });
+    ElNotification({
+      title: "Success",
+      type: "success",
+    });
   });
 };
 
 const handleSubmit = async () => {
-  if (!v$.value) return;
+  if(!v$.value) return;
 
-  if ((await v$.value.validate())) {
+  if((await v$.value.validate())) {
     try {
       const payload = dataValue.value as any;
 
-      if (route.params.id) {
+      if(route.params.id) {
         await store.UPDATE_PROVIDERS({
           id: route.params.id as string | number,
           data: payload,
@@ -133,10 +142,16 @@ const handleSubmit = async () => {
         await store.CREATE_PROVIDERS(payload);
       }
 
-      ElNotification({ title: "Success", type: "success" });
+      ElNotification({
+        title: "Success",
+        type: "success",
+      });
       await router.push("/reference-suppliers");
     } catch (e) {
-      ElNotification({ title: "Error", type: "error" });
+      ElNotification({
+        title: "Error",
+        type: "error",
+      });
     }
   }
 };
@@ -145,6 +160,9 @@ const handleSubmit = async () => {
 const isDisabled = computed(() => {
   return route.name === "reference-suppliers-view";
 });
+
+const title = computed(() => route.meta.title ?? "");
+const isTranslate = computed(() => !!route.meta.isTranslate);
 
 watch(() => route.name, () => {
   setBreadCrumbFn();
@@ -157,7 +175,9 @@ watch(() => route.name, () => {
       :loading="loading"
     >
       <div class="flex items-center justify-between mb-[24px]">
-        <h1 class="m-0 font-semibold text-[32px] leading-[48px]">{{ route.meta.title }}</h1>
+        <h1 class="m-0 font-semibold text-[32px] leading-[48px]">
+          {{ isTranslate ? t(title) : title }}
+        </h1>
       </div>
       <div class="flex gap-6">
         <div class="w-[70%]">
@@ -169,8 +189,7 @@ watch(() => route.name, () => {
               <div class="grid grid-cols-3 gap-4">
                 <app-input
                   v-model="dataValue.name"
-                  label="Наименование"
-                  placeholder="Введите"
+                  :label="t('common.name2')"
                   label-class="text-[#A8AAAE] font-medium text-[12px]"
                   class="w-full"
                   required
@@ -180,8 +199,7 @@ watch(() => route.name, () => {
 
                 <app-input
                   v-model="dataValue.address"
-                  label="Юр. адрес"
-                  placeholder="Введите"
+                  :label="t('common.legalAddress')"
                   label-class="text-[#A8AAAE] font-medium text-[12px]"
                   class="w-full"
                   required
@@ -191,8 +209,7 @@ watch(() => route.name, () => {
 
                 <app-input
                   v-model="dataValue.oked"
-                  label="ОКЭД"
-                  placeholder="Введите"
+                  :label="t('common.oked')"
                   label-class="text-[#A8AAAE] font-medium text-[12px]"
                   class="w-full"
                   required
@@ -202,9 +219,8 @@ watch(() => route.name, () => {
 
                 <app-input
                   v-model="dataValue.tin"
-                  label="ИНН"
+                  :label="t('common.tin')"
                   maxlength="9"
-                  placeholder="Введите"
                   label-class="text-[#A8AAAE] font-medium text-[12px]"
                   class="w-full"
                   required
@@ -214,8 +230,7 @@ watch(() => route.name, () => {
 
                 <app-input
                   v-model="dataValue.license"
-                  label="Номер лицензии"
-                  placeholder="Введите"
+                  :label="t('licence.number')"
                   label-class="text-[#A8AAAE] font-medium text-[12px]"
                   class="w-full"
                   required
@@ -225,8 +240,7 @@ watch(() => route.name, () => {
 
                 <app-input
                   v-model="dataValue.sertificate"
-                  label="Сертификат"
-                  placeholder="Введите"
+                  :label="t('common.certificate')"
                   label-class="text-[#A8AAAE] font-medium text-[12px]"
                   class="w-full"
                   required
@@ -236,8 +250,7 @@ watch(() => route.name, () => {
 
                 <app-date-picker
                   v-model="dataValue.sert_end_date"
-                  label="Срок сертификата"
-                  placeholder="Введите"
+                  :label="t('common.certificateDuration')"
                   label-class="text-[#A8AAAE] font-medium text-[12px]"
                   class="w-full"
                   required
@@ -247,8 +260,7 @@ watch(() => route.name, () => {
 
                 <app-input
                   v-model="dataValue.director"
-                  label="Руководитель"
-                  placeholder="Введите"
+                  :label="t('common.supervisor')"
                   label-class="text-[#A8AAAE] font-medium text-[12px]"
                   class="w-full"
                   required
@@ -258,8 +270,7 @@ watch(() => route.name, () => {
 
                 <app-input
                   v-model="dataValue.phone"
-                  label="Контакты"
-                  placeholder="Введите"
+                  :label="t('common.contact')"
                   label-class="text-[#A8AAAE] font-medium text-[12px]"
                   class="w-full"
                   required
@@ -270,7 +281,7 @@ watch(() => route.name, () => {
 
               <ElSwitch
                 v-if="route.params.id && !route.query.type"
-                active-text="Деактивация"
+                :active-text="getStatusText(status)"
                 class="app-switch mt-auto"
                 v-model="status"
                 @change="changeStatus"
@@ -288,7 +299,7 @@ watch(() => route.name, () => {
               class="custom-danger-btn"
               @click="deleteFn"
             >
-              Удалить
+              {{ t("method.delete") }}
             </button>
 
             <div class="flex items-center gap-4">
@@ -296,14 +307,14 @@ watch(() => route.name, () => {
                 @click="cancelFn"
                 class="custom-cancel-btn"
               >
-                Отменить
+                {{ t("method.cancel") }}
               </button>
 
               <button
                 class="custom-apply-btn"
                 @click="handleSubmit"
               >
-                {{ $route.params.id ? "Сохранить" : "Добавить" }}
+                {{ t(route.params.id ? "method.save" : "method.add") }}
               </button>
             </div>
           </div>
@@ -320,7 +331,7 @@ watch(() => route.name, () => {
               alt="edit"
               class="size-5"
             >
-            Редактировать
+            {{ t("method.edit") }}
           </button>
         </div>
       </div>

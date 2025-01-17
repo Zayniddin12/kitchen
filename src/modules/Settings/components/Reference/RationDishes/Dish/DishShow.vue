@@ -13,7 +13,7 @@ import { LOCALES } from "@/localization/localization.type";
 import { MealDetailCompositionType } from "@/modules/Settings/settings.types";
 
 const route = useRoute();
-const { locale } = useI18n();
+const { locale, t } = useI18n();
 
 const settingsStore = useSettingsStore();
 
@@ -37,7 +37,7 @@ const setBreadCrumbFn = () => {
       to: { name: "reference-dish" },
     },
     {
-      label: String(route?.meta?.breadcrumbItemTitle ?? ""),
+      label: t(String(route?.meta?.breadcrumbItemTitle ?? "")),
       isActionable: true,
     },
   ]);
@@ -52,7 +52,7 @@ onMounted(() => {
 
 <template>
   <section>
-    <h1 class="m-0 font-semibold text-[32px] leading-[48px]">{{ route.meta.title }}</h1>
+    <h1 class="m-0 font-semibold text-[32px] leading-[48px]">{{ t(route.meta.title) }}</h1>
     <div class="flex items-start mt-6">
       <AppOverlay
         :loading="settingsStore.rationLoading"
@@ -83,7 +83,7 @@ onMounted(() => {
           <h4 class="text-dark text-lg font-medium mt-10">
             Состав блюда
           </h4>
-            <ElTable
+          <ElTable
             :data="settingsStore.mealDetail.compositions"
             class="custom-element-table mt-3"
           >
@@ -102,7 +102,7 @@ onMounted(() => {
               align="center"
             >
               <template #default="{row}:{row: MealDetailCompositionType}">
-                {{ row.product_type_parent_name || "-"}}
+                {{ row.product_type_parent_name || "-" }}
               </template>
             </ElTableColumn>
             <ElTableColumn
@@ -111,7 +111,7 @@ onMounted(() => {
               align="center"
             >
               <template #default="{row}:{row: MealDetailCompositionType}">
-                {{ row.product_type_name || "-"}}
+                {{ row.product_type_name || "-" }}
               </template>
             </ElTableColumn>
             <ElTableColumn
@@ -120,7 +120,7 @@ onMounted(() => {
               align="center"
             >
               <template #default="{row}:{row: MealDetailCompositionType}">
-                {{ row.quantity || "-"}}
+                {{ row.quantity || "-" }}
               </template>
             </ElTableColumn>
             <ElTableColumn
@@ -129,7 +129,7 @@ onMounted(() => {
               align="center"
             >
               <template #default="{row}:{row: MealDetailCompositionType}">
-                {{ row.unit || "-"}}
+                {{ row.unit || "-" }}
               </template>
             </ElTableColumn>
           </ElTable>

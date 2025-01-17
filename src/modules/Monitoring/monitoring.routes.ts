@@ -7,7 +7,8 @@ export default [
     name: "monitoring",
     redirect: { name: "monitoring.remainingGoods" },
     meta: {
-      title: "Мониторинг",
+      title: "monitoring.title",
+      isTranslate: true
     },
     children: [
       {
@@ -20,7 +21,8 @@ export default [
             name: "monitoring.remainingGoods.index",
             component: () => import("@/modules/Monitoring/pages/remaining-goods/RemainingGoods.vue"),
             meta: {
-              title: "Остатка товаров",
+              title: "monitoring.remainingGoods",
+              isTranslate: true
             },
           },
           {
@@ -35,7 +37,8 @@ export default [
         name: "monitoring.kitchenReport",
         component: () => import("@/modules/Monitoring/pages/KitchenReport.vue"),
         meta: {
-          title: "Отчет о кухне",
+          title: "monitoring.kitchenReport",
+          isTranslate: true
         },
       },
     ],

@@ -224,7 +224,3 @@ const handleSubmit = async () => {
     </div>
   </div>
 </template>
-
-<style lang="scss">
-
-</style>

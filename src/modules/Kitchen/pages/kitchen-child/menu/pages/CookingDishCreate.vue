@@ -15,13 +15,16 @@ import { Name } from "@/utils/helper";
 import { ValidationType } from "@/components/ui/form/app-form/app-form.type";
 import { useSettingsStore } from "@/modules/Settings/store";
 import { ElNotification } from "element-plus";
+import { useI18n } from "vue-i18n";
+import { useCommonStore } from "@/stores/common.store";
 
 const kitchenStore = useKitchenStore();
+const commonStore = useCommonStore();
+
 const route = useRoute();
 const router = useRouter();
 const { setBreadCrumb } = useBreadcrumb();
-
-const num = ref(1);
+const { t } = useI18n();
 
 const existingImage = ref<string>("");
 
@@ -54,120 +57,55 @@ const dataValue = ref<DataValue>({
   quantity: "",
   unit_id: "",
   image: "",
-  compositions: [
-    {
-      product_type_parent_id: "",
-      product_vid: {
-        id: "",
-        data: [],
-      },
-      quantity: 0,
-      unit_id: "",
+  compositions: [{
+    product_type_parent_id: "",
+    product_vid: {
+      id: "",
+      data: [],
     },
-  ],
+    quantity: 0,
+    unit_id: "",
+  }],
 });
 
-const mealData = ref<any>([
-  {
-    typeProduct: "",
-    viewProduct: "",
-    total: 0,
-    unit: "",
-  },
-]);
-
-const tableData = ref([
-  {
-    id: 1,
-    num: "1",
-    date: "23.08.2024",
-    doc: "852369",
-    theme: "Доставка мяса",
-    send: "Зарафшан",
-    receive: "Фонд",
-  },
-  {
-    id: 2,
-    num: "2",
-    date: "22.08.2024",
-    doc: "556261",
-    theme: "Доставка картофеля",
-    send: "Учкудук",
-    receive: "Фонд",
-  },
-  {
-    id: 3,
-    num: "3",
-    date: "21.08.2024",
-    doc: "584534",
-    theme: "Доставка лука",
-    send: "Навои",
-    receive: "Фонд",
-  },
-  {
-    id: 4,
-    num: "4",
-    date: "22.08.2024",
-    doc: "556261",
-    theme: "Доставка картофеля",
-    send: "Учкудук",
-    receive: "Фонд",
-  },
-]);
-
-const addMeal = () => {
-  mealData.value.push({
-    typeProduct: "",
-    viewProduct: "",
-    total: 0,
-    unit: "",
-  });
-};
-
-const deleteMeal = (mealIndex: any) => {
-  if (mealData.value.length < 2) return;
-
-  confirm.delete().then(response => {
-    mealData.value = mealData.value.filter((meal: any, index: any) => index !== mealIndex);
-  });
-};
+const mealData = ref<any>([{
+  typeProduct: "",
+  viewProduct: "",
+  total: 0,
+  unit: "",
+}]);
 
 const setBreadCrumbFn = () => {
   kitchenStore.fetchPart(+route.params.department_id, route.params.part_name as string);
   kitchenStore.fetchPart2(+route.params.kitchen_id);
   kitchenStore.fetchPart3(+route.params.child_id);
 
-  if (!kitchenStore.part) return;
+  if(!kitchenStore.part) return;
 
-  setBreadCrumb([
-    {
-      label: "Кухня",
-    },
-    {
-      label: kitchenStore.part.title,
-    },
-    {
-      label: kitchenStore.part.department_name,
-      to: { name: "KitchenIndex" },
-    },
-    {
-      label: kitchenStore.part.kitchen_vid as string,
-      isActionable: true,
-      to: { name: "KitchenShow" },
-    },
-    {
-      label: kitchenStore.part.kitchen_type as string,
-      isActionable: true,
-    },
-    {
-      label: "Меню",
-      to: { name: "KitchenMenuIndex" },
-    },
-    {
-      label: "Приготовление блюда",
-      isActionable: true,
-    },
-  ]);
+  setBreadCrumb([{
+    label: "kitchen.title",
+    isTranslate: true,
+  }, {
+    label: kitchenStore.part.title,
+  }, {
+    label: kitchenStore.part.department_name,
+    to: { name: "KitchenIndex" },
+  }, {
+    label: kitchenStore.part.kitchen_vid as string,
+    isActionable: true,
+    to: { name: "KitchenShow" },
+  }, {
+    label: kitchenStore.part.kitchen_type as string,
+    isActionable: true,
+  }, {
+    label: "common.menu",
+    isTranslate: true,
+    to: { name: "KitchenMenuIndex" },
+  }, {
+    label: "kitchen.cookingDish",
+    isTranslate: true,
+    isActionable: true,
+  }]);
 };
 
 watchEffect(() => {
@@ -200,7 +138,6 @@ const cancel = () => {
 const changeInput = async (event: number | string, index: number) => {
   const responseVid = await store.GET_MEALS_VID_PRO({ parent_id: event });
   dataValue.value.compositions[index].product_vid.data = responseVid.product_types && responseVid.product_types;
-  console.log(responseVid);
 };
 
 const repeaterAgain = () => {
@@ -216,7 +153,7 @@ const repeaterAgain = () => {
 };
 
 const handleDelete = (index: number) => {
-  if (dataValue.value.compositions.length > 1) {
+  if(dataValue.value.compositions.length > 1) {
     confirm.delete().then(() => {
       dataValue.value.compositions.splice(index, 1);
     });
@@ -242,9 +179,9 @@ onMounted(async () => {
 const loadingSubmit = ref(false);
 
 const handleSubmit = async () => {
-  if (!v$.value) return;
+  if(!v$.value) return;
 
-  if ((await v$.value.validate())) {
+  if((await v$.value.validate())) {
     try {
       loadingSubmit.value = true;
       const formData = new FormData();
@@ -255,7 +192,7 @@ const handleSubmit = async () => {
       formData.append("unit_id", dataValue.value.unit_id);
       formData.append("kitchen_id", route.params.child_id as string);
 
-      if (dataValue.value.image) {
+      if(dataValue.value.image) {
         formData.append("image", dataValue.value.image);
       }
 
@@ -271,12 +208,10 @@ const handleSubmit = async () => {
 
       loadingSubmit.value = false;
 
-      ElNotification({ title: "Success", type: "success" });
+      commonStore.successToast();
       await router.push(`/kitchen/${route.params.department_id}/free-kitchen/${route.params.kitchen_id}/${route.params.child_id}/menu`);
     } catch (e) {
       loadingSubmit.value = false;
-
-      ElNotification({ title: "Error", type: "error" });
     }
   }
 };
@@ -290,7 +225,7 @@ const changeVid = (id: string | number, index: number) => {
 
 <template>
   <div>
-    <h1 class="mb-6 text-[32px] text-[#000D24] font-semibold">Приготовление блюда</h1>
+    <h1 class="mb-6 text-[32px] text-[#000D24] font-semibold">{{ t("kitchen.cookingDish") }}</h1>
 
     <div class="border rounded-[24px] p-[24px]">
       <AppMediaUploader
@@ -300,9 +235,9 @@ const changeVid = (id: string | number, index: number) => {
         class="mt-4"
       />
 
-<!--      <pre>-->
-<!--        {{ dataValue }}-->
-<!--      </pre>-->
+      <!--      <pre>-->
+      <!--        {{ dataValue }}-->
+      <!--      </pre>-->
 
       <AppForm
         :value="dataValue"
@@ -311,8 +246,7 @@ const changeVid = (id: string | number, index: number) => {
         <div class="mt-[24px] grid grid-cols-2 gap-5">
           <app-input
             v-model="dataValue.name.ru"
-            label="Наименование (Рус)"
-            placeholder="Введите"
+            :label="t('common.name2Lang', {lang: t('lang.ru')})"
             label-class="text-[#A8AAAE] text-[12px]"
             required
             prop="name.ru"
@@ -320,8 +254,7 @@ const changeVid = (id: string | number, index: number) => {
 
           <app-input
             v-model="dataValue.name.uz"
-            label="Наименование (Ўзб)"
-            placeholder="Введите"
+            :label="t('common.name2Lang', {lang: t('lang.uz')})"
             label-class="text-[#A8AAAE] text-[12px]"
             required
             prop="name.uz"
@@ -329,16 +262,15 @@ const changeVid = (id: string | number, index: number) => {
 
           <app-input
             v-model="dataValue.number"
-            label="Уникальный номер блюда"
-            placeholder="Автоматически"
+            :label="t('kitchen.uniqueDishNumber')"
+            :placeholder="t('common.automatically')"
             label-class="text-[#A8AAAE] font-medium text-[12px]"
             disabled
           />
 
           <app-select
             v-model="dataValue.unit_id"
-            label="Ед. измерения"
-            placeholder="Выберите"
+            :label="t('common.measurement')"
             label-class="text-[#A8AAAE] text-[12px]"
             required
             prop="unit_id"
@@ -351,18 +283,18 @@ const changeVid = (id: string | number, index: number) => {
 
 
       <div class="mt-[24px]">
-        <h1 class="text-[#000D24] text-[18px] font-medium">Состав блюда</h1>
+        <h1 class="text-[#000D24] text-[18px] font-medium">{{ t("kitchen.compositionDish") }}</h1>
 
         <div class="bg-[#F8F9FC] rounded-[16px] p-[16px] mt-[24px]">
-          <div class="grid grid-cols-4 gap-4 border-b mt-[16px]"
-               v-for="(item, index) in dataValue.compositions"
-               :key="index"
+          <div
+            class="grid grid-cols-4 gap-4 border-b mt-[16px]"
+            v-for="(item, index) in dataValue.compositions"
+            :key="index"
           >
             <app-select
               v-model="item.product_type_parent_id"
-              label="Тип продукта"
+              :label="t('product.type')"
               label-class="text-[#A8AAAE] text-[12px]"
-              placeholder="Выберите"
               itemValue="id"
               itemLabel="name"
               :items="store.typeProduct.product_categories"
@@ -372,10 +304,8 @@ const changeVid = (id: string | number, index: number) => {
             <app-select
               v-model="item.product_vid.id"
               @change="changeVid($event, index)"
-              label="Вид продукта"
-              no-data-text="Нет данных"
+              :label="t('product.view')"
               label-class="text-[#A8AAAE] text-[12px]"
-              placeholder="Выберите"
               itemValue="id"
               itemLabel="name"
               :items="item.product_vid.data"
@@ -383,16 +313,15 @@ const changeVid = (id: string | number, index: number) => {
 
             <app-input
               v-model="item.quantity"
-              label="Количество"
+              :label="t('common.quantity')"
               label-class="text-[#A8AAAE] text-[12px]"
-              placeholder="0.0"
             />
 
             <div class="flex items-center">
               <app-select
                 v-model="item.unit_id"
                 class="w-full"
-                label="Ед. измерения"
+                :label="t('common.measurement')"
                 label-class="text-[#A8AAAE] text-[12px]"
                 itemValue="id"
                 itemLabel="name"
@@ -404,7 +333,10 @@ const changeVid = (id: string | number, index: number) => {
                 class="bg-[#E2E6F3] rounded-[8px] flex justify-center items-center h-[40px] w-[40px] ml-[16px] mt-2"
                 @click="handleDelete(index)"
               >
-                <img src="@/assets/images/icons/delete.svg" alt="delete" />
+                <img
+                  src="@/assets/images/icons/delete.svg"
+                  alt="delete"
+                />
               </button>
             </div>
           </div>
@@ -427,7 +359,7 @@ const changeVid = (id: string | number, index: number) => {
               maskRepeat: 'no-repeat'
             }"
           ></span>
-            Добавить еще
+            {{t("method.addMore")}}
           </button>
 
           <!--          <div class="flex items-center gap-x-8">-->
@@ -464,7 +396,7 @@ const changeVid = (id: string | number, index: number) => {
             class="!bg-[#E2E6F3] !border-none !text-dark-gray"
             @click="cancel"
           >
-            Отменить
+          {{t("method.cancel")}}
           </ElButton>
           <ElButton
             @click="handleSubmit"
@@ -473,7 +405,7 @@ const changeVid = (id: string | number, index: number) => {
             type="primary"
             class="!bg-blue-500"
           >
-            Продать
+          {{t("common.sell")}}
             <!--    send btn text => Применить-->
           </ElButton>
         </div>
@@ -483,10 +415,3 @@ const changeVid = (id: string | number, index: number) => {
 
   </div>
 </template>
-
-<style
-  scoped
-  lang="scss"
->
-
-</style>

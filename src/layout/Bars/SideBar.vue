@@ -157,14 +157,14 @@ const logOut = () => {
 </script>
 
 <template>
-  <div class="sidebar w-[128px] z-10">
+  <div class="sidebar z-10">
     <div
-      class="sidebar-wrapper bg-white-blue dark:bg-dark text-center relative flex flex-col justify-between"
+      class="sidebar-wrapper w-[128px] bg-white-blue pt-4 pb-5 dark:bg-dark text-center relative flex flex-col justify-between"
     >
       <div class="overflow-auto">
         <img
           src="@/assets/images/logo.svg"
-          class="m-auto pt-[16px] pb-[40px]"
+          class="m-auto pb-[30px]"
           alt="logo"
         />
         <div
@@ -175,7 +175,7 @@ const logOut = () => {
         >
           <div
             :class="{ activeListItem: currentMenu == index }"
-            class="h-[88px] flex flex-col justify-center items-center cursor-pointer p-[12px] hover:bg-white dark:hover:bg-body-dark hover:shadow-menu hover:font-medium rounded-lg"
+            class="py-5 px-[29px] flex flex-col justify-center items-center cursor-pointer w-[104px] min-h-[88px] hover:bg-white dark:hover:bg-body-dark hover:shadow-menu hover:font-medium rounded-lg"
           >
             <li
               :style="{
@@ -201,7 +201,7 @@ const logOut = () => {
           <Transition name="nested-reverse">
             <div
               v-if="currentIndex === index && item.children"
-              class="w-[260px] dark:bg-dark bg-white-blue rounded-[16px] h-[100%] absolute top-0 left-[120px] transition overflow-auto"
+              class="w-[260px] dark:bg-dark bg-white-blue rounded-[16px] h-[100%] absolute top-0 left-[138px] transition overflow-auto"
             >
               <ChildSidebar
                 :childSidebar="childSidebar"
@@ -214,11 +214,8 @@ const logOut = () => {
             </div>
           </Transition>
         </div>
-      </div>
-
-      <!------------------------log out---------------------------->
       <button
-        class="mb-[10px] h-[45px] "
+        class="mb-[10px] h-[45px] mt-4"
         @click.stop="logOut"
         plain
       >
@@ -232,6 +229,9 @@ const logOut = () => {
           </span>
         </span>
       </button>
+      </div>
+
+      <!------------------------log out---------------------------->
     </div>
   </div>
 </template>
@@ -252,7 +252,7 @@ const logOut = () => {
 .sidebar-wrapper {
   background-color: var(--white-blue);
   border-radius: 16px;
-  height: 98%;
+  height: 100%;
 }
 
 .activeListItem {

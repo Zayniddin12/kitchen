@@ -9,71 +9,63 @@ import NotFoundPage from "@/components/errors/404.vue";
 import { useDistrictStore } from "@/modules/Monitoring/store/district.store";
 import { useRoute } from "vue-router";
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
+import { useI18n } from "vue-i18n";
+import AppPagination from "@/components/ui/app-pagination/AppPagination.vue";
 
 const districtStore = useDistrictStore();
 const route = useRoute();
 const { setBreadCrumb } = useBreadcrumb();
+const { t } = useI18n();
 
 const tableColumns = computed<TableColumnType[]>(() => {
-  return [
-    {
-      label: "№",
-      prop: "num",
-      width: 80,
-      sortable: false,
-    },
-    {
-      label: "Название продукта",
-      prop: "product_name",
-      width: 220,
-      sortable: true,
-    },
-    {
-      label: "Ед. изм",
-      width: 170,
-      prop: "unit_measurement",
-      sortable: true,
-    },
-    {
-      label: "Ёшлар",
-      prop: "department_1",
-      width: 170,
-      sortable: true,
-    },
-    {
-      label: "Високоволтнй",
-      prop: "department_2",
-      width: 180,
-      sortable: true,
-    },
-    {
-      label: "Табассум",
-      prop: "department_3",
-      width: 165,
-      sortable: true,
-    },
-    {
-      label: "Мойбулоқ",
-      prop: "department_4",
-      width: 165,
-      sortable: true,
-    },
-    {
-      label: "Ёғду",
-      prop: "department_5",
-      sortable: true,
-    },
-    {
-      label: "Паҳлавон",
-      prop: "department_6",
-      sortable: true,
-    },
-    {
-      label: "по КП РУ Навои",
-      prop: "all",
-      sortable: true,
-    },
-  ];
+  return [{
+    label: "№",
+    prop: "num",
+    width: 80,
+    sortable: false,
+  }, {
+    label: t("product.name"),
+    prop: "product_name",
+    width: 220,
+    sortable: true,
+  }, {
+    label: t("common.measurement"),
+    width: 170,
+    prop: "unit_measurement",
+    sortable: true,
+  }, {
+    label: "Ёшлар",
+    prop: "department_1",
+    width: 170,
+    sortable: true,
+  }, {
+    label: "Високоволтнй",
+    prop: "department_2",
+    width: 180,
+    sortable: true,
+  }, {
+    label: "Табассум",
+    prop: "department_3",
+    width: 165,
+    sortable: true,
+  }, {
+    label: "Мойбулоқ",
+    prop: "department_4",
+    width: 165,
+    sortable: true,
+  }, {
+    label: "Ёғду",
+    prop: "department_5",
+    sortable: true,
+  }, {
+    label: "Паҳлавон",
+    prop: "department_6",
+    sortable: true,
+  }, {
+    label: "по КП РУ Навои",
+    prop: "all",
+    sortable: true,
+  }];
 });
 
 const tableData = computed(() => {
@@ -102,21 +94,18 @@ const tableData = computed(() => {
 const setBreadCrumbFn = () => {
   districtStore.getDistrict(+route.params.id);
 
-  if (!districtStore.district) return;
+  if(!districtStore.district) return;
 
-  setBreadCrumb([
-    {
-      label: "Мониторинг",
-      to: { name: "monitoring.remainingGoods.index" },
-    },
-    {
-      label: "КП РУ Навои",
-    },
-    {
-      label: districtStore.district.name,
-      isActionable: true,
-    },
-  ]);
+  setBreadCrumb([{
+    label: "monitoring.title",
+    isTranslate: true,
+    to: { name: "monitoring.remainingGoods.index" },
+  }, {
+    label: "КП РУ Навои",
+  }, {
+    label: districtStore.district.name,
+    isActionable: true,
+  }]);
 };
 
 watchEffect(() => {
@@ -150,8 +139,11 @@ watchEffect(() => {
                 <img
                   src="@/assets/images/download.svg"
                   class="size-5"
+                  alt="download"
                 />
-                <span class="font-medium text-dark-gray">Скачать</span>
+                <span class="font-medium text-dark-gray">
+                  {{ t("method.download") }}
+                </span>
               </div>
             </ElButton>
             <template #dropdown>
@@ -165,7 +157,7 @@ watchEffect(() => {
                     class="w-[13px] h-[17px]"
                   />
                   <span class="text-sm text-dark-gray font-medium">
-                    PDF файл
+                    {{ t("common.file", { format: "PDF" }) }}
                   </span>
                 </ElDropdownItem>
                 <ElDropdownItem
@@ -177,7 +169,7 @@ watchEffect(() => {
                     class="w-[13px] h-[17px]"
                   />
                   <span class="text-sm text-dark-gray font-medium">
-                    Excel файл
+                    {{ t("common.file", { format: "Excel" }) }}
                   </span>
                 </ElDropdownItem>
                 <ElDropdownItem
@@ -189,7 +181,7 @@ watchEffect(() => {
                     class="w-[13px] h-[17px]"
                   />
                   <span class="text-sm text-dark-gray font-medium">
-                    1C файл
+                    {{ t("common.file", { format: "1C" }) }}
                   </span>
                 </ElDropdownItem>
               </ElDropdownMenu>
@@ -204,15 +196,16 @@ watchEffect(() => {
                 src="@/assets/images/icons/share.svg"
                 class="size-5"
               />
-              <span class="font-medium text-dark-gray">Поделиться</span>
+              <span class="font-medium text-dark-gray">{{t("method.share")}}</span>
             </div>
           </ElButton>
         </div>
       </div>
       <ElTable
-          stripe
+        stripe
         :data="tableData"
         class="custom-element-table"
+        :empty-text="t('common.empty')"
       >
         <ElTableColumn
           v-for="column in tableColumns"
@@ -228,17 +221,7 @@ watchEffect(() => {
           </template>
         </ElTableColumn>
       </ElTable>
-      <div class="mt-6 flex items-center justify-between">
-        <div class="text-sm text-cool-gray">
-          Показано 1–12 из 100 результатов
-        </div>
-        <el-pagination
-          class="float-right"
-          background
-          layout="prev, pager, next"
-          :total="1000"
-        />
-      </div>
+      <AppPagination class="mt-6" />
     </div>
   </section>
   <NotFoundPage

@@ -102,26 +102,26 @@ watchEffect(() => {
             <div class="px-4 py-3.5 flex justify-end items-center gap-x-8">
               <div class="flex items-center gap-x-1 text-sm">
                 <span class="text-cool-gray">
-                  Цена:
+                  {{t("common.price")}}:
                 </span>
                 <strong class="font-semibold text-dark">
-                  25 000 сум
+                  25 000 {{t("currency.sum")}}
                 </strong>
               </div>
               <div class="flex items-center gap-x-1 text-sm">
                 <span class="text-cool-gray">
-                  НДС:
+                  {{t("common.ndc")}}:
                 </span>
                 <strong class="font-semibold text-dark">
-                  3 000 сум
+                  3 000 {{t("currency.sum")}}
                 </strong>
               </div>
               <div class="flex items-center gap-x-1 text-sm">
                 <span class="text-cool-gray">
-                  Общая сумма:
+                  {{ t("common.totalSum")}}:
                 </span>
                 <strong class="font-semibold text-dark">
-                  28 000 сум
+                  28 000 {{t("currency.sum")}}
                 </strong>
               </div>
             </div>

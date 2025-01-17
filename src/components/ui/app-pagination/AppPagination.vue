@@ -33,6 +33,7 @@ const paginationText = computed(() => {
 
 <template>
   <div
+    v-if="props.pagination"
     v-show="props.pagination.pages_count > 1"
     class="app-pagination flex items-center justify-between"
   >

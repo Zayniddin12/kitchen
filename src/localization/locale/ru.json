@@ -18,7 +18,8 @@
     "forgotPassword": "Забыли пароль",
     "newPassword": "Новый пароль",
     "confirmPassword": "Подтвердите пароль",
-    "sendCode": "Отправить код"
+    "sendCode": "Отправить код",
+    "repeatNewPassword": "Повторите новый пароль"
   },
   "logo": {
     "title": "NKMK",
@@ -50,9 +51,11 @@
     "and": "и",
     "name": "Название",
     "name2": "Наименование",
+    "name2Lang": "Наименование {lang}",
     "quantity": "Количество",
     "measurement": "Ед. измерения",
     "unitMeasurement": "Единица измерения",
+    "unitMeasurement2": "Единицы измерения",
     "price": "Цена",
     "sum": "Сумма",
     "totalSum": "Общая сумма",
@@ -106,7 +109,25 @@
     "timeToStart": "Время начало",
     "endToTime": "Время окончания",
     "next": "Далее",
-    "clear": "Очистить"
+    "clear": "Очистить",
+    "file": "{format} файл",
+    "tzr": "ТЗР",
+    "places": "мест",
+    "kitchens": "кухни",
+    "regions": "Регионы",
+    "workPlace": "Место работы",
+    "workingHours": "График работы",
+    "myProfile": "Мой профиль",
+    "oldPassword": "Старый пароль",
+    "job": "Должность",
+    "lang": "Язык интерфейса",
+    "personalInformation": "Персональная информация",
+    "changePicture": "Cменить картинку",
+    "deletePicture": "Удалить картинку",
+    "legalAddressDatabase": "Юр. адрес базы",
+    "uniqueDatabaseCode": "Уникальный код базы",
+    "subordination": "Подчинение",
+    "headDepartment": "Начальник управления"
   },
   "status": {
     "active": "Активный",
@@ -156,7 +177,8 @@
     "reset": "Сбросить",
     "apply": "Применить",
     "seal": "Печать",
-    "download": "Скачать"
+    "download": "Скачать",
+    "share": "Поделиться"
   },
   "confirm": {
     "cancel": {
@@ -258,7 +280,9 @@
     "invoiceDate": "Дата накладной",
     "shortInvoiceDate": "Дата нак...",
     "invoiceNumber": "№ накладной",
+    "invoiceNumber2": "Номер накладной",
     "type": "Вид документа",
+    "type2": "Виды документов",
     "whom": {
       "from": "От кого",
       "to": "Кому",
@@ -304,7 +328,8 @@
     "contract": "Контракты",
     "contractNumber": "№ контракта",
     "contractTotalSum": "Общая сумма контракта",
-    "consignmentNote": "Накладной документ"
+    "consignmentNote": "Накладной документ",
+    "typeDoc": "Типы документов"
   },
   "error": {
     "title": "Error",
@@ -330,20 +355,43 @@
   "settings": {
     "directories": "Справочники",
     "positionsAndRoles": "Должности и роли",
-    "regionalAdministration": "Региональное управление"
+    "regionalAdministration": "Региональное управление",
+    "profile": "Настройки профиля",
+    "log": "Логи",
+    "products": "Продукты",
+    "rationsDishes": "Рационы и блюда",
+    "managementFactoriesAndWarehouses": "Управ, комбинаты и склады",
+    "suppliersAndOrganizations": "Поставщики и организации",
+    "nameUnitsMeasurement": "Наименование единиц измерения",
+    "abbreviationUnits": "Сокращение единиц"
+  },
+  "regionalDirectorates": {
+    "title": "Региональные управления",
+    "create": "Добавить новое региональное управление",
+    "edit": "Редактировать региональное управление",
+    "show": "Просмотр деталей региональное управление"
+  },
+  "combineNutrition": {
+    "title": "Комбинаты питания",
+    "create": "Добавить новый комбинат питания",
+    "edit": "Редактировать комбината",
+    "show": "Просмотр деталей комбината"
   },
   "lang": {
-    "ru": "РУС",
-    "uz": "ЎЗБ"
+    "ru": "Рус",
+    "uz": "Ўзб"
   },
   "user": {
-    "combine": "Комбинат"
+    "combine": "Комбинат",
+    "name": "Имя",
+    "fullName": "Фамилия"
   },
   "base": {
     "warehouse": {
       "title": "База склад",
       "reverseTitle": "Склад базы"
-    }
+    },
+    "name": "Наименование базы"
   },
   "kitchen": {
     "all": "Все кухни",
@@ -377,7 +425,20 @@
     "error": {
       "atLeastOnePeriodMustBeAdded": "At least one period must be added.",
       "noValidDateInputFound": "No valid date input found."
-    }
+    },
+    "cookingDish": "Приготовление блюда",
+    "uniqueDishNumber": "Уникальный номер блюда",
+    "compositionDish": "Состав блюда",
+    "lpp": "Кухни ЛПП"
+  },
+  "kitchenWarehouse": {
+    "title": "Склад кухни",
+    "byProducts": "По продуктам",
+    "byInvoices": "По накладным",
+    "filling": "Заполнение склада",
+    "description": "Этот элемент показывает процент заполненности склада, помогая вам следить за остатками и эффективно управлять запасами",
+    "markup": "Наценка",
+    "rentab": "Рентаб..."
   },
   "gender": {
     "female": "Женский",
@@ -407,5 +468,83 @@
     "desserts": "Десерты",
     "supplements": "Добавки",
     "drinks": "Напитки"
+  },
+  "monitoring": {
+    "title": "Мониторинг",
+    "remainingGoods": "Остатка товаров",
+    "kitchenReport": "Отчет о кухне",
+    "attendance": "Посещаемость",
+    "dishes": "Блюда",
+    "holySale": "Св. продажа",
+    "buffet": "Буфет",
+    "polyclinic": "Поликлиника",
+    "healthResort": "Профилакторий",
+    "camp": "Лагерь",
+    "prepared": "Приготовленных",
+    "distributed": "Раздаваемых"
+  },
+  "warehouseBases": {
+    "title": "Базы складов",
+    "create": "Добавить базу складов",
+    "edit": "Редактировать базу складов",
+    "show": "Просмотр деталей базы складов"
+  },
+  "baseWarehouses": {
+    "title": "Склады базы",
+    "create": "Добавить новый склад базы",
+    "edit": "Редактирования склада",
+    "show": "Просмотр деталей склада"
+  },
+  "kitchenWarehouses": {
+    "title": "Склады кухни",
+    "create": "Добавить новый склад кухни",
+    "edit": "Редактировать склада кухни",
+    "show": "Просмотр деталей склада кухни"
+  },
+  "kitchenType": {
+    "title": "Типы кухни",
+    "create": "Добавить тип кухни",
+    "edit": "Редактировать тип кухни",
+    "show": "Просмотр деталей тип кухни"
+  },
+  "suppliers": {
+    "title": "Поставщики",
+    "create": "Добавить нового поставщика",
+    "edit": "Редактирования поставщика",
+    "show": "Просмотр деталей поставщика"
+  },
+  "organization": {
+    "title": "Организации",
+    "create": "Добавить новую организацию",
+    "edit": "Редактировать организации",
+    "show": "Просмотр деталей организации",
+    "name": "Название организации"
+  },
+  "typeProduct": {
+    "title": "Типы продуктов",
+    "create": "Добавить тип продукта",
+    "edit": "Редактирования типа продукта",
+    "show": "Просмотр деталей типа продукта"
+  },
+  "vidProduct": {
+    "title": "Виды продуктов",
+    "create": "Добавить вид продукта",
+    "edit": "Редактировать вид продукта",
+    "show": "Просмотр деталей вида продукта"
+  },
+  "ration": {
+    "create": "Добавить новый рацион",
+    "edit": "Редактировать рациона",
+    "show": "Просмотр деталей рациона"
+  },
+  "dishes": {
+    "create": "Добавить новое блюдо",
+    "edit": "Редактировать блюда",
+    "show": "Просмотр деталей блюда"
+  },
+  "users": {
+    "title": "Кадры",
+    "personalDatabase": "База кадров",
+    "visitors": "Посетители"
   }
 }

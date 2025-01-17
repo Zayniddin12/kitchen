@@ -280,14 +280,12 @@ const totalPrice = computed(() =>
               :title="t('home.warehouseOccupancy')"
               :subtitle="t('home.textWillGoHere')"
               :data="warehouseCapacityData"
-              :legend-item-gap="160"
               :loading="statisticsStore.warehouseCapacityLoading"
             />
             <AnalyticsCard
               :title="t('home.visitorsNumber')"
               :icon="UsersIcon"
               :subtitle="t('home.textWillGoHere')"
-              :legend-item-gap="220"
               :data="visitorsData"
               :loading="statisticsStore.visitorsLoading"
             />
@@ -481,14 +479,12 @@ const totalPrice = computed(() =>
           :icon="KitchenIcon"
           :subtitle="t('home.textWillGoHere')"
           :data="kitchenData"
-          :legend-item-gap="135"
           :loading="statisticsStore.kitchenCountLoading"
         />
         <AnalyticsCard
           :title="t('home.numberOfWarehouses')"
           :icon="BranchIcon"
           :subtitle="t('home.textWillGoHere')"
-          :legend-item-gap="135"
           :data="warehouseData"
           :loading="statisticsStore.warehouseCountLoading"
         />

@@ -3,7 +3,7 @@
   lang="ts"
 >
 
-import { computed, watch, watchEffect } from "vue";
+import { computed, ref, watch, watchEffect } from "vue";
 import DishesImg from "@/assets/images/kitchen/test/dishes.png";
 import { useRoute } from "vue-router";
 import { useKitchenStore } from "@/modules/Kitchen/kitchen.store";
@@ -16,78 +16,7 @@ const route = useRoute();
 const kitchenStore = useKitchenStore();
 const { setBreadCrumb } = useBreadcrumb();
 
-const categories = computed(() => [
-  {
-    id: 1,
-    name: t("kitchen.dishes2"),
-    products: [
-      {
-        id: 1,
-        name: "Плов",
-        price: 25000,
-        cost_price: 3000,
-        sum: 28000,
-        photo: DishesImg,
-      },
-      {
-        id: 2,
-        name: "Плов",
-        price: 25000,
-        cost_price: 3000,
-        sum: 28000,
-        photo: DishesImg,
-      },
-      {
-        id: 3,
-        name: "Плов",
-        price: 25000,
-        cost_price: 3000,
-        sum: 28000,
-        photo: DishesImg,
-      },
-      {
-        id: 4,
-        name: "Плов",
-        price: 25000,
-        cost_price: 3000,
-        sum: 28000,
-        photo: DishesImg,
-      },
-      {
-        id: 5,
-        name: "Плов",
-        price: 25000,
-        cost_price: 3000,
-        sum: 28000,
-        photo: DishesImg,
-      },
-      {
-        id: 6,
-        name: "Плов",
-        price: 25000,
-        cost_price: 3000,
-        sum: 28000,
-        photo: DishesImg,
-      },
-      {
-        id: 7,
-        name: "Плов",
-        price: 25000,
-        cost_price: 3000,
-        sum: 28000,
-        photo: DishesImg,
-      },
-      {
-        id: 8,
-        name: "Плов",
-        price: 25000,
-        cost_price: 3000,
-        sum: 28000,
-        photo: DishesImg,
-      },
-    ],
-  },
-]);
+const mealsData = ref([]);
 
 const setBreadCrumbFn = () => {
   kitchenStore.fetchPart(+route.params.department_id, route.params.part_name as string);
@@ -141,8 +70,11 @@ watch(() => route.params, async () => {
     kitchen_type_id: route.params.kitchen_id as string,
   });
 
-  await kitchenStore.GET_MEALS_LIST({ kitchen_id: route.params.child_id });
+  const response = await kitchenStore.GET_MEALS_LIST({ kitchen_id: route.params.child_id });
 
+  console.log(response);
+
+  mealsData.value = response.meals ? response.meals : [];
   setBreadCrumbFn();
 }, { immediate: true });
 
@@ -152,15 +84,12 @@ watch(() => route.params, async () => {
   <section>
     <div>
       <div class="flex flex-col gap-y-6">
-        <div
-          v-for="category in categories"
-          :key="category.id"
-        >
+        <div>
           <h2 class="text-[32px] font-semibold text-dark">
-            {{ category.name }}
+            {{ t("kitchen.dishes2") }}
           </h2>
           <ElTable
-            :data="category.products"
+            :data="mealsData"
             stripe
             :empty-text="t('common.empty')"
             class="custom-element-table custom-element-table-normal mt-6"
@@ -183,7 +112,7 @@ watch(() => route.params, async () => {
               <template #default="{row}: {row: Record<string,any>}">
                 <div class="flex items-center justify-center gap-x-3">
                   <img
-                    :src="DishesImg"
+                    :src="row.image ? row.image : ''"
                     :alt="row.name"
                     class="size-8 rounded-full object-contain"
                   />

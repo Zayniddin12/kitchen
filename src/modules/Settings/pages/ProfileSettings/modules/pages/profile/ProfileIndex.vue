@@ -9,6 +9,9 @@ import Avatar from "@/assets/images/avatar.png";
 import { computed } from "vue";
 import { phoneFormatter } from "@/utils/helper";
 import { activeLanguage } from "@/localization";
+import { useI18n } from "vue-i18n";
+
+const { t } = useI18n();
 
 const route = useRoute();
 
@@ -17,39 +20,33 @@ const authStore = useAuthStore();
 const userImg = computed(() => authStore.user?.image || Avatar);
 
 type PersonalDataType = {
-  title: string;
-  value?: string | null;
+  title: string; value?: string | null;
 }[]
 
 const personalData = computed<PersonalDataType>(() => {
-  if (!authStore.user) return [];
-  return [
-    {
-      title: "Имя",
-      value: authStore.user.firstname,
-    },
-    {
-      title: "Фамилия",
-      value: authStore.user.lastname,
-    },
-    {
-      title: "Номер телефона",
-      value: authStore.user.phone ? phoneFormatter(authStore.user.phone) : "",
-    },
-    {
-      title: "Должность",
-      value: authStore.user.position,
-    },
-    {
-      title: "Место работы",
-      value: authStore.user.organization_name,
-    },
-    {
-      title: "Язык интерфейса",
-      value: activeLanguage.value.title,
-    },
-  ];
+  if(!authStore.user) return [];
+  return [{
+    title: t("user.name"),
+    value: authStore.user.firstname,
+  }, {
+    title: t("user.fullName"),
+    value: authStore.user.lastname,
+  }, {
+    title: t("common.phone"),
+    value: authStore.user.phone ? phoneFormatter(authStore.user.phone) : "",
+  }, {
+    title: t("common.job"),
+    value: authStore.user.position,
+  }, {
+    title: t("common.workPlace"),
+    value: authStore.user.organization_name,
+  }, {
+    title: t("common.lang"),
+    value: activeLanguage.value.title,
+  }];
 });
+
+const title = computed(() => route.meta.childTitle ?? "");
 
 </script>
 
@@ -60,7 +57,7 @@ const personalData = computed<PersonalDataType>(() => {
   >
     <div class="flex items-center gap-x-10 justify-between">
       <h5 class="text-lg text-black-text font-semibold">
-        {{ route.meta.childTitle ?? "" }}
+        {{ route.meta.childIsTranslate ? t(title) : title }}
       </h5>
       <RouterLink
         :to="{name: 'profile-settings-profile-edit'}"
@@ -72,7 +69,7 @@ const personalData = computed<PersonalDataType>(() => {
           class="size-5"
         />
         <span>
-          Редактировать
+          {{t("method.edit")}}
         </span>
       </RouterLink>
     </div>
@@ -86,13 +83,15 @@ const personalData = computed<PersonalDataType>(() => {
         <strong class="text-black-text font-medium text-lg">{{ authStore.userFullName ?? "-" }}</strong>
         <div class="flex flex-col gap-y-0.5">
           <span>{{ authStore.user.position ?? "-" }}</span>
-          <span>Название организации</span>
+          <span>
+            {{t("organization.name")}}
+          </span>
         </div>
       </div>
     </div>
     <div class="mt-6 rounded-2xl border border-[#EEEEEF] p-4">
       <h6 class="font-medium text-black-text text-lg">
-        Персональная информация
+        {{t("common.personalInformation")}}
       </h6>
       <div class="grid grid-cols-3 gap-4 mt-4">
         <div
@@ -111,7 +110,3 @@ const personalData = computed<PersonalDataType>(() => {
     </div>
   </div>
 </template>
-
-<style lang="scss">
-
-</style>

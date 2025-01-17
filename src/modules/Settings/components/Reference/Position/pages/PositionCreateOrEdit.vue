@@ -204,6 +204,7 @@ const changeBase = (id: AppSelectValueType) => {
   listStore.fetchBaseWarehouses(id);
   listStore.fetchKitchenWarehouses(id);
   clearBase();
+  changeWorkPlace(id, "base");
 };
 
 const clearBase = () => {
@@ -321,6 +322,7 @@ onMounted(() => {
                 label-class="text-[#A8AAAE] text-xs font-medium"
                 class="mb-0"
                 :disabled="!form2.base_id || !!form2.kitchen_warehouse_id"
+                @change="id => changeWorkPlace(id, 'baseWarehouse')"
                 clearable
               />
               <AppSelect
@@ -334,6 +336,7 @@ onMounted(() => {
                 label-class="text-[#A8AAAE] text-xs font-medium"
                 class="mb-0"
                 :disabled="!form2.base_id || !!form2.base_warehouse_id"
+                @change="id => changeWorkPlace(id, 'kitchenWarehouse')"
                 clearable
               />
             </div>

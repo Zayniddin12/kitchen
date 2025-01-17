@@ -9,6 +9,8 @@ import {
     ListProductsResponseType, UpdatePriceDataType
 } from "@/modules/KitchenWarehouse/kitchen-warehouse.types";
 import kitchenWarehouseApi from "@/modules/KitchenWarehouse/kitchen-warehouse.api";
+import axios from "@/plugins/axios/axios";
+
 
 interface DynamicItemStateType {
     id: number;
@@ -102,6 +104,10 @@ export const useKitchenWarehouseStore = defineStore("kitchenWarehouse", () => {
         }
     };
 
+    const CREATE_FACTORY_KITCHEN = ({id, data}) => {
+        return axios.post(`/kitchen-warehouses/${id}/unpacking`, data)
+    }
+
     return {
         dynamicState,
         dynamicItemState,
@@ -118,5 +124,7 @@ export const useKitchenWarehouseStore = defineStore("kitchenWarehouse", () => {
         fetchFillingPercentage,
         updatePriceLoading,
         updatePrice,
+
+        CREATE_FACTORY_KITCHEN
     };
 });

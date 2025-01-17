@@ -1,14 +1,18 @@
-<script setup lang="ts">
-import {computed, onMounted, ref, watch} from "vue";
-import {useRoute, useRouter} from "vue-router";
+<script
+  setup
+  lang="ts"
+>
+import { computed, onMounted, ref, watch } from "vue";
+import { useRoute, useRouter } from "vue-router";
 import AppInput from "@/components/ui/form/app-input/AppInput.vue";
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 import useConfirm from "@/components/ui/app-confirm/useConfirm";
 import AppForm from "@/components/ui/form/app-form/AppForm.vue";
-import {ValidationType} from "@/components/ui/form/app-form/app-form.type";
-import {useSettingsStore} from "@/modules/Settings/store";
-import {ElNotification} from "element-plus";
+import { ValidationType } from "@/components/ui/form/app-form/app-form.type";
+import { useSettingsStore } from "@/modules/Settings/store";
 import AppOverlay from "@/components/ui/app-overlay/AppOverlay.vue";
+import { useI18n } from "vue-i18n";
+import { getStatusText } from "@/utils/helper";
 
 interface Name {
   ru: string;
@@ -25,225 +29,220 @@ const setValidation = (value: ValidationType) => {
   v$.value = value;
 };
 
-const store = useSettingsStore()
+const store = useSettingsStore();
 const route = useRoute();
 const router = useRouter();
-const {confirm} = useConfirm();
-const {setBreadCrumb} = useBreadcrumb();
+const { confirm } = useConfirm();
+const { setBreadCrumb } = useBreadcrumb();
+const { t } = useI18n();
+
+const title = computed(() => route.meta.title ?? "");
+const isTranslate = computed(() => !!route.meta.isTranslate);
+
 const setBreadCrumbFn = () => {
-  setBreadCrumb([
-    {
-      label: "Настройки",
-      isActionable: false,
-    },
-    {
-      label: "Справочники",
-      isActionable: false,
-      to: {name: "reference"},
-    },
-
-    {
-      label: "Управ, комбинаты и склады",
-      isActionable: false,
-      to: {name: "reference"},
-    },
-
-    {
-      label: "Региональные управления",
-      isActionable: false,
-      to: {name: "reference-regional-directorates"},
-    },
-    {
-      label: activeBreadCrumbItemTitle.value,
-      isActionable: true,
-    },
-  ]);
+  setBreadCrumb([{
+    label: "common.settings",
+    isTranslate: true,
+    isActionable: false,
+  }, {
+    label: "settings.directories",
+    isTranslate: true,
+    isActionable: false,
+    to: { name: "reference" },
+  }, {
+    label: "settings.managementFactoriesAndWarehouses",
+    isTranslate: true,
+    isActionable: false,
+    to: { name: "reference" },
+  }, {
+    label: "regionalDirectorates.title",
+    isTranslate: true,
+    isActionable: false,
+    to: { name: "reference-regional-directorates" },
+  }, {
+    label: activeBreadCrumbItemTitle.value,
+    isTranslate: true,
+    isActionable: true,
+  }]);
 };
 
 const dataValue = ref<DataValue>({
   name: {
-    ru: '',
-    uz: ''
+    ru: "",
+    uz: "",
   },
-  status: 'active'
-})
-const loading = ref<boolean>(false)
-const status = ref<boolean>(true)
+  status: "active",
+});
+const loading = ref<boolean>(false);
+const status = ref<boolean>(true);
 
 
 onMounted(async () => {
-  if (route.params.id) {
-    loading.value = true
+  if(route.params.id) {
+    loading.value = true;
     try {
-      const managements = await store.GET_REGIONAL_DETAIL(route.params.id as number | string)
-      if (managements && managements.data && managements.data.management) {
-        dataValue.value = managements.data.management
+      const managements = await store.GET_REGIONAL_DETAIL(route.params.id as number | string);
+      if(managements && managements.data && managements.data.management) {
+        dataValue.value = managements.data.management;
 
-        status.value = managements.data.management.status === 'active'
+        status.value = managements.data.management.status === "active";
       }
     } catch (e) {
-      loading.value = false
+      loading.value = false;
     }
-    loading.value = false
+    loading.value = false;
   }
-})
+});
 
 
 const cancelFn = () => {
   confirm.cancel().then(() => {
-    router.push({name: "reference-regional-directorates"});
+    router.push({ name: "reference-regional-directorates" });
   });
 };
 
 const deleteFn = () => {
   confirm.delete().then(() => {
-    store.DELETE_REGIONAL(route.params.id as number | string)
-    router.push('/reference-regional-directorates');
-    ElNotification({title: 'Success', type: 'success'});
+    store.DELETE_REGIONAL(route.params.id as number | string);
+    router.push("/reference-regional-directorates");
   });
 };
 
 const changeStatus = () => {
-  if (status.value) {
-    dataValue.value.status = 'active'
+  if(status.value) {
+    dataValue.value.status = "active";
   } else {
-    dataValue.value.status = 'inactive'
+    dataValue.value.status = "inactive";
   }
-}
+};
 
 const handleSubmit = async () => {
-  if (!v$.value) return;
+  if(!v$.value) return;
 
-  if ((await v$.value.validate())) {
+  if((await v$.value.validate())) {
     try {
-      const payload = dataValue.value as DataValue
+      const payload = dataValue.value as DataValue;
 
-      if (route.params.id) {
+      if(route.params.id) {
         await store.UPDATE_REGIONAL({
           id: route.params.id as string | number,
           data: {
             name: payload.name,
             status: payload.status,
           },
-        })
+        });
       } else {
-        await store.CREATE_REGIONAL(payload)
+        await store.CREATE_REGIONAL(payload);
       }
 
-      ElNotification({title: 'Success', type: 'success'});
-      await router.push('/reference-regional-directorates')
+      await router.push("/reference-regional-directorates");
     } catch (e) {
-      ElNotification({title: 'Error', type: 'error'});
     }
   }
-}
+};
 
 const activeBreadCrumbItemTitle = computed<string>(() => {
   switch (route.name) {
     case "reference-regional-directorates-add":
-      return "Добавить";
+      return "method.add";
     case "reference-regional-directorates-edit":
-      return "Редактировать";
+      return "method.edit";
     case "reference-regional-directorates-view":
-      return "Просмотр";
+      return "common.view";
     default:
       return "";
   }
 });
 
 const isDisabled = computed(() => {
-  return route.name === 'reference-regional-directorates-view'
-})
+  return route.name === "reference-regional-directorates-view";
+});
 
 watch(() => route.name, () => {
   setBreadCrumbFn();
-}, {immediate: true});
+}, { immediate: true });
 </script>
 
 <template>
   <div>
-    <AppOverlay
-        :loading="loading"
-    >
     <div class="flex items-center justify-between mb-[24px]">
-      <h1 class="m-0 font-semibold text-[32px] leading-[48px]">{{ route.meta.title }}</h1>
+      <h1 class="m-0 font-semibold text-[32px] leading-[48px]">{{ isTranslate ? t(title) : title }}</h1>
     </div>
-
     <div class="flex gap-6">
       <div class="w-[70%]">
         <AppForm
-            :value="dataValue"
-            @validation="setValidation"
+          :value="dataValue"
+          @validation="setValidation"
         >
-          <div class="border border-[#E2E6F3] rounded-[24px] p-[24px] h-[65vh] flex flex-col">
+          <AppOverlay
+            :loading
+            :rounded="24"
+            class="border border-[#E2E6F3] rounded-[24px] p-[24px] h-[65vh] flex flex-col"
+          >
             <div class="flex items-center gap-4">
               <app-input
-                  v-model="dataValue.name.ru"
-                  label="Наименование (Рус)"
-                  placeholder="Введите"
-                  label-class="text-[#A8AAAE] font-medium text-[12px]"
-                  class="w-full"
-                  required
-                  prop="name.ru"
-                  :disabled="isDisabled"
+                v-model="dataValue.name.ru"
+                :label="t('name2Lang', {lang: t('lang.ru')})"
+                label-class="text-[#A8AAAE] font-medium text-[12px]"
+                class="w-full"
+                required
+                prop="name.ru"
+                :disabled="isDisabled"
               />
-
               <app-input
-                  v-model="dataValue.name.uz"
-                  label="Наименование (Ўзб)"
-                  placeholder="Введите"
-                  label-class="text-[#A8AAAE] font-medium text-[12px]"
-                  class="w-full"
-                  required
-                  prop="name.uz"
-                  :disabled="isDisabled"
+                v-model="dataValue.name.uz"
+                :label="t('name2Lang', {lang: t('lang.uz')})"
+                label-class="text-[#A8AAAE] font-medium text-[12px]"
+                class="w-full"
+                required
+                prop="name.uz"
+                :disabled="isDisabled"
               />
             </div>
-
             <div class="flex items-center gap-4">
               <app-input
-                  label="Подчинение"
-                  placeholder="Начальник управления"
-                  label-class="text-[#A8AAAE] font-medium text-[12px]"
-                  class="w-[50%]"
-                  disabled
+                :label="t('common.subordination')"
+                :placeholder="t('common.headDepartment')"
+                label-class="text-[#A8AAAE] font-medium text-[12px]"
+                class="w-[50%]"
+                disabled
               />
             </div>
-
             <ElSwitch
-                v-model="status"
-                v-if="route.params.id && !route.query.type"
-                @change="changeStatus"
-                :active-text="status ? 'Активация' : 'Деактивация'"
-                class="app-switch mt-auto"
+              v-model="status"
+              v-if="route.params.id && !route.query.type"
+              @change="changeStatus"
+              :active-text="getStatusText(status)"
+              class="app-switch mt-auto"
             />
-          </div>
+          </AppOverlay>
         </AppForm>
 
         <div
-            v-if="!route.query.type"
-            class="flex items-center mt-[24px] "
-            :class="!route.params.id ? 'justify-end' : 'justify-between'"
+          v-if="!route.query.type"
+          class="flex items-center mt-[24px] "
+          :class="!route.params.id ? 'justify-end' : 'justify-between'"
         >
           <button
-              v-if="route.params.id"
-              class="custom-danger-btn"
-              @click="deleteFn"
+            v-if="route.params.id"
+            class="custom-danger-btn"
+            @click="deleteFn"
           >
-            Удалить
+            {{ t("method.delete") }}
           </button>
-
-
           <div class="flex items-center gap-4">
             <button
-                @click="cancelFn"
-                class="custom-cancel-btn"
+              @click="cancelFn"
+              class="custom-cancel-btn"
             >
-              Отменить
+              {{ t("method.cancel") }}
             </button>
 
-            <button class="custom-apply-btn" @click="handleSubmit">
-              {{ $route.params.id ? "Сохранить" : "Добавить" }}
+            <button
+              class="custom-apply-btn"
+              @click="handleSubmit"
+            >
+              {{ t(route.params.id ? "method.save" : "method.add") }}
             </button>
           </div>
         </div>
@@ -251,16 +250,18 @@ watch(() => route.name, () => {
 
       <div class="w-[30%]">
         <button
-            @click="router.push({name: 'reference-regional-directorates-edit', params: {id: 1}})"
-            v-if="route.query.type == 'view'"
-            class="flex items-center gap-4 bg-[#F8F9FC] py-[10px] px-[20px] rounded-[8px]"
+          @click="router.push({name: 'reference-regional-directorates-edit', params: {id: 1}})"
+          v-if="route.query.type == 'view'"
+          class="flex items-center gap-4 bg-[#F8F9FC] py-[10px] px-[20px] rounded-[8px]"
         >
-          <img src="@/assets/images/icons/edit.svg" alt="edit">
-          Редактировать
+          <img
+            src="@/assets/images/icons/edit.svg"
+            alt="edit"
+          >
+          {{ t("method.edit") }}
         </button>
       </div>
     </div>
-    </AppOverlay>
   </div>
 </template>
 
