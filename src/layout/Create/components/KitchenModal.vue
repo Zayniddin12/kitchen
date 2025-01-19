@@ -238,26 +238,28 @@ const sendForm = async () => {
 
   if (typeSwitch.value) {
 
-    const newForm: DocumentCreateDataType = {
+    let newForm: DocumentCreateDataType = {
       Document: JSON.parse(JSON.stringify(form)),
     };
 
     delete newForm.Document.from;
     delete newForm.Document.to;
 
-    newForm.Act = JSON.parse(JSON.stringify(actForm));
+    // newForm.Document = JSON.parse(JSON.stringify(actForm.doc_signer_obj));
 
-    if (newForm.Act && newForm.Act.doc_signer_obj) {
+    if (newForm.Document && newForm.Document.doc_signer_obj) {
       const signerKeys = ["signer_id_1", "signer_id_2", "signer_id_3", "signer_id_4", "signer_id_5"] as const;
 
-      newForm.Act.doc_signers = signerKeys
-        .filter((key) => newForm.Act!.doc_signer_obj![key]) // Faqat qiymati borlarini olish
+      newForm.Document.doc_signers = signerKeys
+        .filter((key) => newForm.Document!.doc_signer_obj![key]) // Faqat qiymati borlarini olish
         .map((key) => ({
-          signer_id: +newForm.Act!.doc_signer_obj![key] as number,
+          signer_id: +newForm.Document!.doc_signer_obj![key] as number,
         }));
 
-      delete newForm.Act.doc_signer_obj;
+      delete newForm.Document.doc_signer_obj;
     }
+
+    console.log(newForm, "newForm");
 
     if (!activeComingModal.value) {
       delete newForm.Document.subject;
@@ -268,9 +270,23 @@ const sendForm = async () => {
       delete newForm.Act?.shipping_method;
       delete newForm.Act?.subject;
     }
+
+    await documentStore.create(filterObjectValues(newForm)).then(() => {
+      commonStore.successToast();
+      model.value = false;
+      clearValidations();
+      validationErrors.value = {
+        Document: {},
+        Act: {},
+      };
+    }).catch((error: any) => {
+      if (error?.error?.code === 422) {
+        validationErrors.value = error.meta.validation_errors;
+      }
+    });
 
   } else {
-    const newForm: DocumentCreateDataType = {
+    let newForm: DocumentCreateDataType = {
       Document: JSON.parse(JSON.stringify(form)),
     };
 
@@ -278,6 +294,12 @@ const sendForm = async () => {
     delete newForm.Document.to;
 
     newForm.Act = JSON.parse(JSON.stringify(actForm));
+
+    newForm.Act && newForm.Act.products && newForm.Act.products.forEach(item => {
+      delete item.product;
+    });
+
+    delete newForm.Document.doc_signer_obj;
 
     if (newForm.Act && newForm.Act.doc_signer_obj) {
       const signerKeys = ["signer_id_1", "signer_id_2", "signer_id_3", "signer_id_4", "signer_id_5"] as const;
@@ -300,21 +322,25 @@ const sendForm = async () => {
       delete newForm.Act?.shipping_method;
       delete newForm.Act?.subject;
     }
+    console.log(newForm, "newForm");
+
+    await documentStore.create(filterObjectValues(newForm)).then(() => {
+      commonStore.successToast();
+      model.value = false;
+      clearValidations();
+      validationErrors.value = {
+        Document: {},
+        Act: {},
+      };
+    }).catch((error: any) => {
+      if (error?.error?.code === 422) {
+        validationErrors.value = error.meta.validation_errors;
+      }
+    });
   }
 
-  // await documentStore.create(filterObjectValues(newForm)).then(() => {
-  //   commonStore.successToast();
-  //   model.value = false;
-  //   clearValidations();
-  //   validationErrors.value = {
-  //     Document: {},
-  //     Act: {},
-  //   };
-  // }).catch((error: any) => {
-  //   if (error?.error?.code === 422) {
-  //     validationErrors.value = error.meta.validation_errors;
-  //   }
-  // });
+
+
 };
 
 const vidProducts = ref<Map<number, Record<string, any>[]>>(new Map);
@@ -1066,13 +1092,13 @@ const changeUser = (val, key) => {
           <el-switch
             v-model="typeSwitch"
             size="large"
-            active-text="Покупка"
-            inactive-text="Поставка"
+            active-text="Поставка"
+            inactive-text="Покупка"
           />
 
           <AppInput
             v-if="typeSwitch"
-            v-model="form.content"
+            v-model="form.comment"
             prop="content"
             :label="t('Комментарий')"
             label-class="text-[#A8AAAE] text-[12px] font-medium"
@@ -1356,7 +1382,7 @@ const changeUser = (val, key) => {
                         {{ t("document.consignmentNumberDate") }}
                       </td>
                       <td class="p-2 border-b border-gray-300">
-                        {{ item.formNumberAndDate }}
+                        {{ formNumberAndDate }}
                       </td>
                     </tr>
 

@@ -67,6 +67,7 @@
     "legalAddress": "Юр. адрес",
     "oked": "ОКЭД",
     "tin": "ИНН",
+    "tin2": "ИНН / ПИНФЛ",
     "certificate": "Сертификат",
     "certificateDuration": "Срок сертификата",
     "supervisor": "Руководитель",
