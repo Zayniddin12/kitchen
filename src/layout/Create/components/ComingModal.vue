@@ -389,8 +389,8 @@ const deleteProduct = (index: number) => {
   actForm.products.splice(index, 1);
 };
 
-const fetchRespondents = (search = "") => {
-  settingsStore.fetchRespondents();
+const fetchRespondents = (params: any) => {
+  settingsStore.fetchRespondents(params);
 };
 
 const selectedProductTypes = computed(() => {
@@ -462,7 +462,7 @@ const closeModal = async () => {
 
 const openModal = () => {
   form.doc_type_id = props.id;
-  fetchRespondents();
+
 
   if (authStore.disabledUserWorkplace) {
     console.log(authStore.user);
@@ -470,6 +470,7 @@ const openModal = () => {
     const type = activeComingModal.value ? "to" : "from";
     form[`${type}_id`] = activeWorkplace.workplace_id;
     form[`${type}_type`] = activeWorkplace.workplace_type;
+    fetchRespondents({type: activeWorkplace.workplace_type});
     form[type] = `${activeWorkplace.workplace_id}_${activeWorkplace.workplace_type}`;
   }
 
