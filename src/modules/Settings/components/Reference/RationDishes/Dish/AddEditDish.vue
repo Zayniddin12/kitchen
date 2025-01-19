@@ -231,8 +231,8 @@ const changeInputProduct = (val, index) => {
             <div class="mt-[24px] grid grid-cols-2 gap-5">
               <app-input
                 v-model="dataValue.name.ru"
-                label="Наименование (Рус)"
-                placeholder="Введите"
+                :label="$t('Наименование (Рус)')"
+                :placeholder="$t('form.select')"
                 label-class="text-[#A8AAAE] text-[12px]"
                 required
                 prop="name.ru"
@@ -241,8 +241,8 @@ const changeInputProduct = (val, index) => {
 
               <app-input
                 v-model="dataValue.name.uz"
-                label="Наименование (Ўзб)"
-                placeholder="Введите"
+                :label="$t('Наименование (Ўзб)')"
+                :placeholder="$t('form.select')"
                 label-class="text-[#A8AAAE] text-[12px]"
                 required
                 prop="name.uz"
@@ -251,8 +251,8 @@ const changeInputProduct = (val, index) => {
 
               <app-input
                 v-model="dataValue.number"
-                label="Уникальный номер блюда"
-                placeholder="Автоматически"
+                :label="$t('kitchen.uniqueDishNumber')"
+                :placeholder="$t('common.automatically')"
                 label-class="text-[#A8AAAE] font-medium text-[12px]"
                 disabled
                 :disabled="isDisabled"
@@ -260,8 +260,8 @@ const changeInputProduct = (val, index) => {
 
               <app-select
                 v-model="dataValue.unit_id"
-                label="Ед. измерения"
-                placeholder="Выберите"
+                :label="$t('common.measurement')"
+                :placeholder="$t('form.select')"
                 label-class="text-[#A8AAAE] text-[12px]"
                 required
                 prop="unit_id"
@@ -278,17 +278,17 @@ const changeInputProduct = (val, index) => {
               :data="dataValue.compositions"
               stripe
               class="custom-element-table mt-[40px]"
-              :empty-text="'Нет доступных данных'"
+              :empty-text="$t('Нет доступных данных')"
             >
               <el-table-column
                 prop="product_type_name"
-                label="Состав"
+                :label="$t('common.compound')"
               />
               <el-table-column
                 prop="quantity"
-                label="Количество"
+                :label="$t('common.quantity')"
               />
-              <el-table-column prop="product_type_id" label="Ед. измерения">
+              <el-table-column prop="product_type_id" :label="$t('common.measurement')">
                 <template #default="scope">
                   {{ scope.row.unit_id ? getUnitId(scope.row.unit_id) : "-" }}
                 </template>
@@ -298,7 +298,7 @@ const changeInputProduct = (val, index) => {
 
           <template v-else>
             <div class="mt-[24px]">
-              <h1 class="text-[#000D24] text-[18px] font-medium">Состав блюда</h1>
+              <h1 class="text-[#000D24] text-[18px] font-medium">{{$t('kitchen.compositionDish')}}</h1>
 
               <div class="bg-[#F8F9FC] rounded-[16px] p-[16px] mt-[24px]">
                 <div class="grid grid-cols-4 gap-4 border-b mt-[16px]"
@@ -381,7 +381,7 @@ const changeInputProduct = (val, index) => {
             v-if="route.name === 'reference-dish-id'"
             @click="deleteFn"
           >
-            Удалить
+            {{$t('method.delete')}}
           </button>
 
           <div class="flex items-center justify-end ml-auto">
@@ -389,7 +389,7 @@ const changeInputProduct = (val, index) => {
               class="custom-cancel-btn"
               @click="cancelFn"
             >
-              Отменить
+              {{$t('method.cancel')}}
             </button>
 
             <button class="custom-apply-btn ml-[8px]" @click="handleSubmit">

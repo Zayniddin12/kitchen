@@ -65,24 +65,27 @@ watchDebounced(search, () => {
 <template>
   <div>
     <div class="flex items-center justify-between">
-      <h1 class="m-0 font-semibold text-[32px] leading-[48px]">Виды документов</h1>
+      <h1 class="m-0 font-semibold text-[32px] leading-[48px]">{{ $t("document.type2") }}</h1>
 
       <el-input
         v-model="search"
         size="large"
-        placeholder="Поиск"
+        :placeholder="$t('form.search')"
         :prefix-icon="Search"
         class="w-[300px]"
       />
     </div>
 
     <div class="mt-[24px]">
-      <el-table v-loading="loading"
-                :empty-text="'Нет доступных данных'" :data="settingsStore.vidDocument.documents" stripe
-                class="custom-element-table">
+      <el-table
+        v-loading="loading"
+        :empty-text="$t('Нет доступных данных')"
+        :data="settingsStore.vidDocument.documents" stripe
+        class="custom-element-table"
+      >
         <el-table-column prop="id" label="№" width="80" />
-        <el-table-column prop="name" label="Наименование вида" sortable width="400" />
-        <el-table-column prop="name" label="Типы документов" sortable />
+        <el-table-column prop="name" :label="$t('Наименование вида')" sortable width="400" />
+        <el-table-column prop="name" :label="$t('document.typeDoc')" sortable />
       </el-table>
     </div>
   </div>
