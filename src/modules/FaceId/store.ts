@@ -1,14 +1,10 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
 import $axios from "@/plugins/axios/axios";
-import { useAuthStore } from "@/modules/Auth/auth.store";
 import tokenManager from "@/utils/token.manager";
-
+import { ElNotification } from "element-plus";
 
 export const useFaceStore = defineStore("faceStore", () => {
-
-
-
   const faceId = ref({
     user_id: "",
     face_path: "",
@@ -19,9 +15,16 @@ export const useFaceStore = defineStore("faceStore", () => {
   });
 
   const FETCH_FACE_ID = async (params?: any) => {
-    if(!tokenManager.getAccessToken()) return ;
+    if (!tokenManager.getAccessToken()) return;
     const { data } = await $axios.get("/face-check", { params });
     faceId.value = data.data;
+    if (data.success == false) {
+      ElNotification({
+        title: 'Ogohlantirish!',
+        message: 'Siz ovqat olgansiz!',
+        type: "warning",
+      });
+    }
     return data.data;
   };
 
