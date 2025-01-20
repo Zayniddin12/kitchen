@@ -558,6 +558,8 @@ const openModal = async () => {
     role_name: "head-chef",
   });
 
+  signersList.act.chef = signersList.form.chef;
+
   signersList.form.head_base = await usersStore.fetchUsers({
     per_page: 100,
     role_name: "head-warehouse",
@@ -569,6 +571,17 @@ const openModal = async () => {
   });
 
   signersList.form.accountant_base = await usersStore.fetchUsers({
+    per_page: 100,
+    role_name: "accountant-base-warehouse",
+  });
+
+  // for act signers
+  signersList.act.head_kpi = await usersStore.fetchUsers({
+    per_page: 100,
+    role_name: "head-factory",
+  });
+
+  signersList.act.accountant = await usersStore.fetchUsers({
     per_page: 100,
     role_name: "accountant-base-warehouse",
   });
@@ -1279,9 +1292,9 @@ const changeUser = (val, key) => {
                 required
                 @change="changeUser($event, 'signer_id_1')"
               >
-                <template v-if="usersStore.users">
+                <template v-if="signersList.form.chef.users">
                   <ElOption
-                    v-for="item in usersStore.users.users"
+                    v-for="item in signersList.form.chef.users"
                     :key="item.id"
                     :label="usersStore.getUserFullName(item)"
                     :value="item.id"
@@ -1297,9 +1310,9 @@ const changeUser = (val, key) => {
                 required
                 @change="changeUser($event, 'signer_id_2')"
               >
-                <template v-if="usersStore.users">
+                <template v-if="signersList.form.head_base.users">
                   <ElOption
-                    v-for="item in usersStore.users.users"
+                    v-for="item in signersList.form.head_base.users"
                     :key="item.id"
                     :label="usersStore.getUserFullName(item)"
                     :value="item.id"
@@ -1315,9 +1328,9 @@ const changeUser = (val, key) => {
                 required
                 @change="changeUser($event, 'signer_id_3')"
               >
-                <template v-if="usersStore.users">
+                <template v-if="signersList.form.commodityExpert.users">
                   <ElOption
-                    v-for="item in usersStore.users.users"
+                    v-for="item in signersList.form.commodityExpert.users"
                     :key="item.id"
                     :label="usersStore.getUserFullName(item)"
                     :value="item.id"
@@ -1333,9 +1346,9 @@ const changeUser = (val, key) => {
                 required
                 @change="changeUser($event, 'signer_id_4')"
               >
-                <template v-if="usersStore.users">
+                <template v-if="signersList.form.accountant_base.users">
                   <ElOption
-                    v-for="item in usersStore.users.users"
+                    v-for="item in signersList.form.accountant_base.users"
                     :key="item.id"
                     :label="usersStore.getUserFullName(item)"
                     :value="item.id"
@@ -1897,9 +1910,9 @@ const changeUser = (val, key) => {
                 required
                 @change="changeUser($event, 'signer_id_1')"
               >
-                <template v-if="usersStore.users">
+                <template v-if="signersList.act.chef.users">
                   <ElOption
-                    v-for="item in usersStore.users.users"
+                    v-for="item in signersList.act.chef.users"
                     :key="item.id"
                     :label="usersStore.getUserFullName(item)"
                     :value="item.id"
@@ -1915,9 +1928,9 @@ const changeUser = (val, key) => {
                 required
                 @change="changeUser($event, 'signer_id_2')"
               >
-                <template v-if="usersStore.users">
+                <template v-if="signersList.act.head_kpi.users">
                   <ElOption
-                    v-for="item in usersStore.users.users"
+                    v-for="item in signersList.act.head_kpi.users"
                     :key="item.id"
                     :label="usersStore.getUserFullName(item)"
                     :value="item.id"
@@ -1933,9 +1946,9 @@ const changeUser = (val, key) => {
                 required
                 @change="changeUser($event, 'signer_id_3')"
               >
-                <template v-if="usersStore.users">
+                <template v-if="signersList.act.accountant.users">
                   <ElOption
-                    v-for="item in usersStore.users.users"
+                    v-for="item in signersList.act.accountant.users"
                     :key="item.id"
                     :label="usersStore.getUserFullName(item)"
                     :value="item.id"
