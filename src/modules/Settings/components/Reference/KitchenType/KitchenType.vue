@@ -119,7 +119,7 @@ const currentTableChange = (value: Record<string, any>) => {
         stripe
         class="custom-element-table mt-[24px]"
         v-loading="loading"
-        :empty-text="'Нет доступных данных'"
+        :empty-text="$t('Нет доступных данных')"
         highlight-current-row
         @current-change="currentTableChange"
     >

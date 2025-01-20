@@ -97,13 +97,13 @@ const tableCurrentChange = (value:Record<string, any>) => {
 <template>
   <div>
     <div class="flex items-center justify-between">
-      <h1 class="m-0 font-semibold text-[32px] leading-[48px] text-[#000D24]">Блюда</h1>
+      <h1 class="m-0 font-semibold text-[32px] leading-[48px] text-[#000D24]">{{$t('monitoring.dishes')}}</h1>
 
       <div class="flex items-center">
         <el-input
             v-model="params.search"
             size="large"
-            placeholder="Поиск"
+            :placeholder="$t('form.search')"
             :prefix-icon="Search"
             class="w-[300px]"
             @input="handleSearch"
@@ -118,7 +118,7 @@ const tableCurrentChange = (value:Record<string, any>) => {
               alt="plus"
               class="mr-[8px]"
           />
-          Добавить
+          {{$t('method.add')}}
         </button>
       </div>
     </div>
@@ -128,7 +128,7 @@ const tableCurrentChange = (value:Record<string, any>) => {
         stripe
         class="custom-element-table mt-[24px]"
         v-loading="loading"
-        :empty-text="'Нет доступных данных'"
+        :empty-text="$t('Нет доступных данных')"
         highlight-current-row
         @current-change="tableCurrentChange"
     >
@@ -146,7 +146,7 @@ const tableCurrentChange = (value:Record<string, any>) => {
       </el-table-column>
       <el-table-column
           prop="image"
-          label="Картинка блюды"
+          :label="$t('Картинка блюды')"
           sortable
       >
         <template #default="scope">
@@ -167,20 +167,20 @@ const tableCurrentChange = (value:Record<string, any>) => {
       </el-table-column>
       <el-table-column
           prop="name"
-          label="Наименование блюда"
+          :label="$t('Наименование блюда')"
           sortable
       />
       <el-table-column
           prop="number"
-          label="Уникальный номер"
+          :label="$t('common.uniqueNumber')"
           sortable
       />
       <el-table-column
           prop="unit"
-          label="Ед. измерения"
+          :label="$t('common.measurement')"
           sortable
       />
-      <el-table-column label="Действие">
+      <el-table-column :label="$t('common.action')">
         <template #default="scope">
           <button
               class="action-btn"
@@ -207,7 +207,7 @@ const tableCurrentChange = (value:Record<string, any>) => {
 
     <div class="mt-[24px] flex items-center justify-between">
       <div class="text-cool-gray text-[14px]">
-        Показано 1–10 из {{ store.meals.pagination.total_count }} результатов
+        {{$t('Показано 1–10 из')}} {{ store.meals.pagination.total_count }} {{$t('результатов')}}
       </div>
 
       <el-pagination

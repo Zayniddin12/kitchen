@@ -90,12 +90,12 @@ const tableCurrentChange = (value: Record<string, any>) => {
 <template>
   <div>
     <div class="flex items-center justify-between">
-      <h1 class="m-0 font-semibold text-[32px] leading-[48px]">Виды продуктов</h1>
+      <h1 class="m-0 font-semibold text-[32px] leading-[48px]">{{$t('vidProduct.title')}}</h1>
 
       <div class="flex items-center">
         <el-input
             v-model="params.search"
-            placeholder="Поиск"
+            :placeholder="$t('form.search')"
             :prefix-icon="Search"
             class="w-[300px]"
             size="large"
@@ -110,7 +110,7 @@ const tableCurrentChange = (value: Record<string, any>) => {
               src="@/assets/images/icons/plus.svg"
               alt="plus"
           />
-          Добавить
+          {{$t('method.add')}}
         </button>
       </div>
     </div>
@@ -121,7 +121,7 @@ const tableCurrentChange = (value: Record<string, any>) => {
         v-loading="loading"
         class="custom-element-table mt-[24px]"
         stripe
-        empty-text="Нет доступных данных"
+        :empty-text="$t('Нет доступных данных')"
         highlight-current-row
         @current-change="tableCurrentChange"
     >
@@ -139,7 +139,7 @@ const tableCurrentChange = (value: Record<string, any>) => {
       </el-table-column>
       <el-table-column
           prop="photo"
-          label="Картинка вида продукта"
+          :label="$t('Картинка вида продукта')"
       >
         <template #default="scope">
           <img
@@ -158,7 +158,7 @@ const tableCurrentChange = (value: Record<string, any>) => {
       </el-table-column>
       <el-table-column
           prop="name"
-          label="Наименование вида продукта"
+          :label="$t('Наименование вида продукта')"
           sortable
       >
         <template #default="scope">
@@ -167,11 +167,11 @@ const tableCurrentChange = (value: Record<string, any>) => {
       </el-table-column>
       <el-table-column
           prop="parent_name"
-          label="Тип продукта"
+          :label="$t('product.type')"
           sortable
       />
       <el-table-column
-          label="Действие"
+          :label="$t('common.action')"
           align="right"
       >
         <template #default="scope">
@@ -200,7 +200,7 @@ const tableCurrentChange = (value: Record<string, any>) => {
 
     <div class="mt-[24px] flex items-center justify-between">
       <div class="text-cool-gray text-[14px]">
-        Показано 1–10 из {{ store.vidProduct.pagination?.total_count }} результатов
+        {{$t('Показано 1–10 из')}} {{ store.vidProduct.pagination?.total_count }} {{$t('результатов')}}
       </div>
 
       <el-pagination

@@ -219,8 +219,9 @@ watch(() => route.name, () => {
 
                 <app-input
                   v-model="dataValue.tin"
-                  :label="t('common.tin')"
-                  maxlength="9"
+                  :label="t('common.tin2')"
+                  :min="9"
+                  :max="15"
                   label-class="text-[#A8AAAE] font-medium text-[12px]"
                   class="w-full"
                   required
@@ -233,8 +234,6 @@ watch(() => route.name, () => {
                   :label="t('licence.number')"
                   label-class="text-[#A8AAAE] font-medium text-[12px]"
                   class="w-full"
-                  required
-                  prop="license"
                   :disabled="isDisabled"
                 />
 
@@ -243,8 +242,6 @@ watch(() => route.name, () => {
                   :label="t('common.certificate')"
                   label-class="text-[#A8AAAE] font-medium text-[12px]"
                   class="w-full"
-                  required
-                  prop="sertificate"
                   :disabled="isDisabled"
                 />
 
@@ -253,8 +250,6 @@ watch(() => route.name, () => {
                   :label="t('common.certificateDuration')"
                   label-class="text-[#A8AAAE] font-medium text-[12px]"
                   class="w-full"
-                  required
-                  prop="sert_end_date"
                   :disabled="isDisabled"
                 />
 

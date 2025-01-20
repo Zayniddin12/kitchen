@@ -255,7 +255,7 @@ watch(() => route.name, () => {
 
 <template>
   <AppOverlay :loading="loading">
-    <h1 class="m-0 font-semibold text-[32px] leading-[48px]">{{ route.meta.title }}</h1>
+    <h1 class="m-0 font-semibold text-[32px] leading-[48px]">{{ $t(route.meta.title) }}</h1>
 
     <div class="flex items-start mt-[24px]">
       <div class="w-[70%]">
@@ -267,7 +267,7 @@ watch(() => route.name, () => {
             <div class="grid grid-cols-3 gap-5">
               <app-input
                 v-model="dataValue.name.ru"
-                label="Наименование (Рус)"
+                :label="$t('Наименование (Рус)')"
                 placeholder="Введите"
                 label-class="text-[#A8AAAE] font-medium text-[12px]"
                 required
@@ -276,7 +276,7 @@ watch(() => route.name, () => {
               />
               <app-input
                 v-model="dataValue.name.uz"
-                label="Наименование (Ўзб)"
+                :label="$t('Наименование (Ўзб)')"
                 placeholder="Введите"
                 label-class="text-[#A8AAAE] font-medium text-[12px]"
                 required
@@ -285,7 +285,7 @@ watch(() => route.name, () => {
               />
               <app-input
                 v-model="dataValue.number"
-                label="Уникальный номер рациона"
+                :label="$t('Уникальный номер рациона')"
                 placeholder="Введите"
                 label-class="text-[#A8AAAE] font-medium text-[12px]"
                 disabled
@@ -295,9 +295,9 @@ watch(() => route.name, () => {
             <div class="grid grid-cols-3 gap-5">
               <app-select
                 v-model="dataValue.kitchen_type_ids"
-                label="Тип кухни"
+                :label="$t('Тип кухни')"
                 multiple
-                placeholder="Выберите"
+                :placeholder="$t('form.select')"
                 label-class="text-[#A8AAAE] font-medium text-[12px]"
                 required
                 prop="kitchen_type_ids"
@@ -310,7 +310,7 @@ watch(() => route.name, () => {
                 <app-time-picker
                   v-model="dataValue.start_time"
                   type="time"
-                  label="Время начало"
+                  :label="$t('common.timeToStart')"
                   class="w-full"
                   label-class="text-[#A8AAAE] font-medium text-[12px]"
                   required
@@ -319,7 +319,7 @@ watch(() => route.name, () => {
                 />
                 <app-time-picker
                   v-model="dataValue.end_time"
-                  label="Время окончания"
+                  :label="$t('common.endToTime')"
                   class="w-full ml-[8px]"
                   label-class="text-[#A8AAAE] font-medium text-[12px]"
                   required
@@ -330,8 +330,8 @@ watch(() => route.name, () => {
 
               <app-select
                 v-model="dataValue.duration_in_days"
-                label="Длительность"
-                placeholder="Введите"
+                :label="$t('Длительность')"
+                :placeholder="$t('form.select')"
                 label-class="text-[#A8AAAE] font-medium text-[12px]"
                 required
                 prop="duration_in_days"
@@ -347,11 +347,11 @@ watch(() => route.name, () => {
               :data="compositions"
               stripe
               class="custom-element-table mt-[40px]"
-              :empty-text="'Нет доступных данных'"
+              :empty-text="$t('Нет доступных данных')"
             >
               <el-table-column
                 prop="typeProduct"
-                label="Состав"
+                :label="$t('common.compound')"
               >
                 <template #default="scope">
                   {{ scope.row.typeProduct ? getTypeProduct(scope.row.typeProduct) : "-" }}
@@ -359,11 +359,11 @@ watch(() => route.name, () => {
               </el-table-column>
               <el-table-column
                 prop="quantity"
-                label="Количество"
+                :label="$t('common.quantity')"
               />
               <el-table-column
                 prop="unit_id"
-                label="Ед. измерения"
+                :label="$t('common.measurement')"
               >
                 <template #default="scope">
                   {{ scope.row.unit_id ? getUnitId(scope.row.unit_id) : "-" }}
@@ -373,7 +373,7 @@ watch(() => route.name, () => {
           </template>
 
           <template v-else>
-            <h1 class="text-[#000D24] text-[18px] font-medium mb-[12px]">Состав рациона</h1>
+            <h1 class="text-[#000D24] text-[18px] font-medium mb-[12px]">{{$t('kitchen.compoundRation')}}</h1>
 
             <div
               class=" pb-3 bg-[#F8F9FC] rounded-[16px] px-[12px]"
@@ -383,8 +383,8 @@ watch(() => route.name, () => {
               <div class="grid grid-cols-5 gap-5 border-b  py-[16px]">
                 <app-select
                   v-model="item.meal_id"
-                  label="Блюдо"
-                  placeholder="Выберите"
+                  :label="$t('Блюдо')"
+                  :placeholder="$t('form.select')"
                   label-class="text-[#A8AAAE] font-medium text-[12px]"
                   clearable
                   :disabled="item.typeProduct || isDisabled"
@@ -395,8 +395,8 @@ watch(() => route.name, () => {
                 />
                 <app-select
                   v-model="item.typeProduct"
-                  label="Тип продукта"
-                  placeholder="Выберите"
+                  :label="$t('product.type')"
+                  :placeholder="$t('form.select')"
                   label-class="text-[#A8AAAE] font-medium text-[12px]"
                   clearable
                   :disabled="item.meal_id || isDisabled"
@@ -407,8 +407,8 @@ watch(() => route.name, () => {
                 />
                 <app-select
                   v-model="item.product_type_id"
-                  label="Вид продукта"
-                  placeholder="Выберите"
+                  :label="$t('product.view')"
+                  :placeholder="$t('form.select')"
                   label-class="text-[#A8AAAE] font-medium text-[12px]"
                   :disabled="item.meal_id || isDisabled"
                   itemValue="id"
@@ -418,7 +418,7 @@ watch(() => route.name, () => {
                 />
                 <app-input
                   v-model="item.quantity"
-                  label="Количество"
+                  :label="$t('common.quantity')"
                   placeholder="0.0"
                   :disabled="isDisabled"
                   label-class="text-[#A8AAAE] font-medium text-[12px]"
@@ -426,8 +426,8 @@ watch(() => route.name, () => {
                 <div class="flex items-center w-full">
                   <app-select
                     v-model="item.unit_id"
-                    label="Ед. измерения"
-                    placeholder="Введите"
+                    :label="$t('common.measurement')"
+                    :placeholder="$t('form.select')"
                     label-class="text-[#A8AAAE] font-medium text-[12px]"
                     class="w-full"
                     itemValue="id"
@@ -457,14 +457,14 @@ watch(() => route.name, () => {
                 class="mr-[4px]"
                 alt="plus"
               />
-              Добавить еще
+              {{$t('method.addMore')}}
             </button>
 
             <el-switch
               v-if="route.name === 'reference-ration-edit-id'"
               v-model="status"
               class="mt-[120px]"
-              :active-text="status ? 'Активация' : 'Деактивация'"
+              :active-text="status ? $t('status.activation') : $t('status.deactivation')"
             />
           </template>
         </div>
@@ -478,7 +478,7 @@ watch(() => route.name, () => {
             v-if="route.name === 'reference-ration-edit-id'"
             @click="deleteFn"
           >
-            Удалить
+            {{$t('method.delete')}}
           </button>
 
           <div class="flex items-center gap-4 ml-auto">
@@ -486,13 +486,13 @@ watch(() => route.name, () => {
               class="custom-cancel-btn"
               @click="cancelFn"
             >
-              Отменить
+              {{$t('method.cancel')}}
             </button>
             <button
               class="custom-apply-btn"
               @click="handleSubmit"
             >
-              {{ route.name === "reference-ration-edit-id" ? "Сохранить" : "Добавить" }}
+              {{ route.name === "reference-ration-edit-id" ? $t('method.save') : $t('method.add') }}
             </button>
           </div>
         </div>
@@ -508,7 +508,7 @@ watch(() => route.name, () => {
           class="mr-[12px]"
           alt="edit"
         />
-        Редактировать
+        {{$t('method.edit')}}
       </button>
     </div>
   </AppOverlay>

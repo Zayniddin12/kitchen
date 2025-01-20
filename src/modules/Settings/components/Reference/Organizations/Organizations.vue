@@ -113,7 +113,7 @@ const tableCurrentChange = (value: Record<string, any>) => {
               src="@/assets/images/icons/plus.svg"
               alt="plus"
           >
-          Добавить
+          {{$t('method.add')}}
         </button>
       </div>
     </div>
@@ -124,7 +124,7 @@ const tableCurrentChange = (value: Record<string, any>) => {
           stripe
           class="custom-element-table"
           v-loading="loading"
-          :empty-text="'Нет доступных данных'"
+          :empty-text="$t('Нет доступных данных')"
           highlight-current-row
           @current-change="tableCurrentChange"
       >
@@ -157,7 +157,7 @@ const tableCurrentChange = (value: Record<string, any>) => {
             sortable
         />
         <el-table-column
-            label="Действие"
+            :label="$t('common.action')"
             align="right"
         >
           <template #default="scope">
@@ -186,7 +186,7 @@ const tableCurrentChange = (value: Record<string, any>) => {
 
       <div class="mt-[24px] flex items-center justify-between">
         <div class="text-cool-gray text-[14px]">
-          Показано 1–10 из {{ store.organization.paginator.total_count }} результатов
+          {{$t('Показано 1–10 из')}} {{ store.organization.paginator.total_count }} {{$t('результатов')}}
         </div>
 
         <el-pagination

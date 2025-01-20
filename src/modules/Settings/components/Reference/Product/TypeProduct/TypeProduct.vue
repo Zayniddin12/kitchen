@@ -75,7 +75,7 @@ const tableCurrentChange = (value: Record<string, any>) => {
 <template>
   <div>
     <div class="flex items-center justify-between">
-      <h1 class="m-0 font-semibold text-[32px] leading-[48px]">Типы продуктов</h1>
+      <h1 class="m-0 font-semibold text-[32px] leading-[48px]">{{$t('typeProduct.title')}}</h1>
 
       <div class="flex items-center">
         <el-input
@@ -95,7 +95,7 @@ const tableCurrentChange = (value: Record<string, any>) => {
               src="@/assets/images/icons/plus.svg"
               alt="plus"
           />
-          Добавить
+          {{$t('method.add')}}
         </button>
       </div>
     </div>
@@ -105,7 +105,7 @@ const tableCurrentChange = (value: Record<string, any>) => {
         :data="store.typeProduct.product_categories"
         stripe
         class="custom-element-table mt-[24px]"
-        :empty-text="'Нет доступных данных'"
+        :empty-text="$t('Нет доступных данных')"
         highlight-current-row
         @current-change="tableCurrentChange"
     >
@@ -120,7 +120,7 @@ const tableCurrentChange = (value: Record<string, any>) => {
       </el-table-column>
       <el-table-column
           prop="name"
-          label="Наименование типа продукта"
+          :label="$t('Наименование типа продукта')"
           sortable
       >
         <template #default="scope">
@@ -128,7 +128,7 @@ const tableCurrentChange = (value: Record<string, any>) => {
         </template>
       </el-table-column>
       <el-table-column
-          label="Действие"
+          :label="$t('common.action')"
           align="right"
       >
         <template #default="scope">

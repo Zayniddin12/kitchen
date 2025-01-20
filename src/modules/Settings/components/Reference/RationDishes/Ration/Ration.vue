@@ -91,13 +91,13 @@ const tableCurrentChange = (value: Record<string, any>) => {
 <template>
   <div>
     <div class="flex items-center justify-between">
-      <h1 class="m-0 font-semibold text-[32px] leading-[48px]">Рационы</h1>
+      <h1 class="m-0 font-semibold text-[32px] leading-[48px]">{{$t('kitchen.ration')}}</h1>
 
       <div class="flex items-center">
         <el-input
             v-model="params.search"
             size="large"
-            placeholder="Поиск"
+            :placeholder="$t('form.search')"
             :prefix-icon="Search as string"
             class="w-[300px]"
             @input="handleSearch"
@@ -111,7 +111,7 @@ const tableCurrentChange = (value: Record<string, any>) => {
               src="@/assets/images/icons/plus.svg"
               alt="plus"
           />
-          Добавить
+          {{$t('method.add')}}
         </button>
       </div>
     </div>
@@ -121,7 +121,7 @@ const tableCurrentChange = (value: Record<string, any>) => {
         :data="store.rationList.rations"
         class="custom-element-table mt-[24px]"
         v-loading="loading"
-        :empty-text="'Нет доступных данных'"
+        :empty-text="$t('Нет доступных данных')"
         highlight-current-row
         @current-change="tableCurrentChange"
     >
@@ -139,26 +139,26 @@ const tableCurrentChange = (value: Record<string, any>) => {
       </el-table-column>
       <el-table-column
           prop="name"
-          label="Наименование рациона"
+          :label="$t('Наименование рациона')"
           sortable
       />
       <el-table-column
           prop="number"
-          label="Уникальный номер"
+          :label="$t('kitchen.uniqueDishNumber')"
           sortable
       />
       <el-table-column
           prop="kitchen_type_names"
-          label="Тип кухни"
+          :label="$t('Тип кухни')"
           sortable
       />
       <el-table-column
           prop="duration_in_days"
-          label="Длительность"
+          :label="$t('Длительность')"
           sortable
       />
       <el-table-column
-          label="Действие"
+          :label="$t('common.action')"
           align="right"
       >
         <template #default="scope">
@@ -187,7 +187,7 @@ const tableCurrentChange = (value: Record<string, any>) => {
 
     <div class="mt-[24px] flex items-center justify-between">
       <div class="text-cool-gray text-[14px]">
-        Показано 1–10 из {{ store.rationList?.pagination?.total_count }} результатов
+        {{$t('Показано 1–10 из')}} {{ store.rationList?.pagination?.total_count }} {{$t('результатов')}}
       </div>
 
       <el-pagination

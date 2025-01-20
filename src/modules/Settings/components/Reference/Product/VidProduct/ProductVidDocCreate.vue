@@ -161,7 +161,7 @@ watchEffect(() => {
 
 <template>
   <div>
-      <h1 class="m-0 font-semibold text-[32px] leading-[48px]">{{ route.meta.title }}</h1>
+      <h1 class="m-0 font-semibold text-[32px] leading-[48px]">{{ $t(route.meta.title) }}</h1>
 
       <div class="flex items-start mt-[24px]">
         <AppOverlay
@@ -180,7 +180,7 @@ watchEffect(() => {
             <div class="grid grid-cols-2 gap-4 mt-6">
               <AppInput
                 v-model="dataValue.name.ru"
-                label="Наименование (Рус)"
+                :label="$t('Наименование (Рус)')"
                 label-class="text-[#A8AAAE] text-xs"
                 placeholder="Введите"
                 required
@@ -190,7 +190,7 @@ watchEffect(() => {
 
               <AppInput
                 v-model="dataValue.name.uz"
-                label="Наименование (Ўзб)"
+                :label="$t('Наименование (Ўзб)')"
                 label-class="text-[#A8AAAE] text-xs"
                 placeholder="Введите"
                 required
@@ -200,7 +200,7 @@ watchEffect(() => {
 
               <AppSelect
                 v-model="dataValue.parent_id"
-                label="Тип продукта"
+                :label="$t('product.type')"
                 label-class="text-[#A8AAAE] text-xs"
                 placeholder="Введите"
                 itemValue="id"
@@ -213,7 +213,7 @@ watchEffect(() => {
 
               <AppSelect
                 v-model="dataValue.measurement_unit_id"
-                label="Единица измерения"
+                :label="$t('common.unitMeasurement')"
                 label-class="text-[#A8AAAE] text-xs"
                 placeholder="Введите"
                 itemValue="id"
@@ -227,13 +227,13 @@ watchEffect(() => {
                 v-model="dataValue.place_occupied"
                 prop="place_occupied"
                 custom-type="number"
-                label="Занимаемое место"
+                :label="$t('Занимаемое место')"
                 label-class="text-[#A8AAAE] text-xs"
                 class="mb-0"
               />
 
               <app-input
-                label="Ед. изм. занимаемого места"
+                :label="$t('Ед. изм. занимаемого места')"
                 label-class="text-[#A8AAAE] text-[12px]"
                 disabled
                 placeholder="кг"
@@ -244,7 +244,7 @@ watchEffect(() => {
           <el-switch
             v-model="dataValue.is_active"
             v-if="route.name === 'reference-vid-edit-id'"
-            :active-text="dataValue.is_active ? 'Активация' : 'Деактивация'"
+            :active-text="dataValue.is_active ? $t('status.activation') : $t('status.deactivation')"
           />
           <!--          :before-change="switchChange"-->
         </AppOverlay>
@@ -256,7 +256,7 @@ watchEffect(() => {
           v-if="route.name === 'reference-vid-edit-id'"
           @click="deleteFn"
         >
-          Удалить
+          {{$t('method.delete')}}
         </button>
 
         <div class="flex items-center ml-auto">
@@ -264,14 +264,14 @@ watchEffect(() => {
             class="custom-cancel-btn"
             @click="cancelFn"
           >
-            Отменить
+            {{$t('method.cancel')}}
           </button>
 
           <button
             class="custom-apply-btn ml-[8px]"
             @click="handleSubmit"
           >
-            {{ route.name === "reference-vid-edit-id" ? "Сохранить" : "Добавить" }}
+            {{ route.name === "reference-vid-edit-id" ? $t('method.save') : $t('method.add') }}
           </button>
         </div>
       </div>
