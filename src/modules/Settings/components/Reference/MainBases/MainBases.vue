@@ -90,7 +90,7 @@ const tableCurrentChange = (value: Record<string, any>) => {
       <div class="flex items-center">
         <el-input
           v-model="form.search"
-          placeholder="Поиск"
+          :placeholder="$t('form.search')"
           :prefix-icon="Search"
           class="w-[300px] mr-4"
         />
@@ -110,8 +110,8 @@ const tableCurrentChange = (value: Record<string, any>) => {
                   maskPosition: 'center',
                   maskRepeat: 'no-repeat'
                    }"
-          ></span>
-          Добавить
+          />
+          {{$t('method.add')}}
         </RouterLink>
       </div>
     </div>
@@ -139,7 +139,7 @@ const tableCurrentChange = (value: Record<string, any>) => {
         </el-table-column>
         <el-table-column
           prop="name"
-          label="Наименование склада"
+          :label="$t('Наименование склада')"
           sortable
           width="400"
         >
@@ -147,17 +147,17 @@ const tableCurrentChange = (value: Record<string, any>) => {
         </el-table-column>
         <el-table-column
           prop="base"
-          label="База складов"
+          :label="$t('База складов')"
           sortable
         />
         <el-table-column
           prop="capacity"
-          label="Вместимость склада"
+          :label="$t('Вместимость склада')"
           sortable
         />
         <el-table-column
           prop="products"
-          label="Продукты хранения"
+          :label="$t('Продукты хранения')"
           sortable
         >
           <template #default="{row}:{row:BaseWarehouseListType}">
@@ -165,7 +165,7 @@ const tableCurrentChange = (value: Record<string, any>) => {
           </template>
         </el-table-column>
         <el-table-column
-          label="Действие"
+          :label="$t('common.action')"
           align="right"
         >
           <template #default="{row}">
@@ -198,8 +198,7 @@ const tableCurrentChange = (value: Record<string, any>) => {
         class="mt-6 flex items-center justify-between"
       >
         <div class="text-cool-gray text-[14px]">
-          Показано {{ form.page }}–{{ form.per_page }} из {{ settingsStore.baseWarehouses.paginator.pages_count }}
-          результатов
+          Показано {{ form.page }}–{{ form.per_page }} из {{ settingsStore.baseWarehouses.paginator.pages_count }} результатов
         </div>
 
         <el-pagination

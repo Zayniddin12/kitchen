@@ -177,8 +177,8 @@ watch(() => route.name, () => {
               <div class="flex items-center gap-4">
                 <app-input
                   v-model="dataValue.name.ru"
-                  label="Наименование (Рус)"
-                  placeholder="Введите"
+                  :label="$t('Наименование (Рус)')"
+                  :placeholder="$t('form.select')"
                   label-class="text-[#A8AAAE] font-medium text-[12px]"
                   class="w-full"
                   :disabled="isDisabled"
@@ -188,8 +188,8 @@ watch(() => route.name, () => {
 
                 <app-input
                   v-model="dataValue.name.uz"
-                  label="Наименование (Ўзб)"
-                  placeholder="Введите"
+                  :label="$t('Наименование (Ўзб)')"
+                  :placeholder="$t('form.select')"
                   label-class="text-[#A8AAAE] font-medium text-[12px]"
                   class="w-full"
                   :disabled="isDisabled"
@@ -197,14 +197,13 @@ watch(() => route.name, () => {
                   prop="name.uz"
                 />
               </div>
-              <!--              {{ dataValue }}-->
               <template v-if="route.name === 'reference-kitchen-type-view'">
-                <span class="text-base text-dark">{{ dataValue.is_paid ? "Продажи" : "Бесплатная кухня" }}</span>
+                <span class="text-base text-dark">{{ dataValue.is_paid ? $t('kitchen.paid') : $t('kitchen.free') }}</span>
               </template>
               <ElSwitch
                 v-else
                 v-model="dataValue.is_paid"
-                :active-text="dataValue.is_paid ? 'Продажи' : 'Бесплатная кухня'"
+                :active-text="dataValue.is_paid ? $t('kitchen.paid') : $t('kitchen.free')"
                 class="app-switch"
                 @change="changeStatus"
               />
@@ -213,7 +212,7 @@ watch(() => route.name, () => {
                 v-if="route.params.id && !route.query.type"
                 active-text="Деактивация"
                 v-model="status"
-                :active-text="dataValue.is_active ? 'Активация' : 'Деактивация'"
+                :active-text="dataValue.is_active ? $t('status.activation') : $t('status.deactivation')"
                 class="app-switch mt-2"
                 @change="changeStatus"
               />
@@ -231,7 +230,7 @@ watch(() => route.name, () => {
               v-if="route.params.id"
               class="custom-danger-btn"
             >
-              Удалить
+              {{$t('method.delete')}}
             </button>
 
             <div class="flex items-center gap-4">
@@ -239,14 +238,14 @@ watch(() => route.name, () => {
                 @click="cancelFn"
                 class="custom-cancel-btn"
               >
-                Отменить
+                {{$t('method.cancel')}}
               </button>
 
               <button
                 class="custom-apply-btn"
                 @click="handleSubmit"
               >
-                {{ $route.params.id ? "Сохранить" : "Добавить" }}
+                {{ $route.params.id ? $t('method.save') : $t('method.add') }}
               </button>
             </div>
           </div>
@@ -262,7 +261,7 @@ watch(() => route.name, () => {
               src="@/assets/images/icons/edit.svg"
               alt="#"
             />
-            Редактировать
+            {{$t('method.edit')}}
           </button>
         </div>
       </div>

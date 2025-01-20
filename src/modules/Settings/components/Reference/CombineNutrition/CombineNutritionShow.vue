@@ -62,7 +62,7 @@ onMounted(() => {
         <template v-if="settingsStore.foodFactory">
           <div>
             <span class="app-card__item-title">
-              Наименование
+              {{$t('common.name2')}}
             </span>
             <p>
               {{ settingsStore.foodFactory.name[activeLocale] ?? "-" }}
@@ -70,7 +70,7 @@ onMounted(() => {
           </div>
           <div>
             <span class="app-card__item-title">
-              Региональное управление
+              {{$t('settings.regionalAdministration')}}
             </span>
             <p>
               {{ settingsStore.foodFactory.management.name[activeLocale] ?? "-" }}
@@ -87,7 +87,7 @@ onMounted(() => {
           alt="edit"
           class="size-5"
         />
-        Редактировать
+        {{$t('method.edit')}}
       </RouterLink>
     </div>
   </section>

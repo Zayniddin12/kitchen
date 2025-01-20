@@ -62,7 +62,7 @@ onMounted(() => {
         <template v-if="settingsStore.kitchenTypeDetail">
           <div>
             <span class="app-card__item-title">
-              Наименование
+              {{$t('common.name2')}}
             </span>
             <p>
               {{ settingsStore.kitchenTypeDetail.name[activeLocale] }}
@@ -70,10 +70,10 @@ onMounted(() => {
           </div>
           <div>
             <span class="app-card__item-title">
-              Статус
+              {{$t('common.status')}}
             </span>
             <p>
-              {{ settingsStore.kitchenTypeDetail.is_paid ? "Продажи" : "Бесплатная кухня" }}
+              {{ settingsStore.kitchenTypeDetail.is_paid ? $t('kitchen.paid') : $t('kitchen.free') }}
             </p>
           </div>
         </template>
@@ -87,12 +87,8 @@ onMounted(() => {
           alt="edit"
           class="size-5"
         />
-        Редактировать
+        {{$t('method.edit')}}
       </RouterLink>
     </div>
   </section>
 </template>
-
-<style lang="scss">
-
-</style>

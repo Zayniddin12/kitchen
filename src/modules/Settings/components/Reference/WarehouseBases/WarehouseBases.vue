@@ -1,7 +1,4 @@
-<script
-  setup
-  lang="ts"
->
+<script setup lang="ts">
 import { ref, watchEffect, onMounted, computed } from "vue";
 import { Search } from "@element-plus/icons-vue";
 import { useRoute, useRouter } from "vue-router";

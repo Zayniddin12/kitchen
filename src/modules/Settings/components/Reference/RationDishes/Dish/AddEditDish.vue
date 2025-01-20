@@ -307,9 +307,9 @@ const changeInputProduct = (val, index) => {
                 >
                   <app-select
                     v-model="item.product_type_parent_id"
-                    label="Тип продукта"
+                    :label="$t('product.create')"
                     label-class="text-[#A8AAAE] text-[12px]"
-                    placeholder="Выберите"
+                    :placeholder="$t('form.select')"
                     itemValue="id"
                     itemLabel="name"
                     :items="store.typeProduct.product_categories"
@@ -319,9 +319,9 @@ const changeInputProduct = (val, index) => {
                   <app-select
                     v-model="item.product_type_id"
                     @change="changeInputProduct($event, index)"
-                    label="Вид продукта"
+                    :label="$t('product.view')"
                     label-class="text-[#A8AAAE] text-[12px]"
-                    placeholder="Выберите"
+                    :placeholder="$t('form.select')"
                     itemValue="id"
                     itemLabel="name"
                     :items="item.vid_list"
@@ -329,7 +329,7 @@ const changeInputProduct = (val, index) => {
 
                   <app-input
                     v-model="item.quantity"
-                    label="Количество"
+                    :label="$t('common.quantity')"
                     label-class="text-[#A8AAAE] text-[12px]"
                     placeholder="0.0"
                   />
@@ -339,9 +339,9 @@ const changeInputProduct = (val, index) => {
                       v-model="item.unit_id"
                       disabled
                       class="w-full"
-                      label="Ед. измерения"
+                      :label="$t('common.measurement')"
                       label-class="text-[#A8AAAE] text-[12px]"
-                      placeholder="Выберите"
+                      :placeholder="$t('form.select')"
                       itemValue="id"
                       itemLabel="name"
                       :items="store.units.units"
@@ -366,7 +366,7 @@ const changeInputProduct = (val, index) => {
                   class="mr-[4px]"
                   alt="plus"
                 />
-                Добавить еще
+               {{$t('method.addMore')}}
               </button>
             </div>
           </template>
@@ -393,7 +393,7 @@ const changeInputProduct = (val, index) => {
             </button>
 
             <button class="custom-apply-btn ml-[8px]" @click="handleSubmit">
-              {{ route.name === "reference-dish-id" ? "Сохранить" : "Добавить" }}
+              {{ route.name === "reference-dish-id" ? $t('method.save') : $t('method.add') }}
             </button>
           </div>
         </div>
@@ -409,7 +409,7 @@ const changeInputProduct = (val, index) => {
           alt="edit"
           class="mr-[12px]"
         />
-        Редактировать
+        {{$t('method.edit')}}
       </button>
     </div>
   </AppOverlay>

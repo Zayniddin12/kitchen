@@ -61,18 +61,18 @@ onMounted(() => {
         <template v-if="settingsStore.baseWarehouse">
           <div class="grid grid-cols-2 gap-6">
             <div>
-              <span class="app-card__item-title">Наименование</span>
+              <span class="app-card__item-title">{{$t('common.name2')}}</span>
               <p>{{ settingsStore.baseWarehouse.name[activeLocale] }}</p>
             </div>
             <div>
               <span class="app-card__item-title">
-                База складов
+                {{$t('База складов')}}
               </span>
               <p>-</p>
             </div>
             <div>
               <span class="app-card__item-title">
-                Вместимость склада
+                {{$t('Вместимость склада')}}
               </span>
               <p>
                 {{ settingsStore.baseWarehouse.capacity }}
@@ -80,7 +80,7 @@ onMounted(() => {
             </div>
             <div>
               <span class="app-card__item-title">
-                Единица измерения
+                {{$t('common.unitMeasurement')}}
               </span>
               <p>
                 -
@@ -88,7 +88,7 @@ onMounted(() => {
             </div>
             <div>
               <span class="app-card__item-title">
-                Типы продуктов хранения
+                {{$t('Типы продуктов хранения')}}
               </span>
               <p>
                 {{ settingsStore.baseWarehouse.warehouseProducts.map(el => el.name).join(", ") }}
@@ -106,12 +106,8 @@ onMounted(() => {
           alt="edit"
           class="size-5"
         />
-        Редактировать
+        {{$t('method.edit')}}
       </RouterLink>
     </div>
   </section>
 </template>
-
-<style lang="scss">
-
-</style>

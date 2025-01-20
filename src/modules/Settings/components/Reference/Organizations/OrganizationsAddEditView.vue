@@ -171,8 +171,8 @@ watch(() => route.name, () => {
             <div class="grid grid-cols-2 gap-4">
               <app-input
                 v-model="dataValue.name"
-                label="Наименование"
-                placeholder="Введите"
+                :label="$t('common.name2')"
+                :placeholder="$t('form.select')"
                 label-class="text-[#A8AAAE] font-medium text-[12px]"
                 class="w-full"
                 required
@@ -182,8 +182,8 @@ watch(() => route.name, () => {
 
               <app-input
                 v-model="dataValue.address"
-                label="Юр. адрес"
-                placeholder="Введите"
+                :label="$t('common.legalAddress')"
+                :placeholder="$t('form.select')"
                 label-class="text-[#A8AAAE] font-medium text-[12px]"
                 class="w-full"
                 required
@@ -195,9 +195,9 @@ watch(() => route.name, () => {
             <div class="grid grid-cols-2 gap-4">
               <app-input
                 v-model="dataValue.tin"
-                label="ИНН"
+                :label="$t('common.tin')"
                 maxlength="9"
-                placeholder="Выберите"
+                :placeholder="$t('form.select')"
                 label-class="text-[#A8AAAE] font-medium text-[12px]"
                 class="w-full"
                 required
@@ -208,7 +208,7 @@ watch(() => route.name, () => {
 
             <ElSwitch
               v-if="route.params.id && !route.query.type"
-              active-text="Деактивация"
+              :active-text="$t('status.deactivation')"
               class="app-switch mt-auto"
               @change="changeStatus"
               v-model="status"
@@ -227,7 +227,7 @@ watch(() => route.name, () => {
             class="custom-danger-btn"
             @click="deleteFn"
           >
-            Удалить
+            {{$t('method.delete')}}
           </button>
 
 
@@ -236,14 +236,14 @@ watch(() => route.name, () => {
               @click="cancelFn"
               class="custom-cancel-btn"
             >
-              Отменить
+              {{$t('method.cancel')}}
             </button>
 
             <button
               class="custom-apply-btn"
               @click="handleSubmit"
             >
-              {{ $route.params.id ? "Сохранить" : "Добавить" }}
+              {{ $route.params.id ? $t('method.save') : $t('method.add') }}
             </button>
           </div>
         </div>
@@ -267,7 +267,7 @@ watch(() => route.name, () => {
                   maskRepeat: 'no-repeat'
                    }"
           ></li>
-          Редактировать
+          {{$t('method.edit')}}
         </button>
       </div>
     </div>

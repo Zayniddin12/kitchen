@@ -202,8 +202,8 @@ const disabledFormItems = computed<boolean>(() => {
             <app-input
               v-model="form.name.ru"
               prop="name.ru"
-              label="Наименование (Рус)"
-              placeholder="Введите"
+              :label="$t('Наименование (Рус)')"
+              :placeholder="$t('form.select')"
               label-class="text-[#A8AAAE] font-medium text-xs"
               required
               :disabled="disabledFormItems"
@@ -212,8 +212,8 @@ const disabledFormItems = computed<boolean>(() => {
             <app-input
               v-model="form.name.uz"
               prop="name.uz"
-              label="Наименование (Ўзб)"
-              placeholder="Введите"
+              :label="$t('Наименование (Ўзб)')"
+              :placeholder="$t('form.select')"
               label-class="text-[#A8AAAE] font-medium text-xs"
               required
               :disabled="disabledFormItems"
@@ -225,8 +225,8 @@ const disabledFormItems = computed<boolean>(() => {
               item-value="id"
               item-label="name"
               prop="base_id"
-              label="База складов"
-              placeholder="Введите"
+              :label="$t('База складов')"
+              :placeholder="$t('form.select')"
               label-class="text-[#A8AAAE] font-medium text-xs"
               required
               :disabled="disabledFormItems"
@@ -236,8 +236,8 @@ const disabledFormItems = computed<boolean>(() => {
               v-model="form.capacity"
               custom-type="number"
               prop="capacity"
-              label="Вместимость склада"
-              placeholder="Выберите"
+              :label="$t('Вместимость склада')"
+              :placeholder="$t('form.select')"
               label-class="text-[#A8AAAE] font-medium text-xs"
               required
               :disabled="disabledFormItems"
@@ -248,8 +248,8 @@ const disabledFormItems = computed<boolean>(() => {
               :items="settingsStore.units.units"
               item-value="id"
               item-label="name"
-              label="Ед. изм. вместимости склада"
-              placeholder="тонна"
+              :label="$t('Ед. изм. вместимости склада')"
+              :placeholder="$t('тонна')"
               label-class="text-[#A8AAAE] font-medium text-[12px]"
               disabled
             >
@@ -263,7 +263,7 @@ const disabledFormItems = computed<boolean>(() => {
               item-label="name"
               prop="product_ids"
               multiple
-              label="Типы продуктов хранения"
+              :label="$t('Типы продуктов хранения')"
               placeholder="Мясные"
               label-class="text-[#A8AAAE] font-medium text-[12px]"
               required
@@ -288,7 +288,7 @@ const disabledFormItems = computed<boolean>(() => {
               </el-table-column>
               <el-table-column
                 prop="name"
-                label="Наименование базы"
+                :label="$t('Наименование базы')"
               />
             </el-table>
           </div>
@@ -312,16 +312,16 @@ const disabledFormItems = computed<boolean>(() => {
           <div class="grid grid-cols-2 gap-4 mt-2" v-if="factory">
             <app-input
               v-model="workshop_name_ru"
-              label="Наименование (Рус)"
-              placeholder="Введите"
+              :label="$t('Наименование (Рус)')"
+              :placeholder="$t('form.select')"
               label-class="text-[#A8AAAE] font-medium text-xs"
               :disabled="disabledFormItems"
             />
 
             <app-input
               v-model="workshop_name_uz"
-              label="Наименование (Ўзб)"
-              placeholder="Введите"
+              :label="$t('Наименование (Ўзб)')"
+              :placeholder="$t('form.select')"
               label-class="text-[#A8AAAE] font-medium text-xs"
               :disabled="disabledFormItems"
             />
@@ -340,7 +340,7 @@ const disabledFormItems = computed<boolean>(() => {
             class="custom-danger-btn"
             @click="deleteFn"
           >
-            Удалить
+            {{$t('method.delete')}}
           </ElButton>
 
 
@@ -349,7 +349,7 @@ const disabledFormItems = computed<boolean>(() => {
               @click="cancelFn"
               class="custom-cancel-btn flex items-center justify-center"
             >
-              Отменить
+              {{$t('method.cancel')}}
             </button>
 
             <ElButton
@@ -359,7 +359,7 @@ const disabledFormItems = computed<boolean>(() => {
               size="large"
               class="custom-apply-btn"
             >
-              {{ route.params.id ? "Сохранить" : "Добавить" }}
+              {{ route.params.id ? $t('method.save') : $t('method.add') }}
             </ElButton>
           </div>
         </div>
@@ -376,7 +376,7 @@ const disabledFormItems = computed<boolean>(() => {
             alt="edit icon"
             class="size-5"
           />
-          Редактировать
+          {{$t('method.edit')}}
         </RouterLink>
       </div>
     </div>

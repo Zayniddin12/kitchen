@@ -179,8 +179,8 @@ const disabled = computed(() => {
             <AppInput
                 v-model="form.name.ru"
                 prop="name.ru"
-                label="Наименование (Рус)"
-                placeholder="Введите"
+                :label="$t('Наименование (Рус)')"
+                :placeholder="$t('form.enter')"
                 label-class="text-[#A8AAAE] font-medium text-[12px]"
                 required
                 :disabled
@@ -188,8 +188,8 @@ const disabled = computed(() => {
             <AppInput
                 v-model="form.name.uz"
                 prop="name.uz"
-                label="Наименование (Ўзб)"
-                placeholder="Введите"
+                :label="$t('Наименование (Ўзб)')"
+                :placeholder="$t('form.enter')"
                 label-class="text-[#A8AAAE] font-medium text-[12px]"
                 required
                 :disabled
@@ -201,8 +201,8 @@ const disabled = computed(() => {
                 item-label="name"
                 prop="management_id"
                 trigger="change"
-                label="Региональное управление"
-                placeholder="Выберите"
+                :label="$t('settings.regionalAdministration')"
+                :placeholder="$t('form.select')"
                 label-class="text-[#A8AAAE] font-medium text-[12px]"
                 required
                 :disabled
@@ -228,7 +228,7 @@ const disabled = computed(() => {
               class="custom-danger-btn"
               @click="deleteFn"
           >
-            Удалить
+            {{$t('method.delete')}}
           </ElButton>
 
 
@@ -237,7 +237,7 @@ const disabled = computed(() => {
                 @click="cancelFn"
                 class="custom-cancel-btn h-10"
             >
-              Отменить
+              {{$t('method.cancel')}}
             </button>
 
             <ElButton
@@ -247,7 +247,7 @@ const disabled = computed(() => {
                 @click="sendForm"
                 class="custom-apply-btn"
             >
-              {{ route.params.id ? "Сохранить" : "Добавить" }}
+              {{ route.params.id ? $t('method.save') : $t('method.add') }}
             </ElButton>
           </div>
         </div>
@@ -264,7 +264,7 @@ const disabled = computed(() => {
               alt="edit icon"
               class="size-5"
           />
-          Редактировать
+          {{$t('method.edit')}}
         </RouterLink>
       </div>
     </div>
