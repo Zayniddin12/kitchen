@@ -186,7 +186,7 @@ const handleSubmit = async () => {
 };
 
 const changeInput = async (event, index) => {
-  await store.GET_MEALS_VID_PRO({ parent_id: event });
+  await store.GET_MEALS_VID_PRO({ parent_id: event, per_page: 100 });
   dataValue.value.compositions[index].vid_list = store.parentProductType?.product_types;
   dataValue.value.compositions[index].unit_id = null;
 };
@@ -298,7 +298,7 @@ const changeInputProduct = (val, index) => {
 
           <template v-else>
             <div class="mt-[24px]">
-              <h1 class="text-[#000D24] text-[18px] font-medium">{{$t('kitchen.compositionDish')}}</h1>
+              <h1 class="text-[#000D24] text-[18px] font-medium">{{ $t("kitchen.compositionDish") }}</h1>
 
               <div class="bg-[#F8F9FC] rounded-[16px] p-[16px] mt-[24px]">
                 <div class="grid grid-cols-4 gap-4 border-b mt-[16px]"
@@ -381,7 +381,7 @@ const changeInputProduct = (val, index) => {
             v-if="route.name === 'reference-dish-id'"
             @click="deleteFn"
           >
-            {{$t('method.delete')}}
+            {{ $t("method.delete") }}
           </button>
 
           <div class="flex items-center justify-end ml-auto">
@@ -389,7 +389,7 @@ const changeInputProduct = (val, index) => {
               class="custom-cancel-btn"
               @click="cancelFn"
             >
-              {{$t('method.cancel')}}
+              {{ $t("method.cancel") }}
             </button>
 
             <button class="custom-apply-btn ml-[8px]" @click="handleSubmit">

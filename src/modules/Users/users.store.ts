@@ -34,10 +34,12 @@ export const useUsersStore = defineStore("usersStore", () => {
     } finally {
       usersLoading.value = false;
     }
+
+    return users.value;
   };
 
   const getUserFullName = (user: UserType | null) => {
-    if(!user) return "";
+    if (!user) return "";
 
     const { firstname, lastname, patronymic } = user;
 
@@ -185,7 +187,7 @@ export const useUsersStore = defineStore("usersStore", () => {
   };
 
   const initializeSearchUser = () => {
-    if(searchUser.value) return;
+    if (searchUser.value) return;
 
     const storedUser = getSessionItem(searchUserStorageKey);
     searchUser.value = storedUser ? JSON.parse(storedUser) : null;

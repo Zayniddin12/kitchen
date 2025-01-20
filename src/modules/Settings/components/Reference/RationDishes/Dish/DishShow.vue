@@ -107,7 +107,7 @@ onMounted(() => {
             </ElTableColumn>
             <ElTableColumn
               prop="product_type_name"
-              label="Тип продукта"
+              label="Вид продукта"
               align="center"
             >
               <template #default="{row}:{row: MealDetailCompositionType}">

@@ -2,7 +2,9 @@
   setup
   lang="ts"
 >
-import AppInput from "@/components/ui/form/app-input/AppInput.vue";
+import
+
+  AppInput from "@/components/ui/form/app-input/AppInput.vue";
 import AppSelect from "@/components/ui/form/app-select/AppSelect.vue";
 import AppDatePicker from "@/components/ui/form/app-date-picker/AppDatePicker.vue";
 import useConfirm from "@/components/ui/app-confirm/useConfirm";
@@ -90,6 +92,21 @@ const form = reactive<DocumentCreateDataDocumentType>({
     signer_id_1: "",
     signer_id_2: "",
     signer_id_3: "",
+    signer_id_4: "",
+  },
+});
+
+const signersList = reactive<any>({
+  form: {
+    chef: {},
+    head_base: {},
+    commodityExpert: {},
+    accountant_base: {},
+  },
+  act: {
+    head_kpi: {},
+    chef: {},
+    accountant: {},
   },
 });
 
@@ -340,7 +357,6 @@ const sendForm = async () => {
   }
 
 
-
 };
 
 const vidProducts = ref<Map<number, Record<string, any>[]>>(new Map);
@@ -518,9 +534,8 @@ const closeModal = async () => {
   }
 };
 
-const openModal = () => {
+const openModal = async () => {
   form.doc_type_id = props.id;
-  fetchRespondents();
 
   if (authStore.disabledUserWorkplace) {
     const activeWorkplace = authStore.user.workplaces[0];
@@ -528,6 +543,7 @@ const openModal = () => {
     form[`${type}_id`] = activeWorkplace.workplace_id;
     form[`${type}_type`] = activeWorkplace.workplace_type;
     form[type] = `${activeWorkplace.workplace_id}_${activeWorkplace.workplace_type}`;
+    fetchRespondents({ type: [activeWorkplace.workplace_type] });
   }
 
   settingsStore.GET_TYPE_PRODUCT();
@@ -537,8 +553,24 @@ const openModal = () => {
   if (activeComingModal.value) {
     oldActForm.value = JSON.parse(JSON.stringify(actForm));
   }
-  usersStore.fetchUsers({
+  signersList.form.chef = await usersStore.fetchUsers({
     per_page: 100,
+    role_name: "head-chef",
+  });
+
+  signersList.form.head_base = await usersStore.fetchUsers({
+    per_page: 100,
+    role_name: "head-warehouse",
+  });
+
+  signersList.form.commodityExpert = await usersStore.fetchUsers({
+    per_page: 100,
+    role_name: "merchandiser",
+  });
+
+  signersList.form.accountant_base = await usersStore.fetchUsers({
+    per_page: 100,
+    role_name: "accountant-base-warehouse",
   });
 };
 
@@ -852,7 +884,7 @@ const changeUser = (val, key) => {
             <template v-if="typeSwitch">
               <div class="flex items-center justify-between mb-[24px]">
                 <h2 class="text-[#4F5662] text-sm font-semibold">
-                  {{ t("document.commission.head_KP") }}:
+                  {{ t("document.commission.chef") }}:
                 </h2>
                 <span class="ml-2 text-[#A8AAAE] text-sm font-medium block">
                 {{
@@ -863,7 +895,7 @@ const changeUser = (val, key) => {
 
               <div class="flex items-center justify-between mb-[24px]">
                 <h2 class="text-[#4F5662] text-sm font-semibold">
-                  {{ t("document.commission.chef") }}:
+                  {{ t("document.commission.baseChief") }}:
                 </h2>
                 <span class="ml-2 text-[#A8AAAE] text-sm font-medium block">
                 {{
@@ -873,11 +905,22 @@ const changeUser = (val, key) => {
               </div>
               <div class="flex items-center justify-between mb-[24px]">
                 <h2 class="text-[#4F5662] text-sm font-semibold">
-                  {{ t("document.commission.accountant") }}:
+                  {{ t("document.commission.commodityExpert") }}:
                 </h2>
                 <span class="ml-2 text-[#A8AAAE] text-sm font-medium block">
                {{
                     form.doc_signer_obj.signer_id_3 && typeof (form.doc_signer_obj.signer_id_3) === "number" ? usersStore.getUserFullName(getUser(form.doc_signer_obj.signer_id_3)) : ""
+                  }}
+              </span>
+              </div>
+
+              <div class="flex items-center justify-between mb-[24px]">
+                <h2 class="text-[#4F5662] text-sm font-semibold">
+                  {{ t("document.commission.accountant_base") }}:
+                </h2>
+                <span class="ml-2 text-[#A8AAAE] text-sm font-medium block">
+               {{
+                    form.doc_signer_obj.signer_id_4 && typeof (form.doc_signer_obj.signer_id_4) === "number" ? usersStore.getUserFullName(getUser(form.doc_signer_obj.signer_id_4)) : ""
                   }}
               </span>
               </div>
@@ -1230,8 +1273,8 @@ const changeUser = (val, key) => {
               <AppSelect
                 v-model="form.doc_signer_obj.signer_id_1"
                 prop="doc_signer_obj.signer_id_1"
-                :placeholder="t('document.commission.head_KP')"
-                :label="t('document.commission.head_KP')"
+                :placeholder="t('document.commission.chef')"
+                :label="t('document.commission.chef')"
                 label-class="text-[#A8AAAE] text-xs font-medium"
                 required
                 @change="changeUser($event, 'signer_id_1')"
@@ -1248,8 +1291,8 @@ const changeUser = (val, key) => {
               <AppSelect
                 v-model="form.doc_signer_obj.signer_id_2"
                 prop="doc_signer_obj.signer_id_2"
-                :placeholder="t('document.commission.chef')"
-                :label="t('document.commission.chef')"
+                :placeholder="t('document.commission.baseChief')"
+                :label="t('document.commission.baseChief')"
                 label-class="text-[#A8AAAE] text-xs font-medium"
                 required
                 @change="changeUser($event, 'signer_id_2')"
@@ -1266,11 +1309,29 @@ const changeUser = (val, key) => {
               <AppSelect
                 v-model="form.doc_signer_obj.signer_id_3"
                 prop="doc_signer_obj.signer_id_3"
-                :placeholder="t('document.commission.accountant')"
-                :label="t('document.commission.accountant')"
+                :placeholder="t('document.commission.commodityExpert')"
+                :label="t('document.commission.commodityExpert')"
                 label-class="text-[#A8AAAE] text-xs font-medium"
                 required
                 @change="changeUser($event, 'signer_id_3')"
+              >
+                <template v-if="usersStore.users">
+                  <ElOption
+                    v-for="item in usersStore.users.users"
+                    :key="item.id"
+                    :label="usersStore.getUserFullName(item)"
+                    :value="item.id"
+                  />
+                </template>
+              </AppSelect>
+              <AppSelect
+                v-model="form.doc_signer_obj.signer_id_4"
+                prop="doc_signer_obj.signer_id_4"
+                :placeholder="t('document.commission.accountant_base')"
+                :label="t('document.commission.accountant_base')"
+                label-class="text-[#A8AAAE] text-xs font-medium"
+                required
+                @change="changeUser($event, 'signer_id_4')"
               >
                 <template v-if="usersStore.users">
                   <ElOption
@@ -1583,7 +1644,7 @@ const changeUser = (val, key) => {
 
             <div class="flex items-center justify-between mb-[24px]">
               <h2 class="text-[#4F5662] text-sm font-semibold">
-                {{ t("document.commission.commodityExpert") }}:
+                {{ t("document.commission.head_KP") }}:
               </h2>
               <span class="ml-2 text-[#A8AAAE] text-sm font-medium block">
                 {{
@@ -1594,7 +1655,7 @@ const changeUser = (val, key) => {
 
             <div class="flex items-center justify-between mb-[24px]">
               <h2 class="text-[#4F5662] text-sm font-semibold">
-                {{ t("document.commission.warehouseManager") }}:
+                {{ t("document.commission.accountant") }}:
               </h2>
               <span class="ml-2 text-[#A8AAAE] text-sm font-medium block">
                {{
@@ -1603,16 +1664,7 @@ const changeUser = (val, key) => {
               </span>
             </div>
 
-            <div class="flex items-center justify-between mb-[24px]">
-              <h2 class="text-[#4F5662] text-sm font-semibold">
-                {{ t("document.commission.accountant_base") }}:
-              </h2>
-              <span class="ml-2 text-[#A8AAAE] text-sm font-medium block">
-                {{
-                  actForm.doc_signer_obj.signer_id_4 && typeof (actForm.doc_signer_obj.signer_id_4) === "number" ? usersStore.getUserFullName(getUser(actForm.doc_signer_obj.signer_id_4)) : ""
-                }}
-              </span>
-            </div>
+
           </div>
         </div>
       </div>
@@ -1829,158 +1881,6 @@ const changeUser = (val, key) => {
               </el-collapse>
             </div>
 
-            <!--            <div class="bg-[#FFFFFF] rounded-[8px] p-[12px] mb-[24px]">-->
-
-            <!--              &lt;!&ndash;              {{ actForm.products }}&ndash;&gt;-->
-            <!--              {{ selectedProductTypes }}-->
-            <!--              <AppSelect-->
-            <!--                v-model="actForm.products[0]"-->
-            <!--                :items="selectedProductTypes"-->
-            <!--                item-label="name"-->
-            <!--                item-value="id"-->
-            <!--                prop="products[0]"-->
-            <!--                :placeholder="t('product.name')"-->
-            <!--                :label="t('product.name')"-->
-            <!--                label-class="text-[#A8AAAE] text-xs font-medium"-->
-            <!--                @change="actProductTypeChange"-->
-            <!--                required-->
-            <!--                trigger="blur"-->
-            <!--              >-->
-            <!--              </AppSelect>-->
-            <!--              <AppInput-->
-            <!--                :modelValue="actForm.products[0]?.quantity ?? ''"-->
-            <!--                label-class="text-[#A8AAAE] text-xs font-medium"-->
-            <!--                :placeholder="t('product.quantity')"-->
-            <!--                :label="t('product.quantity')"-->
-            <!--                disabled-->
-            <!--              />-->
-            <!--              <AppInput-->
-            <!--                :model-value="actForm.products[0]?.unit_id ? getProductMeasurement(actForm.products[0].unit_id) : ''"-->
-            <!--                label-class="text-[#A8AAAE] text-xs font-medium"-->
-            <!--                :label="t('common.unitMeasurement')"-->
-            <!--                :placeholder="t('common.unitMeasurement')"-->
-            <!--                disabled-->
-            <!--              />-->
-            <!--              <AppInput-->
-            <!--                v-model="actForm.doc_details.contract_details"-->
-            <!--                prop="doc_details.contract_details"-->
-            <!--                :placeholder="t('document.act.numberAgreement')"-->
-            <!--                :label="t('document.act.numberAgreement')"-->
-            <!--                label-class="text-[#A8AAAE] text-xs font-medium"-->
-            <!--                required-->
-            <!--                :maxlength="20"-->
-            <!--                :max="20"-->
-            <!--              />-->
-            <!--              <AppDatePicker-->
-            <!--                v-model="actForm.doc_details.contract_details_date"-->
-            <!--                prop="doc_details.contract_details_date"-->
-            <!--                :placeholder="t('document.act.dateAgreement')"-->
-            <!--                :label="t('document.act.dateAgreement')"-->
-            <!--                label-class="text-[#A8AAAE] text-xs font-medium"-->
-            <!--                required-->
-            <!--              />-->
-            <!--              <AppInput-->
-            <!--                v-model="formNumberAndDate"-->
-            <!--                :placeholder="t('document.consignmentNumberDate')"-->
-            <!--                :label="t('document.consignmentNumberDate')"-->
-            <!--                label-class="text-[#A8AAAE] text-xs font-medium"-->
-            <!--                disabled-->
-            <!--              />-->
-            <!--              <AppInput-->
-            <!--                v-model="actForm.doc_details.manufacturer"-->
-            <!--                prop="doc_details.manufacturer"-->
-            <!--                :placeholder="t('product.manufacturer')"-->
-            <!--                :label="t('product.manufacturer')"-->
-            <!--                label-class="text-[#A8AAAE] text-xs font-medium"-->
-            <!--                required-->
-            <!--              />-->
-            <!--              <AppInput-->
-            <!--                :model-value="from"-->
-            <!--                :label="t('common.supplier')"-->
-            <!--                :placeholder="t('common.supplier')"-->
-            <!--                label-class="text-[#A8AAAE] text-xs font-medium"-->
-            <!--                disabled-->
-            <!--              />-->
-
-            <!--              <AppInput-->
-            <!--                v-model="actForm.shipping_method"-->
-            <!--                prop="shipping_method"-->
-            <!--                :placeholder="t('common.transport')"-->
-            <!--                :label="t('common.transport')"-->
-            <!--                label-class="text-[#A8AAAE] text-xs font-medium"-->
-            <!--                required-->
-            <!--              />-->
-            <!--              <AppInput-->
-            <!--                v-model="actForm.doc_details.licence"-->
-            <!--                prop="doc_details.licence"-->
-            <!--                :placeholder="t('licence.number')"-->
-            <!--                :label="t('licence.number')"-->
-            <!--                label-class="text-[#A8AAAE] text-xs font-medium"-->
-            <!--                required-->
-            <!--                :max="20"-->
-            <!--                :maxlength="20"-->
-            <!--              />-->
-            <!--              <AppDatePicker-->
-            <!--                v-model="actForm.doc_details.licence_date"-->
-            <!--                prop="doc_details.licence_date"-->
-            <!--                :placeholder="t('licence.date')"-->
-            <!--                :label="t('licence.date')"-->
-            <!--                label-class="text-[#A8AAAE] text-xs font-medium"-->
-            <!--                required-->
-            <!--              />-->
-            <!--              <AppInput-->
-            <!--                v-model="actForm.doc_details.sanitary"-->
-            <!--                prop="doc_details.sanitary"-->
-            <!--                :placeholder="t('document.sanitaryConclusion.number')"-->
-            <!--                :label="t('document.sanitaryConclusion.number')"-->
-            <!--                label-class="text-[#A8AAAE] text-xs font-medium"-->
-            <!--                required-->
-            <!--                :max="20"-->
-            <!--              />-->
-            <!--              <AppDatePicker-->
-            <!--                v-model="actForm.doc_details.sanitary_date"-->
-            <!--                prop="doc_details.sanitary_date"-->
-            <!--                :placeholder="t('document.sanitaryConclusion.date')"-->
-            <!--                :label="t('document.sanitaryConclusion.date')"-->
-            <!--                label-class="text-[#A8AAAE] text-xs font-medium"-->
-            <!--                required-->
-            <!--              />-->
-            <!--              <AppInput-->
-            <!--                v-model="actForm.doc_details.vetirinary"-->
-            <!--                prop="doc_details.vetirinary"-->
-            <!--                :placeholder="t('document.veterinaryCertificate.number')"-->
-            <!--                :label="t('document.veterinaryCertificate.number')"-->
-            <!--                label-class="text-[#A8AAAE] text-xs font-medium"-->
-            <!--                required-->
-            <!--                :max="20"-->
-            <!--              />-->
-            <!--              <AppDatePicker-->
-            <!--                v-model="actForm.doc_details.vetirinary_date"-->
-            <!--                prop="doc_details.vetirinary_date"-->
-            <!--                :placeholder="t('document.veterinaryCertificate.date')"-->
-            <!--                :label="t('document.veterinaryCertificate.date')"-->
-            <!--                label-class="text-[#A8AAAE] text-xs font-medium"-->
-            <!--                required-->
-            <!--              />-->
-            <!--              <AppInput-->
-            <!--                v-model="actForm.doc_details.quality"-->
-            <!--                prop="doc_details.quality"-->
-            <!--                :placeholder="t('document.qualityCertificate.number')"-->
-            <!--                :label="t('document.qualityCertificate.number')"-->
-            <!--                label-class="text-[#A8AAAE] text-xs font-medium"-->
-            <!--                required-->
-            <!--                :max="20"-->
-            <!--                :maxlength="20"-->
-            <!--              />-->
-            <!--              <AppDatePicker-->
-            <!--                v-model="actForm.doc_details.quality_date"-->
-            <!--                prop="doc_details.quality_date"-->
-            <!--                :placeholder="t('document.qualityCertificate.date')"-->
-            <!--                :label="t('document.qualityCertificate.date')"-->
-            <!--                label-class="text-[#A8AAAE] text-xs font-medium"-->
-            <!--                required-->
-            <!--              />-->
-            <!--            </div>-->
           </template>
 
           <div class="bg-[#FFFFFF] rounded-[8px] p-[12px]">
@@ -2009,8 +1909,8 @@ const changeUser = (val, key) => {
               <AppSelect
                 v-model="actForm.doc_signer_obj.signer_id_2"
                 prop="doc_signer_obj.signer_id_2"
-                :placeholder="t('document.commission.commodityExpert')"
-                :label="t('document.commission.commodityExpert')"
+                :placeholder="t('document.commission.head_KP')"
+                :label="t('document.commission.head_KP')"
                 label-class="text-[#A8AAAE] text-xs font-medium"
                 required
                 @change="changeUser($event, 'signer_id_2')"
@@ -2027,29 +1927,11 @@ const changeUser = (val, key) => {
               <AppSelect
                 v-model="actForm.doc_signer_obj.signer_id_3"
                 prop="doc_signer_obj.signer_id_3"
-                :placeholder="t('document.commission.warehouseManager')"
-                :label="t('document.commission.warehouseManager')"
+                :placeholder="t('document.commission.accountant')"
+                :label="t('document.commission.accountant')"
                 label-class="text-[#A8AAAE] text-xs font-medium"
                 required
                 @change="changeUser($event, 'signer_id_3')"
-              >
-                <template v-if="usersStore.users">
-                  <ElOption
-                    v-for="item in usersStore.users.users"
-                    :key="item.id"
-                    :label="usersStore.getUserFullName(item)"
-                    :value="item.id"
-                  />
-                </template>
-              </AppSelect>
-              <AppSelect
-                v-model="actForm.doc_signer_obj.signer_id_4"
-                prop="doc_signer_obj.signer_id_4"
-                :placeholder="t('document.commission.accountant_base')"
-                :label="t('document.commission.accountant_base')"
-                label-class="text-[#A8AAAE] text-xs font-medium"
-                required
-                @change="changeUser($event, 'signer_id_4')"
               >
                 <template v-if="usersStore.users">
                   <ElOption
