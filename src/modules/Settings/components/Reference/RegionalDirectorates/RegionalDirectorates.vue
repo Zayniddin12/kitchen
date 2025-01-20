@@ -101,7 +101,7 @@ const tableCurrentChange = (value: Record<string, any>) => {
       <div class="flex items-center">
         <el-input
             v-model="params.search"
-            placeholder="Поиск"
+            :placeholder="$t('form.search')"
             :prefix-icon="Search"
             class="w-[300px] mr-4"
             @input="handleSearch"
@@ -122,8 +122,8 @@ const tableCurrentChange = (value: Record<string, any>) => {
                   maskPosition: 'center',
                   maskRepeat: 'no-repeat'
                    }"
-          ></span>
-          Добавить
+          />
+          {{$t('method.add')}}
         </button>
       </div>
     </div>
@@ -152,12 +152,12 @@ const tableCurrentChange = (value: Record<string, any>) => {
         </el-table-column>
         <el-table-column
             prop="name"
-            label="Наименование"
+            :label="$t('common.name2')"
             sortable
             width="400"
         />
         <el-table-column
-            label="Действие"
+            :label="$t('common.action')"
             align="right"
         >
           <template #default="scope">

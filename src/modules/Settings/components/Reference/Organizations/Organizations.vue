@@ -142,18 +142,18 @@ const tableCurrentChange = (value: Record<string, any>) => {
         </el-table-column>
         <el-table-column
             prop="name"
-            label="Наименование"
+            :label="$t('common.name2')"
             sortable
             width="400"
         />
         <el-table-column
             prop="tin"
-            label="ИНН"
+            :label="$t('common.tin')"
             sortable
         />
         <el-table-column
             prop="address"
-            label="Юр. адрес"
+            :label="$t('common.legalAddress')"
             sortable
         />
         <el-table-column

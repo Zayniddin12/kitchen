@@ -87,6 +87,13 @@ const form = reactive<DocumentCreateDataDocumentType>({
   ],
 });
 
+const signersList = reactive<any>({
+  warehouseman: [],
+  merchandiser: [],
+  manager_base: [],
+  head_warehouse: [],
+});
+
 const formNumberAndDate = computed(() => {
   if (!form.number && !form.date) return "";
   return `${form.number} ${form.date}`;
@@ -99,27 +106,6 @@ const validationErrors = ref<Record<string, any> | null>({
 
 const oldForm = ref<null | DocumentCreateDataDocumentType>(null);
 
-// const actList = reactive<any[]>([
-//   {
-//     product: {},
-//     quantity: null,
-//     count_product: null,
-//     contract_details: null,
-//     contract_details_date: null,
-//     formNumberAndDate: null,
-//     manufacturer: null,
-//     from: null,
-//     shipping_method: null,
-//     licence: null,
-//     licence_date: null,
-//     sanitary: null,
-//     sanitary_date: null,
-//     vetirinary: null,
-//     vetirinary_date: null,
-//     quality: null,
-//     quality_date: null,
-//   },
-// ]);
 
 const actForm = reactive<any>({
   number: "",
@@ -460,31 +446,48 @@ const closeModal = async () => {
   }
 };
 
-const openModal = () => {
-  form.doc_type_id = props.id;
+const openModal = async () => {
+    form.doc_type_id = props.id;
 
 
-  if (authStore.disabledUserWorkplace) {
-    console.log(authStore.user);
-    const activeWorkplace = authStore.user.workplaces[0];
-    const type = activeComingModal.value ? "to" : "from";
-    form[`${type}_id`] = activeWorkplace.workplace_id;
-    form[`${type}_type`] = activeWorkplace.workplace_type;
-    fetchRespondents({type: activeWorkplace.workplace_type});
-    form[type] = `${activeWorkplace.workplace_id}_${activeWorkplace.workplace_type}`;
+    if (authStore.disabledUserWorkplace) {
+      console.log(authStore.user);
+      const activeWorkplace = authStore.user.workplaces[0];
+      const type = activeComingModal.value ? "to" : "from";
+      form[`${type}_id`] = activeWorkplace.workplace_id;
+      form[`${type}_type`] = activeWorkplace.workplace_type;
+      fetchRespondents({ type: [activeWorkplace.workplace_type] });
+      form[type] = `${activeWorkplace.workplace_id}_${activeWorkplace.workplace_type}`;
+    }
+
+    settingsStore.GET_TYPE_PRODUCT();
+    settingsStore.GET_UNITS();
+
+    oldForm.value = JSON.parse(JSON.stringify(form));
+    if (activeComingModal.value) {
+      oldActForm.value = JSON.parse(JSON.stringify(actForm));
+    }
+    signersList.warehouseman = await usersStore.fetchUsers({
+      per_page: 100,
+      role_name: "warehouseman",
+    });
+
+    signersList.merchandiser = await usersStore.fetchUsers({
+      per_page: 100,
+      role_name: "merchandiser",
+    });
+
+    signersList.manager_base = await usersStore.fetchUsers({
+      per_page: 100,
+      role_name: "manager-base",
+    });
+
+    signersList.head_warehouse = await usersStore.fetchUsers({
+      per_page: 100,
+      role_name: "head-warehouse",
+    });
   }
-
-  settingsStore.GET_TYPE_PRODUCT();
-  settingsStore.GET_UNITS();
-
-  oldForm.value = JSON.parse(JSON.stringify(form));
-  if (activeComingModal.value) {
-    oldActForm.value = JSON.parse(JSON.stringify(actForm));
-  }
-  usersStore.fetchUsers({
-    per_page: 100,
-  });
-};
+;
 
 watch(model, newValue => {
   if (newValue) openModal();
@@ -1574,14 +1577,15 @@ const changeUser = (val, key) => {
               <AppSelect
                 v-model="actForm.doc_signer_obj.signer_id_1"
                 prop="doc_signer_obj.signer_id_1"
+                :label="t('document.commission.storekeeper')"
                 :placeholder="t('document.commission.storekeeper')"
                 label-class="text-[#A8AAAE] text-xs font-medium"
                 required
                 @change="changeUser($event, 'signer_id_1')"
               >
-                <template v-if="usersStore.users">
+                <template v-if="signersList.warehouseman.users">
                   <ElOption
-                    v-for="item in usersStore.users.users"
+                    v-for="item in signersList.warehouseman.users"
                     :key="item.id"
                     :label="usersStore.getUserFullName(item)"
                     :value="item.id"
@@ -1597,9 +1601,9 @@ const changeUser = (val, key) => {
                 required
                 @change="changeUser($event, 'signer_id_2')"
               >
-                <template v-if="usersStore.users">
+                <template v-if="signersList.merchandiser.users">
                   <ElOption
-                    v-for="item in usersStore.users.users"
+                    v-for="item in signersList.merchandiser.users"
                     :key="item.id"
                     :label="usersStore.getUserFullName(item)"
                     :value="item.id"
@@ -1634,9 +1638,9 @@ const changeUser = (val, key) => {
                 required
                 @change="changeUser($event, 'signer_id_4')"
               >
-                <template v-if="usersStore.users">
+                <template v-if="signersList.manager_base.users">
                   <ElOption
-                    v-for="item in usersStore.users.users"
+                    v-for="item in signersList.manager_base.users"
                     :key="item.id"
                     :label="usersStore.getUserFullName(item)"
                     :value="item.id"
@@ -1652,9 +1656,9 @@ const changeUser = (val, key) => {
                 required
                 @change="changeUser($event, 'signer_id_5')"
               >
-                <template v-if="usersStore.users">
+                <template v-if="signersList.head_warehouse.users">
                   <ElOption
-                    v-for="item in usersStore.users.users"
+                    v-for="item in signersList.head_warehouse.users.users"
                     :key="item.id"
                     :label="usersStore.getUserFullName(item)"
                     :value="item.id"

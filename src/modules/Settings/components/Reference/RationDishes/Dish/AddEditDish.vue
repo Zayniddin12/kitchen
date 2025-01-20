@@ -186,7 +186,7 @@ const handleSubmit = async () => {
 };
 
 const changeInput = async (event, index) => {
-  await store.GET_MEALS_VID_PRO({ parent_id: event });
+  await store.GET_MEALS_VID_PRO({ parent_id: event, per_page: 100 });
   dataValue.value.compositions[index].vid_list = store.parentProductType?.product_types;
   dataValue.value.compositions[index].unit_id = null;
 };
@@ -298,7 +298,7 @@ const changeInputProduct = (val, index) => {
 
           <template v-else>
             <div class="mt-[24px]">
-              <h1 class="text-[#000D24] text-[18px] font-medium">{{$t('kitchen.compositionDish')}}</h1>
+              <h1 class="text-[#000D24] text-[18px] font-medium">{{ $t("kitchen.compositionDish") }}</h1>
 
               <div class="bg-[#F8F9FC] rounded-[16px] p-[16px] mt-[24px]">
                 <div class="grid grid-cols-4 gap-4 border-b mt-[16px]"
@@ -307,9 +307,9 @@ const changeInputProduct = (val, index) => {
                 >
                   <app-select
                     v-model="item.product_type_parent_id"
-                    label="Тип продукта"
+                    :label="$t('product.create')"
                     label-class="text-[#A8AAAE] text-[12px]"
-                    placeholder="Выберите"
+                    :placeholder="$t('form.select')"
                     itemValue="id"
                     itemLabel="name"
                     :items="store.typeProduct.product_categories"
@@ -319,9 +319,9 @@ const changeInputProduct = (val, index) => {
                   <app-select
                     v-model="item.product_type_id"
                     @change="changeInputProduct($event, index)"
-                    label="Вид продукта"
+                    :label="$t('product.view')"
                     label-class="text-[#A8AAAE] text-[12px]"
-                    placeholder="Выберите"
+                    :placeholder="$t('form.select')"
                     itemValue="id"
                     itemLabel="name"
                     :items="item.vid_list"
@@ -329,7 +329,7 @@ const changeInputProduct = (val, index) => {
 
                   <app-input
                     v-model="item.quantity"
-                    label="Количество"
+                    :label="$t('common.quantity')"
                     label-class="text-[#A8AAAE] text-[12px]"
                     placeholder="0.0"
                   />
@@ -339,9 +339,9 @@ const changeInputProduct = (val, index) => {
                       v-model="item.unit_id"
                       disabled
                       class="w-full"
-                      label="Ед. измерения"
+                      :label="$t('common.measurement')"
                       label-class="text-[#A8AAAE] text-[12px]"
-                      placeholder="Выберите"
+                      :placeholder="$t('form.select')"
                       itemValue="id"
                       itemLabel="name"
                       :items="store.units.units"
@@ -366,7 +366,7 @@ const changeInputProduct = (val, index) => {
                   class="mr-[4px]"
                   alt="plus"
                 />
-                Добавить еще
+               {{$t('method.addMore')}}
               </button>
             </div>
           </template>
@@ -381,7 +381,7 @@ const changeInputProduct = (val, index) => {
             v-if="route.name === 'reference-dish-id'"
             @click="deleteFn"
           >
-            {{$t('method.delete')}}
+            {{ $t("method.delete") }}
           </button>
 
           <div class="flex items-center justify-end ml-auto">
@@ -389,11 +389,11 @@ const changeInputProduct = (val, index) => {
               class="custom-cancel-btn"
               @click="cancelFn"
             >
-              {{$t('method.cancel')}}
+              {{ $t("method.cancel") }}
             </button>
 
             <button class="custom-apply-btn ml-[8px]" @click="handleSubmit">
-              {{ route.name === "reference-dish-id" ? "Сохранить" : "Добавить" }}
+              {{ route.name === "reference-dish-id" ? $t('method.save') : $t('method.add') }}
             </button>
           </div>
         </div>
@@ -409,7 +409,7 @@ const changeInputProduct = (val, index) => {
           alt="edit"
           class="mr-[12px]"
         />
-        Редактировать
+        {{$t('method.edit')}}
       </button>
     </div>
   </AppOverlay>

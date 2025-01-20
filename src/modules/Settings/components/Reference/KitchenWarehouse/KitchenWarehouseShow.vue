@@ -60,7 +60,7 @@ onMounted(() => {
         <template v-if="settingsStore.kitchenWarehouseDetail">
           <div>
             <span class="app-card__item-title">
-              Наименование
+              {{$t('common.name2')}}
             </span>
             <p>
               {{ settingsStore.kitchenWarehouseDetail.name[activeLocale] ?? "-" }}
@@ -68,7 +68,7 @@ onMounted(() => {
           </div>
           <div>
             <span class="app-card__item-title">
-              База складов
+              {{$t('База складов')}}
             </span>
             <p>
               -
@@ -76,7 +76,7 @@ onMounted(() => {
           </div>
           <div>
             <span class="app-card__item-title">
-              Вместимость склада
+              {{$t('Вместимость склада')}}
             </span>
             <p>
               {{ settingsStore.kitchenWarehouseDetail.capacity || "-" }}
@@ -84,7 +84,7 @@ onMounted(() => {
           </div>
           <div>
             <span class="app-card__item-title">
-              Ед. изм. вместимости
+              {{ $t('Ед. изм. вместимости') }}
             </span>
             <p>
               -
@@ -92,7 +92,7 @@ onMounted(() => {
           </div>
           <div>
             <span class="app-card__item-title">
-              Тип кухни
+              {{$t('Тип кухни')}}
             </span>
             <p>
               -
@@ -100,7 +100,7 @@ onMounted(() => {
           </div>
           <div>
             <span class="app-card__item-title">
-              Вместимость кухни
+              {{$t('Вместимость кухни')}}
             </span>
             <p>
               {{ settingsStore.kitchenWarehouseDetail.kitchen_capacity ?? "-" }}
@@ -117,12 +117,8 @@ onMounted(() => {
           alt="edit"
           class="size-5"
         />
-        Редактировать
+        {{$t('method.edit')}}
       </RouterLink>
     </div>
   </section>
 </template>
-
-<style lang="scss">
-
-</style>
