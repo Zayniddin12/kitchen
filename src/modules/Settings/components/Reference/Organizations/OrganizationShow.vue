@@ -62,7 +62,7 @@ onMounted(() => {
         <template v-if="settingsStore.organizationDetail">
           <div>
           <span class="app-card__item-title">
-            Наименование
+            {{$t('common.name2')}}
           </span>
             <p>
               {{ settingsStore.organizationDetail.name || "-" }}
@@ -70,7 +70,7 @@ onMounted(() => {
           </div>
           <div>
           <span class="app-card__item-title">
-            Юр. адрес
+            {{$t('common.legalAddress')}}
           </span>
             <p>
               {{ settingsStore.organizationDetail.address || "-" }}
@@ -78,7 +78,7 @@ onMounted(() => {
           </div>
           <div>
           <span class="app-card__item-title">
-            ИНН
+            {{$t('common.tin')}}
           </span>
             <p>
               {{ settingsStore.organizationDetail.tin || "-" }}
@@ -95,12 +95,8 @@ onMounted(() => {
           alt="edit"
           class="size-5"
         />
-        Редактировать
+        {{$t('method.edit')}}
       </RouterLink>
     </div>
   </section>
 </template>
-
-<style lang="scss">
-
-</style>

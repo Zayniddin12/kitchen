@@ -96,7 +96,7 @@ const tableCurrentChange = (value: FoodFactoryListType) => {
       <div class="flex items-center">
         <el-input
           v-model="form.search"
-          placeholder="Поиск"
+          :placeholder="$t('form.search')"
           :prefix-icon="Search"
           class="w-[300px] mr-[16px]"
         />
@@ -117,7 +117,7 @@ const tableCurrentChange = (value: FoodFactoryListType) => {
                   maskRepeat: 'no-repeat'
                    }"
           ></span>
-          Добавить
+          {{$t('method.add')}}
         </button>
 
         <button>
@@ -146,13 +146,13 @@ const tableCurrentChange = (value: FoodFactoryListType) => {
         </el-table-column>
         <el-table-column
           prop="name"
-          label="Наименование"
+          :label="$t('common.name2')"
           sortable
           width="400"
         />
         <el-table-column
           prop="management"
-          label="Региональное управление"
+          :label="$t('settings.regionalAdministration')"
           sortable
         >
           <template #default="{row}">
@@ -160,7 +160,7 @@ const tableCurrentChange = (value: FoodFactoryListType) => {
           </template>
         </el-table-column>
         <el-table-column
-          label="Действие"
+          :label="$t('common.action')"
           align="right"
         >
           <template #default="{row}">
@@ -193,8 +193,7 @@ const tableCurrentChange = (value: FoodFactoryListType) => {
         class="mt-6 flex items-center justify-between"
       >
         <div class="text-cool-gray text-[14px]">
-          Показано {{ form.page }}–{{ form.per_page }} из {{ settingsStore.foodFactories.paginator.pages_count }}
-          результатов
+          Показано {{ form.page }}–{{ form.per_page }} из {{ settingsStore.foodFactories.paginator.pages_count }} результатов
         </div>
 
         <el-pagination

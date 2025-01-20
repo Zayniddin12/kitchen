@@ -172,8 +172,8 @@ watch(() => route.name, () => {
             <div class="grid grid-cols-3 gap-4">
               <app-input
                 v-model="dataValue.name.ru"
-                label="Наименование (Рус)"
-                placeholder="Введите"
+                :label="$t('Наименование (Рус)')"
+                :placeholder="$t('form.select')"
                 label-class="text-[#A8AAAE] font-medium text-[12px]"
                 class="w-full"
                 required
@@ -183,8 +183,8 @@ watch(() => route.name, () => {
 
               <app-input
                 v-model="dataValue.name.uz"
-                label="Наименование (Ўзб)"
-                placeholder="Введите"
+                :label="$t('Наименование (Ўзб)')"
+                :placeholder="$t('form.select')"
                 label-class="text-[#A8AAAE] font-medium text-[12px]"
                 class="w-full"
                 required
@@ -194,8 +194,8 @@ watch(() => route.name, () => {
 
               <app-select
                 v-model="dataValue.base_id"
-                label="База складов"
-                placeholder="Введите"
+                :label="$t('База складов')"
+                :placeholder="$t('form.select')"
                 label-class="text-[#A8AAAE] font-medium text-[12px]"
                 class="w-full"
                 required
@@ -208,8 +208,8 @@ watch(() => route.name, () => {
 
               <app-input
                 v-model="dataValue.capacity"
-                label="Вместимость склада"
-                placeholder="Введите"
+                :label="$t('Вместимость склада')"
+                :placeholder="$t('form.select')"
                 label-class="text-[#A8AAAE] font-medium text-[12px]"
                 class="w-full"
                 required
@@ -223,8 +223,8 @@ watch(() => route.name, () => {
                 :items="store.units.units"
                 item-value="id"
                 item-label="name"
-                label="Ед. изм. вместимости"
-                placeholder="Введите"
+                :label="$t('Ед. изм. вместимости')"
+                :placeholder="$t('form.select')"
                 label-class="text-[#A8AAAE] font-medium text-[12px]"
                 class="w-full"
                 type="number"
@@ -233,8 +233,8 @@ watch(() => route.name, () => {
 
               <app-select
                 v-model="dataValue.kitchen_type_id"
-                label="Тип кухни"
-                placeholder="Введите"
+                :label="$t('Тип кухни')"
+                :placeholder="$t('form.select')"
                 label-class="text-[#A8AAAE] font-medium text-[12px]"
                 class="w-full"
                 required
@@ -247,8 +247,8 @@ watch(() => route.name, () => {
 
               <app-input
                 v-model="dataValue.kitchen_capacity"
-                label="Вместимость кухни"
-                placeholder="Введите"
+                :label="$t('Вместимость кухни')"
+                :placeholder="$t('form.select')"
                 label-class="text-[#A8AAAE] font-medium text-[12px]"
                 class="w-full"
                 required
@@ -261,7 +261,7 @@ watch(() => route.name, () => {
           <ElSwitch
             v-model="dataValue.status"
             v-if="route.params.id && !route.query.type"
-            active-text="Деактивация"
+            :active-text="$t('common.deactivation')"
             class="app-switch mt-auto"
             :before-change="switchChange"
           />
@@ -277,7 +277,7 @@ watch(() => route.name, () => {
             class="custom-danger-btn"
             @click="deleteFn"
           >
-            Удалить
+            {{$t('method.delete')}}
           </button>
 
           <div class="flex items-center gap-4">
@@ -285,14 +285,14 @@ watch(() => route.name, () => {
               @click="cancelFn"
               class="custom-cancel-btn"
             >
-              Отменить
+              {{$t('method.cancel')}}
             </button>
 
             <button
               class="custom-apply-btn"
               @click="handleSubmit"
             >
-              {{ $route.params.id ? "Сохранить" : "Добавить" }}
+              {{ $route.params.id ? $t('method.save') : $t('method.add') }}
             </button>
           </div>
         </div>
@@ -308,7 +308,7 @@ watch(() => route.name, () => {
             src="@/assets/images/icons/edit.svg"
             alt="#"
           >
-          Редактировать
+          {{$t('method.edit')}}
         </button>
       </div>
     </div>

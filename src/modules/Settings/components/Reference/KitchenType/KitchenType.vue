@@ -95,7 +95,7 @@ const currentTableChange = (value: Record<string, any>) => {
         <el-input
             v-model="params.search"
             size="large"
-            placeholder="Поиск"
+            :placeholder="$t('form.search')"
             :prefix-icon="Search as any"
             class="w-[300px] mr-[16px]"
             @input="handleSearch"
@@ -109,7 +109,7 @@ const currentTableChange = (value: Record<string, any>) => {
               src="@/assets/images/icons/plus.svg"
               alt="#"
           />
-          Добавить
+          {{$t('method.add')}}
         </button>
       </div>
     </div>
@@ -137,7 +137,7 @@ const currentTableChange = (value: Record<string, any>) => {
       </el-table-column>
       <el-table-column
           prop="name"
-          label="Наименование кухни"
+          :label="$t('Наименование кухни')"
           sortable
           width="400"
       >
@@ -148,7 +148,7 @@ const currentTableChange = (value: Record<string, any>) => {
         </template>
       </el-table-column>
       <el-table-column
-          label="Действие"
+          :label="$t('common.action')"
           align="right"
       >
         <template #default="scope">
