@@ -58,6 +58,7 @@ onMounted(() => {
         :rounded="16"
         parent-class-name="w-[70%] app-card border border-[#E2E6F3] p-[24px] min-h-[60vh]"
       >
+<!--        <pre>{{settingsStore.baseWarehouse}}</pre>-->
         <template v-if="settingsStore.baseWarehouse">
           <div class="grid grid-cols-2 gap-6">
             <div>
@@ -80,10 +81,10 @@ onMounted(() => {
             </div>
             <div>
               <span class="app-card__item-title">
-                {{$t('common.unitMeasurement')}}
+<!--                {{$t('common.unitMeasurement')}}-->
               </span>
               <p>
-                -
+<!--                - -->
               </p>
             </div>
             <div>
