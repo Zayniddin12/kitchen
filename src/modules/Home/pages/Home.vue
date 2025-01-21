@@ -396,7 +396,7 @@ const totalPrice = computed(() =>
         </div>
       </div>
       <GraphChart
-        :title="t('product.arrival')"
+        :title="t('product.by_warehouses')"
         :subtitle="t('home.textWillGoHere')"
         class="mb-10"
         :loading="statisticsStore.incomingGraphProductsLoading"

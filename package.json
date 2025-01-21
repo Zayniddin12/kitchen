@@ -11,6 +11,8 @@
     "type-check": "vue-tsc --build --force"
   },
   "dependencies": {
+    "@casl/ability": "^6.7.2",
+    "@casl/vue": "^2.2.2",
     "@element-plus/icons-vue": "^2.3.1",
     "@vue/compiler-sfc": "^3.5.8",
     "@vueuse/core": "^11.1.0",

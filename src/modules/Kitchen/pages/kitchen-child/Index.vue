@@ -26,14 +26,14 @@ const menuBoxes = computed(() => {
       id: 1,
       icon: menuIcon,
       title: t("common.menu"),
-      description: t("kitchen.therePlans", {number: 4}),
+      description: t("kitchen.therePlans", { number: 4 }),
       link: { name: "KitchenMenuIndex" },
     },
     {
       id: 2,
       icon: kitchenIcon,
       title: t("kitchen.ration"),
-      description: t("kitchen.rations", {number: 80}),
+      description: t("kitchen.rations", { number: 80 }),
       link: { name: "KitchenRation" },
     },
     {
@@ -52,14 +52,14 @@ const salesBoxes = computed(() => {
       id: 1,
       icon: menuIcon,
       title: t("common.menu"),
-      description: t("kitchen.therePlans", {number: 4}),
+      description: t("kitchen.therePlans", { number: 4 }),
       link: { name: "KitchenMenuIndex" },
     },
     {
       id: 2,
       icon: kitchenIcon,
       title: t("kitchen.dishes2"),
-      description: t("kitchen.rations", {number: 80}),
+      description: t("kitchen.rations", { number: 80 }),
       link: { name: "KitchenDishesIndex" },
     },
     {
@@ -89,7 +89,7 @@ const setBreadCrumbFn = () => {
   setBreadCrumb([
     {
       label: "kitchen.title",
-      isTranslate: true
+      isTranslate: true,
     },
     {
       label: kitchenStore.part.title,

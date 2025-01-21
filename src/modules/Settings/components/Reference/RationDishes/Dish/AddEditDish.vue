@@ -307,7 +307,7 @@ const changeInputProduct = (val, index) => {
                 >
                   <app-select
                     v-model="item.product_type_parent_id"
-                    :label="$t('product.create')"
+                    :label="$t('product.type')"
                     label-class="text-[#A8AAAE] text-[12px]"
                     :placeholder="$t('form.select')"
                     itemValue="id"

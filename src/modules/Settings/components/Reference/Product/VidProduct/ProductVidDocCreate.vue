@@ -122,6 +122,7 @@ const handleSubmit = async () => {
       formData.append("name[uz]", dataValue.value.name.uz);
       formData.append("name[ru]", dataValue.value.name.ru);
       formData.append("parent_id", dataValue.value.parent_id);
+      formData.append("place_occupied", dataValue.value.place_occupied);
       formData.append("measurement_unit_id", Number(dataValue.value.measurement_unit_id));
       if (route.params.id) formData.append("_method", "PUT");
 
