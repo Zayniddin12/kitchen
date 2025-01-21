@@ -463,8 +463,8 @@ const deleteProduct = (index: number) => {
   actForm.products.splice(index, 1);
 };
 
-const fetchRespondents = (search = "") => {
-  settingsStore.fetchRespondents();
+const fetchRespondents = (params: any) => {
+  settingsStore.fetchRespondents(params);
 };
 
 const selectedProductTypes = computed(() => {
@@ -544,6 +544,7 @@ const openModal = async () => {
     form[`${type}_type`] = activeWorkplace.workplace_type;
     form[type] = `${activeWorkplace.workplace_id}_${activeWorkplace.workplace_type}`;
     fetchRespondents({ type: [activeWorkplace.workplace_type] });
+    console.log("kirdi", activeWorkplace.workplace_type);
   }
 
   settingsStore.GET_TYPE_PRODUCT();

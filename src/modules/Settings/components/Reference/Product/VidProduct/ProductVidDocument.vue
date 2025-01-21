@@ -56,11 +56,11 @@ const setBreadCrumbFn = () => {
       to: { name: "reference" }
     },
     {
-      label: "Виды продуктов",
+      label: "Продукты",
       to: { name: "reference" }
     },
     {
-      label: "Типы продуктов",
+      label: "Виды продуктов",
       isActionable: true
     }
   ]);
