@@ -154,7 +154,7 @@ const filterForm = async () => {
 
 const clearForm = () => {
 	router.push({query: {}});
-	isOpenFilter.value = false;
+	// isOpenFilter.value = false;
 };
 
 onMounted(() => {
