@@ -97,19 +97,16 @@ const fetchActs = async () => {
     await documentStore.fetchActs(filterObjectValues(form));
     validationErrors.value = null;
   } catch (error: any) {
+    console.log(error, 'rere');
     if (error?.error?.code === 422) {
       validationErrors.value = error.meta.validation_errors;
     }
   }
 };
 
-watch(
-  () => route.query,
-  () => {
-    fetchActs();
-  },
-  { immediate: true },
-);
+watch(() => route.query, () => {
+  fetchActs();
+}, { immediate: true });
 
 watch(() => documentStore.documentsIsRefresh, (newValue) => {
   if (newValue) fetchActs();
@@ -127,7 +124,6 @@ const tableCurrentChange = (value: ActType) => {
 const changePage = (value: number) => {
   router.push({ query: { ...route.query, page: value } });
 };
-
 </script>
 
 <template>
