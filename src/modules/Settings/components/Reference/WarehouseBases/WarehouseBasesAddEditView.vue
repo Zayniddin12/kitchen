@@ -237,7 +237,6 @@ const isTranslate = computed(() => !!route.meta.isTranslate);
             </div>
 
             <div class="grid grid-cols-2 gap-4">
-              {{settingsStore.foodFactories?.food_factories}}
               <AppSelect
                 v-model="warehouseData.factory_id"
                 :items="settingsStore.foodFactories?.food_factories"

@@ -17,7 +17,7 @@ const store = useWarehouseBasesStore();
 const consumption = ref<any[]>([{
   category_id: null,
   product_type_id: null,
-  quantity: null,
+  quantity: '0.00001',
   measurement: null,
   price: null,
   totalSum: null,
@@ -25,7 +25,7 @@ const consumption = ref<any[]>([{
 const result = ref<any[]>([{
   category_id: null,
   product_type_id: null,
-  quantity: null,
+  quantity: '0.00001',
   measurement: null,
   price: null,
   totalSum: null,
