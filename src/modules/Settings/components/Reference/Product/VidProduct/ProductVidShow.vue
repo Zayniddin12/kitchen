@@ -84,6 +84,11 @@ onMounted(() => {
               <span class="app-card__item-title">Единица измерения</span>
               <p>{{ settingsStore.typeProductDetail.measurement_unit_name || "—" }}</p>
             </div>
+
+            <div>
+              <span class="app-card__item-title">Занимаемое место</span>
+              <p>{{ settingsStore.typeProductDetail.place_occupied || "—" }}</p>
+            </div>
           </div>
         </template>
       </AppOverlay>
