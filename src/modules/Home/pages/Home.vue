@@ -225,8 +225,6 @@ onMounted(() => {
   };
 });
 
-
-const receipt = ref(null);
 const items = ref([
   { name: "Apples", price: 3.5 },
   { name: "Bananas", price: 2.0 },
@@ -234,261 +232,256 @@ const items = ref([
   { name: "Milk", price: 1.5 },
   { name: "Eggs", price: 3.0 },
 ]);
-
-const totalPrice = computed(() =>
-  items.value.reduce((total, item) => total + item.price, 0),
-);
-
 </script>
 
 <template>
-    <div>
-      <h1 class="m-0 font-semibold text-[32px] mb-[24px]">
-        Главная
-      </h1>
-      <div
-        v-if="settingsStore.regional.managements.length"
-        class="app-tabs !text-sm mb-6"
-      >
-        <RouterLink
-          :to="{name: route.name}"
-          :class="[
+  <div>
+    <h1 class="m-0 font-semibold text-[32px] mb-[24px]">
+      {{ $t("navigation.home") }}
+    </h1>
+    <div
+      v-if="settingsStore.regional.managements.length"
+      class="app-tabs !text-sm mb-6"
+    >
+      <RouterLink
+        :to="{name: route.name}"
+        :class="[
                 'app-tab',
                 { 'app-tab--active': !form.management_id },
               ]"
-        >
-          {{ t("common.all") }}
-        </RouterLink>
-        <RouterLink
-          v-for="item in settingsStore.regional.managements"
-          :key="item.id"
-          :to="{ query: { ...route.query, ...{ management_id: item.id } } }"
-          :class="[
+      >
+        {{ t("common.all") }}
+      </RouterLink>
+      <RouterLink
+        v-for="item in settingsStore.regional.managements"
+        :key="item.id"
+        :to="{ query: { ...route.query, ...{ management_id: item.id } } }"
+        :class="[
                 'app-tab',
                 { 'app-tab--active': form.management_id === item.id },
               ]"
+      >
+        {{ item.name }}
+      </RouterLink>
+    </div>
+
+    <div class="flex items-start gap-4 mb-[40px]">
+      <div class="w-[55%]">
+        <div class="grid grid-cols-2 gap-x-4 mb-10">
+          <AnalyticsCard
+            :icon="WarehouseIcon"
+            :title="t('home.warehouseOccupancy')"
+            :subtitle="t('home.textWillGoHere')"
+            :data="warehouseCapacityData"
+            :loading="statisticsStore.warehouseCapacityLoading"
+          />
+          <AnalyticsCard
+            :title="t('home.visitorsNumber')"
+            :icon="UsersIcon"
+            :subtitle="t('home.textWillGoHere')"
+            :data="visitorsData"
+            :loading="statisticsStore.visitorsLoading"
+          />
+        </div>
+        <PreparationsChart
+          :title="t('home.preparation')"
+          :total_price="statisticsStore.kitchenPreparations?.total_price"
+          :percent="5"
+          :data="statisticsStore.kitchenPreparations?.kitchens ?? []"
+          :loading="statisticsStore.kitchenPreparationsLoading"
         >
-          {{ item.name }}
-        </RouterLink>
+          <template #form>
+            <AppForm
+              :value="kitchenPreparationsForm"
+              :validation-errors="kitchenPreparationsValidationErrors"
+              class="grid grid-cols-3 gap-x-2"
+            >
+              <AppSelect
+                v-model="kitchenPreparationsForm.type_id"
+                prop="type_id"
+                size="large"
+                :placeholder="t('home.allType')"
+                :items="settingsStore.kitchenWarehouseList"
+                item-label="name"
+                item-value="id"
+                @change="fetchKitchenPreparations"
+              />
+              <AppDatePicker
+                v-model="kitchenPreparationsForm.from_date"
+                prop="from_date"
+                size="large"
+                @change="fetchKitchenPreparations"
+              />
+              <AppDatePicker
+                v-model="kitchenPreparationsForm.to_date"
+                prop="to_date"
+                size="large"
+                @change="fetchKitchenPreparations"
+              />
+            </AppForm>
+          </template>
+        </PreparationsChart>
       </div>
+      <div class="w-[45%]">
+        <div class="p-6 bg-[#F8F9FC] rounded-t-[24px]">
+          <h6 class="text-dark text-lg font-semibold ">{{ t("home.lowStockProducts") }}</h6>
+        </div>
 
-      <div class="flex items-start gap-4 mb-[40px]">
-        <div class="w-[55%]">
-          <div class="grid grid-cols-2 gap-x-4 mb-10">
-            <AnalyticsCard
-              :icon="WarehouseIcon"
-              :title="t('home.warehouseOccupancy')"
-              :subtitle="t('home.textWillGoHere')"
-              :data="warehouseCapacityData"
-              :loading="statisticsStore.warehouseCapacityLoading"
-            />
-            <AnalyticsCard
-              :title="t('home.visitorsNumber')"
-              :icon="UsersIcon"
-              :subtitle="t('home.textWillGoHere')"
-              :data="visitorsData"
-              :loading="statisticsStore.visitorsLoading"
-            />
-          </div>
-          <PreparationsChart
-            :title="t('home.preparation')"
-            :total_price="statisticsStore.kitchenPreparations?.total_price"
-            :percent="5"
-            :data="statisticsStore.kitchenPreparations?.kitchens ?? []"
-            :loading="statisticsStore.kitchenPreparationsLoading"
+        <ElTable
+          v-loading="statisticsStore.productsLoading"
+          :data="statisticsStore.products"
+          :row-class-name="handleClass"
+          :empty-text="t('common.empty')"
+        >
+          <ElTableColumn
+            prop="idx"
+            label="№"
+            width="80"
           >
-            <template #form>
-              <AppForm
-                :value="kitchenPreparationsForm"
-                :validation-errors="kitchenPreparationsValidationErrors"
-                class="grid grid-cols-3 gap-x-2"
-              >
-                <AppSelect
-                  v-model="kitchenPreparationsForm.type_id"
-                  prop="type_id"
-                  size="large"
-                  :placeholder="t('home.allType')"
-                  :items="settingsStore.kitchenWarehouseList"
-                  item-label="name"
-                  item-value="id"
-                  @change="fetchKitchenPreparations"
-                />
-                <AppDatePicker
-                  v-model="kitchenPreparationsForm.from_date"
-                  prop="from_date"
-                  size="large"
-                  @change="fetchKitchenPreparations"
-                />
-                <AppDatePicker
-                  v-model="kitchenPreparationsForm.to_date"
-                  prop="to_date"
-                  size="large"
-                  @change="fetchKitchenPreparations"
-                />
-              </AppForm>
+            <template #default="{$index}">
+              {{ $index + 1 }}
             </template>
-          </PreparationsChart>
-        </div>
-        <div class="w-[45%]">
-          <div class="p-6 bg-[#F8F9FC] rounded-t-[24px]">
-            <h6 class="text-dark text-lg font-semibold ">{{ t("home.lowStockProducts") }}</h6>
-          </div>
-
-          <ElTable
-            v-loading="statisticsStore.productsLoading"
-            :data="statisticsStore.products"
-            :row-class-name="handleClass"
-            :empty-text="t('common.empty')"
+          </ElTableColumn>
+          <ElTableColumn
+            prop="product_parent_name"
+            :label="t('product.type')"
           >
-            <ElTableColumn
-              prop="idx"
-              label="№"
-              width="80"
-            >
-              <template #default="{$index}">
-                {{ $index + 1 }}
-              </template>
-            </ElTableColumn>
-            <ElTableColumn
-              prop="product_parent_name"
-              :label="t('product.type')"
-            >
-              <template #default="{row}:{row:ProductType}">
-                <div
-                  v-if="row.product_image || row.product_parent_name"
-                  class="flex items-center gap-x-3"
-                >
-                  <el-avatar
-                    v-if="row.product_image"
-                    :size="32"
-                    :src="row.product_image"
-                  />
-                  <span>{{ row.product_parent_name }}</span>
-                </div>
-                <template v-else>-</template>
-              </template>
-            </ElTableColumn>
-            <ElTableColumn
-              prop="product_name"
-              :label="t('product.view')"
-            >
-              <template #default="{row}:{row: ProductType}">
-                {{ row.product_name || "-" }}
-              </template>
-            </ElTableColumn>
-            <ElTableColumn
-              prop="quantity"
-              :label="t('common.quantity')"
-            >
-              <template #default="{row}:{row: ProductType}">
-                {{ row.quantity || "-" }}
-              </template>
-            </ElTableColumn>
-            <ElTableColumn
-              prop="base_name"
-              :label="t('common.base')"
-            >
-              <template #default="{row}:{row: ProductType}">
-                {{ row.base_name || "-" }}
-              </template>
-            </ElTableColumn>
-          </ElTable>
-        </div>
-      </div>
-      <GraphChart
-        :title="t('product.arrival')"
-        :subtitle="t('home.textWillGoHere')"
-        class="mb-10"
-        :loading="statisticsStore.incomingGraphProductsLoading"
-        :data="statisticsStore.incomingGraphProducts"
-      >
-        <template #form>
-          <AppForm
-            :value="incomingGraphForm"
-            :validation-errors="incomingGraphValidationErrors"
-            class="grid grid-cols-3 gap-x-4"
+            <template #default="{row}:{row:ProductType}">
+              <div
+                v-if="row.product_image || row.product_parent_name"
+                class="flex items-center gap-x-3"
+              >
+                <el-avatar
+                  v-if="row.product_image"
+                  :size="32"
+                  :src="row.product_image"
+                />
+                <span>{{ row.product_parent_name }}</span>
+              </div>
+              <template v-else>-</template>
+            </template>
+          </ElTableColumn>
+          <ElTableColumn
+            prop="product_name"
+            :label="t('product.view')"
           >
-            <AppSelect
-              v-model="incomingGraphForm.type_id"
-              prop="type_id"
-              size="large"
-              :placeholder="t('home.allType')"
-              :items="settingsStore.kitchenTypesList"
-              item-value="id"
-              item-label="name"
-              @change="fetchIncomingGraphProducts"
-            />
-            <AppDatePicker
-              v-model="incomingGraphForm.from_date"
-              prop="from_date"
-              size="large"
-              @change="fetchIncomingGraphProducts"
-            />
-            <AppDatePicker
-              v-model="incomingGraphForm.to_date"
-              prop="to_date"
-              size="large"
-              @change="fetchIncomingGraphProducts"
-            />
-          </AppForm>
-        </template>
-      </GraphChart>
-      <GraphChart
-        :title="t('home.leftoversFromDishes')"
-        :subtitle="t('home.textWillGoHere')"
-        class="mb-10"
-        :loading="statisticsStore.outgoingGraphProductsLoading"
-        :data="statisticsStore.outgoingGraphProducts"
-      >
-        <template #form>
-          <AppForm
-            :value="outgoingGraphForm"
-            :validation-errors="outgoingGraphValidationErrors"
-            class="grid grid-cols-3 gap-x-4"
+            <template #default="{row}:{row: ProductType}">
+              {{ row.product_name || "-" }}
+            </template>
+          </ElTableColumn>
+          <ElTableColumn
+            prop="quantity"
+            :label="t('common.quantity')"
           >
-            <AppSelect
-              v-model="outgoingGraphForm.type_id"
-              prop="type_id"
-              size="large"
-              clearable
-              :placeholder="t('kitchen.all')"
-              :items="settingsStore.kitchenTypesList"
-              item-value="id"
-              item-label="name"
-              @change="fetchOutgoingGraphProducts"
-            />
-            <AppDatePicker
-              v-model="outgoingGraphForm.from_date"
-              prop="from_date"
-              size="large"
-              @change="fetchOutgoingGraphProducts"
-            />
-            <AppDatePicker
-              v-model="outgoingGraphForm.to_date"
-              prop="to_date"
-              size="large"
-              @change="fetchOutgoingGraphProducts"
-            />
-          </AppForm>
-        </template>
-      </GraphChart>
-
-      <div class="grid grid-cols-2 gap-x-4">
-        <AnalyticsCard
-          :title="t('home.numberOfKitchens')"
-          :icon="KitchenIcon"
-          :subtitle="t('home.textWillGoHere')"
-          :data="kitchenData"
-          :loading="statisticsStore.kitchenCountLoading"
-        />
-        <AnalyticsCard
-          :title="t('home.numberOfWarehouses')"
-          :icon="BranchIcon"
-          :subtitle="t('home.textWillGoHere')"
-          :data="warehouseData"
-          :loading="statisticsStore.warehouseCountLoading"
-        />
+            <template #default="{row}:{row: ProductType}">
+              {{ row.quantity || "-" }} {{row.unit_name}}
+            </template>
+          </ElTableColumn>
+          <ElTableColumn
+            prop="base_name"
+            :label="t('common.base')"
+          >
+            <template #default="{row}:{row: ProductType}">
+              {{ row.base_name || "-" }}
+            </template>
+          </ElTableColumn>
+        </ElTable>
       </div>
     </div>
+    <GraphChart
+      :title="t('product.arrival')"
+      :subtitle="t('home.textWillGoHere')"
+      class="mb-10"
+      :loading="statisticsStore.incomingGraphProductsLoading"
+      :data="statisticsStore.incomingGraphProducts"
+    >
+      <template #form>
+        <AppForm
+          :value="incomingGraphForm"
+          :validation-errors="incomingGraphValidationErrors"
+          class="grid grid-cols-3 gap-x-4"
+        >
+          <AppSelect
+            v-model="incomingGraphForm.type_id"
+            prop="type_id"
+            size="large"
+            :placeholder="t('home.allType')"
+            :items="settingsStore.kitchenTypesList"
+            item-value="id"
+            item-label="name"
+            @change="fetchIncomingGraphProducts"
+          />
+          <AppDatePicker
+            v-model="incomingGraphForm.from_date"
+            prop="from_date"
+            size="large"
+            @change="fetchIncomingGraphProducts"
+          />
+          <AppDatePicker
+            v-model="incomingGraphForm.to_date"
+            prop="to_date"
+            size="large"
+            @change="fetchIncomingGraphProducts"
+          />
+        </AppForm>
+      </template>
+    </GraphChart>
+    <GraphChart
+      :title="t('home.leftoversFromDishes')"
+      :subtitle="t('home.textWillGoHere')"
+      class="mb-10"
+      :loading="statisticsStore.outgoingGraphProductsLoading"
+      :data="statisticsStore.outgoingGraphProducts"
+    >
+      <template #form>
+        <AppForm
+          :value="outgoingGraphForm"
+          :validation-errors="outgoingGraphValidationErrors"
+          class="grid grid-cols-3 gap-x-4"
+        >
+          <AppSelect
+            v-model="outgoingGraphForm.type_id"
+            prop="type_id"
+            size="large"
+            clearable
+            :placeholder="t('kitchen.all')"
+            :items="settingsStore.kitchenTypesList"
+            item-value="id"
+            item-label="name"
+            @change="fetchOutgoingGraphProducts"
+          />
+          <AppDatePicker
+            v-model="outgoingGraphForm.from_date"
+            prop="from_date"
+            size="large"
+            @change="fetchOutgoingGraphProducts"
+          />
+          <AppDatePicker
+            v-model="outgoingGraphForm.to_date"
+            prop="to_date"
+            size="large"
+            @change="fetchOutgoingGraphProducts"
+          />
+        </AppForm>
+      </template>
+    </GraphChart>
+
+    <div class="grid grid-cols-2 gap-x-4">
+      <AnalyticsCard
+        :title="t('home.numberOfKitchens')"
+        :icon="KitchenIcon"
+        :subtitle="t('home.textWillGoHere')"
+        :data="kitchenData"
+        :loading="statisticsStore.kitchenCountLoading"
+      />
+      <AnalyticsCard
+        :title="t('home.numberOfWarehouses')"
+        :icon="BranchIcon"
+        :subtitle="t('home.textWillGoHere')"
+        :data="warehouseData"
+        :loading="statisticsStore.warehouseCountLoading"
+      />
+    </div>
+  </div>
 </template>
 

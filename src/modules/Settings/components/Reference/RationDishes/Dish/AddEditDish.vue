@@ -96,11 +96,13 @@ onMounted(async () => {
         dataValue.value = meals.meal;
         existingImage.value = meals.meal.image;
 
-        meals.meal.compositions.map((e) => {
+        for (const e of meals.meal.compositions) {
+
           if (e.product_type_parent_id) {
-            return store.GET_MEALS_VID_PRO({ parent_id: e.product_type_parent_id });
+            await store.GET_MEALS_VID_PRO({ parent_id: e.product_type_parent_id, per_page: 100 });
+            e.vid_list = store.parentProductType?.product_types;
           }
-        });
+        }
       }
     }
   } catch (e) {
@@ -186,7 +188,7 @@ const handleSubmit = async () => {
 };
 
 const changeInput = async (event, index) => {
-  await store.GET_MEALS_VID_PRO({ parent_id: event });
+  await store.GET_MEALS_VID_PRO({ parent_id: event, per_page: 100 });
   dataValue.value.compositions[index].vid_list = store.parentProductType?.product_types;
   dataValue.value.compositions[index].unit_id = null;
 };
@@ -209,7 +211,7 @@ const changeInputProduct = (val, index) => {
 
   dataValue.value.compositions[index].unit_id = dataValue.value.compositions[index].vid_list.find((e) => e.id === val).unit_id;
 };
-</script>changeInput
+</script>
 
 <template>
   <AppOverlay :loading="loading">
@@ -298,7 +300,7 @@ const changeInputProduct = (val, index) => {
 
           <template v-else>
             <div class="mt-[24px]">
-              <h1 class="text-[#000D24] text-[18px] font-medium">{{$t('kitchen.compositionDish')}}</h1>
+              <h1 class="text-[#000D24] text-[18px] font-medium">{{ $t("kitchen.compositionDish") }}</h1>
 
               <div class="bg-[#F8F9FC] rounded-[16px] p-[16px] mt-[24px]">
                 <div class="grid grid-cols-4 gap-4 border-b mt-[16px]"
@@ -307,7 +309,7 @@ const changeInputProduct = (val, index) => {
                 >
                   <app-select
                     v-model="item.product_type_parent_id"
-                    :label="$t('product.create')"
+                    :label="$t('product.type')"
                     label-class="text-[#A8AAAE] text-[12px]"
                     :placeholder="$t('form.select')"
                     itemValue="id"
@@ -366,7 +368,7 @@ const changeInputProduct = (val, index) => {
                   class="mr-[4px]"
                   alt="plus"
                 />
-               {{$t('method.addMore')}}
+                {{ $t("method.addMore") }}
               </button>
             </div>
           </template>
@@ -381,7 +383,7 @@ const changeInputProduct = (val, index) => {
             v-if="route.name === 'reference-dish-id'"
             @click="deleteFn"
           >
-            {{$t('method.delete')}}
+            {{ $t("method.delete") }}
           </button>
 
           <div class="flex items-center justify-end ml-auto">
@@ -389,11 +391,11 @@ const changeInputProduct = (val, index) => {
               class="custom-cancel-btn"
               @click="cancelFn"
             >
-              {{$t('method.cancel')}}
+              {{ $t("method.cancel") }}
             </button>
 
             <button class="custom-apply-btn ml-[8px]" @click="handleSubmit">
-              {{ route.name === "reference-dish-id" ? $t('method.save') : $t('method.add') }}
+              {{ route.name === "reference-dish-id" ? $t("method.save") : $t("method.add") }}
             </button>
           </div>
         </div>
@@ -409,7 +411,7 @@ const changeInputProduct = (val, index) => {
           alt="edit"
           class="mr-[12px]"
         />
-        {{$t('method.edit')}}
+        {{ $t("method.edit") }}
       </button>
     </div>
   </AppOverlay>
