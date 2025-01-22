@@ -60,6 +60,11 @@ const activeUserUpdatePage = computed(() => {
   return !!(route.meta.type === "update" && routeId.value);
 });
 
+const rationsList = reactive<any>({
+  temporary: { rations: [] },
+  permanent: { rations: [] },
+});
+
 
 const form = ref<UserCreateOrUpdateDataType>({
   phone: "",
@@ -314,8 +319,10 @@ const setData = async () => {
     form.value.dining_locations = {
       permanent: {
         kitchen_id: "",
+        ration_id: "",
       },
       temporary: {
+        ration_id: "",
         kitchen_id: "",
         start_date: "",
         end_date: "",
@@ -411,6 +418,35 @@ const workingHours = reactive([{
   title: 12,
   key: 12,
 }]);
+
+watch(() => form.value.dining_locations?.temporary.kitchen_id, async (val) => {
+  console.log(val, "val");
+  if (val) {
+    form.value.dining_locations.temporary.ration_id = "";
+    rationsList.temporary = await settingsStore.GET_RATION_LIST({
+      per_page: 100,
+      kitchen_id: form.value.dining_locations?.temporary.kitchen_id,
+    });
+  } else {
+    form.value.dining_locations.temporary.ration_id = "";
+  }
+
+
+});
+
+watch(() => form.value.dining_locations?.permanent.kitchen_id, async (val) => {
+
+  if (val) {
+    form.value.dining_locations.permanent.ration_id = "";
+    rationsList.permanent = await settingsStore.GET_RATION_LIST({
+      per_page: 100,
+      kitchen_id: form.value.dining_locations?.permanent.kitchen_id,
+    });
+  } else {
+    form.value.dining_locations.permanent.ration_id = "";
+  }
+
+});
 
 </script>
 
@@ -709,6 +745,32 @@ const workingHours = reactive([{
                   item-label="name"
                   label="Временная кухня"
                   label-class="text-[#A8AAAE] text-xs font-medium"
+                  class="mb-1"
+                  clearable
+                />
+                <AppSelect
+                  v-model="form.dining_locations.permanent.ration_id"
+                  :items="rationsList.permanent.rations"
+                  :disabled="!form.dining_locations.permanent.kitchen_id"
+                  item-value="id"
+                  item-label="name"
+                  prop="dining_locations.permanent.ration_id"
+                  label="Постоянная кухня для выдачи рационов"
+                  label-class="text-[#A8AAAE] text-xs font-medium"
+                  required
+                  class="mb-1"
+                  clearable
+                />
+                <AppSelect
+                  v-model="form.dining_locations.temporary.ration_id"
+                  :disabled="!form.dining_locations.temporary.kitchen_id"
+                  prop="dining_locations.temporary.ration_id"
+                  :items="rationsList.temporary.rations"
+                  item-value="id"
+                  item-label="name"
+                  label="Временная кухня для выдачи рационов"
+                  label-class="text-[#A8AAAE] text-xs font-medium"
+                  required
                   class="mb-1"
                   clearable
                 />

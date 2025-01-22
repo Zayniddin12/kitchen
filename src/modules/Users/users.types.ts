@@ -69,10 +69,12 @@ export interface UserCreateOrUpdateDataPrefixType {
 }
 
 export interface UserCreateDiningLocationsChildType {
+  ration_id: string | number
   kitchen_id: number | "",
 }
 
 export interface UserCreateDiningLocationsTemporaryType extends UserCreateDiningLocationsChildType {
+  ration_id: string | number
   start_date: string,
   end_date: string,
 }
