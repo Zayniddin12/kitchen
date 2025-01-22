@@ -364,7 +364,7 @@ const fetchUser = async () => {
       }
     }
   }
-  setData();
+  await setData();
 };
 
 const gender = computed(() => {
@@ -748,6 +748,7 @@ watch(() => form.value.dining_locations?.permanent.kitchen_id, async (val) => {
                   class="mb-1"
                   clearable
                 />
+                {{ form.dining_locations.permanent }}
                 <AppSelect
                   v-model="form.dining_locations.permanent.ration_id"
                   :items="rationsList.permanent.rations"

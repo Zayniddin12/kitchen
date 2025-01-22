@@ -76,14 +76,15 @@ const clear = () => {
 watch(
   () => props.value,
   newValue => {
-    if (newValue && !model.value) {
+
+    if (newValue) {
       mediaFile.value = newValue;
     }
   },
   { immediate: true },
 );
 
-watch(model, readImage, {immediate: true});
+watch(model, readImage, { immediate: true });
 
 const setDefaultImage = (event: any) => {
   event.target.src = "https://www.landuse-ca.org/wp-content/uploads/2019/04/no-photo-available.png";
@@ -92,6 +93,7 @@ const setDefaultImage = (event: any) => {
 
 <template>
   <div class="app-media-uploader">
+    {{ mediaFile }}
     <input
       :id
       ref="input-file"

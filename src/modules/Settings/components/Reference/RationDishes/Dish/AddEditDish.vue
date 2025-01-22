@@ -94,7 +94,8 @@ onMounted(async () => {
       const meals = await store.GET_MEALS_DETAIL(route.params.id as string | number);
       if (meals && meals.meal) {
         dataValue.value = meals.meal;
-        existingImage.value = meals.meal.image;
+        existingImage.value = dataValue.value.image;
+
 
         for (const e of meals.meal.compositions) {
 
@@ -211,6 +212,9 @@ const changeInputProduct = (val, index) => {
 
   dataValue.value.compositions[index].unit_id = dataValue.value.compositions[index].vid_list.find((e) => e.id === val).unit_id;
 };
+watch(() => dataValue.value.image, () => {
+  console.log(dataValue.value.image);
+});
 </script>
 
 <template>
@@ -220,6 +224,7 @@ const changeInputProduct = (val, index) => {
     <div class="mt-[24px] flex items-start">
       <div class="w-[70%]">
         <div class="border rounded-[24px] p-[24px]">
+<!--          {{ existingImage }}-->
           <AppMediaUploader
             v-model="dataValue.image"
             :value="existingImage"
