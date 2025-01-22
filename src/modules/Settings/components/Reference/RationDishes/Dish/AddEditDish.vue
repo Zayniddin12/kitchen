@@ -96,11 +96,13 @@ onMounted(async () => {
         dataValue.value = meals.meal;
         existingImage.value = meals.meal.image;
 
-        meals.meal.compositions.map((e) => {
+        for (const e of meals.meal.compositions) {
+
           if (e.product_type_parent_id) {
-            return store.GET_MEALS_VID_PRO({ parent_id: e.product_type_parent_id });
+            await store.GET_MEALS_VID_PRO({ parent_id: e.product_type_parent_id, per_page: 100 });
+            e.vid_list = store.parentProductType?.product_types;
           }
-        });
+        }
       }
     }
   } catch (e) {
@@ -209,7 +211,7 @@ const changeInputProduct = (val, index) => {
 
   dataValue.value.compositions[index].unit_id = dataValue.value.compositions[index].vid_list.find((e) => e.id === val).unit_id;
 };
-</script>changeInput
+</script>
 
 <template>
   <AppOverlay :loading="loading">
@@ -366,7 +368,7 @@ const changeInputProduct = (val, index) => {
                   class="mr-[4px]"
                   alt="plus"
                 />
-               {{$t('method.addMore')}}
+                {{ $t("method.addMore") }}
               </button>
             </div>
           </template>
@@ -393,7 +395,7 @@ const changeInputProduct = (val, index) => {
             </button>
 
             <button class="custom-apply-btn ml-[8px]" @click="handleSubmit">
-              {{ route.name === "reference-dish-id" ? $t('method.save') : $t('method.add') }}
+              {{ route.name === "reference-dish-id" ? $t("method.save") : $t("method.add") }}
             </button>
           </div>
         </div>
@@ -409,7 +411,7 @@ const changeInputProduct = (val, index) => {
           alt="edit"
           class="mr-[12px]"
         />
-        {{$t('method.edit')}}
+        {{ $t("method.edit") }}
       </button>
     </div>
   </AppOverlay>

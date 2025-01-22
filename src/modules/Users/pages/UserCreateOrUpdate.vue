@@ -420,7 +420,7 @@ const workingHours = reactive([{
 }]);
 
 watch(() => form.value.dining_locations?.temporary.kitchen_id, async (val) => {
-  console.log(val, "val");
+
   if (val) {
     form.value.dining_locations.temporary.ration_id = "";
     rationsList.temporary = await settingsStore.GET_RATION_LIST({

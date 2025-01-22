@@ -15,6 +15,7 @@ import AppTimePicker from "@/components/ui/form/app-time-picker/AppTimePicker.vu
 import useConfirm from "@/components/ui/app-confirm/useConfirm";
 import AppForm from "@/components/ui/form/app-form/AppForm.vue";
 import AppOverlay from "@/components/ui/app-overlay/AppOverlay.vue";
+import { useI18n } from "vue-i18n";
 
 interface DataValue {
   kitchen_type_ids: string;
@@ -37,6 +38,7 @@ const setValidation = (value: ValidationType) => {
   v$.value = value;
 };
 
+const {t} = useI18n()
 const store = useSettingsStore();
 const route = useRoute();
 const router = useRouter();
@@ -151,7 +153,7 @@ const setBreadCrumbFn = () => {
       to: { name: "reference-ration" },
     },
     {
-      label: String(route?.meta?.breadcrumbItemTitle ?? ""),
+      label: t(String(route?.meta?.breadcrumbItemTitle ?? "")),
       isActionable: true,
     },
   ]);
