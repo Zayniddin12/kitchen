@@ -456,19 +456,24 @@ const openModal = async () => {
 
 
     if (authStore.disabledUserWorkplace) {
-      console.log(authStore.user);
-      const activeWorkplace = authStore.user.workplaces[0];
-      const type = activeComingModal.value ? "to" : "from";
-      form[`${type}_id`] = activeWorkplace.workplace_id;
-      form[`${type}_type`] = activeWorkplace.workplace_type;
-      // await fetchRespondents({ type: [activeWorkplace.workplace_type] });
 
-      await settingsStore.fetchRespondents({ type: [activeWorkplace.workplace_type], per_page: 100 });
-      toList.value = settingsStore.respondents;
+      const activeWorkplace = authStore.user.workplaces[0];
+      if (activeWorkplace.workplace_id) {
+        const type = activeComingModal.value ? "to" : "from";
+        form[`${type}_id`] = activeWorkplace.workplace_id;
+        form[`${type}_type`] = activeWorkplace.workplace_type;
+        // await fetchRespondents({ type: [activeWorkplace.workplace_type] });
+        form[type] = `${activeWorkplace.workplace_id}_${activeWorkplace.workplace_type}`;
+        await settingsStore.fetchRespondents({ type: [activeWorkplace.workplace_type], per_page: 100 });
+        toList.value = settingsStore.respondents;
+      } else {
+        await settingsStore.fetchRespondents({ type: ["base"], per_page: 100 });
+        toList.value = settingsStore.respondents;
+      }
       await settingsStore.fetchRespondents({ type: ["provider"], per_page: 100 });
       fromList.value = settingsStore.respondents;
 
-      form[type] = `${activeWorkplace.workplace_id}_${activeWorkplace.workplace_type}`;
+
     }
 
     await settingsStore.GET_TYPE_PRODUCT();
@@ -961,7 +966,6 @@ const changeUser = (val, key) => {
               </button>
             </template>
           </AppSelect>
-
           <AppSelect
             v-model="form.to"
             prop="to"
