@@ -16,9 +16,19 @@ for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
   app.component(key, component);
 }
 
+import { abilitiesPlugin } from "@casl/vue";
+import { defineAbilitiesFor } from "@/mixins/ability";
+
+const role = JSON.parse(localStorage.getItem("user_role"));
+
+const ability = defineAbilitiesFor([role]);
+
 app
   .use(ElementPlus)
   .use(createPinia())
-  .use(router )
+  .use(abilitiesPlugin, ability, {
+    useGlobalProperties: true,
+  })
+  .use(router)
   .use(i18n)
   .mount("#app");

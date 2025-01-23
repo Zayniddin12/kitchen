@@ -193,7 +193,7 @@ onMounted(async () => {
       </el-dropdown>
       <ThemeToggler v-if="false" />
 
-      <Notifications />
+<!--      <Notifications />-->
 
       <Language v-if="false" />
 
