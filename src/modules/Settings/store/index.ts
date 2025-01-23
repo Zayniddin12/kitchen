@@ -199,6 +199,7 @@ export const useSettingsStore = defineStore("settingsStore", () => {
     try {
       const { data }: { data: Record<string, any> } = await $axios.get("documents/respondents-list", { params });
       respondents.value = data.data.respondents;
+      return data.data.respondents;
     } finally {
       respondentsLoading.value = false;
     }
