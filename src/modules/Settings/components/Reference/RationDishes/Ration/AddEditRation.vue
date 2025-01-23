@@ -38,7 +38,7 @@ const setValidation = (value: ValidationType) => {
   v$.value = value;
 };
 
-const {t} = useI18n()
+const { t } = useI18n();
 const store = useSettingsStore();
 const route = useRoute();
 const router = useRouter();
@@ -253,12 +253,31 @@ const isDisabled = computed(() => {
 watch(() => route.name, () => {
   setBreadCrumbFn();
 }, { immediate: true });
+
+const mealUnitList = ref([]);
+
+const mealUnitGet = (val, index) => {
+  if (val) {
+    console.log(val, index);
+
+    const data = store.meals.meals.find((meal) => meal.id === val);
+    console.log(data);
+    mealUnitList.value[index] = [{
+      id: data.unit_id,
+      name: data.unit,
+    }];
+
+    compositions.value[index].unit_id = data.unit_id;
+  } else {
+    compositions.value[index].unit_id = null;
+  }
+};
 </script>
 
 <template>
   <AppOverlay :loading="loading">
     <h1 class="m-0 font-semibold text-[32px] leading-[48px]">{{ $t(route.meta.title) }}</h1>
-
+    <!--    {{ mealUnitList }}-->
     <div class="flex items-start mt-[24px]">
       <div class="w-[70%]">
         <div class="border rounded-[24px] p-[24px]">
@@ -375,7 +394,7 @@ watch(() => route.name, () => {
           </template>
 
           <template v-else>
-            <h1 class="text-[#000D24] text-[18px] font-medium mb-[12px]">{{$t('kitchen.compoundRation')}}</h1>
+            <h1 class="text-[#000D24] text-[18px] font-medium mb-[12px]">{{ $t("kitchen.compoundRation") }}</h1>
 
             <div
               class=" pb-3 bg-[#F8F9FC] rounded-[16px] px-[12px]"
@@ -393,7 +412,7 @@ watch(() => route.name, () => {
                   itemValue="id"
                   itemLabel="name"
                   :items="store.meals.meals"
-
+                  @change="mealUnitGet($event, index)"
                 />
                 <app-select
                   v-model="item.typeProduct"
@@ -416,7 +435,7 @@ watch(() => route.name, () => {
                   itemValue="id"
                   itemLabel="name"
                   :items="store.dynamicVid.product_types[index]"
-                  @change="value => store.GET_UNITS({product_type_id: value})"
+                  @input="value => store.GET_UNITS({product_type_id: value})"
                 />
                 <app-input
                   v-model="item.quantity"
@@ -435,7 +454,7 @@ watch(() => route.name, () => {
                     itemValue="id"
                     itemLabel="name"
                     :disabled="isDisabled || !item.product_type_id"
-                    :items="store.unitsData.get(item.product_type_id) ?? []"
+                    :items="store.unitsData.get(item.product_type_id) ?? mealUnitList[index]"
                   />
                   <button
                     class="bg-[#E2E6F3] rounded-[8px] flex justify-center items-center h-[40px] w-[60px] ml-[16px] mt-2"
@@ -459,7 +478,7 @@ watch(() => route.name, () => {
                 class="mr-[4px]"
                 alt="plus"
               />
-              {{$t('method.addMore')}}
+              {{ $t("method.addMore") }}
             </button>
 
             <el-switch
@@ -480,7 +499,7 @@ watch(() => route.name, () => {
             v-if="route.name === 'reference-ration-edit-id'"
             @click="deleteFn"
           >
-            {{$t('method.delete')}}
+            {{ $t("method.delete") }}
           </button>
 
           <div class="flex items-center gap-4 ml-auto">
@@ -488,13 +507,13 @@ watch(() => route.name, () => {
               class="custom-cancel-btn"
               @click="cancelFn"
             >
-              {{$t('method.cancel')}}
+              {{ $t("method.cancel") }}
             </button>
             <button
               class="custom-apply-btn"
               @click="handleSubmit"
             >
-              {{ route.name === "reference-ration-edit-id" ? $t('method.save') : $t('method.add') }}
+              {{ route.name === "reference-ration-edit-id" ? $t("method.save") : $t("method.add") }}
             </button>
           </div>
         </div>
@@ -510,7 +529,7 @@ watch(() => route.name, () => {
           class="mr-[12px]"
           alt="edit"
         />
-        {{$t('method.edit')}}
+        {{ $t("method.edit") }}
       </button>
     </div>
   </AppOverlay>

@@ -309,6 +309,7 @@ const changeProduct = async (product: DocumentProductType, index: number) => {
   actForm.products[index].product = activeVidProduct;
 
   product.unit_id = activeVidProduct.unit_id;
+  product.unit = activeVidProduct.unit;
 };
 
 const getProductTypeTitle = (category_id: number, product_type_id: number) => {
@@ -504,9 +505,8 @@ watch(model, newValue => {
 });
 
 const respondentChange = (value: string, type: "from" | "to") => {
-  console.log(value);
   const values = value.split("_");
-  form.from = value;
+  form[type] = value;
   form[`${type}_id`] = Number(values[0]);
   form[`${type}_type`] = values[1];
 };
@@ -908,7 +908,6 @@ const changeUser = (val, key) => {
             label-class="text-[#A8AAAE] text-xs font-medium"
             required
           />
-
           <AppSelect
             v-model="form.from"
             prop="from"
@@ -962,7 +961,7 @@ const changeUser = (val, key) => {
               </button>
             </template>
           </AppSelect>
-          <!--{{settingsStore.respondents}}-->
+
           <AppSelect
             v-model="form.to"
             prop="to"
@@ -1105,7 +1104,7 @@ const changeUser = (val, key) => {
                       required
                     />
                     <AppInput
-                      v-model="product.unit_id"
+                      v-model="product.unit"
                       :prop="`products[${index}].unit_id`"
                       :placeholder="t('common.measurement')"
                       :label="t('common.measurement')"
