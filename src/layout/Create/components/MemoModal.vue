@@ -24,7 +24,6 @@ import AppOverlay from "@/components/ui/app-overlay/AppOverlay.vue";
 import { useAuthStore } from "@/modules/Auth/auth.store";
 import QrCode from "@/components/workplaces/qr-code/QrCode.vue";
 import { useI18n } from "vue-i18n";
-import { useUsersStore } from "@/modules/Users/users.store";
 
 const model = defineModel<ModalValueType>();
 
@@ -38,7 +37,6 @@ const settingsStore = useSettingsStore();
 const commonStore = useCommonStore();
 const documentStore = useDocumentStore();
 const authStore = useAuthStore();
-const usersStore = useUsersStore();
 
 const form = reactive<DocumentCreateDataDocumentType>({
   doc_type_id: null,
@@ -148,16 +146,11 @@ const setForm = async () => {
   if (form.to_id && form.to_type) form.to = `${form.to_id}_${form.to_type}`;
 };
 
-const toList = ref<any>({
-  users: [],
-});
+const toList = ref<any>([]);
 const openModal = async () => {
   required.value = false;
-  settingsStore.fetchRespondents();
-
-  toList.value = await usersStore.fetchUsers({
-    per_page: 100,
-  });
+  await settingsStore.fetchRespondents();
+  toList.value = await settingsStore.fetchRespondents({ type: ["user"] });
 
   await setForm();
 
@@ -174,6 +167,7 @@ watch(model, (newModel) => {
 
 const respondentChange = (value: string, type: "from" | "to") => {
   const values = value.split("_");
+  form[type] = value;
   form[`${type}_id`] = Number(values[0]);
   form[`${type}_type`] = values[1];
 };
@@ -308,7 +302,6 @@ const loading = computed(() => documentStore.createLoading || documentStore.upda
             label-class="text-[#A8AAAE] text-[12px] font-medium"
             disabled
           />
-          <!--          {{toList.users}}-->
           <AppSelect
             v-model="form.to"
             prop="to"
@@ -319,10 +312,10 @@ const loading = computed(() => documentStore.createLoading || documentStore.upda
             :required
           >
             <ElOption
-              v-for="item in toList.users"
-              :key="item.id"
-              :value="item.id"
-              :label="usersStore.getUserFullName(item)"
+              v-for="item in toList"
+              :key="`${item.id}_${item.model_type}`"
+              :value="`${item.id}_${item.model_type}`"
+              :label="item.name"
             />
           </AppSelect>
           <AppInput
