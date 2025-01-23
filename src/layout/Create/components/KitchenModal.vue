@@ -1087,8 +1087,9 @@ const changeUser = (val, key) => {
             @change="(value) => respondentChange(value as string, 'to')"
             required
             trigger="blur"
-            :disabled="authStore.disabledUserWorkplace && activeComingModal"
+
           >
+            <!--            :disabled="authStore.disabledUserWorkplace && activeComingModal"-->
             <template v-if="activeComingModal">
               <ElOption
                 v-for="item in toList"
