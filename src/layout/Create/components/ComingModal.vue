@@ -364,6 +364,7 @@ const createProduct = () => {
     product_type_id: "",
     quantity: null,
     unit_id: "",
+    unit: "",
     price: null,
   });
 };
@@ -446,6 +447,9 @@ const closeModal = async () => {
   }
 };
 
+const fromList = ref<any>([]);
+const toList = ref<any>([]);
+
 const openModal = async () => {
     form.doc_type_id = props.id;
 
@@ -456,21 +460,27 @@ const openModal = async () => {
       const type = activeComingModal.value ? "to" : "from";
       form[`${type}_id`] = activeWorkplace.workplace_id;
       form[`${type}_type`] = activeWorkplace.workplace_type;
-      fetchRespondents({ type: [activeWorkplace.workplace_type] });
+      // await fetchRespondents({ type: [activeWorkplace.workplace_type] });
+
+      await settingsStore.fetchRespondents({ type: [activeWorkplace.workplace_type], per_page: 100 });
+      toList.value = settingsStore.respondents;
+      await settingsStore.fetchRespondents({ type: ["provider"], per_page: 100 });
+      fromList.value = settingsStore.respondents;
+
       form[type] = `${activeWorkplace.workplace_id}_${activeWorkplace.workplace_type}`;
     }
 
-    settingsStore.GET_TYPE_PRODUCT();
-    settingsStore.GET_UNITS();
+    await settingsStore.GET_TYPE_PRODUCT();
+    await settingsStore.GET_UNITS();
 
     oldForm.value = JSON.parse(JSON.stringify(form));
     if (activeComingModal.value) {
       oldActForm.value = JSON.parse(JSON.stringify(actForm));
     }
-    signersList.warehouseman = await usersStore.fetchUsers({
-      per_page: 100,
-      role_name: "warehouseman",
-    });
+    // signersList.warehouseman = await usersStore.fetchUsers({
+    //   per_page: 100,
+    //   role_name: "accountant-base-warehouse",
+    // });
 
     signersList.merchandiser = await usersStore.fetchUsers({
       per_page: 100,
@@ -574,6 +584,7 @@ watch(providerCreateModal, newMProviderModal => {
 
 
 const activeProduct = ref(1);
+const activeActProduct = ref(1);
 const value = ref(null);
 
 const changeUser = (val, key) => {
@@ -897,12 +908,13 @@ const changeUser = (val, key) => {
             label-class="text-[#A8AAAE] text-xs font-medium"
             required
           />
+
           <AppSelect
             v-model="form.from"
             prop="from"
             :placeholder="t('document.whom.from')"
             :label="t('document.whom.from')"
-            :items="settingsStore.respondents"
+            :items="fromList"
             :loading="settingsStore.respondentsLoading"
             label-class="text-[#A8AAAE] text-xs font-medium"
             @change="(value) => respondentChange(value as string, 'from')"
@@ -912,7 +924,7 @@ const changeUser = (val, key) => {
           >
             <template v-if="activeComingModal">
               <ElOption
-                v-for="item in settingsStore.respondents"
+                v-for="item in fromList"
                 :key="`${item.id}_${item.model_type}`"
                 :value="`${item.id}_${item.model_type}`"
                 :label="item.name"
@@ -965,7 +977,7 @@ const changeUser = (val, key) => {
           >
             <template v-if="activeComingModal">
               <ElOption
-                v-for="item in settingsStore.respondents"
+                v-for="item in toList"
                 :key="`${item.id}_${item.model_type}`"
                 :value="`${item.id}_${item.model_type}`"
                 :label="item.name"
@@ -1066,6 +1078,7 @@ const changeUser = (val, key) => {
                     required
                     trigger="blur"
                   />
+                  <!--                  {{ vidProducts.get(product.category_id as number)[0] }}-->
                   <AppSelect
                     v-model="product.product_type_id"
                     :prop="`products[${index}].product_type_id`"
@@ -1090,12 +1103,9 @@ const changeUser = (val, key) => {
                       label-class="text-[#A8AAAE] text-xs font-medium"
                       required
                     />
-                    <AppSelect
+                    <AppInput
                       v-model="product.unit_id"
                       :prop="`products[${index}].unit_id`"
-                      :items="settingsStore.units.units ?? []"
-                      item-label="name"
-                      item-value="id"
                       :placeholder="t('common.measurement')"
                       :label="t('common.measurement')"
                       label-class="text-[#A8AAAE] text-xs font-medium"
@@ -1177,17 +1187,23 @@ const changeUser = (val, key) => {
                 </span>
               </div>
             </div>
+            <div
+              v-if="actForm.content"
+              class="text-[#4F5662] text-[14px]"
+            >
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {{ actForm.content }}
+            </div>
             <span
               class="block text-[#4F5662] text-sm font-normal leading-[20px] mb-[24px]"
             >
 <!--              {{ actForm.products }}-->
             </span>
             <div class="overflow-x-auto mb-[24px]">
-              <el-collapse accordion class="border-none">
+              <el-collapse accordion class="border-none" v-model="activeActProduct">
                 <el-collapse-item class="w-full mb-4 !border-0 !bg-[#F8F9FC] rounded-[8px] overflow-hidden act-left"
                                   v-for="(item, index) in actForm.products"
                                   :title="'Продукт ' + (index + 1)"
-                                  :name="index">
+                                  :name="index + 1">
                   <table
                     class="mt-4 min-w-full border border-gray-300 bg-white text-left text-sm text-gray-900 rounded-[8px] border-separate table-my border-spacing-0"
                   >
@@ -1409,11 +1425,11 @@ const changeUser = (val, key) => {
             </div>
 
             <div class="mb-4">
-              <el-collapse class="border-0" accordion>
+              <el-collapse class="border-0" accordion v-model="activeActProduct">
                 <el-collapse-item class=" w-full mb-4 !border-0 act-right rounded-[16px] overflow-hidden"
                                   v-for="(item, index) in actForm.products"
                                   :title="'Продукт ' + (index + 1)"
-                                  :name="index">
+                                  :name="index + 1">
                   <div class="bg-[#FFFFFF] rounded-[8px] p-[12px] mb-[24px]">
 
                     <!--                    {{ form.products }}-->
@@ -1574,32 +1590,32 @@ const changeUser = (val, key) => {
             </strong>
             <!--            {{ actForm.doc_signer_obj }}-->
             <div class="flex flex-col">
+              <!--              <AppSelect-->
+              <!--                v-model="actForm.doc_signer_obj.signer_id_1"-->
+              <!--                prop="doc_signer_obj.signer_id_1"-->
+              <!--                :label="t('document.commission.accountant')"-->
+              <!--                :placeholder="t('document.commission.accountant')"-->
+              <!--                label-class="text-[#A8AAAE] text-xs font-medium"-->
+              <!--                required-->
+              <!--                @change="changeUser($event, 'signer_id_1')"-->
+              <!--              >-->
+              <!--                <template v-if="signersList.warehouseman.users">-->
+              <!--                  <ElOption-->
+              <!--                    v-for="item in signersList.warehouseman.users"-->
+              <!--                    :key="item.id"-->
+              <!--                    :label="usersStore.getUserFullName(item)"-->
+              <!--                    :value="item.id"-->
+              <!--                  />-->
+              <!--                </template>-->
+              <!--              </AppSelect>-->
               <AppSelect
                 v-model="actForm.doc_signer_obj.signer_id_1"
                 prop="doc_signer_obj.signer_id_1"
-                :label="t('document.commission.storekeeper')"
-                :placeholder="t('document.commission.storekeeper')"
-                label-class="text-[#A8AAAE] text-xs font-medium"
-                required
-                @change="changeUser($event, 'signer_id_1')"
-              >
-                <template v-if="signersList.warehouseman.users">
-                  <ElOption
-                    v-for="item in signersList.warehouseman.users"
-                    :key="item.id"
-                    :label="usersStore.getUserFullName(item)"
-                    :value="item.id"
-                  />
-                </template>
-              </AppSelect>
-              <AppSelect
-                v-model="actForm.doc_signer_obj.signer_id_2"
-                prop="doc_signer_obj.signer_id_2"
                 :placeholder="t('document.commission.commodityExpert')"
                 :label="t('document.commission.commodityExpert')"
                 label-class="text-[#A8AAAE] text-xs font-medium"
                 required
-                @change="changeUser($event, 'signer_id_2')"
+                @change="changeUser($event, 'signer_id_1')"
               >
                 <template v-if="signersList.merchandiser.users">
                   <ElOption
@@ -1612,13 +1628,13 @@ const changeUser = (val, key) => {
               </AppSelect>
               <AppSelect
                 v-if="!activeComingModal"
-                v-model="actForm.doc_signer_obj.signer_id_3"
-                prop="doc_signer_obj.signer_id_3"
+                v-model="actForm.doc_signer_obj.signer_id_2"
+                prop="doc_signer_obj.signer_id_2"
                 :placeholder="t('document.commission.forwarder')"
                 :label="t('document.commission.forwarder')"
                 label-class="text-[#A8AAAE] text-xs font-medium"
                 required
-                @change="changeUser($event, 'signer_id_3')"
+                @change="changeUser($event, 'signer_id_2')"
               >
                 <template v-if="usersStore.users">
                   <ElOption
@@ -1630,13 +1646,13 @@ const changeUser = (val, key) => {
                 </template>
               </AppSelect>
               <AppSelect
-                v-model="actForm.doc_signer_obj.signer_id_4"
-                prop="doc_signer_obj.signer_id_4"
+                v-model="actForm.doc_signer_obj.signer_id_3"
+                prop="doc_signer_obj.signer_id_3"
                 :placeholder="t('document.commission.warehouseManager')"
                 :label="t('document.commission.warehouseManager')"
                 label-class="text-[#A8AAAE] text-xs font-medium"
                 required
-                @change="changeUser($event, 'signer_id_4')"
+                @change="changeUser($event, 'signer_id_3')"
               >
                 <template v-if="signersList.manager_base.users">
                   <ElOption
@@ -1648,17 +1664,17 @@ const changeUser = (val, key) => {
                 </template>
               </AppSelect>
               <AppSelect
-                v-model="actForm.doc_signer_obj.signer_id_5"
-                prop="doc_signer_obj.signer_id_5"
+                v-model="actForm.doc_signer_obj.signer_id_4"
+                prop="doc_signer_obj.signer_id_4"
                 :placeholder="t('document.commission.baseChief')"
                 :label="t('document.commission.baseChief')"
                 label-class="text-[#A8AAAE] text-xs font-medium"
                 required
-                @change="changeUser($event, 'signer_id_5')"
+                @change="changeUser($event, 'signer_id_4')"
               >
                 <template v-if="signersList.head_warehouse.users">
                   <ElOption
-                    v-for="item in signersList.head_warehouse.users.users"
+                    v-for="item in signersList.head_warehouse.users"
                     :key="item.id"
                     :label="usersStore.getUserFullName(item)"
                     :value="item.id"

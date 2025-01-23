@@ -15,7 +15,13 @@ import AppOverlay from "@/components/ui/app-overlay/AppOverlay.vue";
 import { ValidationType } from "@/components/ui/form/app-form/app-form.type";
 import AppForm from "@/components/ui/form/app-form/AppForm.vue";
 import {
-  deepEqual, filterObjectValues, formatPhone, getStatus, getStatusText, mergeCommonKeys, setStatus,
+  deepEqual,
+  filterObjectValues,
+  formatPhone,
+  getStatus,
+  getStatusText,
+  mergeCommonKeys,
+  setStatus,
 } from "@/utils/helper";
 import { useCommonStore } from "@/stores/common.store";
 import { usePositionStore } from "@/modules/Settings/components/Reference/Position/position.store";
@@ -364,7 +370,7 @@ const fetchUser = async () => {
       }
     }
   }
-  setData();
+  await setData();
 };
 
 const gender = computed(() => {
@@ -422,7 +428,7 @@ const workingHours = reactive([{
 watch(() => form.value.dining_locations?.temporary.kitchen_id, async (val) => {
 
   if (val) {
-    form.value.dining_locations.temporary.ration_id = "";
+    // form.value.dining_locations.temporary.ration_id = "";
     rationsList.temporary = await settingsStore.GET_RATION_LIST({
       per_page: 100,
       kitchen_id: form.value.dining_locations?.temporary.kitchen_id,
@@ -437,7 +443,7 @@ watch(() => form.value.dining_locations?.temporary.kitchen_id, async (val) => {
 watch(() => form.value.dining_locations?.permanent.kitchen_id, async (val) => {
 
   if (val) {
-    form.value.dining_locations.permanent.ration_id = "";
+    // form.value.dining_locations.permanent.ration_id = "";
     rationsList.permanent = await settingsStore.GET_RATION_LIST({
       per_page: 100,
       kitchen_id: form.value.dining_locations?.permanent.kitchen_id,
@@ -448,11 +454,22 @@ watch(() => form.value.dining_locations?.permanent.kitchen_id, async (val) => {
 
 });
 
+const temporaryKitchen = computed(() => {
+  if (form.value.dining_locations?.permanent?.kitchen_id) {
+    return settingsStore.kitchenWarehouse.kitchen_warehouses.filter(
+      item => item.id !== form.value.dining_locations.permanent.kitchen_id,
+    );
+  }
+
+  return settingsStore.kitchenWarehouse.kitchen_warehouses;
+});
+
 </script>
 
 <template>
   <div>
     <h1 class="m-0 font-semibold text-[32px]">{{ route.meta?.title }}</h1>
+    <!--        {{ form }}-->
     <div
       v-if="hasTab"
       class="app-tabs w-[345px] mt-6"
@@ -738,17 +755,6 @@ watch(() => form.value.dining_locations?.permanent.kitchen_id, async (val) => {
                   clearable
                 />
                 <AppSelect
-                  v-model="form.dining_locations.temporary.kitchen_id"
-                  prop="dining_locations.temporary.kitchen_id"
-                  :items="settingsStore.kitchenWarehouse.kitchen_warehouses"
-                  item-value="id"
-                  item-label="name"
-                  label="Временная кухня"
-                  label-class="text-[#A8AAAE] text-xs font-medium"
-                  class="mb-1"
-                  clearable
-                />
-                <AppSelect
                   v-model="form.dining_locations.permanent.ration_id"
                   :items="rationsList.permanent.rations"
                   :disabled="!form.dining_locations.permanent.kitchen_id"
@@ -762,6 +768,20 @@ watch(() => form.value.dining_locations?.permanent.kitchen_id, async (val) => {
                   clearable
                 />
                 <AppSelect
+                  v-model="form.dining_locations.temporary.kitchen_id"
+                  prop="dining_locations.temporary.kitchen_id"
+                  :items="temporaryKitchen"
+                  item-value="id"
+                  item-label="name"
+                  label="Временная кухня"
+                  label-class="text-[#A8AAAE] text-xs font-medium"
+                  class="mb-1"
+                  clearable
+                  :disabled="!form.dining_locations.permanent.kitchen_id"
+                />
+                <!--                {{ form.dining_locations.permanent }}-->
+
+                <AppSelect
                   v-model="form.dining_locations.temporary.ration_id"
                   :disabled="!form.dining_locations.temporary.kitchen_id"
                   prop="dining_locations.temporary.ration_id"
@@ -770,7 +790,7 @@ watch(() => form.value.dining_locations?.permanent.kitchen_id, async (val) => {
                   item-label="name"
                   label="Временная кухня для выдачи рационов"
                   label-class="text-[#A8AAAE] text-xs font-medium"
-                  required
+
                   class="mb-1"
                   clearable
                 />

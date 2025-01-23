@@ -12,6 +12,7 @@ import { useKitchenStore } from "@/modules/Kitchen/kitchen.store";
 import { removeItem } from "@/utils/localStorage";
 import { getSessionItem, removeSessionItem, setSessionItem } from "@/utils/sessionStorage";
 import { useI18n } from "vue-i18n";
+import { check } from "@/mixins/permission";
 
 const emit = defineEmits<{
   (e: "update:childSidebarPin", value: boolean): void;
@@ -176,6 +177,7 @@ const logOut = () => {
           <div
             :class="{ activeListItem: currentMenu == index }"
             class="py-5 px-[29px] flex flex-col justify-center items-center cursor-pointer w-[104px] min-h-[88px] hover:bg-white dark:hover:bg-body-dark hover:shadow-menu hover:font-medium rounded-lg"
+            v-if="check(item.permissions)"
           >
             <li
               :style="{

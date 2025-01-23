@@ -199,6 +199,7 @@ export const useSettingsStore = defineStore("settingsStore", () => {
     try {
       const { data }: { data: Record<string, any> } = await $axios.get("documents/respondents-list", { params });
       respondents.value = data.data.respondents;
+      return data.data.respondents;
     } finally {
       respondentsLoading.value = false;
     }
@@ -524,7 +525,7 @@ export const useSettingsStore = defineStore("settingsStore", () => {
   };
 
   const UPDATE_MEALS = ({ id, data }: { id: string | number; data: any }) => {
-    return $axios.put(`/meals/${id}/`, data);
+    return $axios.post(`/meals/${id}/`, data);
   };
 
   const DELETE_MEALS = async (id: number) => {

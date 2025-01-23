@@ -111,6 +111,7 @@ export const useAuthStore = defineStore("authStore", () => {
 		await authApi.me()
 			.then(response => {
 				user.value = response;
+				localStorage.setItem('user_role', JSON.stringify(response.role_name))
 			})
 			.finally(() => {
 				userLoading.value = false;
