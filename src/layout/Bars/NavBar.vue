@@ -178,10 +178,10 @@ onMounted(async () => {
                         >
                           {{ child.name }}
                         </span>
-                        <img
-                          src="@/assets/arrow-right.svg"
-                          alt="arrow icon"
-                        />
+<!--                        <img-->
+<!--                          src="@/assets/arrow-right.svg"-->
+<!--                          alt="arrow icon"-->
+<!--                        />-->
                       </button>
                     </el-dropdown-item>
                   </el-dropdown-menu>
