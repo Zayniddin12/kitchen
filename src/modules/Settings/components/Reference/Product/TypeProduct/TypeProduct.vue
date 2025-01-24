@@ -88,6 +88,7 @@ const tableCurrentChange = (value: Record<string, any>) => {
         />
 
         <button
+          v-if="$can('create', 'Button')"
             class="custom-apply-btn ml-[16px]"
             @click="router.push('/reference-type-product-create')"
         >
@@ -133,6 +134,7 @@ const tableCurrentChange = (value: Record<string, any>) => {
       >
         <template #default="scope">
           <button
+            v-if="$can('read', 'Button')"
               class="action-btn"
               @click.stop="router.push(`/reference-type-product-view/${scope.row.id}`)"
           >
@@ -143,6 +145,7 @@ const tableCurrentChange = (value: Record<string, any>) => {
           </button>
 
           <button
+            v-if="$can('update', 'Button')"
               class="action-btn ml-[8px]"
               @click.stop="router.push(`/reference-type-product-edit/${scope.row.id}`)"
           >

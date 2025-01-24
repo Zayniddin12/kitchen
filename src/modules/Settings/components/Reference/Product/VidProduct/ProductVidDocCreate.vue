@@ -255,8 +255,9 @@ watchEffect(() => {
 
     <div class="flex items-center justify-between mt-[24px] w-[70%]">
       <button
+        v-if="$can('delete', 'Button')"
         class="custom-danger-btn"
-        v-if="route.name === 'reference-vid-edit-id'"
+        v-show="route.name === 'reference-vid-edit-id'"
         @click="deleteFn"
       >
         {{ $t("method.delete") }}

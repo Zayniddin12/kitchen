@@ -190,6 +190,7 @@ watch(() => route.name, () => {
           />
         </AppForm>
         <RouterLink
+          v-if="$can('create', 'Button')"
           :to="{name: `${route.name as string}-fetch`}"
           class="custom-apply-btn h-[47px]"
         >
@@ -311,6 +312,7 @@ watch(() => route.name, () => {
             class="inline-flex items-center"
           >
             <RouterLink
+              v-if="$can('read', 'Button')"
               class="action-btn mr-2"
               :to="{name: `${route.name as string}-id`, params: {id: row.id}}"
             >
@@ -321,6 +323,7 @@ watch(() => route.name, () => {
             </RouterLink>
 
             <RouterLink
+              v-if="$can('update', 'Button')"
               class="action-btn"
               :to="{name: `${route.name as string}-edit`, params: {id: row.id}}"
             >

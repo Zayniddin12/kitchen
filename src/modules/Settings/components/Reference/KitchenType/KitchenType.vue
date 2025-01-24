@@ -102,6 +102,7 @@ const currentTableChange = (value: Record<string, any>) => {
         />
 
         <button
+          v-if="$can('create', 'Button')"
             @click="$router.push({name: 'reference-kitchen-type-add'})"
             class="flex items-center justify-center gap-3 custom-apply-btn"
         >
@@ -153,6 +154,7 @@ const currentTableChange = (value: Record<string, any>) => {
       >
         <template #default="scope">
           <button
+            v-if="$can('read', 'Button')"
               class="action-btn mr-[8px]"
               @click.stop="$router.push({name: 'reference-kitchen-type-view', query: {type: 'view'}, params: {id: scope.row.id}})"
           >
@@ -163,6 +165,7 @@ const currentTableChange = (value: Record<string, any>) => {
           </button>
 
           <button
+            v-if="$can('update', 'Button')"
               class="action-btn"
               @click.stop="$router.push({name: 'reference-kitchen-type-edit', params: {id: scope.row.id}})"
           >

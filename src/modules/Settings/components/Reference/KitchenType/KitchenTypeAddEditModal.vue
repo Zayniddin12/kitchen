@@ -13,6 +13,7 @@ import AppInput from "@/components/ui/form/app-input/AppInput.vue";
 import AppForm from "@/components/ui/form/app-form/AppForm.vue";
 import AppOverlay from "@/components/ui/app-overlay/AppOverlay.vue";
 import type { StatusType } from "@/types/common.type";
+import { useI18n } from "vue-i18n";
 
 interface Name {
   uz: string;
@@ -30,6 +31,7 @@ const setValidation = (value: ValidationType) => {
   v$.value = value;
 };
 
+const {t} = useI18n()
 const store = useSettingsStore();
 const route = useRoute();
 const router = useRouter();
@@ -86,7 +88,7 @@ const setBreadCrumbFn = () => {
       to: { name: "reference-kitchen-type" },
     },
     {
-      label: String(route?.meta?.breadcrumbItemTitle ?? ""),
+      label: t(String(route?.meta?.breadcrumbItemTitle ?? "")),
       isActionable: true,
     },
   ]);
@@ -226,8 +228,9 @@ watch(() => route.name, () => {
             :class="!route.params.id ? 'justify-end' : 'justify-between'"
           >
             <button
+              v-if="$can('delete', 'Button')"
               @click="deleteFn"
-              v-if="route.params.id"
+              v-show="route.params.id"
               class="custom-danger-btn"
             >
               {{$t('method.delete')}}

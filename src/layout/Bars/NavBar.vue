@@ -99,6 +99,7 @@ onMounted(async () => {
     <div class="flex items-center gap-6">
 
       <el-dropdown
+        v-if="$can('payment', 'Button')"
         trigger="click"
         :hide-on-click="false"
         ref="dropdown"

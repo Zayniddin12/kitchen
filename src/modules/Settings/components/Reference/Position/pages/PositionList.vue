@@ -102,6 +102,7 @@ watch(() => route.query, fetchPositions, { immediate: true });
           input-style="height: 42px"
         />
         <RouterLink
+          v-if="$can('create', 'Button')"
           :to="{name: 'position-create'}"
           class="custom-apply-btn"
         >
@@ -175,6 +176,7 @@ watch(() => route.query, fetchPositions, { immediate: true });
             class="flex items-center justify-end gap-x-2"
           >
             <RouterLink
+              v-if="$can('read', 'Button')"
               :to="{name: 'position-show', params:{id: row.id}}"
               class="action-btn"
             >
@@ -185,6 +187,7 @@ watch(() => route.query, fetchPositions, { immediate: true });
             </RouterLink>
 
             <RouterLink
+              v-if="$can('update', 'Button')"
               :to="{name: 'position-edit', params: {id: row.id}}"
               class="action-btn"
             >

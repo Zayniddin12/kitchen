@@ -113,6 +113,7 @@ onMounted(() => {
       </div>
 
       <RouterLink
+        v-if="$can('update', 'Button')"
         :to="{name: `${usersStore.activeRoutePrefix}-edit`}"
         class="custom-cancel-btn flex items-center gap-2 text-[#4F5662] font-semibold !text-[18px]"
       >

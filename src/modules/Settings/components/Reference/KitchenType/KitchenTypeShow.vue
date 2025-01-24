@@ -9,11 +9,12 @@ import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 import AppOverlay from "@/components/ui/app-overlay/AppOverlay.vue";
 import { useSettingsStore } from "@/modules/Settings/store";
 import { activeLocale } from "@/localization";
+import { useI18n } from "vue-i18n";
 
 const route = useRoute();
 
 const settingsStore = useSettingsStore();
-
+const {t} = useI18n()
 const { setBreadCrumb } = useBreadcrumb();
 
 const setBreadCrumbFn = () => {
@@ -36,7 +37,7 @@ const setBreadCrumbFn = () => {
       to: { name: "reference-kitchen-type" },
     },
     {
-      label: String(route?.meta?.breadcrumbItemTitle ?? ""),
+      label: t(String(route?.meta?.breadcrumbItemTitle ?? "")),
       isActionable: true,
     },
   ]);
@@ -79,6 +80,7 @@ onMounted(() => {
         </template>
       </AppOverlay>
       <RouterLink
+        v-if="$can('update', 'Button')"
         :to="{name: 'reference-kitchen-type-edit'}"
         class="custom-light-btn flex items-center justify-center w-full max-w-[17%]"
       >

@@ -14,6 +14,7 @@ import { ValidationType } from "@/components/ui/form/app-form/app-form.type";
 import { useSettingsStore } from "@/modules/Settings/store";
 import { ElNotification } from "element-plus";
 import AppOverlay from "@/components/ui/app-overlay/AppOverlay.vue";
+import { useI18n } from "vue-i18n";
 
 interface DataValue {
   management_id: string;
@@ -29,6 +30,7 @@ const setValidation = (value: ValidationType) => {
   v$.value = value;
 };
 
+const {t} = useI18n()
 const store = useSettingsStore();
 const route = useRoute();
 const router = useRouter();
@@ -66,7 +68,7 @@ const setBreadCrumbFn = () => {
       to: { name: "reference-kitchen-warehouse" },
     },
     {
-      label: String(route?.meta?.breadcrumbItemTitle ?? ""),
+      label: t(String(route?.meta?.breadcrumbItemTitle ?? "")),
       isActionable: true,
     },
   ]);
@@ -277,7 +279,8 @@ watch(() => route.name, () => {
           :class="!route.params.id ? 'justify-end' : 'justify-between'"
         >
           <button
-            v-if="route.params.id"
+            v-if="$can('delete', 'Button')"
+            v-show="route.params.id"
             class="custom-danger-btn"
             @click="deleteFn"
           >

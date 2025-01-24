@@ -384,8 +384,9 @@ watch(() => dataValue.value.image, () => {
           v-if="route.name === 'reference-dish-create' || route.name === 'reference-dish-id'"
         >
           <button
+            v-if="$can('delete', 'Button')"
             class="custom-danger-btn"
-            v-if="route.name === 'reference-dish-id'"
+            v-show="route.name === 'reference-dish-id'"
             @click="deleteFn"
           >
             {{ $t("method.delete") }}
