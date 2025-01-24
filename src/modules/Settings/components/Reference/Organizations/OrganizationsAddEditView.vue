@@ -12,6 +12,7 @@ import { ElNotification } from "element-plus";
 import AppForm from "@/components/ui/form/app-form/AppForm.vue";
 import { ValidationType } from "@/components/ui/form/app-form/app-form.type";
 import AppOverlay from "@/components/ui/app-overlay/AppOverlay.vue";
+import { useI18n } from "vue-i18n";
 
 interface DataValue {
   name: string;
@@ -25,6 +26,7 @@ const setValidation = (value: ValidationType) => {
   v$.value = value;
 };
 
+const {t} = useI18n()
 const store = useSettingsStore();
 const route = useRoute();
 const router = useRouter();
@@ -50,7 +52,7 @@ const setBreadCrumbFn = () => {
       to: { name: "reference-organization" },
     },
     {
-      label: String(route?.meta?.breadcrumbItemTitle ?? ""),
+      label: t(String(route?.meta?.breadcrumbItemTitle ?? "")),
       isActionable: true,
     },
   ]);
@@ -223,7 +225,8 @@ watch(() => route.name, () => {
           :class="!route.params.id ? 'justify-end' : 'justify-between'"
         >
           <button
-            v-if="route.params.id"
+            v-if="$can('delete', 'Button')"
+            v-show="route.params.id"
             class="custom-danger-btn"
             @click="deleteFn"
           >

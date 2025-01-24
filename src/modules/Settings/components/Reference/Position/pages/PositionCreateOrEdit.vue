@@ -351,7 +351,8 @@ onMounted(() => {
       </AppOverlay>
       <div class="flex justify-between items-center mt-6 gap-x-6">
         <ElButton
-          v-if="method === 'update'"
+          v-if="$can('delete', 'Button')"
+          v-show="method === 'update'"
           :loading="positionStore.deletePositionLoading"
           class="custom-danger-btn"
           size="large"

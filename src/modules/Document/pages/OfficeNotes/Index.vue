@@ -336,6 +336,7 @@ const tableRowClassName = ({ row }: { row: DraftType }) => {
         </div>
       </template>
     </CollapseFilter>
+
     <el-table
       v-loading="documentStore.draftsLoading"
       :data="documentStore.draftsLoading ? [] : documentStore.drafts?.documents"
@@ -407,7 +408,8 @@ const tableRowClassName = ({ row }: { row: DraftType }) => {
         <template #default="{ row }: { row: DraftType }">
           <div class="flex items-center gap-x-2.5">
             <button
-              v-if="route.meta.permissionEdit"
+              v-if="$can('update', 'Button')"
+              v-show="route.meta.permissionEdit"
               class="action-btn ml-[20px]"
               @click="editModalHandler(row)"
             >
@@ -416,8 +418,10 @@ const tableRowClassName = ({ row }: { row: DraftType }) => {
                 alt="edit"
               />
             </button>
+
             <RouterLink
-              v-if="route.meta.permissionView"
+              v-if="$can('read', 'Button')"
+              v-show="route.meta.permissionView"
               class="action-btn"
               :to="{name: `${route.name as string}-id`, params: {id:row.id}}"
             >
@@ -426,6 +430,7 @@ const tableRowClassName = ({ row }: { row: DraftType }) => {
                 alt="eye"
               />
             </RouterLink>
+
             <ElButton
               :loading="documentStore.pdfLoading"
               plain

@@ -127,9 +127,18 @@ const setForm = async () => {
 
   if (authStore.disabledUserWorkplace) {
     const activeWorkplace = authStore.user.workplaces[0];
-    form.from_id = activeWorkplace.workplace_id;
-    form.from_type = activeWorkplace.workplace_type;
-    form.from = `${activeWorkplace.workplace_id}_${activeWorkplace.workplace_type}`;
+    if (activeWorkplace.workplace_id) {
+      form.from_id = activeWorkplace.workplace_id;
+      form.from_type = activeWorkplace.workplace_type;
+      // form.from = `${activeWorkplace.workplace_id}_${activeWorkplace.workplace_type}`;
+      form.from = `${authStore.user.id}_user`;
+      console.log(authStore.user);
+    } else {
+      form.from_id = authStore.user.id;
+      form.from_type = "user";
+
+      form.from = `${authStore.user.id}_user`;
+    }
   }
 
   if (!document.value) return;
@@ -147,9 +156,17 @@ const setForm = async () => {
 };
 
 const toList = ref<any>([]);
+
+const filterUser = computed(() => {
+  if (authStore.user.id) {
+    return toList.value.filter(user => user.id !== authStore.user.id);
+  }
+  return toList.value;
+});
+
 const openModal = async () => {
   required.value = false;
-  await settingsStore.fetchRespondents();
+
   toList.value = await settingsStore.fetchRespondents({ type: ["user"] });
 
   await setForm();
@@ -292,7 +309,7 @@ const loading = computed(() => documentStore.createLoading || documentStore.upda
             prop="number"
             :label="t('document.number')"
             label-class="text-[#A8AAAE] text-[12px] font-medium"
-            :required
+            required
             :max="20"
 
           />
@@ -312,7 +329,7 @@ const loading = computed(() => documentStore.createLoading || documentStore.upda
             :required
           >
             <ElOption
-              v-for="item in toList"
+              v-for="item in filterUser"
               :key="`${item.id}_${item.model_type}`"
               :value="`${item.id}_${item.model_type}`"
               :label="item.name"
@@ -350,10 +367,10 @@ const loading = computed(() => documentStore.createLoading || documentStore.upda
           >
             <template v-if="authStore.user">
               <ElOption
-                v-for="item in authStore.user.workplaces"
-                :key="`${item.workplace_type}_${item.workplace_type}`"
-                :value="`${item.workplace_id}_${item.workplace_type}`"
-                :label="item.workplace"
+                v-for="item in toList"
+                :key="`${item.id}_${item.model_type}`"
+                :value="`${item.id}_${item.model_type}`"
+                :label="item.name"
               />
             </template>
           </AppSelect>

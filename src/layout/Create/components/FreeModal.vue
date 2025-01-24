@@ -97,6 +97,7 @@ const sendForm = async (status: DocumentStatusType) => {
 
 const respondentChange = (value: string, type: "from" | "to") => {
   const values = value.split("_");
+  form[type] = value;
   form[`${type}_id`] = Number(values[0]);
   form[`${type}_type`] = values[1];
 };
@@ -144,9 +145,18 @@ const setForm = async () => {
   form.doc_type_id = props.id ?? null;
   if (authStore.disabledUserWorkplace) {
     const activeWorkplace = authStore.user.workplaces[0];
-    form.from_id = activeWorkplace.workplace_id;
-    form.from_type = activeWorkplace.workplace_type;
-    form.from = `${activeWorkplace.workplace_id}_${activeWorkplace.workplace_type}`;
+    if (activeWorkplace.workplace_id) {
+      form.from_id = activeWorkplace.workplace_id;
+      form.from_type = activeWorkplace.workplace_type;
+      // form.from = `${activeWorkplace.workplace_id}_${activeWorkplace.workplace_type}`;
+      form.from = `${authStore.user.id}_user`;
+      console.log(authStore.user);
+    } else {
+      form.from_id = authStore.user.id;
+      form.from_type = "user";
+
+      form.from = `${authStore.user.id}_user`;
+    }
   }
 
   if (!document.value) return;
@@ -163,9 +173,18 @@ const setForm = async () => {
   if (form.to_id && form.to_type) form.to = `${form.to_id}_${form.to_type}`;
 };
 
+const toList = ref<any>([]);
+
+const filterUser = computed(() => {
+  if (authStore.user.id) {
+    return toList.value.filter(user => user.id !== authStore.user.id);
+  }
+  return toList.value;
+});
+
 const openModal = async () => {
   required.value = false;
-  if (!settingsStore.respondents.length) settingsStore.fetchRespondents();
+  toList.value = await settingsStore.fetchRespondents({ type: ["user"] });
 
   await setForm();
   oldForm.value = JSON.parse(JSON.stringify(form));
@@ -223,7 +242,7 @@ watch(model, (newModel) => {
 
         <div class="flex items-center mb-[24px]">
           <h1 class="text-[#4F5662] text-[14px] font-semibold">№:</h1>
-          <span class="ml-2 text-[#A8AAAE] text-[14px] font-medium block">{{ form.number || "NK-00000" }}</span>
+          <span class="ml-2 text-[#A8AAAE] text-[14px] font-medium block">{{ form.number || "Z-00000" }}</span>
         </div>
 
         <div class="flex items-baseline mb-6">
@@ -290,6 +309,22 @@ watch(model, (newModel) => {
             disabled
           />
 
+          <AppDatePicker
+            class="response"
+            :label="t('document.creationDate')"
+            :placeholder="form.date"
+            label-class="text-[#A8AAAE] text-xs font-medium"
+            disabled
+          />
+          <AppInput
+            v-model="form.number"
+            prop="number"
+            :label="t('document.number')"
+            :placeholder="t('common.automatically')"
+            label-class="text-[#A8AAAE] text-xs font-medium"
+            disabled
+          />
+
           <AppSelect
             v-model="form.to"
             prop="to"
@@ -301,7 +336,7 @@ watch(model, (newModel) => {
             trigger="blur"
           >
             <ElOption
-              v-for="item in settingsStore.respondents"
+              v-for="item in filterUser"
               :key="`${item.id}_${item.model_type}`"
               :value="`${item.id}_${item.model_type}`"
               :label="item.name"
@@ -318,20 +353,7 @@ watch(model, (newModel) => {
             :max="100"
             :maxlength="100"
           />
-          <AppDatePicker
-            :label="t('document.creationDate')"
-            :placeholder="form.date"
-            label-class="text-[#A8AAAE] text-xs font-medium"
-            disabled
-          />
-          <AppInput
-            v-model="form.number"
-            prop="number"
-            :label="t('document.number')"
-            :placeholder="t('common.automatically')"
-            label-class="text-[#A8AAAE] text-xs font-medium"
-            disabled
-          />
+
 
           <AppInput
             v-model="form.content"
@@ -355,10 +377,10 @@ watch(model, (newModel) => {
             @change="(value) => respondentChange(value as string, 'to')"
           >
             <ElOption
-              v-for="item in authStore.user.workplaces"
-              :key="`${item.workplace_type}_${item.workplace_type}`"
-              :value="`${item.workplace_id}_${item.workplace_type}`"
-              :label="item.workplace"
+              v-for="item in toList"
+              :key="`${item.id}_${item.model_type}`"
+              :value="`${item.id}_${item.model_type}`"
+              :label="item.name"
             />
           </AppSelect>
         </AppForm>
@@ -393,3 +415,9 @@ watch(model, (newModel) => {
     </div>
   </el-dialog>
 </template>
+
+<style lang="scss">
+.response .el-input__prefix {
+  display: none;
+}
+</style>

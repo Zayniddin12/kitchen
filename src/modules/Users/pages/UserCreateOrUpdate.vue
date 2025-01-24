@@ -868,7 +868,8 @@ const temporaryKitchen = computed(() => {
 
     <div class="flex items-center justify-between mt-[24px]">
       <ElButton
-        v-if="activeUserUpdatePage"
+        v-if="$can('delete', 'Button')"
+        v-show="activeUserUpdatePage"
         :loading="deleteLoading"
         type="danger"
         size="large"

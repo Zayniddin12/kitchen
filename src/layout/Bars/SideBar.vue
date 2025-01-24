@@ -8,7 +8,6 @@ import { useLayoutStore } from "@/navigation";
 import ChildSidebar from "@/layout/Bars/ChildSidebar.vue";
 import { useSidebarStore } from "@/layout/Bars/sidebar.store";
 import { useAuthStore } from "@/modules/Auth/auth.store";
-import { useKitchenStore } from "@/modules/Kitchen/kitchen.store";
 import { removeItem } from "@/utils/localStorage";
 import { getSessionItem, removeSessionItem, setSessionItem } from "@/utils/sessionStorage";
 import { useI18n } from "vue-i18n";

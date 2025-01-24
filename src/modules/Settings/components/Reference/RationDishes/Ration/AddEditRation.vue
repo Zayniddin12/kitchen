@@ -272,6 +272,22 @@ const mealUnitGet = (val, index) => {
     compositions.value[index].unit_id = null;
   }
 };
+
+const changeVid = (val, index) => {
+    if (val) {
+      const unit = store.dynamicVid.product_types[index]?.find((e) => e.id === val);
+      if (Object.keys(unit).length) {
+        mealUnitList.value[index] = [{
+          id: unit.unit_id,
+          name: unit.unit,
+        }];
+
+        compositions.value[index].unit_id = unit.unit_id;
+      }
+    }
+
+  }
+;
 </script>
 
 <template>
@@ -402,7 +418,14 @@ const mealUnitGet = (val, index) => {
               :key="index as any"
             >
               <div class="grid grid-cols-5 gap-5 border-b  py-[16px]">
+                <app-input
+                  v-if="item.typeProduct"
+                  :label="$t('Блюдо')"
+                  disabled
+                  label-class="text-[#A8AAAE] font-medium text-[12px]"
+                />
                 <app-select
+                  v-if="!item.typeProduct"
                   v-model="item.meal_id"
                   :label="$t('Блюдо')"
                   :placeholder="$t('form.select')"
@@ -414,7 +437,20 @@ const mealUnitGet = (val, index) => {
                   :items="store.meals.meals"
                   @change="mealUnitGet($event, index)"
                 />
+                <app-input
+                  v-if="item.meal_id"
+                  :label="$t('product.type')"
+                  disabled
+                  label-class="text-[#A8AAAE] font-medium text-[12px]"
+                />
+                <app-input
+                  v-if="item.meal_id"
+                  :label="$t('product.view')"
+                  disabled
+                  label-class="text-[#A8AAAE] font-medium text-[12px]"
+                />
                 <app-select
+                  v-if="!item.meal_id"
                   v-model="item.typeProduct"
                   :label="$t('product.type')"
                   :placeholder="$t('form.select')"
@@ -427,6 +463,7 @@ const mealUnitGet = (val, index) => {
                   @change="changeInput($event, 'product_type', index)"
                 />
                 <app-select
+                  v-if="!item.meal_id"
                   v-model="item.product_type_id"
                   :label="$t('product.view')"
                   :placeholder="$t('form.select')"
@@ -435,7 +472,7 @@ const mealUnitGet = (val, index) => {
                   itemValue="id"
                   itemLabel="name"
                   :items="store.dynamicVid.product_types[index]"
-                  @input="value => store.GET_UNITS({product_type_id: value})"
+                  @input="changeVid($event, index)"
                 />
                 <app-input
                   v-model="item.quantity"
@@ -450,12 +487,14 @@ const mealUnitGet = (val, index) => {
                     :label="$t('common.measurement')"
                     :placeholder="$t('form.select')"
                     label-class="text-[#A8AAAE] font-medium text-[12px]"
-                    class="w-full"
+                    class="w-full unit-select"
                     itemValue="id"
                     itemLabel="name"
-                    :disabled="isDisabled || !item.product_type_id"
-                    :items="store.unitsData.get(item.product_type_id) ?? mealUnitList[index]"
+                    disabled
+                    :items="mealUnitList[index]"
+
                   />
+                  <!--                  store.unitsData.get(item.product_type_id) ??-->
                   <button
                     class="bg-[#E2E6F3] rounded-[8px] flex justify-center items-center h-[40px] w-[60px] ml-[16px] mt-2"
                     @click="handleDelete(index as any)"
@@ -495,8 +534,9 @@ const mealUnitGet = (val, index) => {
           v-if="route.name === 'reference-ration-edit-id' || route.name === 'reference-ration-create'"
         >
           <button
+            v-if="$can('delete', 'Button')"
             class="custom-danger-btn"
-            v-if="route.name === 'reference-ration-edit-id'"
+            v-show="route.name === 'reference-ration-edit-id'"
             @click="deleteFn"
           >
             {{ $t("method.delete") }}
@@ -534,3 +574,9 @@ const mealUnitGet = (val, index) => {
     </div>
   </AppOverlay>
 </template>
+
+<style lang="scss">
+.unit-select .el-select__suffix {
+  display: none !important;
+}
+</style>

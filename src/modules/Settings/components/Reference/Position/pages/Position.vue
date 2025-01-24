@@ -65,6 +65,7 @@ onMounted(() => {
         {{ isTranslate ? t(title) : title }}
       </h1>
       <RouterLink
+        v-if="$can('update', 'Button')"
         :to="{name: 'position-edit'}"
         class="rounded-lg bg-[#E2E6F3] py-2.5 px-5 inline-flex items-center gap-x-2"
       >

@@ -95,6 +95,7 @@ onMounted(() => {
         </div>
       </AppOverlay>
       <RouterLink
+        v-if="$can('update', 'Button')"
         :to="{name: 'reference-type-product-edit-id'}"
         class="custom-light-btn flex items-center ml-[24px]"
       >

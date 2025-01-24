@@ -96,6 +96,7 @@ const tableCurrentChange = (value: Record<string, any>) => {
         />
 
         <RouterLink
+          v-if="$can('create', 'Button')"
           :to="{name: 'reference-main-bases-add'}"
           class="flex items-center justify-center gap-3 custom-apply-btn"
         >
@@ -171,6 +172,7 @@ const tableCurrentChange = (value: Record<string, any>) => {
           <template #default="{row}">
             <div class="inline-flex items-center gap-x-2">
               <RouterLink
+                v-if="$can('read', 'Button')"
                 class="action-btn"
                 :to="{name: 'reference-main-bases-view', params: {id: row.id}}"
               >
@@ -181,6 +183,7 @@ const tableCurrentChange = (value: Record<string, any>) => {
               </RouterLink>
 
               <RouterLink
+                v-if="$can('update', 'Button')"
                 :to="{name: 'reference-main-bases-edit', params: {id: row.id}}"
                 class="action-btn"
               >

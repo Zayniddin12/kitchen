@@ -102,6 +102,7 @@ const tableCurrentChange = (value: FoodFactoryListType) => {
         />
 
         <button
+          v-if="$can('create', 'Button')"
           @click="$router.push({name: 'reference-combine-nutrition-add'})"
           class="flex items-center justify-center gap-3 custom-apply-btn"
         >
@@ -166,6 +167,7 @@ const tableCurrentChange = (value: FoodFactoryListType) => {
           <template #default="{row}">
             <div class="inline-flex items-center">
               <RouterLink
+                v-if="$can('read', 'Button')"
                 class="action-btn mr-2"
                 :to="{name: 'reference-combine-nutrition-view', params: {id: row.id}}"
               >
@@ -176,6 +178,7 @@ const tableCurrentChange = (value: FoodFactoryListType) => {
               </RouterLink>
 
               <RouterLink
+                v-if="$can('update', 'Button')"
                 class="action-btn"
                 :to="{name: 'reference-combine-nutrition-edit', params: {id: row.id}}"
               >

@@ -127,7 +127,7 @@ const computedPlaceholder = computed(() => {
 
   if (props.type === "search") return t("form.search");
 
-  return t("form.enter");
+  return ""
 });
 
 const renderSearchIcon = shallowRef<any>({

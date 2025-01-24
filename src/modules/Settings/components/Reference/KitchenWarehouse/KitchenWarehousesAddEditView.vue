@@ -14,6 +14,7 @@ import { ValidationType } from "@/components/ui/form/app-form/app-form.type";
 import { useSettingsStore } from "@/modules/Settings/store";
 import { ElNotification } from "element-plus";
 import AppOverlay from "@/components/ui/app-overlay/AppOverlay.vue";
+import { useI18n } from "vue-i18n";
 
 interface DataValue {
   management_id: string;
@@ -29,6 +30,7 @@ const setValidation = (value: ValidationType) => {
   v$.value = value;
 };
 
+const {t} = useI18n()
 const store = useSettingsStore();
 const route = useRoute();
 const router = useRouter();
@@ -42,7 +44,7 @@ const dataValue = ref<DataValue>({
   capacity: "",
   kitchen_capacity: "",
   kitchen_type_id: "",
-  measure_id: "",
+  measure_id: 2,
   status: "active",
 });
 
@@ -66,7 +68,7 @@ const setBreadCrumbFn = () => {
       to: { name: "reference-kitchen-warehouse" },
     },
     {
-      label: String(route?.meta?.breadcrumbItemTitle ?? ""),
+      label: t(String(route?.meta?.breadcrumbItemTitle ?? "")),
       isActionable: true,
     },
   ]);
@@ -216,20 +218,24 @@ watch(() => route.name, () => {
                 custom-type="number"
                 prop="capacity"
                 :disabled="isDisabled"
-              />
+              >
+                <template #append>
+                  <span>тонна</span>
+                </template>
+              </app-input>
 
-              <AppSelect
-                v-model="dataValue.measure_id"
-                :items="store.units.units"
-                item-value="id"
-                item-label="name"
-                :label="$t('Ед. изм. вместимости')"
-                :placeholder="$t('form.select')"
-                label-class="text-[#A8AAAE] font-medium text-[12px]"
-                class="w-full"
-                type="number"
-                prop="measure_id"
-              />
+              <!--              <AppSelect-->
+              <!--                v-model="dataValue.measure_id"-->
+              <!--                :items="store.units.units"-->
+              <!--                item-value="id"-->
+              <!--                item-label="name"-->
+              <!--                :label="$t('Ед. изм. вместимости')"-->
+              <!--                :placeholder="$t('form.select')"-->
+              <!--                label-class="text-[#A8AAAE] font-medium text-[12px]"-->
+              <!--                class="w-full"-->
+              <!--                type="number"-->
+              <!--                prop="measure_id"-->
+              <!--              />-->
 
               <app-select
                 v-model="dataValue.kitchen_type_id"
@@ -273,11 +279,12 @@ watch(() => route.name, () => {
           :class="!route.params.id ? 'justify-end' : 'justify-between'"
         >
           <button
-            v-if="route.params.id"
+            v-if="$can('delete', 'Button')"
+            v-show="route.params.id"
             class="custom-danger-btn"
             @click="deleteFn"
           >
-            {{$t('method.delete')}}
+            {{ $t("method.delete") }}
           </button>
 
           <div class="flex items-center gap-4">
@@ -285,14 +292,14 @@ watch(() => route.name, () => {
               @click="cancelFn"
               class="custom-cancel-btn"
             >
-              {{$t('method.cancel')}}
+              {{ $t("method.cancel") }}
             </button>
 
             <button
               class="custom-apply-btn"
               @click="handleSubmit"
             >
-              {{ $route.params.id ? $t('method.save') : $t('method.add') }}
+              {{ $route.params.id ? $t("method.save") : $t("method.add") }}
             </button>
           </div>
         </div>
@@ -308,7 +315,7 @@ watch(() => route.name, () => {
             src="@/assets/images/icons/edit.svg"
             alt="#"
           >
-          {{$t('method.edit')}}
+          {{ $t("method.edit") }}
         </button>
       </div>
     </div>

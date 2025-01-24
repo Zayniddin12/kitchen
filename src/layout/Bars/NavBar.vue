@@ -99,6 +99,7 @@ onMounted(async () => {
     <div class="flex items-center gap-6">
 
       <el-dropdown
+        v-if="$can('payment', 'Button')"
         trigger="click"
         :hide-on-click="false"
         ref="dropdown"
@@ -178,10 +179,10 @@ onMounted(async () => {
                         >
                           {{ child.name }}
                         </span>
-                        <img
-                          src="@/assets/arrow-right.svg"
-                          alt="arrow icon"
-                        />
+<!--                        <img-->
+<!--                          src="@/assets/arrow-right.svg"-->
+<!--                          alt="arrow icon"-->
+<!--                        />-->
                       </button>
                     </el-dropdown-item>
                   </el-dropdown-menu>

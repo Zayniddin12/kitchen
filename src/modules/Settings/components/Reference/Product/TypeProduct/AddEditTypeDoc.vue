@@ -10,6 +10,7 @@ import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 import useConfirm from "@/components/ui/app-confirm/useConfirm";
 import AppInput from "@/components/ui/form/app-input/AppInput.vue";
 import AppOverlay from "@/components/ui/app-overlay/AppOverlay.vue";
+import { useI18n } from "vue-i18n";
 
 interface Name {
   uz: string;
@@ -21,6 +22,7 @@ interface DataValue {
   is_active: boolean
 }
 
+const {t} = useI18n()
 const store = useSettingsStore();
 const route = useRoute();
 const router = useRouter();
@@ -70,7 +72,7 @@ const setBreadCrumbFn = () => {
       to: { name: "reference-type-product" },
     },
     {
-      label: String(route?.meta?.breadcrumbItemTitle ?? ""),
+      label: t(String(route?.meta?.breadcrumbItemTitle ?? "")),
       isActionable: true,
     },
   ]);
@@ -174,8 +176,9 @@ watch(() => route.name, () => {
 
       <div class="flex items-start justify-between mt-[24px] w-[70%]">
         <button
+          v-if="$can('delete', 'Button')"
           class="custom-danger-btn"
-          v-if="route.name === 'reference-type-product-edit-id'"
+          v-show="route.name === 'reference-type-product-edit-id'"
           @click="deleteFn"
         >
           {{$t('method.delete')}}
