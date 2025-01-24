@@ -17,9 +17,11 @@ import AppForm from "@/components/ui/form/app-form/AppForm.vue";
 import { ValidationType } from "@/components/ui/form/app-form/app-form.type";
 import { useSettingsStore } from "@/modules/Settings/store";
 import { useCommonStore } from "@/stores/common.store";
+import { useI18n } from "vue-i18n";
 
 const route = useRoute();
 const router = useRouter();
+const {t} = useI18n()
 const { confirm } = useConfirm();
 const settingsStore = useSettingsStore();
 const commonStore = useCommonStore();
@@ -65,7 +67,7 @@ const setBreadCrumbFn = () => {
       to: { name: "reference-combine-nutrition" }
     },
     {
-      label: route?.meta?.breadcrumbItemTitle as string ?? "",
+      label: t(route?.meta?.breadcrumbItemTitle as string ?? ""),
       isActionable: true
     }
   ]);
@@ -221,10 +223,11 @@ const disabled = computed(() => {
             class="flex items-center mt-[24px] justify-between"
         >
           <ElButton
+            v-if="$can('delete', 'Button')"
               type="danger"
               size="large"
               :loading="deleteLoading"
-              v-if="route.name === 'reference-combine-nutrition-edit'"
+              v-show="route.name === 'reference-combine-nutrition-edit'"
               class="custom-danger-btn"
               @click="deleteFn"
           >

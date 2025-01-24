@@ -136,6 +136,7 @@ onMounted(() => {
         </template>
       </AppOverlay>
       <RouterLink
+        v-if="$can('update', 'Button')"
         :to="{name: 'reference-dish-id'}"
         class="custom-light-btn flex items-center ml-6 justify-center w-full max-w-[17%]"
       >

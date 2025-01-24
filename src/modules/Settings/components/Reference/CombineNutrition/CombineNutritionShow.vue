@@ -9,11 +9,12 @@ import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 import { onMounted } from "vue";
 import AppOverlay from "@/components/ui/app-overlay/AppOverlay.vue";
 import { activeLocale } from "@/localization";
+import { useI18n } from "vue-i18n";
 
 const route = useRoute();
 
 const settingsStore = useSettingsStore();
-
+const {t} = useI18n()
 const { setBreadCrumb } = useBreadcrumb();
 
 const setBreadCrumbFn = () => {
@@ -36,7 +37,7 @@ const setBreadCrumbFn = () => {
       to: { name: "reference-combine-nutrition" },
     },
     {
-      label: route?.meta?.breadcrumbItemTitle as string ?? "",
+      label: t(route?.meta?.breadcrumbItemTitle as string ?? ""),
       isActionable: true,
     },
   ]);
@@ -79,6 +80,7 @@ onMounted(() => {
         </template>
       </AppOverlay>
       <RouterLink
+        v-if="$can('update', 'Button')"
         :to="{name: 'reference-combine-nutrition-edit'}"
         class="custom-light-btn flex items-center ml-6 justify-center w-full max-w-[17%]"
       >

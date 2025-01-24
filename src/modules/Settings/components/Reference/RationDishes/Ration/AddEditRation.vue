@@ -476,8 +476,9 @@ watch(() => route.name, () => {
           v-if="route.name === 'reference-ration-edit-id' || route.name === 'reference-ration-create'"
         >
           <button
+            v-if="$can('delete', 'Button')"
             class="custom-danger-btn"
-            v-if="route.name === 'reference-ration-edit-id'"
+            v-show="route.name === 'reference-ration-edit-id'"
             @click="deleteFn"
           >
             {{$t('method.delete')}}

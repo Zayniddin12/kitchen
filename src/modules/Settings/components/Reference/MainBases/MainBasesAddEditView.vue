@@ -15,9 +15,11 @@ import { useSettingsStore } from "@/modules/Settings/store";
 import { useCommonStore } from "@/stores/common.store";
 import AppOverlay from "@/components/ui/app-overlay/AppOverlay.vue";
 import AppForm from "@/components/ui/form/app-form/AppForm.vue";
+import { useI18n } from "vue-i18n";
 
 const route = useRoute();
 const router = useRouter();
+const {t} = useI18n()
 const { confirm } = useConfirm();
 const settingsStore = useSettingsStore();
 const commonStore = useCommonStore();
@@ -68,7 +70,7 @@ const setBreadCrumbFn = () => {
       to: { name: "reference-main-bases" },
     },
     {
-      label: String(route?.meta?.breadcrumbItemTitle ?? ""),
+      label: t(String(route?.meta?.breadcrumbItemTitle ?? "")),
       isActionable: true,
     },
   ]);
@@ -333,10 +335,11 @@ const disabledFormItems = computed<boolean>(() => {
           class="flex items-center mt-6 justify-between"
         >
           <ElButton
+            v-if="$can('delete', 'Button')"
             type="danger"
             size="large"
             :loading="deleteLoading"
-            v-if="route.name === 'reference-main-bases-edit'"
+            v-show="route.name === 'reference-main-bases-edit'"
             class="custom-danger-btn"
             @click="deleteFn"
           >

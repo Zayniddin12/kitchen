@@ -183,6 +183,7 @@ watch(() => documentStore.documentsIsRefresh, (newValue) => {
 
       <div class="flex items-center">
         <RouterLink
+          v-if="$can('create', 'Button')"
           :to="{name: 'contracts-create'}"
           class="custom-apply-btn !font-medium !gap-x-2 !text-bae"
         >
@@ -417,6 +418,7 @@ watch(() => documentStore.documentsIsRefresh, (newValue) => {
         <template #default="{row}:{row:ContractType}">
           <div class="flex items-center gap-x-2">
             <RouterLink
+              v-if="$can('read', 'Button')"
               class="action-btn"
               :to="{name: 'contracts-view-view', params: {id:row.id}}"
             >

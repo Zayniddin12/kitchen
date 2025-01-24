@@ -267,7 +267,8 @@ const isTranslate = computed(() => !!route.meta.isTranslate);
           :class="!route.params.id ? 'justify-end' : 'justify-between'"
         >
           <button
-            v-if="route.params.id"
+            v-if="$can('delete', 'Button')"
+            v-show="route.params.id"
             class="custom-danger-btn"
             @click="deleteFn"
           >

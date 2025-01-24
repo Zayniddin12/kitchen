@@ -14,6 +14,7 @@ import { RationProductTypeType } from "@/modules/Settings/settings.types";
 
 const route = useRoute();
 const { locale } = useI18n();
+const { t } = useI18n();
 
 const settingsStore = useSettingsStore();
 
@@ -37,7 +38,7 @@ const setBreadCrumbFn = () => {
       to: { name: "reference-ration" },
     },
     {
-      label: String(route?.meta?.breadcrumbItemTitle ?? ""),
+      label: t(String(route?.meta?.breadcrumbItemTitle ?? "")),
       isActionable: true,
     },
   ]);
@@ -141,6 +142,7 @@ onMounted(() => {
         </template>
       </AppOverlay>
       <RouterLink
+        v-if="$can('update', 'Button')"
         :to="{name: 'reference-ration-edit-id'}"
         class="custom-light-btn flex items-center ml-6 justify-center w-full max-w-[17%]"
       >

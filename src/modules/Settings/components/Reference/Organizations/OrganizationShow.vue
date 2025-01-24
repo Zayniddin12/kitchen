@@ -8,11 +8,12 @@ import { useSettingsStore } from "@/modules/Settings/store";
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 import { onMounted } from "vue";
 import AppOverlay from "@/components/ui/app-overlay/AppOverlay.vue";
+import { useI18n } from "vue-i18n";
 
 const route = useRoute();
 
 const settingsStore = useSettingsStore();
-
+const {t} = useI18n()
 const { setBreadCrumb } = useBreadcrumb();
 
 const setBreadCrumbFn = () => {
@@ -35,7 +36,7 @@ const setBreadCrumbFn = () => {
       to: { name: "reference-organization" },
     },
     {
-      label: String(route?.meta?.breadcrumbItemTitle ?? ""),
+      label: t(String(route?.meta?.breadcrumbItemTitle ?? "")),
       isActionable: true,
     },
   ]);
@@ -87,6 +88,7 @@ onMounted(() => {
         </template>
       </AppOverlay>
       <RouterLink
+        v-if="$can('update', 'Button')"
         :to="{name: 'reference-organization-edit'}"
         class="custom-light-btn flex items-center ml-6 justify-center w-full max-w-[17%]"
       >

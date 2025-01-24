@@ -17,6 +17,7 @@ const routeId = computed<number>(() => {
   return +route.params.id;
 });
 
+const {t} = useI18n()
 const { locale } = useI18n();
 
 const settingsStore = useSettingsStore();
@@ -37,7 +38,7 @@ const setBreadCrumbFn = () => {
       to: { name: "reference-vid-product" },
     },
     {
-      label: String(route?.meta?.breadcrumbItemTitle ?? ""),
+      label: t(String(route?.meta?.breadcrumbItemTitle ?? "")),
       isActionable: true,
     },
   ]);
@@ -93,6 +94,7 @@ onMounted(() => {
         </template>
       </AppOverlay>
       <RouterLink
+        v-if="$can('update', 'Button')"
         :to="{name: 'reference-vid-edit-id'}"
         class="custom-light-btn flex items-center ml-6 justify-center w-full max-w-[17%]"
       >

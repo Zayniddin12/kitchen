@@ -906,6 +906,7 @@ const packagingPage = () => {
                 <template #default="{ row }: { row: ListInvoiceType }">
                   <template v-if="row.isEdit">
                     <button
+                      v-if="$can('update', 'Button')"
                       class="action-btn"
                       @click="updateProductPrice(row)"
                     >

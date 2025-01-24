@@ -315,6 +315,7 @@ const changePage = (value: number) => {
         <template #default="{row}:{row:ActType}">
           <div class="flex items-center justify-center gap-x-2.5">
             <RouterLink
+              v-if="$can('read', 'Button')"
               class="action-btn"
               :to="{name: 'acts-id', params: {id: row.id}}"
             >

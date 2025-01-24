@@ -1,43 +1,90 @@
 import { AbilityBuilder, Ability } from "@casl/ability";
 
-export type Actions = "view" | "add" | "edit";
+export type Actions = "create" | "read" | "update" | "delete" | "payment";
 export type Subjects = "Button";
 
 export const defineAbilitiesFor = (roles: string[]) => {
-  console.log(roles, "roles111");
   const { can, cannot, build } = new AbilityBuilder<Ability<[Actions, Subjects]>>(Ability);
 
   const rolePermissions = {
-    fund_head_director: {
-      can: ["view"],
-      cannot: ["payment", "xls"],
+    hr: {
+      can: ["create", "read", "update"],
+      cannot: ["delete", "payment"],
     },
-    fund_director_deputy: {
-      can: ["view"],
-      cannot: ["payment", "xls"],
-    },
-    reg_management_head: {
-      can: ["view"],
-      cannot: ["payment", "xls"],
-    },
-    dormitory_manager: {
-      can: ["add", "view"],
-      cannot: ["delete", "edit", "payment", "xls"],
-    },
-    dormitory_caretaker: {
-      can: ["add", "edit", "view"],
-      cannot: ["delete", "payment", "xls"],
-    },
-    dormitory_cashier: {
-      can: ["add", "edit", "view", "payment"],
-      cannot: ["xls"],
-    },
-    super_admin: {
-      can: ["add", "edit", "view", "delete", "payment", "connect", "xls"],
+    "cashier-llp": {
+      can: ["create", "read", "update", "delete", "payment"],
       cannot: [],
     },
-    fund_admin: {
-      can: ["add", "edit", "view", "delete", "payment", "connect", "xls"],
+    "cashier-sales": {
+      can: ["create", "read", "update", "delete", "payment"],
+      cannot: [],
+    },
+    "cashier-sales": {
+      can: ["create", "read", "update", "delete", "payment"],
+      cannot: [],
+    },
+    admin: {
+      can: ["create", "read", "update", "payment"],
+      cannot: ["delete"],
+    },
+    "super-admin": {
+      can: ["create", "read", "update", "delete", "payment"],
+      cannot: [],
+    },
+    "director-foundation": {
+      can: ["read"],
+      cannot: ["create", "update", "delete", "payment"],
+    },
+    "deputy-director-foundation": {
+      can: ["read"],
+      cannot: ["create", "update", "delete", "payment"],
+    },
+    broker: {
+      can: ["create", "read", "update", "payment"],
+      cannot: ["delete"],
+    },
+    "head-management": {
+      can: ["read"],
+      cannot: ["update", "delete", "payment", "create"],
+    },
+    "head-factory": {
+      can: ["read"],
+      cannot: ["update", "delete", "payment", "create"],
+    },
+    "head-warehouse": {
+      can: ["create", "read", "update", "delete", "payment"],
+      cannot: [],
+    },
+    "accountant-base-warehouse": {
+      can: ["create", "read"],
+      cannot: ["update", "delete", "payment"],
+    },
+    "manager-base": {
+      can: ["create", "read", "update", "delete", "payment"],
+      cannot: [],
+    },
+    "merchandiser": {
+      can: ["create", "read", "update", "delete", "payment"],
+      cannot: [],
+    },
+    "freight-forwarder": {
+      can: ["create", "read", "update", "delete", "payment"],
+      cannot: [],
+    },
+    "head-chef": {
+      can: ["read"],
+      cannot: ["create", "update", "delete", "payment"],
+    },
+    chef: {
+      can: ["create", "read", "update", "delete", "payment"],
+      cannot: [],
+    },
+    technologist: {
+      can: ["create", "read", "update"],
+      cannot: ["delete", "payment"],
+    },
+    warehouseman: {
+      can: ["create", "read", "update", "delete", "payment"],
       cannot: [],
     },
   };

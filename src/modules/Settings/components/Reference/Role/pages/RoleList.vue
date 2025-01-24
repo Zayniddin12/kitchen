@@ -127,6 +127,7 @@ onMounted(() => {
       >
         <template #default="{row}:{row: RoleType}">
           {{ row.parent_name || "-" }}
+<!--          <span class="text-[red]">{{row.name}}</span>-->
         </template>
       </ElTableColumn>
       <ElTableColumn

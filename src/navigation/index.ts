@@ -21,18 +21,34 @@ export const useLayoutStore = defineStore("layoutStore", () => {
         title: t("navigation.home"),
         route: "/",
         icon: "smart-home",
-        permissions: ["admin"],
+        permissions: [
+          "admin",
+          "super-admin"
+        ],
       },
       {
         title: t("document.title1"),
         icon: "document",
         unique: "document",
-        permissions: ["admin"],
+        permissions: [
+          "admin",
+          "super-admin",
+          "director-foundation",
+          "deputy-director-foundation",
+          "broker",
+          "head-management",
+          "head-factory",
+          "head-warehouse",
+          "accountant-base-warehouse",
+          "manager-base",
+          "merchandiser",
+          "freight-forwarder",
+          "head-chef"
+        ],
         children: [
           {
             title: t("document.memos"),
             icon: "record",
-            permissions: ["admin"],
             children: [
               {
                 title: t("document.incoming"),
@@ -102,7 +118,19 @@ export const useLayoutStore = defineStore("layoutStore", () => {
         title: t("monitoring.title"),
         icon: "monitoring",
         unique: "monitoring",
-        permissions: ["admin"],
+        permissions: [
+          "admin",
+          "super-admin",
+          "director-foundation",
+          "deputy-director-foundation",
+          "head-management",
+          "head-factory",
+          "head-warehouse",
+          "accountant-base-warehouse",
+          "manager-base",
+          "merchandiser",
+          "freight-forwarder"
+        ],
         children: [
           {
             title: t("monitoring.remainingGoods"),
@@ -121,39 +149,76 @@ export const useLayoutStore = defineStore("layoutStore", () => {
         icon: "building-warehouse",
         unique: "building-warehouse",
         children: warehouseBasesStore.managementBasesMenu,
-        permissions: ["admin"],
+        permissions: [
+          "admin",
+          "super-admin",
+          "director-foundation",
+          "deputy-director-foundation",
+          "head-management",
+          "head-factory",
+          "head-warehouse",
+          "manager-base",
+          "merchandiser",
+          "freight-forwarder"
+        ],
       },
       {
         title: t("kitchenWarehouse.title"),
         icon: "building-warehouse",
         unique: "warehouse",
         children: kitchenWarehouse.dynamicState,
-        permissions: ["admin"],
+        permissions: [
+          "admin",
+          "super-admin",
+          "director-foundation",
+          "deputy-director-foundation",
+          "head-management",
+          "head-factory",
+          "freight-forwarder",
+          "head-chef"
+        ],
       },
       {
         title: t("kitchen.title"),
         icon: "kitchen",
         unique: "kitchen",
         children: kitchenStore.departments,
-        permissions: ["admin"],
+        permissions: [
+          "admin",
+          "super-admin",
+          "director-foundation",
+          "deputy-director-foundation",
+          "head-management",
+          "head-factory",
+          "freight-forwarder",
+          "head-chef",
+          "chef",
+          "cashier-llp",
+          "cashier-sales"
+        ],
       },
       {
         title: t("users.title"),
         icon: "users",
         unique: "users",
-        permissions: ["admin"],
+        permissions: [
+          "admin",
+          "super-admin",
+          "director-foundation",
+          "deputy-director-foundation",
+          "accountant-base-warehouse",
+          "hr"
+        ],
         children: [
           {
             title: t("users.personalDatabase"),
             icon: "record",
             route: "/personal-database",
-            permissions: ["admin"],
           },
           {
             title: t("users.visitors"),
             icon: "derictory",
             route: "/visitors",
-            permissions: ["admin"],
           },
         ],
       },
@@ -161,14 +226,38 @@ export const useLayoutStore = defineStore("layoutStore", () => {
         title: t("settings.directories"),
         icon: "record",
         route: "/reference",
-        permissions: ["admin"],
+        permissions: [
+          "admin",
+          "super-admin",
+          "director-foundation",
+          "deputy-director-foundation",
+          "broker",
+          "accountant-base-warehouse"
+        ],
       },
       {
         title: t("common.settings"),
         icon: "settings",
         unique: "settings",
         route: "/profile-settings/profile",
-        permissions: ["admin"],
+        permissions: [
+          "admin",
+          "super-admin",
+          "director-foundation",
+          "deputy-director-foundation",
+          "broker",
+          "head-management",
+          "head-factory",
+          "head-warehouse",
+          "accountant-base-warehouse",
+          "manager-base",
+          "merchandiser",
+          "freight-forwarder",
+          "head-chef",
+          "chef",
+          "cashier-llp",
+          "cashier-sales"
+        ],
       },
     ];
   });
