@@ -6,6 +6,7 @@ import { computed, watchEffect } from "vue";
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 import { useI18n } from "vue-i18n";
 import { useRoute } from "vue-router";
+import { check } from "@/mixins/permission";
 
 const { t } = useI18n();
 
@@ -24,6 +25,7 @@ interface UlItems {
 
 const ulItems = computed<UlItems[]>(() => [{
   title: t("document.title1"),
+  permissions: ["admin", "super_admin"],
   menu: [
     {
       title: t("document.typeDoc"),
@@ -39,6 +41,7 @@ const ulItems = computed<UlItems[]>(() => [{
 },
   {
     title: t("settings.products"),
+    permissions: ['technologist', "admin", "super_admin"],
     menu: [
       {
         title: t("typeProduct.title"),
@@ -54,6 +57,7 @@ const ulItems = computed<UlItems[]>(() => [{
   },
   {
     title: t("settings.rationsDishes"),
+    permissions: ['technologist', "admin", "super_admin"],
     menu: [
       {
         title: t("kitchen.ration"),
@@ -69,6 +73,7 @@ const ulItems = computed<UlItems[]>(() => [{
   },
   {
     title: t("settings.managementFactoriesAndWarehouses"),
+    permissions: ["admin", "super_admin"],
     menu: [
       {
         title: t("regionalDirectorates.title"),
@@ -104,6 +109,7 @@ const ulItems = computed<UlItems[]>(() => [{
   },
   {
     title: t("settings.positionsAndRoles"),
+    permissions: ["admin", "super_admin"],
     menu: [
       {
         title: t("position.list"),
@@ -119,6 +125,7 @@ const ulItems = computed<UlItems[]>(() => [{
   },
   {
     title: t("settings.suppliersAndOrganizations"),
+    permissions: ["admin", "super_admin"],
     menu: [
       {
         title: t("suppliers.title"),
@@ -134,6 +141,7 @@ const ulItems = computed<UlItems[]>(() => [{
   },
   {
     title: t("common.unitMeasurement2"),
+    permissions: ["admin", "super_admin"],
     menu: [
       {
         title: t("common.unitMeasurement2"),
@@ -176,6 +184,7 @@ watchEffect(() => {
         :key="index"
       >
         <h3
+          v-if="check(item.permissions)"
           class="text-[#2E90FA] font-medium text-[18px] flex items-center leading-[28px]"
         >
           <svg
