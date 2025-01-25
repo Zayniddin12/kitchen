@@ -233,14 +233,18 @@ watchEffect(() => {
               :label="$t('Занимаемое место')"
               label-class="text-[#A8AAAE] text-xs"
               class="mb-0"
+            >
+              <template #append>
+                <span>кг</span>
+              </template>
+            </AppInput>
+
+            <el-switch
+              class="mt-7"
+              v-model="dataValue.is_active"
+              active-text="Приготовляемый"
             />
 
-            <app-input
-              :label="$t('Ед. изм. занимаемого места')"
-              label-class="text-[#A8AAAE] text-[12px]"
-              disabled
-              placeholder="кг"
-            />
           </div>
         </AppForm>
 

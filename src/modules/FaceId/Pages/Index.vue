@@ -6,7 +6,7 @@ import { useI18n } from "vue-i18n";
 
 const model = defineModel();
 const store = useFaceStore();
-const {t} = useI18n();
+const { t } = useI18n();
 
 const count = ref<string | number>("00:00");
 let timer: ReturnType<typeof setInterval> | null = null;
@@ -17,7 +17,7 @@ const closeModal = () => {
 
 watch(() => model.value, async (newValue) => {
   if (newValue) {
-    let count1 = 5;
+    let count1 = 60;
 
     timer = setInterval(() => {
       const minutes = Math.floor(count1 / 60);
@@ -63,32 +63,41 @@ watch(() => count.value, (val) => {
 
     <div class="flex items-center ml-[30px]">
       <img
-        :src="store.faceId.face_path"
+        :src="store.faceId?.face_path"
         class="h-[100%] object-contain w-[50%] rounded-[24px]"
         alt="#"
       />
 
       <div class="w-[50%]">
         <div class="bg-[#F8F9FC] py-[32px] px-[48px] rounded-[24px] w-[90%] ml-[30px]">
-          <h1 class="font-bold text-[45px] text-[#000D24]">{{ store.faceId.user_name }}</h1>
+          <h1 class="font-bold text-[45px] text-[#000D24]">{{ store.faceId?.user_name }}</h1>
 
           <ul class="mt-[54px]">
-            <li class="text-[24px] text-[#8F9194]">{{t("common.workPlace")}}:</li>
-            <li class="text-[#000D24] text-[32px] mb-[35px]">{{ store.faceId.work_place_name }}</li>
+            <li class="text-[24px] text-[#8F9194]">{{ t("common.workPlace") }}:</li>
+            <li class="text-[#000D24] text-[32px] mb-[35px]">{{ store.faceId?.work_place_name }}</li>
 
-            <li class="text-[24px] text-[#8F9194]">{{t("kitchen.ration2")}}:</li>
-            <li class="text-[#000D24] text-[32px] mb-[35px]">{{ store.faceId.ration }}</li>
+            <li class="text-[24px] text-[#8F9194]">{{ t("kitchen.ration2") }}:</li>
+            <li class="text-[#000D24] text-[32px] mb-[35px]">{{ store.faceId?.ration }}</li>
 
-            <li class="text-[24px] text-[#8F9194]">{{t("common.workingHours")}}:</li>
-            <li class="text-[#000D24] text-[32px]">{{ store.faceId.work_hours }} {{t("time.hour")}}.</li>
+            <li class="text-[24px] text-[#8F9194]">{{ t("common.workingHours") }}:</li>
+            <li class="text-[#000D24] text-[32px]">{{ store.faceId?.work_hours }} {{ t("time.hour") }}.</li>
           </ul>
+        </div>
+        <div class="px-[48px] mt-8 flex items-center justify-between">
+          <p class="mb-0 text-[#000D24] text-[24px]">{{ count }}</p>
+          <button
+            class="custom-apply-btn"
+
+          >
+            Подтвердить
+          </button>
         </div>
       </div>
     </div>
 
-    <div class="bg-[#F8F9FC] py-[14px] px-[32px] w-[170px] mt-[10px] ml-auto rounded-[16px] mr-[45px] text-center">
-      <p class="mb-0 text-[#000D24] text-[24px]">{{ count }}</p>
-    </div>
+    <!--    <div class="bg-[#F8F9FC] py-[14px] px-[32px] w-[170px] mt-[10px] ml-auto rounded-[16px] mr-[45px] text-center">-->
+
+    <!--    </div>-->
   </el-dialog>
 </template>
 
