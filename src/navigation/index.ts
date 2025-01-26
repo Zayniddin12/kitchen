@@ -23,7 +23,37 @@ export const useLayoutStore = defineStore("layoutStore", () => {
         icon: "smart-home",
         permissions: [
           "admin",
-          "super-admin"
+          "super-admin",
+        ],
+      },
+      {
+        title: t("monitoring.title"),
+        icon: "monitoring",
+        unique: "monitoring",
+        permissions: [
+          "admin",
+          "super-admin",
+          "director-foundation",
+          "deputy-director-foundation",
+          "head-management",
+          "head-factory",
+          "head-warehouse",
+          "accountant-base-warehouse",
+          "manager-base",
+          "merchandiser",
+          "freight-forwarder",
+        ],
+        children: [
+          {
+            title: t("monitoring.remainingGoods"),
+            icon: "box",
+            route: "/monitoring/remaining-goods",
+          },
+          {
+            title: t("monitoring.kitchenReport"),
+            icon: "kitchen",
+            route: "/monitoring/kitchen-report",
+          },
         ],
       },
       {
@@ -43,7 +73,7 @@ export const useLayoutStore = defineStore("layoutStore", () => {
           "manager-base",
           "merchandiser",
           "freight-forwarder",
-          "head-chef"
+          "head-chef",
         ],
         children: [
           {
@@ -115,36 +145,6 @@ export const useLayoutStore = defineStore("layoutStore", () => {
         ],
       },
       {
-        title: t("monitoring.title"),
-        icon: "monitoring",
-        unique: "monitoring",
-        permissions: [
-          "admin",
-          "super-admin",
-          "director-foundation",
-          "deputy-director-foundation",
-          "head-management",
-          "head-factory",
-          "head-warehouse",
-          "accountant-base-warehouse",
-          "manager-base",
-          "merchandiser",
-          "freight-forwarder"
-        ],
-        children: [
-          {
-            title: t("monitoring.remainingGoods"),
-            icon: "box",
-            route: "/monitoring/remaining-goods",
-          },
-          {
-            title: t("monitoring.kitchenReport"),
-            icon: "kitchen",
-            route: "/monitoring/kitchen-report",
-          },
-        ],
-      },
-      {
         title: t("warehouseBases.title"),
         icon: "building-warehouse",
         unique: "building-warehouse",
@@ -159,7 +159,7 @@ export const useLayoutStore = defineStore("layoutStore", () => {
           "head-warehouse",
           "manager-base",
           "merchandiser",
-          "freight-forwarder"
+          "freight-forwarder",
         ],
       },
       {
@@ -175,7 +175,7 @@ export const useLayoutStore = defineStore("layoutStore", () => {
           "head-management",
           "head-factory",
           "freight-forwarder",
-          "head-chef"
+          "head-chef",
         ],
       },
       {
@@ -194,7 +194,7 @@ export const useLayoutStore = defineStore("layoutStore", () => {
           "head-chef",
           "chef",
           "cashier-llp",
-          "cashier-sales"
+          "cashier-sales",
         ],
       },
       {
@@ -207,7 +207,7 @@ export const useLayoutStore = defineStore("layoutStore", () => {
           "director-foundation",
           "deputy-director-foundation",
           "accountant-base-warehouse",
-          "hr"
+          "hr",
         ],
         children: [
           {
@@ -232,7 +232,7 @@ export const useLayoutStore = defineStore("layoutStore", () => {
           "director-foundation",
           "deputy-director-foundation",
           "broker",
-          "accountant-base-warehouse"
+          "accountant-base-warehouse",
         ],
       },
       {
@@ -256,7 +256,7 @@ export const useLayoutStore = defineStore("layoutStore", () => {
           "head-chef",
           "chef",
           "cashier-llp",
-          "cashier-sales"
+          "cashier-sales",
         ],
       },
     ];
