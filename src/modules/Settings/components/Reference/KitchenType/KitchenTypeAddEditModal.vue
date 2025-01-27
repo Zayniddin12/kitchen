@@ -24,6 +24,7 @@ interface DataValue {
   name: Name;
   status: boolean | StatusType;
   is_paid: number | string | boolean;
+  is_free: boolean;
 }
 
 const v$ = ref<ValidationType | null>(null);
@@ -31,7 +32,7 @@ const setValidation = (value: ValidationType) => {
   v$.value = value;
 };
 
-const {t} = useI18n()
+const { t } = useI18n();
 const store = useSettingsStore();
 const route = useRoute();
 const router = useRouter();
@@ -44,6 +45,7 @@ const dataValue = ref<DataValue>({
     ru: "",
   },
   is_paid: false,
+  is_free: false,
   status: "active",
 });
 const status = ref<boolean>(true);
@@ -56,7 +58,6 @@ onMounted(async () => {
       const kitchen = await store.GET_KITCHEN_TYPE_DETAIL(+route.params.id);
       if (kitchen && kitchen.kitchen_type) {
         dataValue.value = kitchen.kitchen_type;
-        dataValue.value.is_paid = dataValue.value.is_paid == 1;
 
         status.value = kitchen.kitchen_type.status == "active";
       }
@@ -122,7 +123,6 @@ const handleSubmit = async () => {
 
   if ((await v$.value.validate())) {
     try {
-      dataValue.value.is_paid = dataValue.value.is_paid ? 1 : 0;
       const payload = dataValue.value as DataValue;
 
       if (route.params.id) {
@@ -200,16 +200,21 @@ watch(() => route.name, () => {
                 />
               </div>
               <template v-if="route.name === 'reference-kitchen-type-view'">
-                <span class="text-base text-dark">{{ dataValue.is_paid ? $t('kitchen.paid') : $t('kitchen.free') }}</span>
+                <span class="text-base text-dark">{{ dataValue.is_paid ? $t("kitchen.paid") : $t("kitchen.free")
+                  }}d</span>
               </template>
-              <ElSwitch
-                v-else
-                v-model="dataValue.is_paid"
-                :active-text="dataValue.is_paid ? $t('kitchen.paid') : $t('kitchen.free')"
-                class="app-switch"
-                @change="changeStatus"
-              />
-              <br/>
+              <div v-else>
+                <!--                <ElSwitch-->
+                <!--                  v-model="dataValue.is_paid"-->
+                <!--                  :active-text="dataValue.is_paid ? $t('kitchen.paid') : $t('kitchen.free')"-->
+                <!--                  class="app-switch"-->
+                <!--                  @change="changeStatus"-->
+                <!--                />-->
+
+                <el-checkbox v-model="dataValue.is_paid" :label="$t('kitchen.paid')" size="large" />
+                <el-checkbox v-model="dataValue.is_free" :label="$t('kitchen.free')" size="large" />
+              </div>
+              <br />
               <ElSwitch
                 v-if="route.params.id && !route.query.type"
                 active-text="Деактивация"
@@ -233,7 +238,7 @@ watch(() => route.name, () => {
               v-show="route.params.id"
               class="custom-danger-btn"
             >
-              {{$t('method.delete')}}
+              {{ $t("method.delete") }}
             </button>
 
             <div class="flex items-center gap-4">
@@ -241,14 +246,14 @@ watch(() => route.name, () => {
                 @click="cancelFn"
                 class="custom-cancel-btn"
               >
-                {{$t('method.cancel')}}
+                {{ $t("method.cancel") }}
               </button>
 
               <button
                 class="custom-apply-btn"
                 @click="handleSubmit"
               >
-                {{ $route.params.id ? $t('method.save') : $t('method.add') }}
+                {{ $route.params.id ? $t("method.save") : $t("method.add") }}
               </button>
             </div>
           </div>
@@ -264,7 +269,7 @@ watch(() => route.name, () => {
               src="@/assets/images/icons/edit.svg"
               alt="#"
             />
-            {{$t('method.edit')}}
+            {{ $t("method.edit") }}
           </button>
         </div>
       </div>

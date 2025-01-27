@@ -134,6 +134,7 @@ export interface KitchenTypeDetailType {
   id: number,
   name: NameType,
   is_paid: boolean,
+  is_free: boolean,
   status: StatusType,
   created_at: string,
   updated_at: string,

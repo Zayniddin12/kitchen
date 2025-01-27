@@ -12,6 +12,7 @@ export const useFaceStore = defineStore("faceStore", () => {
     work_place_name: "",
     ration: "",
     work_hours: "",
+    order_id: "",
   });
 
   const FETCH_FACE_ID = async (params?: any) => {
@@ -20,16 +21,23 @@ export const useFaceStore = defineStore("faceStore", () => {
     faceId.value = data.data;
     if (data.success == false) {
       ElNotification({
-        title: 'Ogohlantirish!',
-        message: 'Siz ovqat olgansiz!',
+        title: "Ogohlantirish!",
+        message: "Siz ovqat olgansiz!",
         type: "warning",
       });
     }
     return data.data;
   };
 
+  const CONFIRM_USER = async (id: number | string) => {
+    if (!tokenManager.getAccessToken()) return;
+    const { data } = await $axios.post(`/orders/${id}/accept`);
+    return data;
+  };
+
   return {
     faceId,
     FETCH_FACE_ID,
+    CONFIRM_USER,
   };
 });

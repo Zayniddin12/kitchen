@@ -2,17 +2,26 @@
 import { ref, watch } from "vue";
 import { useFaceStore } from "@/modules/FaceId/store";
 import { useI18n } from "vue-i18n";
-
+import useConfirm from "@/components/ui/app-confirm/useConfirm";
 
 const model = defineModel();
 const store = useFaceStore();
 const { t } = useI18n();
+const { confirm } = useConfirm();
 
 const count = ref<string | number>("00:00");
 let timer: ReturnType<typeof setInterval> | null = null;
 
 const closeModal = () => {
   model.value = false;
+};
+
+const confirmUser = () => {
+  confirm.confirm().then(async response => {
+    let order_id: number | string = store.faceId.order_id;
+    await store.CONFIRM_USER(order_id);
+    model.value = false;
+  });
 };
 
 watch(() => model.value, async (newValue) => {
@@ -61,14 +70,14 @@ watch(() => count.value, (val) => {
       </div>
     </template>
 
-    <div class="flex items-center ml-[30px]">
+    <div class="flex items-stretch ml-[30px]">
       <img
-        :src="store.faceId?.face_path"
-        class="h-[100%] object-contain w-[50%] rounded-[24px]"
+        src="https://plus.unsplash.com/premium_photo-1664474619075-644dd191935f?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8aW1hZ2V8ZW58MHx8MHx8fDA%3D"
+        class="h-[700px] object-cover w-[50%] rounded-[24px]"
         alt="#"
       />
 
-      <div class="w-[50%]">
+      <div class="w-[50%] flex flex-col">
         <div class="bg-[#F8F9FC] py-[32px] px-[48px] rounded-[24px] w-[90%] ml-[30px]">
           <h1 class="font-bold text-[45px] text-[#000D24]">{{ store.faceId?.user_name }}</h1>
 
@@ -83,11 +92,11 @@ watch(() => count.value, (val) => {
             <li class="text-[#000D24] text-[32px]">{{ store.faceId?.work_hours }} {{ t("time.hour") }}.</li>
           </ul>
         </div>
-        <div class="px-[48px] mt-8 flex items-center justify-between">
+        <div class="px-[48px] mt-auto flex items-center justify-between">
           <p class="mb-0 text-[#000D24] text-[24px]">{{ count }}</p>
           <button
             class="custom-apply-btn"
-
+            @click="confirmUser"
           >
             Подтвердить
           </button>

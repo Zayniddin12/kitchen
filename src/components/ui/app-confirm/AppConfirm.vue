@@ -36,6 +36,7 @@ const closeDialog = () => {
     class="p-7 !rounded-3xl confirm-dialog"
     :before-close="closeDialog"
   >
+    <!--    {{activeConfirm}}-->
     <template
       #title
       v-if="activeConfirm?.title"
@@ -54,7 +55,8 @@ const closeDialog = () => {
       #footer
       v-if="activeConfirm?.buttons?.length"
     >
-      <div class="mt-6 flex items-center gap-x-3 text-sm font-medium justify-end">
+      <div class="mt-6 flex items-center gap-x-3 text-sm font-medium "
+           :class="activeConfirm.type === 'confirm' ? 'justify-between grid grid-cols-2' : 'justify-end'">
         <button
           v-for="button in activeConfirm.buttons"
           :key="button.action"

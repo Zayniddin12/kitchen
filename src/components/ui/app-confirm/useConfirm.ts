@@ -30,6 +30,10 @@ export default function() {
       { label: t("method.cancel"), status: "secondary", action: "cancel" },
       { label: t("method.delete"), status: "danger", action: "confirm" },
     ],
+    confirm: [
+      { label: t("method.cancel"), status: "secondary", action: "cancel" },
+      { label: t("method.apply"), status: "primary", action: "confirm" },
+    ],
     show: [{ label: t("method.understandable"), action: "confirm", status: "primary" }],
   };
 
@@ -56,6 +60,7 @@ export default function() {
     }
 
     return init({
+      type,
       title,
       description,
       buttons: buttons,
@@ -65,6 +70,13 @@ export default function() {
 
   const confirm = {
     openModal,
+    confirm: (params: ConfirmParamsType = {}) =>
+      openModal(
+        "confirm",
+        params.title || ``,
+        params.description || '',
+        !!params.disabledBody,
+      ),
     cancel: (params: ConfirmParamsType = {}) =>
       openModal(
         "cancel",
