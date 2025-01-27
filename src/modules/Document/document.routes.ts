@@ -88,6 +88,20 @@ export default [
       breadcrumbItemIsTranslate: true,
     },
   },
+  {
+    path: "/drafts/:id",
+    name: "drafts-id",
+    component: () => import("@/modules/Document/pages/OfficeNotes/View.vue"),
+    meta: {
+      title: "document.drafts",
+      isTranslate: true,
+      parentRouteTitle: "document.drafts",
+      parentRouteIsTranslate: true,
+      parentRouteUrl: { name: "drafts" },
+      documentTitle: "document.drafts",
+      documentTitleIsTranslate: true,
+    },
+  },
   // -------------------------Служебные записки-------------------------------
 
 

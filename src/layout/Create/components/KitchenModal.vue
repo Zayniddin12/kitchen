@@ -1006,6 +1006,7 @@ const changeUser = (val, key) => {
             :label="t('document.whom.from')"
             :items="fromList"
             :loading="settingsStore.respondentsLoading"
+            filterable
             label-class="text-[#A8AAAE] text-xs font-medium"
             @change="(value) => respondentChange(value as string, 'from')"
             required
@@ -1086,6 +1087,7 @@ const changeUser = (val, key) => {
             label-class="text-[#A8AAAE] text-xs font-medium"
             @change="(value) => respondentChange(value as string, 'to')"
             required
+            filterable
             trigger="blur"
 
           >
@@ -1212,6 +1214,7 @@ const changeUser = (val, key) => {
                     :placeholder="t('product.type')"
                     label-class="text-[#A8AAAE] text-xs font-medium"
                     @change="fetchVidProductsList(product)"
+                    filterable
                     required
                     trigger="blur"
                   />
@@ -1225,6 +1228,7 @@ const changeUser = (val, key) => {
                     :placeholder="t('product.view')"
                     label-class="text-[#A8AAAE] text-xs font-medium"
                     required
+                    filterable
                     :disabled="!product.category_id"
                     @change="changeProduct(product, index)"
                   />
@@ -1249,6 +1253,7 @@ const changeUser = (val, key) => {
                       :label="t('common.measurement')"
                       label-class="text-[#A8AAAE] text-xs font-medium"
                       required
+                      filterable
                       disabled
                     />
                   </div>
@@ -1298,6 +1303,7 @@ const changeUser = (val, key) => {
                 :label="t('document.commission.chef')"
                 label-class="text-[#A8AAAE] text-xs font-medium"
                 required
+                filterable
                 @change="changeUser($event, 'signer_id_1')"
               >
                 <template v-if="signersList.form.chef.users">
@@ -1316,6 +1322,7 @@ const changeUser = (val, key) => {
                 :label="t('document.commission.baseChief')"
                 label-class="text-[#A8AAAE] text-xs font-medium"
                 required
+                filterable
                 @change="changeUser($event, 'signer_id_2')"
               >
                 <template v-if="signersList.form.head_base.users">
@@ -1334,6 +1341,7 @@ const changeUser = (val, key) => {
                 :label="t('document.commission.commodityExpert')"
                 label-class="text-[#A8AAAE] text-xs font-medium"
                 required
+                filterable
                 @change="changeUser($event, 'signer_id_3')"
               >
                 <template v-if="signersList.form.commodityExpert.users">
@@ -1352,6 +1360,7 @@ const changeUser = (val, key) => {
                 :label="t('document.commission.accountant_base')"
                 label-class="text-[#A8AAAE] text-xs font-medium"
                 required
+                filterable
                 @change="changeUser($event, 'signer_id_4')"
               >
                 <template v-if="signersList.form.accountant_base.users">
@@ -1922,6 +1931,7 @@ const changeUser = (val, key) => {
                 :label="t('document.commission.chef')"
                 label-class="text-[#A8AAAE] text-xs font-medium"
                 required
+                filterable
                 @change="changeUser($event, 'signer_id_1')"
               >
                 <template v-if="signersList.act.chef.users">
@@ -1940,6 +1950,7 @@ const changeUser = (val, key) => {
                 :label="t('document.commission.head_KP')"
                 label-class="text-[#A8AAAE] text-xs font-medium"
                 required
+                filterable
                 @change="changeUser($event, 'signer_id_2')"
               >
                 <template v-if="signersList.act.head_kpi.users">
@@ -1958,6 +1969,7 @@ const changeUser = (val, key) => {
                 :label="t('document.commission.accountant')"
                 label-class="text-[#A8AAAE] text-xs font-medium"
                 required
+                filterable
                 @change="changeUser($event, 'signer_id_3')"
               >
                 <template v-if="signersList.act.accountant.users">
