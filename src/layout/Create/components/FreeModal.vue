@@ -331,6 +331,7 @@ watch(model, (newModel) => {
             :label="t('common.recipient')"
             label-class="text-[#A8AAAE] text-[12px] font-medium"
             :loading="settingsStore.respondentsLoading"
+            filterable
             @change="(value) => respondentChange(value as string, 'to')"
             :required
             trigger="blur"
@@ -373,6 +374,7 @@ watch(model, (newModel) => {
             :placeholder="t('common.sender')"
             :label="t('common.sender')"
             label-class="text-[#A8AAAE] text-xs font-medium"
+            filterable
             :disabled="authStore.disabledUserWorkplace"
             @change="(value) => respondentChange(value as string, 'to')"
           >

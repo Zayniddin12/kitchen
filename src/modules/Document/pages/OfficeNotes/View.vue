@@ -165,11 +165,11 @@ watch(() => route.params.id, (newId) => {
 
     <button class="custom-white-btn w-[260px]">
       <img
-        src="@/assets/images/icons/plane.svg"
-        alt="plane"
-        class="mr-[12px]"
+        class="mr-4"
+        src="@/assets/images/download.svg"
+        alt="download"
       />
-      {{ t("method.send") }}
+      {{ t("method.download") }}
     </button>
   </div>
 </template>

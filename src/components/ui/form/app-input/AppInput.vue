@@ -127,7 +127,7 @@ const computedPlaceholder = computed(() => {
 
   if (props.type === "search") return t("form.search");
 
-  return ""
+  return "";
 });
 
 const renderSearchIcon = shallowRef<any>({
@@ -216,6 +216,7 @@ watch(
       :inputStyle
       class="app-input__input"
       @change="change"
+      @wheel.stop.prevent
     >
       <template
         v-if="slots.prepend || type === 'tel' || prepend"

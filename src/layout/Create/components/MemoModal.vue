@@ -68,34 +68,61 @@ const sendForm = async (status: DocumentStatusType) => {
 
   form.status = status;
 
-  if (!v$.value) return;
+  if (status == "draft") {
 
-  if (!(await v$.value.validate())) {
-    commonStore.errorToast(t("error.validation"));
-    return;
-  }
+    const newForm = { ...form };
+    delete newForm.to;
 
-  const newForm = { ...form };
-  delete newForm.to;
+    try {
+      if (document.value) {
+        delete newForm.doc_type_id;
 
-  try {
-    if (document.value) {
-      delete newForm.doc_type_id;
+        await documentStore.update(document.value.id, newForm);
+        document.value.content = form.content ?? "";
+        document.value.subject = form.subject ?? "";
+        document.value.to_name = to.value;
+      } else {
+        await documentStore.create(newForm);
+      }
 
-      await documentStore.update(document.value.id, newForm);
-      document.value.content = form.content ?? "";
-      document.value.subject = form.subject ?? "";
-      document.value.to_name = to.value;
-    } else {
-      await documentStore.create(newForm);
+      commonStore.successToast();
+      validationErrors.value = null;
+      model.value = false;
+    } catch (error: any) {
+      if (error?.error?.code === 422) {
+        validationErrors.value = error.meta.validation_errors;
+      }
+    }
+  } else {
+    if (!v$.value) return;
+
+    if (!(await v$.value.validate())) {
+      commonStore.errorToast(t("error.validation"));
+      return;
     }
 
-    commonStore.successToast();
-    validationErrors.value = null;
-    model.value = false;
-  } catch (error: any) {
-    if (error?.error?.code === 422) {
-      validationErrors.value = error.meta.validation_errors;
+    const newForm = { ...form };
+    delete newForm.to;
+
+    try {
+      if (document.value) {
+        delete newForm.doc_type_id;
+
+        await documentStore.update(document.value.id, newForm);
+        document.value.content = form.content ?? "";
+        document.value.subject = form.subject ?? "";
+        document.value.to_name = to.value;
+      } else {
+        await documentStore.create(newForm);
+      }
+
+      commonStore.successToast();
+      validationErrors.value = null;
+      model.value = false;
+    } catch (error: any) {
+      if (error?.error?.code === 422) {
+        validationErrors.value = error.meta.validation_errors;
+      }
     }
   }
 };
@@ -123,37 +150,39 @@ const clear = () => {
 };
 
 const setForm = async () => {
-  form.doc_type_id = props.id ?? null;
+    form.doc_type_id = props.id ?? null;
 
-  if (authStore.disabledUserWorkplace) {
-    const activeWorkplace = authStore.user.workplaces[0];
-    if (activeWorkplace.workplace_id) {
-      form.from_id = activeWorkplace.workplace_id;
-      form.from_type = activeWorkplace.workplace_type;
-      // form.from = `${activeWorkplace.workplace_id}_${activeWorkplace.workplace_type}`;
-      form.from = `${authStore.user.id}_user`;
-      console.log(authStore.user);
-    } else {
+    if (authStore.disabledUserWorkplace) {
+      const activeWorkplace = authStore.user.workplaces[0];
+      // if (activeWorkplace.workplace_id) {
+      //   form.from_id = activeWorkplace.workplace_id;
+      //   form.from_type = activeWorkplace.workplace_type;
+      //   // form.from = `${activeWorkplace.workplace_id}_${activeWorkplace.workplace_type}`;
+      //   form.from = `${authStore.user.id}_user`;
+      //   console.log(authStore.user);
+      // } else {
       form.from_id = authStore.user.id;
       form.from_type = "user";
 
       form.from = `${authStore.user.id}_user`;
+      // }
     }
+    ;
+
+    if (!document.value) return;
+    await documentStore.fetchDocument(document.value.id);
+
+    if (!documentStore.document) return;
+    form.date = documentStore.document.date;
+    form.number = documentStore.document.number;
+    form.to_id = documentStore.document.to_id ?? null;
+    form.to_type = documentStore.document.to_type ?? "";
+    form.subject = documentStore.document.subject ?? "";
+    form.content = documentStore.document.content ?? "";
+
+    if (form.to_id && form.to_type) form.to = `${form.to_id}_${form.to_type}`;
   }
-
-  if (!document.value) return;
-  await documentStore.fetchDocument(document.value.id);
-
-  if (!documentStore.document) return;
-  form.date = documentStore.document.date;
-  form.number = documentStore.document.number;
-  form.to_id = documentStore.document.to_id ?? null;
-  form.to_type = documentStore.document.to_type ?? "";
-  form.subject = documentStore.document.subject ?? "";
-  form.content = documentStore.document.content ?? "";
-
-  if (form.to_id && form.to_type) form.to = `${form.to_id}_${form.to_type}`;
-};
+;
 
 const toList = ref<any>([]);
 
@@ -308,6 +337,7 @@ const loading = computed(() => documentStore.createLoading || documentStore.upda
             v-model="form.number"
             prop="number"
             :label="t('document.number')"
+            :placeholder="t('document.number')"
             label-class="text-[#A8AAAE] text-[12px] font-medium"
             required
             :max="20"
@@ -322,11 +352,12 @@ const loading = computed(() => documentStore.createLoading || documentStore.upda
           <AppSelect
             v-model="form.to"
             prop="to"
+            filterable
             :label="t('document.whom.to')"
             label-class="text-[#A8AAAE] text-[12px] font-medium"
             :loading="settingsStore.respondentsLoading"
             @change="(value) => respondentChange(value as string, 'to')"
-            :required
+            required
           >
             <ElOption
               v-for="item in filterUser"
@@ -338,9 +369,10 @@ const loading = computed(() => documentStore.createLoading || documentStore.upda
           <AppInput
             v-model="form.subject"
             prop="subject"
+            :placeholder="t('form.enter')"
             :label="t('common.theme')"
             label-class="text-[#A8AAAE] text-xs font-medium"
-            :required
+            required
             :max="100"
           />
 
@@ -352,7 +384,7 @@ const loading = computed(() => documentStore.createLoading || documentStore.upda
             :placeholder="t('document.memo.message')"
             type="textarea"
             :rows="5"
-            :required
+            required
             :max="1000"
           />
 
@@ -363,6 +395,7 @@ const loading = computed(() => documentStore.createLoading || documentStore.upda
             :label="t('common.sender')"
             label-class="text-[#A8AAAE] text-xs font-medium"
             :disabled="authStore.disabledUserWorkplace"
+            filterable
             @change="(value) => respondentChange(value as string, 'to')"
           >
             <template v-if="authStore.user">

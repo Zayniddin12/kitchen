@@ -476,6 +476,7 @@ watch(model, (newModel) => {
             @change="(value) => respondentChange(value as string, 'to')"
             :required
             trigger="blur"
+            filterable
           >
             <ElOption
               v-for="item in settingsStore.respondents"
@@ -538,6 +539,7 @@ watch(model, (newModel) => {
                 :items="settingsStore.typeProduct.product_categories"
                 item-value="id"
                 item-label="name"
+                filterable
                 :label="t('product.type')"
                 :placeholder="t('product.type')"
                 label-class="text-[#A8AAAE] text-xs font-medium"
@@ -550,6 +552,7 @@ watch(model, (newModel) => {
                 :items="vidProducts.get(product.category_id as number)"
                 item-label="name"
                 item-value="id"
+                filterable
                 :label="t('product.view')"
                 :placeholder="t('product.view')"
                 label-class="text-[#A8AAAE] text-xs font-medium"
@@ -573,6 +576,7 @@ watch(model, (newModel) => {
                   :items="settingsStore.units.units"
                   item-label="name"
                   item-value="id"
+                  filterable
                   :placeholder="t('common.measurement')"
                   :label="t('common.measurement')"
                   label-class="text-[#A8AAAE] text-xs font-medium"
@@ -587,7 +591,7 @@ watch(model, (newModel) => {
                 :placeholder="t('common.price')"
                 :label="t('common.price')"
                 label-class="text-[#A8AAAE] text-xs font-medium"
-                :required
+                required
               />
             </template>
             <button
@@ -616,6 +620,7 @@ watch(model, (newModel) => {
             :label="t('common.sender')"
             label-class="text-[#A8AAAE] text-xs font-medium"
             :disabled="authStore.disabledUserWorkplace"
+            filterable
             @change="(value) => respondentChange(value as string, 'to')"
           >
             <template v-if="authStore.user">
