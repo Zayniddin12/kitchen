@@ -52,6 +52,7 @@ const dataValue = ref<DataValue>({
   measurement_unit_id: "",
   place_occupied: "",
   is_active: true,
+  ready_to_eat: true,
 });
 const existingImage = ref<string>("");
 const loading = ref<boolean>(false);
@@ -122,6 +123,7 @@ const handleSubmit = async () => {
       formData.append("name[uz]", dataValue.value.name.uz);
       formData.append("name[ru]", dataValue.value.name.ru);
       formData.append("parent_id", dataValue.value.parent_id);
+      formData.append("ready_to_eat", dataValue.value.ready_to_eat);
       formData.append("place_occupied", dataValue.value.place_occupied);
       formData.append("measurement_unit_id", Number(dataValue.value.measurement_unit_id));
       if (route.params.id) formData.append("_method", "PUT");
@@ -241,7 +243,7 @@ watchEffect(() => {
 
             <el-switch
               class="mt-7"
-              v-model="dataValue.is_active"
+              v-model="dataValue.ready_to_eat"
               active-text="Приготовляемый"
             />
 

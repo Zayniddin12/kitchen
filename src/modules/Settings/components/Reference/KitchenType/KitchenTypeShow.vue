@@ -14,7 +14,7 @@ import { useI18n } from "vue-i18n";
 const route = useRoute();
 
 const settingsStore = useSettingsStore();
-const {t} = useI18n()
+const { t } = useI18n();
 const { setBreadCrumb } = useBreadcrumb();
 
 const setBreadCrumbFn = () => {
@@ -63,7 +63,7 @@ onMounted(() => {
         <template v-if="settingsStore.kitchenTypeDetail">
           <div>
             <span class="app-card__item-title">
-              {{$t('common.name2')}}
+              {{ $t("common.name2") }}
             </span>
             <p>
               {{ settingsStore.kitchenTypeDetail.name[activeLocale] }}
@@ -71,10 +71,16 @@ onMounted(() => {
           </div>
           <div>
             <span class="app-card__item-title">
-              {{$t('common.status')}}
+              {{ $t("common.status") }}
             </span>
-            <p>
-              {{ settingsStore.kitchenTypeDetail.is_paid ? $t('kitchen.paid') : $t('kitchen.free') }}
+            <p v-if="settingsStore.kitchenTypeDetail.is_paid && settingsStore.kitchenTypeDetail.is_free">
+              {{ $t("kitchen.free") }} и {{$t("kitchen.paid")}}
+
+            </p>
+            <p v-else>
+              {{ settingsStore.kitchenTypeDetail.is_paid ? $t("kitchen.paid") : "" }}
+              {{ settingsStore.kitchenTypeDetail.is_free ? $t("kitchen.free") : ""
+              }}
             </p>
           </div>
         </template>
@@ -89,7 +95,7 @@ onMounted(() => {
           alt="edit"
           class="size-5"
         />
-        {{$t('method.edit')}}
+        {{ $t("method.edit") }}
       </RouterLink>
     </div>
   </section>
