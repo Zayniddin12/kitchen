@@ -118,6 +118,7 @@ const clear = () => {
 };
 
 const respondentChange = (value: string, type: "from" | "to") => {
+  form[type] = value;
   const values = value.split("_");
   form[`${type}_id`] = Number(values[0]);
   form[`${type}_type`] = values[1];
@@ -646,6 +647,7 @@ watch(model, (newModel) => {
             size="large"
             @click="sendForm('draft')"
             class="custom-apply-btn h-[41px] w-[212px]"
+            :disabled="!form.to"
           >
             {{ t("method.saveAsDraft") }}
           </ElButton>
@@ -655,6 +657,7 @@ watch(model, (newModel) => {
             size="large"
             @click="sendForm('sent')"
             class="custom-send-btn h-[41px] w-[116px] !ml-0"
+            :disabled="!form.to"
           >
             {{ t("method.send") }}
           </ElButton>

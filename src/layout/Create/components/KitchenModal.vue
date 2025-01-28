@@ -1245,14 +1245,12 @@ const changeUser = (val, key) => {
                     />
                     <AppSelect
                       v-model="product.unit_id"
-                      :prop="`products[${index}].unit_id`"
                       :items="settingsStore.units.units ?? []"
                       item-label="name"
                       item-value="id"
                       :placeholder="t('common.measurement')"
                       :label="t('common.measurement')"
                       label-class="text-[#A8AAAE] text-xs font-medium"
-                      required
                       filterable
                       disabled
                     />
@@ -2000,6 +1998,7 @@ const changeUser = (val, key) => {
         size="large"
         @click="sendForm"
         class="custom-send-btn"
+        :disabled="!form.number"
       >
         {{ t("method.send") }}
 

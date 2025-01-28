@@ -400,6 +400,7 @@ watch(model, (newModel) => {
             size="large"
             @click="sendForm('draft')"
             class="custom-apply-btn h-[41px] w-[212px]"
+            :disabled="!form.to"
           >
             {{ t("method.saveAsDraft") }}
           </ElButton>
@@ -409,6 +410,7 @@ watch(model, (newModel) => {
             size="large"
             @click="sendForm('sent')"
             class="custom-send-btn h-[41px] w-[116px] !ml-0"
+            :disabled="!form.to"
           >
             {{ t("method.send") }}
           </ElButton>

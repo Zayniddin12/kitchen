@@ -169,7 +169,7 @@ const from = computed<string>(() => {
 
 const to = computed<string>(() => {
   if (!form.to_id || !form.to_type) return "";
-  const activeEl = settingsStore.respondents.find(
+  const activeEl = toList.value.find(
     el => el.model_type === form.to_type && el.id === form.to_id,
   );
 
@@ -1109,11 +1109,9 @@ const changeUser = (val, key) => {
                     />
                     <AppInput
                       v-model="product.unit"
-                      :prop="`products[${index}].unit_id`"
                       :placeholder="t('common.measurement')"
                       :label="t('common.measurement')"
                       label-class="text-[#A8AAAE] text-xs font-medium"
-                      required
                       disabled
                     />
                   </div>
@@ -1704,6 +1702,8 @@ const changeUser = (val, key) => {
         size="large"
         @click="sendForm"
         class="custom-send-btn"
+        :disabled="!form.number"
+
       >
         {{ t("method.send") }}
 
