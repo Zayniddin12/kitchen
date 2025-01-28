@@ -1158,8 +1158,8 @@ const changeUser = (val, key) => {
           <el-switch
             v-model="typeSwitch"
             size="large"
-            active-text="Поставка"
-            inactive-text="Покупка"
+            active-text="Покупка"
+            inactive-text="Поставка"
           />
 
           <AppInput
