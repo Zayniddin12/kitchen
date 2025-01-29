@@ -92,6 +92,7 @@ onMounted(() => {
           <ElTable
             :data="settingsStore.ration.product_types"
             class="custom-element-table mt-3"
+            :empty-text="$t('common.empty')"
           >
             <ElTableColumn
               width="80"
