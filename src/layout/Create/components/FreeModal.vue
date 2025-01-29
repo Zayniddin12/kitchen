@@ -280,10 +280,10 @@ watch(model, (newModel) => {
             </h1>
           </div>
 
-          <!--          <img-->
-          <!--            src="@/assets/images/icons/qr.svg"-->
-          <!--            alt="qr"-->
-          <!--          />-->
+                    <img
+                      src="@/assets/images/icons/qr.svg"
+                      alt="qr"
+                    />
 
           <h1 class="text-[#A8AAAE] text-sm">{{ authStore.userFullName }}</h1>
         </div>

@@ -100,13 +100,12 @@ const signersList = reactive<any>({
   form: {
     chef: {},
     head_base: {},
-    commodityExpert: {},
-    accountant_base: {},
   },
   act: {
     head_kpi: {},
     chef: {},
     accountant: {},
+    commodityExpert: {},
   },
 });
 
@@ -208,7 +207,7 @@ const from = computed<string>(() => {
 
 const to = computed<string>(() => {
   if (!form.to_id || !form.to_type) return "";
-  const activeEl = settingsStore.respondents.find(
+  const activeEl = toList.value.find(
     el => el.model_type === form.to_type && el.id === form.to_id,
   );
 
@@ -508,7 +507,7 @@ const getUser = (id: number): UserType | null => {
 
   if (selectedUsers.value.has(id)) return selectedUsers.value.get(id) as UserType;
 
-  const user: UserType | undefined = usersStore.users.users.find(user => user.id === id);
+  const user: UserType | undefined = allUser.value.users.find(user => user.id === id);
 
   if (!user) return null;
 
@@ -536,6 +535,7 @@ const closeModal = async () => {
 
 const fromList = ref<any>([]);
 const toList = ref<any>([]);
+const allUser = ref<any>({ users: [] });
 
 const openModal = async () => {
   form.doc_type_id = props.id;
@@ -559,6 +559,11 @@ const openModal = async () => {
   if (activeComingModal.value) {
     oldActForm.value = JSON.parse(JSON.stringify(actForm));
   }
+
+  allUser.value = await usersStore.fetchUsers({
+    per_page: 100,
+  });
+
   signersList.form.chef = await usersStore.fetchUsers({
     per_page: 100,
     role_name: "head-chef",
@@ -571,26 +576,27 @@ const openModal = async () => {
     role_name: "head-warehouse",
   });
 
-  signersList.form.commodityExpert = await usersStore.fetchUsers({
-    per_page: 100,
-    role_name: "merchandiser",
-  });
-
-  signersList.form.accountant_base = await usersStore.fetchUsers({
-    per_page: 100,
-    role_name: "accountant-base-warehouse",
-  });
-
   // for act signers
   signersList.act.head_kpi = await usersStore.fetchUsers({
     per_page: 100,
     role_name: "head-factory",
   });
 
+  signersList.act.commodityExpert = await usersStore.fetchUsers({
+    per_page: 100,
+    role_name: "merchandiser",
+  });
+
   signersList.act.accountant = await usersStore.fetchUsers({
     per_page: 100,
-    role_name: "accountant-base-warehouse",
+    role_name: "accountant",
   });
+
+  // signersList.act.chef = await usersStore.fetchUsers({
+  //   per_page: 100,
+  //   role_name: "head-chef",
+  // });
+
 };
 
 watch(model, newValue => {
@@ -904,7 +910,7 @@ const changeUser = (val, key) => {
             <template v-if="typeSwitch">
               <div class="flex items-center justify-between mb-[24px]">
                 <h2 class="text-[#4F5662] text-sm font-semibold">
-                  {{ t("document.commission.chef") }}:
+                  {{ t("document.commission.head_KP") }}:
                 </h2>
                 <span class="ml-2 text-[#A8AAAE] text-sm font-medium block">
                 {{
@@ -915,32 +921,11 @@ const changeUser = (val, key) => {
 
               <div class="flex items-center justify-between mb-[24px]">
                 <h2 class="text-[#4F5662] text-sm font-semibold">
-                  {{ t("document.commission.baseChief") }}:
+                  {{ t("document.commission.chef") }}:
                 </h2>
                 <span class="ml-2 text-[#A8AAAE] text-sm font-medium block">
                 {{
                     form.doc_signer_obj.signer_id_2 && typeof (form.doc_signer_obj.signer_id_2) === "number" ? usersStore.getUserFullName(getUser(form.doc_signer_obj.signer_id_2)) : ""
-                  }}
-              </span>
-              </div>
-              <div class="flex items-center justify-between mb-[24px]">
-                <h2 class="text-[#4F5662] text-sm font-semibold">
-                  {{ t("document.commission.commodityExpert") }}:
-                </h2>
-                <span class="ml-2 text-[#A8AAAE] text-sm font-medium block">
-               {{
-                    form.doc_signer_obj.signer_id_3 && typeof (form.doc_signer_obj.signer_id_3) === "number" ? usersStore.getUserFullName(getUser(form.doc_signer_obj.signer_id_3)) : ""
-                  }}
-              </span>
-              </div>
-
-              <div class="flex items-center justify-between mb-[24px]">
-                <h2 class="text-[#4F5662] text-sm font-semibold">
-                  {{ t("document.commission.accountant_base") }}:
-                </h2>
-                <span class="ml-2 text-[#A8AAAE] text-sm font-medium block">
-               {{
-                    form.doc_signer_obj.signer_id_4 && typeof (form.doc_signer_obj.signer_id_4) === "number" ? usersStore.getUserFullName(getUser(form.doc_signer_obj.signer_id_4)) : ""
                   }}
               </span>
               </div>
@@ -1215,7 +1200,6 @@ const changeUser = (val, key) => {
                     label-class="text-[#A8AAAE] text-xs font-medium"
                     @change="fetchVidProductsList(product)"
                     filterable
-                    required
                     trigger="blur"
                   />
                   <AppSelect
@@ -1227,7 +1211,6 @@ const changeUser = (val, key) => {
                     :label="t('product.view')"
                     :placeholder="t('product.view')"
                     label-class="text-[#A8AAAE] text-xs font-medium"
-                    required
                     filterable
                     :disabled="!product.category_id"
                     @change="changeProduct(product, index)"
@@ -1241,7 +1224,6 @@ const changeUser = (val, key) => {
                       :placeholder="t('common.quantity')"
                       :label="t('common.quantity')"
                       label-class="text-[#A8AAAE] text-xs font-medium"
-                      required
                     />
                     <AppSelect
                       v-model="product.unit_id"
@@ -1262,7 +1244,6 @@ const changeUser = (val, key) => {
                     :placeholder="t('common.price')"
                     :label="t('common.price')"
                     label-class="text-[#A8AAAE] text-xs font-medium"
-                    required
                   />
                 </div>
               </el-collapse-item>
@@ -1297,31 +1278,12 @@ const changeUser = (val, key) => {
               <AppSelect
                 v-model="form.doc_signer_obj.signer_id_1"
                 prop="doc_signer_obj.signer_id_1"
-                :placeholder="t('document.commission.chef')"
-                :label="t('document.commission.chef')"
+                :placeholder="t('document.commission.head_KP')"
+                :label="t('document.commission.head_KP')"
                 label-class="text-[#A8AAAE] text-xs font-medium"
                 required
                 filterable
                 @change="changeUser($event, 'signer_id_1')"
-              >
-                <template v-if="signersList.form.chef.users">
-                  <ElOption
-                    v-for="item in signersList.form.chef.users"
-                    :key="item.id"
-                    :label="usersStore.getUserFullName(item)"
-                    :value="item.id"
-                  />
-                </template>
-              </AppSelect>
-              <AppSelect
-                v-model="form.doc_signer_obj.signer_id_2"
-                prop="doc_signer_obj.signer_id_2"
-                :placeholder="t('document.commission.baseChief')"
-                :label="t('document.commission.baseChief')"
-                label-class="text-[#A8AAAE] text-xs font-medium"
-                required
-                filterable
-                @change="changeUser($event, 'signer_id_2')"
               >
                 <template v-if="signersList.form.head_base.users">
                   <ElOption
@@ -1333,37 +1295,18 @@ const changeUser = (val, key) => {
                 </template>
               </AppSelect>
               <AppSelect
-                v-model="form.doc_signer_obj.signer_id_3"
-                prop="doc_signer_obj.signer_id_3"
-                :placeholder="t('document.commission.commodityExpert')"
-                :label="t('document.commission.commodityExpert')"
+                v-model="form.doc_signer_obj.signer_id_2"
+                prop="doc_signer_obj.signer_id_2"
+                :placeholder="t('document.commission.chef')"
+                :label="t('document.commission.chef')"
                 label-class="text-[#A8AAAE] text-xs font-medium"
                 required
                 filterable
-                @change="changeUser($event, 'signer_id_3')"
+                @change="changeUser($event, 'signer_id_2')"
               >
-                <template v-if="signersList.form.commodityExpert.users">
+                <template v-if="signersList.form.chef.users">
                   <ElOption
-                    v-for="item in signersList.form.commodityExpert.users"
-                    :key="item.id"
-                    :label="usersStore.getUserFullName(item)"
-                    :value="item.id"
-                  />
-                </template>
-              </AppSelect>
-              <AppSelect
-                v-model="form.doc_signer_obj.signer_id_4"
-                prop="doc_signer_obj.signer_id_4"
-                :placeholder="t('document.commission.accountant_base')"
-                :label="t('document.commission.accountant_base')"
-                label-class="text-[#A8AAAE] text-xs font-medium"
-                required
-                filterable
-                @change="changeUser($event, 'signer_id_4')"
-              >
-                <template v-if="signersList.form.accountant_base.users">
-                  <ElOption
-                    v-for="item in signersList.form.accountant_base.users"
+                    v-for="item in signersList.form.chef.users"
                     :key="item.id"
                     :label="usersStore.getUserFullName(item)"
                     :value="item.id"
@@ -1548,126 +1491,12 @@ const changeUser = (val, key) => {
                   </table>
                 </el-collapse-item>
               </el-collapse>
-              <!--              <table-->
-              <!--                class="min-w-full border border-gray-300 bg-white text-left text-sm text-gray-900 rounded-[8px] border-separate table-my border-spacing-0"-->
-              <!--              >-->
-              <!--                <colgroup>-->
-              <!--                  <col class="w-[60%]">-->
-              <!--                </colgroup>-->
-              <!--                <tbody>-->
-              <!--                <tr class="border-gray-300">-->
-              <!--                  <td class="border-r border-b p-2 font-medium">-->
-              <!--                    {{ t("product.name") }}-->
-              <!--                  </td>-->
-              <!--                  <td class="p-2 border-b border-gray-300">{{ activeProductType?.name }}</td>-->
-              <!--                </tr>-->
 
-              <!--                <tr class="border-gray-300">-->
-              <!--                  <td class="border-r border-b p-2 font-medium">-->
-              <!--                    {{ t("product.quantity") }}-->
-              <!--                  </td>-->
-              <!--                  <td class="p-2 border-b border-gray-300">-->
-              <!--                    {{ actForm.products[0]?.quantity ? formatNumber(actForm.products[0].quantity) : "" }}-->
-              <!--                  </td>-->
-              <!--                </tr>-->
-
-              <!--                <tr class="border-gray-300">-->
-              <!--                  <td class="border-r border-b p-2 font-medium">-->
-              <!--                    {{ t("common.unitMeasurement") }}-->
-              <!--                  </td>-->
-              <!--                  <td class="p-2 border-b border-gray-300">-->
-              <!--                    {{ actForm.products[0]?.unit_id ? getProductMeasurement(actForm.products[0].unit_id) : "" }}-->
-              <!--                  </td>-->
-              <!--                </tr>-->
-
-              <!--                <tr class="border-gray-300">-->
-              <!--                  <td class="border-r border-b p-2 font-medium">-->
-              <!--                    {{ t("document.act.numberDateAgreement") }}-->
-              <!--                  </td>-->
-              <!--                  <td class="p-2 border-b border-gray-300">-->
-              <!--                    {{ actForm.doc_details.contract_details }}-->
-              <!--                  </td>-->
-              <!--                </tr>-->
-
-              <!--                <tr class="border-gray-300">-->
-              <!--                  <td class="border-r border-b p-2 font-medium">-->
-              <!--                    {{ t("document.consignmentNumberDate") }}-->
-              <!--                  </td>-->
-              <!--                  <td class="p-2 border-b border-gray-300">-->
-              <!--                    {{ formNumberAndDate }}-->
-              <!--                  </td>-->
-              <!--                </tr>-->
-
-              <!--                <tr class="border-gray-300">-->
-              <!--                  <td class="border-r border-b p-2 font-medium">-->
-              <!--                    {{ t("product.manufacturer") }}-->
-              <!--                  </td>-->
-              <!--                  <td class="p-2 border-b border-gray-300">{{ actForm.doc_details.manufacturer }}</td>-->
-              <!--                </tr>-->
-
-              <!--                <tr class="border-gray-300">-->
-              <!--                  <td class="border-r border-b p-2 font-medium">{{ t("common.supplier") }}</td>-->
-              <!--                  <td class="p-2 border-b border-gray-300">-->
-              <!--                    {{ from }}-->
-              <!--                  </td>-->
-              <!--                </tr>-->
-
-              <!--                <tr class="border-gray-300">-->
-              <!--                  <td class="border-r border-b p-2 font-medium">-->
-              <!--                    {{ t("common.recipient") }}-->
-              <!--                  </td>-->
-              <!--                  <td class="p-2 border-b border-gray-300">{{ to }}</td>-->
-              <!--                </tr>-->
-
-              <!--                <tr class="border-gray-300">-->
-              <!--                  <td class="border-r border-b p-2 font-medium">-->
-              <!--                    {{ t("common.transport") }}-->
-              <!--                  </td>-->
-              <!--                  <td class="p-2 border-b border-gray-300">{{ actForm.shipping_method }}</td>-->
-              <!--                </tr>-->
-
-              <!--                <tr class="border-gray-300">-->
-              <!--                  <td class="border-r border-b p-2 font-medium">-->
-              <!--                    {{ t("licence.numberAndDate") }}-->
-              <!--                  </td>-->
-              <!--                  <td class="p-2 border-b border-gray-300">-->
-              <!--                    {{ actForm.doc_details.licence }}-->
-              <!--                  </td>-->
-              <!--                </tr>-->
-
-              <!--                <tr class="border-gray-300">-->
-              <!--                  <td class="border-r border-b p-2 font-medium">-->
-              <!--                    {{ t("document.numberAndDateOfTheConclusionOfTheSanitaryAndEpidemiologicalCenter") }}-->
-              <!--                  </td>-->
-              <!--                  <td class="p-2 border-b border-gray-300">-->
-              <!--                    {{ actForm.doc_details.sanitary }}-->
-              <!--                  </td>-->
-              <!--                </tr>-->
-
-              <!--                <tr class="border-gray-300">-->
-              <!--                  <td class="border-r border-b p-2 font-medium">-->
-              <!--                    {{ t("document.numberAndDateOfVeterinaryCertificate") }}-->
-              <!--                  </td>-->
-              <!--                  <td class="p-2 border-b border-gray-300">-->
-              <!--                    {{ actForm.doc_details.vetirinary }}-->
-              <!--                  </td>-->
-              <!--                </tr>-->
-
-              <!--                <tr class="border-gray-300">-->
-              <!--                  <td class="border-r border-b p-2 font-medium">-->
-              <!--                    {{ t("document.numberAndDateOfQualityCertificate") }}-->
-              <!--                  </td>-->
-              <!--                  <td class="p-2 border-b border-gray-300">-->
-              <!--                    {{ actForm.doc_details.quality }}-->
-              <!--                  </td>-->
-              <!--                </tr>-->
-              <!--                </tbody>-->
-              <!--              </table>-->
             </div>
 
             <div class="flex items-center justify-between mb-[24px]">
               <h2 class="text-[#4F5662] text-sm font-semibold">
-                {{ t("document.commission.chef") }}:
+                {{ t("document.commission.baseChief") }}:
               </h2>
               <span class="ml-2 text-[#A8AAAE] text-sm font-medium block">
                 {{
@@ -1678,7 +1507,7 @@ const changeUser = (val, key) => {
 
             <div class="flex items-center justify-between mb-[24px]">
               <h2 class="text-[#4F5662] text-sm font-semibold">
-                {{ t("document.commission.head_KP") }}:
+                {{ t("document.commission.commodityExpert") }}:
               </h2>
               <span class="ml-2 text-[#A8AAAE] text-sm font-medium block">
                 {{
@@ -1694,6 +1523,17 @@ const changeUser = (val, key) => {
               <span class="ml-2 text-[#A8AAAE] text-sm font-medium block">
                {{
                   actForm.doc_signer_obj.signer_id_3 && typeof (actForm.doc_signer_obj.signer_id_3) === "number" ? usersStore.getUserFullName(getUser(actForm.doc_signer_obj.signer_id_3)) : ""
+                }}
+              </span>
+            </div>
+
+            <div class="flex items-center justify-between mb-[24px]">
+              <h2 class="text-[#4F5662] text-sm font-semibold">
+                {{ t("document.commission.chef") }}:
+              </h2>
+              <span class="ml-2 text-[#A8AAAE] text-sm font-medium block">
+               {{
+                  actForm.doc_signer_obj.signer_id_4 && typeof (actForm.doc_signer_obj.signer_id_4) === "number" ? usersStore.getUserFullName(getUser(actForm.doc_signer_obj.signer_id_4)) : ""
                 }}
               </span>
             </div>
@@ -1925,16 +1765,16 @@ const changeUser = (val, key) => {
               <AppSelect
                 v-model="actForm.doc_signer_obj.signer_id_1"
                 prop="doc_signer_obj.signer_id_1"
-                :placeholder="t('document.commission.chef')"
-                :label="t('document.commission.chef')"
+                :placeholder="t('document.commission.baseChief')"
+                :label="t('document.commission.baseChief')"
                 label-class="text-[#A8AAAE] text-xs font-medium"
                 required
                 filterable
                 @change="changeUser($event, 'signer_id_1')"
               >
-                <template v-if="signersList.act.chef.users">
+                <template v-if="signersList.act.head_kpi.users">
                   <ElOption
-                    v-for="item in signersList.act.chef.users"
+                    v-for="item in signersList.act.head_kpi.users"
                     :key="item.id"
                     :label="usersStore.getUserFullName(item)"
                     :value="item.id"
@@ -1944,16 +1784,16 @@ const changeUser = (val, key) => {
               <AppSelect
                 v-model="actForm.doc_signer_obj.signer_id_2"
                 prop="doc_signer_obj.signer_id_2"
-                :placeholder="t('document.commission.head_KP')"
-                :label="t('document.commission.head_KP')"
+                :placeholder="t('document.commission.commodityExpert')"
+                :label="t('document.commission.commodityExpert')"
                 label-class="text-[#A8AAAE] text-xs font-medium"
                 required
                 filterable
                 @change="changeUser($event, 'signer_id_2')"
               >
-                <template v-if="signersList.act.head_kpi.users">
+                <template v-if="signersList.act.commodityExpert.users">
                   <ElOption
-                    v-for="item in signersList.act.head_kpi.users"
+                    v-for="item in signersList.act.commodityExpert.users"
                     :key="item.id"
                     :label="usersStore.getUserFullName(item)"
                     :value="item.id"
@@ -1973,6 +1813,26 @@ const changeUser = (val, key) => {
                 <template v-if="signersList.act.accountant.users">
                   <ElOption
                     v-for="item in signersList.act.accountant.users"
+                    :key="item.id"
+                    :label="usersStore.getUserFullName(item)"
+                    :value="item.id"
+                  />
+                </template>
+              </AppSelect>
+
+              <AppSelect
+                v-model="actForm.doc_signer_obj.signer_id_4"
+                prop="doc_signer_obj.signer_id_4"
+                :placeholder="t('document.commission.chef')"
+                :label="t('document.commission.chef')"
+                label-class="text-[#A8AAAE] text-xs font-medium"
+                required
+                filterable
+                @change="changeUser($event, 'signer_id_4')"
+              >
+                <template v-if="signersList.act.chef.users">
+                  <ElOption
+                    v-for="item in signersList.act.chef.users"
                     :key="item.id"
                     :label="usersStore.getUserFullName(item)"
                     :value="item.id"
