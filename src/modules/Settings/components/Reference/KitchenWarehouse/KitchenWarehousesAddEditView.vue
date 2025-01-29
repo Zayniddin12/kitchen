@@ -43,7 +43,7 @@ const dataValue = ref<DataValue>({
   base_id: "",
   capacity: "",
   kitchen_capacity: "",
-  kitchen_type_id: "",
+  kitchen_type_ids: [],
   measure_id: 2,
   status: "active",
 });
@@ -238,13 +238,14 @@ watch(() => route.name, () => {
               <!--              />-->
 
               <app-select
-                v-model="dataValue.kitchen_type_id"
+                v-model="dataValue.kitchen_type_ids"
                 :label="$t('Тип кухни')"
                 :placeholder="$t('form.select')"
                 label-class="text-[#A8AAAE] font-medium text-[12px]"
                 class="w-full"
                 required
-                prop="kitchen_type_id"
+                multiple
+                prop="kitchen_type_ids"
                 item-value="id"
                 item-label="name"
                 :items="store.kitchenTypes.kitchen_types"
@@ -267,7 +268,7 @@ watch(() => route.name, () => {
           <ElSwitch
             v-model="dataValue.status"
             v-if="route.params.id && !route.query.type"
-            :active-text="$t('common.deactivation')"
+            :active-text="$t('status.deactivation')"
             class="app-switch mt-auto"
             :before-change="switchChange"
           />
