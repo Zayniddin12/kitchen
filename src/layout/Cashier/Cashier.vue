@@ -7,7 +7,16 @@ import { useAuthStore } from "@/modules/Auth/auth.store";
 import tokenManager from "@/utils/token.manager";
 import { WarehouseCapacityParamsType } from "@/modules/Home/statistics.types";
 import { useRoute } from "vue-router";
-import QRCode from 'qrcode';
+import QRCode from "qrcode";
+import { useCashier } from "@/layout/Cashier/cashier";
+
+interface ProductItemType {
+  id: number;
+  price: number;
+  weight: number;
+  name: string;
+  photo: string | object;
+}
 
 const products = ref([
 
@@ -93,11 +102,44 @@ const products = ref([
     img: "/cola.png",
   },
 ]);
-
 const orders = reactive<Map<number, number>>(new Map());
 const ordersModal = ref(false);
+let receiptIndex = ref(0);
+const form = reactive<WarehouseCapacityParamsType>({
+  management_id: 1,
+});
+const managements = ref<object[]>([
+  {
+    id: 1,
+    name: "Завтрак",
+  },
+  {
+    id: 2,
+    name: "Первое",
+  },
+  {
+    id: 3,
+    name: "Второе",
+  },
+  {
+    id: 4,
+    name: "Салаты",
+  },
+  {
+    id: 5,
+    name: "Десерты",
+  },
+  {
+    id: 6,
+    name: "Добавки",
+  },
+  {
+    id: 7,
+    name: "Напитки",
+  },
 
-const route = useRoute();
+]);
+
 const updateQuantity = (product_id: number, increment = true) => {
 
   const currentQuantity = orders.get(product_id) || 0;
@@ -116,13 +158,25 @@ const updateQuantity = (product_id: number, increment = true) => {
   }
 };
 
-interface ProductItemType {
-  id: number;
-  price: number;
-  weight: number;
-  name: string;
-  photo: string | object;
-}
+const { confirm } = useConfirm();
+const route = useRoute();
+const authStore = useAuthStore();
+const store = useCashier();
+
+
+onMounted(async () => {
+  if (tokenManager.getAccessToken()) authStore.me();
+
+  route.query.management_id = form.management_id ? form.management_id : null;
+
+  // Generate QR code on canvas
+  QRCode.toCanvas(qrCanvas.value, qrData.value, {
+    width: 200,
+    errorCorrectionLevel: "H",
+  }, (error) => {
+    if (error) console.error("QR Code generation error:", error);
+  });
+});
 
 const selectedProducts = computed(() => {
   const selected = [] as ProductItemType[];
@@ -171,16 +225,6 @@ const ordersSum = computed(() => {
   return totalSum;
 });
 
-const { confirm } = useConfirm();
-
-const clearOrders = () => {
-  confirm.cancel().then(response => {
-    if (response !== "confirm") return;
-    orders.clear();
-    ordersModal.value = false;
-  });
-};
-
 const createOrder = async () => {
   window.print();
 
@@ -212,62 +256,14 @@ const createOrder = async () => {
   }
 
 };
-const authStore = useAuthStore();
-onMounted(async () => {
-  if (tokenManager.getAccessToken()) authStore.me();
-
-  route.query.management_id = form.management_id ? form.management_id : null;
-
-  // Generate QR code on canvas
-  QRCode.toCanvas(qrCanvas.value, qrData.value, {
-    width: 200,
-    errorCorrectionLevel: 'H',
-  }, (error) => {
-    if (error) console.error('QR Code generation error:', error);
-  });
-});
-
-const form = reactive<WarehouseCapacityParamsType>({
-  management_id: 1,
-});
-
-const managements = ref<object[]>([
-  {
-    id: 1,
-    name: "Завтрак",
-  },
-  {
-    id: 2,
-    name: "Первое",
-  },
-  {
-    id: 3,
-    name: "Второе",
-  },
-  {
-    id: 4,
-    name: "Салаты",
-  },
-  {
-    id: 5,
-    name: "Десерты",
-  },
-  {
-    id: 6,
-    name: "Добавки",
-  },
-  {
-    id: 7,
-    name: "Напитки",
-  },
-
-]);
-
 
 watch(() => route.query.management_id, (newId) => {
   const management_id = newId ? parseInt(newId as string) : null;
   form.management_id = management_id && !isNaN(management_id) ? management_id : null;
 
+  store.GET_MENU_LIST({
+    period: newId
+  })
 }, { immediate: true });
 
 const clearBasket = () => {
@@ -290,20 +286,14 @@ const currentDate = computed(() => {
   return `${day}.${month}.${year} ${hours}:${minutes}:${seconds}`;
 });
 
-let receiptIndex = ref(0); // Initialize the counter
-
 const generateReceiptIndex = computed(() => {
   receiptIndex.value += 1; // Increment the counter
   return receiptIndex.value;
 });
 
-
 const qrCanvas = ref(null);
-const orderId = ref('12345');
-const total = ref('$99.99');
 
 const qrData = ref(JSON.stringify(selectedProducts.value));
-
 </script>
 
 <template>
@@ -316,8 +306,8 @@ const qrData = ref(JSON.stringify(selectedProducts.value));
         <img src="@/assets/images/logo.svg" alt="#" />
         <p class="text-center">NKMK JAMGARMASI</p>
       </div>
+
       <div class="my-2 flex items-center justify-between">
-        <!--        <span>Қайси ошхона:</span>-->
         <span class="text-sm">NKMK JAMGARMASI OSHXONASI</span>
       </div>
 
@@ -344,7 +334,8 @@ const qrData = ref(JSON.stringify(selectedProducts.value));
             <td><small class="text-xs">{{ item.name && item.name }}</small></td>
             <td><small class="text-xs">{{ item.qqs && item.qqs }}%</small></td>
             <td style="text-align: right;"><small class="text-xs">{{ orders.get(item.id) }}</small></td>
-            <td style="text-align: right;"><small class="text-xs">{{ (item.price * Number(orders.get(item.id))).toLocaleString()
+            <td style="text-align: right;"><small
+              class="text-xs">{{ (item.price * Number(orders.get(item.id))).toLocaleString()
               }}</small></td>
           </tr>
           </tbody>
@@ -383,14 +374,9 @@ const qrData = ref(JSON.stringify(selectedProducts.value));
 
     <div class="bg-[#F8F9FC] flex gap-1 select-none no-receipt">
       <div class="w-[70%] p-4">
-        <div
-          class="inner"
-        >
-          <div
-            class="flex flex-col gap-y-6"
-          >
+        <div class="inner">
+          <div class="flex flex-col gap-y-6">
             <div>
-
               <div>
                 <div class="flex items-center justify-between mb-[10px] xl:mb-[24px]">
                   <h4 class="text-[#000D24] text-[32px] font-semibold">
@@ -400,9 +386,7 @@ const qrData = ref(JSON.stringify(selectedProducts.value));
                   <HeaderUser />
                 </div>
 
-                <div
-                  class="app-tabs2 !text-sm mb-6"
-                >
+                <div class="app-tabs2 !text-sm mb-6">
                   <RouterLink
                     v-for="item in managements"
                     :key="item.id"
@@ -411,12 +395,11 @@ const qrData = ref(JSON.stringify(selectedProducts.value));
                            'app-tab',
                            { 'app-tab--active': form.management_id == item.id },
                          ]"
-                        >
+                  >
                     {{ item.name }}
                   </RouterLink>
                 </div>
 
-                <!--              :class="productsWrapperClassName"-->
                 <div class="overflow-y-auto h-[72vh] 2xl:h-[80vh] pr-2">
                   <div class="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6">
                     <div
@@ -432,9 +415,9 @@ const qrData = ref(JSON.stringify(selectedProducts.value));
                       />
 
                       <div class="menu__card-subtitles text-start mt-[12px] mb-[16px]">
-                        <span
-                          class="text-[#000D24] font-semibold text-[20px] mb-[4px]">{{ formatNumber(productItem.price)
-                          }} UZS</span>
+                        <span class="text-[#000D24] font-semibold text-[20px] mb-[4px]">
+                          {{ formatNumber(productItem.price) }} UZS
+                        </span>
                         <span class="text-[#000D24] font-medium text-[14px]">{{ productItem.name }} </span>
                       </div>
 
@@ -495,10 +478,6 @@ const qrData = ref(JSON.stringify(selectedProducts.value));
                 </div>
               </div>
             </div>
-            <!--          <AppEmpty-->
-            <!--            v-else-->
-            <!--            class="h-[60vh]"-->
-            <!--          />-->
           </div>
         </div>
       </div>
