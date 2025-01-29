@@ -32,32 +32,32 @@ export const defineAbilitiesFor = (roles: string[]) => {
       cannot: [],
     },
     "director-foundation": {
-      can: ["read"],
-      cannot: ["create", "update", "delete", "payment"],
+      can: ["read", 'payment'],
+      cannot: ["create", "update", "delete"],
     },
     "deputy-director-foundation": {
-      can: ["read"],
-      cannot: ["create", "update", "delete", "payment"],
+      can: ["read", "payment"],
+      cannot: ["create", "update", "delete"],
     },
     broker: {
-      can: ["create", "read", "update", "payment"],
-      cannot: ["delete"],
+      can: ["create", "read", "update"],
+      cannot: ["delete", "payment"],
     },
     "head-management": {
-      can: ["read"],
-      cannot: ["update", "delete", "payment", "create"],
+      can: ["read", "payment"],
+      cannot: ["update", "delete", "create"],
     },
     "head-factory": {
-      can: ["read"],
-      cannot: ["update", "delete", "payment", "create"],
+      can: ["read", "payment"],
+      cannot: ["update", "delete", "create"],
     },
     "head-warehouse": {
       can: ["create", "read", "update", "delete", "payment"],
       cannot: [],
     },
     "accountant-base-warehouse": {
-      can: ["create", "read"],
-      cannot: ["update", "delete", "payment"],
+      can: ["create", "read", "payment"],
+      cannot: ["update", "delete"],
     },
     "manager-base": {
       can: ["create", "read", "update", "delete", "payment"],
@@ -72,16 +72,16 @@ export const defineAbilitiesFor = (roles: string[]) => {
       cannot: [],
     },
     "head-chef": {
-      can: ["read"],
-      cannot: ["create", "update", "delete", "payment"],
+      can: ["read", "payment"],
+      cannot: ["create", "update", "delete"],
     },
     chef: {
       can: ["create", "read", "update", "delete", "payment"],
       cannot: [],
     },
     technologist: {
-      can: ["create", "read", "update"],
-      cannot: ["delete", "payment"],
+      can: ["create", "read", "update", "payment"],
+      cannot: ["delete"],
     },
     warehouseman: {
       can: ["create", "read", "update", "delete", "payment"],
