@@ -13,7 +13,7 @@ import { useI18n } from "vue-i18n";
 const route = useRoute();
 
 const settingsStore = useSettingsStore();
-const {t} = useI18n()
+const { t } = useI18n();
 const { setBreadCrumb } = useBreadcrumb();
 
 const setBreadCrumbFn = () => {
@@ -61,7 +61,7 @@ onMounted(() => {
         <template v-if="settingsStore.kitchenWarehouseDetail">
           <div>
             <span class="app-card__item-title">
-              {{$t('common.name2')}}
+              {{ $t("common.name2") }}
             </span>
             <p>
               {{ settingsStore.kitchenWarehouseDetail.name[activeLocale] ?? "-" }}
@@ -69,15 +69,15 @@ onMounted(() => {
           </div>
           <div>
             <span class="app-card__item-title">
-              {{$t('База складов')}}
+              {{ $t("База складов") }}
             </span>
             <p>
-              -
+              {{ settingsStore.kitchenWarehouseDetail.base_name || "-" }}
             </p>
           </div>
           <div>
             <span class="app-card__item-title">
-              {{$t('Вместимость склада')}}
+              {{ $t("Вместимость склада") }}
             </span>
             <p>
               {{ settingsStore.kitchenWarehouseDetail.capacity || "-" }}
@@ -85,23 +85,28 @@ onMounted(() => {
           </div>
           <div>
             <span class="app-card__item-title">
-              {{ $t('Ед. изм. вместимости') }}
+              {{ $t("Ед. изм. вместимости") }}
             </span>
             <p>
-              -
+              {{ $t("тонна") }}
             </p>
           </div>
           <div>
             <span class="app-card__item-title">
-              {{$t('Тип кухни')}}
+              {{ $t("Тип кухни") }}
             </span>
-            <p>
-              -
+            <p
+              v-if="settingsStore.kitchenWarehouseDetail.kitchen_type_names && settingsStore.kitchenWarehouseDetail.kitchen_type_names.length"
+              v-for="item in settingsStore.kitchenWarehouseDetail.kitchen_type_names">
+              {{ item }}
             </p>
+            <span v-else>
+              -
+            </span>
           </div>
           <div>
             <span class="app-card__item-title">
-              {{$t('Вместимость кухни')}}
+              {{ $t("Вместимость кухни") }}
             </span>
             <p>
               {{ settingsStore.kitchenWarehouseDetail.kitchen_capacity ?? "-" }}
@@ -119,7 +124,7 @@ onMounted(() => {
           alt="edit"
           class="size-5"
         />
-        {{$t('method.edit')}}
+        {{ $t("method.edit") }}
       </RouterLink>
     </div>
   </section>
