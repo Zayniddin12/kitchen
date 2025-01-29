@@ -97,7 +97,7 @@ watch(() => route.params.id, (newId) => {
         <div class="flex items-baseline mb-[24px]">
           <h1 class=" text-[14px] font-medium">
             <span class="text-[#4F5662]">{{ t("document.whom.to") }}:</span>
-            <span class="text-[#A8AAAE] ml-2">{{ documentStore.document?.from_name ?? "-" }}</span>
+            <span class="text-[#A8AAAE] ml-2">{{ documentStore.document?.to_name ?? "-" }}</span>
           </h1>
         </div>
 
@@ -121,7 +121,7 @@ watch(() => route.params.id, (newId) => {
 
           <QrCode />
 
-          <h1 class="text-[#A8AAAE] text-[14px] mr-[100px]">{{ authStore.userFullName }}</h1>
+          <h1 class="text-[#A8AAAE] text-[14px] mr-[100px]">{{ documentStore.document?.from_name ?? "-" }}</h1>
         </div>
       </AppOverlay>
       <div

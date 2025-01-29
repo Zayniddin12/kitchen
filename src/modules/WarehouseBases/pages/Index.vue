@@ -250,7 +250,7 @@ const enterToFactory = () => {
   router.push({
     name: "warehouse-factory",
     params: { district_id: route.params.district_id, product_id: route.params.product_id },
-    query: {id: id.value}
+    query: { id: id.value },
   });
 };
 
@@ -565,7 +565,7 @@ const enterToFactory = () => {
             <ElTableColumn
               prop="idx"
               label="№"
-              :width="150"
+
             >
               <template #default="{$index}">
                 {{
@@ -594,7 +594,7 @@ const enterToFactory = () => {
             <ElTableColumn
               prop="measure"
               label="Ед. измерения"
-              width="360"
+
             >
               <template #default="{row}:{row:WarehouseBasesProductType}">
                 {{ row.product.measure || "—" }}
@@ -603,26 +603,26 @@ const enterToFactory = () => {
             <ElTableColumn
               prop="price_formatted"
               label="Сумма"
-              width="360"
+             
             >
               <template #default="{row}:{row:WarehouseBasesProductType}">
                 {{ row.price_formatted || "—" }}
               </template>
             </ElTableColumn>
-            <ElTableColumn
-              prop="action"
-              align="right"
-              label="Действие"
-            >
-              <template #default="{row}">
-                <button class="action-btn">
-                  <img
-                    src="@/assets/images/download.svg"
-                    alt="download"
-                  />
-                </button>
-              </template>
-            </ElTableColumn>
+            <!--            <ElTableColumn-->
+            <!--              prop="action"-->
+            <!--              align="right"-->
+            <!--              label="Действие"-->
+            <!--            >-->
+            <!--              <template #default="{row}">-->
+            <!--                <button class="action-btn">-->
+            <!--                  <img-->
+            <!--                    src="@/assets/images/download.svg"-->
+            <!--                    alt="download"-->
+            <!--                  />-->
+            <!--                </button>-->
+            <!--              </template>-->
+            <!--            </ElTableColumn>-->
           </ElTable>
           <AppPagination
             v-if="warehouseBasesStore.products"

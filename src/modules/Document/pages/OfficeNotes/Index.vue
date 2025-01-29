@@ -369,14 +369,14 @@ const tableRowClassName = ({ row }: { row: DraftType }) => {
           {{ row.date ?? "-" }}
         </template>
       </el-table-column>
-      <el-table-column
-        prop="number"
-        :label="t('document.number')"
-      >
-        <template #default="{ row }: { row: DraftType }">
-          {{ row.number ?? "-" }}
-        </template>
-      </el-table-column>
+<!--      <el-table-column-->
+<!--        prop="number"-->
+<!--        :label="t('document.number')"-->
+<!--      >-->
+<!--        <template #default="{ row }: { row: DraftType }">-->
+<!--          {{ row.number ?? "-" }}-->
+<!--        </template>-->
+<!--      </el-table-column>-->
       <el-table-column
         prop="subject"
         :label="t('common.theme')"

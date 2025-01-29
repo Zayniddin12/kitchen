@@ -169,7 +169,7 @@ const from = computed<string>(() => {
 
 const to = computed<string>(() => {
   if (!form.to_id || !form.to_type) return "";
-  const activeEl = settingsStore.respondents.find(
+  const activeEl = toList.value.find(
     el => el.model_type === form.to_type && el.id === form.to_id,
   );
 
@@ -422,7 +422,7 @@ const getUser = (id: number): UserType | null => {
 
   if (selectedUsers.value.has(id)) return selectedUsers.value.get(id) as UserType;
 
-  const user: UserType | undefined = usersStore.users.users.find(user => user.id === id);
+  const user: UserType | undefined = allUser.value.users.find(user => user.id === id);
 
   if (!user) return null;
 
@@ -450,6 +450,7 @@ const closeModal = async () => {
 
 const fromList = ref<any>([]);
 const toList = ref<any>([]);
+const allUser = ref<any>({ users: [] });
 
 const openModal = async () => {
     form.doc_type_id = props.id;
@@ -487,6 +488,10 @@ const openModal = async () => {
     //   per_page: 100,
     //   role_name: "accountant-base-warehouse",
     // });
+
+    allUser.value = await usersStore.fetchUsers({
+      per_page: 100,
+    });
 
     signersList.merchandiser = await usersStore.fetchUsers({
       per_page: 100,
@@ -1079,7 +1084,6 @@ const changeUser = (val, key) => {
                     :placeholder="t('product.type')"
                     label-class="text-[#A8AAAE] text-xs font-medium"
                     @change="fetchVidProductsList(product)"
-                    required
                     trigger="blur"
                   />
                   <!--                  {{ vidProducts.get(product.category_id as number)[0] }}-->
@@ -1092,7 +1096,6 @@ const changeUser = (val, key) => {
                     :label="t('product.view')"
                     :placeholder="t('product.view')"
                     label-class="text-[#A8AAAE] text-xs font-medium"
-                    required
                     :disabled="!product.category_id"
                     @change="changeProduct(product, index)"
                   />
@@ -1105,15 +1108,12 @@ const changeUser = (val, key) => {
                       :placeholder="t('common.quantity')"
                       :label="t('common.quantity')"
                       label-class="text-[#A8AAAE] text-xs font-medium"
-                      required
                     />
                     <AppInput
                       v-model="product.unit"
-                      :prop="`products[${index}].unit_id`"
                       :placeholder="t('common.measurement')"
                       :label="t('common.measurement')"
                       label-class="text-[#A8AAAE] text-xs font-medium"
-                      required
                       disabled
                     />
                   </div>
@@ -1124,7 +1124,6 @@ const changeUser = (val, key) => {
                     :placeholder="t('common.price')"
                     :label="t('common.price')"
                     label-class="text-[#A8AAAE] text-xs font-medium"
-                    required
                   />
                 </div>
               </el-collapse-item>
@@ -1329,7 +1328,7 @@ const changeUser = (val, key) => {
 
             <div class="flex items-center justify-between mb-[24px]">
               <h2 class="text-[#4F5662] text-sm font-semibold">
-                {{ t("document.commission.storekeeper") }}:
+                {{ t("document.commission.commodityExpert") }}:
               </h2>
               <span class="ml-2 text-[#A8AAAE] text-sm font-medium block">
                 {{
@@ -1338,16 +1337,6 @@ const changeUser = (val, key) => {
               </span>
             </div>
 
-            <div class="flex items-center justify-between mb-[24px]">
-              <h2 class="text-[#4F5662] text-sm font-semibold">
-                {{ t("document.commission.commodityExpert") }}:
-              </h2>
-              <span class="ml-2 text-[#A8AAAE] text-sm font-medium block">
-                {{
-                  actForm.doc_signer_obj.signer_id_2 && typeof (actForm.doc_signer_obj.signer_id_2) === "number" ? usersStore.getUserFullName(getUser(actForm.doc_signer_obj.signer_id_2)) : ""
-                }}
-              </span>
-            </div>
 
             <div class="flex items-center justify-between mb-[24px]">
               <h2 class="text-[#4F5662] text-sm font-semibold">
@@ -1355,7 +1344,7 @@ const changeUser = (val, key) => {
               </h2>
               <span class="ml-2 text-[#A8AAAE] text-sm font-medium block">
                {{
-                  actForm.doc_signer_obj.signer_id_4 && typeof (actForm.doc_signer_obj.signer_id_4) === "number" ? usersStore.getUserFullName(getUser(actForm.doc_signer_obj.signer_id_4)) : ""
+                  actForm.doc_signer_obj.signer_id_2 && typeof (actForm.doc_signer_obj.signer_id_2) === "number" ? usersStore.getUserFullName(getUser(actForm.doc_signer_obj.signer_id_2)) : ""
                 }}
               </span>
             </div>
@@ -1366,10 +1355,11 @@ const changeUser = (val, key) => {
               </h2>
               <span class="ml-2 text-[#A8AAAE] text-sm font-medium block">
                 {{
-                  actForm.doc_signer_obj.signer_id_5 && typeof (actForm.doc_signer_obj.signer_id_5) === "number" ? usersStore.getUserFullName(getUser(actForm.doc_signer_obj.signer_id_5)) : ""
+                  actForm.doc_signer_obj.signer_id_3 && typeof (actForm.doc_signer_obj.signer_id_3) === "number" ? usersStore.getUserFullName(getUser(actForm.doc_signer_obj.signer_id_3)) : ""
                 }}
               </span>
             </div>
+
           </div>
         </div>
       </div>
@@ -1631,32 +1621,13 @@ const changeUser = (val, key) => {
                 </template>
               </AppSelect>
               <AppSelect
-                v-if="!activeComingModal"
                 v-model="actForm.doc_signer_obj.signer_id_2"
                 prop="doc_signer_obj.signer_id_2"
-                :placeholder="t('document.commission.forwarder')"
-                :label="t('document.commission.forwarder')"
-                label-class="text-[#A8AAAE] text-xs font-medium"
-                required
-                @change="changeUser($event, 'signer_id_2')"
-              >
-                <template v-if="usersStore.users">
-                  <ElOption
-                    v-for="item in usersStore.users.users"
-                    :key="item.id"
-                    :label="usersStore.getUserFullName(item)"
-                    :value="item.id"
-                  />
-                </template>
-              </AppSelect>
-              <AppSelect
-                v-model="actForm.doc_signer_obj.signer_id_3"
-                prop="doc_signer_obj.signer_id_3"
                 :placeholder="t('document.commission.warehouseManager')"
                 :label="t('document.commission.warehouseManager')"
                 label-class="text-[#A8AAAE] text-xs font-medium"
                 required
-                @change="changeUser($event, 'signer_id_3')"
+                @change="changeUser($event, 'signer_id_2')"
               >
                 <template v-if="signersList.manager_base.users">
                   <ElOption
@@ -1668,13 +1639,13 @@ const changeUser = (val, key) => {
                 </template>
               </AppSelect>
               <AppSelect
-                v-model="actForm.doc_signer_obj.signer_id_4"
-                prop="doc_signer_obj.signer_id_4"
+                v-model="actForm.doc_signer_obj.signer_id_3"
+                prop="doc_signer_obj.signer_id_3"
                 :placeholder="t('document.commission.baseChief')"
                 :label="t('document.commission.baseChief')"
                 label-class="text-[#A8AAAE] text-xs font-medium"
                 required
-                @change="changeUser($event, 'signer_id_4')"
+                @change="changeUser($event, 'signer_id_3')"
               >
                 <template v-if="signersList.head_warehouse.users">
                   <ElOption
@@ -1704,6 +1675,8 @@ const changeUser = (val, key) => {
         size="large"
         @click="sendForm"
         class="custom-send-btn"
+        :disabled="!form.number"
+
       >
         {{ t("method.send") }}
 

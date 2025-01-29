@@ -185,6 +185,7 @@ const setForm = async () => {
 ;
 
 const toList = ref<any>([]);
+const fromList = ref<any>([]);
 
 const filterUser = computed(() => {
   if (authStore.user.id) {
@@ -396,7 +397,7 @@ const loading = computed(() => documentStore.createLoading || documentStore.upda
             label-class="text-[#A8AAAE] text-xs font-medium"
             :disabled="authStore.disabledUserWorkplace"
             filterable
-            @change="(value) => respondentChange(value as string, 'to')"
+            @change="(value) => respondentChange(value as string, 'from')"
           >
             <template v-if="authStore.user">
               <ElOption

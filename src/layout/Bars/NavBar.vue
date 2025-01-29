@@ -164,7 +164,7 @@ onMounted(async () => {
                 </button>
 
                 <template #dropdown>
-                  <el-dropdown-menu class="navbar-dropdown right-5">
+                  <el-dropdown-menu class="navbar-dropdown right-5" @click="() => dropdown.handleOpen()">
                     <el-dropdown-item
                       class="item-drop"
                       v-for="(child, index) in item.childs"
@@ -179,10 +179,10 @@ onMounted(async () => {
                         >
                           {{ child.name }}
                         </span>
-<!--                        <img-->
-<!--                          src="@/assets/arrow-right.svg"-->
-<!--                          alt="arrow icon"-->
-<!--                        />-->
+                        <!--                        <img-->
+                        <!--                          src="@/assets/arrow-right.svg"-->
+                        <!--                          alt="arrow icon"-->
+                        <!--                        />-->
                       </button>
                     </el-dropdown-item>
                   </el-dropdown-menu>
@@ -194,7 +194,7 @@ onMounted(async () => {
       </el-dropdown>
       <ThemeToggler v-if="false" />
 
-<!--      <Notifications />-->
+      <!--      <Notifications />-->
 
       <Language v-if="false" />
 

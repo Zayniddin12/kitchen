@@ -788,7 +788,7 @@ const temporaryKitchen = computed(() => {
                   :items="rationsList.temporary.rations"
                   item-value="id"
                   item-label="name"
-                  label="Временная кухня для выдачи рационов"
+                  label="Рацион для временной кухни"
                   label-class="text-[#A8AAAE] text-xs font-medium"
 
                   class="mb-1"

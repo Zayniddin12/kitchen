@@ -118,6 +118,7 @@ const clear = () => {
 };
 
 const respondentChange = (value: string, type: "from" | "to") => {
+  form[type] = value;
   const values = value.split("_");
   form[`${type}_id`] = Number(values[0]);
   form[`${type}_type`] = values[1];
@@ -337,6 +338,25 @@ watch(model, (newModel) => {
 
           <div class="text-[#4F5662] text-[14px] mb-[24px]">
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {{ form.content }}
+          </div>
+
+          <div class="my-[40px] flex items-center gap-x-[100px] justify-between">
+            <div class="flex items-baseline max-w-[200px]">
+              <h1 class=" text-sm font-medium">
+                <span class="text-[#4F5662] font-semibold">{{ t("common.sender") }}:</span>
+                <span
+                  v-if="from"
+                  class="text-[#A8AAAE] ml-2"
+                >{{ from.position }} ({{ from.workplace }})</span>
+              </h1>
+            </div>
+
+                      <img
+                        src="@/assets/images/icons/qr.svg"
+                        alt="qr"
+                      />
+
+            <h1 class="text-[#A8AAAE] text-sm">{{ authStore.userFullName }}</h1>
           </div>
 
           <el-table
@@ -646,6 +666,7 @@ watch(model, (newModel) => {
             size="large"
             @click="sendForm('draft')"
             class="custom-apply-btn h-[41px] w-[212px]"
+            :disabled="!form.to"
           >
             {{ t("method.saveAsDraft") }}
           </ElButton>
@@ -655,6 +676,7 @@ watch(model, (newModel) => {
             size="large"
             @click="sendForm('sent')"
             class="custom-send-btn h-[41px] w-[116px] !ml-0"
+            :disabled="!form.to"
           >
             {{ t("method.send") }}
           </ElButton>
