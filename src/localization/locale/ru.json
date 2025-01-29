@@ -473,7 +473,10 @@
     "salads": "Салаты",
     "desserts": "Десерты",
     "supplements": "Добавки",
-    "drinks": "Напитки"
+    "drinks": "Напитки",
+    "lunch": "Обед",
+    "dinner": "Ужин",
+    "extra_food": "Сухой питания"
   },
   "monitoring": {
     "title": "Мониторинг",
