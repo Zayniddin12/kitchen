@@ -267,7 +267,7 @@ watch(() => route.name, () => {
           <ElSwitch
             v-model="dataValue.status"
             v-if="route.params.id && !route.query.type"
-            :active-text="$t('common.deactivation')"
+            :active-text="$t('status.deactivation')"
             class="app-switch mt-auto"
             :before-change="switchChange"
           />

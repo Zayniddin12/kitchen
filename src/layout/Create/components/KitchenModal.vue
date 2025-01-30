@@ -701,7 +701,7 @@ const changeUser = (val, key) => {
   <el-dialog
     v-model="model"
     :show-close="false"
-    class="w-[75%]"
+    class="xl:w-[70%] w-[98%]"
     align-center
     append-to-body
     :before-close="closeModal"

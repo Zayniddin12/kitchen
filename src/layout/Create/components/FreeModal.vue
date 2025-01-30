@@ -204,7 +204,7 @@ watch(model, (newModel) => {
   <el-dialog
     v-model="model"
     :show-close="false"
-    class="w-[70%]"
+    class="xl:w-[70%] w-[98%]"
     align-center
     append-to-body
     :before-close="closeModal"
