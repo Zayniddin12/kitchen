@@ -29,6 +29,12 @@ const routes: RouteRecordRaw[] = [
   ...KitchenWarehouse,
   ...Kitchen,
   ...Users,
+  {
+    path: "/docs",
+    name: "docs",
+    component: () => import("@/layout/DocsLayout.vue"),
+    meta: { layout: "DocsLayout" },
+  },
 
   {
     path: "/cashier",

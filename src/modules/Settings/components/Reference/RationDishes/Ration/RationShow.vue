@@ -53,7 +53,7 @@ onMounted(() => {
 
 <template>
   <section>
-    <h1 class="m-0 font-semibold text-[32px] leading-[48px]">{{ route.meta.title }}</h1>
+    <h1 class="m-0 font-semibold text-[32px] leading-[48px]">{{ t(route.meta.title) }}</h1>
     <div class="flex items-start mt-6">
       <AppOverlay
         :loading="settingsStore.rationLoading"
@@ -90,8 +90,53 @@ onMounted(() => {
           </div>
           <h4 class="text-dark text-lg font-medium mt-10">Состав рациона</h4>
           <ElTable
+            v-if="settingsStore.ration.meals && settingsStore.ration.meals.length"
+            :data="settingsStore.ration.meals"
+            class="custom-element-table mt-3"
+            :empty-text="$t('common.empty')"
+          >
+            <ElTableColumn
+              width="80"
+              prop="idx"
+              label="№"
+            >
+              <template #default="{$index}">
+                {{ $index + 1 }}
+              </template>
+            </ElTableColumn>
+            <ElTableColumn
+              prop="name"
+              label="Блюдо"
+              align="center"
+            >
+              <template #default="{row}:{row: RationProductTypeType}">
+                {{ row.name }}
+              </template>
+            </ElTableColumn>
+            <ElTableColumn
+              label="Количество"
+              prop="quantity"
+              align="center"
+            >
+              <template #default="{row}:{row: RationProductTypeType}">
+                {{ row.quantity }}
+              </template>
+            </ElTableColumn>
+            <ElTableColumn
+              label="Ед. измерения"
+              prop="unit"
+              align="center"
+            >
+              <template #default="{row}:{row: RationProductTypeType}">
+                {{ row.unit_name }}
+              </template>
+            </ElTableColumn>
+          </ElTable>
+          <ElTable
+            v-if="settingsStore.ration.product_types && settingsStore.ration.product_types.length"
             :data="settingsStore.ration.product_types"
             class="custom-element-table mt-3"
+            :empty-text="$t('common.empty')"
           >
             <ElTableColumn
               width="80"

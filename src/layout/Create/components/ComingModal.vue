@@ -459,13 +459,13 @@ const openModal = async () => {
     if (authStore.disabledUserWorkplace) {
 
       const activeWorkplace = authStore.user.workplaces[0];
-      if (activeWorkplace.workplace_id) {
+      if (activeWorkplace.base_id) {
         const type = activeComingModal.value ? "to" : "from";
-        form[`${type}_id`] = activeWorkplace.workplace_id;
-        form[`${type}_type`] = activeWorkplace.workplace_type;
+        form[`${type}_id`] = activeWorkplace.base_id;
+        form[`${type}_type`] = "base";
         // await fetchRespondents({ type: [activeWorkplace.workplace_type] });
-        form[type] = `${activeWorkplace.workplace_id}_${activeWorkplace.workplace_type}`;
-        await settingsStore.fetchRespondents({ type: [activeWorkplace.workplace_type], per_page: 100 });
+        form[type] = `${activeWorkplace.base_id}_base`;
+        await settingsStore.fetchRespondents({ type: ["base"], per_page: 100 });
         toList.value = settingsStore.respondents;
       } else {
         await settingsStore.fetchRespondents({ type: ["base"], per_page: 100 });
