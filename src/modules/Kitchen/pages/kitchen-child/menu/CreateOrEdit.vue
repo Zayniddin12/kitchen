@@ -1232,8 +1232,20 @@ const isTranslate = computed(() => !!route.meta.isTranslate);
                           item-label="name"
                           :label="t('kitchen.ration2')"
                           label-class="text-[#A8AAAE]"
-                          class="w-[222px]"
-                        />
+                          class="w-[300px]"
+                        >
+                          <el-option
+                            v-for="item in settingsStore.rationList.rations"
+                            :key="item.id"
+                            :label="item.name"
+                            :value="item.id"
+                          >
+                            <div class="flex items-center justify-between w-full">
+                              <span>{{ item.name }}</span>
+                              <span>{{ item.number }}</span>
+                            </div>
+                          </el-option>
+                        </AppSelect>
                         <div
                           v-if="itemMeal.product_id && itemMeal.rationsList && itemMeal.rationsList.products"
                           class="mt-6"
@@ -1349,7 +1361,20 @@ const isTranslate = computed(() => !!route.meta.isTranslate);
                             :placeholder="t('kitchen.dishesPlaceholder')"
                             label-class="text-[#A8AAAE] text-xs font-medium"
                             @input="changeInputMeals($event, index, childIndex, indexMeal)"
-                          />
+                          >
+
+                            <el-option
+                              v-for="item in settingsStore.meals.meals"
+                              :key="item.id"
+                              :label="item.name"
+                              :value="item.id"
+                            >
+                              <div class="flex items-center justify-between w-full">
+                                <span>{{ item.name }}</span>
+                                <span>{{ item.number }}</span>
+                              </div>
+                            </el-option>
+                          </AppSelect>
 
                           <app-select
                             v-model="item.product"

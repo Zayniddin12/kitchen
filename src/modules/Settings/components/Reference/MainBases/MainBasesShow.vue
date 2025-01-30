@@ -92,7 +92,7 @@ onMounted(() => {
                 {{$t('Типы продуктов хранения')}}
               </span>
               <p>
-                {{ settingsStore.baseWarehouse.warehouseProducts.map(el => el.name).join(", ") }}
+                {{ settingsStore.baseWarehouse.warehouseProductTypes.map(el => el.name).join(", ") }}
               </p>
             </div>
           </div>

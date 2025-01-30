@@ -659,11 +659,11 @@ const clearBasket = () => {
                 >
                   <div class="flex flex-col gap-y-2 text-sm">
                     <p>
-                      <span class="text-cool-gray mr-2">{{t("kitchen.totalServings")}}:</span>
+                      <span class="text-cool-gray mr-2">{{ t("kitchen.totalServings") }}:</span>
                       <strong class="font-semibold text-dark">{{ n.amount }}</strong>
                     </p>
                     <p>
-                      <span class="text-cool-gray mr-2">{{t("common.sum")}}:</span>
+                      <span class="text-cool-gray mr-2">{{ t("common.sum") }}:</span>
                       <strong class="font-semibold text-dark">
                         {{ n.total_price && n.total_price.toLocaleString() }} UZS
                       </strong>
@@ -671,11 +671,11 @@ const clearBasket = () => {
                   </div>
                   <div class="flex flex-col gap-y-2 text-sm">
                     <p>
-                      <span class="text-cool-gray mr-2">{{t("kitchen.issue")}}:</span>
+                      <span class="text-cool-gray mr-2">{{ t("kitchen.issue") }}:</span>
                       <strong class="font-semibold text-dark">{{ n.amount_served && n.amount_served }}</strong>
                     </p>
                     <p>
-                      <span class="text-cool-gray mr-2">{{t("common.sum")}}:</span>
+                      <span class="text-cool-gray mr-2">{{ t("common.sum") }}:</span>
                       <strong class="font-semibold text-dark">
                         {{ n.price_served && n.price_served.toLocaleString() }} UZS
                       </strong>
@@ -684,11 +684,11 @@ const clearBasket = () => {
 
                   <div class="flex flex-col gap-y-2 text-sm">
                     <p>
-                      <span class="text-cool-gray mr-2">{{t("kitchen.selling")}}:</span>
+                      <span class="text-cool-gray mr-2">{{ t("kitchen.selling") }}:</span>
                       <strong class="font-semibold text-dark">{{ n.amount_sold && n.amount_sold }}</strong>
                     </p>
                     <p>
-                      <span class="text-cool-gray mr-2">{{t("common.sum")}}:</span>
+                      <span class="text-cool-gray mr-2">{{ t("common.sum") }}:</span>
                       <strong class="font-semibold text-dark">
                         {{ n.price_sold && n.price_sold.toLocaleString() }} UZS
                       </strong>
@@ -696,11 +696,11 @@ const clearBasket = () => {
                   </div>
                   <div class="flex flex-col gap-y-2 text-sm">
                     <p>
-                      <span class="text-cool-gray mr-2">{{t("kitchen.leftoverPortions")}}:</span>
+                      <span class="text-cool-gray mr-2">{{ t("kitchen.leftoverPortions") }}:</span>
                       <strong class="font-semibold text-[#EA5455]">{{ n.amount_left && n.amount_left }}</strong>
                     </p>
                     <p>
-                      <span class="text-cool-gray mr-2">{{t("common.sum")}}:</span>
+                      <span class="text-cool-gray mr-2">{{ t("common.sum") }}:</span>
                       <strong class="font-semibold text-dark">
                         {{ n.price_left && n.price_left.toLocaleString() }} UZS
                       </strong>
@@ -749,7 +749,7 @@ const clearBasket = () => {
                     >
 
                       <img
-                        :src="ColaImg"
+                        :src="productItem.image"
                         :alt="productItem.name"
                         class="object-cover rounded-[12px] w-full h-[120px]"
                       />
@@ -809,7 +809,7 @@ const clearBasket = () => {
                           <path d="M4.66602 9.99967H16.3327" stroke="#4F5662" stroke-width="1.2" stroke-linecap="round"
                                 stroke-linejoin="round" />
                         </svg>
-                        {{t("method.add")}}
+                        {{ t("method.add") }}
                       </button>
                     </div>
                     <!--                    <div-->
@@ -1105,10 +1105,10 @@ const clearBasket = () => {
         >
           <div>
             <div class="flex items-center justify-between mb-4">
-              <h4 class="text-xl text-black font-semibold pl-8">{{t("common.basket")}}</h4>
+              <h4 class="text-xl text-black font-semibold pl-8">{{ t("common.basket") }}</h4>
               <button v-if="orders.size" @click="clearBasket"
                       class="text-[#A8AAAE] text-[14px] bg-red-500 mr-6 text-white px-2 py-1 rounded-[8px]">
-                {{t("common.clear")}}
+                {{ t("common.clear") }}
               </button>
             </div>
             <div
@@ -1212,9 +1212,9 @@ const clearBasket = () => {
               class="!bg-blue w-full flex items-center justify-between px-[24px] py-[14px] rounded-[12px] text-white"
               @click="createOrder"
             >
-            {{t("common.next")}}
+              {{ t("common.next") }}
               <strong class="font-semibold ml-auto">
-                {{ formatNumber(ordersSum) }} {{t("currency.sum")}}
+                {{ formatNumber(ordersSum) }} {{ t("currency.sum") }}
               </strong>
             </button>
 
