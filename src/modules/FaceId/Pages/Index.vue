@@ -3,9 +3,11 @@ import { ref, watch } from "vue";
 import { useFaceStore } from "@/modules/FaceId/store";
 import { useI18n } from "vue-i18n";
 import useConfirm from "@/components/ui/app-confirm/useConfirm";
+import { useRoute } from "vue-router";
 
 const model = defineModel();
 const store = useFaceStore();
+const route = useRoute();
 const { t } = useI18n();
 const { confirm } = useConfirm();
 
@@ -25,29 +27,33 @@ const confirmUser = () => {
 };
 
 watch(() => model.value, async (newValue) => {
-  if (newValue) {
-    let count1 = 60;
+  if (route.meta && route.meta.type == "FACE_ID") {
+    if (newValue) {
+      let count1 = 60;
 
-    timer = setInterval(() => {
-      const minutes = Math.floor(count1 / 60);
-      const seconds = count1 % 60;
-      count.value = `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
-      count1--;
+      timer = setInterval(() => {
+        const minutes = Math.floor(count1 / 60);
+        const seconds = count1 % 60;
+        count.value = `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+        count1--;
 
-      if (count1 < 0) {
-        clearInterval(timer as number);
+        if (count1 < 0) {
+          clearInterval(timer as number);
+        }
+      }, 1000);
+    } else {
+      if (timer) {
+        clearInterval(timer);
       }
-    }, 1000);
-  } else {
-    if (timer) {
-      clearInterval(timer);
     }
   }
 }, { immediate: true });
 
 watch(() => count.value, (val) => {
-  if (val === "00:00") {
-    closeModal();
+  if (route.meta && route.meta.type == "FACE_ID") {
+    if (val === "00:00") {
+      closeModal();
+    }
   }
 });
 </script>

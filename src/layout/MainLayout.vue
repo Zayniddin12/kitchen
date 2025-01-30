@@ -63,37 +63,45 @@ const faceStore = useFaceStore();
 const model = ref<boolean>(false);
 
 const interval = setInterval(async () => {
-  const data = await faceStore.FETCH_FACE_ID();
-  if (data) {
-    if (data && data.user_id) {
-      model.value = !model.value;
-    }
-  }
+ if (route.meta && route.meta.type == 'FACE_ID') {
+   const data = await faceStore.FETCH_FACE_ID();
+   if (data) {
+     if (data && data.user_id) {
+       model.value = !model.value;
+     }
+   }
+ }
 }, 5000);
 
 watch(() => model.value, (value) => {
-  if (value) {
-    clearInterval(interval);
+  if (route.meta && route.meta.type == 'FACE_ID') {
+    alert('2')
+    if (value) {
+      clearInterval(interval);
+    }
   }
 });
 
 
 watch(() => model.value, async (newValue) => {
-  if (!newValue && tokenManager.getAccessToken()) {
-    const interval = setInterval(async () => {
-      const data = await faceStore.FETCH_FACE_ID();
-      if (data) {
-        if (data && data.user_id) {
-          model.value = !model.value;
+  if (route.meta && route.meta.type == 'FACE_ID') {
+    alert('1')
+    if (!newValue && tokenManager.getAccessToken()) {
+      const interval = setInterval(async () => {
+        const data = await faceStore.FETCH_FACE_ID();
+        if (data) {
+          if (data && data.user_id) {
+            model.value = !model.value;
+          }
         }
-      }
-    }, 5000);
+      }, 5000);
 
-    watch(() => model.value, (value) => {
-      if (value) {
-        clearInterval(interval);
-      }
-    });
+      watch(() => model.value, (value) => {
+        if (value) {
+          clearInterval(interval);
+        }
+      });
+    }
   }
 });
 
@@ -153,12 +161,17 @@ const navDrawerItems = computed(() => {
 });
 
 const navDrawerWidth = ref<number>(0);
-
+console.log(route.meta.type == 'FACE_ID');
 </script>
 
 <template>
   <div>
-    <AppFaceId v-model="model" />
+
+    <div v-if="route.meta && route.meta.type == 'FACE_ID'">
+      <AppFaceId v-model="model" />
+    </div>
+    <div v-else/>
+
     <SideBar
       v-model:childSidebarPin="childSidebarPin"
       v-model:childSidebar="childSidebar"
