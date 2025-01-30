@@ -65,6 +65,9 @@ const date = ref(formatDate2(new Date()));
 
 const form = reactive<DocumentCreateDataDocumentType>({
   comment: "",
+  kitchen_id: null,
+  kitchen_type: "",
+  kitchen: "",
   doc_type_id: null,
   date: "",
   number: "",
@@ -216,6 +219,17 @@ const to = computed<string>(() => {
   return activeEl.name;
 });
 
+const kitchen = computed<string>(() => {
+  if (!form.kitchen_id || !form.kitchen_type) return "";
+  const activeEl = kitchenList.value.find(
+    el => el.model_type === form.kitchen_type && el.id === form.kitchen_id,
+  );
+
+  if (!activeEl) return "";
+
+  return activeEl.name;
+});
+
 const v$ = ref<ValidationType | null>(null);
 
 const setValidation = (validation: ValidationType) => {
@@ -252,6 +266,9 @@ const sendForm = async () => {
     return;
   }
 
+  form.to_id = form.kitchen_id;
+  form.to_type = form.kitchen_type;
+
   if (typeSwitch.value) {
 
     let newForm: DocumentCreateDataType = {
@@ -274,8 +291,7 @@ const sendForm = async () => {
 
       delete newForm.Document.doc_signer_obj;
     }
-
-    console.log(newForm, "newForm");
+    
 
     if (!activeComingModal.value) {
       delete newForm.Document.subject;
@@ -535,6 +551,7 @@ const closeModal = async () => {
 
 const fromList = ref<any>([]);
 const toList = ref<any>([]);
+const kitchenList = ref<any>([]);
 const allUser = ref<any>({ users: [] });
 
 const openModal = async () => {
@@ -549,6 +566,20 @@ const openModal = async () => {
       form[type] = `${activeWorkplace.base_id}_base`;
       await settingsStore.fetchRespondents({ type: ["base"], per_page: 100 });
       toList.value = settingsStore.respondents;
+
+      await settingsStore.fetchRespondents({
+        type: ["kitchenWarehouse"],
+        base_id: activeWorkplace.base_id,
+        per_page: 100,
+      });
+      kitchenList.value = settingsStore.respondents;
+
+      if (activeWorkplace.workplace_type && activeWorkplace.workplace_type == "kitchenWarehouse") {
+        form.kitchen_id = activeWorkplace.workplace_id;
+        form.kitchen_type = activeWorkplace.workplace_type;
+
+        form.kitchen = `${activeWorkplace.workplace_id}_${activeWorkplace.workplace_type}`;
+      }
     } else {
       await settingsStore.fetchRespondents({ type: ["base"], per_page: 100 });
       toList.value = settingsStore.respondents;
@@ -556,6 +587,7 @@ const openModal = async () => {
 
     await settingsStore.fetchRespondents({ type: ["provider"], per_page: 100 });
     fromList.value = settingsStore.respondents;
+
   }
 
   settingsStore.GET_TYPE_PRODUCT();
@@ -583,10 +615,11 @@ const openModal = async () => {
   });
 
   // for act signers
-  signersList.act.head_kpi = await usersStore.fetchUsers({
-    per_page: 100,
-    role_name: "head-factory",
-  });
+  signersList.act.head_kpi = signersList.form.head_base;
+  // signersList.act.head_kpi = await usersStore.fetchUsers({
+  //   per_page: 100,
+  //   role_name: "head-warehouse",
+  // });
 
   signersList.act.commodityExpert = await usersStore.fetchUsers({
     per_page: 100,
@@ -608,6 +641,15 @@ watch(model, newValue => {
 const respondentChange = (value: string, type: "from" | "to") => {
   console.log(value);
   form.from = value;
+  const values = value.split("_");
+
+  form[`${type}_id`] = Number(values[0]);
+  form[`${type}_type`] = values[1];
+};
+
+const respondentChangeKitchen = (value: string, type: "kitchen") => {
+
+  form.kitchen = value;
   const values = value.split("_");
 
   form[`${type}_id`] = Number(values[0]);
@@ -799,6 +841,15 @@ const changeUser = (val, key) => {
               </h2>
               <span class="ml-2 text-[#A8AAAE] text-sm font-medium block">
                 {{ to }}
+              </span>
+            </div>
+
+            <div class="flex mb-[8px]">
+              <h2 class="text-[#4F5662] text-sm font-medium">
+                {{ t("kitchen.title") }}:
+              </h2>
+              <span class="ml-2 text-[#A8AAAE] text-sm font-medium block">
+                {{ kitchen }}
               </span>
             </div>
 
@@ -1064,7 +1115,6 @@ const changeUser = (val, key) => {
           <!--          >-->
 
           <!--          </AppSelect>-->
-
           <AppSelect
             v-model="form.to"
             prop="to"
@@ -1082,6 +1132,57 @@ const changeUser = (val, key) => {
             <template v-if="activeComingModal">
               <ElOption
                 v-for="item in toList"
+                :key="`${item.id}_${item.model_type}`"
+                :value="`${item.id}_${item.model_type}`"
+                :label="item.name"
+              />
+            </template>
+            <template v-else>
+              <ElOption
+                v-for="item in authStore.user.workplaces"
+                :key="`${item.workplace_type}_${item.workplace_type}`"
+                :value="`${item.workplace_id}_${item.workplace_type}`"
+                :label="item.workplace"
+              />
+            </template>
+            <!--            <template #footer>-->
+            <!--              <button-->
+            <!--                @click.stop="providerCreateModal = true"-->
+            <!--                class="flex items-center justify-center gap-3 border-[1px] border-[#2E90FA] rounded-[8px] w-full text-[#2E90FA] text-sm font-medium py-[10px]"-->
+            <!--              >-->
+            <!--                  <span-->
+            <!--                    :style="{-->
+            <!--                      maskImage: 'url(/icons/plusIcon.svg)',-->
+            <!--                      backgroundColor: '#2E90FA',-->
+            <!--                      color: '#2E90FA',-->
+            <!--                      width: '20px',-->
+            <!--                      height: '20px',-->
+            <!--                      maskSize: '20px',-->
+            <!--                      maskPosition: 'center',-->
+            <!--                      maskRepeat: 'no-repeat',-->
+            <!--                    }"-->
+            <!--                  ></span>-->
+            <!--                Добавить-->
+            <!--              </button>-->
+            <!--            </template>-->
+          </AppSelect>
+          <AppSelect
+            v-model="form.kitchen"
+            prop="to"
+            :placeholder="t('kitchen.title')"
+            :label="t('kitchen.title')"
+            :loading="authStore.userLoading"
+            label-class="text-[#A8AAAE] text-xs font-medium"
+            @change="(value) => respondentChangeKitchen(value as string, 'kitchen')"
+            required
+            filterable
+            trigger="blur"
+            :disabled="!form.to"
+          >
+            <!--            :disabled="authStore.disabledUserWorkplace && activeComingModal"-->
+            <template v-if="activeComingModal">
+              <ElOption
+                v-for="item in kitchenList"
                 :key="`${item.id}_${item.model_type}`"
                 :value="`${item.id}_${item.model_type}`"
                 :label="item.name"

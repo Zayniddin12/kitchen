@@ -325,10 +325,10 @@ const setData = async () => {
     form.value.dining_locations = {
       permanent: {
         kitchen_id: "",
-        ration_id: "",
+        ration_id: [],
       },
       temporary: {
-        ration_id: "",
+        ration_id: [],
         kitchen_id: "",
         start_date: "",
         end_date: "",
@@ -434,7 +434,7 @@ watch(() => form.value.dining_locations?.temporary.kitchen_id, async (val) => {
       kitchen_id: form.value.dining_locations?.temporary.kitchen_id,
     });
   } else {
-    form.value.dining_locations.temporary.ration_id = "";
+    form.value.dining_locations.temporary.ration_id = [];
   }
 
 
@@ -449,7 +449,7 @@ watch(() => form.value.dining_locations?.permanent.kitchen_id, async (val) => {
       kitchen_id: form.value.dining_locations?.permanent.kitchen_id,
     });
   } else {
-    form.value.dining_locations.permanent.ration_id = "";
+    form.value.dining_locations.permanent.ration_id = [];
   }
 
 });
@@ -760,13 +760,26 @@ const temporaryKitchen = computed(() => {
                   :disabled="!form.dining_locations.permanent.kitchen_id"
                   item-value="id"
                   item-label="name"
+                  multiple
                   prop="dining_locations.permanent.ration_id"
                   label="Постоянная кухня для выдачи рационов"
                   label-class="text-[#A8AAAE] text-xs font-medium"
                   required
                   class="mb-1"
                   clearable
-                />
+                >
+                  <el-option
+                    v-for="item in rationsList.permanent.rations"
+                    :key="item.id"
+                    :label="item.name"
+                    :value="item.id"
+                  >
+                    <div class="flex items-center justify-between w-full">
+                      <span>{{ item.name }}</span>
+                      <span>{{ item.number }}</span>
+                    </div>
+                  </el-option>
+                </AppSelect>
                 <AppSelect
                   v-model="form.dining_locations.temporary.kitchen_id"
                   prop="dining_locations.temporary.kitchen_id"
@@ -786,14 +799,27 @@ const temporaryKitchen = computed(() => {
                   :disabled="!form.dining_locations.temporary.kitchen_id"
                   prop="dining_locations.temporary.ration_id"
                   :items="rationsList.temporary.rations"
+                  multiple
                   item-value="id"
                   item-label="name"
                   label="Рацион для временной кухни"
                   label-class="text-[#A8AAAE] text-xs font-medium"
-
                   class="mb-1"
                   clearable
-                />
+                >
+                  <el-option
+                    v-for="item in rationsList.temporary.rations"
+                    :key="item.id"
+                    :label="item.name"
+                    :value="item.id"
+                  >
+                    <div class="flex items-center justify-between w-full">
+                      <span>{{ item.name }}</span>
+                      <span>{{ item.number }}</span>
+                    </div>
+                  </el-option>
+                </AppSelect>
+
                 <AppDatePicker
                   v-model="form.dining_locations.temporary.start_date"
                   prop="dining_locations.temporary.start_date"
