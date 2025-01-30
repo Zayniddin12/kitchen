@@ -177,16 +177,19 @@ watch(() => route.query.management_id, async (newId) => {
   const management_id = newId ? parseInt(newId as string) : null;
   form.management_id = management_id && !isNaN(management_id) ? management_id : null;
   let workplace_id = JSON.parse(localStorage.getItem("workplace_id"));
+  let userRole = JSON.parse(localStorage.getItem("user_role"));
   if (!workplace_id) return;
 
-  const data = await store.GET_MENU_LIST({
-    id: workplace_id,
-    params: {
-      period: newId,
-    },
-  });
-  if (data) {
-    products.value = store.menuList.elements;
+  if (userRole == "cashier-sales") {
+    const data = await store.GET_MENU_LIST({
+      id: workplace_id,
+      params: {
+        period: newId,
+      },
+    });
+    if (data) {
+      products.value = store.menuList.elements;
+    }
   }
 }, { immediate: true });
 
