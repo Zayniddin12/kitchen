@@ -164,7 +164,7 @@ const setForm = async () => {
       form.from_id = authStore.user.id;
       form.from_type = "user";
 
-      form.from = `${authStore.user.id}_user`;
+      form.from = `${authStore.user.firstname} ${authStore.user.lastname} ${authStore.user.patronymic}`;
       // }
     }
     ;
@@ -243,7 +243,7 @@ const loading = computed(() => documentStore.createLoading || documentStore.upda
   <el-dialog
     v-model="model"
     :show-close="false"
-    class="w-[70%]"
+    class="xl:w-[70%] w-[98%]"
     align-center
     append-to-body
     :before-close="closeModal"

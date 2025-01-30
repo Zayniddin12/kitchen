@@ -141,25 +141,20 @@ const tableCurrentChange = (value: Record<string, any>) => {
         <el-table-column
           prop="name"
           :label="$t('Наименование склада')"
-          sortable
-          width="400"
         >
 
         </el-table-column>
         <el-table-column
           prop="base"
           :label="$t('База складов')"
-          sortable
         />
         <el-table-column
           prop="capacity"
           :label="$t('Вместимость склада')"
-          sortable
         />
         <el-table-column
           prop="products"
           :label="$t('Продукты хранения')"
-          sortable
         >
           <template #default="{row}:{row:BaseWarehouseListType}">
             {{ row.products.map(item => item.name).join(", ") }}

@@ -8,9 +8,10 @@ export const useCashier = defineStore("cashierStore", () => {
 
 
   const GET_MENU_LIST = async (params) => {
-    const { data } = await $axios.get(`/kitchen-sales/14/sell-menu-today`, {params});
+    const { data } = await $axios.get(`/kitchen-sales/${params.id}/sell-menu-today`, {...params});
 
     menuList.value = data.data;
+    return data.data
   };
   return {
     menuList,

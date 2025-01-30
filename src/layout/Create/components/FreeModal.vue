@@ -145,18 +145,18 @@ const setForm = async () => {
   form.doc_type_id = props.id ?? null;
   if (authStore.disabledUserWorkplace) {
     const activeWorkplace = authStore.user.workplaces[0];
-    if (activeWorkplace.workplace_id) {
-      form.from_id = activeWorkplace.workplace_id;
-      form.from_type = activeWorkplace.workplace_type;
-      // form.from = `${activeWorkplace.workplace_id}_${activeWorkplace.workplace_type}`;
-      form.from = `${authStore.user.id}_user`;
-      console.log(authStore.user);
-    } else {
-      form.from_id = authStore.user.id;
-      form.from_type = "user";
+    // if (activeWorkplace.workplace_id) {
+    //   form.from_id = activeWorkplace.workplace_id;
+    //   form.from_type = activeWorkplace.workplace_type;
+    //   // form.from = `${activeWorkplace.workplace_id}_${activeWorkplace.workplace_type}`;
+    //   form.from = `${authStore.user.id}_user`;
+    //   console.log(authStore.user);
+    // } else {
+    form.from_id = authStore.user.id;
+    form.from_type = "user";
 
-      form.from = `${authStore.user.id}_user`;
-    }
+    form.from = `${authStore.user.firstname} ${authStore.user.lastname} ${authStore.user.patronymic}`;
+    // }
   }
 
   if (!document.value) return;
@@ -175,12 +175,6 @@ const setForm = async () => {
 
 const toList = ref<any>([]);
 
-const filterUser = computed(() => {
-  if (authStore.user.id) {
-    return toList.value.filter(user => user.id !== authStore.user.id);
-  }
-  return toList.value;
-});
 
 const openModal = async () => {
   required.value = false;
@@ -204,7 +198,7 @@ watch(model, (newModel) => {
   <el-dialog
     v-model="model"
     :show-close="false"
-    class="w-[70%]"
+    class="xl:w-[70%] w-[98%]"
     align-center
     append-to-body
     :before-close="closeModal"
@@ -280,10 +274,10 @@ watch(model, (newModel) => {
             </h1>
           </div>
 
-                    <img
-                      src="@/assets/images/icons/qr.svg"
-                      alt="qr"
-                    />
+          <img
+            src="@/assets/images/icons/qr.svg"
+            alt="qr"
+          />
 
           <h1 class="text-[#A8AAAE] text-sm">{{ authStore.userFullName }}</h1>
         </div>
@@ -337,7 +331,7 @@ watch(model, (newModel) => {
             trigger="blur"
           >
             <ElOption
-              v-for="item in filterUser"
+              v-for="item in toList"
               :key="`${item.id}_${item.model_type}`"
               :value="`${item.id}_${item.model_type}`"
               :label="item.name"

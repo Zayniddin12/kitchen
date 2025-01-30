@@ -593,10 +593,6 @@ const openModal = async () => {
     role_name: "merchandiser",
   });
 
-  signersList.act.accountant = await usersStore.fetchUsers({
-    per_page: 100,
-    role_name: "accountant",
-  });
 
   // signersList.act.chef = await usersStore.fetchUsers({
   //   per_page: 100,
@@ -707,7 +703,7 @@ const changeUser = (val, key) => {
   <el-dialog
     v-model="model"
     :show-close="false"
-    class="w-[75%]"
+    class="xl:w-[70%] w-[98%]"
     align-center
     append-to-body
     :before-close="closeModal"
@@ -1524,22 +1520,11 @@ const changeUser = (val, key) => {
 
             <div class="flex items-center justify-between mb-[24px]">
               <h2 class="text-[#4F5662] text-sm font-semibold">
-                {{ t("document.commission.accountant") }}:
-              </h2>
-              <span class="ml-2 text-[#A8AAAE] text-sm font-medium block">
-               {{
-                  actForm.doc_signer_obj.signer_id_3 && typeof (actForm.doc_signer_obj.signer_id_3) === "number" ? usersStore.getUserFullName(getUser(actForm.doc_signer_obj.signer_id_3)) : ""
-                }}
-              </span>
-            </div>
-
-            <div class="flex items-center justify-between mb-[24px]">
-              <h2 class="text-[#4F5662] text-sm font-semibold">
                 {{ t("document.commission.chef") }}:
               </h2>
               <span class="ml-2 text-[#A8AAAE] text-sm font-medium block">
                {{
-                  actForm.doc_signer_obj.signer_id_4 && typeof (actForm.doc_signer_obj.signer_id_4) === "number" ? usersStore.getUserFullName(getUser(actForm.doc_signer_obj.signer_id_4)) : ""
+                  actForm.doc_signer_obj.signer_id_3 && typeof (actForm.doc_signer_obj.signer_id_3) === "number" ? usersStore.getUserFullName(getUser(actForm.doc_signer_obj.signer_id_3)) : ""
                 }}
               </span>
             </div>
@@ -1809,32 +1794,12 @@ const changeUser = (val, key) => {
               <AppSelect
                 v-model="actForm.doc_signer_obj.signer_id_3"
                 prop="doc_signer_obj.signer_id_3"
-                :placeholder="t('document.commission.accountant')"
-                :label="t('document.commission.accountant')"
-                label-class="text-[#A8AAAE] text-xs font-medium"
-                required
-                filterable
-                @change="changeUser($event, 'signer_id_3')"
-              >
-                <template v-if="signersList.act.accountant.users">
-                  <ElOption
-                    v-for="item in signersList.act.accountant.users"
-                    :key="item.id"
-                    :label="usersStore.getUserFullName(item)"
-                    :value="item.id"
-                  />
-                </template>
-              </AppSelect>
-
-              <AppSelect
-                v-model="actForm.doc_signer_obj.signer_id_4"
-                prop="doc_signer_obj.signer_id_4"
                 :placeholder="t('document.commission.chef')"
                 :label="t('document.commission.chef')"
                 label-class="text-[#A8AAAE] text-xs font-medium"
                 required
                 filterable
-                @change="changeUser($event, 'signer_id_4')"
+                @change="changeUser($event, 'signer_id_3')"
               >
                 <template v-if="signersList.act.chef.users">
                   <ElOption
@@ -1845,6 +1810,7 @@ const changeUser = (val, key) => {
                   />
                 </template>
               </AppSelect>
+
             </div>
           </div>
         </AppForm>

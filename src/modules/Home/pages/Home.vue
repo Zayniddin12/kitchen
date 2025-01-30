@@ -1,7 +1,4 @@
-<script
-  setup
-  lang="ts"
->
+<script setup lang="ts">
 import { use } from "echarts/core";
 import { CanvasRenderer } from "echarts/renderers";
 import { PieChart, BarChart, LineChart } from "echarts/charts";
@@ -265,8 +262,8 @@ const items = ref([
       </RouterLink>
     </div>
 
-    <div class="flex items-start gap-4 mb-[40px]">
-      <div class="w-[55%]">
+    <div class="grid xl:grid-cols-2 grid-cols-1 gap-4 mb-[40px]">
+      <div>
         <div class="grid grid-cols-2 gap-x-4 mb-10">
           <AnalyticsCard
             :icon="WarehouseIcon"
@@ -283,6 +280,7 @@ const items = ref([
             :loading="statisticsStore.visitorsLoading"
           />
         </div>
+
         <PreparationsChart
           :title="t('home.preparation')"
           :total_price="statisticsStore.kitchenPreparations?.total_price"
@@ -322,7 +320,8 @@ const items = ref([
           </template>
         </PreparationsChart>
       </div>
-      <div class="w-[45%]">
+
+      <div>
         <div class="p-6 bg-[#F8F9FC] rounded-t-[24px]">
           <h6 class="text-dark text-lg font-semibold ">{{ t("home.lowStockProducts") }}</h6>
         </div>
@@ -388,6 +387,7 @@ const items = ref([
         </ElTable>
       </div>
     </div>
+
     <GraphChart
       :title="t('product.arrival')"
       :subtitle="t('home.textWillGoHere')"
@@ -426,6 +426,7 @@ const items = ref([
         </AppForm>
       </template>
     </GraphChart>
+
     <GraphChart
       :title="t('home.leftoversFromDishes')"
       :subtitle="t('home.textWillGoHere')"
@@ -474,6 +475,7 @@ const items = ref([
         :data="kitchenData"
         :loading="statisticsStore.kitchenCountLoading"
       />
+
       <AnalyticsCard
         :title="t('home.numberOfWarehouses')"
         :icon="BranchIcon"
