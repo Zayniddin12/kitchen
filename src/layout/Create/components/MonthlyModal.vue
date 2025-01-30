@@ -231,9 +231,14 @@ const setForm = async () => {
 
   if (authStore.disabledUserWorkplace) {
     const activeWorkplace = authStore.user.workplaces[0];
-    form.from_id = activeWorkplace.workplace_id;
-    form.from_type = activeWorkplace.workplace_type;
-    form.from = `${activeWorkplace.workplace_id}_${activeWorkplace.workplace_type}`;
+    // form.from_id = activeWorkplace.workplace_id;
+    // form.from_type = activeWorkplace.workplace_type;
+    // form.from = `${activeWorkplace.workplace_id}_${activeWorkplace.workplace_type}`;
+
+    form.from_id = authStore.user.id;
+    form.from_type = "user";
+
+    form.from = `${authStore.user.firstname} ${authStore.user.lastname} ${authStore.user.patronymic}`;
   }
 
   if (!props.uuid) return;
@@ -251,9 +256,10 @@ const setForm = async () => {
   if (form.to_id && form.to_type) form.to = `${form.to_id}_${form.to_type}`;
 };
 
+const toList = ref<any>([]);
 const openModal = async () => {
   required.value = false;
-  settingsStore.fetchRespondents();
+  toList.value = await settingsStore.fetchRespondents({ type: ["user"] });
   settingsStore.GET_TYPE_PRODUCT();
   settingsStore.GET_UNITS();
 
@@ -351,10 +357,10 @@ watch(model, (newModel) => {
               </h1>
             </div>
 
-                      <img
-                        src="@/assets/images/icons/qr.svg"
-                        alt="qr"
-                      />
+            <img
+              src="@/assets/images/icons/qr.svg"
+              alt="qr"
+            />
 
             <h1 class="text-[#A8AAAE] text-sm">{{ authStore.userFullName }}</h1>
           </div>
@@ -499,7 +505,7 @@ watch(model, (newModel) => {
             filterable
           >
             <ElOption
-              v-for="item in settingsStore.respondents"
+              v-for="item in toList"
               :key="`${item.id}_${item.model_type}`"
               :value="`${item.id}_${item.model_type}`"
               :label="item.name"

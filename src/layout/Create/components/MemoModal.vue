@@ -164,7 +164,7 @@ const setForm = async () => {
       form.from_id = authStore.user.id;
       form.from_type = "user";
 
-      form.from = `${authStore.user.id}_user`;
+      form.from = `${authStore.user.firstname} ${authStore.user.lastname} ${authStore.user.patronymic}`;
       // }
     }
     ;

@@ -20,7 +20,7 @@ const title = computed(() => route.meta.title ?? "");
 
 const isTranslate = computed(() => !!route.meta.isTranslate);
 
-const { t } = useI18n();
+const { t, locale } = useI18n();
 
 const documentStore = useDocumentStore();
 const authStore = useAuthStore();
@@ -112,7 +112,7 @@ watch(() => route.params.id, (newId) => {
         </div>
 
         <div class="mt-[40px] flex items-center justify-between">
-          <div class="flex items-baseline mb-[24px] w-[200px]">
+          <div class="flex items-baseline ">
             <h1 class=" text-[14px] font-medium">
               <span class="text-[#4F5662]">{{ t("common.sender") }}:</span>
               <span class="text-[#A8AAAE] ml-2">{{ authStore.user?.position }}</span>
@@ -120,8 +120,7 @@ watch(() => route.params.id, (newId) => {
           </div>
 
           <QrCode />
-
-          <h1 class="text-[#A8AAAE] text-[14px] mr-[100px]">{{ documentStore.document?.from_name ?? "-" }}</h1>
+          <h1 class="text-[#A8AAAE] text-[14px]">{{ documentStore.document?.from_name[locale] ?? "-" }}</h1>
         </div>
       </AppOverlay>
       <div
