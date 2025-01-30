@@ -5,6 +5,7 @@ import MainLayout from "@/layout/MainLayout.vue";
 import LoginLayout from "@/layout/LoginLayout.vue";
 import ErrorLayout from "@/layout/ErrorLayout.vue";
 import CashierLayout from "@/layout/CashierLayout.vue";
+import DocsLayout from "@/layout/DocsLayout.vue";
 import ResetPasswordLayout from "@/modules/Auth/pages/ResetPassword.vue";
 import AppConfirm from "@/components/ui/app-confirm/AppConfirm.vue";
 
@@ -16,6 +17,7 @@ const layouts = {
   LoginLayout,
   ErrorLayout,
   CashierLayout,
+  DocsLayout,
   ResetPasswordLayout,
 };
 
