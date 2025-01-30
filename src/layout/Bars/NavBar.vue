@@ -71,8 +71,6 @@ const openModal = (item: DocTypeListType) => {
 
 onMounted(async () => {
   await settingsStore.getDocTypeList();
-
-  console.log(settingsStore.docTypeList);
 });
 </script>
 
