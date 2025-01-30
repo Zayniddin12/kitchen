@@ -112,8 +112,9 @@ export const useAuthStore = defineStore("authStore", () => {
       .then(response => {
         user.value = response;
         localStorage.setItem("user_role", JSON.stringify(response.role_name));
+        localStorage.setItem('workplace_id', response.workplaces && response.workplaces[0].workplace_id)
 
-        if (response.role_name === "cashier-llp") {
+        if (response.role_name === "cashier-sales" && response.workplaces && response.workplaces[0].workplace_type == 'kitchenWarehouse') {
           router.push("/cashier?management_id=1");
         }
       })

@@ -8,11 +8,13 @@ import { useRoute, useRouter } from "vue-router";
 import AppOverlay from "@/components/ui/app-overlay/AppOverlay.vue";
 import { computed, onMounted, ref } from "vue";
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
+import { useI18n } from "vue-i18n";
 
 const settingsStore = useSettingsStore();
 
 const router = useRouter();
 const route = useRoute();
+const {t} = useI18n()
 
 const routeId = computed(() => {
   return route.params.id ? +route.params.id : 0;
@@ -63,7 +65,7 @@ const setBreadCrumbFn = () => {
       to: { name: "reference-type-product" },
     },
     {
-      label: String(route?.meta?.breadcrumbItemTitle ?? ""),
+      label: t(String(route?.meta?.breadcrumbItemTitle ?? "")),
       isActionable: true,
     },
   ]);
