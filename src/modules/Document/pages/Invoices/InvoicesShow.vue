@@ -11,6 +11,8 @@ import {DocumentProductType, DocumentType} from "@/modules/Document/document.typ
 import {useUsersStore} from "@/modules/Users/users.store";
 import AppOverlay from "@/components/ui/app-overlay/AppOverlay.vue";
 import {useI18n} from "vue-i18n";
+import html2canvas from "html2canvas";
+import jsPDF from "jspdf";
 
 const documentStore = useDocumentStore();
 const userStore = useUsersStore();
@@ -67,11 +69,25 @@ onMounted(() => {
 	documentStore.fetchDocument(routeId.value);
 });
 
+const downloadPdf = async () => {
+  const element = document.getElementById("pdf-content");
+  if (!element) return;
+
+  const canvas = await html2canvas(element, { scale: 2 });
+  const imgData = canvas.toDataURL("image/png");
+
+  const pdf = new jsPDF("p", "mm", "a4");
+  const imgWidth = 210;
+  const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+  pdf.addImage(imgData, "PNG", 0, 0, imgWidth, imgHeight);
+  pdf.save("Document.pdf");
+}
 </script>
 
 <template>
   <div class="flex items-start justify-center">
-    <div class="w-[55%]">
+    <div class="w-[55%]" id="pdf-content">
       <AppOverlay
         :loading="documentStore.documentLoading"
         :rounded="15"
@@ -271,13 +287,13 @@ onMounted(() => {
       </div>
     </div>
     <div class="flex flex-col gap-y-6 ml-4 w-[260px]">
-      <button class="custom-white-btn w-full">
+      <button class="custom-white-btn w-full" @click="downloadPdf">
         <img
-          src="@/assets/images/icons/plane.svg"
-          alt="plane"
-          class="mr-[12px]"
+          class="mr-4"
+          src="@/assets/images/download.svg"
+          alt="download"
         />
-        {{ t("method.send") }}
+        {{ t("method.download") }}
       </button>
       <a
         v-if="route.name === 'invoice-inbox-id' && documentStore.document?.file_info && documentStore.document?.file_link"
