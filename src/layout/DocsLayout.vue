@@ -1,8 +1,33 @@
 <script setup lang="ts">
-
+import axios from "axios";
 import { useI18n } from "vue-i18n";
+import { onMounted, ref } from "vue";
+import { useRoute } from "vue-router";
+import { ElNotification } from "element-plus";
 
 const { t } = useI18n();
+
+const route = useRoute();
+const docData = ref<any>(null);
+
+onMounted(async () => {
+
+  const paramId = route.params.id;
+
+  if (paramId) {
+    try {
+      docData.value = await axios.get(`https://wms-api.ngmkfond.uz/api/v1/documents/${paramId}/signer-info`);
+    } catch (e) {
+      ElNotification({
+        title: "Error",
+        message: e.message,
+        type: "error",
+      });
+    }
+  }
+
+
+});
 </script>
 
 <template>
@@ -53,7 +78,7 @@ const { t } = useI18n();
 
       <div class="flex mb-[24px]">
         <h2 class="text-[#A8AAAE] text-sm font-medium">
-          Lavozimi:  <span class="ml-2 text-[#4F5662] text-sm font-medium">
+          Lavozimi: <span class="ml-2 text-[#4F5662] text-sm font-medium">
        Bosh muhandis (fhdgdgghf sdftsfgdcsvcfgsfds tysfdtysfdgssd styfdtsfcxgs wsdftwssxc)
               </span>
         </h2>
