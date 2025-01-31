@@ -111,15 +111,17 @@ watch(() => route.params.id, (newId) => {
           {{ documentStore.document?.content ?? "-" }}
         </div>
 
-        <div class="mt-[40px] flex items-center justify-between">
-          <div class="flex items-baseline ">
+        <div class="mt-[40px] grid grid-cols-3 items-center">
+          <div class="flex items-baseline">
             <h1 class=" text-[14px] font-medium">
               <span class="text-[#4F5662]">{{ t("common.sender") }}:</span>
-              <span class="text-[#A8AAAE] ml-2">{{ authStore.user?.position }}</span>
+              <span class="text-[#A8AAAE] ml-2">{{ documentStore.document?.from_name ?? "-" }}</span>
             </h1>
           </div>
 
-          <QrCode />
+          <div class="flex items-center justify-center">
+            <QrCode />
+          </div>
           <h1 class="text-[#A8AAAE] text-[14px]">{{ documentStore.document?.from_name[locale] ?? "-" }}</h1>
         </div>
       </AppOverlay>

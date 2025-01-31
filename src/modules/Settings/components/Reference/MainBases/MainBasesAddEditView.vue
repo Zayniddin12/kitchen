@@ -19,7 +19,7 @@ import { useI18n } from "vue-i18n";
 
 const route = useRoute();
 const router = useRouter();
-const {t} = useI18n()
+const { t } = useI18n();
 const { confirm } = useConfirm();
 const settingsStore = useSettingsStore();
 const commonStore = useCommonStore();
@@ -161,10 +161,10 @@ const setForm = async () => {
   form.base_id = settingsStore.baseWarehouse.base_id;
   form.measure_id = settingsStore.baseWarehouse.measure_id;
   form.status = getStatus(settingsStore.baseWarehouse.status);
-  form.product_ids = settingsStore.baseWarehouse.warehouseProducts.map(item => item.id);
+  form.product_ids = settingsStore.baseWarehouse.warehouseProductTypes.map(item => item.id);
 
   if (settingsStore.baseWarehouse?.workshop_name.uz || settingsStore.baseWarehouse?.workshop_name.ru) {
-    factory.value = true
+    factory.value = true;
     workshop_name_uz.value = settingsStore.baseWarehouse?.workshop_name.uz;
     workshop_name_ru.value = settingsStore.baseWarehouse?.workshop_name.ru;
   }
@@ -172,7 +172,7 @@ const setForm = async () => {
 
 onMounted(async () => {
   settingsStore.GET_UNITS();
-  settingsStore.GET_TYPE_PRODUCT();
+  settingsStore.GET_TYPE_PRODUCT({ warehouse_id: routeID.value, per_page: 100 });
   settingsStore.GET_WAREHOUSE_BASES_LIST({ per_page: 100 });
 
   if (routeID.value) await setForm();
@@ -295,21 +295,23 @@ const disabledFormItems = computed<boolean>(() => {
             </el-table>
           </div>
 
+          <div class="">
+            <ElSwitch
+              v-model="factory"
+              active-text="цех"
+              class="app-switch mt-5"
+            />
 
-          <ElSwitch
-            v-if="route.name === 'reference-main-bases-edit' && form.status !== undefined"
-            v-model="form.status"
-            :active-text="getStatusText(form.status)"
-            class="app-switch mt-auto"
-          />
-          <br />
+            <br />
 
+            <ElSwitch
+              v-if="route.name === 'reference-main-bases-edit' && form.status !== undefined"
+              v-model="form.status"
+              :active-text="getStatusText(form.status)"
+              class="app-switch mt-16"
+            />
+          </div>
 
-          <ElSwitch
-            v-model="factory"
-            active-text="цех"
-            class="app-switch mt-5"
-          />
 
           <div class="grid grid-cols-2 gap-4 mt-2" v-if="factory">
             <app-input
@@ -343,7 +345,7 @@ const disabledFormItems = computed<boolean>(() => {
             class="custom-danger-btn"
             @click="deleteFn"
           >
-            {{$t('method.delete')}}
+            {{ $t("method.delete") }}
           </ElButton>
 
 
@@ -352,7 +354,7 @@ const disabledFormItems = computed<boolean>(() => {
               @click="cancelFn"
               class="custom-cancel-btn flex items-center justify-center"
             >
-              {{$t('method.cancel')}}
+              {{ $t("method.cancel") }}
             </button>
 
             <ElButton
@@ -362,7 +364,7 @@ const disabledFormItems = computed<boolean>(() => {
               size="large"
               class="custom-apply-btn"
             >
-              {{ route.params.id ? $t('method.save') : $t('method.add') }}
+              {{ route.params.id ? $t("method.save") : $t("method.add") }}
             </ElButton>
           </div>
         </div>
@@ -379,7 +381,7 @@ const disabledFormItems = computed<boolean>(() => {
             alt="edit icon"
             class="size-5"
           />
-          {{$t('method.edit')}}
+          {{ $t("method.edit") }}
         </RouterLink>
       </div>
     </div>

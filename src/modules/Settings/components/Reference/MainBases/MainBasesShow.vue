@@ -69,7 +69,7 @@ onMounted(() => {
               <span class="app-card__item-title">
                 {{$t('База складов')}}
               </span>
-              <p>-</p>
+              <p>  {{ settingsStore.baseWarehouse.base_name ?? "-" }}</p>
             </div>
             <div>
               <span class="app-card__item-title">

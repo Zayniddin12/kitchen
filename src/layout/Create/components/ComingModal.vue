@@ -454,7 +454,7 @@ const allUser = ref<any>({ users: [] });
 
 const openModal = async () => {
     form.doc_type_id = props.id;
-
+    console.log(authStore.disabledUserWorkplace);
 
     if (authStore.disabledUserWorkplace) {
 
@@ -465,13 +465,16 @@ const openModal = async () => {
         form[`${type}_type`] = "base";
         // await fetchRespondents({ type: [activeWorkplace.workplace_type] });
         form[type] = `${activeWorkplace.base_id}_base`;
-        await settingsStore.fetchRespondents({ type: ["base"], per_page: 100 });
+        await settingsStore.fetchRespondents({
+          type: activeComingModal.value ? ["base"] : ["kitchenWarehouse", "organization", "base"],
+          per_page: 100,
+        });
         toList.value = settingsStore.respondents;
       } else {
         await settingsStore.fetchRespondents({ type: ["base"], per_page: 100 });
         toList.value = settingsStore.respondents;
       }
-      await settingsStore.fetchRespondents({ type: ["provider"], per_page: 100 });
+      await settingsStore.fetchRespondents({ type: activeComingModal.value ? ["provider"] : ["base"], per_page: 100 });
       fromList.value = settingsStore.respondents;
 
 
@@ -994,10 +997,10 @@ const changeUser = (val, key) => {
             </template>
             <template v-else>
               <ElOption
-                v-for="item in authStore.user.workplaces"
-                :key="`${item.workplace_type}_${item.workplace_type}`"
-                :value="`${item.workplace_id}_${item.workplace_type}`"
-                :label="item.workplace"
+                v-for="item in toList"
+                :key="`${item.id}_${item.model_type}`"
+                :value="`${item.id}_${item.model_type}`"
+                :label="item.name"
               />
             </template>
             <!--            <template #footer>-->
