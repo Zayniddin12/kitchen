@@ -115,14 +115,14 @@ watch(() => route.params.id, (newId) => {
           <div class="flex items-baseline">
             <h1 class=" text-[14px] font-medium">
               <span class="text-[#4F5662]">{{ t("common.sender") }}:</span>
-              <span class="text-[#A8AAAE] ml-2">{{ documentStore.document?.from_name ?? "-" }}</span>
+              <span class="text-[#A8AAAE] ml-2">{{ documentStore.document?.from_role_title ?? "-" }}</span>
             </h1>
           </div>
 
           <div class="flex items-center justify-center">
             <QrCode />
           </div>
-          <h1 class="text-[#A8AAAE] text-[14px]">{{ documentStore.document?.from_name[locale] ?? "-" }}</h1>
+          <h1 class="text-[#A8AAAE] text-[14px]">{{ documentStore.document?.from_name ?? "-" }}</h1>
         </div>
       </AppOverlay>
       <div
