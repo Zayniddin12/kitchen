@@ -992,7 +992,7 @@ const clearBasket = () => {
                     >
                       <div class="flex items-center gap-x-3">
                         <img
-                          :src="image"
+                          :src="row.image"
                           :alt="row.name"
                           class="size-8 rounded-full object-contain"
                         />

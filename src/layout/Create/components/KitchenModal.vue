@@ -269,6 +269,8 @@ const sendForm = async () => {
   form.to_id = form.kitchen_id;
   form.to_type = form.kitchen_type;
 
+  actForm.products = form.products;
+
   if (typeSwitch.value) {
 
     let newForm: DocumentCreateDataType = {
@@ -291,7 +293,7 @@ const sendForm = async () => {
 
       delete newForm.Document.doc_signer_obj;
     }
-    
+
 
     if (!activeComingModal.value) {
       delete newForm.Document.subject;
