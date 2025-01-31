@@ -2,20 +2,20 @@
   setup
   lang="ts"
 >
-import {computed, onMounted, ref, watchEffect} from "vue";
+import { computed, onMounted, ref, watchEffect } from "vue";
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
-import {useRoute} from "vue-router";
-import {useDocumentStore} from "@/modules/Document/document.store";
-import {formatDate2, formatNumber} from "@/utils/helper";
-import {DocumentProductType, DocumentType} from "@/modules/Document/document.types";
-import {useUsersStore} from "@/modules/Users/users.store";
+import { useRoute } from "vue-router";
+import { useDocumentStore } from "@/modules/Document/document.store";
+import { formatDate2, formatNumber } from "@/utils/helper";
+import { DocumentProductType, DocumentType } from "@/modules/Document/document.types";
+import { useUsersStore } from "@/modules/Users/users.store";
 import AppOverlay from "@/components/ui/app-overlay/AppOverlay.vue";
-import {useI18n} from "vue-i18n";
+import { useI18n } from "vue-i18n";
 
 const documentStore = useDocumentStore();
 const userStore = useUsersStore();
 
-const {t} = useI18n();
+const { t } = useI18n();
 
 const route = useRoute();
 
@@ -26,45 +26,45 @@ const isTranslate = computed(() => !!route.meta.isTranslate);
 const routeId = computed<string>(() => route.params.id as string);
 
 const productsSum = computed(() => {
-	if (!documentStore.document) return 0;
-	return documentStore.document.products.reduce((sum: number, product: DocumentProductType) => {
-		return (
-		  sum +
-		  Number(
-			product.price && product.quantity ? product.price * product.quantity : 0
-		  )
-		);
-	}, 0);
+  if (!documentStore.document) return 0;
+  return documentStore.document.products.reduce((sum: number, product: DocumentProductType) => {
+    return (
+      sum +
+      Number(
+        product.price && product.quantity ? product.price * product.quantity : 0,
+      )
+    );
+  }, 0);
 });
 
-const {setBreadCrumb} = useBreadcrumb();
+const { setBreadCrumb } = useBreadcrumb();
 
 const setBreadCrumbFn = () => {
-	setBreadCrumb([
-		{
-			label: "document.title1",
-			isTranslate: true
-		},
-		{
-			label: "document.overhead2",
-			isTranslate: true
-		},
-		{
-			label: String(route.meta?.parentRouteTitle ?? ""),
-			to: route.meta.parentRouteUrl,
-			isTranslate: route.meta.parentRouteIsTranslate,
-		},
-		{
-			label: title.value,
-			isActionable: true,
-			isTranslate: isTranslate.value
-		}
-	]);
+  setBreadCrumb([
+    {
+      label: "document.title1",
+      isTranslate: true,
+    },
+    {
+      label: "document.overhead2",
+      isTranslate: true,
+    },
+    {
+      label: String(route.meta?.parentRouteTitle ?? ""),
+      to: route.meta.parentRouteUrl,
+      isTranslate: route.meta.parentRouteIsTranslate,
+    },
+    {
+      label: title.value,
+      isActionable: true,
+      isTranslate: isTranslate.value,
+    },
+  ]);
 };
 
 onMounted(() => {
-	setBreadCrumbFn();
-	documentStore.fetchDocument(routeId.value);
+  setBreadCrumbFn();
+  documentStore.fetchDocument(routeId.value);
 });
 
 </script>
@@ -88,46 +88,46 @@ onMounted(() => {
           </div>
         </header>
         <h1 class="text-[#000D24] font-bold text-[20px] text-center mb-6 uppercase">
-          {{ route.name === "invoice-inbox-id" ? t('document.overhead') : t("document.title") }}</h1>
+          {{ route.name === "invoice-inbox-id" ? t("document.overhead") : t("document.overhead") }}</h1>
         <div class="flex items-center justify-between">
           <div class="flex items-center mb-[8px]">
             <h1 class="text-[#4F5662] text-[14px] font-medium">{{ t("document.dateCreatedSystem") }}:</h1>
             <span class="ml-2 text-[#A8AAAE] text-[14px] font-medium block">
             {{
-	            documentStore.document?.created_at ? formatDate2(new Date(documentStore.document.created_at)) : "-"
-            }}
+                documentStore.document?.created_at ? formatDate2(new Date(documentStore.document.created_at)) : "-"
+              }}
           </span>
           </div>
         </div>
 
         <div class="flex items-center mb-6">
           <h1 class="text-[#4F5662] text-[14px] font-medium">
-	         {{ t("document.invoiceNumberSystem") }}:
+            {{ t("document.invoiceNumberSystem") }}:
           </h1>
           <span class="ml-2 text-[#A8AAAE] text-[14px] font-medium block">
             {{
-	            documentStore.document?.generated_number ?? "-"
+              documentStore.document?.generated_number ?? "-"
             }}
           </span>
         </div>
 
         <div class="flex items-center mb-[8px]">
           <h1 class="text-[#4F5662] text-[14px] font-medium">
-	          {{ t("document.invoiceDate") }}:
+            {{ t("document.invoiceDate") }}:
           </h1>
           <span class="ml-2 text-[#A8AAAE] text-[14px] font-medium block">{{
-		          documentStore.document?.date ?? "-"
-                                                                          }}</span>
+              documentStore.document?.date ?? "-"
+            }}</span>
         </div>
 
         <div class="flex items-center mb-6">
           <h1 class="text-[#4F5662] text-[14px] font-medium">
-	          {{ t("document.invoiceNumber") }}:
+            {{ t("document.invoiceNumber") }}:
           </h1>
           <span class="ml-2 text-[#A8AAAE] text-[14px] font-medium block">
 	          {{
-		          documentStore.document?.number ?? "-"
-	          }}
+              documentStore.document?.number ?? "-"
+            }}
           </span>
         </div>
 
@@ -135,49 +135,49 @@ onMounted(() => {
           <h1 class="text-[#4F5662] text-[14px] font-medium">{{ t("document.type") }}:</h1>
           <span class="ml-2 text-[#A8AAAE] text-[14px] font-medium block">
 	          {{
-		          documentStore.document?.type ?? "-"
-	          }}
+              documentStore.document?.type ?? "-"
+            }}
           </span>
         </div>
 
         <div class="flex items-center mb-6">
           <h1 class="text-[#4F5662] text-[14px] font-medium">{{ t("document.whom.from") }}:</h1>
           <span class="ml-2 text-[#A8AAAE] text-[14px] font-medium block">{{
-		          documentStore.document?.from_name ?? "-"
-                                                                          }}</span>
+              documentStore.document?.from_name ?? "-"
+            }}</span>
         </div>
         <div class="flex items-baseline mb-[8px]">
           <h1 class="text-[#4F5662] text-[14px] font-medium">{{ t("document.whom.to") }}:</h1>
           <span class="ml-2 text-[#A8AAAE] text-[14px] font-medium block">{{
-		          documentStore.document?.to_name ?? "-"
-                                                                          }}</span>
+              documentStore.document?.to_name ?? "-"
+            }}</span>
         </div>
         <div class="flex items-baseline mb-6">
           <h1 class="text-[#4F5662] text-[14px] font-medium">
-	          {{ t("document.whom.through") }}:
+            {{ t("document.whom.through") }}:
           </h1>
           <span class="ml-2 text-[#A8AAAE] text-[14px] font-medium block">
 	          {{
-		          documentStore.document?.through_whom ?? "-"
-	          }}
+              documentStore.document?.through_whom ?? "-"
+            }}
           </span>
         </div>
 
         <div class="flex items-center mb-[14px]">
           <h1 class="text-[#4F5662] text-[14px] font-medium">
-	          {{ t("document.base") }}:
+            {{ t("document.base") }}:
           </h1>
           <span class="ml-2 text-[#A8AAAE] text-[14px] font-medium block">{{
-		          documentStore.document?.basis ?? "-"
-                                                                          }}</span>
+              documentStore.document?.basis ?? "-"
+            }}</span>
         </div>
         <div class="flex items-center mb-6">
           <h1 class="text-[#4F5662] text-[14px] font-medium">
-	          {{ t("document.shippingMethod") }}:
+            {{ t("document.shippingMethod") }}:
           </h1>
           <span class="ml-2 text-[#A8AAAE] text-[14px] font-medium block">
             {{
-	            documentStore.document?.shipping_method ?? "-"
+              documentStore.document?.shipping_method ?? "-"
             }}
           </span>
         </div>
@@ -219,7 +219,7 @@ onMounted(() => {
           >
             <div class="flex items-center justify-end p-4">
               <h1 class="text-[#8F9194] text-sm font-bold mr-[5px]">
-                {{ t('common.totalSum') }}:
+                {{ t("common.totalSum") }}:
               </h1>
               <h1 class="text-[#000D24] text-sm font-bold mr-5">
                 {{ formatNumber(productsSum) }} {{ t("currency.sum") }}
@@ -234,7 +234,7 @@ onMounted(() => {
             :key="singer.id"
           >
             <p class=" text-sm text-[#4F5662] font-medium w-[18%]">
-	            {{ singer.position_name || t("document.commission.storekeeper") }}:
+              {{ singer.position_name || t("document.commission.storekeeper") }}:
             </p>
             <img
               src="@/assets/images/icons/qr.svg"
@@ -257,7 +257,7 @@ onMounted(() => {
           size="large"
           class="custom-cancel-btn h-[41px]"
         >
-        {{ t("method.reject") }}
+          {{ t("method.reject") }}
         </ElButton>
         <ElButton
           :loading="documentStore.approveLoading"
@@ -266,7 +266,7 @@ onMounted(() => {
           size="large"
           class="custom-send-btn h-[41px] !ml-0"
         >
-        {{ t("method.accept") }}
+          {{ t("method.accept") }}
         </ElButton>
       </div>
     </div>
@@ -295,8 +295,8 @@ onMounted(() => {
 	              {{ t("document.consignmentNote") }}
               </span>
               <span class="text-[#A8AAAE] text-xs uppercase">{{
-		              (documentStore.document.file_info.mimeType as string).replace("application/", "")
-                                                             }} | {{ documentStore.document.file_info.size }}</span>
+                  (documentStore.document.file_info.mimeType as string).replace("application/", "")
+                }} | {{ documentStore.document.file_info.size }}</span>
             </span>
       </a>
     </div>

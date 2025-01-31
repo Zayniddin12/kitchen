@@ -2,7 +2,6 @@
   setup
   lang="ts"
 >
-import { Search } from "@element-plus/icons-vue";
 import { onMounted, ref } from "vue";
 import Language from "@/components/language/index.vue";
 import MemoModal from "@/layout/Create/components/MemoModal.vue";
@@ -13,11 +12,11 @@ import MonthlyModal from "@/layout/Create/components/MonthlyModal.vue";
 import ThemeToggler from "@/layout/Bars/ThemeToggler.vue";
 import { useSettingsStore } from "@/modules/Settings/store";
 import { DocTypeListType } from "@/modules/Settings/settings.types";
-import Notifications from "@/components/layouts/notifications/Notifications.vue";
 import HeaderUser from "@/components/layouts/header-user/HeaderUser.vue";
 import { useI18n } from "vue-i18n";
 
 const { t } = useI18n();
+const settingsStore = useSettingsStore();
 
 const editModal = ref<boolean>(false);
 const editModal2 = ref<boolean>(false);
@@ -26,9 +25,6 @@ const freeModal = ref<boolean>(false);
 const monthlyModal = ref<boolean>(false);
 const dropdown = ref<any>(null);
 const input1 = ref<string>("");
-
-const settingsStore = useSettingsStore();
-
 const docTypeId = ref<number | null>(null);
 const docTypeName = ref<string>("");
 const docTypeTitle = ref<string>("");
@@ -71,8 +67,6 @@ const openModal = (item: DocTypeListType) => {
 
 onMounted(async () => {
   await settingsStore.getDocTypeList();
-
-  console.log(settingsStore.docTypeList);
 });
 </script>
 

@@ -43,6 +43,9 @@ export default [
                     path: "",
                     name: "KitchenMenuIndex",
                     component: () => import("@/modules/Kitchen/pages/kitchen-child/menu/Index.vue"),
+                    meta: {
+                      type: 'FACE_ID',
+                    }
                   },
                   {
                     path: ":id(\\d+)",

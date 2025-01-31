@@ -9,6 +9,8 @@ import { WarehouseCapacityParamsType } from "@/modules/Home/statistics.types";
 import { useRoute } from "vue-router";
 import QRCode from "qrcode";
 import { useCashier } from "@/layout/Cashier/cashier";
+import { ElMessage, ElMessageBox } from "element-plus";
+import { useKitchenStore } from "@/modules/Kitchen/kitchen.store";
 
 interface ProductItemType {
   id: number;
@@ -75,6 +77,7 @@ const updateQuantity = (product_id: number, increment = true) => {
   }
 };
 
+const kitchenStore = useKitchenStore();
 const { confirm } = useConfirm();
 const route = useRoute();
 const authStore = useAuthStore();
@@ -143,34 +146,55 @@ const ordersSum = computed(() => {
 });
 
 const createOrder = async () => {
-  window.print();
+  ElMessageBox.confirm("Хотите подтвердить заказ?", "", {
+      confirmButtonText: "Да",
+      cancelButtonText: "Отменить",
+      type: "warning",
+    },
+  )
+    .then(() => {
+      let kt_id = JSON.parse(localStorage.getItem('workplace_id'))
 
-  try {
-    // selectedProducts.value.forEach(product => {
-    //   if (product.product_type == "product") {
-    //     payload.products.push({
-    //       menu_id: Number(product.id),
-    //       id: Number(product.product_id),
-    //       price: Number(product.price),
-    //       quantity: Number(orders.get(product.id)),
-    //     });
-    //   } else {
-    //     payload.meals.push({
-    //       menu_id: Number(product.id),
-    //       id: Number(product.product_id),
-    //       price: Number(product.price),
-    //       quantity: Number(orders.get(product.id)),
-    //     });
-    //   }
-    // });
+      let payload = {
+        kitchen_id: Number(kt_id),
+        products: [],
+        meals: [],
+      };
 
-    // await kitchenStore.CREATE_ORDER(payload);
-    // await kitchenStore.GET_CURRENT_MENU_SALES_LIST(route.params.child_id as string);
-    orders.clear();
-    ordersModal.value = false;
-  } catch (error) {
-    console.log(error);
-  }
+      selectedProducts.value.forEach(product => {
+        if (product.product_type == "product") {
+          payload.products.push({
+            id: Number(product.product_id),
+            menu_id: Number(product.id),
+            quantity: Number(orders.get(product.id)),
+            price: Number(product.price),
+          });
+        } else {
+          payload.meals.push({
+            id: Number(product.product_id),
+            menu_id: Number(product.id),
+            quantity: Number(orders.get(product.id)),
+            price: Number(product.price),
+          });
+        }
+      });
+      kitchenStore.CREATE_ORDER(payload);
+      orders.clear();
+      ordersModal.value = false;
+
+      window.print();
+      // await kitchenStore.GET_CURRENT_MENU_SALES_LIST(route.params.child_id as string);
+
+    })
+    .catch((e) => {
+      console.log(e, 'rrr');
+      ElMessage({
+        type: "info",
+        message: "Заказ отменен?",
+      });
+      orders.clear();
+      ordersModal.value = false;
+    });
 };
 
 watch(() => route.query.management_id, async (newId) => {
@@ -178,14 +202,19 @@ watch(() => route.query.management_id, async (newId) => {
   form.management_id = management_id && !isNaN(management_id) ? management_id : null;
   let workplace_id = JSON.parse(localStorage.getItem("workplace_id"));
 
-  const data = await store.GET_MENU_LIST({
-    id: workplace_id,
-    params: {
-      period: newId,
-    },
-  });
-  if (data) {
-    products.value = store.menuList.elements;
+  let userRole = JSON.parse(localStorage.getItem("user_role"));
+  if (!workplace_id) return;
+
+  if (userRole == "cashier-sales") {
+    const data = await store.GET_MENU_LIST({
+      id: workplace_id,
+      params: {
+        period: newId,
+      },
+    });
+    if (data) {
+      products.value = store.menuList.elements;
+    }
   }
 }, { immediate: true });
 
@@ -516,12 +545,33 @@ const qrData = ref(JSON.stringify(selectedProducts.value));
 </template>
 
 <style lang="scss">
+.el-message-box__container {
+  justify-content: center;
+}
+
+.el-message-box__btns {
+  justify-content: center;
+}
+
+.el-message-box__message p {
+  font-size: 18px;
+  margin-top: 15px;
+  margin-bottom: 15px;
+}
 
 .receipt {
   display: none;
 }
 
 @media print {
+  .el-overlay {
+    display: none;
+  }
+
+  .is-message-box {
+    display: none;
+  }
+
   @page {
     margin: 0;
   }
