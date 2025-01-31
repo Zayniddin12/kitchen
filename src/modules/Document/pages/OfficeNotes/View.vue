@@ -1,16 +1,15 @@
-<script
-  setup
-  lang="ts"
->
-
+<script setup lang="ts">
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
-import { computed, watch, watchEffect } from "vue";
+import { computed, watch } from "vue";
 import { useRoute } from "vue-router";
 import { useDocumentStore } from "@/modules/Document/document.store";
 import AppOverlay from "@/components/ui/app-overlay/AppOverlay.vue";
 import { useAuthStore } from "@/modules/Auth/auth.store";
 import QrCode from "@/components/workplaces/qr-code/QrCode.vue";
 import { useI18n } from "vue-i18n";
+
+import html2canvas from "html2canvas";
+import jsPDF from "jspdf";
 
 const route = useRoute();
 
@@ -58,11 +57,25 @@ watch(() => route.params.id, (newId) => {
   if (newId) documentStore.fetchDocument(newId as string);
 }, { immediate: true });
 
+const downloadPdf = async () => {
+  const element = document.getElementById("pdf-content");
+  if (!element) return;
+
+  const canvas = await html2canvas(element, { scale: 2 });
+  const imgData = canvas.toDataURL("image/png");
+
+  const pdf = new jsPDF("p", "mm", "a4");
+  const imgWidth = 210;
+  const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+  pdf.addImage(imgData, "PNG", 0, 0, imgWidth, imgHeight);
+  pdf.save("Document.pdf");
+}
 </script>
 
 <template>
   <div class="flex items-start justify-center gap-x-6">
-    <div class="w-[50%]">
+    <div class="w-[50%]" id="pdf-content">
       <AppOverlay
         :loading="documentStore.documentLoading"
         :rounded="15"
@@ -125,6 +138,7 @@ watch(() => route.params.id, (newId) => {
           <h1 class="text-[#A8AAAE] text-[14px]">{{ documentStore.document?.from_name ?? "-" }}</h1>
         </div>
       </AppOverlay>
+
       <div
         v-if="(route.meta?.hasRejectBtn || route.meta?.hasAcceptBtn || route.meta?.hasCancelBtn) && (documentStore.document?.status === 'sent' || documentStore.document?.status === 'pending')"
         class="flex items-center justify-end mt-6 gap-x-4"
@@ -164,7 +178,7 @@ watch(() => route.params.id, (newId) => {
       </div>
     </div>
 
-    <button class="custom-white-btn w-[260px]">
+    <button class="custom-white-btn w-[260px]" @click="downloadPdf">
       <img
         class="mr-4"
         src="@/assets/images/download.svg"

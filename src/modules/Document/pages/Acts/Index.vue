@@ -324,19 +324,19 @@ const changePage = (value: number) => {
                 alt="eye"
               />
             </RouterLink>
-            <ElButton
-              :loading="documentStore.pdfLoading"
-              plain
-              @click.stop="documentStore.getPdf(row.id)"
-              class="action-btn"
-              text
-              bg
-            >
-              <img
-                src="@/assets/images/download.svg"
-                alt="download"
-              />
-            </ElButton>
+<!--            <ElButton-->
+<!--              :loading="documentStore.pdfLoading"-->
+<!--              plain-->
+<!--              @click.stop="documentStore.getPdf(row.id)"-->
+<!--              class="action-btn"-->
+<!--              text-->
+<!--              bg-->
+<!--            >-->
+<!--              <img-->
+<!--                src="@/assets/images/download.svg"-->
+<!--                alt="download"-->
+<!--              />-->
+<!--            </ElButton>-->
           </div>
         </template>
       </el-table-column>
