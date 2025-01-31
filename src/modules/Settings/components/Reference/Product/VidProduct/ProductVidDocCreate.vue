@@ -65,6 +65,9 @@ onMounted(async () => {
       if (detail && detail.data) {
         dataValue.value = detail.data.product_type;
         existingImage.value = dataValue.value.image;
+
+        dataValue.value.ready_to_eat = detail.data.product_type.ready_to_eat == 1;
+
       }
     } catch (e) {
       loading.value = false;
@@ -123,7 +126,7 @@ const handleSubmit = async () => {
       formData.append("name[uz]", dataValue.value.name.uz);
       formData.append("name[ru]", dataValue.value.name.ru);
       formData.append("parent_id", dataValue.value.parent_id);
-      formData.append("ready_to_eat", dataValue.value.ready_to_eat);
+      formData.append("ready_to_eat", dataValue.value.ready_to_eat ? 1 : 0);
       formData.append("place_occupied", dataValue.value.place_occupied);
       formData.append("measurement_unit_id", Number(dataValue.value.measurement_unit_id));
       if (route.params.id) formData.append("_method", "PUT");
@@ -235,6 +238,7 @@ watchEffect(() => {
               :label="$t('Занимаемое место')"
               label-class="text-[#A8AAAE] text-xs"
               class="mb-0"
+              required
             >
               <template #append>
                 <span>кг</span>
@@ -252,6 +256,7 @@ watchEffect(() => {
 
         <el-switch
           v-model="dataValue.is_active"
+          class="mt-6"
           v-if="route.name === 'reference-vid-edit-id'"
           :active-text="dataValue.is_active ? $t('status.activation') : $t('status.deactivation')"
         />
