@@ -3,152 +3,152 @@
   lang="ts"
 >
 
-import {useDocumentStore} from "@/modules/Document/document.store";
-import {useSettingsStore} from "@/modules/Settings/store";
-import {computed, onMounted, reactive, ref, watch} from "vue";
-import {useRoute, useRouter} from "vue-router";
+import { useDocumentStore } from "@/modules/Document/document.store";
+import { useSettingsStore } from "@/modules/Settings/store";
+import { computed, onMounted, reactive, ref, watch } from "vue";
+import { useRoute, useRouter } from "vue-router";
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 import white from "@/assets/images/filter2.svg";
 import filter from "@/assets/images/filter.svg";
 import CollapseFilter from "@/components/collapseFilter/index.vue";
 import AppInput from "@/components/ui/form/app-input/AppInput.vue";
 import AppSelect from "@/components/ui/form/app-select/AppSelect.vue";
-import {ValidationType} from "@/components/ui/form/app-form/app-form.type";
-import {filterObjectValues, formatDate2, setTableColumnIndex} from "@/utils/helper";
-import {DraftsParamsType, DraftType} from "@/modules/Document/document.types";
+import { ValidationType } from "@/components/ui/form/app-form/app-form.type";
+import { filterObjectValues, formatDate2, setTableColumnIndex } from "@/utils/helper";
+import { DraftsParamsType, DraftType } from "@/modules/Document/document.types";
 import AppForm from "@/components/ui/form/app-form/AppForm.vue";
 import AppPagination from "@/components/ui/app-pagination/AppPagination.vue";
 import AppDatePicker from "@/components/ui/form/app-date-picker/AppDatePicker.vue";
-import {useI18n} from "vue-i18n";
+import { useI18n } from "vue-i18n";
 
 const documentStore = useDocumentStore();
 const settingsStore = useSettingsStore();
 
-const {t} = useI18n();
+const { t } = useI18n();
 
 const title = computed(() => route.meta.title ?? "");
 
 const isTranslate = computed(() => !!route.meta.isTranslate);
 
 interface FormType extends DraftsParamsType {
-	basis?: string;
-	created_at?: string,
-	date?: string,
-	shipping_method?: string,
-	generated_number?: string,
+  basis?: string;
+  created_at?: string,
+  date?: string,
+  shipping_method?: string,
+  generated_number?: string,
 }
 
 const form = reactive<FormType>({
-	page: null,
-	number: "",
-	basis: "",
-	from_id: "",
-	to_id: "",
-	created_at: "",
-	date: "",
-	shipping_method: "",
-	generated_number: ""
+  page: null,
+  number: "",
+  basis: "",
+  from_id: "",
+  to_id: "",
+  created_at: "",
+  date: "",
+  shipping_method: "",
+  generated_number: "",
 });
 
 const v$ = ref<ValidationType | null>(null);
 const validationErrors = ref<Record<string, any> | null>(null);
 
 const setValidation = (validation: ValidationType) => {
-	v$.value = validation;
+  v$.value = validation;
 };
 
 const filterForm = () => {
-	const query = {...filterObjectValues(form)};
-	delete query.page;
+  const query = { ...filterObjectValues(form) };
+  delete query.page;
 
-	router.push({query});
+  router.push({ query });
 };
 
 const clearForm = () => {
-	router.push({query: {}});
-	isOpenFilter.value = false;
+  router.push({ query: {} });
+  isOpenFilter.value = false;
 };
 
 const isOpenFilter = ref<boolean>(false);
 const router = useRouter();
 const route = useRoute();
 
-const {setBreadCrumb} = useBreadcrumb();
+const { setBreadCrumb } = useBreadcrumb();
 
 const setBreadCrumbFn = () => {
-	setBreadCrumb([
-		{
-			label: "document.title1",
-			isTranslate: true
-		},
-		{
-			label: "document.overhead2",
-			isTranslate: true
-		},
-		{
-			label: String(route.meta.breadcrumbItemTitle ?? ""),
-			isTranslate: route.meta.breadcrumbItemIsTranslate,
-			isActionable: true
-		}
-	]);
+  setBreadCrumb([
+    {
+      label: "document.title1",
+      isTranslate: true,
+    },
+    {
+      label: "document.overhead2",
+      isTranslate: true,
+    },
+    {
+      label: String(route.meta.breadcrumbItemTitle ?? ""),
+      isTranslate: route.meta.breadcrumbItemIsTranslate,
+      isActionable: true,
+    },
+  ]);
 };
 
 const fetchInvoices = async () => {
-	const query = route.query as Record<string, string>;
+  const query = route.query as Record<string, string>;
 
-	const page = parseInt(query.page);
-	const from_id = parseInt(query.from_id);
-	const to_id = parseInt(query.to_id);
+  const page = parseInt(query.page);
+  const from_id = parseInt(query.from_id);
+  const to_id = parseInt(query.to_id);
 
-	form.page = !isNaN(page) ? page : null;
-	form.number = query.number ?? "";
-	form.basis = query.basis ?? "";
-	form.from_id = !isNaN(from_id) ? from_id : "";
-	form.to_id = !isNaN(to_id) ? to_id : "";
-	form.created_at = query.created_at ?? "";
-	form.date = query.date ?? "";
-	form.shipping_method = query.shipping_method ?? "";
-	form.generated_number = query.generated_number ?? "";
+  form.page = !isNaN(page) ? page : null;
+  form.number = query.number ?? "";
+  form.basis = query.basis ?? "";
+  form.from_id = !isNaN(from_id) ? from_id : "";
+  form.to_id = !isNaN(to_id) ? to_id : "";
+  form.created_at = query.created_at ?? "";
+  form.date = query.date ?? "";
+  form.shipping_method = query.shipping_method ?? "";
+  form.generated_number = query.generated_number ?? "";
 
-	const newForm = {...form, doc_type: "invoice"};
+  const newForm = { ...form, doc_type: "invoice" };
 
 
-	try {
-		await documentStore.fetchDrafts(route.meta?.apiUrl ?? "", filterObjectValues(newForm));
-		validationErrors.value = null;
-	} catch (error: any) {
-		if (error?.error?.code === 422) {
-			validationErrors.value = error.meta.validation_errors;
-		}
-	}
+  try {
+    await documentStore.fetchDrafts(route.meta?.apiUrl ?? "", filterObjectValues(newForm));
+    validationErrors.value = null;
+  } catch (error: any) {
+    if (error?.error?.code === 422) {
+      validationErrors.value = error.meta.validation_errors;
+    }
+  }
 };
 
 watch(
   () => route.query,
   () => {
-	  fetchInvoices();
+    fetchInvoices();
   },
-  {immediate: true}
+  { immediate: true },
 );
 
 watch(() => documentStore.documentsIsRefresh, (newValue) => {
-	if (newValue) fetchInvoices();
+  if (newValue) fetchInvoices();
 });
 
 watch(() => route.name, () => {
-	setBreadCrumbFn();
-}, {immediate: true});
+  setBreadCrumbFn();
+}, { immediate: true });
 
 onMounted(() => {
-	settingsStore.fetchRespondents();
+  settingsStore.fetchRespondents();
 });
 
 const tableCurrentChange = (value: DraftType) => {
-	router.push({name: `${route.name as string}-id`, params: {id: value.id}});
+  router.push({ name: `${route.name as string}-id`, params: { id: value.id } });
 };
 
 const changePage = (value: number) => {
-	router.push({query: {...route.query, page: value}});
+  router.push({ query: { ...route.query, page: value } });
 };
 
 </script>
@@ -287,11 +287,11 @@ const changePage = (value: number) => {
         >
           <template #default="{ $index }">
             {{
-	            setTableColumnIndex(
-	              $index,
-	              form.page as number,
-	              documentStore.drafts?.paginator.per_page ?? 0
-	            )
+              setTableColumnIndex(
+                $index,
+                form.page as number,
+                documentStore.drafts?.paginator.per_page ?? 0,
+              )
             }}
           </template>
         </ElTableColumn>
@@ -356,7 +356,7 @@ const changePage = (value: number) => {
           :label="t('document.shortShippingMethod')"
         >
           <template #default="{ row }:{row: DraftType}">
-            {{ row.payment_method || "-" }}
+            {{ row.shipping_method || "-" }}
           </template>
         </ElTableColumn>
         <ElTableColumn
@@ -374,19 +374,19 @@ const changePage = (value: number) => {
                   alt="eye"
                 />
               </RouterLink>
-<!--              <ElButton-->
-<!--                :loading="documentStore.pdfLoading"-->
-<!--                plain-->
-<!--                @click.stop="documentStore.getPdf(row.id)"-->
-<!--                class="action-btn"-->
-<!--                text-->
-<!--                bg-->
-<!--              >-->
-<!--                <img-->
-<!--                  src="@/assets/images/download.svg"-->
-<!--                  alt="download"-->
-<!--                />-->
-<!--              </ElButton>-->
+              <!--              <ElButton-->
+              <!--                :loading="documentStore.pdfLoading"-->
+              <!--                plain-->
+              <!--                @click.stop="documentStore.getPdf(row.id)"-->
+              <!--                class="action-btn"-->
+              <!--                text-->
+              <!--                bg-->
+              <!--              >-->
+              <!--                <img-->
+              <!--                  src="@/assets/images/download.svg"-->
+              <!--                  alt="download"-->
+              <!--                />-->
+              <!--              </ElButton>-->
             </div>
           </template>
         </ElTableColumn>

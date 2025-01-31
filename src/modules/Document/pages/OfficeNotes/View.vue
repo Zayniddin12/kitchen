@@ -70,7 +70,7 @@ const downloadPdf = async () => {
 
   pdf.addImage(imgData, "PNG", 0, 0, imgWidth, imgHeight);
   pdf.save("Document.pdf");
-}
+};
 </script>
 
 <template>
@@ -165,16 +165,16 @@ const downloadPdf = async () => {
         >
           {{ t("method.accept") }}
         </ElButton>
-        <ElButton
-          :loading="documentStore.cancelLoading"
-          @click="documentStore.changeDocumentStatus('cancelled', routeId)"
-          type="danger"
-          size="large"
-          v-if="route.meta?.hasCancelBtn"
-          class="custom-danger-btn h-[41px] !ml-0"
-        >
-          {{ t("method.recall") }}
-        </ElButton>
+        <!--        <ElButton-->
+        <!--          :loading="documentStore.cancelLoading"-->
+        <!--          @click="documentStore.changeDocumentStatus('cancelled', routeId)"-->
+        <!--          type="danger"-->
+        <!--          size="large"-->
+        <!--          v-if="route.meta?.hasCancelBtn"-->
+        <!--          class="custom-danger-btn h-[41px] !ml-0"-->
+        <!--        >-->
+        <!--          {{ t("method.recall") }}-->
+        <!--        </ElButton>-->
       </div>
     </div>
 
