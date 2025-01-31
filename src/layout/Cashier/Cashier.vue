@@ -153,8 +153,10 @@ const createOrder = async () => {
     },
   )
     .then(() => {
+      let kt_id = JSON.parse(localStorage.getItem('workplace_id'))
+
       let payload = {
-        kitchen_id: 15,
+        kitchen_id: Number(kt_id),
         products: [],
         meals: [],
       };
@@ -177,12 +179,15 @@ const createOrder = async () => {
         }
       });
       kitchenStore.CREATE_ORDER(payload);
+      orders.clear();
+      ordersModal.value = false;
 
       window.print();
       // await kitchenStore.GET_CURRENT_MENU_SALES_LIST(route.params.child_id as string);
 
     })
-    .catch(() => {
+    .catch((e) => {
+      console.log(e, 'rrr');
       ElMessage({
         type: "info",
         message: "Заказ отменен?",
@@ -190,8 +195,6 @@ const createOrder = async () => {
       orders.clear();
       ordersModal.value = false;
     });
-  orders.clear();
-  ordersModal.value = false;
 };
 
 watch(() => route.query.management_id, async (newId) => {
@@ -247,7 +250,6 @@ const qrData = ref(JSON.stringify(selectedProducts.value));
 
 <template>
   <div>
-
     <div class="text-left receipt">
       <p class="text-center">***Добро пожаловать!***</p>
 
