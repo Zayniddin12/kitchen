@@ -409,6 +409,7 @@ const enterToFactory = () => {
                 :items="settingsStore.vidProduct.product_types"
                 item-label="name"
                 item-value="id"
+                filterable
                 label="Название продукта"
                 placeholder="Название продукта"
                 label-class="text-[#A8AAAE] text-xs font-medium"
@@ -603,7 +604,7 @@ const enterToFactory = () => {
             <ElTableColumn
               prop="price_formatted"
               label="Сумма"
-             
+
             >
               <template #default="{row}:{row:WarehouseBasesProductType}">
                 {{ row.price_formatted || "—" }}

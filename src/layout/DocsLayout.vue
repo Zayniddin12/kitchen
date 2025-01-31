@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import axios from "axios";
 import { useI18n } from "vue-i18n";
-import { onMounted, ref } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { useRoute } from "vue-router";
 import { ElNotification } from "element-plus";
 
@@ -16,11 +16,13 @@ onMounted(async () => {
 
   if (paramId) {
     try {
-      docData.value = await axios.get(`https://wms-api.ngmkfond.uz/api/v1/documents/${paramId}/signer-info`, {
+      const { data } = await axios.get(`https://wms-api.ngmkfond.uz/api/v1/documents/${paramId}/signer-info`, {
         headers: {
           "x-app-lang": "uz",
         },
       });
+
+      docData.value = data.data ?? {};
     } catch (e) {
       ElNotification({
         title: "Error",
@@ -32,6 +34,9 @@ onMounted(async () => {
 
 
 });
+
+
+const fullUrl = computed(() => window.location.origin + route.fullPath);
 </script>
 
 <template>
@@ -58,7 +63,7 @@ onMounted(async () => {
           Tizim manzili:
         </h2>
         <span class="ml-2 text-[#4F5662] text-sm font-medium block">
-               https://wms.ngmkfond.uz
+              {{ fullUrl }}
               </span>
       </div>
 
@@ -67,7 +72,7 @@ onMounted(async () => {
           Vaqti:
         </h2>
         <span class="ml-2 text-[#4F5662] text-sm font-medium block">
-            28.01.2025 17:24
+        {{ docData?.sign_data?.signed_at ?? "-" }}
               </span>
       </div>
 
@@ -76,14 +81,14 @@ onMounted(async () => {
           Imzolovchi:
         </h2>
         <span class="ml-2 text-[#4F5662] text-sm font-medium block">
-           Baxtiyor Risqiyev Botirovich
+           {{ docData?.sign_data?.signer_name ?? "-" }}
               </span>
       </div>
 
       <div class="flex mb-[24px]">
         <h2 class="text-[#A8AAAE] text-sm font-medium">
           Lavozimi: <span class="ml-2 text-[#4F5662] text-sm font-medium">
-       Bosh muhandis (fhdgdgghf sdftsfgdcsvcfgsfds tysfdtysfdgssd styfdtsfcxgs wsdftwssxc)
+       {{ docData?.sign_data?.role_title ?? "-" }}
               </span>
         </h2>
 
@@ -94,7 +99,7 @@ onMounted(async () => {
           Hujjat turi:
         </h2>
         <span class="ml-2 text-[#4F5662] text-sm font-medium block">
-        Служебная записка
+     {{ docData?.sign_data?.doc_type ?? "-" }}
               </span>
       </div>
 
@@ -103,7 +108,7 @@ onMounted(async () => {
           Hujjat №:
         </h2>
         <span class="ml-2 text-[#4F5662] text-sm font-medium block">
-   04-04-01/463
+{{ docData?.sign_data?.number ?? "-" }}
               </span>
       </div>
 

@@ -243,19 +243,21 @@ const downloadPdf = async () => {
             </div>
           </template>
         </el-table>
-        <template v-if="route.name === 'invoice-outgoing-id'">
+        <template v-if="documentStore.document?.singers && documentStore.document.singers.length">
           <div
             class="mt-[40px] flex items-center justify-between gap-x-6"
-            v-for="singer in documentStore.document?.singers"
+            v-for="singer in documentStore.document.singers"
             :key="singer.id"
           >
             <p class=" text-sm text-[#4F5662] font-medium w-[18%]">
               {{ singer.position_name || t("document.commission.storekeeper") }}:
             </p>
             <img
-              src="@/assets/images/icons/qr.svg"
+              v-if="singer.qr"
+              :src="singer.qr"
               alt="qr"
-            />
+              width="120"
+              height="120" />
             <p class="text-[#A8AAAE] text-sm w-[22%]">{{ userStore.getUserFullName(singer) || "-" }}</p>
           </div>
         </template>
