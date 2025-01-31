@@ -16,7 +16,11 @@ onMounted(async () => {
 
   if (paramId) {
     try {
-      docData.value = await axios.get(`https://wms-api.ngmkfond.uz/api/v1/documents/${paramId}/signer-info`);
+      docData.value = await axios.get(`https://wms-api.ngmkfond.uz/api/v1/documents/${paramId}/signer-info`, {
+        headers: {
+          "x-app-lang": "uz",
+        },
+      });
     } catch (e) {
       ElNotification({
         title: "Error",
