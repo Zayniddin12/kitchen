@@ -30,7 +30,7 @@ const setValidation = (value: ValidationType) => {
   v$.value = value;
 };
 
-const {t} = useI18n()
+const { t } = useI18n();
 const store = useSettingsStore();
 const route = useRoute();
 const router = useRouter();

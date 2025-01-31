@@ -269,7 +269,12 @@ const sendForm = async () => {
   form.to_id = form.kitchen_id;
   form.to_type = form.kitchen_type;
 
-  actForm.products = form.products;
+  actForm.products = form.products.map((item, index) => {
+    return {
+      ...item,
+      ...actForm.products[index],
+    };
+  });
 
   if (typeSwitch.value) {
 
@@ -641,8 +646,8 @@ watch(model, newValue => {
 });
 
 const respondentChange = (value: string, type: "from" | "to") => {
-  console.log(value);
-  form.from = value;
+
+  form[type] = value;
   const values = value.split("_");
 
   form[`${type}_id`] = Number(values[0]);
