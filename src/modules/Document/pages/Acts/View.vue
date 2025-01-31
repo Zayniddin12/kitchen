@@ -10,6 +10,8 @@ import { useRoute } from "vue-router";
 import AppOverlay from "@/components/ui/app-overlay/AppOverlay.vue";
 import { useUsersStore } from "@/modules/Users/users.store";
 import { useI18n } from "vue-i18n";
+import html2canvas from "html2canvas";
+import jsPDF from "jspdf";
 
 const route = useRoute();
 
@@ -48,13 +50,28 @@ onMounted(() => {
   documentStore.fetchDocument(route.params.id as string);
 });
 
+const downloadPdf = async () => {
+  const element = document.getElementById("pdf-content");
+  if (!element) return;
+
+  const canvas = await html2canvas(element, { scale: 2 });
+  const imgData = canvas.toDataURL("image/png");
+
+  const pdf = new jsPDF("p", "mm", "a4");
+  const imgWidth = 210;
+  const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+  pdf.addImage(imgData, "PNG", 0, 0, imgWidth, imgHeight);
+  pdf.save("Document.pdf");
+}
 </script>
 
 <template>
   <div class="flex items-start justify-center act-show">
     <AppOverlay
       :loading="documentStore.documentLoading"
-      parent-class-name="w-[50%] min-w-[792px] border-[#E2E6F3] border rounded-[15px] px-[72px] pb-[50px] min-h-[75vh]"
+      id="pdf-content"
+      parent-class-name="w-[50%] min-w-[792px] border-[#E2E6F3] border rounded-[15px] px-[72px] pb-[50px] min-h-[100vh] "
     >
       <header class="flex items-center justify-center my-[24px] mb-6">
         <img
@@ -303,12 +320,13 @@ onMounted(() => {
       </ElButton>
       <ElButton
         :loading="documentStore.pdfLoading"
-        @click="documentStore.getPdf(route.params.id as string)"
+       @click="downloadPdf"
         plain
         text
         bg
         class="custom-white-btn w-full h-11 !ml-0"
       >
+<!--        @click="documentStore.getPdf(route.params.id as string)"-->
         <img
           src="@/assets/images/icons/download.svg"
           alt="plane"
