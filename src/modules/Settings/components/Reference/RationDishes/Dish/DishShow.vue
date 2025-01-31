@@ -64,7 +64,7 @@ onMounted(() => {
             v-if="settingsStore.mealDetail.image"
             :src="settingsStore.mealDetail.image"
             :alt="settingsStore.mealDetail.name[locale as LOCALES]"
-            class="h-[250px] w-full mb-6"
+            class="h-[250px] w-full mb-6 object-contain"
           >
           <div class="grid grid-cols-3 gap-6">
             <div>
