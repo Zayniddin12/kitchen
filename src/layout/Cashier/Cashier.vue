@@ -9,6 +9,8 @@ import { WarehouseCapacityParamsType } from "@/modules/Home/statistics.types";
 import { useRoute } from "vue-router";
 import QRCode from "qrcode";
 import { useCashier } from "@/layout/Cashier/cashier";
+import { ElMessage, ElMessageBox } from "element-plus";
+import { useKitchenStore } from "@/modules/Kitchen/kitchen.store";
 
 interface ProductItemType {
   id: number;
@@ -75,6 +77,7 @@ const updateQuantity = (product_id: number, increment = true) => {
   }
 };
 
+const kitchenStore = useKitchenStore();
 const { confirm } = useConfirm();
 const route = useRoute();
 const authStore = useAuthStore();
@@ -143,34 +146,52 @@ const ordersSum = computed(() => {
 });
 
 const createOrder = async () => {
-  window.print();
+  ElMessageBox.confirm("Хотите подтвердить заказ?", "", {
+      confirmButtonText: "Да",
+      cancelButtonText: "Отменить",
+      type: "warning",
+    },
+  )
+    .then(() => {
+      let payload = {
+        kitchen_id: 15,
+        products: [],
+        meals: [],
+      };
 
-  try {
-    // selectedProducts.value.forEach(product => {
-    //   if (product.product_type == "product") {
-    //     payload.products.push({
-    //       menu_id: Number(product.id),
-    //       id: Number(product.product_id),
-    //       price: Number(product.price),
-    //       quantity: Number(orders.get(product.id)),
-    //     });
-    //   } else {
-    //     payload.meals.push({
-    //       menu_id: Number(product.id),
-    //       id: Number(product.product_id),
-    //       price: Number(product.price),
-    //       quantity: Number(orders.get(product.id)),
-    //     });
-    //   }
-    // });
+      selectedProducts.value.forEach(product => {
+        if (product.product_type == "product") {
+          payload.products.push({
+            id: Number(product.product_id),
+            menu_id: Number(product.id),
+            quantity: Number(orders.get(product.id)),
+            price: Number(product.price),
+          });
+        } else {
+          payload.meals.push({
+            id: Number(product.product_id),
+            menu_id: Number(product.id),
+            quantity: Number(orders.get(product.id)),
+            price: Number(product.price),
+          });
+        }
+      });
+      kitchenStore.CREATE_ORDER(payload);
 
-    // await kitchenStore.CREATE_ORDER(payload);
-    // await kitchenStore.GET_CURRENT_MENU_SALES_LIST(route.params.child_id as string);
-    orders.clear();
-    ordersModal.value = false;
-  } catch (error) {
-    console.log(error);
-  }
+      window.print();
+      // await kitchenStore.GET_CURRENT_MENU_SALES_LIST(route.params.child_id as string);
+
+    })
+    .catch(() => {
+      ElMessage({
+        type: "info",
+        message: "Заказ отменен?",
+      });
+      orders.clear();
+      ordersModal.value = false;
+    });
+  orders.clear();
+  ordersModal.value = false;
 };
 
 watch(() => route.query.management_id, async (newId) => {
@@ -226,6 +247,7 @@ const qrData = ref(JSON.stringify(selectedProducts.value));
 
 <template>
   <div>
+
     <div class="text-left receipt">
       <p class="text-center">***Добро пожаловать!***</p>
 
@@ -521,12 +543,33 @@ const qrData = ref(JSON.stringify(selectedProducts.value));
 </template>
 
 <style lang="scss">
+.el-message-box__container {
+  justify-content: center;
+}
+
+.el-message-box__btns {
+  justify-content: center;
+}
+
+.el-message-box__message p {
+  font-size: 18px;
+  margin-top: 15px;
+  margin-bottom: 15px;
+}
 
 .receipt {
   display: none;
 }
 
 @media print {
+  .el-overlay {
+    display: none;
+  }
+
+  .is-message-box {
+    display: none;
+  }
+
   @page {
     margin: 0;
   }
