@@ -30,7 +30,7 @@ const routes: RouteRecordRaw[] = [
   ...Kitchen,
   ...Users,
   {
-    path: "/docs",
+    path: "/docs/:id",
     name: "docs",
     component: () => import("@/layout/DocsLayout.vue"),
     meta: { layout: "DocsLayout" },

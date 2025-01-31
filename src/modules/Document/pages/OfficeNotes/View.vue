@@ -120,7 +120,7 @@ watch(() => route.params.id, (newId) => {
           </div>
 
           <div class="flex items-center justify-center">
-            <QrCode />
+            <img v-if="documentStore.document?.qr" :src="documentStore.document.qr" alt="" width="120" height="120">
           </div>
           <h1 class="text-[#A8AAAE] text-[14px]">{{ documentStore.document?.from_name ?? "-" }}</h1>
         </div>
