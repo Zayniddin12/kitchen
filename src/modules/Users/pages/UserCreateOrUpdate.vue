@@ -844,6 +844,7 @@ const temporaryKitchen = computed(() => {
                 <AppSelect
                   v-model="form.organization_id"
                   prop="organization_id"
+                  required
                   item-value="id"
                   item-label="name"
                   :items="settingsStore.organization?.organizations ?? []"
