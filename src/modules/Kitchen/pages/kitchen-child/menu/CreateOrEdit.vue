@@ -768,7 +768,6 @@ const setBreadCrumbFn = () => {
 
 onMounted(async () => {
 
-  await settingsStore.GET_RATION_LIST({ per_page: 100 });
   await settingsStore.GET_MEALS({ per_page: 100 });
   await settingsStore.GET_TYPE_PRODUCT({ per_page: 100 });
 
@@ -1041,6 +1040,10 @@ watch(() => route.params, async () => {
   setBreadCrumbFn();
 }, { immediate: true });
 
+watch(() => kitchenData.value.intermediateDate1, async (val) => {
+  await settingsStore.GET_RATION_LIST({ per_page: 100, duration: val ? 7 : 10 });
+}, { immediate: false });
+
 
 const changeInput = async (event: any, index: number, childIndex: number, indexMeal: number) => {
   // list_dishes.value[index].data[childIndex].vid_product = null
@@ -1139,7 +1142,6 @@ const isTranslate = computed(() => !!route.meta.isTranslate);
                     required
                   />
                 </div>
-
                 <ElSwitch
                   v-if="kitchenStore.activeMenuPart"
                   v-model="kitchenData.intermediateDate1"
