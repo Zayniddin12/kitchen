@@ -88,7 +88,8 @@ const form = reactive<DocumentCreateDataDocumentType>({
 });
 
 const signersList = reactive<any>({
-  warehouseman: [],
+  accountant: [],
+  forwarder: [],
   merchandiser: [],
   manager_base: [],
   head_warehouse: [],
@@ -496,6 +497,18 @@ const openModal = async () => {
       per_page: 100,
     });
 
+    if (!activeComingModal.value) {
+      signersList.forwarder = await usersStore.fetchUsers({
+        per_page: 100,
+        role_name: "freight-forwarder",
+      });
+
+      signersList.accountant = await usersStore.fetchUsers({
+        per_page: 100,
+        role_name: "accountant-base-warehouse",
+      });
+    }
+
     signersList.merchandiser = await usersStore.fetchUsers({
       per_page: 100,
       role_name: "merchandiser",
@@ -820,7 +833,7 @@ const changeUser = (val, key) => {
             <template v-if="!activeComingModal">
               <div class="flex items-center justify-between mb-[24px]">
                 <h2 class="text-[#4F5662] text-sm font-semibold">
-                  {{ t("document.commission.storekeeper") }}:
+                  {{ t("document.commission.commodityExpert") }}:
                 </h2>
                 <span class="ml-2 text-[#A8AAAE] text-sm font-medium block">
                 {{
@@ -831,7 +844,7 @@ const changeUser = (val, key) => {
 
               <div class="flex items-center justify-between mb-[24px]">
                 <h2 class="text-[#4F5662] text-sm font-semibold">
-                  {{ t("document.commission.commodityExpert") }}:
+                  {{ t("document.commission.warehouseManager") }}:
                 </h2>
                 <span class="ml-2 text-[#A8AAAE] text-sm font-medium block">
                 {{
@@ -853,7 +866,7 @@ const changeUser = (val, key) => {
 
               <div class="flex items-center justify-between mb-[24px]">
                 <h2 class="text-[#4F5662] text-sm font-semibold">
-                  {{ t("document.commission.warehouseManager") }}:
+                  {{ t("document.commission.accountant") }}:
                 </h2>
                 <span class="ml-2 text-[#A8AAAE] text-sm font-medium block">
                {{
@@ -906,7 +919,7 @@ const changeUser = (val, key) => {
           <AppInput
             v-model="form.number"
             prop="number"
-            :placeholder="t('document.invoiceNumber')"
+            :placeholder="t('document.enter_invoiceNumber')"
             :label="t('document.invoiceNumber')"
             label-class="text-[#A8AAAE] text-xs font-medium"
             required
@@ -916,7 +929,7 @@ const changeUser = (val, key) => {
           <AppDatePicker
             v-model="form.date"
             prop="date"
-            :placeholder="t('document.invoiceDate')"
+            placeholder="дд.мм.гггг"
             :label="t('document.invoiceDate')"
             label-class="text-[#A8AAAE] text-xs font-medium"
             required
@@ -924,7 +937,7 @@ const changeUser = (val, key) => {
           <AppSelect
             v-model="form.from"
             prop="from"
-            :placeholder="t('document.whom.from')"
+            :placeholder="t('document.whom.select_from')"
             :label="t('document.whom.from')"
             :items="fromList"
             :loading="settingsStore.respondentsLoading"
@@ -977,7 +990,7 @@ const changeUser = (val, key) => {
           <AppSelect
             v-model="form.to"
             prop="to"
-            :placeholder="t('document.whom.to')"
+            :placeholder="t('document.whom.select_to')"
             :label="t('document.whom.to')"
             :loading="authStore.userLoading"
             label-class="text-[#A8AAAE] text-xs font-medium"
@@ -1027,14 +1040,14 @@ const changeUser = (val, key) => {
           <AppInput
             v-model="form.through_whom"
             prop="through_whom"
-            :placeholder="t('document.whom.through')"
+            :placeholder="t('document.whom.enter_through')"
             :label="t('document.whom.through')"
             label-class="text-[#A8AAAE] text-xs font-medium"
           />
           <AppInput
             v-model="form.basis"
             prop="basis"
-            :placeholder="t('document.base')"
+            :placeholder="t('document.enter_base')"
             :label="t('document.base')"
             label-class="text-[#A8AAAE] text-xs font-medium"
             required
@@ -1042,7 +1055,7 @@ const changeUser = (val, key) => {
           <AppInput
             v-model="form.shipping_method"
             prop="shipping_method"
-            :placeholder="t('document.shippingMethod')"
+            :placeholder="t('document.enter_shippingMethod')"
             :label="t('document.shippingMethod')"
             label-class="text-[#A8AAAE] text-xs font-medium"
             required
@@ -1084,7 +1097,7 @@ const changeUser = (val, key) => {
                     item-value="id"
                     item-label="name"
                     :label="t('product.type')"
-                    :placeholder="t('product.type')"
+                    :placeholder="t('product.select_type')"
                     label-class="text-[#A8AAAE] text-xs font-medium"
                     @change="fetchVidProductsList(product)"
                     trigger="blur"
@@ -1097,7 +1110,7 @@ const changeUser = (val, key) => {
                     item-label="name"
                     item-value="id"
                     :label="t('product.view')"
-                    :placeholder="t('product.view')"
+                    :placeholder="t('product.select_view')"
                     label-class="text-[#A8AAAE] text-xs font-medium"
                     :disabled="!product.category_id"
                     @change="changeProduct(product, index)"
@@ -1108,7 +1121,7 @@ const changeUser = (val, key) => {
                       @input="inputQuantity(index, product.quantity)"
                       custom-type="number"
                       :prop="`products[${index}].quantity`"
-                      :placeholder="t('common.quantity')"
+                      :placeholder="t('common.enter_quantity')"
                       :label="t('common.quantity')"
                       label-class="text-[#A8AAAE] text-xs font-medium"
                     />
@@ -1124,7 +1137,7 @@ const changeUser = (val, key) => {
                     v-model.number="product.price"
                     type="number"
                     :prop="`products[${index}].price`"
-                    :placeholder="t('common.price')"
+                    :placeholder="t('common.enter_price')"
                     :label="t('common.price')"
                     label-class="text-[#A8AAAE] text-xs font-medium"
                   />
@@ -1396,7 +1409,7 @@ const changeUser = (val, key) => {
               <AppInput
                 v-model="actForm.number"
                 prop="number"
-                placeholder="АКТ-00000"
+                :placeholder="t('document.act.enter_number')"
                 :label="t('document.act.number')"
                 label-class="text-[#A8AAAE] text-xs font-medium"
                 required
@@ -1411,7 +1424,7 @@ const changeUser = (val, key) => {
               <AppInput
                 v-model="actForm.content"
                 prop="content"
-                :placeholder="t('document.act.specifiedContentText')"
+                :placeholder="t('document.act.enter_contents')"
                 type="textarea"
                 :rows="5"
                 required
@@ -1456,7 +1469,7 @@ const changeUser = (val, key) => {
                     <AppInput
                       v-model="item.contract_details"
                       :prop="`products[${index}]['contract_details']`"
-                      :placeholder="t('document.act.numberAgreement')"
+                      :placeholder="t('document.act.enter_numberAgreement')"
                       :label="t('document.act.numberAgreement')"
                       label-class="text-[#A8AAAE] text-xs font-medium"
                       required
@@ -1466,7 +1479,7 @@ const changeUser = (val, key) => {
                     <AppDatePicker
                       v-model="item.contract_details_date"
                       :prop="`products[${index}]['contract_details_date']`"
-                      :placeholder="t('document.act.dateAgreement')"
+                      placeholder="дд.мм.гггг"
                       :label="t('document.act.dateAgreement')"
                       label-class="text-[#A8AAAE] text-xs font-medium"
                       required
@@ -1481,7 +1494,7 @@ const changeUser = (val, key) => {
                     <AppInput
                       v-model="item.manufacturer"
                       :prop="`products[${index}]['manufacturer']`"
-                      :placeholder="t('product.manufacturer')"
+                      :placeholder="t('product.enter_manufacturer')"
                       :label="t('product.manufacturer')"
                       label-class="text-[#A8AAAE] text-xs font-medium"
                       required
@@ -1497,7 +1510,7 @@ const changeUser = (val, key) => {
                     <AppInput
                       v-model="item.shipping_method"
                       :prop="`products[${index}]['shipping_method']`"
-                      :placeholder="t('common.transport')"
+                      :placeholder="t('common.enter_transport')"
                       :label="t('common.transport')"
                       label-class="text-[#A8AAAE] text-xs font-medium"
                       required
@@ -1506,7 +1519,7 @@ const changeUser = (val, key) => {
                       <AppInput
                         v-model="item.licence"
                         :prop="`products[${index}]['licence']`"
-                        :placeholder="t('licence.number')"
+                        :placeholder="t('licence.enter_number')"
                         :label="t('licence.number')"
                         label-class="text-[#A8AAAE] text-xs font-medium"
                         required
@@ -1516,7 +1529,7 @@ const changeUser = (val, key) => {
                       <AppDatePicker
                         v-model="item.licence_date"
                         :prop="`products[${index}]['licence_date']`"
-                        :placeholder="t('licence.date')"
+                        placeholder="дд.мм.гггг"
                         :label="t('licence.date')"
                         label-class="text-[#A8AAAE] text-xs font-medium"
                         required
@@ -1524,7 +1537,7 @@ const changeUser = (val, key) => {
                       <AppInput
                         v-model="item.sanitary"
                         :prop="`products[${index}]['sanitary']`"
-                        :placeholder="t('document.sanitaryConclusion.number')"
+                        :placeholder="t('document.sanitaryConclusion.enter_number')"
                         :label="t('document.sanitaryConclusion.number')"
                         label-class="text-[#A8AAAE] text-xs font-medium"
                         required
@@ -1533,7 +1546,7 @@ const changeUser = (val, key) => {
                       <AppDatePicker
                         v-model="item.sanitary_date"
                         :prop="`products[${index}]['sanitary_date']`"
-                        :placeholder="t('document.sanitaryConclusion.date')"
+                        placeholder="дд.мм.гггг"
                         :label="t('document.sanitaryConclusion.date')"
                         label-class="text-[#A8AAAE] text-xs font-medium"
                         required
@@ -1541,7 +1554,7 @@ const changeUser = (val, key) => {
                       <AppInput
                         v-model="item.vetirinary"
                         :prop="`products[${index}]['vetirinary']`"
-                        :placeholder="t('document.veterinaryCertificate.number')"
+                        :placeholder="t('document.veterinaryCertificate.enter_number')"
                         :label="t('document.veterinaryCertificate.number')"
                         label-class="text-[#A8AAAE] text-xs font-medium"
                         required
@@ -1550,7 +1563,7 @@ const changeUser = (val, key) => {
                       <AppDatePicker
                         v-model="item.vetirinary_date"
                         :prop="`products[${index}]['vetirinary_date']`"
-                        :placeholder="t('document.veterinaryCertificate.date')"
+                        placeholder="дд.мм.гггг"
                         :label="t('document.veterinaryCertificate.date')"
                         label-class="text-[#A8AAAE] text-xs font-medium"
                         required
@@ -1558,7 +1571,7 @@ const changeUser = (val, key) => {
                       <AppInput
                         v-model="item.quality"
                         :prop="`products[${index}]['quality']`"
-                        :placeholder="t('document.qualityCertificate.number')"
+                        :placeholder="t('document.qualityCertificate.enter_number')"
                         :label="t('document.qualityCertificate.number')"
                         label-class="text-[#A8AAAE] text-xs font-medium"
                         required
@@ -1568,7 +1581,7 @@ const changeUser = (val, key) => {
                       <AppDatePicker
                         v-model="item.quality_date"
                         :prop="`products[${index}]['quality_date']`"
-                        :placeholder="t('document.qualityCertificate.date')"
+                        placeholder="дд.мм.гггг"
                         :label="t('document.qualityCertificate.date')"
                         label-class="text-[#A8AAAE] text-xs font-medium"
                         required
@@ -1605,60 +1618,154 @@ const changeUser = (val, key) => {
               <!--                  />-->
               <!--                </template>-->
               <!--              </AppSelect>-->
-              <AppSelect
-                v-model="actForm.doc_signer_obj.signer_id_1"
-                prop="doc_signer_obj.signer_id_1"
-                :placeholder="t('document.commission.commodityExpert')"
-                :label="t('document.commission.commodityExpert')"
-                label-class="text-[#A8AAAE] text-xs font-medium"
-                required
-                @change="changeUser($event, 'signer_id_1')"
-              >
-                <template v-if="signersList.merchandiser.users">
-                  <ElOption
-                    v-for="item in signersList.merchandiser.users"
-                    :key="item.id"
-                    :label="usersStore.getUserFullName(item)"
-                    :value="item.id"
-                  />
-                </template>
-              </AppSelect>
-              <AppSelect
-                v-model="actForm.doc_signer_obj.signer_id_2"
-                prop="doc_signer_obj.signer_id_2"
-                :placeholder="t('document.commission.warehouseManager')"
-                :label="t('document.commission.warehouseManager')"
-                label-class="text-[#A8AAAE] text-xs font-medium"
-                required
-                @change="changeUser($event, 'signer_id_2')"
-              >
-                <template v-if="signersList.manager_base.users">
-                  <ElOption
-                    v-for="item in signersList.manager_base.users"
-                    :key="item.id"
-                    :label="usersStore.getUserFullName(item)"
-                    :value="item.id"
-                  />
-                </template>
-              </AppSelect>
-              <AppSelect
-                v-model="actForm.doc_signer_obj.signer_id_3"
-                prop="doc_signer_obj.signer_id_3"
-                :placeholder="t('document.commission.baseChief')"
-                :label="t('document.commission.baseChief')"
-                label-class="text-[#A8AAAE] text-xs font-medium"
-                required
-                @change="changeUser($event, 'signer_id_3')"
-              >
-                <template v-if="signersList.head_warehouse.users">
-                  <ElOption
-                    v-for="item in signersList.head_warehouse.users"
-                    :key="item.id"
-                    :label="usersStore.getUserFullName(item)"
-                    :value="item.id"
-                  />
-                </template>
-              </AppSelect>
+              <template v-if="activeComingModal">
+                <AppSelect
+                  v-model="actForm.doc_signer_obj.signer_id_1"
+                  prop="doc_signer_obj.signer_id_1"
+                  :placeholder="t('document.commission.select_commodityExpert')"
+                  :label="t('document.commission.commodityExpert')"
+                  label-class="text-[#A8AAAE] text-xs font-medium"
+                  required
+                  @change="changeUser($event, 'signer_id_1')"
+                >
+                  <template v-if="signersList.merchandiser.users">
+                    <ElOption
+                      v-for="item in signersList.merchandiser.users"
+                      :key="item.id"
+                      :label="usersStore.getUserFullName(item)"
+                      :value="item.id"
+                    />
+                  </template>
+                </AppSelect>
+                <AppSelect
+                  v-model="actForm.doc_signer_obj.signer_id_2"
+                  prop="doc_signer_obj.signer_id_2"
+                  :placeholder="t('document.commission.select_warehouseManager')"
+                  :label="t('document.commission.warehouseManager')"
+                  label-class="text-[#A8AAAE] text-xs font-medium"
+                  required
+                  @change="changeUser($event, 'signer_id_2')"
+                >
+                  <template v-if="signersList.manager_base.users">
+                    <ElOption
+                      v-for="item in signersList.manager_base.users"
+                      :key="item.id"
+                      :label="usersStore.getUserFullName(item)"
+                      :value="item.id"
+                    />
+                  </template>
+                </AppSelect>
+                <AppSelect
+                  v-model="actForm.doc_signer_obj.signer_id_3"
+                  prop="doc_signer_obj.signer_id_3"
+                  :placeholder="t('document.commission.select_baseChief')"
+                  :label="t('document.commission.baseChief')"
+                  label-class="text-[#A8AAAE] text-xs font-medium"
+                  required
+                  @change="changeUser($event, 'signer_id_3')"
+                >
+                  <template v-if="signersList.head_warehouse.users">
+                    <ElOption
+                      v-for="item in signersList.head_warehouse.users"
+                      :key="item.id"
+                      :label="usersStore.getUserFullName(item)"
+                      :value="item.id"
+                    />
+                  </template>
+                </AppSelect>
+              </template>
+              <template v-else>
+                <AppSelect
+                  v-model="actForm.doc_signer_obj.signer_id_1"
+                  prop="doc_signer_obj.signer_id_1"
+                  :placeholder="t('document.commission.commodityExpert')"
+                  :label="t('document.commission.commodityExpert')"
+                  label-class="text-[#A8AAAE] text-xs font-medium"
+                  required
+                  @change="changeUser($event, 'signer_id_1')"
+                >
+                  <template v-if="signersList.merchandiser.users">
+                    <ElOption
+                      v-for="item in signersList.merchandiser.users"
+                      :key="item.id"
+                      :label="usersStore.getUserFullName(item)"
+                      :value="item.id"
+                    />
+                  </template>
+                </AppSelect>
+                <AppSelect
+                  v-model="actForm.doc_signer_obj.signer_id_2"
+                  prop="doc_signer_obj.signer_id_2"
+                  :placeholder="t('document.commission.warehouseManager')"
+                  :label="t('document.commission.warehouseManager')"
+                  label-class="text-[#A8AAAE] text-xs font-medium"
+                  required
+                  @change="changeUser($event, 'signer_id_2')"
+                >
+                  <template v-if="signersList.manager_base.users">
+                    <ElOption
+                      v-for="item in signersList.manager_base.users"
+                      :key="item.id"
+                      :label="usersStore.getUserFullName(item)"
+                      :value="item.id"
+                    />
+                  </template>
+                </AppSelect>
+                <AppSelect
+                  v-model="actForm.doc_signer_obj.signer_id_3"
+                  :placeholder="t('document.commission.forwarder')"
+                  :label="t('document.commission.forwarder')"
+                  label-class="text-[#A8AAAE] text-xs font-medium"
+                  @change="changeUser($event, 'signer_id_3')"
+                >
+                  <template v-if="signersList.forwarder.users">
+                    <ElOption
+                      v-for="item in signersList.forwarder.users"
+                      :key="item.id"
+                      :label="usersStore.getUserFullName(item)"
+                      :value="item.id"
+                    />
+                  </template>
+                </AppSelect>
+                <AppSelect
+                  v-model="actForm.doc_signer_obj.signer_id_4"
+                  prop="doc_signer_obj.signer_id_4"
+                  :placeholder="t('document.commission.accountant')"
+                  :label="t('document.commission.accountant')"
+                  label-class="text-[#A8AAAE] text-xs font-medium"
+                  required
+                  @change="changeUser($event, 'signer_id_4')"
+                >
+                  <template v-if="signersList.accountant.users">
+                    <ElOption
+                      v-for="item in signersList.accountant.users"
+                      :key="item.id"
+                      :label="usersStore.getUserFullName(item)"
+                      :value="item.id"
+                    />
+                  </template>
+                </AppSelect>
+
+
+                <AppSelect
+                  v-model="actForm.doc_signer_obj.signer_id_5"
+                  prop="doc_signer_obj.signer_id_5"
+                  :placeholder="t('document.commission.baseChief')"
+                  :label="t('document.commission.baseChief')"
+                  label-class="text-[#A8AAAE] text-xs font-medium"
+                  required
+                  @change="changeUser($event, 'signer_id_5')"
+                >
+                  <template v-if="signersList.head_warehouse.users">
+                    <ElOption
+                      v-for="item in signersList.head_warehouse.users"
+                      :key="item.id"
+                      :label="usersStore.getUserFullName(item)"
+                      :value="item.id"
+                    />
+                  </template>
+                </AppSelect>
+              </template>
             </div>
           </div>
         </AppForm>
@@ -1758,7 +1865,7 @@ const changeUser = (val, key) => {
           <AppDatePicker
             v-model="providerForm.sert_end_date"
             prop="sert_end_date"
-            placeholder="Введите"
+            placeholder="дд.мм.гггг"
             label-class="text-[#A8AAAE] text-[12px] font-medium"
             :label="t('common.certificateDuration')"
             required

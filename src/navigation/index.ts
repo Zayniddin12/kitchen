@@ -134,7 +134,7 @@ export const useLayoutStore = defineStore("layoutStore", () => {
             title: t("document.act.title2"),
             icon: "document",
             route: "/acts",
-            permissions: ["admin"],
+            permissions: ["admin", "director-foundation", "deputy-director-foundation"],
           },
           {
             title: t("document.contract"),

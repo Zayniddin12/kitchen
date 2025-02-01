@@ -323,6 +323,7 @@ watch(model, (newModel) => {
             v-model="form.to"
             prop="to"
             :label="t('common.recipient')"
+            :placeholder="t('common.select_recipient')"
             label-class="text-[#A8AAAE] text-[12px] font-medium"
             :loading="settingsStore.respondentsLoading"
             filterable
@@ -341,7 +342,7 @@ watch(model, (newModel) => {
           <AppInput
             v-model="form.subject"
             prop="subject"
-            :placeholder="t('common.theme')"
+            :placeholder="t('common.select_theme')"
             :label="t('common.theme')"
             label-class="text-[#A8AAAE] text-xs font-medium"
             :required
@@ -356,7 +357,7 @@ watch(model, (newModel) => {
             type="textarea"
             :rows="5"
             :label="t('document.freeRequest.contents')"
-            :placeholder="t('document.freeRequest.contents')"
+            :placeholder="t('document.freeRequest.place_contents')"
             label-class="text-[#A8AAAE] text-xs font-medium"
             :required
             :max="1000"

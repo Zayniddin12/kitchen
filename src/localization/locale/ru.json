@@ -41,6 +41,7 @@
     "numberOfWarehouses": "Количество складов"
   },
   "common": {
+    "select_recipient": "Выберите получателя",
     "all": "Все",
     "fund": "Фонд",
     "filter": "Фильтр",
@@ -53,16 +54,19 @@
     "name2": "Наименование",
     "name2Lang": "Наименование {lang}",
     "quantity": "Количество",
+    "enter_quantity": "Введите количество продукта",
     "measurement": "Ед. измерения",
     "unitMeasurement": "Единица измерения",
     "unitMeasurement2": "Единицы измерения",
     "price": "Цена",
+    "enter_price": "Введите цену за единицу продукта",
     "sum": "Сумма",
     "totalSum": "Общая сумма",
     "date": "Дата",
     "supplier": "Поставщик",
     "recipient": "Получатель",
     "transport": "Транспорт",
+    "enter_transport": "Введите транспорт",
     "automatically": "Автоматически",
     "legalAddress": "Юр. адрес",
     "oked": "ОКЭД",
@@ -73,6 +77,7 @@
     "supervisor": "Руководитель",
     "contact": "Контакты",
     "theme": "Тема",
+    "select_theme": "Введите тему запроса",
     "sender": "Отправитель",
     "message": "Сообщения",
     "phone": "Номер телефона",
@@ -144,6 +149,7 @@
   "licence": {
     "numberAndDate": "Номер и дата лицензии",
     "number": "Номер лицензии",
+    "enter_number": "Введите № лицензии",
     "date": "Дата лицензии"
   },
   "currency": {
@@ -248,7 +254,8 @@
       "title": "Запрос",
       "subtitle": "Свободный запрос",
       "type": "Тип запроса",
-      "contents": "Содержание запроса"
+      "contents": "Содержание запроса",
+      "place_contents": "Введите содержание запроса"
     },
     "monthlyRequest": {
       "create": "Создать месячный запрос",
@@ -267,10 +274,13 @@
       "title": "АКТ",
       "title2": "Акты",
       "numberAgreement": "Номер договора о поставке",
+      "enter_numberAgreement": "Введите номер договора",
       "dateAgreement": "Дата договора о поставке",
       "numberDateAgreement": "Номер и дата договора о поставке",
       "number": "№ Акта",
+      "enter_number": "Введите № акта",
       "contents": "Содержание акта",
+      "enter_contents": "Введите содержание акта",
       "specifiedContentText": "Поле ввода текст содержания акта с выводом шаблонного заданного текста"
     },
     "consignmentNumberDate": "Номер и дата накладной",
@@ -281,16 +291,22 @@
     "invoiceDate": "Дата накладной",
     "shortInvoiceDate": "Дата нак...",
     "invoiceNumber": "№ накладной",
+    "enter_invoiceNumber": "Введите № документа",
     "invoiceNumber2": "Номер накладной",
     "type": "Вид документа",
     "type2": "Виды документов",
     "whom": {
       "from": "От кого",
+      "select_from": "Выберите отправителя",
       "to": "Кому",
-      "through": "Через кого"
+      "select_to": "Выберите получателя",
+      "through": "Через кого",
+      "enter_through": "Введите экспедитора"
     },
     "base": "Основание",
+    "enter_base": "Введите основание",
     "shippingMethod": "Способ отправления",
+    "enter_shippingMethod": "Введите способ отправления",
     "shortShippingMethod": "Способ отп...",
     "commission": {
       "title": "Состав комиссии приема продуктов",
@@ -300,9 +316,12 @@
       "storekeeper": "Кладовщик",
       "chef": "Шеф повар",
       "commodityExpert": "Товаровед",
+      "select_commodityExpert": "Выберите товароведа",
       "forwarder": "Экспедитор",
       "warehouseManager": "Зав. склад",
-      "baseChief": "Начальник базы"
+      "select_warehouseManager": "Выберите зав. склада",
+      "baseChief": "Начальник базы",
+      "select_baseChief": "Выберите начальника базы"
     },
     "numberAndDateOfTheConclusionOfTheSanitaryAndEpidemiologicalCenter": "Номер и дата заключение Санитарно-эпидемиологического центра",
     "numberAndDateOfVeterinaryCertificate": "Номер и дата удостоверения ветеринарии",
@@ -310,14 +329,17 @@
     "tableReceivedProducts": "Таблица получаемых продуктов",
     "sanitaryConclusion": {
       "number": "Номер заключения Санитарно",
+      "enter_number": "Введите № заключения СЭЦ",
       "date": "Дата заключения Санитарно"
     },
     "veterinaryCertificate": {
       "number": "Номер удостоверения ветеринарии",
+      "enter_number": "Введите № удостоверения ветеринарии",
       "date": "Дата удостоверения ветеринарии"
     },
     "qualityCertificate": {
       "number": "Номер удостоверения качества",
+      "enter_number": "Введите № удостоверения качества",
       "date": "Дата удостоверения качества"
     },
     "supplier": {
@@ -344,8 +366,11 @@
     "name": "Название продукта",
     "quantity": "Количество продукта",
     "manufacturer": "Производитель продукта",
+    "enter_manufacturer": "Введите производителя",
     "type": "Тип продукта",
+    "select_type": "Выберите тип продукта",
     "view": "Вид продукта",
+    "select_view": "Выберите вид продукта",
     "arrival": "Приход продуктов",
     "by_warehouses": "По складам"
   },

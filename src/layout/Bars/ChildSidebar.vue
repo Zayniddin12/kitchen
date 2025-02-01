@@ -4,6 +4,7 @@
 >
 import { PropType, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
+import { check } from "@/mixins/permission";
 
 interface SidebarItem {
   title?: string;
@@ -129,7 +130,7 @@ const activeChildMenu = (item: SidebarItem) => {
       </el-collapse-item>
 
       <div
-        v-else
+        v-else-if="check(item.permissions)"
         class="text-dark-gray text-[14px] text-left py-[10px] font-medium cursor-pointer px-[12px]"
         :class="{ activeMenu: currentItem == item.route }"
         @click.stop="activeChildMenu(item)"
