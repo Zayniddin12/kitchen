@@ -15,4 +15,4 @@ deploy:
     - ssh $SSH_USER@$SSH_HOST "docker stop dormitory-app || true && docker rm dormitory-app || true"
     - ssh $SSH_USER@$SSH_HOST "docker run -d -p 3000:3000 --name dormitory-app ${CI_REGISTRY}/${CI_PROJECT_NAMESPACE}/${CI_PROJECT_NAME}:${CI_PIPELINE_IID}"
   only:
-    - main
+    - master
