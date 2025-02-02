@@ -388,6 +388,10 @@ const qrData = ref(JSON.stringify(selectedProducts.value));
                         {{ productItem.unit_name }}
                       </h5>
 
+
+                      <h5 class="text-start text-black">
+                        {{ $t("common.quantity") }}: {{ productItem.amount }}
+                      </h5>
                       <div
                         v-if="orders.get(productItem.id)"
                         class="menu__card__actions !justify-between  bg-[#E2E6F3] px-[24px] py-[14px] rounded-[12px]">

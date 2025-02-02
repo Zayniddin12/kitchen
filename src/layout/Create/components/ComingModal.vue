@@ -976,7 +976,7 @@ const changeUser = (val, key) => {
             :disabled="authStore.disabledUserWorkplace && !activeComingModal"
             trigger="blur"
           >
-            <template v-if="activeComingModal">
+            <template>
               <ElOption
                 v-for="item in fromList"
                 :key="`${item.id}_${item.model_type}`"
@@ -984,14 +984,14 @@ const changeUser = (val, key) => {
                 :label="item.name"
               />
             </template>
-            <template v-else-if="authStore.user">
-              <ElOption
-                v-for="item in authStore.user.workplaces"
-                :key="`${item.workplace_type}_${item.workplace_type}`"
-                :value="`${item.workplace_id}_${item.workplace_type}`"
-                :label="item.workplace"
-              />
-            </template>
+            <!--            <template v-else-if="authStore.user">-->
+            <!--              <ElOption-->
+            <!--                v-for="item in authStore.user.workplaces"-->
+            <!--                :key="`${item.workplace_type}_${item.workplace_type}`"-->
+            <!--                :value="`${item.workplace_id}_${item.workplace_type}`"-->
+            <!--                :label="item.workplace"-->
+            <!--              />-->
+            <!--            </template>-->
             <template
               v-if="activeComingModal"
               #footer

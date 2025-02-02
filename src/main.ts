@@ -1,6 +1,7 @@
 import { createApp } from "vue";
 import { createPinia } from "pinia";
 import ElementPlus from "element-plus";
+import ru from "element-plus/es/locale/lang/ru";
 import "element-plus/dist/index.css";
 import App from "@/App.vue";
 import router from "@/router";
@@ -24,7 +25,9 @@ const role = JSON.parse(localStorage.getItem("user_role"));
 const ability = defineAbilitiesFor([role]);
 
 app
-  .use(ElementPlus)
+  .use(ElementPlus, {
+    locale: ru,
+  })
   .use(createPinia())
   .use(abilitiesPlugin, ability, {
     useGlobalProperties: true,
