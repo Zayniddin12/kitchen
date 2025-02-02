@@ -21,6 +21,7 @@ interface ProductItemType {
 }
 
 const products = ref([]);
+const products2 = ref([]);
 const orders = reactive<Map<number, number>>(new Map());
 const ordersModal = ref(false);
 let receiptIndex = ref(0);
@@ -103,7 +104,7 @@ const selectedProducts = computed(() => {
 
   const productMap = new Map<number, ProductItemType>();
 
-  products.value.forEach(product => {
+  products2.value.forEach(product => {
     productMap.set(product.id, product);
   });
 
@@ -214,6 +215,17 @@ watch(() => route.query.management_id, async (newId) => {
     });
     if (data) {
       products.value = store.menuList.elements;
+      if (products2.value && products2.value.length) {
+        const productId = products2.value.map((product) => product.id);
+        store.menuList.elements.forEach((item) => {
+          if (!productId.includes(item.id)) {
+            products2.value.push(item);
+          }
+        });
+      } else {
+        products2.value = store.menuList.elements;
+      }
+
     }
   }
 }, { immediate: true });
@@ -466,7 +478,9 @@ const qrData = ref(JSON.stringify(selectedProducts.value));
                 <img
                   :src="productItem.image"
                   :alt="productItem.name"
-                  class="lg:w-[80px] lg:h-[80px] xl:w-[100px] xl:h-[100px] 2xl:w-[120px] 2xl:h-[120px] w-[100px] object-cover rounded-[12px]"
+                  width="120"
+                  height="120"
+                  class="lg:w-[80px] lg:h-[80px] xl:w-[100px] xl:h-[100px] 2xl:w-[120px] 2xl:h-[120px] w-[100px] object-contain rounded-[12px]"
                 />
                 <div class="w-full flex flex-col">
                   <div class="flex 2xl:items-center justify-between flex-col 2xl:flex-row">

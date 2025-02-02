@@ -40,6 +40,7 @@ const margin = ref("ml-[414px]");
 onMounted(async () => {
   if (tokenManager.getAccessToken()) authStore.me();
   // else await index.replace({ name: "login" });
+  localStorage.setItem("workplace_id", JSON.stringify(childSidebarPin.value));
   childSidebarPin.value = JSON.parse(localStorage.getItem("child-sidebar-pin") || "false");
   await settingsStore.GET_REGIONAL({ per_page: 100 });
   warehouseBasesStore.fetchManagementBases();
@@ -63,19 +64,19 @@ const faceStore = useFaceStore();
 const model = ref<boolean>(false);
 
 const interval = setInterval(async () => {
- if (route.meta && route.meta.type == 'FACE_ID') {
-   const data = await faceStore.FETCH_FACE_ID();
-   if (data) {
-     if (data && data.user_id) {
-       model.value = !model.value;
-     }
-   }
- }
+  if (route.meta && route.meta.type == "FACE_ID") {
+    const data = await faceStore.FETCH_FACE_ID();
+    if (data) {
+      if (data && data.user_id) {
+        model.value = !model.value;
+      }
+    }
+  }
 }, 5000);
 
 watch(() => model.value, (value) => {
-  if (route.meta && route.meta.type == 'FACE_ID') {
-    alert('2')
+  if (route.meta && route.meta.type == "FACE_ID") {
+    alert("2");
     if (value) {
       clearInterval(interval);
     }
@@ -84,8 +85,8 @@ watch(() => model.value, (value) => {
 
 
 watch(() => model.value, async (newValue) => {
-  if (route.meta && route.meta.type == 'FACE_ID') {
-    alert('1')
+  if (route.meta && route.meta.type == "FACE_ID") {
+    alert("1");
     if (!newValue && tokenManager.getAccessToken()) {
       const interval = setInterval(async () => {
         const data = await faceStore.FETCH_FACE_ID();
@@ -161,7 +162,7 @@ const navDrawerItems = computed(() => {
 });
 
 const navDrawerWidth = ref<number>(0);
-console.log(route.meta.type == 'FACE_ID');
+console.log(route.meta.type == "FACE_ID");
 </script>
 
 <template>
@@ -170,7 +171,7 @@ console.log(route.meta.type == 'FACE_ID');
     <div v-if="route.meta && route.meta.type == 'FACE_ID'">
       <AppFaceId v-model="model" />
     </div>
-    <div v-else/>
+    <div v-else />
 
     <SideBar
       v-model:childSidebarPin="childSidebarPin"
