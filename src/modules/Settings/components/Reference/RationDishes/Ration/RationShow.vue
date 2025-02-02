@@ -81,11 +81,11 @@ onMounted(() => {
             </div>
             <div>
               <span class="app-card__item-title">Время начало</span>
-              <p>{{ settingsStore.ration.start_time || "-" }}</p>
+              <p>{{ settingsStore.ration?.start_time.split(":").slice(0, 2).join(":") || "-" }}</p>
             </div>
             <div>
               <span class="app-card__item-title">Время окончания</span>
-              <p>{{ settingsStore.ration.end_time || "-" }}</p>
+              <p>{{ settingsStore.ration?.end_time.split(":").slice(0, 2).join(":") || "-" }}</p>
             </div>
           </div>
           <h4 class="text-dark text-lg font-medium mt-10">Состав рациона</h4>

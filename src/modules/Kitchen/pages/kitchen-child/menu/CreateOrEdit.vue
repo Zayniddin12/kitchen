@@ -182,13 +182,15 @@ watch(scheduledDates, async (newValue) => {
                   return {
                     id: item.id,
                     period: 1,
-                    start_time: item.start_time.split(":").slice(0, 2).join(":"),
-                    end_time: item.end_time.split(":").slice(0, 2).join(":"),
+                    start_time: item.start_time && item.start_time.split(":").slice(0, 2).join(":"),
+                    end_time: item.end_time && item.end_time.split(":").slice(0, 2).join(":"),
                     amount: item.amount,
                     product_type: "ration",
                     product_id: item.product_id,
                     rationsList: {
-                      total_price: item.price,
+                      total_price: item.price_total,
+                      vat_price: item.vat_price,
+                      price: item.price,
                       products: item.product,
                     },
                   };
@@ -212,13 +214,15 @@ watch(scheduledDates, async (newValue) => {
                   return {
                     id: item.id,
                     period: 2,
-                    start_time: item.start_time.split(":").slice(0, 2).join(":"),
-                    end_time: item.end_time.split(":").slice(0, 2).join(":"),
+                    start_time: item.start_time && item.start_time.split(":").slice(0, 2).join(":"),
+                    end_time: item.end_time && item.end_time.split(":").slice(0, 2).join(":"),
                     amount: item.amount,
                     product_type: "ration",
                     product_id: item.product_id,
                     rationsList: {
                       total_price: item.price_total,
+                      vat_price: item.vat_price,
+                      price: item.price,
                       products: item.product,
                     },
                   };
@@ -242,13 +246,15 @@ watch(scheduledDates, async (newValue) => {
                   return {
                     id: item.id,
                     period: 3,
-                    start_time: item.start_time.split(":").slice(0, 2).join(":"),
-                    end_time: item.end_time.split(":").slice(0, 2).join(":"),
+                    start_time: item.start_time && item.start_time.split(":").slice(0, 2).join(":"),
+                    end_time: item.end_time && item.end_time.split(":").slice(0, 2).join(":"),
                     amount: item.amount,
                     product_type: "ration",
                     product_id: item.product_id,
                     rationsList: {
                       total_price: item.price_total,
+                      vat_price: item.vat_price,
+                      price: item.price,
                       products: item.product,
                     },
                   };
@@ -272,13 +278,15 @@ watch(scheduledDates, async (newValue) => {
                   return {
                     id: item.id,
                     period: 4,
-                    start_time: item.start_time.split(":").slice(0, 2).join(":"),
-                    end_time: item.end_time.split(":").slice(0, 2).join(":"),
+                    start_time: item.start_time && item.start_time.split(":").slice(0, 2).join(":"),
+                    end_time: item.end_time && item.end_time.split(":").slice(0, 2).join(":"),
                     amount: item.amount,
                     product_type: "ration",
                     product_id: item.product_id,
                     rationsList: {
                       total_price: item.price_total,
+                      vat_price: item.vat_price,
+                      price: item.price,
                       products: item.product,
                     },
                   };
@@ -1273,7 +1281,7 @@ const isTranslate = computed(() => !!route.meta.isTranslate);
                                     {{ t("common.price") }}:
                                   </span>
                                   <strong class="font-semibold text-dark">
-                                    25 000 {{ t("currency.sum") }}
+                                    {{ itemMeal.rationsList?.price.toLocaleString() }} {{ t("currency.sum") }}
                                   </strong>
                                 </div>
                                 <div class="flex items-center gap-x-1 text-sm">
@@ -1281,7 +1289,7 @@ const isTranslate = computed(() => !!route.meta.isTranslate);
                                     {{ t("common.ndc") }}:
                                   </span>
                                   <strong class="font-semibold text-dark">
-                                    3 000 {{ t("currency.sum") }}
+                                    {{ itemMeal.rationsList?.vat_price.toLocaleString() }} {{ t("currency.sum") }}
                                   </strong>
                                 </div>
                                 <div class="flex items-center gap-x-1 text-sm">
@@ -1289,7 +1297,7 @@ const isTranslate = computed(() => !!route.meta.isTranslate);
                                     {{ t("common.totalSum") }}:
                                   </span>
                                   <strong class="font-semibold text-dark">
-                                    {{ itemMeal.rationsList.total_price.toLocaleString() }}
+                                    {{ itemMeal.rationsList.total_price.toLocaleString() }} {{ t("currency.sum") }}
                                   </strong>
                                 </div>
                               </div>
