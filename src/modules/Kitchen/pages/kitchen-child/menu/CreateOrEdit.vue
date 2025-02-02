@@ -1042,7 +1042,7 @@ watch(() => route.params, async () => {
 
 watch(() => kitchenData.value.intermediateDate1, async (val) => {
   await settingsStore.GET_RATION_LIST({ per_page: 100, duration: val ? 7 : 10 });
-}, { immediate: false });
+}, { immediate: true });
 
 
 const changeInput = async (event: any, index: number, childIndex: number, indexMeal: number) => {
