@@ -481,8 +481,12 @@ const openModal = async () => {
 
 
     }
+    if (activeComingModal.value) {
+      await settingsStore.GET_TYPE_PRODUCT();
 
-    await settingsStore.GET_TYPE_PRODUCT();
+    } else {
+      await settingsStore.GET_TYPE_PRODUCT({ in_warehouse_id: form.from_id });
+    }
     await settingsStore.GET_UNITS();
 
     oldForm.value = JSON.parse(JSON.stringify(form));

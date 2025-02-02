@@ -19,6 +19,8 @@ import AppForm from "@/components/ui/form/app-form/AppForm.vue";
 import type { ValidationType } from "@/components/ui/form/app-form/app-form.type";
 import { useCommonStore } from "@/stores/common.store";
 import { useI18n } from "vue-i18n";
+import ru from "element-plus/es/locale/lang/ru";
+import { ElConfigProvider } from "element-plus";
 
 interface MealDataType {
   period: number;
@@ -1128,16 +1130,19 @@ const isTranslate = computed(() => !!route.meta.isTranslate);
                 :value="kitchenData"
                 @validation="value => kitchenDatav$ = value"
               >
+
                 <div class="flex items-center gap-4">
-                  <AppDatePicker
-                    v-model="kitchenData.startDate"
-                    prop="startDate"
-                    placeholder="дд.мм.гггг"
-                    format="DD.MM.YYYY"
-                    class="w-[141px] mt-3"
-                    icon-position="start"
-                    required
-                  />
+                  <el-config-provider :locale="ru">
+                    <AppDatePicker
+                      v-model="kitchenData.startDate"
+                      prop="startDate"
+                      placeholder="дд.мм.гггг"
+                      format="DD.MM.YYYY"
+                      class="w-[141px] mt-3"
+                      icon-position="start"
+                      required
+                    />
+                  </el-config-provider>
 
                   <AppDatePicker
                     v-if="kitchenStore.activeSalesPart"
