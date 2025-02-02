@@ -1,13 +1,20 @@
 import { createApp } from "vue";
 import { createPinia } from "pinia";
 import ElementPlus from "element-plus";
-import ru from "element-plus/es/locale/lang/ru";
 import "element-plus/dist/index.css";
 import App from "@/App.vue";
 import router from "@/router";
 import "@/assets/styles/style.scss";
 import i18n from "@/localization";
 import "external-svg-loader";
+import dayjs from "dayjs";
+import "dayjs/locale/ru"; // Import Russian locale
+import updateLocale from "dayjs/plugin/updateLocale";
+
+dayjs.extend(updateLocale);
+dayjs.updateLocale("ru", {
+  weekStart: 1, // Monday as the first day of the week
+});
 
 import * as ElementPlusIconsVue from "@element-plus/icons-vue";
 
@@ -26,7 +33,7 @@ const ability = defineAbilitiesFor([role]);
 
 app
   .use(ElementPlus, {
-    locale: ru,
+    locale: "ru",
   })
   .use(createPinia())
   .use(abilitiesPlugin, ability, {
