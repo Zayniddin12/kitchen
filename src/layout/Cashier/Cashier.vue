@@ -153,7 +153,7 @@ const createOrder = async () => {
     },
   )
     .then(() => {
-      let kt_id = JSON.parse(localStorage.getItem('workplace_id'))
+      let kt_id = JSON.parse(localStorage.getItem("workplace_id"));
 
       let payload = {
         kitchen_id: Number(kt_id),
@@ -187,12 +187,12 @@ const createOrder = async () => {
 
     })
     .catch((e) => {
-      console.log(e, 'rrr');
+      console.log(e, "rrr");
       ElMessage({
         type: "info",
         message: "Заказ отменен?",
       });
-      orders.clear();
+      // orders.clear();
       ordersModal.value = false;
     });
 };
@@ -264,7 +264,7 @@ const qrData = ref(JSON.stringify(selectedProducts.value));
 
       <div class="my-2 flex items-center justify-between">
         <span class="text-sm">KASSIR:</span>
-        <span class="text-sm">Begzod Rafiqov</span>
+        <span class="text-sm">  {{ authStore.userShortName || "-" }}</span>
       </div>
 
       <span class="block border-[1px] border-dashed border-[#000]"></span>
@@ -313,14 +313,13 @@ const qrData = ref(JSON.stringify(selectedProducts.value));
       </div>
       <div class="my-2 flex items-center justify-between text-xs">Chek Nº: {{ generateReceiptIndex }}</div>
 
-
       <p class="text-center my-[20px]">***Приходите снова!***</p>
 
-      <div class="flex flex-col items-center justify-center">
-        <h2>QR Code</h2>
-        <!-- Canvas for the QR code -->
-        <canvas ref="qrCanvas"></canvas>
-      </div>
+      <!--      <div class="flex flex-col items-center justify-center">-->
+      <!--        <h2>QR Code</h2>-->
+      <!--        &lt;!&ndash; Canvas for the QR code &ndash;&gt;-->
+      <!--        <canvas ref="qrCanvas"></canvas>-->
+      <!--      </div>-->
     </div>
 
     <div class="bg-[#F8F9FC] flex gap-1 select-none no-receipt">
