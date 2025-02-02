@@ -266,18 +266,18 @@ watch(model, (newModel) => {
         <div class="mt-[40px] flex items-center gap-x-[100px] justify-between">
           <div class="flex items-baseline max-w-[200px]">
             <h1 class=" text-sm font-medium">
-              <span class="text-[#4F5662] font-semibold">{{ t("common.sender") }}:</span>
-              <span
-                v-if="from"
-                class="text-[#A8AAAE] ml-2"
-              >{{ from.position }} ({{ from.workplace }})</span>
+              <span class="text-[#4F5662] font-semibold">{{ authStore.user.position ? authStore.user.position : "" }}</span>
+<!--              <span-->
+<!--                v-if="from"-->
+<!--                class="text-[#A8AAAE] ml-2"-->
+<!--              ></span>-->
             </h1>
           </div>
 
-          <img
-            src="@/assets/images/icons/qr.svg"
-            alt="qr"
-          />
+          <!--          <img-->
+          <!--            src="@/assets/images/icons/qr.svg"-->
+          <!--            alt="qr"-->
+          <!--          />-->
 
           <h1 class="text-[#A8AAAE] text-sm">{{ authStore.userFullName }}</h1>
         </div>

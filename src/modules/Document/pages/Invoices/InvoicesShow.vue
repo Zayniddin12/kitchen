@@ -104,7 +104,9 @@ const downloadPdf = async () => {
           </div>
         </header>
         <h1 class="text-[#000D24] font-bold text-[20px] text-center mb-6 uppercase">
-          {{ route.name === "invoice-inbox-id" ? t("document.overhead") : t("document.overhead") }}</h1>
+          <!--          {{ route.name === "invoice-inbox-id" ? t("document.overhead") : t("document.overhead") }}-->
+          {{ documentStore?.document && documentStore.document.type ? documentStore.document.type : "" }}
+        </h1>
         <div class="flex items-center justify-between">
           <div class="flex items-center mb-[8px]">
             <h1 class="text-[#4F5662] text-[14px] font-medium">{{ t("document.dateCreatedSystem") }}:</h1>

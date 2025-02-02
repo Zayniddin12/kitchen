@@ -93,6 +93,7 @@ const signersList = reactive<any>({
   merchandiser: [],
   manager_base: [],
   head_warehouse: [],
+  head_chef: [],
 });
 
 const formNumberAndDate = computed(() => {
@@ -507,6 +508,11 @@ const openModal = async () => {
         per_page: 100,
         role_name: "accountant-base-warehouse",
       });
+
+      signersList.head_chef = await usersStore.fetchUsers({
+        per_page: 100,
+        role_name: "head-chef",
+      });
     }
 
     signersList.merchandiser = await usersStore.fetchUsers({
@@ -833,8 +839,9 @@ const changeUser = (val, key) => {
             <template v-if="!activeComingModal">
               <div class="flex items-center justify-between mb-[24px]">
                 <h2 class="text-[#4F5662] text-sm font-semibold">
-<!--                  {{ t("document.commission.commodityExpert") }}:-->
-                  {{ actForm.doc_signer_obj.signer_id_1 ? getUser(actForm.doc_signer_obj.signer_id_1).position + ":" : ""}}
+                  <!--                  {{ t("document.commission.commodityExpert") }}:-->
+                  {{ actForm.doc_signer_obj.signer_id_1 ? getUser(actForm.doc_signer_obj.signer_id_1).position + ":" : ""
+                  }}
                 </h2>
                 <span class="ml-2 text-[#A8AAAE] text-sm font-medium block">
                 {{
@@ -845,8 +852,9 @@ const changeUser = (val, key) => {
 
               <div class="flex items-center justify-between mb-[24px]">
                 <h2 class="text-[#4F5662] text-sm font-semibold">
-<!--                  {{ t("document.commission.warehouseManager") }}:-->
-                  {{ actForm.doc_signer_obj.signer_id_2 ? getUser(actForm.doc_signer_obj.signer_id_2).position + ":" : ""}}
+                  <!--                  {{ t("document.commission.warehouseManager") }}:-->
+                  {{ actForm.doc_signer_obj.signer_id_2 ? getUser(actForm.doc_signer_obj.signer_id_2).position + ":" : ""
+                  }}
                 </h2>
                 <span class="ml-2 text-[#A8AAAE] text-sm font-medium block">
                 {{
@@ -856,8 +864,9 @@ const changeUser = (val, key) => {
               </div>
               <div class="flex items-center justify-between mb-[24px]">
                 <h2 class="text-[#4F5662] text-sm font-semibold">
-<!--                  {{ t("document.commission.forwarder") }}:-->
-                  {{ actForm.doc_signer_obj.signer_id_3 ? getUser(actForm.doc_signer_obj.signer_id_3).position + ":" : ""}}
+                  <!--                  {{ t("document.commission.forwarder") }}:-->
+                  {{ actForm.doc_signer_obj.signer_id_3 ? getUser(actForm.doc_signer_obj.signer_id_3).position + ":" : ""
+                  }}
                 </h2>
                 <span class="ml-2 text-[#A8AAAE] text-sm font-medium block">
                {{
@@ -869,8 +878,9 @@ const changeUser = (val, key) => {
 
               <div class="flex items-center justify-between mb-[24px]">
                 <h2 class="text-[#4F5662] text-sm font-semibold">
-<!--                  {{ t("document.commission.accountant") }}:-->
-                  {{ actForm.doc_signer_obj.signer_id_4 ? getUser(actForm.doc_signer_obj.signer_id_4).position + ":" : ""}}
+                  <!--                  {{ t("document.commission.accountant") }}:-->
+                  {{ actForm.doc_signer_obj.signer_id_4 ? getUser(actForm.doc_signer_obj.signer_id_4).position + ":" : ""
+                  }}
                 </h2>
                 <span class="ml-2 text-[#A8AAAE] text-sm font-medium block">
                {{
@@ -881,12 +891,26 @@ const changeUser = (val, key) => {
 
               <div class="flex items-center justify-between mb-[24px]">
                 <h2 class="text-[#4F5662] text-sm font-semibold">
-<!--                  {{ t("document.commission.baseChief") }}:-->
-                  {{ actForm.doc_signer_obj.signer_id_5 ? getUser(actForm.doc_signer_obj.signer_id_5).position + ":" : ""}}
+                  <!--                  {{ t("document.commission.baseChief") }}:-->
+                  {{ actForm.doc_signer_obj.signer_id_5 ? getUser(actForm.doc_signer_obj.signer_id_5).position + ":" : ""
+                  }}
                 </h2>
                 <span class="ml-2 text-[#A8AAAE] text-sm font-medium block">
                 {{
                     actForm.doc_signer_obj.signer_id_5 && typeof (actForm.doc_signer_obj.signer_id_5) === "number" ? usersStore.getUserFullName(getUser(actForm.doc_signer_obj.signer_id_5)) : ""
+                  }}
+              </span>
+              </div>
+
+              <div class="flex items-center justify-between mb-[24px]">
+                <h2 class="text-[#4F5662] text-sm font-semibold">
+                  <!--                  {{ t("document.commission.baseChief") }}:-->
+                  {{ actForm.doc_signer_obj.signer_id_6 ? getUser(actForm.doc_signer_obj.signer_id_6).position + ":" : ""
+                  }}
+                </h2>
+                <span class="ml-2 text-[#A8AAAE] text-sm font-medium block">
+                {{
+                    actForm.doc_signer_obj.signer_id_6 && typeof (actForm.doc_signer_obj.signer_id_6) === "number" ? usersStore.getUserFullName(getUser(actForm.doc_signer_obj.signer_id_6)) : ""
                   }}
               </span>
               </div>
@@ -1349,8 +1373,9 @@ const changeUser = (val, key) => {
 
             <div class="flex items-center justify-between mb-[24px]">
               <h2 class="text-[#4F5662] text-sm font-semibold">
-<!--                {{ t("document.commission.commodityExpert") }}:-->
-                {{ actForm.doc_signer_obj.signer_id_1 ? getUser(actForm.doc_signer_obj.signer_id_1).position + ":" : ""}}
+                <!--                {{ t("document.commission.commodityExpert") }}:-->
+                {{ actForm.doc_signer_obj.signer_id_1 ? getUser(actForm.doc_signer_obj.signer_id_1).position + ":" : ""
+                }}
               </h2>
               <span class="ml-2 text-[#A8AAAE] text-sm font-medium block">
                 {{
@@ -1362,8 +1387,9 @@ const changeUser = (val, key) => {
 
             <div class="flex items-center justify-between mb-[24px]">
               <h2 class="text-[#4F5662] text-sm font-semibold">
-<!--                {{ t("document.commission.warehouseManager") }}:-->
-                {{ actForm.doc_signer_obj.signer_id_2 ? getUser(actForm.doc_signer_obj.signer_id_2).position + ":" : ""}}
+                <!--                {{ t("document.commission.warehouseManager") }}:-->
+                {{ actForm.doc_signer_obj.signer_id_2 ? getUser(actForm.doc_signer_obj.signer_id_2).position + ":" : ""
+                }}
               </h2>
               <span class="ml-2 text-[#A8AAAE] text-sm font-medium block">
                {{
@@ -1374,8 +1400,9 @@ const changeUser = (val, key) => {
 
             <div class="flex items-center justify-between mb-[24px]">
               <h2 class="text-[#4F5662] text-sm font-semibold">
-<!--                {{ t("document.commission.baseChief") }}:-->
-                {{ actForm.doc_signer_obj.signer_id_3 ? getUser(actForm.doc_signer_obj.signer_id_3).position + ":" : ""}}
+                <!--                {{ t("document.commission.baseChief") }}:-->
+                {{ actForm.doc_signer_obj.signer_id_3 ? getUser(actForm.doc_signer_obj.signer_id_3).position + ":" : ""
+                }}
               </h2>
               <span class="ml-2 text-[#A8AAAE] text-sm font-medium block">
                 {{
@@ -1604,7 +1631,7 @@ const changeUser = (val, key) => {
 
           <div class="bg-[#FFFFFF] rounded-[8px] p-[12px]">
             <strong class="block text-[#4F5662] text-sm font-medium mb-4">
-              {{ t("document.commission.title") }}
+              {{ activeComingModal ? t("document.commission.title") : t("document.commission.title2") }}
             </strong>
             <!--            {{ actForm.doc_signer_obj }}-->
             <div class="flex flex-col">
@@ -1767,6 +1794,23 @@ const changeUser = (val, key) => {
                   <template v-if="signersList.head_warehouse.users">
                     <ElOption
                       v-for="item in signersList.head_warehouse.users"
+                      :key="item.id"
+                      :label="usersStore.getUserFullName(item)"
+                      :value="item.id"
+                    />
+                  </template>
+                </AppSelect>
+
+                <AppSelect
+                  v-model="actForm.doc_signer_obj.signer_id_6"
+                  :placeholder="t('document.commission.chef')"
+                  :label="t('document.commission.chef')"
+                  label-class="text-[#A8AAAE] text-xs font-medium"
+                  @change="changeUser($event, 'signer_id_6')"
+                >
+                  <template v-if="signersList.head_chef.users">
+                    <ElOption
+                      v-for="item in signersList.head_chef.users"
                       :key="item.id"
                       :label="usersStore.getUserFullName(item)"
                       :value="item.id"
