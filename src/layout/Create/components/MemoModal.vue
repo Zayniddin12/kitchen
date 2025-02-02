@@ -306,7 +306,10 @@ const loading = computed(() => documentStore.createLoading || documentStore.upda
           <div class="mt-[40px] flex items-center gap-x-[100px] justify-between">
             <div class="flex items-baseline  max-w-[200px]">
               <h1 class=" text-[14px] font-medium">
-                <span class="text-[#4F5662]">{{ t("common.sender") }}:</span>
+                <span class="text-[#4F5662]">
+<!--                  {{ t("common.sender") }}:-->
+                  {{ authStore.user?.position ?? "" }}
+                </span>
                 <span
                   v-if="from"
                   class="text-[#A8AAAE] ml-2"
