@@ -927,7 +927,7 @@ const sendData = async () => {
       kitchen_id: Number(route.params.child_id),
       start_date: kitchenData.value.startDate.split(".").reverse().join("-"),
       end_date: "",
-      type: 0,
+      type: kitchenStore.activeSalesPart ? 1 : 0,
       duration: kitchenData.value.intermediateDate1 ? 7 : 10,
     };
 
@@ -980,6 +980,7 @@ const sendData = async () => {
       kitchen_id: Number(route.params.child_id),
       start_date: kitchenData.value.startDate.split(".").reverse().join("-"),
       end_date: kitchenData.value.endDate.split(".").reverse().join("-"),
+      type: kitchenStore.activeSalesPart ? 1 : 0,
     };
 
     const kitchenElementPayload = list_dishes.value.flatMap(({ date, data }) =>
