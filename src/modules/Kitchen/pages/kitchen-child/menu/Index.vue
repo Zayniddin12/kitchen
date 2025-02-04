@@ -282,7 +282,10 @@ const createOrder = async () => {
     await kitchenStore.CREATE_ORDER(payload);
     await kitchenStore.GET_CURRENT_MENU_SALES_LIST({
       id: route.params.child_id as string,
-      params: { period: route.query.management_id ? route.query.management_id : form.management_id },
+      params: {
+        period: route.query.management_id ? route.query.management_id : form.management_id,
+        type: route.params.part_name == "free-kitchen" ? 0 : 1,
+      },
     });
     orders.clear();
     ordersModal.value = false;
@@ -365,16 +368,19 @@ watch(() => route.params, async () => {
   if (kitchenStore.activeSalesPart) {
     await kitchenStore.GET_CURRENT_MENU_SALES_LIST({
       id: route.params.child_id as string,
-      params: { period: route.query.management_id ? route.query.management_id : form.management_id },
+      params: {
+        period: route.query.management_id ? route.query.management_id : form.management_id,
+        type: route.params.part_name == "free-kitchen" ? 0 : 1,
+      },
     });
   }
 
   if (kitchenStore.activeMenuPart) {
-    await kitchenStore.GET_CURRENT_MENU_LIST(route.params.child_id as string);
+    await kitchenStore.GET_CURRENT_MENU_LIST(route.params.child_id as string, { type: 0 });
 
   }
 
-  await kitchenStore.GET_WEEKLY_MENU_LIST(route.params.child_id as string);
+  await kitchenStore.GET_WEEKLY_MENU_LIST(route.params.child_id as string, { type: kitchenStore.activeMenuPart ? 0 : 1 });
 
   fullscreenLoading.value = false;
 

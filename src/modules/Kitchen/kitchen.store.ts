@@ -154,14 +154,14 @@ export const useKitchenStore = defineStore("kitchenStore", () => {
     return data;
   };
 
-  const GET_CURRENT_MENU_LIST = async (id: number | string) => {
-    const { data } = await $axios.get(`/kitchen-sales/${id}/menu-today`);
+  const GET_CURRENT_MENU_LIST = async (id: number | string, params: object) => {
+    const { data } = await $axios.get(`/kitchen-sales/${id}/menu-today`, { params });
     menuToday.value = data.data;
     return data;
   };
 
-  const GET_WEEKLY_MENU_LIST = async (id: number | string) => {
-    const { data } = await $axios.get(`/kitchen-sales/${id}/menu-weekly`);
+  const GET_WEEKLY_MENU_LIST = async (id: number | string, params: object) => {
+    const { data } = await $axios.get(`/kitchen-sales/${id}/menu-weekly`, { params });
     menuWeekly.value = data.data;
     return data;
   };

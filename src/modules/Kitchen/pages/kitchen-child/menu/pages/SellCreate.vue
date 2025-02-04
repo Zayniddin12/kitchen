@@ -24,7 +24,7 @@ const setBreadCrumbFn = () => {
   kitchenStore.fetchPart2(+route.params.kitchen_id);
   kitchenStore.fetchPart3(+route.params.child_id);
 
-  if(!kitchenStore.part) return;
+  if (!kitchenStore.part) return;
 
   console.log(kitchenStore.part.kitchen_vid);
 
@@ -53,7 +53,7 @@ const setBreadCrumbFn = () => {
 };
 
 onMounted(async () => {
-  await kitchenStore.GET_CURRENT_MENU_LIST(route.params.child_id as number);
+  await kitchenStore.GET_CURRENT_MENU_LIST(route.params.child_id as number, { type: route.params.part_name == "free-kitchen" ? 0 : 1 });
   tableData.value = kitchenStore.menuToday.elements[0];
   activeData.value = 0;
 });
@@ -193,15 +193,15 @@ const handleSubmit = async () => {
                     {{ t("common.ndc") }}:
                   </span>
                   <strong class="font-semibold text-dark">
-                    3 000 {{t("currency.sum")}}
+                    3 000 {{ t("currency.sum") }}
                   </strong>
                 </div>
                 <div class="flex items-center gap-x-1 text-sm">
                   <span class="text-cool-gray">
-                    {{t("common.totalSum")}}:
+                    {{ t("common.totalSum") }}:
                   </span>
                   <strong class="font-semibold text-dark">
-                    28 000 {{t("currency.sum")}}
+                    28 000 {{ t("currency.sum") }}
                   </strong>
                 </div>
               </div>
@@ -217,7 +217,7 @@ const handleSubmit = async () => {
           @click="handleSubmit"
           class="custom-apply-btn"
         >
-          {{t("common.sell")}}
+          {{ t("common.sell") }}
         </button>
       </div>
 
