@@ -102,8 +102,8 @@ export const useKitchenStore = defineStore("kitchenStore", () => {
     return await $axios.put(`/kitchen-sales/menu/${menu_id}/update-element`, data);
   };
 
-  const GET_ELEMENT_LIST = async (kitchen_id: any) => {
-    const { data } = await $axios.get(`/kitchen-sales/${kitchen_id}/menu-edit`);
+  const GET_ELEMENT_LIST = async (kitchen_id: any, params) => {
+    const { data } = await $axios.get(`/kitchen-sales/${kitchen_id}/menu-edit`, { params });
 
     menuElement.value = data.data;
   };
