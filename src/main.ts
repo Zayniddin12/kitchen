@@ -33,7 +33,7 @@ const ability = defineAbilitiesFor([role]);
 
 app
   .use(ElementPlus, {
-    locale: "ru",
+    // locale: "ru",
   })
   .use(createPinia())
   .use(abilitiesPlugin, ability, {
