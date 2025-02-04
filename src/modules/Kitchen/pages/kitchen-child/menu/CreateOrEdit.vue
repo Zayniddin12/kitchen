@@ -1064,10 +1064,11 @@ const changeInput = async (event: any, index: number, childIndex: number, indexM
 };
 
 const changeInputMeals = async (event: any, index: number, childIndex: number, indexMeal: number) => {
-  // list_dishes.value[index].data[childIndex].vid_product = null
-
+  // list_dish2es.value[index].data[childIndex].vid_product = null
+  console.log(event);
   if (event) {
     const { meal } = await settingsStore.GET_MEALS_DETAIL(event);
+    console.log(meal);
     // list_dishes.value[index].data[childIndex].meals_list = meal ? meal : {};
     list_dishes.value[index].data[childIndex].mealData[indexMeal].meals_list = meal ? meal : {};
 
