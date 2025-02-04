@@ -40,7 +40,7 @@ const margin = ref("ml-[414px]");
 onMounted(async () => {
   if (tokenManager.getAccessToken()) authStore.me();
   // else await index.replace({ name: "login" });
-  localStorage.setItem("workplace_id", JSON.stringify(childSidebarPin.value));
+  // localStorage.setItem("workplace_id", JSON.stringify(childSidebarPin.value));
   childSidebarPin.value = JSON.parse(localStorage.getItem("child-sidebar-pin") || "false");
   await settingsStore.GET_REGIONAL({ per_page: 100 });
   warehouseBasesStore.fetchManagementBases();

@@ -153,7 +153,7 @@ onMounted(() => {
               align="center"
             >
               <template #default="{row}:{row: RationProductTypeType}">
-                {{ row.parent_id }}
+                {{ row.parent_name ?? "-" }}
               </template>
             </ElTableColumn>
             <ElTableColumn
@@ -162,7 +162,7 @@ onMounted(() => {
               align="center"
             >
               <template #default="{row}:{row: RationProductTypeType}">
-                {{ row.id }}
+                {{ row.name ?? "-" }}
               </template>
             </ElTableColumn>
             <ElTableColumn
@@ -180,7 +180,7 @@ onMounted(() => {
               align="center"
             >
               <template #default="{row}:{row: RationProductTypeType}">
-                {{ row.unit_id }}
+                {{ row.unit_name }}
               </template>
             </ElTableColumn>
           </ElTable>

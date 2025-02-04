@@ -90,13 +90,13 @@ onMounted(async () => {
 
   route.query.management_id = form.management_id ? form.management_id : null;
 
-  // Generate QR code on canvas
-  QRCode.toCanvas(qrCanvas.value, qrData.value, {
-    width: 200,
-    errorCorrectionLevel: "H",
-  }, (error) => {
-    if (error) console.error("QR Code generation error:", error);
-  });
+  // // Generate QR code on canvas
+  // QRCode.toCanvas(qrCanvas.value, qrData.value, {
+  //   width: 200,
+  //   errorCorrectionLevel: "H",
+  // }, (error) => {
+  //   if (error) console.error("QR Code generation error:", error);
+  // });
 });
 
 const selectedProducts = computed(() => {
