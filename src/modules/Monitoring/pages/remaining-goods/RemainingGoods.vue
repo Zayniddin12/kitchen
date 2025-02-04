@@ -4,15 +4,21 @@
 >
 import AppDatePicker from "@/components/ui/form/app-date-picker/AppDatePicker.vue";
 import { TableColumnType } from "@/types/common.type";
-import { computed, watchEffect } from "vue";
+import { computed, watchEffect, onMounted, ref, watch } from "vue";
 
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 import { useI18n } from "vue-i18n";
 import AppPagination from "@/components/ui/app-pagination/AppPagination.vue";
+import { useDistrictStore } from "@/modules/Monitoring/store/district.store";
 
+const store = useDistrictStore();
 const { setBreadCrumb } = useBreadcrumb();
 const { t } = useI18n();
 
+const params = ref({
+  start_data: null,
+  end_data: null,
+});
 const tableColumns = computed<TableColumnType[]>(() => {
   return [{
     label: "№",
@@ -64,97 +70,15 @@ const tableColumns = computed<TableColumnType[]>(() => {
   }];
 });
 
-const tableData = computed(() => {
-  return [{
-    id: 1,
-    num: 1,
-    product_name: "Масло подсол...",
-    measurement: "шт",
-    kp_zarafshon: 50,
-    kp_navoi: 45,
-    kp_nurobod: 21,
-    kp_uchkuduk: 51,
-    kp_zafarobod: 52,
-    fund: 219,
-  }, {
-    id: 2,
-    num: 2,
-    product_name: "Сахар",
-    measurement: "тн",
-    kp_zarafshon: 80,
-    kp_navoi: 69,
-    kp_nurobod: 18,
-    kp_uchkuduk: 65,
-    kp_zafarobod: 45,
-    fund: 200,
-  }, {
-    id: 3,
-    num: 3,
-    product_name: "Молоко сухое",
-    measurement: "шт",
-    kp_zarafshon: 50,
-    kp_navoi: 45,
-    kp_nurobod: 21,
-    kp_uchkuduk: 51,
-    kp_zafarobod: 52,
-    fund: 219,
-  }, {
-    id: 4,
-    num: 4,
-    product_name: "Картофель ",
-    measurement: "тн",
-    kp_zarafshon: 80,
-    kp_navoi: 69,
-    kp_nurobod: 18,
-    kp_uchkuduk: 65,
-    kp_zafarobod: 45,
-    fund: 200,
-  }, {
-    id: 5,
-    num: 5,
-    product_name: "Масло подсол...",
-    measurement: "шт",
-    kp_zarafshon: 50,
-    kp_navoi: 45,
-    kp_nurobod: 21,
-    kp_uchkuduk: 51,
-    kp_zafarobod: 52,
-    fund: 219,
-  }, {
-    id: 6,
-    num: 6,
-    product_name: "Сахар",
-    measurement: "тн",
-    kp_zarafshon: 80,
-    kp_navoi: 69,
-    kp_nurobod: 18,
-    kp_uchkuduk: 65,
-    kp_zafarobod: 45,
-    fund: 200,
-  }, {
-    id: 7,
-    num: 7,
-    product_name: "Молоко сухое",
-    measurement: "шт",
-    kp_zarafshon: 50,
-    kp_navoi: 45,
-    kp_nurobod: 21,
-    kp_uchkuduk: 51,
-    kp_zafarobod: 52,
-    fund: 219,
-  }, {
-    id: 8,
-    num: 8,
-    product_name: "Картофель ",
-    measurement: "тн",
-    kp_zarafshon: 80,
-    kp_navoi: 69,
-    kp_nurobod: 18,
-    kp_uchkuduk: 65,
-    kp_zafarobod: 45,
-    fund: 200,
-  }];
+onMounted(async () => {
+
+  try {
+    await store.GET_REMAINING_GOODS_LIST(params);
+  } catch (e) {
+
+  }
 });
+
 
 const setBreadCrumbFn = () => {
   setBreadCrumb([{
@@ -171,6 +95,18 @@ watchEffect(() => {
   setBreadCrumbFn();
 });
 
+watch(() => params.value.start_data, async (newValue, oldValue) => {
+  if (newValue) {
+    await store.GET_REMAINING_GOODS_LIST(params);
+  }
+});
+
+watch(() => params.value.end_data, async (newValue, oldValue) => {
+  if (newValue && params.value.start_data) {
+    await store.GET_REMAINING_GOODS_LIST(params);
+  }
+});
+
 </script>
 
 <template>
@@ -182,10 +118,14 @@ watchEffect(() => {
         </h1>
         <div class="grid grid-cols-4 gap-2 max-w-[645px]">
           <AppDatePicker
+            v-model="params.start_date"
             size="large"
+            :placeholder="$t('common.date_from')"
           />
           <AppDatePicker
+            v-model="params.end_date"
             size="large"
+            :placeholder="$t('common.date_to')"
           />
           <ElDropdown
             placement="bottom"
@@ -264,9 +204,10 @@ watchEffect(() => {
           </ElButton>
         </div>
       </div>
+      <!--      {{ store.remaining_goods_list }}-->
       <ElTable
         stripe
-        :data="tableData"
+        :data="store.remaining_goods_list.products"
         :empty-text="t('common.empty')"
         class="custom-element-table"
       >
@@ -289,7 +230,7 @@ watchEffect(() => {
           </template>
         </ElTableColumn>
       </ElTable>
-      <AppPagination class="mt-6"/>
+      <AppPagination class="mt-6" />
     </div>
   </section>
 </template>

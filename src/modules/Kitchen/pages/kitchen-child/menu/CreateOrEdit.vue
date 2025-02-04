@@ -164,7 +164,7 @@ watch(() => kitchenData.value.startDate, (newValue, oldValue) => {
 watch(scheduledDates, async (newValue) => {
   if (newValue.length > 0) {
     if (route.name === "KitchenMenuEdit") {
-      await kitchenStore.GET_ELEMENT_LIST(route.params.child_id as string);
+      await kitchenStore.GET_ELEMENT_LIST(route.params.child_id as string, { type: kitchenStore.activeSalesPart ? 1 : 0 });
     }
 
     if (kitchenStore.activeMenuPart) {

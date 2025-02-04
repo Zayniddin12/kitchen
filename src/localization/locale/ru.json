@@ -41,6 +41,8 @@
     "numberOfWarehouses": "Количество складов"
   },
   "common": {
+    "date_from": "С",
+    "date_to": "По",
     "select_recipient": "Выберите получателя",
     "all": "Все",
     "fund": "Фонд",
