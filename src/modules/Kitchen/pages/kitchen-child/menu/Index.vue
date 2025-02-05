@@ -671,7 +671,7 @@ const clearBasket = () => {
                     <p>
                       <span class="text-cool-gray mr-2">{{ t("common.sum") }}:</span>
                       <strong class="font-semibold text-dark">
-                        {{ n.total_price && n.total_price.toLocaleString() }} UZS
+                        {{ n.price_total && n.price_total.toLocaleString() }} UZS
                       </strong>
                     </p>
                   </div>
