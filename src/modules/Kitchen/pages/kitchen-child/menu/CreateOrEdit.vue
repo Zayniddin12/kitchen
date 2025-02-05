@@ -387,7 +387,9 @@ watch(scheduledDates, async (newValue) => {
     if (kitchenStore.activeSalesPart) {
       list_dishes.value = [];
       if (route.name === "KitchenMenuEdit") {
+        console.log("Fgrsgfe");
         newValue.forEach(el => {
+
           console.log(el.date);
           console.log(kitchenStore.menuElement.elements[el.date.split(".").reverse().join("-")]);
 
@@ -778,7 +780,7 @@ const setBreadCrumbFn = () => {
 
 onMounted(async () => {
 
-  await settingsStore.GET_MEALS({ per_page: 100 });
+  await settingsStore.GET_MEALS({ per_page: 100, kitchen_id: route.params.child_id });
   await settingsStore.GET_TYPE_PRODUCT({ per_page: 100 });
 
 
@@ -1052,13 +1054,13 @@ watch(() => route.params, async () => {
 }, { immediate: true });
 
 watch(() => kitchenData.value.intermediateDate1, async (val) => {
-  await settingsStore.GET_RATION_LIST({ per_page: 100, duration: val ? 7 : 10 });
+  await settingsStore.GET_RATION_LIST({ per_page: 100, duration: val ? 7 : 10, kitchen_id: route.params.child_id });
 }, { immediate: true });
 
 
 const changeInput = async (event: any, index: number, childIndex: number, indexMeal: number) => {
   // list_dishes.value[index].data[childIndex].vid_product = null
-  const data = await settingsStore.GET_MEALS_VID_PRO({ parent_id: event });
+  const data = await settingsStore.GET_MEALS_VID_PRO({ parent_id: event, kitchen_id: route.params.child_id });
 
   list_dishes.value[index].data[childIndex].mealData[indexMeal].vid_list = data.product_types ? data.product_types : [];
 };
@@ -1392,10 +1394,9 @@ const isTranslate = computed(() => !!route.meta.isTranslate);
                               </div>
                             </el-option>
                           </AppSelect>
-
                           <app-select
                             v-model="item.product"
-                            :disabled="item.meal"
+                            :disabled="!!item.meal"
                             :label="t('product.type')"
                             class="w-full"
                             label-class="text-[#A8AAAE] font-medium text-[12px]"
@@ -1408,7 +1409,7 @@ const isTranslate = computed(() => !!route.meta.isTranslate);
                           />
                           <app-select
                             v-model="item.vid_product"
-                            :disabled="item.meal"
+                            :disabled="!!item.meal"
                             class="w-full"
                             :label="t('product.view')"
                             label-class="text-[#A8AAAE] font-medium text-[12px]"

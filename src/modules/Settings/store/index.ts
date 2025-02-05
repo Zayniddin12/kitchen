@@ -282,6 +282,7 @@ export const useSettingsStore = defineStore("settingsStore", () => {
   const GET_TYPE_PRODUCT = async (params?: any) => {
     const { data } = await $axios.get("/product-types/categories", { params });
     typeProduct.value = data.data;
+    return data.data;
   };
 
   const typeProductDetail = ref<TypeProductDetailType | null>(null);

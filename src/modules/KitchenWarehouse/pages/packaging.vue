@@ -33,8 +33,13 @@ const result = ref<any[]>([{
 const vidProducts = ref<any[]>([]);
 const vidProductsResult = ref<any[]>([]);
 
-onMounted(() => {
-  settingsStore.GET_TYPE_PRODUCT();
+const consumptionTipList = ref<any>([]);
+
+onMounted(async () => {
+  await settingsStore.GET_TYPE_PRODUCT({ kitchen_id: route.params.id4 });
+  consumptionTipList.value = settingsStore.typeProduct.product_categories;
+
+  await settingsStore.GET_TYPE_PRODUCT();
 });
 
 
@@ -57,6 +62,7 @@ const fetchVidProductsList = async (item: any, index: number) => {
   vidProducts.value[index] = await settingsStore.GET_VID_PRODUCT({
     parent_id: item.category_id,
     per_page: 100,
+    kitchen_id: route.params.id4,
   });
 };
 
@@ -145,7 +151,7 @@ const createFactory = async () => {
       <div class="grid grid-cols-6 gap-4" v-for="(item, index) in consumption" :key="index">
         <AppSelect
           v-model="item.category_id"
-          :items="settingsStore.typeProduct.product_categories"
+          :items="consumptionTipList"
           item-value="id"
           item-label="name"
           :label="t('product.type')"
@@ -259,7 +265,6 @@ const createFactory = async () => {
         />
 
         <app-input
-          disabled
           v-model="item2.price"
           :label="t('common.price')"
           label-class="text-[#A8AAAE] text-[12px]"

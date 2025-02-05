@@ -124,7 +124,7 @@ const ordersQQS = computed(() => {
   orders.forEach((quantity, product_id) => {
     selectedProducts.value.forEach(product => {
       if (product.id === product_id) {
-        totalSum += product.qqs_sum * quantity;
+        totalSum += product.vat_price * quantity;
       }
     });
   });
@@ -147,8 +147,8 @@ const ordersSum = computed(() => {
 });
 
 const createOrder = async () => {
-  ElMessageBox.confirm("Хотите подтвердить заказ?", "", {
-      confirmButtonText: "Да",
+  ElMessageBox.confirm("Подтвердить продажу заказа?", "", {
+      confirmButtonText: "Подтвердить",
       cancelButtonText: "Отменить",
       type: "warning",
     },
@@ -287,16 +287,17 @@ const qrData = ref(JSON.stringify(selectedProducts.value));
           <thead>
           <tr>
             <th style="text-align: left; font-size: 12px; font-weight: normal; text-wrap: nowrap">Nomi</th>
-            <th style="text-align: left; font-size: 12px; font-weight: normal; text-wrap: nowrap">QQS</th>
-            <th style="text-align: right; font-size: 12px; font-weight: normal; text-wrap: nowrap">Soni</th>
+            <th style="text-align: left; font-size: 12px; font-weight: normal; text-wrap: nowrap">Soni</th>
+            <th style="text-align: right; font-size: 12px; font-weight: normal; text-wrap: nowrap">QQS</th>
             <th style="text-align: right; font-size: 12px; font-weight: normal; text-wrap: nowrap">Summa</th>
           </tr>
           </thead>
           <tbody>
           <tr v-for="item in selectedProducts" :key="item.name">
             <td><small class="text-xs">{{ item.name && item.name }}</small></td>
-            <td><small class="text-xs">{{ item.qqs && item.qqs }}%</small></td>
-            <td style="text-align: right;"><small class="text-xs">{{ orders.get(item.id) }}</small></td>
+            <td style="text-align: left;"><small class="text-xs">{{ orders.get(item.id) }}</small></td>
+            <td style="text-align: right;"><small class="text-xs">{{ item.vat_price && item.vat_price.toLocaleString()
+              }}</small></td>
             <td style="text-align: right;"><small
               class="text-xs">{{ (item.price * Number(orders.get(item.id))).toLocaleString()
               }}</small></td>
@@ -307,7 +308,10 @@ const qrData = ref(JSON.stringify(selectedProducts.value));
 
       <span class="block border-[1px] border-dashed border-[#000]"></span>
 
-      <h6 class="mt-[10px] text-xs">JAMI:</h6>
+      <div class="my-2 flex items-center justify-between">
+        <span class="text-xs">JAMI::</span>
+        <span class="text-xs">{{ (ordersSum + ordersQQS).toLocaleString() }} UZS</span>
+      </div>
       <div class="my-2 flex items-center justify-between">
         <span class="text-xs">Umumiy summa:</span>
         <span class="text-xs">{{ formatNumber(ordersSum) }} UZS</span>
@@ -562,6 +566,23 @@ const qrData = ref(JSON.stringify(selectedProducts.value));
 </template>
 
 <style lang="scss">
+.el-message-box__btns button {
+  padding: 30px !important;
+
+}
+
+.el-message-box__btns {
+  margin-top: 40px;
+  justify-content: end !important;
+}
+
+.el-message-box {
+
+  --el-messagebox-width: 620px !important;
+  height: 200px;
+  width: 620px !important;
+}
+
 .el-message-box__container {
   justify-content: center;
 }

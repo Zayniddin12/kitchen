@@ -36,7 +36,7 @@ onMounted(async () => {
 });
 
 
-const fullUrl = computed(() => window.location.origin + route.fullPath);
+const fullUrl = computed(() => window.location.origin);
 </script>
 
 <template>
