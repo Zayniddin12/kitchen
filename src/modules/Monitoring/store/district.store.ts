@@ -15,7 +15,7 @@ export const useDistrictStore = defineStore("districtStore", () => {
     { id: 4, name: "КП РУ Учкудук" },
     { id: 5, name: "КП РУ Зафаробод" },
   ]);
-  const remaining_goods_list = ref<any>({ products: [] });
+  const remaining_goods_list = ref<any>([]);
   const district = ref<DistrictType | null>(null);
 
   const getDistrict = (id: number): void => {

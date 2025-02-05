@@ -73,7 +73,7 @@ const tableColumns = computed<TableColumnType[]>(() => {
 onMounted(async () => {
 
   try {
-    await store.GET_REMAINING_GOODS_LIST(params);
+    await store.GET_REMAINING_GOODS_LIST(params.value);
   } catch (e) {
 
   }
@@ -97,13 +97,13 @@ watchEffect(() => {
 
 watch(() => params.value.start_data, async (newValue, oldValue) => {
   if (newValue) {
-    await store.GET_REMAINING_GOODS_LIST(params);
+    await store.GET_REMAINING_GOODS_LIST(params.value);
   }
 });
 
 watch(() => params.value.end_data, async (newValue, oldValue) => {
   if (newValue && params.value.start_data) {
-    await store.GET_REMAINING_GOODS_LIST(params);
+    await store.GET_REMAINING_GOODS_LIST(params.value);
   }
 });
 
@@ -204,10 +204,10 @@ watch(() => params.value.end_data, async (newValue, oldValue) => {
           </ElButton>
         </div>
       </div>
-      <!--      {{ store.remaining_goods_list }}-->
+      <!--      <pre>     {{ store.remaining_goods_list }}</pre>-->
       <ElTable
         stripe
-        :data="store.remaining_goods_list.products"
+        :data="store.remaining_goods_list"
         :empty-text="t('common.empty')"
         class="custom-element-table"
       >

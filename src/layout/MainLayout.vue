@@ -76,7 +76,6 @@ const interval = setInterval(async () => {
 
 watch(() => model.value, (value) => {
   if (route.meta && route.meta.type == "FACE_ID") {
-    alert("2");
     if (value) {
       clearInterval(interval);
     }
@@ -86,7 +85,6 @@ watch(() => model.value, (value) => {
 
 watch(() => model.value, async (newValue) => {
   if (route.meta && route.meta.type == "FACE_ID") {
-    alert("1");
     if (!newValue && tokenManager.getAccessToken()) {
       const interval = setInterval(async () => {
         const data = await faceStore.FETCH_FACE_ID();

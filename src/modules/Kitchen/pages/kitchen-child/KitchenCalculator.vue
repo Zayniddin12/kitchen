@@ -24,7 +24,7 @@ const kitchenStore = useKitchenStore();
 const mealData = ref({ compositions: [] });
 const rationData = ref({});
 
-const tableData = ref([]);
+const tableData = ref({ products: [] });
 
 const title = computed(() => route.meta.title ?? "");
 
@@ -167,7 +167,7 @@ const params = ref({
           <el-table
             v-if="params.ration_id"
             :empty-text="t('common.empty')"
-            :data="tableData"
+            :data="tableData.products"
             stripe
             class="custom-element-table custom-element-table--has-append w-full"
           >
@@ -201,7 +201,7 @@ const params = ref({
                       {{ t("common.price") }}:
                     </span>
                     <strong class="font-semibold text-dark">
-                      {{ t("currency.sum") }}
+                      {{ tableData.price && tableData.price.toLocaleString() }} {{ t("currency.sum") }}
                     </strong>
                   </div>
                   <div class="flex items-center gap-x-1 text-sm">
@@ -209,7 +209,7 @@ const params = ref({
                       {{ t("common.ndc") }}:
                     </span>
                     <strong class="font-semibold text-dark">
-                      {{ t("currency.sum") }}
+                      {{ tableData.vat_price && tableData.vat_price.toLocaleString() }} {{ t("currency.sum") }}
                     </strong>
                   </div>
                   <div class="flex items-center gap-x-1 text-sm">
