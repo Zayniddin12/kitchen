@@ -121,6 +121,7 @@ const createFactory = async () => {
         out_products: result.value.map((v) => ({
           product_type_id: v.product_type_id,
           quantity: v.quantity,
+          price: v.price,
         })),
       },
     });

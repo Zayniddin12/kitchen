@@ -105,7 +105,7 @@ const tableColumns: TableColumnType[] = [
   },
   {
     label: t("common.price"),
-    prop: "net_price",
+    prop: "price",
     align: "right",
   },
   {
@@ -781,7 +781,7 @@ const setBreadCrumbFn = () => {
 onMounted(async () => {
 
   await settingsStore.GET_MEALS({ per_page: 100, kitchen_id: route.params.child_id });
-  await settingsStore.GET_TYPE_PRODUCT({ per_page: 100 });
+  await settingsStore.GET_TYPE_PRODUCT({ per_page: 100, kitchen_id: route.params.child_id });
 
 
   if (route.name === "KitchenMenuEdit") {

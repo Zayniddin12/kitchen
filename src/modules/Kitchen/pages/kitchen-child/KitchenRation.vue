@@ -22,6 +22,7 @@ const { t } = useI18n();
 
 const params = ref({
   per_page: 100,
+  kitchen_id: route.params.child_id,
 });
 
 const setBreadCrumbFn = () => {
