@@ -549,21 +549,21 @@ const clearBasket = () => {
           <template
             v-if="activeTab === TABS.CURRENT && kitchenStore.activeMenuPart"
           >
-            <ElButton
-              class="!bg-blue-500 min-h-12 w-[253px]"
-              type="primary"
-              size="large"
-              tag="RouterLink"
-              :to="{ name: 'KitchenMenuCookingDishCreate' }"
-            >
-              <div class="flex items-center gap-x-2">
-                <svg
-                  :data-src="PlusIcon"
-                  class="size-6"
-                />
-                <span class="text-lg font-medium">{{ t("kitchen.prepareDishes") }}</span>
-              </div>
-            </ElButton>
+<!--            <ElButton-->
+            <!--              class="!bg-blue-500 min-h-12 w-[253px]"-->
+            <!--              type="primary"-->
+            <!--              size="large"-->
+            <!--              tag="RouterLink"-->
+            <!--              :to="{ name: 'KitchenMenuCookingDishCreate' }"-->
+            <!--            >-->
+            <!--              <div class="flex items-center gap-x-2">-->
+            <!--                <svg-->
+            <!--                  :data-src="PlusIcon"-->
+            <!--                  class="size-6"-->
+            <!--                />-->
+            <!--                <span class="text-lg font-medium">{{ t("kitchen.prepareDishes") }}</span>-->
+            <!--              </div>-->
+            <!--            </ElButton>-->
             <ElButton
               class="!bg-[#28C76F] min-h-12 w-[149px]"
               size="large"

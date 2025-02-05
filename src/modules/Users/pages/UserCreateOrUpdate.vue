@@ -622,11 +622,9 @@ const temporaryKitchen = computed(() => {
               />
               <AppInput
                 v-model="form.phone"
-                prop="phone"
                 label="Номер телефона"
                 type="tel"
                 label-class="text-[#A8AAAE] text-xs font-medium"
-                required
                 class="mb-1"
               />
               <template v-if="userStore.activeUserPage">

@@ -156,13 +156,17 @@ const handleSubmit = async () => {
       formData.append("number", dataValue.value.number);
       // formData.append('quantity', dataValue.value.quantity);
       formData.append("unit_id", dataValue.value.unit_id);
-
-      if (dataValue.value.image) {
-        formData.append("image", dataValue.value.image);
-      }
+      
 
       if (route.params.id) {
         formData.append("_method", "PUT");
+        if (dataValue.value.image && typeof dataValue.value.image !== "string") {
+          formData.append("image", dataValue.value.image);
+        }
+      } else {
+        if (dataValue.value.image) {
+          formData.append("image", dataValue.value.image);
+        }
       }
       dataValue.value.compositions.forEach((composition, index) => {
         formData.append(`compositions[${index}][product_type_parent_id]`, composition.product_type_parent_id);
@@ -224,7 +228,8 @@ watch(() => dataValue.value.image, () => {
     <div class="mt-[24px] flex items-start">
       <div class="w-[70%]">
         <div class="border rounded-[24px] p-[24px]">
-<!--          {{ existingImage }}-->
+          <!--          {{ existingImage }}-->
+          {{ dataValue.image }}
           <AppMediaUploader
             v-model="dataValue.image"
             :value="existingImage"
