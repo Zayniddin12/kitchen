@@ -19,61 +19,33 @@ const params = ref({
   start_data: null,
   end_data: null,
 });
-const tableColumns = computed<TableColumnType[]>(() => {
-  return [{
-    label: "№",
-    prop: "num",
-  }, {
-    label: t("product.name"),
-    prop: "product_name",
-  }, {
-    label: t("common.measurement"),
-    prop: "measurement",
-  }, {
-    label: "КП РУ Зарафшон",
-    prop: "kp_zarafshon",
-    link: {
-      name: "monitoring.remainingGoods.district",
-      params: { id: 1 },
+const tableColumns = ref<any>(
+  [
+    {
+      label: "№",
+      prop: "id",
     },
-  }, {
-    label: "КП РУ Навои",
-    prop: "kp_navoi",
-    link: {
-      name: "monitoring.remainingGoods.district",
-      params: { id: 2 },
+    {
+      label: t("product.name"),
+      prop: "product_name",
     },
-  }, {
-    label: "КП РУ Нуробод",
-    prop: "kp_nurobod",
-    link: {
-      name: "monitoring.remainingGoods.district",
-      params: { id: 3 },
+    {
+      label: t("common.measurement"),
+      prop: "unit",
     },
-  }, {
-    label: "КП РУ Учкудук",
-    prop: "kp_uchkuduk",
-    link: {
-      name: "monitoring.remainingGoods.district",
-      params: { id: 4 },
-    },
-  }, {
-    label: "КП РУ Зафаробод",
-    prop: "kp_zafarobod",
-    link: {
-      name: "monitoring.remainingGoods.district",
-      params: { id: 5 },
-    },
-  }, {
-    label: "по Фонду НГМК",
-    prop: "fund",
-  }];
-});
+  ],
+);
 
 onMounted(async () => {
 
   try {
     await store.GET_REMAINING_GOODS_LIST(params.value);
+    store.remaining_goods_list.headers.forEach(item => {
+      tableColumns.value.push({
+        label: item,
+        prop: item,
+      });
+    });
   } catch (e) {
 
   }
@@ -207,16 +179,24 @@ watch(() => params.value.end_data, async (newValue, oldValue) => {
       <!--      <pre>     {{ store.remaining_goods_list }}</pre>-->
       <ElTable
         stripe
-        :data="store.remaining_goods_list"
+        :data="store.remaining_goods_list.products"
         :empty-text="t('common.empty')"
         class="custom-element-table"
       >
+
         <ElTableColumn
-          v-for="column in tableColumns"
+          v-for="(column, index) in tableColumns"
           type="button"
           :key="column.prop"
           :prop="column.prop"
         >
+          <template #default="scope">
+            <!-- Display row index for the "id" column -->
+            <template v-if="column.prop === 'id'">
+              {{ scope.$index + 1 }}
+            </template>
+
+          </template>
           <template #header>
             <RouterLink
               v-if="!!column?.link"
