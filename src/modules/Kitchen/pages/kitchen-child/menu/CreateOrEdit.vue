@@ -780,8 +780,8 @@ const setBreadCrumbFn = () => {
 
 onMounted(async () => {
 
-  await settingsStore.GET_MEALS({ per_page: 100, kitchen_id: route.params.child_id });
-  await settingsStore.GET_TYPE_PRODUCT({ per_page: 100, kitchen_id: route.params.child_id });
+  await settingsStore.GET_MEALS({ per_page: 100, kitchen_id: route.params.child_id, ready_to_eat: 1 });
+  await settingsStore.GET_TYPE_PRODUCT({ per_page: 100, kitchen_id: route.params.child_id, ready_to_eat: 1 });
 
 
   if (route.name === "KitchenMenuEdit") {
@@ -1060,7 +1060,11 @@ watch(() => kitchenData.value.intermediateDate1, async (val) => {
 
 const changeInput = async (event: any, index: number, childIndex: number, indexMeal: number) => {
   // list_dishes.value[index].data[childIndex].vid_product = null
-  const data = await settingsStore.GET_MEALS_VID_PRO({ parent_id: event, kitchen_id: route.params.child_id });
+  const data = await settingsStore.GET_MEALS_VID_PRO({
+    parent_id: event,
+    kitchen_id: route.params.child_id,
+    ready_to_eat: 1,
+  });
 
   list_dishes.value[index].data[childIndex].mealData[indexMeal].vid_list = data.product_types ? data.product_types : [];
 };
@@ -1373,6 +1377,7 @@ const isTranslate = computed(() => !!route.meta.isTranslate);
                             :disabled="item.product || item.vid_product"
                             :items="settingsStore.meals.meals"
                             clearable
+                            filterable
                             class="w-full"
                             item-value="id"
                             item-label="name"
@@ -1401,6 +1406,7 @@ const isTranslate = computed(() => !!route.meta.isTranslate);
                             class="w-full"
                             label-class="text-[#A8AAAE] font-medium text-[12px]"
                             clearable
+                            filterable
                             itemValue="id"
                             itemLabel="name"
                             :items="settingsStore.typeProduct.product_categories"
@@ -1410,6 +1416,7 @@ const isTranslate = computed(() => !!route.meta.isTranslate);
                           <app-select
                             v-model="item.vid_product"
                             :disabled="!!item.meal"
+                            filterable
                             class="w-full"
                             :label="t('product.view')"
                             label-class="text-[#A8AAAE] font-medium text-[12px]"
