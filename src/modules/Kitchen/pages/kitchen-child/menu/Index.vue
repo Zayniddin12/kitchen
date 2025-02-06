@@ -549,7 +549,7 @@ const clearBasket = () => {
           <template
             v-if="activeTab === TABS.CURRENT && kitchenStore.activeMenuPart"
           >
-<!--            <ElButton-->
+            <!--            <ElButton-->
             <!--              class="!bg-blue-500 min-h-12 w-[253px]"-->
             <!--              type="primary"-->
             <!--              size="large"-->
@@ -1130,7 +1130,7 @@ const clearBasket = () => {
                 <!--                {{productItem}}-->
                 <!--                menu__card-img-->
                 <img
-                  :src="ColaImg"
+                  :src="productItem.image"
                   :alt="productItem.name"
                   class="lg:w-[80px] lg:h-[80px] xl:w-[100px] xl:h-[100px] 2xl:w-[120px] 2xl:h-[120px] w-[100px] object-cover rounded-[12px]"
                 />
