@@ -783,7 +783,6 @@ onMounted(async () => {
   await settingsStore.GET_MEALS({ per_page: 100, kitchen_id: route.params.child_id, ready_to_eat: 1 });
   await settingsStore.GET_TYPE_PRODUCT({ per_page: 100, kitchen_id: route.params.child_id, ready_to_eat: 1 });
 
-
   if (route.name === "KitchenMenuEdit") {
     await kitchenStore.GET_MENU_ITEM(route.params.child_id as string);
     if (kitchenStore.activeMenuPart) {
