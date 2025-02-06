@@ -771,6 +771,10 @@ const clearBasket = () => {
                         {{ productItem.unit_name }}
                       </h5>
 
+                      <h5 class="text-start text-[#A8AAAE]">
+                        {{ $t("common.quantity") }}: <span class="text-black">{{ productItem.amount }}</span>
+                      </h5>
+
                       <div
                         v-if="orders.get(productItem.id)"
                         class="menu__card__actions !justify-between  bg-[#E2E6F3] px-[24px] py-[14px] rounded-[12px]">
