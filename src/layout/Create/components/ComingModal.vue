@@ -967,12 +967,12 @@ const changeUser = (val, key) => {
             label-class="text-[#A8AAAE] text-xs font-medium"
             required
           />
+          <!--          {{ fromList }}-->
           <AppSelect
             v-model="form.from"
             prop="from"
             :placeholder="t('document.whom.select_from')"
             :label="t('document.whom.from')"
-            :items="fromList"
             :loading="settingsStore.respondentsLoading"
             label-class="text-[#A8AAAE] text-xs font-medium"
             @change="(value) => respondentChange(value as string, 'from')"
@@ -980,7 +980,15 @@ const changeUser = (val, key) => {
             :disabled="authStore.disabledUserWorkplace && !activeComingModal"
             trigger="blur"
           >
-            <template>
+            <template v-if="activeComingModal">
+              <ElOption
+                v-for="item in fromList"
+                :key="`${item.id}_${item.model_type}`"
+                :value="`${item.id}_${item.model_type}`"
+                :label="item.name"
+              />
+            </template>
+            <template v-else>
               <ElOption
                 v-for="item in fromList"
                 :key="`${item.id}_${item.model_type}`"
