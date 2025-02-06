@@ -1059,19 +1059,21 @@ watch(() => kitchenData.value.intermediateDate1, async (val) => {
 
 const changeInput = async (event: any, index: number, childIndex: number, indexMeal: number) => {
   // list_dishes.value[index].data[childIndex].vid_product = null
-  const data = await settingsStore.GET_MEALS_VID_PRO({
-    parent_id: event,
-    kitchen_id: route.params.child_id,
-    ready_to_eat: 1,
-  });
+  if (typeof event !== "object") {
+    const data = await settingsStore.GET_MEALS_VID_PRO({
+      parent_id: event,
+      kitchen_id: route.params.child_id,
+      ready_to_eat: 1,
+    });
 
-  list_dishes.value[index].data[childIndex].mealData[indexMeal].vid_list = data.product_types ? data.product_types : [];
+    list_dishes.value[index].data[childIndex].mealData[indexMeal].vid_list = data.product_types ? data.product_types : [];
+  }
+
 };
 
 const changeInputMeals = async (event: any, index: number, childIndex: number, indexMeal: number) => {
   // list_dish2es.value[index].data[childIndex].vid_product = null
-  console.log(event);
-  if (event) {
+  if (typeof event !== "object") {
     const { meal } = await settingsStore.GET_MEALS_DETAIL(event);
     console.log(meal);
     // list_dishes.value[index].data[childIndex].meals_list = meal ? meal : {};
