@@ -440,6 +440,7 @@ const packagingPage = () => {
                   prop="product_type_id"
                   :placeholder="t('product.name')"
                   :label="t('product.name')"
+                  filterable
                   label-class="text-[#7F7D83]"
                   :items="settingsStore.vidProduct.product_types"
                   item-label="name"
