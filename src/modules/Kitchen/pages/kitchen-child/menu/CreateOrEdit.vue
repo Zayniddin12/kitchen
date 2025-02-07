@@ -105,7 +105,7 @@ const tableColumns: TableColumnType[] = [
   },
   {
     label: t("common.price"),
-    prop: "price",
+    prop: "net_price",
     align: "right",
   },
   {
