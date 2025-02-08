@@ -88,8 +88,8 @@ export const useKitchenStore = defineStore("kitchenStore", () => {
   const menuTodaySales = ref({});
 
   // GET MENU ITEM
-  const GET_MENU_ITEM = async (kitchen_id: any) => {
-    const { data } = await $axios.get(`/menus/${kitchen_id}`);
+  const GET_MENU_ITEM = async (kitchen_id: any, params: any) => {
+    const { data } = await $axios.get(`/menus/${kitchen_id}`, {params});
 
     menuItem.value = data.data;
   };
