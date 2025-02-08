@@ -784,7 +784,7 @@ onMounted(async () => {
   await settingsStore.GET_TYPE_PRODUCT({ per_page: 100, kitchen_id: route.params.child_id, ready_to_eat: 1 });
 
   if (route.name === "KitchenMenuEdit") {
-    await kitchenStore.GET_MENU_ITEM(route.params.child_id as string);
+    await kitchenStore.GET_MENU_ITEM(route.params.child_id as string, { type: kitchenStore.activeSalesPart ? 1 : 0 });
     if (kitchenStore.activeMenuPart) {
       kitchenData.value.startDate = kitchenStore.menuItem.menu.start_date.split(".").reverse().join("-");
       kitchenData.value.intermediateDate1 = kitchenStore.menuItem.menu.duration == 7;
