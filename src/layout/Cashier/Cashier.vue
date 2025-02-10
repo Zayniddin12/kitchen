@@ -11,7 +11,10 @@ import QRCode from "qrcode";
 import { useCashier } from "@/layout/Cashier/cashier";
 import { ElMessage, ElMessageBox } from "element-plus";
 import { useKitchenStore } from "@/modules/Kitchen/kitchen.store";
+import { useCommonStore } from "@/stores/common.store";
 
+
+const commonStore = useCommonStore();
 interface ProductItemType {
   id: number;
   price: number;
@@ -189,10 +192,11 @@ const createOrder = async () => {
     })
     .catch((e) => {
       console.log(e, "rrr");
-      ElMessage({
-        type: "info",
-        message: "Заказ отменен?",
-      });
+      commonStore.infoToast("Заказ отменен?");
+      // ElMessage({
+      //   type: "info",
+      //   message: "Заказ отменен?",
+      // });
       // orders.clear();
       ordersModal.value = false;
     });
@@ -428,10 +432,10 @@ const qrData = ref(JSON.stringify(selectedProducts.value));
 
                         </button>
                       </div>
-                      <!--                      :disabled="productItem.amount == 0 || orders.has(productItem.id) && (orders.get(productItem.id) == productItem.amount)"-->
+
                       <button v-else
                               @click="updateQuantity(productItem.id)"
-
+                              :disabled="productItem.amount == 0 || orders.has(productItem.id) && (orders.get(productItem.id) == productItem.amount)"
                               class="menu__card__actions  bg-[#E2E6F3] px-[24px] py-[14px] rounded-[12px]">
                         <svg width="21" height="20" viewBox="0 0 21 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                           <path d="M10.5007 4.16699V15.8337" stroke="#4F5662" stroke-width="1.2" stroke-linecap="round"
