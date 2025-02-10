@@ -128,7 +128,9 @@ const sendForm = async () => {
     delete newForm.dining_locations.temporary;
   }
 
-  newForm.phone = `998${newForm.phone.replace(/\D/g, "")}`;
+  if (newForm.phone) {
+    newForm.phone = `998${newForm.phone.replace(/\D/g, "")}`;
+  }
 
   try {
     if (activeUserCreatePage.value) {

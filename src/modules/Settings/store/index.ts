@@ -513,11 +513,11 @@ export const useSettingsStore = defineStore("settingsStore", () => {
   const mealDetail = ref<MealDetailType | null>(null);
   const mealDetailLoading = ref(false);
 
-  const GET_MEALS_DETAIL = async (id: number | string) => {
+  const GET_MEALS_DETAIL = async (id: number | string, params: any) => {
     mealDetailLoading.value = true;
 
     try {
-      const { data } = await $axios.get(`/meals/${id}`);
+      const { data } = await $axios.get(`/meals/${id}`, {params});
       mealDetail.value = data.data.meal;
       return data.data;
     } finally {
