@@ -391,7 +391,7 @@ const generateReceiptIndex = computed(() => {
                   </RouterLink>
                 </div>
 
-                <div class="overflow-y-auto h-[72vh] 2xl:h-[80vh] pr-2">
+                <div class="overflow-y-auto h-[72vh] 2xl:h-[75vh] pr-2">
                   <div class="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6"
                        v-if="products.length > 0">
                     <div
