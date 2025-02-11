@@ -157,7 +157,7 @@ const createOrder = async () => {
       type: "warning",
     },
   )
-    .then(() => {
+    .then(async () => {
       let kt_id = JSON.parse(localStorage.getItem("workplace_id"));
 
       let payload = {
@@ -183,17 +183,38 @@ const createOrder = async () => {
           });
         }
       });
-      kitchenStore.CREATE_ORDER(payload);
+      await kitchenStore.CREATE_ORDER(payload);
       orders.clear();
       ordersModal.value = false;
 
       window.print();
+      let workplace_id = JSON.parse(localStorage.getItem("workplace_id"));
+
+      const data = await store.GET_MENU_LIST({
+        id: workplace_id,
+        params: {
+          period: route.query.management_id,
+        },
+      });
+      if (data) {
+        products.value = store.menuList.elements;
+        if (products2.value && products2.value.length) {
+          const productId = products2.value.map((product) => product.id);
+          store.menuList.elements.forEach((item) => {
+            if (!productId.includes(item.id)) {
+              products2.value.push(item);
+            }
+          });
+        } else {
+          products2.value = store.menuList.elements;
+        }
+
+      }
       // await kitchenStore.GET_CURRENT_MENU_SALES_LIST(route.params.child_id as string);
 
     })
     .catch((e) => {
-      console.log(e, "rrr");
-      commonStore.infoToast("Заказ отменен?");
+      commonStore.infoToast("", "Заказ отменен");
       // ElMessage({
       //   type: "info",
       //   message: "Заказ отменен?",
@@ -260,9 +281,6 @@ const generateReceiptIndex = computed(() => {
   return receiptIndex.value;
 });
 
-const qrCanvas = ref(null);
-
-const qrData = ref(JSON.stringify(selectedProducts.value));
 </script>
 
 <template>
@@ -293,7 +311,9 @@ const qrData = ref(JSON.stringify(selectedProducts.value));
           <tr>
             <th style="text-align: left; font-size: 12px; font-weight: normal; text-wrap: nowrap">Nomi</th>
             <th style="text-align: left; font-size: 12px; font-weight: normal; text-wrap: nowrap">Soni</th>
-            <th style="text-align: right; font-size: 12px; font-weight: normal; text-wrap: nowrap">QQS</th>
+            <th style="text-align: right; font-size: 12px; font-weight: normal; text-wrap: nowrap; padding: 2px">
+              QQS
+            </th>
             <th style="text-align: right; font-size: 12px; font-weight: normal; text-wrap: nowrap">Summa</th>
           </tr>
           </thead>
@@ -319,7 +339,7 @@ const qrData = ref(JSON.stringify(selectedProducts.value));
       </div>
       <div class="my-2 flex items-center justify-between">
         <span class="text-xs">Umumiy summa:</span>
-        <span class="text-xs">{{ (ordersSum + ordersQQS).toLocaleString() }} UZS</span>
+        <span class="text-xs">{{ (ordersSum - ordersQQS).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, " ") }} UZS</span>
       </div>
       <div class="my-2 flex items-center justify-between">
         <span class="text-xs">Umumiy QQS:</span>
