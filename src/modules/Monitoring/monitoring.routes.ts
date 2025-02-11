@@ -41,6 +41,15 @@ export default [
           isTranslate: true
         },
       },
+      {
+        path: "kitchen-sales-report",
+        name: "monitoring.kitchenSalesReport",
+        component: () => import("@/modules/Monitoring/pages/KitchenSalesReport.vue"),
+        meta: {
+          titile: "monitoring.kitchenSalesReport",
+          isTranslate: true
+        }
+      }
     ],
   },
 ] as RouteRecordRaw[];
