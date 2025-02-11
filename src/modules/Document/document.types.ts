@@ -5,7 +5,7 @@ export interface DocumentProductType {
   product_type_id: number | "",
   quantity: number | null,
   unit_id: number | "",
-  price: number | null,
+  price: number | null | string,
   total_price?: number | null,
 
   [key: string]: any,
