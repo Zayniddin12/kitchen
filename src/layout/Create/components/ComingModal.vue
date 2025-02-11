@@ -1561,7 +1561,7 @@ const changeUser = (val, key) => {
                       :placeholder="t('common.enter_transport')"
                       :label="t('common.transport')"
                       label-class="text-[#A8AAAE] text-xs font-medium"
-                      required
+                      
                     />
                     <div class="grid grid-cols-2 gap-4">
                       <AppInput
@@ -1570,7 +1570,7 @@ const changeUser = (val, key) => {
                         :placeholder="t('licence.enter_number')"
                         :label="t('licence.number')"
                         label-class="text-[#A8AAAE] text-xs font-medium"
-                        required
+                        
                         :max="20"
                         :maxlength="20"
                       />
@@ -1580,7 +1580,7 @@ const changeUser = (val, key) => {
                         placeholder="дд.мм.гггг"
                         :label="t('licence.date')"
                         label-class="text-[#A8AAAE] text-xs font-medium"
-                        required
+                        
                       />
                       <AppInput
                         v-model="item.sanitary"
@@ -1588,7 +1588,7 @@ const changeUser = (val, key) => {
                         :placeholder="t('document.sanitaryConclusion.enter_number')"
                         :label="t('document.sanitaryConclusion.number')"
                         label-class="text-[#A8AAAE] text-xs font-medium"
-                        required
+                        
                         :max="20"
                       />
                       <AppDatePicker
@@ -1597,7 +1597,7 @@ const changeUser = (val, key) => {
                         placeholder="дд.мм.гггг"
                         :label="t('document.sanitaryConclusion.date')"
                         label-class="text-[#A8AAAE] text-xs font-medium"
-                        required
+                        
                       />
                       <AppInput
                         v-model="item.vetirinary"
@@ -1605,7 +1605,7 @@ const changeUser = (val, key) => {
                         :placeholder="t('document.veterinaryCertificate.enter_number')"
                         :label="t('document.veterinaryCertificate.number')"
                         label-class="text-[#A8AAAE] text-xs font-medium"
-                        required
+                        
                         :max="20"
                       />
                       <AppDatePicker
@@ -1614,7 +1614,7 @@ const changeUser = (val, key) => {
                         placeholder="дд.мм.гггг"
                         :label="t('document.veterinaryCertificate.date')"
                         label-class="text-[#A8AAAE] text-xs font-medium"
-                        required
+                        
                       />
                       <AppInput
                         v-model="item.quality"
@@ -1622,7 +1622,7 @@ const changeUser = (val, key) => {
                         :placeholder="t('document.qualityCertificate.enter_number')"
                         :label="t('document.qualityCertificate.number')"
                         label-class="text-[#A8AAAE] text-xs font-medium"
-                        required
+                  
                         :max="20"
                         :maxlength="20"
                       />
@@ -1632,7 +1632,7 @@ const changeUser = (val, key) => {
                         placeholder="дд.мм.гггг"
                         :label="t('document.qualityCertificate.date')"
                         label-class="text-[#A8AAAE] text-xs font-medium"
-                        required
+                        
                       />
                     </div>
                   </div>
