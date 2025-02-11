@@ -15,6 +15,7 @@ import { useCommonStore } from "@/stores/common.store";
 
 
 const commonStore = useCommonStore();
+
 interface ProductItemType {
   id: number;
   price: number;
@@ -314,11 +315,11 @@ const qrData = ref(JSON.stringify(selectedProducts.value));
 
       <div class="my-2 flex items-center justify-between">
         <span class="text-xs">JAMI::</span>
-        <span class="text-xs">{{ (ordersSum + ordersQQS).toLocaleString() }} UZS</span>
+        <span class="text-xs">{{ formatNumber(ordersSum) }} UZS</span>
       </div>
       <div class="my-2 flex items-center justify-between">
         <span class="text-xs">Umumiy summa:</span>
-        <span class="text-xs">{{ formatNumber(ordersSum) }} UZS</span>
+        <span class="text-xs">{{ (ordersSum + ordersQQS).toLocaleString() }} UZS</span>
       </div>
       <div class="my-2 flex items-center justify-between">
         <span class="text-xs">Umumiy QQS:</span>
