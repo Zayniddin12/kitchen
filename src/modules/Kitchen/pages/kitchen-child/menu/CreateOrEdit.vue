@@ -1074,7 +1074,7 @@ const changeInput = async (event: any, index: number, childIndex: number, indexM
 const changeInputMeals = async (event: any, index: number, childIndex: number, indexMeal: number) => {
   // list_dish2es.value[index].data[childIndex].vid_product = null
   if (typeof event !== "object") {
-    const { meal } = await settingsStore.GET_MEALS_DETAIL(event, { kitchen_id: route.params.child_id   });
+    const { meal } = await settingsStore.GET_MEALS_DETAIL(event, { kitchen_id: route.params.child_id });
     console.log(meal);
     // list_dishes.value[index].data[childIndex].meals_list = meal ? meal : {};
     list_dishes.value[index].data[childIndex].mealData[indexMeal].meals_list = meal ? meal : {};
@@ -1094,9 +1094,11 @@ const changeChange = async (event: any, index: number, childIndex: number, index
 };
 
 const addMeal = (index: number, childIndex: string | number) => {
+  console.log(index);
+  console.log(childIndex, "childIndex");
   list_dishes.value[index].data[childIndex].mealData.push(
     {
-      period: index + 1,
+      period: childIndex + 1,
       product: null,
       vid_product: null,
       meal: null,
