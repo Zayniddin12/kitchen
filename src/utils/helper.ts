@@ -26,9 +26,15 @@ export const formatDate = (date: Date) => {
   };
 };
 
-export const formatNumber = (value: number, format = " ") => {
-  if (!value) return 0;
-  return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, `${format}`);
+// export const formatNumber = (value: number, format = " ") => {
+//   if (!value) return 0;
+//   return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, `${format}`);
+// };
+
+export const formatNumber = (value: number, separator: string = " ", decimals: number = 2): string => {
+  if (isNaN(value)) return "0";
+
+  return value.toFixed(decimals).replace(/\B(?=(\d{3})+(?!\d))/g, separator);
 };
 
 export const phoneFormatter = (phoneNumberString: string) => {
