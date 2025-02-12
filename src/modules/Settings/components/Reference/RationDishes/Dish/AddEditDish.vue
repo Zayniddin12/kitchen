@@ -229,7 +229,7 @@ watch(() => dataValue.value.image, () => {
       <div class="w-[70%]">
         <div class="border rounded-[24px] p-[24px]">
           <!--          {{ existingImage }}-->
-          {{ dataValue.image }}
+<!--          {{ dataValue.image }}-->
           <AppMediaUploader
             v-model="dataValue.image"
             :value="existingImage"
