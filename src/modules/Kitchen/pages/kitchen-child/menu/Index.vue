@@ -751,7 +751,7 @@ const clearBasket = () => {
                     <div
                       v-for="productItem in kitchenStore.menuTodaySales.elements"
                       :key="productItem.id"
-                      class="menu__card !p-[8px] !bg-white"
+                      class="menu__card !p-[8px] !bg-white justify-between"
                     >
 
                       <img
@@ -811,8 +811,7 @@ const clearBasket = () => {
                       <!--                      :disabled="productItem.amount == 0 || orders.has(productItem.id) && (orders.get(productItem.id) == productItem.amount)"-->
                       <button v-else
                               @click="updateQuantity(productItem.id)"
-
-                              class="menu__card__actions  bg-[#E2E6F3] px-[24px] py-[14px] rounded-[12px]">
+                              class="menu__card__actions  bg-[#E2E6F3] px-[24px] py-[14px] rounded-[12px] mt-auto">
                         <svg width="21" height="20" viewBox="0 0 21 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                           <path d="M10.5007 4.16699V15.8337" stroke="#4F5662" stroke-width="1.2" stroke-linecap="round"
                                 stroke-linejoin="round" />
