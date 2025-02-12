@@ -242,7 +242,7 @@ watchEffect(() => {
   <section class="kitchen-report">
     <div>
       <h1 class="font-semibold text-[32px] text-dark">
-        {{ t("monitoring.kitchenReport") }}
+        {{ t("monitoring.kitchenSalesReport") }}
       </h1>
       <div class="flex justify-between items-center gap-5 mt-6">
         <div class="app-tabs">
