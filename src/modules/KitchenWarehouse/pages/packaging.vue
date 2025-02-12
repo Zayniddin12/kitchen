@@ -36,7 +36,7 @@ const vidProductsResult = ref<any[]>([]);
 const consumptionTipList = ref<any>([]);
 
 onMounted(async () => {
-  await settingsStore.GET_TYPE_PRODUCT({ kitchen_id: route.params.id4 });
+  await settingsStore.GET_TYPE_PRODUCT({ kitchen_id: route.params.id4, per_page: 200 });
   consumptionTipList.value = settingsStore.typeProduct.product_categories;
 
   await settingsStore.GET_TYPE_PRODUCT();
@@ -61,13 +61,13 @@ const deleteConsumption = (index: number) => {
 const fetchVidProductsList = async (item: any, index: number) => {
   vidProducts.value[index] = await settingsStore.GET_VID_PRODUCT({
     parent_id: item.category_id,
-    per_page: 100,
+    per_page: 200,
     kitchen_id: route.params.id4,
   });
 };
 
 const changeProduct = async (item: any, index: number) => {
-  const activeVidProduct = vidProducts.value[index].product_types.find(el => el);
+  const activeVidProduct = vidProducts.value[index].product_types.find(el => el.id == item.product_type_id);
   if (activeVidProduct) {
     item.measurement = activeVidProduct.unit;
     item.price = activeVidProduct.price || 0;
@@ -100,7 +100,7 @@ const resultFetchVidProductsList = async (item: any, index: number) => {
 };
 
 const resultChangeProduct = (item: any, index: number) => {
-  const data = vidProductsResult.value[index].product_types.find(el => el);
+  const data = vidProductsResult.value[index].product_types.find(el => el.id == item.product_type_id);
   if (data) {
     item.measurement = data.unit;
     item.price = data.price;

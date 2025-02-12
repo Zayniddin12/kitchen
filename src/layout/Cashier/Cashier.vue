@@ -285,7 +285,7 @@ const generateReceiptIndex = computed(() => {
 
 <template>
   <div>
-    <div class="text-left receipt">
+    <div class="text-left receipt absolute">
       <p class="text-center">***Добро пожаловать!***</p>
 
       <div class="flex items-center flex-col my-[15px] justify-center">
@@ -391,7 +391,7 @@ const generateReceiptIndex = computed(() => {
                   </RouterLink>
                 </div>
 
-                <div class="overflow-y-auto h-[72vh] 2xl:h-[80vh] pr-2">
+                <div class="overflow-y-auto h-[72vh] 2xl:h-[75vh] pr-2">
                   <div class="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6"
                        v-if="products.length > 0">
                     <div
@@ -422,7 +422,7 @@ const generateReceiptIndex = computed(() => {
                       </h5>
                       <div
                         v-if="orders.get(productItem.id)"
-                        class="menu__card__actions !justify-between  bg-[#E2E6F3] px-[24px] py-[14px] rounded-[12px]">
+                        class="menu__card__actions !justify-between  bg-[#E2E6F3] px-[24px] py-[14px] rounded-[12px] mt-auto">
                         <button
                           @click="updateQuantity(productItem.id, false)"
                           :disabled="!orders.has(productItem.id)"
@@ -457,7 +457,7 @@ const generateReceiptIndex = computed(() => {
                       <button v-else
                               @click="updateQuantity(productItem.id)"
                               :disabled="productItem.amount == 0 || orders.has(productItem.id) && (orders.get(productItem.id) == productItem.amount)"
-                              class="menu__card__actions  bg-[#E2E6F3] px-[24px] py-[14px] rounded-[12px]">
+                              class="mt-auto menu__card__actions  bg-[#E2E6F3] px-[24px] py-[14px] rounded-[12px]">
                         <svg width="21" height="20" viewBox="0 0 21 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                           <path d="M10.5007 4.16699V15.8337" stroke="#4F5662" stroke-width="1.2" stroke-linecap="round"
                                 stroke-linejoin="round" />
@@ -642,6 +642,7 @@ const generateReceiptIndex = computed(() => {
   .receipt {
     margin: 10px;
     display: block;
+    position: static !important;
   }
 
   .no-receipt {

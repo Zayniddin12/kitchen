@@ -806,9 +806,10 @@ const changeUser = (val, key) => {
                 :label="t('common.price')"
               >
                 <template #default="{ row }: { row: DocumentProductType }">
-                  {{
-                    row.price ? `${formatNumber(row.price as number)} ${t("currency.sum")}` : "-"
-                  }}
+                  <!--                  {{-->
+                  <!--                    row.price ? `${formatNumber(row.price as number)} ${t("currency.sum")}` : "-"-->
+                  <!--                  }}-->
+                  {{ row.price ? `${row.price}  ${t("currency.sum")}` : "-" }}
                 </template>
               </el-table-column>
               <el-table-column
@@ -906,18 +907,18 @@ const changeUser = (val, key) => {
               </span>
               </div>
 
-              <div class="flex items-center justify-between mb-[24px]">
-                <h2 class="text-[#4F5662] text-sm font-semibold">
-                  <!--                  {{ t("document.commission.baseChief") }}:-->
-                  {{ actForm.doc_signer_obj.signer_id_6 ? getUser(actForm.doc_signer_obj.signer_id_6).position + ":" : ""
-                  }}
-                </h2>
-                <span class="ml-2 text-[#A8AAAE] text-sm font-medium block">
-                {{
-                    actForm.doc_signer_obj.signer_id_6 && typeof (actForm.doc_signer_obj.signer_id_6) === "number" ? usersStore.getUserFullName(getUser(actForm.doc_signer_obj.signer_id_6)) : ""
-                  }}
-              </span>
-              </div>
+              <!--              <div class="flex items-center justify-between mb-[24px]">-->
+              <!--                <h2 class="text-[#4F5662] text-sm font-semibold">-->
+              <!--                  &lt;!&ndash;                  {{ t("document.commission.baseChief") }}:&ndash;&gt;-->
+              <!--                  {{ actForm.doc_signer_obj.signer_id_6 ? getUser(actForm.doc_signer_obj.signer_id_6).position + ":" : ""-->
+              <!--                  }}-->
+              <!--                </h2>-->
+              <!--                <span class="ml-2 text-[#A8AAAE] text-sm font-medium block">-->
+              <!--                {{-->
+              <!--                    actForm.doc_signer_obj.signer_id_6 && typeof (actForm.doc_signer_obj.signer_id_6) === "number" ? usersStore.getUserFullName(getUser(actForm.doc_signer_obj.signer_id_6)) : ""-->
+              <!--                  }}-->
+              <!--              </span>-->
+              <!--              </div>-->
             </template>
           </div>
         </div>
@@ -1175,9 +1176,8 @@ const changeUser = (val, key) => {
                       disabled
                     />
                   </div>
-                  <AppInput
-                    v-model.number="product.price"
-                    type="number"
+                  <app-input
+                    v-model="product.price"
                     :prop="`products[${index}].price`"
                     :placeholder="t('common.enter_price')"
                     :label="t('common.price')"
@@ -1814,22 +1814,22 @@ const changeUser = (val, key) => {
                   </template>
                 </AppSelect>
 
-                <AppSelect
-                  v-model="actForm.doc_signer_obj.signer_id_6"
-                  :placeholder="t('document.commission.chef')"
-                  :label="t('document.commission.chef')"
-                  label-class="text-[#A8AAAE] text-xs font-medium"
-                  @change="changeUser($event, 'signer_id_6')"
-                >
-                  <template v-if="signersList.head_chef.users">
-                    <ElOption
-                      v-for="item in signersList.head_chef.users"
-                      :key="item.id"
-                      :label="usersStore.getUserFullName(item)"
-                      :value="item.id"
-                    />
-                  </template>
-                </AppSelect>
+                <!--                <AppSelect-->
+                <!--                  v-model="actForm.doc_signer_obj.signer_id_6"-->
+                <!--                  :placeholder="t('document.commission.chef')"-->
+                <!--                  :label="t('document.commission.chef')"-->
+                <!--                  label-class="text-[#A8AAAE] text-xs font-medium"-->
+                <!--                  @change="changeUser($event, 'signer_id_6')"-->
+                <!--                >-->
+                <!--                  <template v-if="signersList.head_chef.users">-->
+                <!--                    <ElOption-->
+                <!--                      v-for="item in signersList.head_chef.users"-->
+                <!--                      :key="item.id"-->
+                <!--                      :label="usersStore.getUserFullName(item)"-->
+                <!--                      :value="item.id"-->
+                <!--                    />-->
+                <!--                  </template>-->
+                <!--                </AppSelect>-->
               </template>
             </div>
           </div>

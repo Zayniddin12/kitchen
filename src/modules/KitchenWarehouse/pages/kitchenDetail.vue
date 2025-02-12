@@ -57,6 +57,7 @@ const validTabs = tabs.value.map(tab => tab.value);
 
 const validRouteTab = (tab: string | null): TABS => {
   const newTab = Number(tab);
+  console.log(tab, "newTab");
   return validTabs.includes(newTab as TABS) ? (newTab as TABS) : defaultTab;
 };
 
@@ -656,6 +657,14 @@ const packagingPage = () => {
                     </template>
                   </ElTableColumn>
                   <ElTableColumn
+                    prop="net_price"
+                    :label="t('Цена закупки')"
+                  >
+                    <template #default="{ row }: { row: ListProductType }">
+                      {{ row.net_price || "—" }}
+                    </template>
+                  </ElTableColumn>
+                  <ElTableColumn
                     prop="transportation_costs_percent"
                     :label="t('common.tzr')"
                     width="130"
@@ -724,6 +733,14 @@ const packagingPage = () => {
                       <template v-else>
                         {{ row.vat_percent }}%
                       </template>
+                    </template>
+                  </ElTableColumn>
+                  <ElTableColumn
+                    prop="price"
+                    :label="t('Цена с наценкой')"
+                  >
+                    <template #default="{ row }: { row: ListProductType }">
+                      {{ row.price ? `${row.price} ${t("currency.sum")}` : "—" }}
                     </template>
                   </ElTableColumn>
                   <ElTableColumn
