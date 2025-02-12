@@ -57,6 +57,7 @@ const validTabs = tabs.value.map(tab => tab.value);
 
 const validRouteTab = (tab: string | null): TABS => {
   const newTab = Number(tab);
+  console.log(tab, "newTab");
   return validTabs.includes(newTab as TABS) ? (newTab as TABS) : defaultTab;
 };
 

@@ -36,7 +36,7 @@ const vidProductsResult = ref<any[]>([]);
 const consumptionTipList = ref<any>([]);
 
 onMounted(async () => {
-  await settingsStore.GET_TYPE_PRODUCT({ kitchen_id: route.params.id4 });
+  await settingsStore.GET_TYPE_PRODUCT({ kitchen_id: route.params.id4, per_page: 200 });
   consumptionTipList.value = settingsStore.typeProduct.product_categories;
 
   await settingsStore.GET_TYPE_PRODUCT();
@@ -61,7 +61,7 @@ const deleteConsumption = (index: number) => {
 const fetchVidProductsList = async (item: any, index: number) => {
   vidProducts.value[index] = await settingsStore.GET_VID_PRODUCT({
     parent_id: item.category_id,
-    per_page: 100,
+    per_page: 200,
     kitchen_id: route.params.id4,
   });
 };
