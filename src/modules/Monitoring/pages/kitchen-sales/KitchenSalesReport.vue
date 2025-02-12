@@ -146,21 +146,6 @@ const mealTimeTable = ref({
   drinks: t("mealTimeTable.drinks"),
 });
 
-const mealTimeKeys = Object.keys(mealTimeTable.value) as Array<
-  keyof typeof mealTimeTable.value
->;
-
-const updatedSoldItems = computed(() => {
-  return salesReportStore.salesReport?.sold_items?.map((item, index) => ({
-    ...item,
-    mealTime: mealTimeKeys[index]
-      ? mealTimeTable.value[mealTimeKeys[index]]
-      : null,
-  }));
-});
-
-
-
 const dishesTableColumns = computed<TableColumnType[]>(() => {
   return [
     {
@@ -281,8 +266,8 @@ watchEffect(() => {
             :items="kitchenStore.kitchenAll"
             item-value="id"
             item-label="name"
-            :label="t('kitchen.selectKitchen')"
-            :placeholder="t('kitchen.selectKitchenPlaceholder')"
+            :label="t('kitchen.title')"
+            :placeholder="t('salesReport.choose_kitchen')"
             label-class="text-[#A8AAAE] text-xs font-medium"
             clearable
             @clear="onKitchenClear"
@@ -292,7 +277,7 @@ watchEffect(() => {
           <AppDatePicker
             size="large"
             v-model="selectedDate"
-            :label="t('monitoring.selectDate')"
+            :label="t('common.date')"
             label-class="text-[#A8AAAE] text-xs font-medium"
           />
 
@@ -373,13 +358,13 @@ watchEffect(() => {
           </div>
           <div
             v-else
-            v-for="(solds, index) in updatedSoldItems"
+            v-for="(solds, index) in salesReportStore.salesReport.sold_items"
             :key="index"
           >
             <h2
               class="font-semibold text-black text-2xl text-center mx-auto mt-5"
             >
-              {{ t(`${mealTime}`) }}
+              {{ solds.period_name }}
             </h2>
 
             <ElTable
