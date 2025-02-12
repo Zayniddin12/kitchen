@@ -2,13 +2,16 @@
   setup
   lang="ts"
 >
-
 import { RouteRecordRaw, useRoute, useRouter } from "vue-router";
 import { computed, onMounted, reactive, ref, watch } from "vue";
 import { UsersParamsType, UserType } from "@/modules/Users/users.types";
 import { StatusType } from "@/types/common.type";
 import { useUsersStore } from "@/modules/Users/users.store";
-import { filterObjectValues, phoneFormatter, setTableColumnIndex } from "@/utils/helper";
+import {
+  filterObjectValues,
+  phoneFormatter,
+  setTableColumnIndex,
+} from "@/utils/helper";
 import AppInput from "@/components/ui/form/app-input/AppInput.vue";
 import { Search } from "@element-plus/icons-vue";
 import { watchDebounced } from "@vueuse/core";
@@ -36,8 +39,8 @@ const v$ = ref<ValidationType | null>(null);
 const validationErrors = ref<Record<string, any> | null>(null);
 
 interface StatusTabType {
-  name: string,
-  value: StatusType
+  name: string;
+  value: StatusType;
 }
 
 const statuses = computed<StatusTabType[]>(() => {
@@ -78,7 +81,6 @@ const fetchUsers = async () => {
   form.search = query.search || "";
   form.page = !isNaN(intPage) ? intPage : null;
 
-
   if (v$.value && !(await v$.value.validate())) {
     commonStore.errorToast("Validation Error");
     return;
@@ -104,7 +106,9 @@ const data = computed(() => {
 });
 
 const loading = computed(() => {
-  return userStore.activeUserPage ? userStore.usersLoading : userStore.employeesLoading;
+  return userStore.activeUserPage
+    ? userStore.usersLoading
+    : userStore.employeesLoading;
 });
 
 const changePage = () => {
@@ -130,20 +134,29 @@ const setBreadCrumbFn = () => {
   ]);
 };
 
+watch(
+  () => route.query,
+  () => {
+    fetchUsers();
+  },
+  { immediate: true }
+);
 
-watch(() => route.query, () => {
-  fetchUsers();
-}, { immediate: true });
+watchDebounced(
+  () => form.search,
+  () => {
+    router.push({ query: filterObjectValues({ search: form.search }) });
+  },
+  { debounce: 1000, maxWait: 5000 }
+);
 
-
-watchDebounced(() => form.search, () => {
-  router.push({ query: filterObjectValues({ search: form.search }) });
-}, { debounce: 1000, maxWait: 5000 });
-
-watch(() => route.name, () => {
-  setBreadCrumbFn();
-}, { immediate: true });
-
+watch(
+  () => route.name,
+  () => {
+    setBreadCrumbFn();
+  },
+  { immediate: true }
+);
 </script>
 
 <template>
@@ -163,7 +176,7 @@ watch(() => route.name, () => {
           <RouterLink
             v-for="tab in statuses"
             :key="tab.value"
-            :to="{query: statusTabUrl(tab.value)}"
+            :to="{ query: statusTabUrl(tab.value) }"
             :class="[
               'app-tab',
               { 'app-tab--active': form.status === tab.value },
@@ -177,7 +190,7 @@ watch(() => route.name, () => {
         <AppForm
           :value="form"
           :validation-errors
-          @validation="(value) => v$ = value"
+          @validation="value => (v$ = value)"
         >
           <AppInput
             v-model="form.search"
@@ -216,7 +229,7 @@ watch(() => route.name, () => {
         label="№"
         width="80"
       >
-        <template #default="{$index}">
+        <template #default="{ $index }">
           {{ setTableColumnIndex($index, form.page as number, data?.pagination.per_page ?? 0) }}
         </template>
       </ElTableColumn>
@@ -225,7 +238,7 @@ watch(() => route.name, () => {
         prop="full_name"
         sortable
       >
-        <template #default="{row}:{row:UserType}">
+        <template #default="{ row }: { row: UserType }">
           <div
             v-if="row.avatar || row.firstname || row.lastname"
             class="flex items-center gap-x-3"
@@ -240,9 +253,7 @@ watch(() => route.name, () => {
               {{ userStore.getUserFullName(row) }}
             </span>
           </div>
-          <template v-else>
-            —
-          </template>
+          <template v-else>—</template>
         </template>
       </ElTableColumn>
       <template v-if="userStore.activeUserPage">
@@ -251,7 +262,7 @@ watch(() => route.name, () => {
           prop="position"
           sortable
         >
-          <template #default="{row}:{row:UserType}">
+          <template #default="{ row }: { row: UserType }">
             {{ row.position || "—" }}
           </template>
         </ElTableColumn>
@@ -260,7 +271,7 @@ watch(() => route.name, () => {
           prop="phone"
           sortable
         >
-          <template #default="{row}:{row:UserType}">
+          <template #default="{ row }: { row: UserType }">
             {{ row.phone ? phoneFormatter(row.phone) : "—" }}
           </template>
         </ElTableColumn>
@@ -268,7 +279,7 @@ watch(() => route.name, () => {
           label="OneID"
           prop="is_oneid_enabled"
         >
-          <template #default="{row}:{row:UserType}">
+          <template #default="{ row }: { row: UserType }">
             {{ row.is_oneid_enabled ? "Есть" : "—" }}
           </template>
         </ElTableColumn>
@@ -279,7 +290,7 @@ watch(() => route.name, () => {
           prop="organization_name"
           sortable
         >
-          <template #default="{row}:{row:UserType}">
+          <template #default="{ row }: { row: UserType }">
             {{ row.organization_name || "—" }}
           </template>
         </ElTableColumn>
@@ -288,7 +299,7 @@ watch(() => route.name, () => {
           prop="work_hours"
           sortable
         >
-          <template #default="{row}:{row:UserType}">
+          <template #default="{ row }: { row: UserType }">
             {{ row.work_hours ? `${row.work_hours} часов` : "—" }}
           </template>
         </ElTableColumn>
@@ -297,16 +308,21 @@ watch(() => route.name, () => {
         label="Статус"
         prop="status"
       >
-        <template #default="{row}:{row:UserType}">
+        <template #default="{ row }: { row: UserType }">
           <div
-            :class="['py-2 px-4 rounded-full text-center text-sm font-medium inline-flex items-center justify-center w-[125px] min-h-10',row.status === 'active' ? 'text-[#22A95E] bg-[#D4F4E2]' : 'text-[#8F9194] bg-[#EEEEEF]']"
+            :class="[
+              'py-2 px-4 rounded-full text-center text-sm font-medium inline-flex items-center justify-center w-[125px] min-h-10',
+              row.status === 'active'
+                ? 'text-[#22A95E] bg-[#D4F4E2]'
+                : 'text-[#8F9194] bg-[#EEEEEF]',
+            ]"
           >
             {{ row.status === "active" ? "Активный" : "Неактивный" }}
           </div>
         </template>
       </ElTableColumn>
       <ElTableColumn label="Действие">
-        <template #default="{row}:{row:UserType}">
+        <template #default="{ row }: { row: UserType }">
           <div
             @click.stop
             class="inline-flex items-center"

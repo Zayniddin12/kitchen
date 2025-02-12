@@ -51,12 +51,17 @@ interface KitchenType {
   name: string;
   kitchen_capacity: number;
 }
+interface KitchenALL {
+  id: number;
+  name: string;
+}
 
 export const useKitchenStore = defineStore("kitchenStore", () => {
   const { t } = useI18n();
 
   const kitchenVid = ref<KitchenVid[] | []>([]);
   const kitchenType = ref<KitchenType[] | []>([]);
+  const kitchenAll = ref<KitchenALL[] | []>([])
   const mealsList = ref({});
   const settingsStore = useSettingsStore();
 
@@ -89,7 +94,7 @@ export const useKitchenStore = defineStore("kitchenStore", () => {
 
   // GET MENU ITEM
   const GET_MENU_ITEM = async (kitchen_id: any, params: any) => {
-    const { data } = await $axios.get(`/menus/${kitchen_id}`, {params});
+    const { data } = await $axios.get(`/menus/${kitchen_id}`, { params });
 
     menuItem.value = data.data;
   };
@@ -146,9 +151,9 @@ export const useKitchenStore = defineStore("kitchenStore", () => {
   };
 
   const GET_CURRENT_MENU_SALES_LIST = async ({
-                                               id,
-                                               params,
-                                             }: { id: number | string, params: any }) => {
+    id,
+    params,
+  }: { id: number | string, params: any }) => {
     const { data } = await $axios.get(`/kitchen-sales/${id}/sell-menu-today`, { params });
     menuTodaySales.value = data.data;
     return data;
@@ -173,9 +178,9 @@ export const useKitchenStore = defineStore("kitchenStore", () => {
   };
 
   const CREATE_KITCHEN_ELEMENT = async ({
-                                          id,
-                                          payload,
-                                        }: {
+    id,
+    payload,
+  }: {
     id: string; payload: any;
   }) => {
     const { data } = await $axios.post(`/kitchen-sales/menu/${id}/add-element`, payload);
@@ -195,6 +200,12 @@ export const useKitchenStore = defineStore("kitchenStore", () => {
     const { data } = await $axios.get("/kitchen-warehouses/list", { params });
 
     kitchenType.value = data.data && data.data.kitchen_warehouses;
+  };
+
+  const GET_KITCHEN_ALL = async (params?: Params) => {
+    const { data } = await $axios.get("/kitchen-warehouses/all", { params });
+
+    kitchenAll.value = data.data && data.data.kitchen_warehouses;
   };
 
   const GET_KITCHEN_LIST = async (params?: Params) => {
@@ -284,8 +295,10 @@ export const useKitchenStore = defineStore("kitchenStore", () => {
     GET_KITCHEN_LIST,
     GET_KITCHEN_VID,
     GET_KITCHEN_TYPE,
+    GET_KITCHEN_ALL,
     departments,
     kitchenType,
+    kitchenAll,
     kitchenVid, // fetchDepartments,
     // kitchenMenu,
     fetchPart,

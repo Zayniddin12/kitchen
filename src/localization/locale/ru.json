@@ -205,6 +205,15 @@
   "pagination": {
     "description": "Показано {start}–{end} из {count} результатов"
   },
+  "salesReport": {
+    "name": "Наименование блюд/продуктов",
+    "prepared_portion": "Приготовленная порция",
+    "amount": "Цена",
+    "total_amount": "Общая сумма",
+    "number_leftovers": "Количество остатков",
+    "choose_kitchen": "Выберите кухню",
+    "": ""
+  },
   "form": {
     "enter": "Введите",
     "select": "Выберите",
@@ -505,6 +514,15 @@
     "lunch": "Обед",
     "dinner": "Ужин",
     "extra_food": "Сухой питания"
+  },
+  "mealTimeTable": {
+    "breakfast": "Завтрак",
+    "first": "Первое",
+    "second": "Второе",
+    "salads": "Салаты",
+    "desserts": "Десерты",
+    "supplements": "Добавки",
+    "drinks": "Напитки"
   },
   "monitoring": {
     "title": "Мониторинг",

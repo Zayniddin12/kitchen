@@ -44,7 +44,7 @@ export default [
       {
         path: "kitchen-sales-report",
         name: "monitoring.kitchenSalesReport",
-        component: () => import("@/modules/Monitoring/pages/KitchenSalesReport.vue"),
+        component: () => import("@/modules/Monitoring/pages/kitchen-sales/KitchenSalesReport.vue"),
         meta: {
           titile: "monitoring.kitchenSalesReport",
           isTranslate: true

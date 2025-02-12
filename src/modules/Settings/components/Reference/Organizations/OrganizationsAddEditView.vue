@@ -202,7 +202,6 @@ watch(() => route.name, () => {
                 :placeholder="$t('form.select')"
                 label-class="text-[#A8AAAE] font-medium text-[12px]"
                 class="w-full"
-                required
                 prop="tin"
                 :disabled="isDisabled"
               />
