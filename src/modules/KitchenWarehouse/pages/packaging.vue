@@ -67,7 +67,7 @@ const fetchVidProductsList = async (item: any, index: number) => {
 };
 
 const changeProduct = async (item: any, index: number) => {
-  const activeVidProduct = vidProducts.value[index].product_types.find(el => el);
+  const activeVidProduct = vidProducts.value[index].product_types.find(el => el.id == item.product_type_id);
   if (activeVidProduct) {
     item.measurement = activeVidProduct.unit;
     item.price = activeVidProduct.price || 0;
@@ -100,7 +100,7 @@ const resultFetchVidProductsList = async (item: any, index: number) => {
 };
 
 const resultChangeProduct = (item: any, index: number) => {
-  const data = vidProductsResult.value[index].product_types.find(el => el);
+  const data = vidProductsResult.value[index].product_types.find(el => el.id == item.product_type_id);
   if (data) {
     item.measurement = data.unit;
     item.price = data.price;
