@@ -55,7 +55,7 @@ watch(() => route.params.id3, () => {
   <div
     v-if="kitchenStore.kitchenType.length"
     class="flex flex-wrap gap-6"
-  >dasda
+  >
     <RouterLink
       class="bg-[#F8F9FC] w-[155px] h-[105px] rounded-[16px] flex flex-col justify-center items-center"
       v-for="item in kitchenStore.kitchenType"
