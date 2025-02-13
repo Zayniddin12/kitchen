@@ -41,6 +41,7 @@
     "numberOfWarehouses": "Количество складов"
   },
   "common": {
+    "copyData": "Скопировать на следуший день",
     "date_from": "С",
     "date_to": "По",
     "select_recipient": "Выберите получателя",
