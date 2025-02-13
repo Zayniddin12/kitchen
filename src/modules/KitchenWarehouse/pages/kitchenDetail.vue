@@ -284,7 +284,7 @@ watch(() => route.params.id4, () => {
 }, { immediate: true });
 
 onMounted(() => {
-  settingsStore.GET_VID_PRODUCT({ per_page: 100 });
+  settingsStore.GET_VID_PRODUCT({ per_page: 200 });
   settingsStore.GET_UNITS();
 });
 
@@ -645,7 +645,7 @@ const packagingPage = () => {
                     :label="t('common.quantity')"
                   >
                     <template #default="{ row }: { row: ListProductType }">
-                      {{ row.quantity || "—" }}
+                      {{ row.quantity.toFixed(2) || "—" }}
                     </template>
                   </ElTableColumn>
                   <ElTableColumn
@@ -830,7 +830,7 @@ const packagingPage = () => {
                 :label="t('common.quantity')"
               >
                 <template #default="{row}:{row: ListInvoiceType}">
-                  {{ row.quantity || "—" }}
+                  {{ row.quantity.toFixed(2) || "—" }}
                 </template>
               </ElTableColumn>
               <ElTableColumn
