@@ -283,7 +283,7 @@ const fetchVidProductsList = async (product: DocumentProductType) => {
 
   await settingsStore.GET_VID_PRODUCT({
     parent_id: product.category_id,
-    per_page: 100,
+    per_page: 200,
   });
 
   vidProducts.value.set(product.category_id, settingsStore.vidProduct.product_types);
@@ -482,10 +482,10 @@ const openModal = async () => {
 
     }
     if (activeComingModal.value) {
-      await settingsStore.GET_TYPE_PRODUCT();
+      await settingsStore.GET_TYPE_PRODUCT({ per_page: 200 });
 
     } else {
-      await settingsStore.GET_TYPE_PRODUCT({ in_warehouse_id: form.from_id });
+      await settingsStore.GET_TYPE_PRODUCT({ in_warehouse_id: form.from_id, per_page: 200 });
     }
     await settingsStore.GET_UNITS();
 
@@ -1132,13 +1132,15 @@ const changeUser = (val, key) => {
                     </button>
                   </div>
                 </template>
-                <div>
+                <div class="h-[400px]">
                   <AppSelect
                     v-model="product.category_id"
                     :prop="`products[${index}].category_id`"
                     :items="settingsStore.typeProduct.product_categories"
                     item-value="id"
                     item-label="name"
+                    clearable
+                    filterable
                     :label="t('product.type')"
                     :placeholder="t('product.select_type')"
                     label-class="text-[#A8AAAE] text-xs font-medium"
@@ -1153,6 +1155,8 @@ const changeUser = (val, key) => {
                     item-label="name"
                     item-value="id"
                     :label="t('product.view')"
+                    clearable
+                    filterable
                     :placeholder="t('product.select_view')"
                     label-class="text-[#A8AAAE] text-xs font-medium"
                     :disabled="!product.category_id"

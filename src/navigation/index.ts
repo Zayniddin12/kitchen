@@ -24,6 +24,8 @@ export const useLayoutStore = defineStore("layoutStore", () => {
         permissions: [
           "admin",
           "super-admin",
+          "head-warehouse",
+          "accountant-base-warehouse",
         ],
       },
       {
@@ -165,6 +167,7 @@ export const useLayoutStore = defineStore("layoutStore", () => {
           "manager-base",
           "merchandiser",
           "freight-forwarder",
+          "accountant-base-warehouse",
         ],
       },
       {
@@ -181,6 +184,8 @@ export const useLayoutStore = defineStore("layoutStore", () => {
           "head-factory",
           "freight-forwarder",
           "head-chef",
+          "head-warehouse",
+          "accountant-base-warehouse",
         ],
       },
       {
@@ -211,7 +216,6 @@ export const useLayoutStore = defineStore("layoutStore", () => {
           "super-admin",
           "director-foundation",
           "deputy-director-foundation",
-          "accountant-base-warehouse",
           "hr",
         ],
         children: [
@@ -237,7 +241,6 @@ export const useLayoutStore = defineStore("layoutStore", () => {
           "director-foundation",
           "deputy-director-foundation",
           "broker",
-          "accountant-base-warehouse",
         ],
       },
       {
