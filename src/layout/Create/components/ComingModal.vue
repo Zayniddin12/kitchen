@@ -1139,6 +1139,8 @@ const changeUser = (val, key) => {
                     :items="settingsStore.typeProduct.product_categories"
                     item-value="id"
                     item-label="name"
+                    clearable
+                    filterable
                     :label="t('product.type')"
                     :placeholder="t('product.select_type')"
                     label-class="text-[#A8AAAE] text-xs font-medium"
@@ -1153,6 +1155,8 @@ const changeUser = (val, key) => {
                     item-label="name"
                     item-value="id"
                     :label="t('product.view')"
+                    clearable
+                    filterable
                     :placeholder="t('product.select_view')"
                     label-class="text-[#A8AAAE] text-xs font-medium"
                     :disabled="!product.category_id"
