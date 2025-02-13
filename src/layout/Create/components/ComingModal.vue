@@ -283,7 +283,7 @@ const fetchVidProductsList = async (product: DocumentProductType) => {
 
   await settingsStore.GET_VID_PRODUCT({
     parent_id: product.category_id,
-    per_page: 100,
+    per_page: 200,
   });
 
   vidProducts.value.set(product.category_id, settingsStore.vidProduct.product_types);
@@ -482,10 +482,10 @@ const openModal = async () => {
 
     }
     if (activeComingModal.value) {
-      await settingsStore.GET_TYPE_PRODUCT();
+      await settingsStore.GET_TYPE_PRODUCT({ per_page: 200 });
 
     } else {
-      await settingsStore.GET_TYPE_PRODUCT({ in_warehouse_id: form.from_id });
+      await settingsStore.GET_TYPE_PRODUCT({ in_warehouse_id: form.from_id, per_page: 200 });
     }
     await settingsStore.GET_UNITS();
 
