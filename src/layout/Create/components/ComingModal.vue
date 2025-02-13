@@ -1132,7 +1132,7 @@ const changeUser = (val, key) => {
                     </button>
                   </div>
                 </template>
-                <div>
+                <div class="h-[400px]">
                   <AppSelect
                     v-model="product.category_id"
                     :prop="`products[${index}].category_id`"
