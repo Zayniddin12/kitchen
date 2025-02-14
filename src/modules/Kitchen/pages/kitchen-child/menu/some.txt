@@ -172,84 +172,33 @@ watch(
   }
 );
 
-const copyDataToAnotherDay = (sourceDate: string, targetDate: string) => {
-  const sourceListDishes = list_dishes.value.find(d => d.date === sourceDate);
-  const sourceData = data.value.find(d => d.date === sourceDate);
+const syncListDishesWithData = () => {
+  list_dishes.value.forEach(dish => {
+    const menuData = kitchenStore.menuElement.elements[dish.date];
 
-  if (!sourceListDishes && !sourceData) {
-    return;
-  }
-
-  if (sourceListDishes) {
-    const copiedData = JSON.parse(JSON.stringify(sourceListDishes.data));
-
-    const targetIndex = list_dishes.value.findIndex(d => d.date === targetDate);
-
-    if (targetIndex !== -1) {
-      list_dishes.value[targetIndex].data = copiedData;
-    } else {
-      list_dishes.value.push({
-        date: targetDate,
-        data: copiedData,
+    if (menuData) {
+      dish.data.forEach(meal => {
+        if (menuData[meal.id]) {
+          meal.mealData = menuData[meal.id].map(item => ({
+            id: item.id,
+            period: meal.id,
+            start_time: item.start_time,
+            end_time: item.end_time,
+            amount: item.amount,
+            product_type: "ration",
+            product_id: item.product_id,
+            rationsList: {
+              total_price: item.price_total,
+              vat_price: item.vat_price,
+              price: item.price,
+              products: item.product,
+            },
+          }));
+        }
       });
     }
-  }
-
-  if (sourceData) {
-    const copiedData = JSON.parse(JSON.stringify(sourceData.data));
-
-    const targetIndex = data.value.findIndex(d => d.date === targetDate);
-    if (targetIndex !== -1) {
-      data.value[targetIndex].data = copiedData;
-    } else {
-      data.value.push({
-        date: targetDate,
-        data: copiedData,
-      });
-    }
-  }
+  });
 };
-
-const copyToNextDay = () => {
-  const activeIndex = scheduledDates.value.findIndex(
-    d => d.date === activeScheduledDate.value
-  );
-  if (activeIndex === -1 || activeIndex >= scheduledDates.value.length - 1) {
-    return;
-  }
-
-  const nextDate = scheduledDates.value[activeIndex + 1].date;
-
-  copyDataToAnotherDay(activeScheduledDate.value, nextDate);
-
-  activeScheduledDate.value = nextDate;
-};
-
-const canCopyData = computed(() => {
-  const activeIndex = scheduledDates.value.findIndex(
-    d => d.date === activeScheduledDate.value
-  );
-
-  if (activeIndex === -1 || activeIndex >= scheduledDates.value.length - 1) {
-    return false;
-  }
-
-  const currentData = data.value.find(
-    d => d.date === activeScheduledDate.value
-  );
-  const hasCheckedMealData = currentData?.data.some(
-    meal => meal.isChecked && meal.mealData.length > 0
-  );
-
-  const currentListDishes = list_dishes.value.find(
-    d => d.date === activeScheduledDate.value
-  );
-  const hasCheckedListDishesData = currentListDishes?.data.some(
-    meal => meal.isChecked && meal.mealData.length > 0
-  );
-
-  return hasCheckedMealData || hasCheckedListDishesData;
-});
 
 // Watch
 watch(scheduledDates, async newValue => {
@@ -1478,6 +1427,20 @@ const deleteMeal = (
   list_dishes.value[index].data[childIndex].mealData.splice(indexMeal, 1);
 };
 
+watch(
+  () => list_dishes.value,
+  newValue => {
+    console.log("list_dishes изменился:", newValue);
+
+    const hasCheckedMeal = newValue.some(day =>
+      Object.values(day.data).some(
+        child => child.isChecked && child.mealData.length > 0
+      )
+    );
+  },
+  { deep: true }
+);
+
 const title = computed(() => route.meta.title ?? "");
 
 const isTranslate = computed(() => !!route.meta.isTranslate);
@@ -1499,13 +1462,22 @@ const isTranslate = computed(() => !!route.meta.isTranslate);
             <!--            {{ kitchenStore.menuElement.elements }}-->
             <!--            {{ kitchenData }}-->
             <!--            {{ kitchenStore.menuElement }}-->
-            <div>
+            <div class="flex justify-between">
               <h3 class="text-lg font-medium text-dark">
                 {{ t("common.enterDate") }}
               </h3>
+
+              <ElButton
+                type="primary"
+                plain
+                class="mt-6 !bg-white !border-blue-500"
+                @click="copyData()"
+              >
+                {{ t("common.copyData") }}
+              </ElButton>
             </div>
             <!--            {{ kitchenStore.menuItem }}-->
-            <div class="flex justify-between">
+            <div>
               <AppForm
                 :value="kitchenData"
                 @validation="value => (kitchenDatav$ = value)"
@@ -1542,15 +1514,6 @@ const isTranslate = computed(() => !!route.meta.isTranslate);
                   class="app-switch"
                 />
               </AppForm>
-              <ElButton
-               size="large"
-                type="primary"
-                plain
-                @click="copyToNextDay"
-                v-if="canCopyData"
-              >
-                {{ t("common.copyData") }}
-              </ElButton>
             </div>
           </div>
           <ElScrollbar
