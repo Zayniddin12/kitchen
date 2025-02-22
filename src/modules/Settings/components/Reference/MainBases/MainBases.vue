@@ -141,20 +141,24 @@ const tableCurrentChange = (value: Record<string, any>) => {
         <el-table-column
           prop="name"
           :label="$t('Наименование склада')"
+          :width="200"
         >
 
         </el-table-column>
         <el-table-column
           prop="base"
           :label="$t('База складов')"
+          :width="200"
         />
         <el-table-column
           prop="capacity"
           :label="$t('Вместимость склада')"
+          :width="200"
         />
         <el-table-column
           prop="products"
           :label="$t('Продукты хранения')"
+          :width="200"
         >
           <template #default="{row}:{row:BaseWarehouseListType}">
             {{ row.products.map(item => item.name).join(", ") }}
@@ -163,6 +167,7 @@ const tableCurrentChange = (value: Record<string, any>) => {
         <el-table-column
           :label="$t('common.action')"
           align="right"
+          :width="200"
         >
           <template #default="{row}">
             <div class="inline-flex items-center gap-x-2">

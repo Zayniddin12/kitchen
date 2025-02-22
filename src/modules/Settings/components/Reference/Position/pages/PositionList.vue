@@ -128,7 +128,7 @@ watch(() => route.query, fetchPositions, { immediate: true });
       <ElTableColumn
         prop="idx"
         label="№"
-        width="100"
+        width="80"
       >
         <template #default="{$index}">
           {{ setTableColumnIndex($index, form.page ?? 0, positionStore.positionsPagination?.pagination.per_page ?? 0) }}
@@ -138,6 +138,7 @@ watch(() => route.query, fetchPositions, { immediate: true });
         prop="name"
         :label="t('position.name')"
         sortable
+        :width="250"
       >
         <template #default="{row}:{row: PositionType}">
           {{ row.name || "-" }}
@@ -147,6 +148,7 @@ watch(() => route.query, fetchPositions, { immediate: true });
         prop="work_place_name"
         :label="t('position.responsibility')"
         sortable
+        :width="200"
       >
         <template #default="{row}:{row: PositionType}">
           {{ row.work_place_name || "-" }}
@@ -156,6 +158,7 @@ watch(() => route.query, fetchPositions, { immediate: true });
         prop="status"
         :label="t('common.status')"
         sortable
+        :width="200"
       >
         <template #default="{row}:{row: PositionType}">
           <div
@@ -169,6 +172,7 @@ watch(() => route.query, fetchPositions, { immediate: true });
         prop="action"
         :label="t('common.action')"
         align="right"
+        :width="200"
       >
         <template #default="{row}">
           <div

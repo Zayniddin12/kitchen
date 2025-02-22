@@ -155,7 +155,7 @@ const tableCurrentChange = (value: FoodFactoryListType) => {
           prop="name"
           :label="t('base.name')"
           sortable
-          width="400"
+          width="300"
         />
         <el-table-column
           prop="address"

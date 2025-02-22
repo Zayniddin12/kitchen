@@ -174,23 +174,28 @@ const params = ref({
             <el-table-column
               prop="name"
               :label="t('kitchen.ingredients')"
+              :width="200"
             />
             <el-table-column
               prop="quantity"
               :label="t('common.quantity')"
+              :width="200"
             />
             <el-table-column
               prop="unit"
               :label="t('common.measurement')"
+              :width="200"
             />
             <el-table-column
               prop="price"
               :label="t('common.price')"
+              :width="200"
             />
 
             <el-table-column
               prop="net_price"
               :label="t('common.sum')"
+              :width="200"
             />
 
             <template #append>
@@ -234,18 +239,22 @@ const params = ref({
             <el-table-column
               prop="product_type_name"
               :label="t('kitchen.ingredients')"
+              :width="200"
             />
             <el-table-column
               prop="quantity"
               :label="t('common.quantity')"
+              :width="200"
             />
             <el-table-column
               prop="unit"
               :label="t('common.measurement')"
+              :width="200"
             />
             <el-table-column
               prop="price"
               :label="t('common.price')"
+              :width="200"
             >
               <template #default="{row, $index}">
                 {{ (row.price && row.price.toLocaleString()) }} сум
@@ -255,6 +264,7 @@ const params = ref({
             <el-table-column
               prop="net_price"
               :label="t('common.sum')"
+              :width="200"
             >
               <template #default="{row, $index}">
                 {{ (row.price * parseInt(row.quantity)).toLocaleString() }} сум

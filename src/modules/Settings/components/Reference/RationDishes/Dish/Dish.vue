@@ -149,6 +149,7 @@ const tableCurrentChange = (value:Record<string, any>) => {
           prop="image"
           :label="$t('Картинка блюды')"
           sortable
+          :width="200"
       >
         <template #default="scope">
           <img
@@ -170,18 +171,21 @@ const tableCurrentChange = (value:Record<string, any>) => {
           prop="name"
           :label="$t('Наименование блюда')"
           sortable
+          :width="200"
       />
       <el-table-column
           prop="number"
           :label="$t('common.uniqueNumber')"
           sortable
+          :width="200"
       />
       <el-table-column
           prop="unit"
           :label="$t('common.measurement')"
           sortable
+          :width="200"
       />
-      <el-table-column :label="$t('common.action')">
+      <el-table-column :label="$t('common.action')" :width="200">
         <template #default="scope">
           <button
             v-if="$can('read', 'Button')"

@@ -292,7 +292,7 @@ watch(model, (newModel) => {
     </template>
 
     <div class="flex">
-      <div class="border-[#E2E6F3] bg-[#fff] border rounded-[15px] w-[65%] mr-0">
+      <div class="border-[#E2E6F3] bg-[#fff] border rounded-[15px] w-[62%] mr-0">
         <AppOverlay
           :loading="documentStore.documentLoading"
           class="px-[72px] pb-[150px]"
@@ -461,7 +461,7 @@ watch(model, (newModel) => {
         </AppOverlay>
       </div>
 
-      <div class="w-[35%] ml-[24px] flex flex-col justify-between">
+      <div class="w-[38%] ml-[24px] flex flex-col justify-between">
         <AppForm
           :value="form"
           @validation="(value:ValidationType) => v$ = value"

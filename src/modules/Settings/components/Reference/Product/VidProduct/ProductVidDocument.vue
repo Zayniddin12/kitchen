@@ -1,6 +1,6 @@
 <script
-    setup
-    lang="ts"
+  setup
+  lang="ts"
 >
 import { Search } from "@element-plus/icons-vue";
 import { onMounted, ref } from "vue";
@@ -22,7 +22,7 @@ const { setBreadCrumb } = useBreadcrumb();
 const params = ref<Params>({
   search: null,
   page: 1,
-  per_page: 10
+  per_page: 10,
 });
 const loading = ref<boolean>(false);
 let time: ReturnType<typeof setTimeout>;
@@ -49,20 +49,20 @@ const refresh = async () => {
 const setBreadCrumbFn = () => {
   setBreadCrumb([
     {
-      label: "Настройки"
+      label: "Настройки",
     },
     {
       label: "Продукты",
-      to: { name: "reference" }
+      to: { name: "reference" },
     },
     {
       label: "Продукты",
-      to: { name: "reference" }
+      to: { name: "reference" },
     },
     {
       label: "Виды продуктов",
-      isActionable: true
-    }
+      isActionable: true,
+    },
   ]);
 };
 
@@ -90,111 +90,116 @@ const tableCurrentChange = (value: Record<string, any>) => {
 <template>
   <div>
     <div class="flex items-center justify-between">
-      <h1 class="m-0 font-semibold text-[32px] leading-[48px]">{{$t('vidProduct.title')}}</h1>
+      <h1 class="m-0 font-semibold text-[32px] leading-[48px]">{{ $t("vidProduct.title") }}</h1>
 
       <div class="flex items-center">
         <el-input
-            v-model="params.search"
-            :placeholder="$t('form.search')"
-            :prefix-icon="Search"
-            class="w-[300px]"
-            size="large"
-            @input="changeSearch"
+          v-model="params.search"
+          :placeholder="$t('form.search')"
+          :prefix-icon="Search"
+          class="w-[300px]"
+          size="large"
+          @input="changeSearch"
         />
 
         <button
           v-if="$can('create', 'Button')"
-            class="custom-apply-btn ml-[16px] h-11"
-            @click="router.push('/reference-vid-add')"
+          class="custom-apply-btn ml-[16px] h-11"
+          @click="router.push('/reference-vid-add')"
         >
           <img
-              src="@/assets/images/icons/plus.svg"
-              alt="plus"
+            src="@/assets/images/icons/plus.svg"
+            alt="plus"
           />
-          {{$t('method.add')}}
+          {{ $t("method.add") }}
         </button>
       </div>
     </div>
 
 
     <el-table
-        :data="store.vidProduct.product_types"
-        v-loading="loading"
-        class="custom-element-table mt-[24px]"
-        stripe
-        :empty-text="$t('Нет доступных данных')"
-        highlight-current-row
-        @current-change="tableCurrentChange"
+      :data="store.vidProduct.product_types"
+      v-loading="loading"
+      class="custom-element-table mt-[24px]"
+      style="width: 100%;"
+      stripe
+      :empty-text="$t('Нет доступных данных')"
+      highlight-current-row
+      @current-change="tableCurrentChange"
     >
       <el-table-column
-          prop="idx"
-          label="№"
-          width="80"
+        prop="idx"
+        label="№"
+        width="80"
       >
         <template
-            #default="{$index}"
-            v-if="store.rationList.rations"
+          #default="{$index}"
+          v-if="store.rationList.rations"
         >
           {{ params.page > 1 ? store.vidProduct.pagination.per_page * (params.page - 1) + $index + 1 : $index + 1 }}
         </template>
       </el-table-column>
       <el-table-column
-          prop="photo"
-          :label="$t('Картинка вида продукта')"
+        prop="photo"
+        :label="$t('Картинка вида продукта')"
+        :width="200"
       >
         <template #default="scope">
           <img
-              v-if="scope.row.image"
-              :src="scope.row.image"
-              alt="#"
-              class="h-[32px] w-[32px] rounded-full"
+            v-if="scope.row.image"
+            :src="scope.row.image"
+            alt="#"
+            class="h-[32px] w-[32px] rounded-full"
           />
           <img
-              v-else
-              src="https://www.landuse-ca.org/wp-content/uploads/2019/04/no-photo-available.png"
-              alt="#"
-              class="h-[32px] w-[32px] rounded-full object-cover"
+            v-else
+            src="https://www.landuse-ca.org/wp-content/uploads/2019/04/no-photo-available.png"
+            alt="#"
+            class="h-[32px] w-[32px] rounded-full object-cover"
           />
         </template>
       </el-table-column>
       <el-table-column
-          prop="name"
-          :label="$t('Наименование вида продукта')"
-          sortable
+        prop="name"
+        :label="$t('Наименование вида продукта')"
+        sortable
+        :width="200"
       >
         <template #default="scope">
           {{ scope.row.name }}
         </template>
       </el-table-column>
       <el-table-column
-          prop="parent_name"
-          :label="$t('product.type')"
-          sortable
+        prop="parent_name"
+        :label="$t('product.type')"
+        sortable
+        :width="200"
       />
       <el-table-column
-          :label="$t('common.action')"
-          align="right"
+        :label="$t('common.action')"
+        align="right"
+        :width="200"
       >
         <template #default="scope">
           <button
             v-if="$can('read', 'Button')"
-              class="action-btn"
-              @click.stop="router.push(`/reference-vid-view/${scope.row.id}`)"
+            class="action-btn"
+            @click.stop="router.push(`/reference-vid-view/${scope.row.id}`)"
           >
             <img
-                src="@/assets/images/eye.svg"
-                alt="eye"
+              src="@/assets/images/eye.svg"
+              alt="eye"
             />
           </button>
 
           <button
             v-if="$can('update', 'Button')"
-              class="action-btn ml-2"
-              @click="router.push(`/reference-vid-edit/${scope.row.id}`)"
+            class="action-btn ml-2"
+            @click="router.push(`/reference-vid-edit/${scope.row.id}`)"
           >
             <img
-                src="@/assets/images/icons/edit.svg"
-                alt="edit"
+              src="@/assets/images/icons/edit.svg"
+              alt="edit"
             />
           </button>
         </template>
@@ -203,18 +208,24 @@ const tableCurrentChange = (value: Record<string, any>) => {
 
     <div class="mt-[24px] flex items-center justify-between">
       <div class="text-cool-gray text-[14px]">
-        {{$t('Показано 1–10 из')}} {{ store.vidProduct.pagination?.total_count }} {{$t('результатов')}}
+        {{ $t("Показано 1–10 из") }} {{ store.vidProduct.pagination?.total_count }} {{ $t("результатов") }}
       </div>
 
       <el-pagination
-          v-model:current-page="params.page"
-          :page-size="params.per_page"
-          class="float-right"
-          background
-          layout="prev, pager, next"
-          :total="store.vidProduct.pagination?.total_count"
-          @change="changePagination"
+        v-model:current-page="params.page"
+        :page-size="params.per_page"
+        class="float-right"
+        background
+        layout="prev, pager, next"
+        :total="store.vidProduct.pagination?.total_count"
+        @change="changePagination"
       />
     </div>
   </div>
 </template>
+
+<style>
+.custom-element-table table {
+  width: 100% !important;
+}
+</style>

@@ -14,7 +14,7 @@ const { t } = useI18n();
 const props = defineProps<AnalyticsCardPropsType>();
 
 const totalDataValue = computed(() => {
-  return props.data.reduce((sum, { value }) => sum += value, 0);
+  return props.data.reduce((sum, { value }) => sum + value, 0).toFixed(2);
 });
 
 const chartOption = computed(() => {
@@ -70,7 +70,7 @@ const chartOption = computed(() => {
         style: {
           text: totalDataValue.value,
           textAlign: "center",
-          font: "bold 32px Arial",
+          font: "bold 20px Arial",
           fill: "#333",
         },
       },
@@ -106,7 +106,7 @@ const chartOption = computed(() => {
           {{ title }}
         </strong>
         <span class="text-xs text-[#A8AAAE]">
-          {{ subtitle }}
+          {{ subtitle }}{{ totalDataValue }}
         </span>
       </div>
     </div>

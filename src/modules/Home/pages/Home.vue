@@ -33,6 +33,7 @@ import AppForm from "@/components/ui/form/app-form/AppForm.vue";
 import GraphChart from "@/modules/Home/components/charts/graph-chart/GraphChart.vue";
 import PreparationsChart from "@/modules/Home/components/charts/preparations-chart/PreparationsChart.vue";
 import { useI18n } from "vue-i18n";
+import { useSidebarStore } from "@/layout/Bars/sidebar.store";
 
 use([
   CanvasRenderer,
@@ -52,6 +53,7 @@ const route = useRoute();
 
 const statisticsStore = useStatisticsStore();
 const settingsStore = useSettingsStore();
+const sidebarStore = useSidebarStore();
 
 const form = reactive<WarehouseCapacityParamsType>({
   management_id: null,
@@ -262,7 +264,8 @@ const items = ref([
       </RouterLink>
     </div>
 
-    <div class="grid xl:grid-cols-2 grid-cols-1 gap-4 mb-[40px]">
+    <div :class="sidebarStore.childSideBarOpen ? '!grid-cols-1' : ''"
+         class="grid xl:!grid-cols-2 !grid-cols-1 gap-4 mb-[40px]">
       <div>
         <div class="grid grid-cols-2 gap-x-4 mb-10">
           <AnalyticsCard

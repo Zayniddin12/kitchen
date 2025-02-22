@@ -45,40 +45,49 @@ const attendanceTableColumns = computed<TableColumnType[]>(() => {
   return [{
     label: "№",
     prop: "num",
-    width: 150,
+    width: 80,
     sortable: false,
+    fixed: true,
   }, {
     label: t("common.regions"),
     prop: "region",
     sortable: true,
+    width: 200,
   }, {
     label: t("users.visitors"),
     prop: "visitors",
     sortable: true,
+    width: 200,
   }, {
     label: t("kitchen.lpp"),
     prop: "kitchens",
     sortable: true,
+    width: 200,
   }, {
     label: t("monitoring.holySale"),
     prop: "holy_sale",
     sortable: true,
+    width: 200,
   }, {
     label: t("monitoring.buffet"),
     prop: "buffet",
     sortable: true,
+    width: 200,
   }, {
     label: t("monitoring.polyclinic"),
     prop: "polyclinic",
     sortable: true,
+    width: 200,
   }, {
     label: t("monitoring.healthResort"),
     prop: "health_resort",
     sortable: true,
+    width: 200,
   }, {
     label: t("monitoring.camp"),
     prop: "camp",
     sortable: true,
+    width: 200,
   }];
 });
 
@@ -309,6 +318,7 @@ watchEffect(() => {
               :width="column?.width ?? ''"
               :sortable="!!column.sortable"
               :prop="column.prop"
+              :fixed="column.fixed"
             >
               <template #header>
                 <strong class="font-medium">

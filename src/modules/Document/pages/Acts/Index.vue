@@ -97,7 +97,7 @@ const fetchActs = async () => {
     await documentStore.fetchActs(filterObjectValues(form));
     validationErrors.value = null;
   } catch (error: any) {
-    console.log(error, 'rere');
+    console.log(error, "rere");
     if (error?.error?.code === 422) {
       validationErrors.value = error.meta.validation_errors;
     }
@@ -242,8 +242,8 @@ const changePage = (value: number) => {
       v-loading="documentStore.actsLoading"
       :data="documentStore.acts?.acts ?? []"
       class="custom-element-table"
+      style="width: 100%"
       stripe
-      highlight-current-row
       :empty-text="t('common.empty')"
       @current-change="tableCurrentChange"
     >
@@ -267,6 +267,7 @@ const changePage = (value: number) => {
         prop="date"
         :label="t('common.date')"
         align="center"
+        width="150"
       >
         <template #default="{row}:{row:ActType}">
           {{ row.date || "-" }}
@@ -276,6 +277,7 @@ const changePage = (value: number) => {
         prop="number"
         :label="t('document.shortNum')"
         align="center"
+        width="150"
       >
         <template #default="{row}:{row:ActType}">
           {{ row.number || "-" }}
@@ -285,6 +287,7 @@ const changePage = (value: number) => {
         prop="product_parent_name"
         :label="t('product.type')"
         align="center"
+        width="150"
       >
         <template #default="{row}:{row:ActType}">
           {{ row.product_parent_name || "-" }}
@@ -294,6 +297,7 @@ const changePage = (value: number) => {
         prop="product_name"
         :label="t('product.view')"
         align="center"
+        width="180"
       >
         <template #default="{row}:{row:ActType}">
           {{ row.product_name || "-" }}
@@ -303,6 +307,7 @@ const changePage = (value: number) => {
         prop="warehouse"
         :label="t('title')"
         align="center"
+        width="150"
       >
         <template #default="{row}:{row:ActType}">
           {{ row.warehouse || "-" }}
@@ -310,7 +315,8 @@ const changePage = (value: number) => {
       </el-table-column>
       <el-table-column
         :label="t('common.action')"
-        align="center"
+        align="right"
+        width="150"
       >
         <template #default="{row}:{row:ActType}">
           <div class="flex items-center justify-center gap-x-2.5">
@@ -324,19 +330,19 @@ const changePage = (value: number) => {
                 alt="eye"
               />
             </RouterLink>
-<!--            <ElButton-->
-<!--              :loading="documentStore.pdfLoading"-->
-<!--              plain-->
-<!--              @click.stop="documentStore.getPdf(row.id)"-->
-<!--              class="action-btn"-->
-<!--              text-->
-<!--              bg-->
-<!--            >-->
-<!--              <img-->
-<!--                src="@/assets/images/download.svg"-->
-<!--                alt="download"-->
-<!--              />-->
-<!--            </ElButton>-->
+            <!--            <ElButton-->
+            <!--              :loading="documentStore.pdfLoading"-->
+            <!--              plain-->
+            <!--              @click.stop="documentStore.getPdf(row.id)"-->
+            <!--              class="action-btn"-->
+            <!--              text-->
+            <!--              bg-->
+            <!--            >-->
+            <!--              <img-->
+            <!--                src="@/assets/images/download.svg"-->
+            <!--                alt="download"-->
+            <!--              />-->
+            <!--            </ElButton>-->
           </div>
         </template>
       </el-table-column>
@@ -351,3 +357,11 @@ const changePage = (value: number) => {
     />
   </div>
 </template>
+
+<style>
+.custom-element-table table {
+  width: 100% !important;
+}
+</style>
+
+

@@ -149,12 +149,13 @@ const tableCurrentChange = (value: FoodFactoryListType) => {
           prop="name"
           :label="$t('common.name2')"
           sortable
-          width="400"
+          :width="200"
         />
         <el-table-column
           prop="management"
           :label="$t('settings.regionalAdministration')"
           sortable
+          :width="300"
         >
           <template #default="{row}">
             {{ row.management.name }}
@@ -163,6 +164,7 @@ const tableCurrentChange = (value: FoodFactoryListType) => {
         <el-table-column
           :label="$t('common.action')"
           align="right"
+          :width="200"
         >
           <template #default="{row}">
             <div class="inline-flex items-center">
