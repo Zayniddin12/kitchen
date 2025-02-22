@@ -635,6 +635,7 @@ const packagingPage = () => {
                   <ElTableColumn
                     prop="product_name"
                     :label="t('product.name')"
+                    width="200"
                   >
                     <template #default="{ row }: { row: ListProductType }">
                       {{ row.product_name || "—" }}
@@ -643,6 +644,7 @@ const packagingPage = () => {
                   <ElTableColumn
                     prop="quantity"
                     :label="t('common.quantity')"
+                    width="200"
                   >
                     <template #default="{ row }: { row: ListProductType }">
                       {{ row.quantity.toFixed(2) || "—" }}
@@ -651,6 +653,7 @@ const packagingPage = () => {
                   <ElTableColumn
                     prop="unit_name"
                     :label="t('common.measurement')"
+                    width="200"
                   >
                     <template #default="{ row }: { row: ListProductType }">
                       {{ row.unit_name || "—" }}
@@ -659,6 +662,7 @@ const packagingPage = () => {
                   <ElTableColumn
                     prop="net_price"
                     :label="t('Цена закупки')"
+                    width="200"
                   >
                     <template #default="{ row }: { row: ListProductType }">
                       {{ row.net_price || "—" }}
@@ -667,7 +671,7 @@ const packagingPage = () => {
                   <ElTableColumn
                     prop="transportation_costs_percent"
                     :label="t('common.tzr')"
-                    width="130"
+                    width="200"
                   >
                     <template #default="{ row }: { row: ListProductType }">
                       <AppInput
@@ -685,7 +689,7 @@ const packagingPage = () => {
                   <ElTableColumn
                     prop="markup_percent"
                     :label="t('kitchenWarehouse.markup')"
-                    width="130"
+                    width="200"
                   >
                     <template #default="{ row }: { row: ListProductType }">
                       <AppInput
@@ -703,7 +707,7 @@ const packagingPage = () => {
                   <ElTableColumn
                     prop="profitability_percent"
                     :label="t('kitchenWarehouse.rentab')"
-                    width="120"
+                    width="200"
                   >
                     <template #default="{ row }: { row: ListProductType }">
                       <AppInput
@@ -721,6 +725,7 @@ const packagingPage = () => {
                   <ElTableColumn
                     prop="vat_percent"
                     :label="t('common.ndc')"
+                    width="200"
                   >
                     <template #default="{ row }: { row: ListProductType }">
                       <AppInput
@@ -738,6 +743,7 @@ const packagingPage = () => {
                   <ElTableColumn
                     prop="price"
                     :label="t('Цена с наценкой')"
+                    width="200"
                   >
                     <template #default="{ row }: { row: ListProductType }">
                       {{ row.price ? `${row.price} ${t("currency.sum")}` : "—" }}
@@ -746,12 +752,13 @@ const packagingPage = () => {
                   <ElTableColumn
                     prop="total_price"
                     :label="t('common.sum')"
+                    width="200"
                   >
                     <template #default="{ row }: { row: ListProductType }">
                       {{ row.total_price ? `${row.total_price} ${t("currency.sum")}` : "—" }}
                     </template>
                   </ElTableColumn>
-                  <ElTableColumn :label="t('common.action')">
+                  <ElTableColumn :label="t('common.action')" width="150">
                     <template #default="{ row }: { row: ListProductType }">
                       <template v-if="row.isEdit">
                         <button

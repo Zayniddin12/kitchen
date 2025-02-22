@@ -237,6 +237,7 @@ watch(
         label="Фамилия И.О."
         prop="full_name"
         sortable
+        :width="200"
       >
         <template #default="{ row }: { row: UserType }">
           <div
@@ -261,6 +262,7 @@ watch(
           label="Должность"
           prop="position"
           sortable
+          :width="200"
         >
           <template #default="{ row }: { row: UserType }">
             {{ row.position || "—" }}
@@ -270,6 +272,7 @@ watch(
           label="Телефон"
           prop="phone"
           sortable
+          :width="200"
         >
           <template #default="{ row }: { row: UserType }">
             {{ row.phone ? phoneFormatter(row.phone) : "—" }}
@@ -278,6 +281,7 @@ watch(
         <ElTableColumn
           label="OneID"
           prop="is_oneid_enabled"
+          :width="200"
         >
           <template #default="{ row }: { row: UserType }">
             {{ row.is_oneid_enabled ? "Есть" : "—" }}
@@ -289,6 +293,7 @@ watch(
           label="Место работы"
           prop="organization_name"
           sortable
+          :width="200"
         >
           <template #default="{ row }: { row: UserType }">
             {{ row.organization_name || "—" }}
@@ -298,6 +303,7 @@ watch(
           label="График работы"
           prop="work_hours"
           sortable
+          :width="200"
         >
           <template #default="{ row }: { row: UserType }">
             {{ row.work_hours ? `${row.work_hours} часов` : "—" }}
@@ -307,6 +313,7 @@ watch(
       <ElTableColumn
         label="Статус"
         prop="status"
+        :width="200"
       >
         <template #default="{ row }: { row: UserType }">
           <div
@@ -321,7 +328,7 @@ watch(
           </div>
         </template>
       </ElTableColumn>
-      <ElTableColumn label="Действие">
+      <ElTableColumn label="Действие" :width="200">
         <template #default="{ row }: { row: UserType }">
           <div
             @click.stop

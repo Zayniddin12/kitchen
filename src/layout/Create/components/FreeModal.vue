@@ -210,7 +210,7 @@ watch(model, (newModel) => {
     <div class="flex">
       <AppOverlay
         :loading="documentStore.documentLoading"
-        parent-class-name="w-[65%] border-[#E2E6F3] bg-[#fff] border rounded-[15px]"
+        parent-class-name="w-[62%] border-[#E2E6F3] bg-[#fff] border rounded-[15px]"
         class="px-[72px] pb-[150px]"
       >
         <header class="flex items-center justify-center my-[24px] mb-6">
@@ -266,11 +266,12 @@ watch(model, (newModel) => {
         <div class="mt-[40px] flex items-center gap-x-[100px] justify-between">
           <div class="flex items-baseline max-w-[200px]">
             <h1 class=" text-sm font-medium">
-              <span class="text-[#4F5662] font-semibold">{{ authStore.user.position ? authStore.user.position : "" }}</span>
-<!--              <span-->
-<!--                v-if="from"-->
-<!--                class="text-[#A8AAAE] ml-2"-->
-<!--              ></span>-->
+              <span class="text-[#4F5662] font-semibold">{{ authStore.user.position ? authStore.user.position : ""
+                }}</span>
+              <!--              <span-->
+              <!--                v-if="from"-->
+              <!--                class="text-[#A8AAAE] ml-2"-->
+              <!--              ></span>-->
             </h1>
           </div>
 
@@ -283,7 +284,7 @@ watch(model, (newModel) => {
         </div>
       </AppOverlay>
 
-      <div class="w-[35%] ml-6 flex flex-col justify-between">
+      <div class="w-[38%] ml-6 flex flex-col justify-between">
         <AppForm
           :value="form"
           :validation-errors

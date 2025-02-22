@@ -257,7 +257,7 @@ const loading = computed(() => documentStore.createLoading || documentStore.upda
       </div>
     </template>
     <div class="flex">
-      <div class="border-[#E2E6F3] bg-[#fff] border rounded-[15px] w-[65%] mr-0">
+      <div class="border-[#E2E6F3] bg-[#fff] border rounded-[15px] w-[62%] mr-0">
         <AppOverlay
           :loading="documentStore.documentLoading"
           class="px-[72px] pb-[150px]"
@@ -324,7 +324,7 @@ const loading = computed(() => documentStore.createLoading || documentStore.upda
         </AppOverlay>
       </div>
 
-      <div class="w-[35%] ml-[24px] flex flex-col justify-between">
+      <div class="w-[38%] ml-[24px] flex flex-col justify-between">
         <AppForm
           :value="form"
           @validation="(value:ValidationType) => v$ = value"
@@ -413,7 +413,7 @@ const loading = computed(() => documentStore.createLoading || documentStore.upda
           </AppSelect>
         </AppForm>
 
-        <div class="flex items-start justify-between gap-x-2">
+        <div class="flex items-start gap-x-2">
           <button
             class="custom-cancel-btn"
             @click="closeModal"

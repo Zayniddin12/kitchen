@@ -164,26 +164,30 @@ const tableCurrentChange = (value: Record<string, any>) => {
           prop="name"
           :label="t('common.name2')"
           sortable
-          width="400"
+          width="300"
         />
         <el-table-column
           prop="tin"
           :label="t('common.tin')"
           sortable
+          :width="200"
         />
         <el-table-column
           prop="address"
           :label="t('common.legalAddress')"
           sortable
+          :width="200"
         />
         <el-table-column
           prop="oked"
           :label="t('common.oked')"
           sortable
+          :width="120"
         />
         <el-table-column
           :label="t('common.action')"
           align="right"
+          :width="200"
         >
           <template #default="scope">
             <button

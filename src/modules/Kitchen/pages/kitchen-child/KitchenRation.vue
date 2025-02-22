@@ -108,7 +108,7 @@ const changePage = () => {
         <ElTableColumn
           prop="id"
           label="№"
-          :width="150"
+          :width="80"
         >
           <template #default="{$index}">
             {{ setTableColumnIndex($index, params.page, settingsStore.rationList.pagination?.per_page ?? 0) }}
@@ -119,6 +119,7 @@ const changePage = () => {
           :label="t('kitchen.rationType')"
           sortable
           align="center"
+          :width="200"
         >
           <template #default="{row,$index}">
             <ElDropdown
@@ -170,12 +171,14 @@ const changePage = () => {
           :label="t('common.uniqueNumber')"
           sortable
           align="center"
+          :width="200"
         />
         <ElTableColumn
           prop="net_price"
           :label="t('common.price')"
           sortable
           align="center"
+          :width="200"
         >
           <template #default="{row}">
             {{ row.net_price && row.net_price.toLocaleString() }} {{ t("currency.sum") }}
@@ -186,6 +189,7 @@ const changePage = () => {
           :label="t('common.ndc')"
           sortable
           align="center"
+          :width="200"
         >
           <template #default="{row}">
             {{ row.vat && row.vat.toLocaleString() }} {{ t("currency.sum") }}
@@ -196,6 +200,7 @@ const changePage = () => {
           :label="t('common.sum')"
           sortable
           align="center"
+          :width="200"
         >
           <template #default="{row}">
             {{ row.price && row.price.toLocaleString() }} {{ t("currency.sum") }}

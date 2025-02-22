@@ -24,14 +24,18 @@ const tableColumns = ref<any>(
     {
       label: "№",
       prop: "id",
+      fixed: true,
+      width: 80,
     },
     {
       label: t("product.name"),
       prop: "product_name",
+      width: 150,
     },
     {
       label: t("common.measurement"),
       prop: "unit",
+      width: 150,
     },
   ],
 );
@@ -44,6 +48,7 @@ onMounted(async () => {
       tableColumns.value.push({
         label: item,
         prop: item,
+        width: 150,
       });
     });
   } catch (e) {
@@ -182,6 +187,7 @@ watch(() => params.value.end_data, async (newValue, oldValue) => {
         :data="store.remaining_goods_list.products"
         :empty-text="t('common.empty')"
         class="custom-element-table"
+        style="width: 100%"
       >
 
         <ElTableColumn
@@ -189,6 +195,8 @@ watch(() => params.value.end_data, async (newValue, oldValue) => {
           type="button"
           :key="column.prop"
           :prop="column.prop"
+          :fixed="column.fixed"
+          :width="column.width"
         >
           <template #default="scope">
             <!-- Display row index for the "id" column -->

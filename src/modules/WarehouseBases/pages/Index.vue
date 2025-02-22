@@ -566,7 +566,7 @@ const enterToFactory = () => {
             <ElTableColumn
               prop="idx"
               label="№"
-
+              width="100"
             >
               <template #default="{$index}">
                 {{
@@ -577,7 +577,7 @@ const enterToFactory = () => {
             <ElTableColumn
               prop="product_name"
               label="Название продукта"
-              width="360"
+              width="200"
             >
               <template #default="{row}:{row:WarehouseBasesProductType}">
                 {{ row.product.name || "—" }}
@@ -586,7 +586,7 @@ const enterToFactory = () => {
             <ElTableColumn
               prop="quantity"
               label="Количество"
-              width="360"
+              width="200"
             >
               <template #default="{row}:{row:WarehouseBasesProductType}">
                 {{ row.quantity || "—" }}
@@ -595,7 +595,7 @@ const enterToFactory = () => {
             <ElTableColumn
               prop="measure"
               label="Ед. измерения"
-
+              width="200"
             >
               <template #default="{row}:{row:WarehouseBasesProductType}">
                 {{ row.product.measure || "—" }}
@@ -604,7 +604,7 @@ const enterToFactory = () => {
             <ElTableColumn
               prop="price_formatted"
               label="Сумма"
-
+              width="200"
             >
               <template #default="{row}:{row:WarehouseBasesProductType}">
                 {{ row.price_formatted || "—" }}

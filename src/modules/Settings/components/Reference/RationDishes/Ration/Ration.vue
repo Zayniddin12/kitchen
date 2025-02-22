@@ -142,25 +142,30 @@ const tableCurrentChange = (value: Record<string, any>) => {
           prop="name"
           :label="$t('Наименование рациона')"
           sortable
+          :width="200"
       />
       <el-table-column
           prop="number"
           :label="$t('kitchen.uniqueDishNumber')"
           sortable
+          :width="200"
       />
       <el-table-column
           prop="kitchen_type_names"
           :label="$t('Тип кухни')"
           sortable
+          :width="200"
       />
       <el-table-column
           prop="duration_in_days"
           :label="$t('Длительность')"
           sortable
+          :width="200"
       />
       <el-table-column
           :label="$t('common.action')"
           align="right"
+          :width="200"
       >
         <template #default="scope">
           <button

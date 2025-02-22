@@ -51,28 +51,6 @@ const form = reactive({
   search: "",
 });
 
-const tableData = ref([
-  {
-    name: "Супер админ",
-    ownership: "Фонд НГМК",
-    numberOfUses: 3,
-  },
-  {
-    name: "Супер админ",
-    ownership: "Фонд НГМК",
-    numberOfUses: 3,
-  },
-  {
-    name: "Супер админ",
-    ownership: "Фонд НГМК",
-    numberOfUses: 3,
-  },
-  {
-    name: "Супер админ",
-    ownership: "Фонд НГМК",
-    numberOfUses: 3,
-  },
-]);
 
 onMounted(() => {
   setBreadCrumbFn();
@@ -104,7 +82,7 @@ onMounted(() => {
       <ElTableColumn
         prop="idx"
         label="№"
-        width="100"
+        width="80"
       >
         <template #default="{$index}">
           {{ $index + 1 }}
@@ -124,6 +102,7 @@ onMounted(() => {
         prop="parent_name"
         :label="t('role.ownership')"
         sortable
+        :width="250"
       >
         <template #default="{row}:{row: RoleType}">
           {{ row.parent_name || "-" }}

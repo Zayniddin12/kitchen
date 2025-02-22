@@ -333,6 +333,7 @@ watch(() => documentStore.documentsIsRefresh, (newValue) => {
       :data="documentStore.contracts?.contracts ?? []"
       stripe
       class="custom-element-table"
+      style="width: 100%"
       highlight-current-row
       :empty-text="t('common.empty')"
       @current-change="tableCurrentChange"
@@ -355,6 +356,7 @@ watch(() => documentStore.documentsIsRefresh, (newValue) => {
       <el-table-column
         prop="date"
         :label="t('common.date')"
+        width="150"
       >
         <template #default="{row}:{row:ContractType}">
           {{ row.date || "-" }}
@@ -363,6 +365,7 @@ watch(() => documentStore.documentsIsRefresh, (newValue) => {
       <el-table-column
         prop="number"
         :label="t('document.contractNumber')"
+        width="150"
       >
         <template #default="{row}:{row:ContractType}">
           {{ row.number || "-" }}
@@ -371,6 +374,7 @@ watch(() => documentStore.documentsIsRefresh, (newValue) => {
       <el-table-column
         prop="from_name"
         :label="t('common.supplier')"
+        width="150"
       >
         <template #default="{row}:{row:ContractType}">
           {{ row.from_name || "-" }}
@@ -379,6 +383,7 @@ watch(() => documentStore.documentsIsRefresh, (newValue) => {
       <el-table-column
         prop="product_parent_name"
         :label="t('product.type')"
+        width="150"
       >
         <template #default="{row}:{row:ContractType}">
           {{ row.product_parent_name || "-" }}
@@ -387,6 +392,7 @@ watch(() => documentStore.documentsIsRefresh, (newValue) => {
       <el-table-column
         prop="product_name"
         :label="t('product.view')"
+        width="150"
       >
         <template #default="{row}:{row:ContractType}">
           {{ row.product_name || "-" }}
@@ -395,6 +401,7 @@ watch(() => documentStore.documentsIsRefresh, (newValue) => {
       <el-table-column
         prop="quantity"
         :label="t('common.quantity')"
+        width="150"
       >
         <template #default="{row}:{row:ContractType}">
           {{ row.quantity || "-" }}
@@ -403,6 +410,7 @@ watch(() => documentStore.documentsIsRefresh, (newValue) => {
       <el-table-column
         prop="unit_name"
         :label="t('common.measurement')"
+        width="150"
       >
         <template #default="{row}:{row:ContractType}">
           {{ row.unit_name || "-" }}
@@ -411,12 +419,13 @@ watch(() => documentStore.documentsIsRefresh, (newValue) => {
       <el-table-column
         prop="total_price"
         :label="t('common.totalSum')"
+        width="150"
       >
         <template #default="{row}:{row:ContractType}">
           {{ row.total_price ? `${formatNumber(row.total_price)} ${t("currency.sum")}` : "-" }}
         </template>
       </el-table-column>
-      <el-table-column label="Действие">
+      <el-table-column label="Действие" width="150">
         <template #default="{row}:{row:ContractType}">
           <div class="flex items-center gap-x-2">
             <RouterLink
