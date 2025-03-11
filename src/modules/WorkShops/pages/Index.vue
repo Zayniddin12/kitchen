@@ -3,7 +3,7 @@
   lang="ts"
 >
 
-import { RouterLink, useRoute, useRouter } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { useWarehouseBasesStore } from "@/modules/WarehouseBases/warehouse-bases.store";
 import { computed, onMounted, reactive, ref, watch, watchEffect } from "vue";
 import filterIcon from "@/assets/images/filter.svg";
@@ -13,8 +13,10 @@ import AppInput from "@/components/ui/form/app-input/AppInput.vue";
 import AppDatePicker from "@/components/ui/form/app-date-picker/AppDatePicker.vue";
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 import {
-  WarehouseBasesInvoicesParamsType, WarehouseBasesInvoiceType,
-  WarehouseBasesProductsParamsType, WarehouseBasesProductType,
+  WarehouseBasesInvoicesParamsType,
+  WarehouseBasesInvoiceType,
+  WarehouseBasesProductsParamsType,
+  WarehouseBasesProductType,
 } from "@/modules/WarehouseBases/warehouse-bases.types";
 import { filterObjectValues, getRouteQuery, setTableColumnIndex } from "@/utils/helper";
 import { useSettingsStore } from "@/modules/Settings/store";
@@ -31,50 +33,12 @@ const documentStore = useDocumentStore();
 const route = useRoute();
 const router = useRouter();
 
-enum TABS {
-  PRODUCTS = 1,
-  INVOICES
-}
-
-const tabItems = computed(() => {
-  return [
-    {
-      value: TABS.PRODUCTS,
-      name: "По продуктам",
-    },
-    {
-      value: TABS.INVOICES,
-      name: "По накладным",
-    },
-  ];
-});
-
 const filterFormOpened = ref(false);
 
-const defaultTab = TABS.PRODUCTS;
-
-const validTabs = tabItems.value.map(tab => tab.value);
-
-const validRouteTab = (tab: string | null): TABS => {
-  const newTab = Number(tab);
-  return validTabs.includes(newTab as TABS) ? (newTab as TABS) : defaultTab;
-};
-
-const activeTab = computed(() =>
-  validRouteTab(route.query.tab as string | null),
-);
-
-const getQueryTab = (tab: TABS) => {
-  const form = filterObjectValues(
-    tab === TABS.PRODUCTS ? productsForm : invoicesForm,
-  );
-
-  return { tab, ...form };
-};
 
 const districtId = computed(() => +route.params.district_id);
 
-const productId = computed(() => +route.params.product_id);
+const productId = computed(() => +route.params.workshop_id);
 
 const productsForm = reactive<WarehouseBasesProductsParamsType>({
   page: null,
@@ -161,9 +125,7 @@ const fetchInvoices = async () => {
 };
 
 const filterForm = () => {
-  const data = activeTab.value === TABS.PRODUCTS ? productsForm : invoicesForm;
-
-  const query = { ...route.query, ...filterObjectValues(data) };
+  const query = { ...route.query, ...filterObjectValues(productsForm) };
   delete query.page;
 
   router.push({ query });
@@ -171,13 +133,8 @@ const filterForm = () => {
 
 const clearForm = async () => {
   filterFormOpened.value = false;
-  console.log(activeTab.value === TABS.INVOICES && invoicesFormV$.value);
-  if (activeTab.value === TABS.PRODUCTS && productsFormV$.value) await productsFormV$.value.resetForm();
-  else if (activeTab.value === TABS.INVOICES && invoicesFormV$.value) {
-    console.log("SSS");
-    await invoicesFormV$.value.resetForm();
-  }
-  router.push({ query: { tab: activeTab.value } });
+  await productsFormV$.value.resetForm();
+
 };
 
 const changePage = (value: number) => {
@@ -187,11 +144,8 @@ const changePage = (value: number) => {
 const id = ref<number | "">("");
 
 const fetchData = () => {
-  if (activeTab.value === TABS.PRODUCTS) {
-    fetchProducts();
-  } else {
-    fetchInvoices();
-  }
+  fetchProducts();
+
 };
 
 const { setBreadCrumb } = useBreadcrumb();
@@ -204,7 +158,7 @@ const setBreadCrumbFn = async () => {
 
   setBreadCrumb([
     {
-      label: "Базы складов",
+      label: "Цех",
     },
     {
       label: warehouseBasesStore.activeManagementBase?.name ?? "",
@@ -228,7 +182,7 @@ watch(
   { immediate: true },
 );
 
-watch(() => route.params.product_id, async () => {
+watch(() => route.params.workshop_id, async () => {
   await settingsStore.fetchBaseWarehouses({ base_id: productId.value, per_page: 100 });
   id.value = settingsStore.baseWarehouses?.base_warehouses[0].id ?? "";
 }, { immediate: true });
@@ -254,6 +208,16 @@ const enterToFactory = () => {
   });
 };
 
+const packagingPage = () => {
+  router.push({
+    name: "workshop-factory",
+    params: {
+      district_id: 12,
+      factory_id: 21,
+      factory_item_id: 45,
+    },
+  });
+};
 </script>
 
 <template>
@@ -261,17 +225,12 @@ const enterToFactory = () => {
     <div v-if="warehouseBasesStore.activeManagementBase?.base">
       <div class="flex items-center justify-between">
         <h1 class="font-semibold text-[32px] text-dark">
-          {{ warehouseBasesStore.product?.title ?? "" }}
+          {{ warehouseBasesStore.product?.title ?? route.meta.title }}
         </h1>
 
-        <button
-          v-if="!!settingsStore.baseWarehouses?.base_warehouses.find((e) => e.id == id)?.workshop_name"
-          class="custom-light-btn"
-          @click="enterToFactory"
-        >
-          {{ settingsStore.baseWarehouses?.base_warehouses.find((e) => e.id == id)?.workshop_name }}
-        </button>
+        <button class="custom-light-btn" @click="packagingPage">Переработка</button>
       </div>
+
       <div class="rounded-2xl py-3 px-4 border mt-6">
         <h3 class="text-dark font-medium text-lg">
           Заполнение склада
@@ -292,27 +251,28 @@ const enterToFactory = () => {
           запасами.
         </p>
       </div>
+
       <div class="mt-6">
-        <div class="flex items-center gap-4 justify-between">
-          <div class="app-tabs">
-            <RouterLink
-              v-for="item in tabItems"
-              :key="item.value"
-              :class="['app-tab', {'app-tab--active': activeTab === item.value}]"
-              :to="{ query: getQueryTab(item.value) }"
-            >
-              {{ item.name }}
-            </RouterLink>
-          </div>
-          <div class="grid grid-cols-3 gap-4 w-[486px]">
-            <AppSelect
-              v-model="id"
-              size="large"
-              class="mb-0"
-              :items="settingsStore.baseWarehouses?.base_warehouses ?? []"
-              item-value="id"
-              item-label="name"
-            />
+        <div class="flex items-center gap-4 justify-end">
+          <!--          <div class="app-tabs">-->
+          <!--            <RouterLink-->
+          <!--              v-for="item in tabItems"-->
+          <!--              :key="item.value"-->
+          <!--              :class="['app-tab', {'app-tab&#45;&#45;active': activeTab === item.value}]"-->
+          <!--              :to="{ query: getQueryTab(item.value) }"-->
+          <!--            >-->
+          <!--              {{ item.name }}-->
+          <!--            </RouterLink>-->
+          <!--          </div>-->
+          <div class="grid grid-cols-2 gap-4 w-[386px]">
+            <!--            <AppSelect-->
+            <!--              v-model="id"-->
+            <!--              size="large"-->
+            <!--              class="mb-0"-->
+            <!--              :items="settingsStore.baseWarehouses?.base_warehouses ?? []"-->
+            <!--              item-value="id"-->
+            <!--              item-label="name"-->
+            <!--            />-->
             <ElDropdown
               placement="bottom"
               class="block w-full"
@@ -398,7 +358,6 @@ const enterToFactory = () => {
             class="mt-4 relative"
           >
             <AppForm
-              v-if="activeTab === TABS.PRODUCTS"
               :value="productsForm"
               @validation="value => productsFormV$ = value"
               :validation-errors="productsFormErrors"
@@ -442,92 +401,11 @@ const enterToFactory = () => {
                 label-class="text-[#A8AAAE] text-xs font-medium"
               />
             </AppForm>
-            <AppForm
-              v-else
-              :value="invoicesForm"
-              @validation="(value) => invoicesFormV$ = value"
-              :validation-errors="invoicesFormErrors"
-            >
-              <div class="grid gap-4 grid-cols-6">
-                <AppDatePicker
-                  v-model="invoicesForm.from"
-                  property="from"
-                  label="С этой даты"
-                  placeholder="С этой даты"
-                  label-class="text-[#A8AAAE] text-xs font-medium"
-                />
-                <AppDatePicker
-                  v-model="invoicesForm.to"
-                  prop="to"
-                  label="По эту дату"
-                  placeholder="По эту дату"
-                  label-class="text-[#A8AAAE] text-xs font-medium"
-                />
-                <AppSelect
-                  v-model="invoicesForm.document_id"
-                  :items="documentStore.drafts?.documents ?? []"
-                  item-label="number"
-                  item-value="id"
-                  class="col-span-2"
-                  label="№ накладной"
-                  placeholder="№ накладной"
-                  label-class="text-[#A8AAAE] text-xs font-medium"
-                  clearable
-                />
-                <AppInput
-                  v-model.number="invoicesForm.price"
-                  type="number"
-                  class="col-span-2"
-                  placeholder="Сумма"
-                  label="Сумма"
-                  label-class="text-[#A8AAAE] text-xs font-medium"
-                />
-              </div>
-              <div class="grid grid-cols-4 gap-4 mt-1">
-                <AppSelect
-                  v-model="invoicesForm.product_id"
-                  :items="settingsStore.vidProduct.product_types"
-                  item-label="name"
-                  item-value="id"
-                  label="Название продукта"
-                  placeholder="Название продукта"
-                  label-class="text-[#A8AAAE] text-xs font-medium"
-                  clearable
-                />
-                <AppInput
-                  v-model="invoicesForm.quantity"
-                  prop="quantity"
-                  custom-type="number"
-                  label="Количество"
-                  placeholder="Количество"
-                  label-class="text-[#A8AAAE] text-xs font-medium"
-                />
-                <AppSelect
-                  v-model="invoicesForm.measurement_unit_id"
-                  :items="settingsStore.units.units"
-                  item-label="name"
-                  item-value="id"
-                  property="measurement_unit_id"
-                  label="Ед. измерения"
-                  placeholder="Ед. измерения"
-                  label-class="text-[#A8AAAE] text-xs font-medium"
-                  clearable
-                />
-                <AppInput
-                  v-model="invoicesForm.net_price"
-                  prop="net_price"
-                  type="number"
-                  label="Цена"
-                  placeholder="Цена"
-                  label-class="text-[#A8AAAE] text-xs font-medium"
-                />
-              </div>
-            </AppForm>
           </TransitionGroup>
           <div class="flex items-center mt-[10px] justify-between">
             <div class="text-[#8F9194] text-[14px]">Найдено:
               {{
-                (activeTab === TABS.PRODUCTS ? warehouseBasesStore.products?.paginator.total_count : warehouseBasesStore.invoices?.pagination.total_count) ?? 0
+                warehouseBasesStore.products?.paginator.total_count ?? 0
               }}
             </div>
             <div class="flex items-center">
@@ -554,7 +432,6 @@ const enterToFactory = () => {
         class="relative overflow-x-hidden"
       >
         <div
-          v-if="activeTab === TABS.PRODUCTS"
           class="inner"
         >
           <ElTable
@@ -603,6 +480,15 @@ const enterToFactory = () => {
             </ElTableColumn>
             <ElTableColumn
               prop="price_formatted"
+              label="Цена"
+              width="200"
+            >
+              <template #default="{row}:{row:WarehouseBasesProductType}">
+                {{ row.price_formatted || "—" }}
+              </template>
+            </ElTableColumn>
+            <ElTableColumn
+              prop="price_formatted"
               label="Сумма"
               width="200"
             >
@@ -629,92 +515,6 @@ const enterToFactory = () => {
             v-if="warehouseBasesStore.products"
             v-model="productsForm.page"
             :pagination="warehouseBasesStore.products.paginator"
-            class="mt-6"
-            @current-change="changePage"
-          />
-        </div>
-        <div
-          v-else-if="activeTab === TABS.INVOICES"
-          class="inner"
-        >
-          <ElTable
-            v-loading="warehouseBasesStore.invoicesLoading"
-            :data="warehouseBasesStore.invoices?.invoices ?? []"
-            class="custom-element-table"
-            stripe
-          >
-            <ElTableColumn
-              prop="idx"
-              label="№"
-              :width="150"
-            >
-              <template #default="{$index}">
-                {{
-                  setTableColumnIndex($index, invoicesForm.page ?? 0, warehouseBasesStore.invoices?.pagination.per_page ?? 0)
-                }}
-              </template>
-            </ElTableColumn>
-            <ElTableColumn
-              prop="product"
-              label="Название продукта"
-            >
-              <template #default="{row}:{row: WarehouseBasesInvoiceType}">
-                {{ row.product.name || "—" }}
-              </template>
-            </ElTableColumn>
-            <ElTableColumn
-              prop="number"
-              label="№ накладной"
-            >
-              <template #default="{row}:{row: WarehouseBasesInvoiceType}">
-                {{ row.document.number || "—" }}
-              </template>
-            </ElTableColumn>
-            <ElTableColumn
-              prop="date"
-              label="Дата накладной"
-            >
-              <template #default="{row}:{row: WarehouseBasesInvoiceType}">
-                {{ row.document.created_at_formatted || "—" }}
-              </template>
-            </ElTableColumn>
-            <ElTableColumn
-              prop="quantity"
-              label="Количество"
-            >
-              <template #default="{row}:{row: WarehouseBasesInvoiceType}">
-                {{ row.quantity || "—" }}
-              </template>
-            </ElTableColumn>
-            <ElTableColumn
-              prop="measurement_unit"
-              label="Ед. измерения"
-            >
-              <template #default="{row}:{row: WarehouseBasesInvoiceType}">
-                {{ row.product.measurement_unit.name || "—" }}
-              </template>
-            </ElTableColumn>
-            <ElTableColumn
-              prop="price_formatted"
-              label="Цена"
-            >
-              <template #default="{row}:{row: WarehouseBasesInvoiceType}">
-                {{ row.price_formatted || "—" }}
-              </template>
-            </ElTableColumn>
-            <ElTableColumn
-              prop="total_price_formatted"
-              label="Сумма"
-            >
-              <template #default="{row}:{row: WarehouseBasesInvoiceType}">
-                {{ row.total_price_formatted || "—" }}
-              </template>
-            </ElTableColumn>
-          </ElTable>
-          <AppPagination
-            v-if="warehouseBasesStore.invoices"
-            v-model="invoicesForm.page"
-            :pagination="warehouseBasesStore.invoices.pagination"
             class="mt-6"
             @current-change="changePage"
           />

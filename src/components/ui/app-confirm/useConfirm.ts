@@ -26,9 +26,13 @@ export default function() {
       { label: t("method.logout"), status: "danger", action: "confirm" },
       { label: t("method.save"), status: "primary", action: "save" },
     ],
+    factory: [
+      { label: t("method.cancel"), status: "secondary", action: "cancel" },
+      { label: t("method.produce"), status: "primary", action: "confirm" },
+    ],
     delete: [
       { label: t("method.cancel"), status: "secondary", action: "cancel" },
-      { label: t("method.delete"), status: "danger", action: "confirm" },
+      { label: t("method.apply"), status: "primary", action: "confirm" },
     ],
     confirm: [
       { label: t("method.cancel"), status: "secondary", action: "cancel" },
@@ -70,6 +74,13 @@ export default function() {
 
   const confirm = {
     openModal,
+    factory: (params: ConfirmParamsType = {}) =>
+      openModal(
+        "factory",
+        params.title || ``,
+        params.description || '',
+        !!params.disabledBody,
+      ),
     confirm: (params: ConfirmParamsType = {}) =>
       openModal(
         "confirm",

@@ -24,11 +24,13 @@ import { useCommonStore } from "@/stores/common.store";
 import { useI18n } from "vue-i18n";
 import AppFaceId from "@/modules/FaceId/Pages/Index.vue";
 import { useFaceStore } from "@/modules/FaceId/store";
+import { useWorkshopsStore } from "@/modules/WorkShops/workshops.store";
 
 const authStore = useAuthStore();
 const route = useRoute();
 const settingsStore = useSettingsStore();
 const warehouseBasesStore = useWarehouseBasesStore();
+const workshopsStoreStore = useWorkshopsStore();
 const commonStore = useCommonStore();
 
 const { t } = useI18n();
@@ -43,7 +45,8 @@ onMounted(async () => {
   // localStorage.setItem("workplace_id", JSON.stringify(childSidebarPin.value));
   childSidebarPin.value = JSON.parse(localStorage.getItem("child-sidebar-pin") || "false");
   await settingsStore.GET_REGIONAL({ per_page: 100 });
-  warehouseBasesStore.fetchManagementBases();
+  await warehouseBasesStore.fetchManagementBases();
+  await workshopsStoreStore.fetchManagementBases();
   commonStore.getTitles();
 });
 

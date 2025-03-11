@@ -1,6 +1,6 @@
 export type ButtonStatusType = "primary" | "secondary" | "danger";
 export type ButtonActionType = "confirm" | "cancel" | "save";
-export type DefaultButtonType = "cancel" | "delete" | "show" | "confirm";
+export type DefaultButtonType = "cancel" | "delete" | "show" | "confirm" | "factory";
 export type textType = string | HTMLElement;
 
 export interface ButtonType {

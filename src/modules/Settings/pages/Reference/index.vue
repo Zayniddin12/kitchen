@@ -41,7 +41,7 @@ const ulItems = computed<UlItems[]>(() => [{
 },
   {
     title: t("settings.products"),
-    permissions: ['technologist', "admin", "super_admin"],
+    permissions: ["technologist", "admin", "super_admin"],
     menu: [
       {
         title: t("typeProduct.title"),
@@ -57,7 +57,7 @@ const ulItems = computed<UlItems[]>(() => [{
   },
   {
     title: t("settings.rationsDishes"),
-    permissions: ['technologist', "admin", "super_admin"],
+    permissions: ["technologist", "admin", "super_admin"],
     menu: [
       {
         title: t("kitchen.ration"),
@@ -89,6 +89,16 @@ const ulItems = computed<UlItems[]>(() => [{
         title: t("warehouseBases.title"),
         subTitle: t("warehouseBases.title"),
         router: "reference-warehouse-bases",
+      },
+      {
+        title: t("Workshops.title"),
+        subTitle: t("Workshops.title"),
+        router: "reference-workshop",
+      },
+      {
+        title: t("Workshops.storageRoom"),
+        subTitle: t("Workshops.storageRoom"),
+        router: "reference-pantries",
       },
       {
         title: t("baseWarehouses.title"),
@@ -149,7 +159,8 @@ const ulItems = computed<UlItems[]>(() => [{
         router: "reference-unit",
       },
     ],
-  }]);
+  },
+]);
 
 const { setBreadCrumb } = useBreadcrumb();
 

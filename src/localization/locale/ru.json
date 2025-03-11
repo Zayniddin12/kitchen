@@ -1,5 +1,18 @@
 {
   "title": "Склад",
+  "pantries": {
+    "title": "Кладовки",
+    "create": "Добавить новую кладовку",
+    "edit": "Редактирования кладовки",
+    "show": "Просмотр деталей кладовки"
+  },
+  "Workshops": {
+    "title": "Цеха",
+    "create": "Добавить новый цех",
+    "edit": "Редактирования цеха",
+    "show": "Просмотр деталей цеха",
+    "storageRoom": "Кладовки"
+  },
   "auth": {
     "login": {
       "title": "Войти в аккаунт",
@@ -171,6 +184,7 @@
     "toast": "Error 404"
   },
   "method": {
+    "produce": "Произвести",
     "cancel": "Отменить",
     "logout": "Выйти",
     "add": "Добавить",
@@ -340,6 +354,7 @@
     "numberAndDateOfVeterinaryCertificate": "Номер и дата удостоверения ветеринарии",
     "numberAndDateOfQualityCertificate": "Номер и дата удостоверения качества",
     "tableReceivedProducts": "Таблица получаемых продуктов",
+    "tableReceivedProducts2": "Таблица расходуемых продуктов",
     "sanitaryConclusion": {
       "number": "Номер заключения Санитарно",
       "enter_number": "Введите № заключения СЭЦ",
@@ -404,7 +419,7 @@
     "log": "Логи",
     "products": "Продукты",
     "rationsDishes": "Рационы и блюда",
-    "managementFactoriesAndWarehouses": "Управ, комбинаты и склады",
+    "managementFactoriesAndWarehouses": "Управления, комбинаты и склады",
     "suppliersAndOrganizations": "Поставщики и организации",
     "nameUnitsMeasurement": "Наименование единиц измерения",
     "abbreviationUnits": "Сокращение единиц"

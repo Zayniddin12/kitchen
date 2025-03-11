@@ -14,6 +14,7 @@ import KitchenWarehouse from "@/modules/KitchenWarehouse/kitchen-warehouse.route
 import Kitchen from "@/modules/Kitchen/kitchen.routes";
 import Users from "@/modules/Users/users.routes";
 import AuthRoutes from "@/modules/Auth/auth.routes";
+import Workshops from "@/modules/WorkShops/workshops.routes";
 import tokenManager from "@/utils/token.manager";
 import { useI18n } from "vue-i18n";
 import localization from "@/localization";
@@ -29,6 +30,7 @@ const routes: RouteRecordRaw[] = [
   ...KitchenWarehouse,
   ...Kitchen,
   ...Users,
+  ...Workshops,
   {
     path: "/docs/:id",
     name: "docs",

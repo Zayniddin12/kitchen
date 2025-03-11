@@ -4,6 +4,7 @@ import { useKitchenWarehouseStore } from "@/modules/KitchenWarehouse/kitchen-war
 import { useKitchenStore } from "@/modules/Kitchen/kitchen.store";
 import { useWarehouseBasesStore } from "@/modules/WarehouseBases/warehouse-bases.store";
 import { useI18n } from "vue-i18n";
+import { useWorkshopsStore } from "@/modules/WorkShops/workshops.store";
 
 export const useLayoutStore = defineStore("layoutStore", () => {
 
@@ -12,6 +13,7 @@ export const useLayoutStore = defineStore("layoutStore", () => {
   const kitchenWarehouse = useKitchenWarehouseStore();
   const kitchenStore = useKitchenStore();
   const warehouseBasesStore = useWarehouseBasesStore();
+  const workshopsStore = useWorkshopsStore();
 
   const currentTheme = ref(localStorage.getItem("currentTheme") || "light");
 
@@ -156,6 +158,25 @@ export const useLayoutStore = defineStore("layoutStore", () => {
         icon: "building-warehouse",
         unique: "building-warehouse",
         children: warehouseBasesStore.managementBasesMenu,
+        permissions: [
+          "admin",
+          "super-admin",
+          "director-foundation",
+          "deputy-director-foundation",
+          "head-management",
+          "head-factory",
+          "head-warehouse",
+          "manager-base",
+          "merchandiser",
+          "freight-forwarder",
+          "accountant-base-warehouse",
+        ],
+      },
+      {
+        title: t("Workshops.title"),
+        icon: "building-warehouse",
+        unique: "building-warehouse",
+        children: workshopsStore.managementBasesWorkshopsMenu,
         permissions: [
           "admin",
           "super-admin",

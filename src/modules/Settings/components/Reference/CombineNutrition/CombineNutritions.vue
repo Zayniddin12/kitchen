@@ -215,3 +215,9 @@ const tableCurrentChange = (value: FoodFactoryListType) => {
   </div>
 </template>
 
+<style>
+ .custom-element-table table {
+    width: 100% !important;
+  }
+</style>
+

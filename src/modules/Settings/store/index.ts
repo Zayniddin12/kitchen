@@ -59,9 +59,31 @@ interface WarehouseBasesList {
   paginator: Pagination;
 }
 
+interface WorkshopList {
+  workshops: object[];
+  pagination: Pagination;
+}
+
+interface PantriesList {
+  pantries: object[];
+  pagination: Pagination;
+}
+
 interface Name {
   uz: string;
   ru: string;
+}
+
+interface WorkshopType {
+  id?: number;
+  name: Name;
+  capacity: string | number | null;
+  status: string;
+  created_at?: string;
+  updated_at?: string;
+  deleted_at?: null | string;
+  factory_id: number | null;
+  measure_id?: number;
 }
 
 interface WareHouseType {
@@ -81,6 +103,24 @@ interface WareHouseItemType {
   created_at?: string;
   updated_at?: string;
   deleted_at?: null | string;
+}
+
+interface WorkshopItemType {
+  id: number;
+  name: Name;
+  status: string;
+  capacity: string | number | null;
+  factory_id: number | null;
+  measure_id?: number;
+}
+
+interface PantriesItemType {
+  id: number;
+  name: Name;
+  status: string;
+  capacity: string | number | null;
+  factory_id: number | null;
+  measure_id?: number;
 }
 
 interface UnitParamsType {
@@ -163,6 +203,38 @@ export const useSettingsStore = defineStore("settingsStore", () => {
   const wareHouseItem = ref<WareHouseItemType | null>(null);
   const wareHouseItemLoading = ref(false);
 
+  // Pantries
+  const pantriesItem = ref<PantriesItemType | null>(null);
+  const pantriesItemLoading = ref<boolean>(false);
+
+  const pantriesList = ref<PantriesList>({
+    pantries: [],
+    pagination: {
+      current_page: 0,
+      per_page: 0,
+      has_more: false,
+      items_count: 0,
+      total_count: 0,
+      pages_count: 0,
+    },
+  });
+
+  // Workshop
+  const workshopItem = ref<WorkshopItemType | null>(null);
+  const workshopItemLoading = ref<boolean>(false);
+
+  const workshopList = ref<WorkshopList>({
+    workshops: [],
+    pagination: {
+      current_page: 0,
+      per_page: 0,
+      has_more: false,
+      items_count: 0,
+      total_count: 0,
+      pages_count: 0,
+    },
+  });
+
   // Документы Типы документов
   const GET_TYPE_DOCUMENT = async (params?: { search: string | null }) => {
     const { data } = await $axios.get("/document-types/categories", { params });
@@ -238,6 +310,72 @@ export const useSettingsStore = defineStore("settingsStore", () => {
 
   const DELETE_RATION = async (id: string | number) => {
     return await $axios.delete("/rations/" + id);
+  };
+
+  // Кладовки
+
+  const GET_PANTRIES_LIST = async (params?: Params) => {
+    const { data } = await $axios.get("/pantry-warehouses", { params });
+    pantriesList.value = data.data;
+  };
+
+  const GET_PANTRIES_ITEM = async (id: string | number) => {
+    pantriesItemLoading.value = true;
+    try {
+      const { data } = await $axios.get("/pantry-warehouses/" + id);
+      pantriesItem.value = data.data && data.data.pantry;
+      return data.data;
+    } finally {
+      pantriesItemLoading.value = false;
+    }
+  };
+
+  const CRETE_PANTRIES = async (data: WorkshopType) => {
+    return await $axios.post("/pantry-warehouses", data);
+
+  };
+
+  const UPDATE_PANTRIES = async ({ id, data }: { id: string | number, data: WorkshopType }) => {
+    return await $axios.put("/pantry-warehouses/" + id, data);
+
+  };
+
+  const DELETE_PANTRIES = async (id: string | number) => {
+    return await $axios.delete("/pantry-warehouses/" + id);
+
+  };
+
+  // Цех
+
+  const GET_WORKSHOP_LIST = async (params?: Params) => {
+    const { data } = await $axios.get("/workshop-warehouses", { params });
+    workshopList.value = data.data;
+  };
+
+  const GET_WORKSHOP_ITEM = async (id: string | number) => {
+    workshopItemLoading.value = true;
+    try {
+      const { data } = await $axios.get("/workshop-warehouses/" + id);
+      workshopItem.value = data.data && data.data.workshop;
+      return data.data;
+    } finally {
+      workshopItemLoading.value = false;
+    }
+  };
+
+  const CRETE_WORKSHOP = async (data: WorkshopType) => {
+    return await $axios.post("/workshop-warehouses", data);
+
+  };
+
+  const UPDATE_WORKSHOP = async ({ id, data }: { id: string | number, data: WorkshopType }) => {
+    return await $axios.put("/workshop-warehouses/" + id, data);
+
+  };
+
+  const DELETE_WORKSHOP = async (id: string | number) => {
+    return await $axios.delete("/workshop-warehouses/" + id);
+
   };
 
 
@@ -517,7 +655,7 @@ export const useSettingsStore = defineStore("settingsStore", () => {
     mealDetailLoading.value = true;
 
     try {
-      const { data } = await $axios.get(`/meals/${id}`, {params});
+      const { data } = await $axios.get(`/meals/${id}`, { params });
       mealDetail.value = data.data.meal;
       return data.data;
     } finally {
@@ -817,5 +955,25 @@ export const useSettingsStore = defineStore("settingsStore", () => {
     kitchenWarehouseDetailLoading,
     GET_KITCHEN_WAREHOUSE_DETAIL,
     // dilshod end
+
+    //WORKSHOP
+    DELETE_WORKSHOP,
+    UPDATE_WORKSHOP,
+    CRETE_WORKSHOP,
+    GET_WORKSHOP_ITEM,
+    GET_WORKSHOP_LIST,
+    workshopItemLoading,
+    workshopItem,
+    workshopList,
+
+    //PANTRIES
+    DELETE_PANTRIES,
+    UPDATE_PANTRIES,
+    CRETE_PANTRIES,
+    GET_PANTRIES_ITEM,
+    GET_PANTRIES_LIST,
+    pantriesList,
+    pantriesItemLoading,
+    pantriesItem,
   };
 });

@@ -63,7 +63,7 @@ watchEffect(() => {
 const refresh = async () => {
   loading.value = true;
   try {
-    await settingsStore.GET_WAREHOUSE_BASES_LIST(params.value);
+    await settingsStore.GET_WORKSHOP_LIST(params.value);
   } catch (e: any) {
     // ElNotification({
     //   title: e,
@@ -95,7 +95,7 @@ watchDebounced(() => params.value.search, () => {
 
 const tableCurrentChange = (value: FoodFactoryListType) => {
   router.push({
-    name: "reference-warehouse-bases-view",
+    name: "reference-workshop-view",
     params: { id: value.id },
     query: { type: "view" },
   });
@@ -120,7 +120,7 @@ const tableCurrentChange = (value: FoodFactoryListType) => {
 
         <button
           v-if="$can('create', 'Button')"
-          @click="$router.push({name: 'reference-warehouse-bases-add'})"
+          @click="$router.push({name: 'reference-workshop-add'})"
           class="flex items-center justify-center gap-3 custom-apply-btn"
         >
           <img
@@ -136,7 +136,7 @@ const tableCurrentChange = (value: FoodFactoryListType) => {
       <el-table
         v-loading="loading"
         :empty-text="t('common.empty')"
-        :data="settingsStore.wareHouseList.bases"
+        :data="settingsStore.workshopList.workshops"
         stripe
         class="custom-element-table"
         highlight-current-row
@@ -148,18 +148,23 @@ const tableCurrentChange = (value: FoodFactoryListType) => {
           width="100"
         >
           <template #default="{$index}">
-            {{ setTableColumnIndex($index, params.page ?? 1, settingsStore.wareHouseList?.paginator.per_page ?? 0) }}
+            {{ setTableColumnIndex($index, params.page ?? 1, settingsStore.workshopList?.pagination.per_page ?? 0) }}
           </template>
         </el-table-column>
         <el-table-column
           prop="name"
-          :label="t('base.name')"
+          :label="t('Наименование цеха')"
           sortable
           width="300"
         />
         <el-table-column
-          prop="address"
-          :label="t('common.legalAddress')"
+          prop="factory_name"
+          :label="t('Комбинат питания')"
+          sortable
+        />
+        <el-table-column
+          prop="capacity"
+          :label="t('Вместимость склада цеха')"
           sortable
         />
         <el-table-column
@@ -170,7 +175,7 @@ const tableCurrentChange = (value: FoodFactoryListType) => {
             <button
               v-if="$can('read', 'Button')"
               class="action-btn mr-[8px]"
-              @click.stop="$router.push({name: 'reference-warehouse-bases-view', query: {type: 'view'}, params: {id: scope.row.id}})"
+              @click.stop="$router.push({name: 'reference-workshop-view', query: {type: 'view'}, params: {id: scope.row.id}})"
             >
               <img
                 src="@/assets/images/eye.svg"
@@ -181,7 +186,7 @@ const tableCurrentChange = (value: FoodFactoryListType) => {
             <button
               v-if="$can('update', 'Button')"
               class="action-btn"
-              @click.stop="$router.push({name: 'reference-warehouse-bases-edit', params: {id: scope.row.id}})"
+              @click.stop="$router.push({name: 'reference-workshop-edit', params: {id: scope.row.id}})"
             >
               <img
                 src="@/assets/images/icons/edit.svg"
