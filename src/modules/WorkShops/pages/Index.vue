@@ -4,7 +4,7 @@
 >
 
 import { useRoute, useRouter } from "vue-router";
-import { useWarehouseBasesStore } from "@/modules/WarehouseBases/warehouse-bases.store";
+import { useWorkshopsStore } from "@/modules/WorkShops/workshops.store";
 import { computed, onMounted, reactive, ref, watch, watchEffect } from "vue";
 import filterIcon from "@/assets/images/filter.svg";
 import CollapseFilter from "@/components/collapseFilter/index.vue";
@@ -24,8 +24,9 @@ import AppPagination from "@/components/ui/app-pagination/AppPagination.vue";
 import AppForm from "@/components/ui/form/app-form/AppForm.vue";
 import { useDocumentStore } from "@/modules/Document/document.store";
 import { ValidationType } from "@/components/ui/form/app-form/app-form.type";
+import AppEmpty from "@/components/ui/app-empty/AppEmpty.vue";
 
-const warehouseBasesStore = useWarehouseBasesStore();
+const workshopsStore = useWorkshopsStore();
 const settingsStore = useSettingsStore();
 const documentStore = useDocumentStore();
 
@@ -68,7 +69,8 @@ const fetchProducts = async () => {
   productsForm.quantity = query.quantity ?? null;
 
   try {
-    if (id.value) warehouseBasesStore.fetchProducts(id.value, filterObjectValues(productsForm));
+
+    if (route.params.workshop_id) await workshopsStore.fetchProducts(Number(route.params.workshop_id), filterObjectValues(productsForm));
   } catch (error: any) {
     if (error?.error?.code === 422) {
       productsFormErrors.value = error.meta.validation_errors;
@@ -116,7 +118,7 @@ const fetchInvoices = async () => {
   invoicesForm.document_id = query.document_id ?? "";
 
   try {
-    if (id.value) warehouseBasesStore.fetchInvoices(id.value, filterObjectValues(invoicesForm));
+    if (id.value) workshopsStore.fetchInvoices(id.value, filterObjectValues(invoicesForm));
   } catch (error: any) {
     if (error?.error?.code === 422) {
       invoicesFormErrors.value = error.meta.validation_errors;
@@ -152,19 +154,19 @@ const { setBreadCrumb } = useBreadcrumb();
 
 const setBreadCrumbFn = async () => {
 
-  warehouseBasesStore.getManagementBase(districtId.value, productId.value);
+  workshopsStore.getManagementWorkshop(districtId.value, productId.value);
 
-  if (!warehouseBasesStore.activeManagementBase) return;
+  if (!workshopsStore.activeManagementBase) return;
 
   setBreadCrumb([
     {
       label: "Цех",
     },
     {
-      label: warehouseBasesStore.activeManagementBase?.name ?? "",
+      label: workshopsStore.activeManagementBase?.name ?? "",
     },
     {
-      label: warehouseBasesStore.activeManagementBase?.base?.name ?? "",
+      label: workshopsStore.activeManagementBase?.workshops?.name ?? "",
       isActionable: true,
     },
   ]);
@@ -182,17 +184,12 @@ watch(
   { immediate: true },
 );
 
-watch(() => route.params.workshop_id, async () => {
-  await settingsStore.fetchBaseWarehouses({ base_id: productId.value, per_page: 100 });
-  id.value = settingsStore.baseWarehouses?.base_warehouses[0].id ?? "";
+watch(() => route.params.workshop_id, async (newId) => {
+  if (newId) {
+    await workshopsStore.fetchFillingPercentage(Number(newId));
+  }
 }, { immediate: true });
 
-watch(id, (newId) => {
-  if (newId) {
-    warehouseBasesStore.fetchFillingPercentage(newId);
-    fetchData();
-  }
-});
 
 onMounted(() => {
   settingsStore.GET_VID_PRODUCT({ per_page: 100 });
@@ -202,7 +199,7 @@ onMounted(() => {
 
 const enterToFactory = () => {
   router.push({
-    name: "warehouse-factory",
+    name: "warehouse-packaging",
     params: { district_id: route.params.district_id, product_id: route.params.product_id },
     query: { id: id.value },
   });
@@ -210,11 +207,10 @@ const enterToFactory = () => {
 
 const packagingPage = () => {
   router.push({
-    name: "workshop-factory",
+    name: "workshop-packaging",
     params: {
-      district_id: 12,
-      factory_id: 21,
-      factory_item_id: 45,
+      district_id: route.params.district_id,
+      factory_id: route.params.workshop_id,
     },
   });
 };
@@ -222,10 +218,10 @@ const packagingPage = () => {
 
 <template>
   <section class="warehouse">
-    <div v-if="warehouseBasesStore.activeManagementBase?.base">
+    <div v-if="workshopsStore.activeManagementBase?.workshops">
       <div class="flex items-center justify-between">
         <h1 class="font-semibold text-[32px] text-dark">
-          {{ warehouseBasesStore.product?.title ?? route.meta.title }}
+          {{ workshopsStore.product?.title ?? route.meta.title }}
         </h1>
 
         <button class="custom-light-btn" @click="packagingPage">Переработка</button>
@@ -236,11 +232,11 @@ const packagingPage = () => {
           Заполнение склада
         </h3>
         <h2 class="text-dark text-[32px] font-semibold mt-3">
-          {{ warehouseBasesStore.fillingPercentage?.percentage ?? 0 }}%
+          {{ workshopsStore.fillingPercentage?.percentage ?? 0 }}%
         </h2>
         <ElProgress
           :stroke-width="16"
-          :percentage="warehouseBasesStore.fillingPercentage?.percentage ?? 0"
+          :percentage="workshopsStore.fillingPercentage?.percentage ?? 0"
           :show-text="false"
           status="success"
           class="mt-2"
@@ -254,16 +250,7 @@ const packagingPage = () => {
 
       <div class="mt-6">
         <div class="flex items-center gap-4 justify-end">
-          <!--          <div class="app-tabs">-->
-          <!--            <RouterLink-->
-          <!--              v-for="item in tabItems"-->
-          <!--              :key="item.value"-->
-          <!--              :class="['app-tab', {'app-tab&#45;&#45;active': activeTab === item.value}]"-->
-          <!--              :to="{ query: getQueryTab(item.value) }"-->
-          <!--            >-->
-          <!--              {{ item.name }}-->
-          <!--            </RouterLink>-->
-          <!--          </div>-->
+
           <div class="grid grid-cols-2 gap-4 w-[386px]">
             <!--            <AppSelect-->
             <!--              v-model="id"-->
@@ -405,7 +392,7 @@ const packagingPage = () => {
           <div class="flex items-center mt-[10px] justify-between">
             <div class="text-[#8F9194] text-[14px]">Найдено:
               {{
-                warehouseBasesStore.products?.paginator.total_count ?? 0
+                workshopsStore.products?.pagination.total_count ?? 0
               }}
             </div>
             <div class="flex items-center">
@@ -434,91 +421,106 @@ const packagingPage = () => {
         <div
           class="inner"
         >
-          <ElTable
-            v-loading="warehouseBasesStore.productsLoading"
-            :data="warehouseBasesStore.products?.warehouse_products"
-            stripe
-            class="custom-element-table"
-          >
-            <ElTableColumn
-              prop="idx"
-              label="№"
-              width="100"
+          <template v-if="workshopsStore.products?.grouped_products.length">
+            <div
+              v-for="item in workshopsStore.products.grouped_products"
+              :key="item.parent_name"
             >
-              <template #default="{$index}">
-                {{
-                  setTableColumnIndex($index, productsForm.page ?? 0, warehouseBasesStore.products?.paginator.per_page ?? 0)
-                }}
-              </template>
-            </ElTableColumn>
-            <ElTableColumn
-              prop="product_name"
-              label="Название продукта"
-              width="200"
-            >
-              <template #default="{row}:{row:WarehouseBasesProductType}">
-                {{ row.product.name || "—" }}
-              </template>
-            </ElTableColumn>
-            <ElTableColumn
-              prop="quantity"
-              label="Количество"
-              width="200"
-            >
-              <template #default="{row}:{row:WarehouseBasesProductType}">
-                {{ row.quantity || "—" }}
-              </template>
-            </ElTableColumn>
-            <ElTableColumn
-              prop="measure"
-              label="Ед. измерения"
-              width="200"
-            >
-              <template #default="{row}:{row:WarehouseBasesProductType}">
-                {{ row.product.measure || "—" }}
-              </template>
-            </ElTableColumn>
-            <ElTableColumn
-              prop="price_formatted"
-              label="Цена"
-              width="200"
-            >
-              <template #default="{row}:{row:WarehouseBasesProductType}">
-                {{ row.price_formatted || "—" }}
-              </template>
-            </ElTableColumn>
-            <ElTableColumn
-              prop="price_formatted"
-              label="Сумма"
-              width="200"
-            >
-              <template #default="{row}:{row:WarehouseBasesProductType}">
-                {{ row.price_formatted || "—" }}
-              </template>
-            </ElTableColumn>
-            <!--            <ElTableColumn-->
-            <!--              prop="action"-->
-            <!--              align="right"-->
-            <!--              label="Действие"-->
-            <!--            >-->
-            <!--              <template #default="{row}">-->
-            <!--                <button class="action-btn">-->
-            <!--                  <img-->
-            <!--                    src="@/assets/images/download.svg"-->
-            <!--                    alt="download"-->
-            <!--                  />-->
-            <!--                </button>-->
-            <!--              </template>-->
-            <!--            </ElTableColumn>-->
-          </ElTable>
-          <AppPagination
-            v-if="warehouseBasesStore.products"
-            v-model="productsForm.page"
-            :pagination="warehouseBasesStore.products.paginator"
-            class="mt-6"
-            @current-change="changePage"
+              <h2 class="text-dark font-medium text-lg mb-3">
+                {{ item.parent_name }}
+              </h2>
+              <ElTable
+                :data="item.products && item.products.length ? item.products : []"
+                stripe
+                class="custom-element-table"
+                :empty-text="$t('common.empty')"
+              >
+                <ElTableColumn
+                  prop="idx"
+                  label="№"
+                  width="100"
+                >
+                  <template #default="{$index}">
+                    {{
+                      setTableColumnIndex($index, productsForm.page ?? 0, workshopsStore.products?.pagination.per_page ?? 0)
+                    }}
+                  </template>
+                </ElTableColumn>
+                <ElTableColumn
+                  prop="product_name"
+                  label="Название продукта"
+                  width="200"
+                >
+                  <template #default="{row}:{row:WarehouseBasesProductType}">
+                    {{ row.product_name || "—" }}
+                  </template>
+                </ElTableColumn>
+                <ElTableColumn
+                  prop="quantity"
+                  label="Количество"
+                  width="200"
+                >
+                  <template #default="{row}:{row:WarehouseBasesProductType}">
+                    {{ row.quantity || "—" }}
+                  </template>
+                </ElTableColumn>
+                <ElTableColumn
+                  prop="unit_name"
+                  label="Ед. измерения"
+                  width="200"
+                >
+                  <template #default="{row}:{row:WarehouseBasesProductType}">
+                    {{ row.unit_name || "—" }}
+                  </template>
+                </ElTableColumn>
+                <ElTableColumn
+                  prop="price"
+                  label="Цена"
+                  width="200"
+                >
+                  <template #default="{row}:{row:WarehouseBasesProductType}">
+                    {{ row.price || "—" }}
+                  </template>
+                </ElTableColumn>
+                <ElTableColumn
+                  prop="total_price"
+                  label="Сумма"
+                  width="200"
+                >
+                  <template #default="{row}:{row:WarehouseBasesProductType}">
+                    {{ row.total_price || "—" }}
+                  </template>
+                </ElTableColumn>
+                <!--            <ElTableColumn-->
+                <!--              prop="action"-->
+                <!--              align="right"-->
+                <!--              label="Действие"-->
+                <!--            >-->
+                <!--              <template #default="{row}">-->
+                <!--                <button class="action-btn">-->
+                <!--                  <img-->
+                <!--                    src="@/assets/images/download.svg"-->
+                <!--                    alt="download"-->
+                <!--                  />-->
+                <!--                </button>-->
+                <!--              </template>-->
+                <!--            </ElTableColumn>-->
+              </ElTable>
+            </div>
+            <AppPagination
+              v-if="workshopsStore.products"
+              v-model="productsForm.page"
+              :pagination="workshopsStore.products.pagination"
+              class="mt-6"
+              @current-change="changePage"
+            />
+          </template>
+          <AppEmpty
+            class="min-h-0"
+            v-else
           />
         </div>
+
       </TransitionGroup>
     </div>
   </section>

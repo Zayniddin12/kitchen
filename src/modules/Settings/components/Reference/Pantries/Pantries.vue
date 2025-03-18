@@ -158,12 +158,12 @@ const tableCurrentChange = (value: FoodFactoryListType) => {
           width="300"
         />
         <el-table-column
-          prop="address"
+          prop="factory_name"
           :label="t('Комбинат питания')"
           sortable
         />
         <el-table-column
-          prop="address"
+          prop="capacity"
           :label="t('Вместимость склада цеха')"
           sortable
         />

@@ -2,21 +2,22 @@
 import AppSelect from "@/components/ui/form/app-select/AppSelect.vue";
 import { useI18n } from "vue-i18n";
 import AppInput from "@/components/ui/form/app-input/AppInput.vue";
-import { onMounted, ref } from "vue";
+import { computed, onMounted, ref, watchEffect } from "vue";
 import { useSettingsStore } from "@/modules/Settings/store";
 import { useRoute, useRouter } from "vue-router";
-import { useWarehouseBasesStore } from "@/modules/WarehouseBases/warehouse-bases.store";
+import { useWorkshopsStore } from "@/modules/WorkShops/workshops.store";
 import { ElNotification } from "element-plus";
 import useConfirm from "@/components/ui/app-confirm/useConfirm";
+import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 
 const { t } = useI18n();
 const router = useRouter();
 const route = useRoute();
 const settingsStore = useSettingsStore();
-const store = useWarehouseBasesStore();
+const store = useWorkshopsStore();
 const { confirm } = useConfirm();
 
-const consumption = ref<any[]>([{
+const in_products = ref<any[]>([{
   category_id: null,
   product_type_id: null,
   quantity: "0.00001",
@@ -24,7 +25,8 @@ const consumption = ref<any[]>([{
   price: null,
   totalSum: null,
 }]);
-const result = ref<any[]>([{
+
+const out_products = ref<any[]>([{
   category_id: null,
   product_type_id: null,
   quantity: "0.00001",
@@ -36,13 +38,12 @@ const vidProducts = ref<any[]>([]);
 const vidProductsResult = ref<any[]>([]);
 
 onMounted(async () => {
-  await settingsStore.fetchBaseWarehouses({ base_id: route.params.productId, per_page: 100 });
   await settingsStore.GET_TYPE_PRODUCT();
 });
 
 
 const addConsumption = () => {
-  consumption.value.push({
+  in_products.value.push({
     category_id: null,
     product_type_id: null,
     quantity: null,
@@ -53,7 +54,7 @@ const addConsumption = () => {
 };
 
 const deleteConsumption = (index: number) => {
-  consumption.value.splice(index, 1);
+  in_products.value.splice(index, 1);
 };
 
 const fetchVidProductsList = async (item: any, index: number) => {
@@ -64,7 +65,7 @@ const fetchVidProductsList = async (item: any, index: number) => {
 };
 
 const changeProduct = async (item: any, index: number) => {
-  const activeVidProduct = vidProducts.value[index].product_types.find(el => el);
+  const activeVidProduct = vidProducts.value[index].product_types.find(el => el.id == item.product_type_id);
   if (activeVidProduct) {
     item.measurement = activeVidProduct.unit;
     item.price = activeVidProduct.price || 0;
@@ -75,7 +76,7 @@ const changeProduct = async (item: any, index: number) => {
 // results
 
 const addResult = () => {
-  result.value.push({
+  out_products.value.push({
     category_id: null,
     product_type_id: null,
     quantity: null,
@@ -86,7 +87,7 @@ const addResult = () => {
 };
 
 const deleteResult = (index: number) => {
-  result.value.splice(index, 1);
+  out_products.value.splice(index, 1);
 };
 
 const resultFetchVidProductsList = async (item: any, index: number) => {
@@ -97,9 +98,10 @@ const resultFetchVidProductsList = async (item: any, index: number) => {
 };
 
 const resultChangeProduct = (item: any, index: number) => {
-  const data = vidProductsResult.value[index].product_types.find(el => el);
+  const data = vidProductsResult.value[index].product_types.find(el => el.id == item.product_type_id);
   if (data) {
     item.measurement = data.unit;
+    item.price = data.price || 0;
     item.totalSum = data.totalSum || 0;
   }
 };
@@ -110,8 +112,17 @@ const createFactory = async () => {
     confirm.factory({
       description: "Вы уверены, что хотите произвести переработку выбранных продуктов? Это действие необратимо.",
     }).then(() => {
-      // router.push({ name: "reference-ration" });
-      ElNotification({ title: "Success", type: "success" });
+      let factory_id = route.params.factory_id;
+      if (factory_id) {
+        store.createWorkshopUnpacking({
+          in_products: in_products.value,
+          out_products: out_products.value,
+        }, factory_id as string).then(() => {
+          router.go(-1);
+          ElNotification({ title: "Success", type: "success" });
+        });
+
+      }
     });
 
 
@@ -119,6 +130,38 @@ const createFactory = async () => {
     ElNotification({ title: "Error", type: "error", message: "Failed to create factory." });
   }
 };
+
+const districtId = computed(() => +route.params.district_id);
+
+const productId = computed(() => +route.params.factory_id);
+const { setBreadCrumb } = useBreadcrumb();
+
+const setBreadCrumbFn = async () => {
+
+  store.getManagementWorkshop(districtId.value, productId.value);
+
+  if (!store.activeManagementBase) return;
+
+  setBreadCrumb([
+    {
+      label: "Цех",
+    },
+    {
+      label: store.activeManagementBase?.name ?? "",
+    },
+    {
+      label: store.activeManagementBase?.workshops?.name ?? "",
+    },
+    {
+      label: "Переработка",
+      isActionable: true,
+    },
+  ]);
+};
+
+watchEffect(() => {
+  setBreadCrumbFn();
+});
 
 </script>
 
@@ -150,7 +193,7 @@ const createFactory = async () => {
     <h5 class="text-[18px] font-medium text-[#000D24]">Исходные продукты</h5>
 
     <div class="mt-[12px] bg-[#F8F9FC] rounded-[16px] py-[16px] px-[12px]">
-      <div class="grid grid-cols-6 gap-4" v-for="(item, index) in consumption" :key="index">
+      <div class="grid grid-cols-6 gap-4" v-for="(item, index) in in_products" :key="index">
         <AppSelect
           v-model="item.category_id"
           :items="settingsStore.typeProduct.product_categories"
@@ -198,7 +241,7 @@ const createFactory = async () => {
 
         <div class="flex items-center gap-4">
           <app-input
-            :placeholder="item.quantity * item.price"
+            :placeholder="item.quantity && (item.quantity * item.price).toLocaleString()"
             class="w-full"
             disabled
             :label="t('common.totalSum')"
@@ -206,7 +249,7 @@ const createFactory = async () => {
           />
 
           <button
-            v-if="consumption && consumption.length !== 1"
+            v-if="in_products && in_products.length !== 1"
             class="bg-[#E2E6F3] p-[10px] rounded-[8px] mt-2"
             @click="deleteConsumption(index)"
           >
@@ -227,7 +270,7 @@ const createFactory = async () => {
     <h5 class="text-[18px] font-medium text-[#000D24]">Готовая продукция</h5>
 
     <div class="mt-[12px] bg-[#F8F9FC] rounded-[16px] py-[16px] px-[12px]">
-      <div class="grid grid-cols-6 gap-4" v-for="(item2, index2) in result" :key="index2">
+      <div class="grid grid-cols-6 gap-4" v-for="(item2, index2) in out_products" :key="index2">
         <AppSelect
           v-model="item2.category_id"
           :items="settingsStore.typeProduct.product_categories"
@@ -282,7 +325,7 @@ const createFactory = async () => {
           />
 
           <button class="bg-[#E2E6F3] p-[10px] rounded-[8px] mt-2" @click="deleteResult(index2)"
-                  v-if="result && result.length !== 1">
+                  v-if="out_products && out_products.length !== 1">
             <img src="@/assets/images/icons/delete.svg" alt="delete" />
           </button>
         </div>

@@ -98,7 +98,7 @@ onMounted(() => {
              {{ t("combineNutrition.title") }}
             </span>
             <p>
-              {{ settingsStore.workshopItem.factory_id }}
+              {{ settingsStore.workshopItem.factory_name && settingsStore.workshopItem.factory_name }}
             </p>
           </div>
         </template>

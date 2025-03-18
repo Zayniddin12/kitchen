@@ -5,13 +5,21 @@ import {
   WarehouseBasesInvoicesParamsType, WarehouseBasesInvoicesResponseType,
   WarehouseBasesProductsParamsType,
   WarehouseBasesProductsResponseType,
-} from "@/modules/WarehouseBases/warehouse-bases.types";
+} from "@/modules/WorkShops/workshops.types";
 
-const prefix = "base-warehouses";
+const prefix = "workshop-warehouses";
 
 export default {
+  async fetchProducts(id: number, params: WarehouseBasesProductsParamsType = {}): Promise<WarehouseBasesProductsResponseType> {
+    const { data }: { data: Record<string, any> } = await axios.get(`${prefix}/${id}/list-products`, { params });
+    return data.data as WarehouseBasesProductsResponseType;
+  },
+  async fetchFillingPercentage(id: number): Promise<FillingPercentageResponseType> {
+    const { data }: { data: Record<string, any> } = await axios.get(`${prefix}/${id}/filling-percentage`);
+    return data.data as FillingPercentageResponseType;
+  },
   async fetchManagementBases(): Promise<ManagementBasesType> {
-    const { data }: { data: Record<string, any> } = await axios.get("managements/with-bases");
+    const { data }: { data: Record<string, any> } = await axios.get("workshop-warehouses/list-by-base");
     return data.data.managements;
   },
 };
