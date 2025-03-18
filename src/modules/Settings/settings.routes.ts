@@ -129,6 +129,102 @@ export default [...ProfileSettingsRoutes, ...PositionRoutes, ...RoleRoutes, // s
 		},
 	},
 
+	// Pantries
+
+	{
+		path: "/reference-pantries",
+		name: "reference-pantries",
+		component: () => import("@/modules/Settings/components/Reference/Pantries/Pantries.vue"),
+		meta: {
+			title: "pantries.title",
+			isTranslate: true,
+		},
+	},
+
+	{
+		path: "/reference-pantries-add",
+		name: "reference-pantries-add",
+		component: () => import("@/modules/Settings/components/Reference/Pantries/PantriesAddEditView.vue"),
+		meta: {
+			title: "pantries.create",
+			isTranslate: true,
+			breadcrumbItemTitle: "method.add",
+			breadcrumbItemIsTranslate: true,
+		},
+	},
+
+	{
+		path: "/reference-pantries-detail/:id(\\d+)",
+		name: "reference-pantries-edit",
+		component: () => import("@/modules/Settings/components/Reference/Pantries/PantriesAddEditView.vue"),
+		meta: {
+			title: "pantries.edit",
+			isTranslate: true,
+			breadcrumbItemTitle: "method.edit",
+			breadcrumbItemIsTranslate: true,
+		},
+	},
+
+	{
+		path: "/reference-pantries-view/:id(\\d+)",
+		name: "reference-pantries-view",
+		component: () => import("@/modules/Settings/components/Reference/Pantries/PantriesShow.vue"),
+		meta: {
+			title: "pantries.show",
+			isTranslate: true,
+			breadcrumbItemTitle: "common.view",
+			breadcrumbItemIsTranslate: true,
+		},
+	},
+
+	// Workshop
+
+	{
+		path: "/reference-workshop",
+		name: "reference-workshop",
+		component: () => import("@/modules/Settings/components/Reference/Workshop/Workshop.vue"),
+		meta: {
+			title: "Workshops.title",
+			isTranslate: true,
+		},
+	},
+
+	{
+		path: "/reference-workshop-add",
+		name: "reference-workshop-add",
+		component: () => import("@/modules/Settings/components/Reference/Workshop/WorkshopAddEditView.vue"),
+		meta: {
+			title: "Workshops.create",
+			isTranslate: true,
+			breadcrumbItemTitle: "method.add",
+			breadcrumbItemIsTranslate: true,
+		},
+	},
+
+	{
+		path: "/reference-workshop-detail/:id(\\d+)",
+		name: "reference-workshop-edit",
+		component: () => import("@/modules/Settings/components/Reference/Workshop/WorkshopAddEditView.vue"),
+		meta: {
+			title: "Workshops.edit",
+			isTranslate: true,
+			breadcrumbItemTitle: "method.edit",
+			breadcrumbItemIsTranslate: true,
+		},
+	},
+
+	{
+		path: "/reference-workshop-view/:id(\\d+)",
+		name: "reference-workshop-view",
+		component: () => import("@/modules/Settings/components/Reference/Workshop/WorkshopShow.vue"),
+		meta: {
+			title: "Workshops.show",
+			isTranslate: true,
+			breadcrumbItemTitle: "common.view",
+			breadcrumbItemIsTranslate: true,
+		},
+	},
+
 	// Warehouse bases
 
 	{

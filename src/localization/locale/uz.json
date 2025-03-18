@@ -1,5 +1,8 @@
 {
   "auth": {
     "login": "Войти в аккаунт"
+  },
+  "Workshops": {
+    "title": "Sehlar"
   }
 }

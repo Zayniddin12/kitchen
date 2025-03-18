@@ -621,9 +621,10 @@ const packagingPage = () => {
                   {{ item.parent_name }}
                 </h2>
                 <ElTable
-                  :data="item.products"
+                  :data="item.products && item.products.length ? item.products : []"
                   stripe
                   class="custom-element-table"
+                  :empty-text="t('common.empty')"
                 >
                   <ElTableColumn
                     prop="idx"

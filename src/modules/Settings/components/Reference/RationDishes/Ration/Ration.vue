@@ -210,3 +210,9 @@ const tableCurrentChange = (value: Record<string, any>) => {
     </div>
   </div>
 </template>
+
+<style>
+ .custom-element-table table {
+    width: 100% !important;
+  }
+</style>

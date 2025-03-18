@@ -725,5 +725,7 @@ const enterToFactory = () => {
 </template>
 
 <style lang="scss">
-
+.custom-element-table table {
+  width: 100% !important;
+}
 </style>
