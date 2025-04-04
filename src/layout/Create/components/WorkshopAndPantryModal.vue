@@ -474,7 +474,7 @@ const openModal = async () => {
         // await fetchRespondents({ type: [activeWorkplace.workplace_type] });
         // form[type] = `${activeWorkplace.base_id}_base`;
         await settingsStore.fetchRespondents({
-          type: activeComingModal.value == 15 ? ["base", "pantryWarehouse", "workshopWarehouse", "kitchenWarehouse"] : ["kitchenWarehouse", "organization", "base", "workshopWarehouse", "pantryWarehouse", "provider"],
+          type: activeComingModal.value == 15 || activeComingModal.value == 18 ? ["base", "pantryWarehouse", "workshopWarehouse", "kitchenWarehouse"] : ["kitchenWarehouse", "organization", "base", "workshopWarehouse", "pantryWarehouse", "provider"],
           per_page: 100,
         });
         toList.value = settingsStore.respondents;
@@ -483,7 +483,7 @@ const openModal = async () => {
         toList.value = settingsStore.respondents;
       }
       await settingsStore.fetchRespondents({
-        type: activeComingModal.value == 15 ? ["provider", "organization"] : ["pantryWarehouse"],
+        type: activeComingModal.value == 15 || activeComingModal.value == 18 ? ["provider", "organization"] : ["pantryWarehouse"],
         per_page: 100,
       });
       fromList.value = settingsStore.respondents;
@@ -650,7 +650,8 @@ const changeUser = (val, key) => {
   >
     <template #header>
       <div class="text-center text-[#000000] font-bold text-[18px]">
-        {{ t(activeComingModal == 15 ? "document.coming.createComing" : "document.coming.createConsumption") }}
+        {{ t(activeComingModal == 15 || activeComingModal.value == 18 ? "document.coming.createComing" : "document.coming.createConsumption")
+        }}
       </div>
     </template>
     <div class="flex gap-x-6 flex-wrap mb-4">
@@ -676,7 +677,7 @@ const changeUser = (val, key) => {
             <h2
               class="text-[#000D24] font-bold text-[20px] text-center mb-[24px]"
             >
-              {{ t("document.overhead") }}
+              {{ props.name }}
             </h2>
 
             <div class="flex mb-[8px]">
