@@ -106,7 +106,7 @@ const chartOption = computed(() => {
           {{ title }}
         </strong>
         <span class="text-xs text-[#A8AAAE]">
-          {{ subtitle }}{{ totalDataValue }}
+          {{ subtitle }}
         </span>
       </div>
     </div>

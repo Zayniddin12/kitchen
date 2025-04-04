@@ -9,6 +9,7 @@ import ComingModal from "@/layout/Create/components/ComingModal.vue";
 import KitchenModal from "@/layout/Create/components/KitchenModal.vue";
 import FreeModal from "@/layout/Create/components/FreeModal.vue";
 import MonthlyModal from "@/layout/Create/components/MonthlyModal.vue";
+import WorkshopAndPantryModal from "@/layout/Create/components/WorkshopAndPantryModal.vue";
 import ThemeToggler from "@/layout/Bars/ThemeToggler.vue";
 import { useSettingsStore } from "@/modules/Settings/store";
 import { DocTypeListType } from "@/modules/Settings/settings.types";
@@ -20,6 +21,7 @@ const settingsStore = useSettingsStore();
 
 const editModal = ref<boolean>(false);
 const editModal2 = ref<boolean>(false);
+const workshopAndPantryModal = ref<boolean>(false);
 const kitchenModal = ref<boolean>(false);
 const freeModal = ref<boolean>(false);
 const monthlyModal = ref<boolean>(false);
@@ -44,6 +46,11 @@ const openModal = (item: DocTypeListType) => {
       break;
     case 14:
       kitchenModal.value = true;
+      break;
+    case 15:
+    case 12:
+    case 13:
+      workshopAndPantryModal.value = true;
       break;
     case 3:
       freeModal.value = true;
@@ -202,6 +209,11 @@ onMounted(async () => {
     />
     <ComingModal
       v-model="editModal2"
+      :id="docTypeId"
+      :name="docTypeName"
+    />
+    <WorkshopAndPantryModal
+      v-model="workshopAndPantryModal"
       :id="docTypeId"
       :name="docTypeName"
     />
