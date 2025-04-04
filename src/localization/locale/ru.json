@@ -347,6 +347,8 @@
       "forwarder": "Экспедитор",
       "warehouseManager": "Зав. склад",
       "select_warehouseManager": "Выберите зав. склада",
+      "passed": "Сдал",
+      "accepted": "Принял",
       "baseChief": "Начальник базы",
       "select_baseChief": "Выберите начальника базы"
     },

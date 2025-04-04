@@ -222,3 +222,9 @@ watch(() => params.value.end_data, async (newValue, oldValue) => {
     </div>
   </section>
 </template>
+
+<style>
+.custom-element-table table {
+  width: 100% !important;
+}
+</style>
