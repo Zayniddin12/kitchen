@@ -60,6 +60,8 @@ const authStore = useAuthStore();
 const { t } = useI18n();
 
 const date = ref(formatDate2(new Date()));
+const hasPantryTo = ref<boolean>(false);
+const hasPantryFrom = ref<boolean>(false);
 
 const form = reactive<any>({
   doc_type_id: null,
@@ -206,6 +208,8 @@ const clearValidations = () => {
   form.to_id = null;
   form.from_type = "";
   form.from_id = null;
+  hasPantryTo.value = false;
+  hasPantryFrom.value = false;
 
 };
 
@@ -449,7 +453,8 @@ const closeModal = async () => {
     if (documentFormIsChange || (activeComingModal.value && actFormIsChange)) {
       await confirm.cancel({ disabledBody: true, disabledBtn: "save" });
     }
-
+    hasPantryTo.value = false;
+    hasPantryFrom.value = false;
     clearValidations();
     model.value = false;
   } catch (error) {
@@ -467,19 +472,41 @@ const openModal = async () => {
     if (authStore.disabledUserWorkplace) {
 
       const activeWorkplace = authStore.user.workplaces[0];
-      if (activeWorkplace.base_id) {
-        const type = activeComingModal.value ? "to" : "from";
-        // form[`${type}_id`] = activeWorkplace.base_id;
-        // form[`${type}_type`] = "base";
-        // await fetchRespondents({ type: [activeWorkplace.workplace_type] });
-        // form[type] = `${activeWorkplace.base_id}_base`;
+      if (activeWorkplace.workplace_type == "pantryWarehouse" && activeWorkplace.workplace_id) {
+        const type = activeComingModal.value == 15 || activeComingModal.value == 18 ? "to" : "from";
+        if (type) {
+          activeComingModal.value == 15 || activeComingModal.value == 18 ? hasPantryTo.value = true : hasPantryFrom.value = true;
+          form[`${type}_id`] = activeWorkplace.workplace_id;
+          form[`${type}_type`] = "pantryWarehouse";
+          // await fetchRespondents({ type: [activeWorkplace.workplace_type] });
+          form[type] = `${activeWorkplace.workplace_id}_pantryWarehouse`;
+        }
+
         await settingsStore.fetchRespondents({
-          type: activeComingModal.value == 15 || activeComingModal.value == 18 ? ["base", "pantryWarehouse", "workshopWarehouse", "kitchenWarehouse"] : ["kitchenWarehouse", "organization", "base", "workshopWarehouse", "pantryWarehouse", "provider"],
+          type: activeComingModal.value == 15 || activeComingModal.value == 18 ? ["pantryWarehouse"] : ["kitchenWarehouse", "organization", "base", "workshopWarehouse", "pantryWarehouse", "provider"],
+          per_page: 100,
+        });
+        toList.value = settingsStore.respondents;
+      } else if (activeWorkplace.workplace_type == "workshopWarehouse" && activeWorkplace.workplace_id) {
+        const type = activeComingModal.value == 15 || activeComingModal.value == 18 ? "to" : "from";
+        if (type) {
+          activeComingModal.value == 15 || activeComingModal.value == 18 ? hasPantryTo.value = true : hasPantryFrom.value = true;
+          form[`${type}_id`] = activeWorkplace.workplace_id;
+          form[`${type}_type`] = "workshopWarehouse";
+          // await fetchRespondents({ type: [activeWorkplace.workplace_type] });
+          form[type] = `${activeWorkplace.workplace_id}_workshopWarehouse`;
+        }
+
+        await settingsStore.fetchRespondents({
+          type: activeComingModal.value == 15 || activeComingModal.value == 18 ? ["pantryWarehouse"] : ["kitchenWarehouse", "organization", "base", "workshopWarehouse", "pantryWarehouse", "provider"],
           per_page: 100,
         });
         toList.value = settingsStore.respondents;
       } else {
-        await settingsStore.fetchRespondents({ type: ["base", "pantryWarehouse", "workshopWarehouse"], per_page: 100 });
+        await settingsStore.fetchRespondents({
+          type: activeComingModal.value == 15 || activeComingModal.value == 18 ? ["pantryWarehouse"] : ["kitchenWarehouse", "organization", "base", "workshopWarehouse", "pantryWarehouse", "provider"],
+          per_page: 100,
+        });
         toList.value = settingsStore.respondents;
       }
       await settingsStore.fetchRespondents({
@@ -989,7 +1016,7 @@ const changeUser = (val, key) => {
             label-class="text-[#A8AAAE] text-xs font-medium"
             @change="(value) => respondentChange(value as string, 'from')"
             required
-            :disabled="authStore.disabledUserWorkplace && !activeComingModal"
+            :disabled="hasPantryFrom"
             trigger="blur"
           >
             <template v-if="activeComingModal">
@@ -1050,6 +1077,7 @@ const changeUser = (val, key) => {
             @change="(value) => respondentChange(value as string, 'to')"
             required
             trigger="blur"
+            :disabled="hasPantryTo"
 
           >
             <!--            :disabled="authStore.disabledUserWorkplace && activeComingModal"-->
