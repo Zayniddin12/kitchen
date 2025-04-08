@@ -1,29 +1,35 @@
 import { defineStore } from "pinia";
 import $axios from "@/plugins/axios/axios";
-import { reactive, ref } from "vue";
+import { ref } from "vue";
 import type {
-  FoodFactoriesCreateFormType, FoodFactoriesParamsType, FoodFactoriesType, FoodFactoryType,
+  FoodFactoriesCreateFormType,
+  FoodFactoriesParamsType,
+  FoodFactoriesType,
+  FoodFactoryType,
 } from "@/modules/Settings/components/Reference/CombineNutrition/combine-nutrition.type";
 import type {
-  BaseWarehouseDataType, BaseWarehousesParamsType, BaseWarehousesType,
+  BaseWarehouseDataType,
+  BaseWarehousesParamsType,
+  BaseWarehousesType,
   BaseWarehouseType,
 } from "@/modules/Settings/components/Reference/MainBases/base-warehouses.type";
 import {
-  DocTypeListType, KitchenTypeDetailType,
+  DocTypeListType,
+  KitchenTypeDetailType,
   KitchenTypesListItemType,
-  KitchenTypesListParamsType, KitchenWarehouseDetailType,
+  KitchenTypesListParamsType,
+  KitchenWarehouseDetailType,
   KitchenWarehouseListItemType,
   KitchenWarehouseListParamsType,
   MealDetailType,
   OrganizationDetailType,
   ProviderDetailType,
-  RationType, RegionalDetailType,
+  RationType,
+  RegionalDetailType,
   RespondentParamsType,
   RespondentType,
   TypeProductDetailType,
 } from "@/modules/Settings/settings.types";
-import KitchenType from "@/modules/Settings/components/Reference/KitchenType/KitchenType.vue";
-import { ProductType } from "@/modules/Home/statistics.types";
 
 interface TypeDocument {
   document_categories: Array<{ id: string | number, name: string }>;
@@ -489,6 +495,15 @@ export const useSettingsStore = defineStore("settingsStore", () => {
     createProviderLoading.value = true;
     try {
       $axios.post("/providers", data);
+    } finally {
+      createProviderLoading.value = false;
+    }
+  };
+
+  const CREATE_PROVIDERS_BY_INN = async (data: any) => {
+    createProviderLoading.value = true;
+    try {
+      return await $axios.post("/providers/add-by-inn", data);
     } finally {
       createProviderLoading.value = false;
     }
@@ -975,5 +990,7 @@ export const useSettingsStore = defineStore("settingsStore", () => {
     pantriesList,
     pantriesItemLoading,
     pantriesItem,
+
+    CREATE_PROVIDERS_BY_INN,
   };
 });
