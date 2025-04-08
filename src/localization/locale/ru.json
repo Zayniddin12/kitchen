@@ -230,7 +230,7 @@
     "": ""
   },
   "form": {
-    "enter": "Введите", 
+    "enter": "Введите",
     "select": "Выберите",
     "create": "Создать",
     "search": "Поиск",
@@ -350,6 +350,8 @@
       "passed": "Сдал",
       "accepted": "Принял",
       "baseChief": "Начальник базы",
+      "warehouse_manager": "Начальник кладовщика",
+      "head_workshop": "Начальник цеха",
       "select_baseChief": "Выберите начальника базы"
     },
     "numberAndDateOfTheConclusionOfTheSanitaryAndEpidemiologicalCenter": "Номер и дата заключение Санитарно-эпидемиологического центра",

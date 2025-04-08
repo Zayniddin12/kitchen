@@ -83,6 +83,8 @@ export const useLayoutStore = defineStore("layoutStore", () => {
           "merchandiser",
           "freight-forwarder",
           "head-chef",
+          "head-pantry",
+          "head-workshop",
         ],
         children: [
           {
@@ -125,17 +127,17 @@ export const useLayoutStore = defineStore("layoutStore", () => {
           {
             title: t("document.overhead2"),
             icon: "invoice",
-            permissions: ["admin"],
+            permissions: ["admin", "head-pantry", "head-workshop"],
             children: [
               {
                 title: t("document.incoming"),
                 route: "/invoice-inbox",
-                permissions: ["admin"],
+                permissions: ["admin", "head-pantry", "head-workshop"],
               },
               {
                 title: t("document.outgoing"),
                 route: "/invoice-outgoing",
-                permissions: ["admin"],
+                permissions: ["admin", "head-pantry", "head-workshop"],
               },
             ],
           },
@@ -189,6 +191,7 @@ export const useLayoutStore = defineStore("layoutStore", () => {
           "merchandiser",
           "freight-forwarder",
           "accountant-base-warehouse",
+          "head-workshop",
         ],
       },
       {
