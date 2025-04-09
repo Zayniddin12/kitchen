@@ -480,7 +480,7 @@ const openModal = async () => {
         });
         toList.value = settingsStore.respondents;
       } else if (activeWorkplace.workplace_type == "workshopWarehouse" && activeWorkplace.workplace_id) {
-        const type = activeComingModal.value == 15 || activeComingModal.value == 18 ? "to" : "from";
+        const type = activeComingModal.value == 18 ? "to" : "from";
         if (type) {
           activeComingModal.value == 15 || activeComingModal.value == 18 ? hasPantryTo.value = true : hasPantryFrom.value = true;
           form[`${type}_id`] = activeWorkplace.workplace_id;
@@ -502,7 +502,7 @@ const openModal = async () => {
         toList.value = settingsStore.respondents;
       }
       await settingsStore.fetchRespondents({
-        type: activeComingModal.value == 15 || activeComingModal.value == 18 ? ["provider", "organization"] : activeComingModal.value == 17 ? ["workshopWarehouse"] : ["workshopWarehouse"],
+        type: activeComingModal.value == 15 || activeComingModal.value == 18 ? ["provider", "organization"] : activeComingModal.value == 17 ? ["workshopWarehouse"] : ["pantryWarehouse"],
         per_page: 100,
       });
       fromList.value = settingsStore.respondents;
