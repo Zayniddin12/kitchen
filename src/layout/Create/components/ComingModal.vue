@@ -35,15 +35,15 @@ import { useAuthStore } from "@/modules/Auth/auth.store";
 import { useI18n } from "vue-i18n";
 
 interface ProviderFormType {
-  name: string;
-  oked: number | null;
-  address: string;
+  // name: string;
+  // oked: number | null;
+  // address: string;
   tin: number | null;
-  license: string;
-  sertificate: string;
-  sert_end_date: string;
-  director: string;
-  phone: string;
+  // license: string;
+  // sertificate: string;
+  // sert_end_date: string;
+  // director: string;
+  // phone: string;
 }
 
 const commonStore = useCommonStore();
@@ -473,7 +473,7 @@ const openModal = async () => {
         });
         toList.value = settingsStore.respondents;
       } else {
-        await settingsStore.fetchRespondents({ type: ["base"], per_page: 100 });
+        await settingsStore.fetchRespondents({ type: ["base", "organization"], per_page: 100 });
         toList.value = settingsStore.respondents;
       }
       await settingsStore.fetchRespondents({ type: activeComingModal.value ? ["provider"] : ["base"], per_page: 100 });
@@ -548,15 +548,15 @@ const respondentChange = (value: string, type: "from" | "to") => {
 };
 
 const providerForm = reactive<ProviderFormType>({
-  name: "",
-  oked: null,
-  address: "",
+  // name: "",
+  // oked: null,
+  // address: "",
   tin: null,
-  license: "",
-  sertificate: "",
-  sert_end_date: "",
-  director: "",
-  phone: "",
+  // license: "",
+  // sertificate: "",
+  // sert_end_date: "",
+  // director: "",
+  // phone: "",
 });
 
 const oldProviderForm = ref<null | ProviderFormType>(null);
@@ -571,21 +571,20 @@ const clearProviderV$ = () => {
 };
 
 const sendProviderForm = async () => {
-  if (!providerV$.value) return;
-
-  if (!(await providerV$.value.validate())) {
-    commonStore.errorToast(t("error.validation"));
+  if (!providerForm.tin) {
+    await commonStore.errorToast(t("error.validation"));
     return;
   }
 
   const newForm = { ...providerForm };
-  newForm.phone = `998${newForm.phone}`;
+  // newForm.phone = `998${newForm.phone}`;
 
-  await settingsStore.CREATE_PROVIDERS(newForm);
+  await settingsStore.CREATE_PROVIDERS_BY_INN(newForm);
   providerCreateModal.value = false;
   clearProviderV$();
   commonStore.successToast();
-  fetchRespondents();
+  await settingsStore.fetchRespondents({ type: activeComingModal.value ? ["provider"] : ["base"], per_page: 100 });
+  fromList.value = settingsStore.respondents;
 };
 
 const providerCreateModal = ref<boolean>(false);
@@ -1865,7 +1864,7 @@ const changeUser = (val, key) => {
     <ElDialog
       v-model="providerCreateModal"
       :show-close="false"
-      class="w-[65%]"
+      class="w-[30%]"
       align-center
       append-to-body
       :before-close="providerCreateModalClose"
@@ -1881,81 +1880,83 @@ const changeUser = (val, key) => {
         @validation="value => (providerV$ = value)"
         class="bg-[#F8F9FC] p-6 rounded-[24px] border border-[#E2E6F3]"
       >
-        <div class="grid grid-cols-3 gap-x-6 gap-y-1">
-          <AppInput
-            v-model="providerForm.name"
-            prop="name"
-            :label="t('common.name2')"
-            label-class="text-[#A8AAAE] text-[12px] font-medium"
-            required
-          />
-          <AppInput
-            v-model="providerForm.address"
-            prop="address"
-            label-class="text-[#A8AAAE] text-[12px] font-medium"
-            :label="t('common.legalAddress')"
-            required
-          />
-          <AppInput
-            v-model="providerForm.oked"
-            type="number"
-            prop="oked"
-            :label="t('common.oked')"
-            label-class="text-[#A8AAAE] text-[12px] font-medium"
-            required
-            :max="5"
-            mask="#####"
-          />
-          <AppInput
-            v-model="providerForm.tin"
-            prop="tin"
-            type="number"
-            :mask="'#'.repeat(9)"
-            :label="t('common.tin')"
-            label-class="text-[#A8AAAE] text-[12px] font-medium"
-            required
-            :min="9"
-            :max="9"
-          />
-          <AppInput
-            v-model="providerForm.license"
-            prop="license"
-            label-class="text-[#A8AAAE] text-[12px] font-medium"
-            :label="t('licence.number')"
-            required
-          />
-          <AppInput
-            v-model="providerForm.sertificate"
-            prop="sertificate"
-            label-class="text-[#A8AAAE] text-[12px] font-medium"
-            :label="t('common.certificate')"
-            required
-          />
-          <AppDatePicker
-            v-model="providerForm.sert_end_date"
-            prop="sert_end_date"
-            placeholder="дд.мм.гггг"
-            label-class="text-[#A8AAAE] text-[12px] font-medium"
-            :label="t('common.certificateDuration')"
-            required
-            :disabled-date="(time) => Date.now() >= time.getTime()"
-          />
-          <AppInput
-            v-model="providerForm.director"
-            prop="director"
-            label-class="text-[#A8AAAE] text-[12px] font-medium"
-            :label="t('common.supervisor')"
-            required
-          />
-          <AppInput
-            v-model="providerForm.phone"
-            prop="phone"
-            type="tel"
-            label-class="text-[#A8AAAE] text-[12px] font-medium"
-            :label="t('common.contact')"
-            required
-          />
-        </div>
+
+        <AppInput
+          v-model="providerForm.tin"
+          prop="tin"
+          type="number"
+          :mask="'#'.repeat(9)"
+          :label="t('common.tin')"
+          label-class="text-[#A8AAAE] text-[12px] font-medium"
+          required
+          :min="9"
+          :max="9"
+        />
+        <!--        <div class="grid grid-cols-3 gap-x-6 gap-y-1">-->
+        <!--          <AppInput-->
+        <!--            v-model="providerForm.name"-->
+        <!--            prop="name"-->
+        <!--            :label="t('common.name2')"-->
+        <!--            label-class="text-[#A8AAAE] text-[12px] font-medium"-->
+        <!--            required-->
+        <!--          />-->
+        <!--          <AppInput-->
+        <!--            v-model="providerForm.address"-->
+        <!--            prop="address"-->
+        <!--            label-class="text-[#A8AAAE] text-[12px] font-medium"-->
+        <!--            :label="t('common.legalAddress')"-->
+        <!--            required-->
+        <!--          />-->
+        <!--          <AppInput-->
+        <!--            v-model="providerForm.oked"-->
+        <!--            type="number"-->
+        <!--            prop="oked"-->
+        <!--            :label="t('common.oked')"-->
+        <!--            label-class="text-[#A8AAAE] text-[12px] font-medium"-->
+        <!--            required-->
+        <!--            :max="5"-->
+        <!--            mask="#####"-->
+        <!--          />-->
+        <!--         -->
+        <!--          <AppInput-->
+        <!--            v-model="providerForm.license"-->
+        <!--            prop="license"-->
+        <!--            label-class="text-[#A8AAAE] text-[12px] font-medium"-->
+        <!--            :label="t('licence.number')"-->
+        <!--            required-->
+        <!--          />-->
+        <!--          <AppInput-->
+        <!--            v-model="providerForm.sertificate"-->
+        <!--            prop="sertificate"-->
+        <!--            label-class="text-[#A8AAAE] text-[12px] font-medium"-->
+        <!--            :label="t('common.certificate')"-->
+        <!--            required-->
+        <!--          />-->
+        <!--          <AppDatePicker-->
+        <!--            v-model="providerForm.sert_end_date"-->
+        <!--            prop="sert_end_date"-->
+        <!--            placeholder="дд.мм.гггг"-->
+        <!--            label-class="text-[#A8AAAE] text-[12px] font-medium"-->
+        <!--            :label="t('common.certificateDuration')"-->
+        <!--            required-->
+        <!--            :disabled-date="(time) => Date.now() >= time.getTime()"-->
+        <!--          />-->
+        <!--          <AppInput-->
+        <!--            v-model="providerForm.director"-->
+        <!--            prop="director"-->
+        <!--            label-class="text-[#A8AAAE] text-[12px] font-medium"-->
+        <!--            :label="t('common.supervisor')"-->
+        <!--            required-->
+        <!--          />-->
+        <!--          <AppInput-->
+        <!--            v-model="providerForm.phone"-->
+        <!--            prop="phone"-->
+        <!--            type="tel"-->
+        <!--            label-class="text-[#A8AAAE] text-[12px] font-medium"-->
+        <!--            :label="t('common.contact')"-->
+        <!--            required-->
+        <!--          />-->
+        <!--        </div>-->
       </AppForm>
 
       <div class="flex items-center justify-end gap-2 mt-[24px]">
