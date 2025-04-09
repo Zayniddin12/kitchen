@@ -42,7 +42,13 @@ const onSubmit = async () => {
     const newForm = { ...form };
     newForm.phone = `998${newForm.phone.replace(/\D/g, "")}`;
     await authStore.login(newForm).then(() => {
-
+      let userRole = JSON.parse(localStorage.getItem("user_role"));
+      console.log(userRole, "userRole");
+      if (userRole == "warehouseman") {
+        commonStore.successToast("/inbox", t("auth.loginToast"));
+        setSessionItem("current-menu", "2");
+        return;
+      }
       commonStore.successToast("/", t("auth.loginToast"));
       setSessionItem("current-menu", "0");
     });
