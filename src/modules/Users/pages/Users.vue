@@ -139,7 +139,7 @@ watch(
   () => {
     fetchUsers();
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 watchDebounced(
@@ -147,7 +147,7 @@ watchDebounced(
   () => {
     router.push({ query: filterObjectValues({ search: form.search }) });
   },
-  { debounce: 1000, maxWait: 5000 }
+  { debounce: 1000, maxWait: 5000 },
 );
 
 watch(
@@ -155,7 +155,7 @@ watch(
   () => {
     setBreadCrumbFn();
   },
-  { immediate: true }
+  { immediate: true },
 );
 </script>
 
@@ -368,3 +368,9 @@ watch(
     />
   </div>
 </template>
+
+<style>
+.custom-element-table table {
+  width: 100% !important;
+}
+</style>

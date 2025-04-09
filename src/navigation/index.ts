@@ -85,6 +85,7 @@ export const useLayoutStore = defineStore("layoutStore", () => {
           "head-chef",
           "head-pantry",
           "head-workshop",
+          "warehouseman",
         ],
         children: [
           {
@@ -108,7 +109,7 @@ export const useLayoutStore = defineStore("layoutStore", () => {
           {
             title: t("document.requests"),
             icon: "record2",
-            permissions: ["admin"],
+            permissions: ["admin", "warehouseman"],
             children: [
               {
                 title: t("document.received"),
@@ -127,17 +128,17 @@ export const useLayoutStore = defineStore("layoutStore", () => {
           {
             title: t("document.overhead2"),
             icon: "invoice",
-            permissions: ["admin", "head-pantry", "head-workshop"],
+            permissions: ["admin", "head-pantry", "head-workshop", "warehouseman"],
             children: [
               {
                 title: t("document.incoming"),
                 route: "/invoice-inbox",
-                permissions: ["admin", "head-pantry", "head-workshop"],
+                permissions: ["admin", "head-pantry", "head-workshop", "warehouseman"],
               },
               {
                 title: t("document.outgoing"),
                 route: "/invoice-outgoing",
-                permissions: ["admin", "head-pantry", "head-workshop"],
+                permissions: ["admin", "head-pantry", "head-workshop", "warehouseman"],
               },
             ],
           },
@@ -145,13 +146,13 @@ export const useLayoutStore = defineStore("layoutStore", () => {
             title: t("document.act.title2"),
             icon: "document",
             route: "/acts",
-            permissions: ["admin", "director-foundation", "deputy-director-foundation"],
+            permissions: ["admin", "director-foundation", "deputy-director-foundation", "warehouseman"],
           },
           {
             title: t("document.contract"),
             icon: "contract",
             route: "/contracts",
-            permissions: ["admin"],
+            permissions: ["admin", "warehouseman"],
           },
         ],
       },
@@ -172,6 +173,7 @@ export const useLayoutStore = defineStore("layoutStore", () => {
           "merchandiser",
           "freight-forwarder",
           "accountant-base-warehouse",
+          "warehouseman",
         ],
       },
       {

@@ -577,13 +577,14 @@ const clearProviderV$ = () => {
 const sendProviderForm = async () => {
 
   if (!providerForm.inn) {
+    console.log("GRsfef");
     await commonStore.errorToast(t("error.validation"));
     return;
   }
 
 
   try {
-    await settingsStore.CREATE_PROVIDERS_BY_INN({ inn: providerForm.inn });
+    await settingsStore.CREATE_PROVIDERS_BY_INN({ tin: providerForm.inn });
     providerCreateModal.value = false;
     clearProviderV$();
     await commonStore.successToast();
@@ -602,7 +603,7 @@ const sendProviderForm = async () => {
     toList.value = settingsStore.respondents;
 
   } catch (e) {
-    await commonStore.errorToast();
+    // await commonStore.errorToast();
   }
 };
 
