@@ -15,6 +15,7 @@ import { useSettingsStore } from "@/modules/Settings/store";
 import { DocTypeListType } from "@/modules/Settings/settings.types";
 import HeaderUser from "@/components/layouts/header-user/HeaderUser.vue";
 import { useI18n } from "vue-i18n";
+import { check } from "@/mixins/permission";
 
 const { t } = useI18n();
 const settingsStore = useSettingsStore();
@@ -100,6 +101,7 @@ onMounted(async () => {
     <!----------Создать modal---------->
     <div class="flex items-center gap-6">
 
+      <!--        v-if="check()"-->
       <el-dropdown
         v-if="$can('payment', 'Button')"
         trigger="click"

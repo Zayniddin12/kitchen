@@ -19,7 +19,7 @@ export const defineAbilitiesFor = (roles: string[]) => {
       can: ["create", "read", "update", "delete", "payment"],
       cannot: [],
     },
-    "cashier-sales": {
+    "head-pantry": {
       can: ["create", "read", "update", "delete", "payment"],
       cannot: [],
     },
@@ -32,7 +32,7 @@ export const defineAbilitiesFor = (roles: string[]) => {
       cannot: [],
     },
     "director-foundation": {
-      can: ["read", 'payment'],
+      can: ["read", "payment"],
       cannot: ["create", "update", "delete"],
     },
     "deputy-director-foundation": {
