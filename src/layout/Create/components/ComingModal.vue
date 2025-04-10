@@ -980,6 +980,7 @@ const changeUser = (val, key) => {
             required
             :disabled="authStore.disabledUserWorkplace && !activeComingModal"
             trigger="blur"
+            filterable
           >
             <template v-if="activeComingModal">
               <ElOption
@@ -1039,7 +1040,7 @@ const changeUser = (val, key) => {
             @change="(value) => respondentChange(value as string, 'to')"
             required
             trigger="blur"
-
+            filterable
           >
             <!--            :disabled="authStore.disabledUserWorkplace && activeComingModal"-->
             <template v-if="activeComingModal">
