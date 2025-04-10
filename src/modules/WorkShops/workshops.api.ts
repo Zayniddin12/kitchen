@@ -22,4 +22,11 @@ export default {
     const { data }: { data: Record<string, any> } = await axios.get("workshop-warehouses/list-by-base");
     return data.data.managements;
   },
+
+  // head pantry
+
+  async fetchManagementBases(): Promise<ManagementBasesType> {
+    const { data }: { data: Record<string, any> } = await axios.get("workshop-warehouses/list-by-base");
+    return data.data.managements;
+  },
 };

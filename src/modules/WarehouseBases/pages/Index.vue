@@ -602,12 +602,21 @@ const enterToFactory = () => {
               </template>
             </ElTableColumn>
             <ElTableColumn
-              prop="price_formatted"
+              prop="price"
+              label="Цена"
+              width="200"
+            >
+              <template #default="{row}:{row:WarehouseBasesProductType}">
+                {{ row.price_formatted ? row.price_formatted + " UZS" : "—" }}
+              </template>
+            </ElTableColumn>
+            <ElTableColumn
+              prop="total_price"
               label="Сумма"
               width="200"
             >
               <template #default="{row}:{row:WarehouseBasesProductType}">
-                {{ row.price_formatted || "—" }}
+                {{ row.total_price_formatted ? row.total_price_formatted + ' UZS' : "—" }}
               </template>
             </ElTableColumn>
             <!--            <ElTableColumn-->

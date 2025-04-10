@@ -1001,6 +1001,7 @@ const changeUser = (val, key) => {
             required
             :disabled="hasPantryFrom"
             trigger="blur"
+            filterable
           >
             <template v-if="activeComingModal">
               <ElOption
@@ -1061,6 +1062,7 @@ const changeUser = (val, key) => {
             required
             trigger="blur"
             :disabled="hasPantryTo"
+            filterable
 
           >
             <!--            :disabled="authStore.disabledUserWorkplace && activeComingModal"-->

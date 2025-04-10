@@ -21,6 +21,18 @@ export const useWorkshopsStore = defineStore("workshopsStore", () => {
 
   const managementBases = ref<ManagementBasesType>([]);
   const managementBasesLoading = ref(false);
+  const headPantryBases = ref<ManagementBasesType>([]);
+  const headPantryBasesLoading = ref(false);
+
+
+  const fetchHeadPantryBases = async () => {
+    headPantryBasesLoading.value = true;
+    try {
+      headPantryBases.value = await workshopsApi.fetchManagementBases();
+    } finally {
+      headPantryBasesLoading.value = false;
+    }
+  };
 
   const fetchManagementBases = async () => {
     managementBasesLoading.value = true;
@@ -28,6 +40,21 @@ export const useWorkshopsStore = defineStore("workshopsStore", () => {
       managementBases.value = await workshopsApi.fetchManagementBases();
     } finally {
       managementBasesLoading.value = false;
+    }
+  };
+
+  // Head Pantry
+  const activeHeadPantryBase = ref<ActiveManagementBaseType | null>(null);
+
+  const getHeadPantryWorkshop = (management_id: number, workshop_id: number) => {
+    const activeManagement = headPantryBases.value.find(el => el.id === management_id);
+
+    if (activeManagement) {
+      activeHeadPantryBase.value = { ...activeManagement, workshops: null };
+
+      const activeBase = activeManagement.workshops.find(el => el.id === workshop_id);
+
+      if (activeBase) activeHeadPantryBase.value.workshops = activeBase;
     }
   };
 
@@ -91,6 +118,29 @@ export const useWorkshopsStore = defineStore("workshopsStore", () => {
     });
   });
 
+  // HEAD PANTRY
+
+  const headPantryWorkshopsMenu = computed(() => {
+    return headPantryBases.value.map(el => {
+      const menu: Record<string, any> = {
+        id: el.id,
+        title: el.name,
+        icon: "building-warehouse",
+      };
+      if (el.workshops.length) {
+        menu.children = el.workshops.map(workshop => {
+          return {
+            id: workshop.id,
+            title: workshop.name,
+            route: `/pantry/${el.id}/${workshop.id}`,
+          };
+        });
+      }
+
+      return menu;
+    });
+  });
+
 
   return {
     createWorkshopUnpacking,
@@ -111,5 +161,16 @@ export const useWorkshopsStore = defineStore("workshopsStore", () => {
 
     fetchManagementBases,
     managementBasesWorkshopsMenu,
+
+    // HEAD PANTRY
+
+    activeHeadPantryBase,
+    getHeadPantryWorkshop,
+
+    headPantryBases,
+    headPantryBasesLoading,
+
+    headPantryWorkshopsMenu,
+    fetchHeadPantryBases,
   };
 });

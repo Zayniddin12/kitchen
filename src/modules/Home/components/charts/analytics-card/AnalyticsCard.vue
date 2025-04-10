@@ -26,7 +26,7 @@ const chartOption = computed(() => {
       bottom: "0%",
       left: "center",
       width: "100%",
-      itemGap: props.legendItemGap ?? 60,
+      itemGap: props.legendItemGap ?? 30,
       icon: "circle",
       orient: "horizontal",
     },
@@ -44,7 +44,7 @@ const chartOption = computed(() => {
         label: {
           show: true,
           position: "inner",
-          formatter: "{c}",
+          formatter: ({ value }: { value: number }) => value.toFixed(2),
           fontSize: 15,
           fontWeight: "bold",
         },
