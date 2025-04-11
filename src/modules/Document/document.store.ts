@@ -152,7 +152,16 @@ export const useDocumentStore = defineStore("documentStore", () => {
     if (document.value) document.value.status = status;
   };
 
+
+  const deleteDocument = async (id: string | number) => {
+
+    return await documentApi.deleteDocument(id);
+
+  };
+
   return {
+    deleteDocument,
+
     createLoading,
     create,
     draftsLoading,

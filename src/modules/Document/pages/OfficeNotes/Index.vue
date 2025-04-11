@@ -21,6 +21,7 @@ import { useSettingsStore } from "@/modules/Settings/store";
 import MemoModal from "@/layout/Create/components/MemoModal.vue";
 import FreeModal from "@/layout/Create/components/FreeModal.vue";
 import { useI18n } from "vue-i18n";
+import useConfirm from "@/components/ui/app-confirm/useConfirm";
 
 const documentStore = useDocumentStore();
 const settingsStore = useSettingsStore();
@@ -30,6 +31,7 @@ const { t } = useI18n();
 const router = useRouter();
 const route = useRoute();
 
+const { confirm } = useConfirm();
 const title = computed(() => route.meta.title ?? "");
 
 const isTranslate = computed(() => !!route.meta.isTranslate);
@@ -208,6 +210,13 @@ const tableRowClassName = ({ row }: { row: DraftType }) => {
   return "";
 };
 
+
+const deleteModalHandler = async (item: any) => {
+  confirm.delete().then(async () => {
+    await documentStore.deleteDocument(item.id);
+    await documentStore.fetchDrafts();
+  });
+};
 </script>
 
 <template>
@@ -369,14 +378,14 @@ const tableRowClassName = ({ row }: { row: DraftType }) => {
           {{ row.date ?? "-" }}
         </template>
       </el-table-column>
-<!--      <el-table-column-->
-<!--        prop="number"-->
-<!--        :label="t('document.number')"-->
-<!--      >-->
-<!--        <template #default="{ row }: { row: DraftType }">-->
-<!--          {{ row.number ?? "-" }}-->
-<!--        </template>-->
-<!--      </el-table-column>-->
+      <!--      <el-table-column-->
+      <!--        prop="number"-->
+      <!--        :label="t('document.number')"-->
+      <!--      >-->
+      <!--        <template #default="{ row }: { row: DraftType }">-->
+      <!--          {{ row.number ?? "-" }}-->
+      <!--        </template>-->
+      <!--      </el-table-column>-->
       <el-table-column
         prop="subject"
         :label="t('common.theme')"
@@ -419,6 +428,17 @@ const tableRowClassName = ({ row }: { row: DraftType }) => {
               />
             </button>
 
+            <button
+              v-if="$can('delete', 'Button')"
+              class="action-btn ml-[20px]"
+              @click="deleteModalHandler(row)"
+            >
+              <img
+                src="@/assets/images/icons/delete-danger-icon.svg"
+                alt="delete"
+              />
+            </button>
+
             <RouterLink
               v-if="$can('read', 'Button')"
               v-show="route.meta.permissionView"
@@ -431,19 +451,19 @@ const tableRowClassName = ({ row }: { row: DraftType }) => {
               />
             </RouterLink>
 
-<!--            <ElButton-->
-<!--              :loading="documentStore.pdfLoading"-->
-<!--              plain-->
-<!--              @click.stop="documentStore.getPdf(row.id)"-->
-<!--              class="action-btn"-->
-<!--              text-->
-<!--              bg-->
-<!--            >-->
-<!--              <img-->
-<!--                src="@/assets/images/download.svg"-->
-<!--                alt="download"-->
-<!--              />-->
-<!--            </ElButton>-->
+            <!--            <ElButton-->
+            <!--              :loading="documentStore.pdfLoading"-->
+            <!--              plain-->
+            <!--              @click.stop="documentStore.getPdf(row.id)"-->
+            <!--              class="action-btn"-->
+            <!--              text-->
+            <!--              bg-->
+            <!--            >-->
+            <!--              <img-->
+            <!--                src="@/assets/images/download.svg"-->
+            <!--                alt="download"-->
+            <!--              />-->
+            <!--            </ElButton>-->
           </div>
         </template>
       </el-table-column>

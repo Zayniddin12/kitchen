@@ -20,11 +20,13 @@ import AppForm from "@/components/ui/form/app-form/AppForm.vue";
 import AppPagination from "@/components/ui/app-pagination/AppPagination.vue";
 import { useCommonStore } from "@/stores/common.store";
 import { useI18n } from "vue-i18n";
+import useConfirm from "@/components/ui/app-confirm/useConfirm";
 
 const route = useRoute();
 const router = useRouter();
 
 const { t } = useI18n();
+const { confirm } = useConfirm();
 
 const title = computed(() => route.meta.title ?? "");
 const isTranslate = computed(() => !!route.meta.isTranslate);
@@ -173,6 +175,13 @@ watch(() => documentStore.documentsIsRefresh, (newValue) => {
   if (newValue) fetchContracts();
 });
 
+
+const deleteModalHandler = async (item: any) => {
+  confirm.delete().then(async () => {
+    await documentStore.deleteDocument(item.id);
+    await fetchContracts();
+  });
+};
 </script>
 
 <template>
@@ -425,7 +434,7 @@ watch(() => documentStore.documentsIsRefresh, (newValue) => {
           {{ row.total_price ? `${formatNumber(row.total_price)} ${t("currency.sum")}` : "-" }}
         </template>
       </el-table-column>
-      <el-table-column label="Действие" width="150">
+      <el-table-column label="Действие" width="200">
         <template #default="{row}:{row:ContractType}">
           <div class="flex items-center gap-x-2">
             <RouterLink
@@ -451,6 +460,16 @@ watch(() => documentStore.documentsIsRefresh, (newValue) => {
                 alt="download"
               />
             </ElButton>
+            <button
+              v-if="$can('delete', 'Button')"
+              class="action-btn"
+              @click.stop="deleteModalHandler(row)"
+            >
+              <img
+                src="@/assets/images/icons/delete-danger-icon.svg"
+                alt="delete"
+              />
+            </button>
           </div>
         </template>
       </el-table-column>

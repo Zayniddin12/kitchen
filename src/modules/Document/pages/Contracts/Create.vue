@@ -131,6 +131,7 @@ const cancel = async () => {
 };
 
 const sendForm = async () => {
+  console.log("deawdfccxz");
   if (!v$.value) return;
 
   if (!(await v$.value.validate())) {
@@ -156,18 +157,13 @@ const sendForm = async () => {
 const providerForm = reactive({
   inn: null,
 });
-const providerV$ = ref<null | ValidationType>(null);
-
-const setValidation2 = (value: ValidationType) => {
-  providerV$.value = value;
-};
 
 const providerCreateModalClose = async () => {
   providerCreateModal.value = false;
 };
 
 const sendProviderForm = async () => {
-  console.log("Hwlf,or,o");
+
   if (!providerForm.inn) {
     await commonStore.errorToast(t("error.validation"));
     return;
@@ -177,20 +173,12 @@ const sendProviderForm = async () => {
   try {
     await settingsStore.CREATE_PROVIDERS_BY_INN({ tin: providerForm.inn });
     providerCreateModal.value = false;
-    clearProviderV$();
     await commonStore.successToast();
     await settingsStore.fetchRespondents({ type: ["provider"], per_page: 1000 });
 
   } catch (e) {
     // await commonStore.errorToast();
   }
-};
-
-const clearProviderV$ = () => {
-  if (!providerV$.value) return;
-
-  providerV$.value.clearValidate();
-  providerV$.value.resetForm();
 };
 
 
@@ -200,6 +188,10 @@ onMounted(() => {
   settingsStore.GET_TYPE_PRODUCT();
   settingsStore.GET_UNITS();
 });
+
+const openProvideModal = () => {
+  providerCreateModal.value = true;
+};
 
 </script>
 
@@ -223,23 +215,67 @@ onMounted(() => {
         label-class="text-[#A8AAAE] text-xs font-medium"
         required
       />
+      <!--      <AppSelect-->
+      <!--        v-model="form.from_id"-->
+      <!--        prop="from_id"-->
+      <!--        label-class="text-[#A8AAAE] text-xs font-medium"-->
+      <!--        :label="t('common.supplier')"-->
+      <!--        :items="settingsStore.respondents"-->
+      <!--        item-label="name"-->
+      <!--        item-value="id"-->
+      <!--        :loading="settingsStore.respondentsLoading"-->
+      <!--        required-->
+      <!--        filterable-->
+      <!--        trigger="blur"-->
+      <!--      >-->
+      <!--        <template-->
+      <!--          #footer-->
+      <!--        >-->
+      <!--          <button-->
+      <!--            @click.stop="openProvideModal"-->
+      <!--            class="flex items-center justify-center gap-3 border-[1px] border-[#2E90FA] rounded-[8px] w-full text-[#2E90FA] text-sm font-medium py-[10px]"-->
+      <!--          >-->
+      <!--                              <span-->
+      <!--                                :style="{-->
+      <!--                                  maskImage: 'url(/icons/plusIcon.svg)',-->
+      <!--                                  backgroundColor: '#2E90FA',-->
+      <!--                                  color: '#2E90FA',-->
+      <!--                                  width: '20px',-->
+      <!--                                  height: '20px',-->
+      <!--                                  maskSize: '20px',-->
+      <!--                                  maskPosition: 'center',-->
+      <!--                                  maskRepeat: 'no-repeat',-->
+      <!--                                }"-->
+      <!--                              ></span>-->
+      <!--            {{ t("method.add") }}-->
+      <!--          </button>-->
+      <!--        </template>-->
+      <!--      </AppSelect>-->
+      <!--      {{ settingsStore.respondents }}-->
       <AppSelect
         v-model="form.from_id"
         prop="from_id"
-        label-class="text-[#A8AAAE] text-xs font-medium"
         :label="t('common.supplier')"
-        :items="settingsStore.respondents"
-        item-label="name"
-        item-value="id"
         :loading="settingsStore.respondentsLoading"
+        label-class="text-[#A8AAAE] text-xs font-medium"
         required
+        trigger="blur"
         filterable
       >
+
+        <template v-if="settingsStore.respondents">
+          <ElOption
+            v-for="item in settingsStore.respondents"
+            :key="item.id"
+            :value="item.id"
+            :label="item.name"
+          />
+        </template>
+
         <template
-          #footer
-        >
+          #footer>
           <button
-            @click.stop="providerCreateModal = true"
+            @mousedown.stop.prevent="providerCreateModal = true"
             class="flex items-center justify-center gap-3 border-[1px] border-[#2E90FA] rounded-[8px] w-full text-[#2E90FA] text-sm font-medium py-[10px]"
           >
                               <span
@@ -254,7 +290,7 @@ onMounted(() => {
                                   maskRepeat: 'no-repeat',
                                 }"
                               ></span>
-            {{ t("method.add") }}
+            Добавить
           </button>
         </template>
       </AppSelect>
@@ -378,25 +414,18 @@ onMounted(() => {
         </div>
       </template>
 
-      <AppForm
-        :value="providerForm"
-        @validation="setValidation2"
-        class="bg-[#F8F9FC] p-6 rounded-[24px] border border-[#E2E6F3]"
-      >
-        <!--        {{ providerForm }}-->
-        <AppInput
-          v-model="providerForm.inn"
-          prop="inn"
-          type="number"
-          :mask="'#'.repeat(9)"
-          :label="t('common.tin')"
-          label-class="text-[#A8AAAE] text-[12px] font-medium"
-          required
-          :min="9"
-          :max="9"
-        />
-
-      </AppForm>
+      <!--        {{ providerForm }}-->
+      <AppInput
+        v-model="providerForm.inn"
+        prop="inn"
+        type="number"
+        :mask="'#'.repeat(9)"
+        :label="t('common.tin')"
+        label-class="text-[#A8AAAE] text-[12px] font-medium"
+        required
+        :min="9"
+        :max="9"
+      />
 
       <div class="flex items-center justify-end gap-2 mt-[24px]">
         <button
