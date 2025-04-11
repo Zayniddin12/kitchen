@@ -70,7 +70,7 @@ const fetchProducts = async () => {
 
   try {
 
-    if (route.params.workshop_id) await workshopsStore.fetchProducts(Number(route.params.workshop_id), filterObjectValues(productsForm));
+    if (route.params.workshop_id) await workshopsStore.fetchProductsPantry(Number(route.params.workshop_id), filterObjectValues(productsForm));
   } catch (error: any) {
     if (error?.error?.code === 422) {
       productsFormErrors.value = error.meta.validation_errors;
@@ -154,19 +154,19 @@ const { setBreadCrumb } = useBreadcrumb();
 
 const setBreadCrumbFn = async () => {
 
-  workshopsStore.getManagementWorkshop(districtId.value, productId.value);
+  workshopsStore.getHeadPantryWorkshop(districtId.value, productId.value);
 
-  if (!workshopsStore.activeManagementBase) return;
+  if (!workshopsStore.activeHeadPantryBase) return;
 
   setBreadCrumb([
     {
-      label: "Цех",
+      label: "Кладовая",
     },
     {
-      label: workshopsStore.activeManagementBase?.name ?? "",
+      label: workshopsStore.activeHeadPantryBase?.name ?? "",
     },
     {
-      label: workshopsStore.activeManagementBase?.workshops?.name ?? "",
+      label: workshopsStore.activeHeadPantryBase?.pantries?.name ?? "",
       isActionable: true,
     },
   ]);
@@ -186,7 +186,7 @@ watch(
 
 watch(() => route.params.workshop_id, async (newId) => {
   if (newId) {
-    await workshopsStore.fetchFillingPercentage(Number(newId));
+    await workshopsStore.fetchFillingPercentagePantry(Number(newId));
   }
 }, { immediate: true });
 
@@ -197,34 +197,15 @@ onMounted(() => {
   documentStore.fetchDrafts("received", { doc_type: "invoice", per_page: 100 });
 });
 
-const enterToFactory = () => {
-  router.push({
-    name: "warehouse-packaging",
-    params: { district_id: route.params.district_id, product_id: route.params.product_id },
-    query: { id: id.value },
-  });
-};
-
-const packagingPage = () => {
-  router.push({
-    name: "workshop-packaging",
-    params: {
-      district_id: route.params.district_id,
-      factory_id: route.params.workshop_id,
-    },
-  });
-};
 </script>
 
 <template>
   <section class="warehouse">
-    <div v-if="workshopsStore.activeManagementBase?.workshops">
+    <div v-if="workshopsStore.activeHeadPantryBase?.pantries">
       <div class="flex items-center justify-between">
         <h1 class="font-semibold text-[32px] text-dark">
-          {{ workshopsStore.product?.title ?? route.meta.title }}
+          {{ workshopsStore.activeHeadPantryBase?.pantries.name ?? route.meta.title }}
         </h1>
-
-        <button class="custom-light-btn" @click="packagingPage">Переработка</button>
       </div>
 
       <div class="rounded-2xl py-3 px-4 border mt-6">
@@ -232,11 +213,11 @@ const packagingPage = () => {
           Заполнение склада
         </h3>
         <h2 class="text-dark text-[32px] font-semibold mt-3">
-          {{ workshopsStore.fillingPercentage?.percentage ?? 0 }}%
+          {{ workshopsStore.fillingPercentagePantry?.percentage ?? 0 }}%
         </h2>
         <ElProgress
           :stroke-width="16"
-          :percentage="workshopsStore.fillingPercentage?.percentage ?? 0"
+          :percentage="workshopsStore.fillingPercentagePantry?.percentage ?? 0"
           :show-text="false"
           status="success"
           class="mt-2"
@@ -392,7 +373,7 @@ const packagingPage = () => {
           <div class="flex items-center mt-[10px] justify-between">
             <div class="text-[#8F9194] text-[14px]">Найдено:
               {{
-                workshopsStore.products?.pagination.total_count ?? 0
+                workshopsStore.productsPantry?.pagination.total_count ?? 0
               }}
             </div>
             <div class="flex items-center">
@@ -421,9 +402,9 @@ const packagingPage = () => {
         <div
           class="inner"
         >
-          <template v-if="workshopsStore.products?.grouped_products.length">
+          <template v-if="workshopsStore.productsPantry?.grouped_products.length">
             <div
-              v-for="item in workshopsStore.products.grouped_products"
+              v-for="item in workshopsStore.productsPantry?.grouped_products"
               :key="item.parent_name"
             >
               <h2 class="text-dark font-medium text-lg mb-3">
@@ -508,9 +489,9 @@ const packagingPage = () => {
               </ElTable>
             </div>
             <AppPagination
-              v-if="workshopsStore.products"
+              v-if="workshopsStore.productsPantry"
               v-model="productsForm.page"
-              :pagination="workshopsStore.products.pagination"
+              :pagination="workshopsStore.productsPantry.pagination"
               class="mt-6"
               @current-change="changePage"
             />

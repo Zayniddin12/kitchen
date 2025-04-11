@@ -475,7 +475,7 @@ const openModal = async () => {
         }
 
         await settingsStore.fetchRespondents({
-          type: activeComingModal.value == 15 || activeComingModal.value == 18 ? ["pantryWarehouse"] : ["kitchenWarehouse", "organization", "base", "workshopWarehouse", "pantryWarehouse", "provider"],
+          type: activeComingModal.value == 15 || activeComingModal.value == 18 ? ["pantryWarehouse"] : ["kitchenWarehouse", "organization", "workshopWarehouse", "pantryWarehouse"],
           per_page: 100,
         });
         toList.value = settingsStore.respondents;
@@ -490,13 +490,13 @@ const openModal = async () => {
         }
 
         await settingsStore.fetchRespondents({
-          type: activeComingModal.value == 15 || activeComingModal.value == 18 ? ["pantryWarehouse"] : ["kitchenWarehouse", "organization", "base", "workshopWarehouse", "pantryWarehouse", "provider"],
+          type: activeComingModal.value == 15 || activeComingModal.value == 18 ? ["pantryWarehouse"] : ["kitchenWarehouse", "organization", "workshopWarehouse", "pantryWarehouse"],
           per_page: 100,
         });
         toList.value = settingsStore.respondents;
       } else {
         await settingsStore.fetchRespondents({
-          type: activeComingModal.value == 15 || activeComingModal.value == 18 ? ["pantryWarehouse"] : activeComingModal.value == 17 ? ["kitchenWarehouse"] : ["kitchenWarehouse", "organization", "base", "workshopWarehouse", "pantryWarehouse", "provider"],
+          type: activeComingModal.value == 15 || activeComingModal.value == 18 ? ["pantryWarehouse"] : activeComingModal.value == 17 ? ["kitchenWarehouse"] : ["kitchenWarehouse", "organization", "workshopWarehouse", "pantryWarehouse"],
           per_page: 100,
         });
         toList.value = settingsStore.respondents;

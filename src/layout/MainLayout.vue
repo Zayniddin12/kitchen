@@ -47,6 +47,7 @@ onMounted(async () => {
   await settingsStore.GET_REGIONAL({ per_page: 100 });
   await warehouseBasesStore.fetchManagementBases();
   await workshopsStoreStore.fetchManagementBases();
+  await workshopsStoreStore.fetchHeadPantryBases();
   commonStore.getTitles();
 });
 

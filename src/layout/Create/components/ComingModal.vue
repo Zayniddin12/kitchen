@@ -468,12 +468,12 @@ const openModal = async () => {
         // await fetchRespondents({ type: [activeWorkplace.workplace_type] });
         form[type] = `${activeWorkplace.base_id}_base`;
         await settingsStore.fetchRespondents({
-          type: activeComingModal.value ? ["base"] : ["kitchenWarehouse", "organization", "base"],
+          type: activeComingModal.value ? ["base"] : ["kitchenWarehouse", "organization", "base", "pantryWarehouse"],
           per_page: 100,
         });
         toList.value = settingsStore.respondents;
       } else {
-        await settingsStore.fetchRespondents({ type: ["base", "organization"], per_page: 100 });
+        await settingsStore.fetchRespondents({ type: ["base", "organization", "pantryWarehouse"], per_page: 100 });
         toList.value = settingsStore.respondents;
       }
       await settingsStore.fetchRespondents({ type: activeComingModal.value ? ["provider"] : ["base"], per_page: 100 });

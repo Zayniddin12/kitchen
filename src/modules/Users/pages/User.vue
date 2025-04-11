@@ -43,7 +43,7 @@ const avatar = computed(() => {
 
 const fullName = computed(() => {
   return usersStore.activeUserPage ? usersStore.userFullName : usersStore.employeeFullName;
-})
+});
 
 const routeId = computed(() => {
   return parseInt(route.params.id as string);
@@ -236,32 +236,32 @@ onMounted(() => {
                   Место работы:
                 </span>
                 <p>
-                {{data?.organization_name ?? "—"}}
+                  {{ data?.organization_name ?? "—" }}
                 </p>
               </div>
             </template>
           </div>
         </div>
 
-        <div class="bg-gray-50 p-6 mt-[24px] rounded-[16px]">
-          <h3 class="text-gray-500 mb-4">История сотрудника</h3>
+        <!--        <div class="bg-gray-50 p-6 mt-[24px] rounded-[16px]">-->
+        <!--          <h3 class="text-gray-500 mb-4">История сотрудника</h3>-->
 
-          <div class="p-[16px] rounded-[8px] border mb-[16px]">
-            Здесь будет текст
-          </div>
+        <!--          <div class="p-[16px] rounded-[8px] border mb-[16px]">-->
+        <!--            Здесь будет текст-->
+        <!--          </div>-->
 
-          <div class="grid grid-cols-2 gap-8">
-            <div>
-              <span class="text-blue-500 mb-[4px] block">Дата и время изменения:</span>
-              <p>28.09.2024</p>
-            </div>
+        <!--          <div class="grid grid-cols-2 gap-8">-->
+        <!--            <div>-->
+        <!--              <span class="text-blue-500 mb-[4px] block">Дата и время изменения:</span>-->
+        <!--              <p>28.09.2024</p>-->
+        <!--            </div>-->
 
-            <div>
-              <span class="text-blue-500 mb-[4px] block">Кто внес изменение:</span>
-              <p>{{ data?.responsible_name || "—" }}</p>
-            </div>
-          </div>
-        </div>
+        <!--            <div>-->
+        <!--              <span class="text-blue-500 mb-[4px] block">Кто внес изменение:</span>-->
+        <!--              <p>{{ data?.responsible_name || "—" }}</p>-->
+        <!--            </div>-->
+        <!--          </div>-->
+        <!--        </div>-->
       </div>
     </AppOverlay>
 
