@@ -430,7 +430,7 @@ const deleteModalHandler = async (item: any) => {
 
             <button
               v-if="$can('delete', 'Button')"
-              class="action-btn ml-[20px]"
+              class="action-btn"
               @click="deleteModalHandler(row)"
             >
               <img
