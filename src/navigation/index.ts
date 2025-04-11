@@ -200,7 +200,7 @@ export const useLayoutStore = defineStore("layoutStore", () => {
         title: t("Workshops.storageRoom2"),
         icon: "building-warehouse",
         unique: "head-pantry",
-        children: workshopsStore.managementBasesWorkshopsMenu,
+        children: workshopsStore.headPantryWorkshopsMenu,
         permissions: [
           "admin",
           "super-admin",

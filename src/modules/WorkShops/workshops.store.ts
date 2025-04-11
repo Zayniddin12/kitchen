@@ -28,7 +28,7 @@ export const useWorkshopsStore = defineStore("workshopsStore", () => {
   const fetchHeadPantryBases = async () => {
     headPantryBasesLoading.value = true;
     try {
-      headPantryBases.value = await workshopsApi.fetchManagementBases();
+      headPantryBases.value = await workshopsApi.fetchHeadPantryBases();
     } finally {
       headPantryBasesLoading.value = false;
     }
@@ -50,11 +50,11 @@ export const useWorkshopsStore = defineStore("workshopsStore", () => {
     const activeManagement = headPantryBases.value.find(el => el.id === management_id);
 
     if (activeManagement) {
-      activeHeadPantryBase.value = { ...activeManagement, workshops: null };
+      activeHeadPantryBase.value = { ...activeManagement, pantries: null };
 
-      const activeBase = activeManagement.workshops.find(el => el.id === workshop_id);
+      const activeBase = activeManagement.pantries.find(el => el.id === workshop_id);
 
-      if (activeBase) activeHeadPantryBase.value.workshops = activeBase;
+      if (activeBase) activeHeadPantryBase.value.pantries = activeBase;
     }
   };
 
@@ -127,12 +127,12 @@ export const useWorkshopsStore = defineStore("workshopsStore", () => {
         title: el.name,
         icon: "building-warehouse",
       };
-      if (el.workshops.length) {
-        menu.children = el.workshops.map(workshop => {
+      if (el.pantries.length) {
+        menu.children = el.pantries.map(pantrie => {
           return {
-            id: workshop.id,
-            title: workshop.name,
-            route: `/pantry/${el.id}/${workshop.id}`,
+            id: pantrie.id,
+            title: pantrie.name,
+            route: `/pantry/${el.id}/${pantrie.id}`,
           };
         });
       }
@@ -140,6 +140,32 @@ export const useWorkshopsStore = defineStore("workshopsStore", () => {
       return menu;
     });
   });
+
+  const fillingPercentagePantry = ref<null | FillingPercentageResponseType>(null);
+  const fillingPercentagePantryLoading = ref(false);
+
+  const fetchFillingPercentagePantry = async (id: number) => {
+    fillingPercentagePantryLoading.value = true;
+
+    try {
+      fillingPercentagePantry.value = await workshopsApi.fetchFillingPercentageHeadPantry(id);
+    } finally {
+      fillingPercentagePantryLoading.value = false;
+    }
+  };
+
+  const productsPantry = ref<WarehouseBasesProductsResponseType | null>(null);
+  const productsPantryLoading = ref(false);
+
+  const fetchProductsPantry = async (id: number, params: WarehouseBasesProductsParamsType = {}) => {
+    productsPantryLoading.value = true;
+
+    try {
+      productsPantry.value = await workshopsApi.fetchProductsHeadPantry(id, params);
+    } finally {
+      productsPantryLoading.value = false;
+    }
+  };
 
 
   return {
@@ -172,5 +198,13 @@ export const useWorkshopsStore = defineStore("workshopsStore", () => {
 
     headPantryWorkshopsMenu,
     fetchHeadPantryBases,
+
+    fillingPercentagePantry,
+    fetchFillingPercentagePantry,
+    fillingPercentagePantryLoading,
+
+    fetchProductsPantry,
+    productsPantryLoading,
+    productsPantry
   };
 });

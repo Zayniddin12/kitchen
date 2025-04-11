@@ -2,6 +2,14 @@ import { RouteRecordRaw } from "vue-router";
 
 export default [
   {
+    path: "/pantry/:district_id(\\d+)/:workshop_id(\\d+)",
+    name: "pantry",
+    component: () => import("@/modules/WorkShops/pages/HeadPantry.vue"),
+    meta: {
+      title: "Кладовая",
+    },
+  },
+  {
     path: "/workshop/:district_id(\\d+)/:workshop_id(\\d+)",
     name: "workshop",
     component: () => import("@/modules/WorkShops/pages/Index.vue"),

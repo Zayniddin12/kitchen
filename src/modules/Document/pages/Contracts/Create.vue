@@ -2,167 +2,210 @@
   setup
   lang="ts"
 >
-import {computed, onMounted, reactive, ref, watchEffect} from "vue";
-import {useRoute, useRouter} from "vue-router";
+import { computed, onMounted, reactive, ref, watch, watchEffect } from "vue";
+import { useRoute, useRouter } from "vue-router";
 import AppInput from "@/components/ui/form/app-input/AppInput.vue";
 import AppSelect from "@/components/ui/form/app-select/AppSelect.vue";
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 import useConfirm from "@/components/ui/app-confirm/useConfirm";
-import {DocumentProductType} from "@/modules/Document/document.types";
+import { DocumentProductType } from "@/modules/Document/document.types";
 import AppForm from "@/components/ui/form/app-form/AppForm.vue";
-import {ValidationType} from "@/components/ui/form/app-form/app-form.type";
-import {useSettingsStore} from "@/modules/Settings/store";
-import {useDocumentStore} from "@/modules/Document/document.store";
-import {AppSelectValueType} from "@/components/ui/form/app-select/app-select.type";
-import {deepEqual, formatNumber} from "@/utils/helper";
-import {useCommonStore} from "@/stores/common.store";
-import {useI18n} from "vue-i18n";
+import { ValidationType } from "@/components/ui/form/app-form/app-form.type";
+import { useSettingsStore } from "@/modules/Settings/store";
+import { useDocumentStore } from "@/modules/Document/document.store";
+import { AppSelectValueType } from "@/components/ui/form/app-select/app-select.type";
+import { deepEqual, formatNumber, togglePageScrolling } from "@/utils/helper";
+import { useCommonStore } from "@/stores/common.store";
+import { useI18n } from "vue-i18n";
 
 interface FormType {
-	from_id: "" | number,
-	number: string,
-	products: DocumentProductType[],
+  from_id: "" | number,
+  number: string,
+  products: DocumentProductType[],
 }
 
 const router = useRouter();
 const route = useRoute();
-const {confirm} = useConfirm();
-const {t} = useI18n();
+const { confirm } = useConfirm();
+const { t } = useI18n();
 
 const settingsStore = useSettingsStore();
 const documentStore = useDocumentStore();
 const commonStore = useCommonStore();
 
 const defaultProduct: DocumentProductType = {
-	product_type_id: "",
-	category_id: "",
-	quantity: null,
-	unit_id: "",
-	price: null,
+  product_type_id: "",
+  category_id: "",
+  quantity: null,
+  unit_id: "",
+  price: null,
 };
 
 const form = reactive<FormType>({
-	from_id: "",
-	number: "",
-	products: [{...defaultProduct}],
+  from_id: "",
+  number: "",
+  products: [{ ...defaultProduct }],
 });
+
+const providerCreateModal = ref<boolean>(false);
 
 const oldForm = ref<FormType>(JSON.parse(JSON.stringify(form)));
 
 const v$ = ref<ValidationType | null>(null);
 
 const setValidation = (value: ValidationType) => {
-	v$.value = value;
+  v$.value = value;
 };
 
 const validationErrors = ref<Record<string, any> | null>(null);
 
 const addProduct = () => {
-	form.products.push({...defaultProduct});
+  form.products.push({ ...defaultProduct });
 };
 
 const permissionProductDelete = computed(() => {
-	return form.products.length > 1;
+  return form.products.length > 1;
 });
 
 const deleteProduct = (index: number) => {
-	if (!permissionProductDelete.value) return;
+  if (!permissionProductDelete.value) return;
 
-	confirm.delete().then(() => {
-		form.products.splice(index, 1);
-	});
+  confirm.delete().then(() => {
+    form.products.splice(index, 1);
+  });
 };
 
 const vidProducts = ref<Map<number, Record<string, any>[]>>(new Map);
 
 const fetchVidProductsList = async (value: AppSelectValueType) => {
 
-	if (typeof value !== "number") return;
+  if (typeof value !== "number") return;
 
-	await settingsStore.GET_VID_PRODUCT({
-		parent_id: value,
-		per_page: 100,
-	});
+  await settingsStore.GET_VID_PRODUCT({
+    parent_id: value,
+    per_page: 100,
+  });
 
-	vidProducts.value.set(value, settingsStore.vidProduct.product_types);
+  vidProducts.value.set(value, settingsStore.vidProduct.product_types);
 };
 
-const {setBreadCrumb} = useBreadcrumb();
+const { setBreadCrumb } = useBreadcrumb();
 
 const title = computed(() => route.meta.title ?? "");
 
 const isTranslate = computed(() => !!route.meta.isTranslate);
 
 const setBreadCrumbFn = () => {
-	setBreadCrumb([
-		{
-			label: "document.title1",
-			isTranslate: true
-		},
-		{
-			label: "document.contract",
-			isTranslate: true,
-			to: {name: "contracts"},
-		},
-		{
-			label: title.value,
-			isTranslate: isTranslate.value,
-			isActionable: true
-		},
-	]);
+  setBreadCrumb([
+    {
+      label: "document.title1",
+      isTranslate: true,
+    },
+    {
+      label: "document.contract",
+      isTranslate: true,
+      to: { name: "contracts" },
+    },
+    {
+      label: title.value,
+      isTranslate: isTranslate.value,
+      isActionable: true,
+    },
+  ]);
 };
 
 const cancel = async () => {
-	const isChange = !deepEqual(form, oldForm.value);
+  const isChange = !deepEqual(form, oldForm.value);
 
-	if (isChange) {
-		const response = await confirm.cancel();
+  if (isChange) {
+    const response = await confirm.cancel();
 
-		if (response === "save") {
-			sendForm();
-			return;
-		}
-	}
+    if (response === "save") {
+      sendForm();
+      return;
+    }
+  }
 
-	v$.value?.clear();
-	router.push({name: "contracts"});
+  v$.value?.clear();
+  router.push({ name: "contracts" });
 };
 
 const sendForm = async () => {
-	if (!v$.value) return;
+  if (!v$.value) return;
 
-	if (!(await v$.value.validate())) {
-		commonStore.errorToast(t("error.validation"));
-		return;
-	}
+  if (!(await v$.value.validate())) {
+    commonStore.errorToast(t("error.validation"));
+    return;
+  }
 
-	const newForm = {
-		doc_type_id: 9,
-		...form,
-	};
+  const newForm = {
+    doc_type_id: 9,
+    ...form,
+  };
 
-	try {
-		await documentStore.create(newForm as any);
-		commonStore.successToast({name: "contracts"});
-	} catch (error: any) {
-		if (error?.error?.code === 422) {
-			validationErrors.value = error.meta.validation_errors;
-		}
-	}
+  try {
+    await documentStore.create(newForm as any);
+    commonStore.successToast({ name: "contracts" });
+  } catch (error: any) {
+    if (error?.error?.code === 422) {
+      validationErrors.value = error.meta.validation_errors;
+    }
+  }
 };
 
+const providerForm = reactive({
+  inn: null,
+});
+const providerV$ = ref<null | ValidationType>(null);
+
+const setValidation2 = (value: ValidationType) => {
+  providerV$.value = value;
+};
+
+const providerCreateModalClose = async () => {
+  providerCreateModal.value = false;
+};
+
+const sendProviderForm = async () => {
+  console.log("Hwlf,or,o");
+  if (!providerForm.inn) {
+    await commonStore.errorToast(t("error.validation"));
+    return;
+  }
+
+
+  try {
+    await settingsStore.CREATE_PROVIDERS_BY_INN({ tin: providerForm.inn });
+    providerCreateModal.value = false;
+    clearProviderV$();
+    await commonStore.successToast();
+    await settingsStore.fetchRespondents({ type: ["provider"], per_page: 1000 });
+
+  } catch (e) {
+    // await commonStore.errorToast();
+  }
+};
+
+const clearProviderV$ = () => {
+  if (!providerV$.value) return;
+
+  providerV$.value.clearValidate();
+  providerV$.value.resetForm();
+};
+
+
 onMounted(() => {
-	setBreadCrumbFn();
-	settingsStore.fetchRespondents();
-	settingsStore.GET_TYPE_PRODUCT();
-	settingsStore.GET_UNITS();
+  setBreadCrumbFn();
+  settingsStore.fetchRespondents({ type: ["provider"], per_page: 1000 });
+  settingsStore.GET_TYPE_PRODUCT();
+  settingsStore.GET_UNITS();
 });
 
 </script>
 
 <template>
   <h1 class="m-0 font-semibold text-[32px]">
-	  {{ isTranslate ? t(title) : title }}
+    {{ isTranslate ? t(title) : title }}
   </h1>
 
   <AppForm
@@ -190,7 +233,31 @@ onMounted(() => {
         item-value="id"
         :loading="settingsStore.respondentsLoading"
         required
-      />
+        filterable
+      >
+        <template
+          #footer
+        >
+          <button
+            @click.stop="providerCreateModal = true"
+            class="flex items-center justify-center gap-3 border-[1px] border-[#2E90FA] rounded-[8px] w-full text-[#2E90FA] text-sm font-medium py-[10px]"
+          >
+                              <span
+                                :style="{
+                                  maskImage: 'url(/icons/plusIcon.svg)',
+                                  backgroundColor: '#2E90FA',
+                                  color: '#2E90FA',
+                                  width: '20px',
+                                  height: '20px',
+                                  maskSize: '20px',
+                                  maskPosition: 'center',
+                                  maskRepeat: 'no-repeat',
+                                }"
+                              ></span>
+            {{ t("method.add") }}
+          </button>
+        </template>
+      </AppSelect>
     </div>
 
     <div class="bg-[#F8F9FC] p-4 rounded-[16px] mt-2">
@@ -288,14 +355,67 @@ onMounted(() => {
       class="custom-cancel-btn"
       @click="cancel"
     >
-        {{ t("method.cancel") }}
+      {{ t("method.cancel") }}
     </button>
     <button
       @click="sendForm"
       class="custom-apply-btn ml-[8px]"
     >
-        {{ t("method.add") }}
+      {{ t("method.add") }}
     </button>
+
+    <ElDialog
+      v-model="providerCreateModal"
+      :show-close="false"
+      class="w-[30%]"
+      align-center
+      append-to-body
+      :before-close="providerCreateModalClose"
+    >
+      <template #header>
+        <div class="text-center text-[#000000] font-bold text-[18px]">
+          {{ t("document.supplier.createTitle") }}
+        </div>
+      </template>
+
+      <AppForm
+        :value="providerForm"
+        @validation="setValidation2"
+        class="bg-[#F8F9FC] p-6 rounded-[24px] border border-[#E2E6F3]"
+      >
+        <!--        {{ providerForm }}-->
+        <AppInput
+          v-model="providerForm.inn"
+          prop="inn"
+          type="number"
+          :mask="'#'.repeat(9)"
+          :label="t('common.tin')"
+          label-class="text-[#A8AAAE] text-[12px] font-medium"
+          required
+          :min="9"
+          :max="9"
+        />
+
+      </AppForm>
+
+      <div class="flex items-center justify-end gap-2 mt-[24px]">
+        <button
+          class="custom-cancel-btn h-10"
+          @click="providerCreateModalClose"
+        >
+          {{ t("method.cancel") }}
+        </button>
+        <ElButton
+          :loading="settingsStore.createProviderLoading"
+          size="large"
+          type="primary"
+          class="custom-apply-btn"
+          @click="sendProviderForm"
+        >
+          {{ t("method.add") }}
+        </ElButton>
+      </div>
+    </ElDialog>
   </div>
 </template>
 
