@@ -20,7 +20,9 @@ import AppForm from "@/components/ui/form/app-form/AppForm.vue";
 import AppPagination from "@/components/ui/app-pagination/AppPagination.vue";
 import AppDatePicker from "@/components/ui/form/app-date-picker/AppDatePicker.vue";
 import { useI18n } from "vue-i18n";
+import useConfirm from "@/components/ui/app-confirm/useConfirm";
 
+const { confirm } = useConfirm();
 const documentStore = useDocumentStore();
 const settingsStore = useSettingsStore();
 
@@ -151,6 +153,13 @@ const changePage = (value: number) => {
   router.push({ query: { ...route.query, page: value } });
 };
 
+
+const deleteModalHandler = async (item: any) => {
+  confirm.delete().then(async () => {
+    await documentStore.deleteDocument(item.id);
+    await fetchInvoices();
+  });
+};
 </script>
 
 <template>
@@ -374,6 +383,17 @@ const changePage = (value: number) => {
                   alt="eye"
                 />
               </RouterLink>
+
+              <button
+                v-if="$can('delete', 'Button')"
+                class="action-btn ml-[20px]"
+                @click="deleteModalHandler(row)"
+              >
+                <img
+                  src="@/assets/images/icons/delete-danger-icon.svg"
+                  alt="delete"
+                />
+              </button>
               <!--              <ElButton-->
               <!--                :loading="documentStore.pdfLoading"-->
               <!--                plain-->
