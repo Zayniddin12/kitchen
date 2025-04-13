@@ -194,6 +194,15 @@ const clearValidations = () => {
   v$.value?.clear();
   actV$.value?.clear();
   actForm.products = [];
+  form.products = [
+    {
+      category_id: "",
+      product_type_id: "",
+      quantity: null,
+      unit_id: "",
+      price: null,
+    },
+  ];
   form.to = "";
   form.from = "";
   form.to_type = "";
@@ -372,6 +381,8 @@ const createProduct = () => {
     unit: "",
     price: null,
   });
+
+  activeProduct.value = form.products.length;
 };
 
 const activeComingModal = computed(() => props.id);
@@ -379,6 +390,7 @@ const activeComingModal = computed(() => props.id);
 const deleteProduct = (index: number) => {
   form.products?.splice(index, 1);
   actForm.products.splice(index, 1);
+  activeProduct.value = form.products.length;
 };
 
 const fetchRespondents = (params: any) => {
