@@ -562,6 +562,7 @@ const enterToFactory = () => {
             :data="warehouseBasesStore.products?.warehouse_products"
             stripe
             class="custom-element-table"
+            :empty-text="$t('common.empty')"
           >
             <ElTableColumn
               prop="idx"
@@ -616,7 +617,7 @@ const enterToFactory = () => {
               width="200"
             >
               <template #default="{row}:{row:WarehouseBasesProductType}">
-                {{ row.total_price_formatted ? row.total_price_formatted + ' UZS' : "—" }}
+                {{ row.total_price_formatted ? row.total_price_formatted + " UZS" : "—" }}
               </template>
             </ElTableColumn>
             <!--            <ElTableColumn-->
@@ -634,6 +635,13 @@ const enterToFactory = () => {
             <!--              </template>-->
             <!--            </ElTableColumn>-->
           </ElTable>
+
+          <div class="my-4 flex items-center justify-between">
+            <span class="text-2xl font-bold">{{ $t("common.totalSum") }}</span>
+            <span
+              class="text-xl font-medium">{{ warehouseBasesStore.products?.total_price_formatted && warehouseBasesStore.products.total_price_formatted
+              }}</span>
+          </div>
           <AppPagination
             v-if="warehouseBasesStore.products"
             v-model="productsForm.page"
@@ -651,6 +659,7 @@ const enterToFactory = () => {
             :data="warehouseBasesStore.invoices?.invoices ?? []"
             class="custom-element-table"
             stripe
+            :empty-text="$t('common.empty')"
           >
             <ElTableColumn
               prop="idx"
