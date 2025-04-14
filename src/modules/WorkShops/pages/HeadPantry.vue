@@ -487,6 +487,13 @@ onMounted(() => {
                 <!--              </template>-->
                 <!--            </ElTableColumn>-->
               </ElTable>
+
+              <div class="my-4 flex items-center justify-between">
+                <span class="text-2xl font-bold">{{ $t("common.totalSum") }}</span>
+                <span
+                  class="text-xl font-medium">{{ workshopsStore.productsPantry?.total_price_formatted && workshopsStore.productsPantry.total_price_formatted
+                  }}</span>
+              </div>
             </div>
             <AppPagination
               v-if="workshopsStore.productsPantry"

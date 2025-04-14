@@ -795,6 +795,13 @@ const packagingPage = () => {
                   </ElTableColumn>
                 </ElTable>
               </div>
+
+              <div class="my-4 flex items-center justify-between">
+                <span class="text-2xl font-bold">{{ $t("common.totalSum") }}</span>
+                <span
+                  class="text-xl font-medium">{{ kitchenWarehouseStore.listProducts?.total_price_formatted && kitchenWarehouseStore.listProducts.total_price_formatted
+                  }}</span>
+              </div>
               <AppPagination
                 v-model="productsForm.page"
                 :pagination="kitchenWarehouseStore.listProducts.pagination"
