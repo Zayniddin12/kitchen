@@ -83,6 +83,11 @@ const downloadPdf = async () => {
   pdf.addImage(imgData, "PNG", 0, 0, imgWidth, imgHeight);
   pdf.save("Document.pdf");
 };
+
+const acceptDocument = async () => {
+  await documentStore.changeDocumentStatus("approved", routeId.value);
+  await documentStore.fetchDocument(routeId.value);
+};
 </script>
 
 <template>
@@ -281,7 +286,7 @@ const downloadPdf = async () => {
         </ElButton>
         <ElButton
           :loading="documentStore.approveLoading"
-          @click="documentStore.changeDocumentStatus('approved', routeId)"
+          @click="acceptDocument"
           type="success"
           size="large"
           class="custom-send-btn h-[41px] !ml-0"
