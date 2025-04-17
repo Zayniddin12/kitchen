@@ -194,6 +194,7 @@ export const useLayoutStore = defineStore("layoutStore", () => {
           "freight-forwarder",
           "accountant-base-warehouse",
           "head-workshop",
+          "merchandiser",
         ],
       },
       {
@@ -287,6 +288,7 @@ export const useLayoutStore = defineStore("layoutStore", () => {
           "director-foundation",
           "deputy-director-foundation",
           "broker",
+          "merchandiser",
         ],
       },
       {
