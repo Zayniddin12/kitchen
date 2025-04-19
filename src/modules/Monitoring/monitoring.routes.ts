@@ -32,15 +32,15 @@ export default [
           },
         ],
       },
-      {
-        path: "kitchen-report",
-        name: "monitoring.kitchenReport",
-        component: () => import("@/modules/Monitoring/pages/KitchenReport.vue"),
-        meta: {
-          title: "monitoring.kitchenReport",
-          isTranslate: true
-        },
-      },
+      // {
+      //   path: "kitchen-report",
+      //   name: "monitoring.kitchenReport",
+      //   component: () => import("@/modules/Monitoring/pages/KitchenReport.vue"),
+      //   meta: {
+      //     title: "monitoring.kitchenReport",
+      //     isTranslate: true
+      //   },
+      // },
       {
         path: "kitchen-sales-report",
         name: "monitoring.kitchenSalesReport",

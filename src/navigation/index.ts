@@ -53,11 +53,11 @@ export const useLayoutStore = defineStore("layoutStore", () => {
             icon: "box",
             route: "/monitoring/remaining-goods",
           },
-          {
-            title: t("monitoring.kitchenReport"),
-            icon: "kitchen",
-            route: "/monitoring/kitchen-report",
-          },
+          // {
+          //   title: t("monitoring.kitchenReport"),
+          //   icon: "kitchen",
+          //   route: "/monitoring/kitchen-report",
+          // },
           {
             title: t("monitoring.kitchenSalesReport"),
             icon: "kitchen",
