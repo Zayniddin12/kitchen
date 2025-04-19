@@ -478,21 +478,21 @@ const openModal = async () => {
 
         const activeWorkplace = authStore.user.workplaces[0];
         if (activeWorkplace.base_id) {
-          const type = activeComingModal.value ? "to" : "from";
-          form[`${type}_id`] = activeWorkplace.base_id;
-          form[`${type}_type`] = "base";
-          // await fetchRespondents({ type: [activeWorkplace.workplace_type] });
-          form[type] = `${activeWorkplace.base_id}_base`;
+          // const type = activeComingModal.value ? "to" : "from";
+          // form[`${type}_id`] = activeWorkplace.base_id;
+          // form[`${type}_type`] = "base";
+          // // await fetchRespondents({ type: [activeWorkplace.workplace_type] });
+          // form[type] = `${activeWorkplace.base_id}_base`;
           await settingsStore.fetchRespondents({
-            type: activeComingModal.value ? ["base"] : ["kitchenWarehouse", "organization", "base", "pantryWarehouse"],
+            type: activeComingModal.value ? ["baseWarehouse"] : ["kitchenWarehouse", "organization", "base", "pantryWarehouse"],
             per_page: 100,
           });
           toList.value = settingsStore.respondents;
         } else {
-          await settingsStore.fetchRespondents({type: ["base", "organization", "pantryWarehouse"], per_page: 100});
+          await settingsStore.fetchRespondents({type: ["baseWarehouse", "organization", "pantryWarehouse"], per_page: 100});
           toList.value = settingsStore.respondents;
         }
-        await settingsStore.fetchRespondents({type: activeComingModal.value ? ["provider"] : ["base"], per_page: 100});
+        await settingsStore.fetchRespondents({type: activeComingModal.value ? ["provider"] : ["baseWarehouse"], per_page: 100});
         fromList.value = settingsStore.respondents;
 
 
@@ -611,7 +611,7 @@ const sendProviderForm = async () => {
   providerCreateModal.value = false;
   clearProviderV$();
   commonStore.successToast();
-  await settingsStore.fetchRespondents({type: activeComingModal.value ? ["provider"] : ["base"], per_page: 100});
+  await settingsStore.fetchRespondents({type: activeComingModal.value ? ["provider"] : ["baseWarehouse"], per_page: 100});
   fromList.value = settingsStore.respondents;
 };
 
@@ -1041,10 +1041,10 @@ const changeUser = (val, key) => {
               label-class="text-[#A8AAAE] text-xs font-medium"
               @change="(value) => respondentChange(value as string, 'from')"
               required
-              :disabled="authStore.disabledUserWorkplace && !activeComingModal"
               trigger="blur"
               filterable
           >
+<!--            :disabled="authStore.disabledUserWorkplace && !activeComingModal"-->
             <template v-if="activeComingModal">
               <ElOption
                   v-for="item in fromList"

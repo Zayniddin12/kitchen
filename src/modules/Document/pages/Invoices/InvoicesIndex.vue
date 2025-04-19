@@ -153,6 +153,26 @@ const changePage = (value: number) => {
   router.push({ query: { ...route.query, page: value } });
 };
 
+const statusColorsTailwind: Record<string, string> = {
+  draft: 'text-gray-400',
+  sent: 'text-blue-500',
+  pending: 'text-amber-500',
+  approved: 'text-green-500',
+  rejected: 'text-red-500',
+  signed: 'text-emerald-500',
+  cancelled: 'text-gray-600',
+};
+
+const statusBorderTailwind: Record<string, string> = {
+  draft: 'border-gray-400',
+  sent: 'border-blue-500',
+  pending: 'border-amber-500',
+  approved: 'border-green-500',
+  rejected: 'border-red-500',
+  signed: 'border-emerald-500',
+  cancelled: 'border-gray-600',
+};
+
 
 const deleteModalHandler = async (item: any) => {
   confirm.delete().then(async () => {
@@ -369,11 +389,22 @@ const deleteModalHandler = async (item: any) => {
           </template>
         </ElTableColumn>
         <ElTableColumn
+          prop="status"
+          width="180px"
+          :label="t('document.status')"
+        >
+          <template #default="{ row }:{row: DraftType}">
+            <span :class="`inline-block border-2 ${statusBorderTailwind[row.status]} rounded-md px-1 ${statusColorsTailwind[row.status]}`">
+              {{ t(`document.${row.status}`) || "-" }}
+            </span>
+          </template>
+        </ElTableColumn>
+        <ElTableColumn
           prop="action"
           :label="t('common.action')"
         >
           <template #default="{row}:{row:DraftType}">
-            <div class="flex items-center gap-x-2.5">
+            <div class="flex items-center gap-x-2.5 p">
               <RouterLink
                 class="action-btn"
                 :to="{name: `${route.name as string}-id`, params: {id:row.id}}"

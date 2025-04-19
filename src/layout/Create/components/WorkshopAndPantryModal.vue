@@ -68,7 +68,6 @@ const form = reactive<any>({
   subject: "",
   // through_whom: "",
   basis: "",
-  shipping_method: "",
   status: "",
   products: [
     {
@@ -239,6 +238,7 @@ const sendForm = async () => {
     Document: JSON.parse(JSON.stringify(form)),
   };
 
+  if(activeComingModal.value === 16) delete newForm.Document.basis;
   delete newForm.Document.from;
   delete newForm.Document.to;
 
@@ -362,7 +362,6 @@ const createProduct = () => {
     contract_details: null,
     contract_details_date: null,
     manufacturer: null,
-    shipping_method: null,
     licence: null,
     licence_date: null,
     sanitary: null,
@@ -774,7 +773,7 @@ const changeUser = (val, key) => {
             <!--              </span>-->
             <!--            </div>-->
 
-            <div class="flex mb-[8px]">
+            <div class="flex mb-[8px]" v-if="activeComingModal !== 16">
               <h2 class="text-[#4F5662] text-sm font-medium">
                 {{ t("document.base") }}:
               </h2>
@@ -783,14 +782,14 @@ const changeUser = (val, key) => {
               </span>
             </div>
 
-            <div class="flex mb-[24px]">
-              <h2 class="text-[#4F5662] text-sm font-medium">
-                {{ t("document.shippingMethod") }}:
-              </h2>
-              <span class="ml-2 text-[#A8AAAE] text-sm font-medium block">
-                {{ form.shipping_method }}
-              </span>
-            </div>
+<!--            <div class="flex mb-[24px]">-->
+<!--              <h2 class="text-[#4F5662] text-sm font-medium">-->
+<!--                {{ t("document.shippingMethod") }}:-->
+<!--              </h2>-->
+<!--              <span class="ml-2 text-[#A8AAAE] text-sm font-medium block">-->
+<!--                {{ form.shipping_method }}-->
+<!--              </span>-->
+<!--            </div>-->
 
             <el-table
               :data="form.products"
@@ -1126,20 +1125,21 @@ const changeUser = (val, key) => {
           <!--          />-->
           <AppInput
             v-model="form.basis"
+            v-if="activeComingModal !== 16"
             prop="basis"
             :placeholder="t('document.enter_base')"
             :label="t('document.base')"
             label-class="text-[#A8AAAE] text-xs font-medium"
             required
           />
-          <AppInput
-            v-model="form.shipping_method"
-            prop="shipping_method"
-            :placeholder="t('document.enter_shippingMethod')"
-            :label="t('document.shippingMethod')"
-            label-class="text-[#A8AAAE] text-xs font-medium"
-            required
-          />
+<!--          <AppInput-->
+<!--            v-model="form.shipping_method"-->
+<!--            prop="shipping_method"-->
+<!--            :placeholder="t('document.enter_shippingMethod')"-->
+<!--            :label="t('document.shippingMethod')"-->
+<!--            label-class="text-[#A8AAAE] text-xs font-medium"-->
+<!--            required-->
+<!--          />-->
           <div class="bg-[#FFFFFF] rounded-[8px] p-[12px]">
             <el-collapse class="border-none product" v-model="activeProduct" accordion>
               <el-collapse-item class="border-none relative" v-for="(product, index) in form.products"
