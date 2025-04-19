@@ -432,7 +432,7 @@ const packagingPage = () => {
               <ElTable
                 :data="item.products && item.products.length ? item.products : []"
                 stripe
-                class="custom-element-table"
+                class="custom-element-table my-4"
                 :empty-text="$t('common.empty')"
               >
                 <ElTableColumn
@@ -506,12 +506,13 @@ const packagingPage = () => {
                 <!--              </template>-->
                 <!--            </ElTableColumn>-->
               </ElTable>
-              <div class="my-4 flex items-center justify-between">
-                <span class="text-2xl font-bold">{{ $t("common.totalSum") }}</span>
-                <span
-                  class="text-xl font-medium">{{ workshopsStore.products?.total_price_formatted && workshopsStore.products.total_price_formatted
-                  }}</span>
-              </div>
+            </div>
+            <!--            Jami summa-->
+            <div class="my-4 flex items-center justify-between">
+              <span class="text-2xl font-bold">{{ $t("common.totalSum") }}</span>
+              <span
+                class="text-xl font-medium">{{ workshopsStore.products?.total_price_formatted && workshopsStore.products.total_price_formatted
+                }}</span>
             </div>
             <AppPagination
               v-if="workshopsStore.products"
