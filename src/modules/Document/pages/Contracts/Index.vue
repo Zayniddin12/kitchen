@@ -258,6 +258,7 @@ const deleteModalHandler = async (item: any) => {
               item-label="name"
               item-value="id"
               :loading="settingsStore.respondentsLoading"
+              filterable
             />
             <AppInput
               v-model.number="form.total_price"
@@ -279,6 +280,7 @@ const deleteModalHandler = async (item: any) => {
               item-value="id"
               item-label="name"
               @change="changeProductCategory"
+              filterable
             />
             <AppSelect
               v-model="form.product_type_id"
@@ -291,6 +293,7 @@ const deleteModalHandler = async (item: any) => {
               item-value="id"
               :disabled="!form.product_category_id"
               @change="changeProductType"
+              filterable
             />
             <AppInput
               v-model="form.quantity"
@@ -309,6 +312,7 @@ const deleteModalHandler = async (item: any) => {
               :items="settingsStore.units.units"
               item-label="name"
               item-value="id"
+              filterable
             />
           </div>
         </AppForm>

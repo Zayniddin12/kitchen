@@ -62,7 +62,7 @@ const option = computed(() => {
       <div class="flex items-center justify-between">
         <div class="flex flex-col">
           <strong class="text-2xl text-dark font-semibold">{{ title }}</strong>
-          <span class="text-black-sub block text-sm">{{ subtitle }}</span>
+          <span class="text-black-sub block text-sm" v-if="false">{{ subtitle }}</span>
         </div>
         <div
             v-if="slots.form"

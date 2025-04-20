@@ -105,7 +105,7 @@ const chartOption = computed(() => {
         <strong class="text-dark font-semibold text-sm">
           {{ title }}
         </strong>
-        <span class="text-xs text-[#A8AAAE]">
+        <span class="text-xs text-[#A8AAAE] opacity-0">
           {{ subtitle }}
         </span>
       </div>

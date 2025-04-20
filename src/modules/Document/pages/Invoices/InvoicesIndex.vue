@@ -68,6 +68,14 @@ const filterForm = () => {
 
 const clearForm = () => {
   router.push({ query: {} });
+  form.from_id = undefined;
+  form.to_id = undefined;
+  form.number = undefined;
+  form.basis = undefined;
+  form.created_at = undefined;
+  form.date = undefined;
+  form.shipping_method = undefined;
+  form.generated_number = undefined;
   isOpenFilter.value = false;
 };
 
@@ -141,8 +149,12 @@ watch(() => route.name, () => {
   setBreadCrumbFn();
 }, { immediate: true });
 
-onMounted(() => {
-  settingsStore.fetchRespondents();
+const fromList = ref<any>([]);
+const toList = ref<any>([]);
+
+onMounted(async () => {
+  fromList.value = await settingsStore.fetchRespondents({ type: ["provider", "baseWarehouse", "pantryWarehouse", "kitchenWarehouse", "workshopWarehouse"]});
+  toList.value = await settingsStore.fetchRespondents();
 });
 
 const tableCurrentChange = (value: DraftType) => {
@@ -241,24 +253,26 @@ const deleteModalHandler = async (item: any) => {
             <AppSelect
               v-model="form.from_id"
               prop="from_id"
-              :items="settingsStore.respondents"
+              :items="fromList"
               item-label="name"
               item-value="id"
               :loading="settingsStore.respondentsLoading"
               :placeholder="t('document.whom.from')"
               :label="t('document.whom.from')"
               label-class="text-[#7F7D83]"
+              filterable
             />
             <AppSelect
               v-model="form.to_id"
               prop="to_id"
-              :items="settingsStore.respondents"
+              :items="toList"
               item-label="name"
               item-value="id"
               :loading="settingsStore.respondentsLoading"
               :placeholder="t('document.whom.to')"
               :label="t('document.whom.to')"
               label-class="text-[#7F7D83]"
+              filterable
             />
             <AppInput
               v-model="form.basis"
