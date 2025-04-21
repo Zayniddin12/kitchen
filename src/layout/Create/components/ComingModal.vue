@@ -296,12 +296,14 @@ const fetchVidProductsList = async (product: DocumentProductType) => {
 
   await settingsStore.GET_VID_PRODUCT({
     parent_id: product.category_id,
+    in_warehouse_id: form.from_id,
     per_page: 200,
   });
 
   vidProducts.value.set(product.category_id, settingsStore.vidProduct.product_types);
   product.product_type_id = "";
   product.unit_id = "";
+  product.price = "";
 };
 
 const inputQuantity = (index: number, e: string | null) => {
@@ -310,7 +312,7 @@ const inputQuantity = (index: number, e: string | null) => {
 };
 
 const changeProduct = async (product: DocumentProductType, index: number) => {
-  // console.log(product, e);
+  // console.log(product);
   if (!(product.product_type_id && product.category_id)) return;
 
   const activeVidProducts = vidProducts.value.get(product.category_id);
@@ -318,6 +320,7 @@ const changeProduct = async (product: DocumentProductType, index: number) => {
   if (!activeVidProducts) return;
 
   const activeVidProduct = activeVidProducts.find(el => el.id === product.product_type_id);
+  console.log(activeVidProduct);
 
   if (!activeVidProduct) return;
 
@@ -325,6 +328,7 @@ const changeProduct = async (product: DocumentProductType, index: number) => {
 
   product.unit_id = activeVidProduct.unit_id;
   product.unit = activeVidProduct.unit;
+  product.price = activeVidProduct.price;
 };
 
 const getProductTypeTitle = (category_id: number, product_type_id: number) => {
@@ -392,7 +396,7 @@ const activeComingModal = computed(() => props.id === 7);
 const deleteProduct = (index: number) => {
   form.products?.splice(index, 1);
   actForm.products.splice(index, 1);
-  activeProduct.value = form.products.length;
+  activeProduct.value = Number(form.products?.length);
 };
 
 const fetchRespondents = (params: any) => {
@@ -477,7 +481,7 @@ const openModal = async () => {
       if (authStore.disabledUserWorkplace) {
 
         const activeWorkplace = authStore.user.workplaces[0];
-        if (activeWorkplace.base_id) {
+        if (activeWorkplace?.base_id) {
           // const type = activeComingModal.value ? "to" : "from";
           // form[`${type}_id`] = activeWorkplace.base_id;
           // form[`${type}_type`] = "base";
@@ -497,12 +501,12 @@ const openModal = async () => {
 
 
       }
-      if (activeComingModal.value) {
-        await settingsStore.GET_TYPE_PRODUCT({per_page: 200});
-
-      } else {
-        await settingsStore.GET_TYPE_PRODUCT({in_warehouse_id: form.from_id, per_page: 200});
-      }
+      // if (activeComingModal.value) {
+      //   // await settingsStore.GET_TYPE_PRODUCT({in_warehouse_id: form.from_id, per_page: 200});
+      //
+      // } else {
+      //   await settingsStore.GET_TYPE_PRODUCT({in_warehouse_id: form.from_id, per_page: 200});
+      // }
       await settingsStore.GET_UNITS();
 
       oldForm.value = JSON.parse(JSON.stringify(form));
@@ -568,8 +572,9 @@ watch(model, newValue => {
   if (newValue) openModal();
 });
 
-const respondentChange = (value: string, type: "from" | "to") => {
+const respondentChange = async (value: string, type: "from" | "to") => {
   const values = value.split("_");
+  await settingsStore.GET_TYPE_PRODUCT({in_warehouse_id: values[0], per_page: 200});
   form[type] = value;
   form[`${type}_id`] = Number(values[0]);
   form[`${type}_type`] = values[1];
@@ -847,7 +852,7 @@ const changeUser = (val, key) => {
                   {{
                     row.price && row.quantity
                         ? `${formatNumber(
-                            (row.price * row.quantity) as number,
+                            (Number(row.price) * row.quantity) as number,
                         )} ${t("currency.sum")}`
                         : "-"
                   }}
@@ -873,7 +878,7 @@ const changeUser = (val, key) => {
                 <h2 class="text-[#4F5662] text-sm font-semibold">
                   <!--                  {{ t("document.commission.commodityExpert") }}:-->
                   {{
-                    actForm.doc_signer_obj.signer_id_1 ? getUser(actForm.doc_signer_obj.signer_id_1).position + ":" : ""
+                    actForm.doc_signer_obj.signer_id_1 ? getUser(actForm.doc_signer_obj.signer_id_1)?.position + ":" : ""
                   }}
                 </h2>
                 <span class="ml-2 text-[#A8AAAE] text-sm font-medium block">
@@ -887,7 +892,7 @@ const changeUser = (val, key) => {
                 <h2 class="text-[#4F5662] text-sm font-semibold">
                   <!--                  {{ t("document.commission.warehouseManager") }}:-->
                   {{
-                    actForm.doc_signer_obj.signer_id_2 ? getUser(actForm.doc_signer_obj.signer_id_2).position + ":" : ""
+                    actForm.doc_signer_obj.signer_id_2 ? getUser(actForm.doc_signer_obj.signer_id_2)?.position + ":" : ""
                   }}
                 </h2>
                 <span class="ml-2 text-[#A8AAAE] text-sm font-medium block">
@@ -915,7 +920,7 @@ const changeUser = (val, key) => {
                 <h2 class="text-[#4F5662] text-sm font-semibold">
                   <!--                  {{ t("document.commission.accountant") }}:-->
                   {{
-                    actForm.doc_signer_obj.signer_id_4 ? getUser(actForm.doc_signer_obj.signer_id_4).position + ":" : ""
+                    actForm.doc_signer_obj.signer_id_4 ? getUser(actForm.doc_signer_obj.signer_id_4)?.position + ":" : ""
                   }}
                 </h2>
                 <span class="ml-2 text-[#A8AAAE] text-sm font-medium block">
@@ -929,7 +934,7 @@ const changeUser = (val, key) => {
                 <h2 class="text-[#4F5662] text-sm font-semibold">
                   <!--                  {{ t("document.commission.baseChief") }}:-->
                   {{
-                    actForm.doc_signer_obj.signer_id_5 ? getUser(actForm.doc_signer_obj.signer_id_5).position + ":" : ""
+                    actForm.doc_signer_obj.signer_id_5 ? getUser(actForm.doc_signer_obj.signer_id_5)?.position + ":" : ""
                   }}
                 </h2>
                 <span class="ml-2 text-[#A8AAAE] text-sm font-medium block">
@@ -943,7 +948,7 @@ const changeUser = (val, key) => {
                 <h2 class="text-[#4F5662] text-sm font-semibold">
                   <!--                  {{ t("document.commission.baseChief") }}:-->
                   {{
-                    actForm.doc_signer_obj.signer_id_6 ? getUser(actForm.doc_signer_obj.signer_id_6).position + ":" : ""
+                    actForm.doc_signer_obj.signer_id_6 ? getUser(actForm.doc_signer_obj.signer_id_6)?.position + ":" : ""
                   }}
                 </h2>
                 <span class="ml-2 text-[#A8AAAE] text-sm font-medium block">
@@ -958,7 +963,7 @@ const changeUser = (val, key) => {
                 <h2 class="text-[#4F5662] text-sm font-semibold">
                   <!--                  {{ t("document.commission.baseChief") }}:-->
                   {{
-                    actForm.doc_signer_obj.signer_id_7 ? getUser(actForm.doc_signer_obj.signer_id_7).position + ":" : ""
+                    actForm.doc_signer_obj.signer_id_7 ? getUser(actForm.doc_signer_obj.signer_id_7)?.position + ":" : ""
                   }}
                 </h2>
                 <span class="ml-2 text-[#A8AAAE] text-sm font-medium block">
@@ -1228,7 +1233,7 @@ const changeUser = (val, key) => {
                   <div class="grid grid-cols-2 gap-x-4">
                     <AppInput
                         v-model="product.quantity"
-                        @input="inputQuantity(index, product.quantity)"
+                        @input="inputQuantity(index, String(product?.quantity))"
                         custom-type="number"
                         :prop="`products[${index}].quantity`"
                         :placeholder="t('common.enter_quantity')"
@@ -1249,6 +1254,7 @@ const changeUser = (val, key) => {
                       :placeholder="t('common.enter_price')"
                       :label="t('common.price')"
                       label-class="text-[#A8AAAE] text-xs font-medium"
+                      disabled
                   />
                 </div>
               </el-collapse-item>
