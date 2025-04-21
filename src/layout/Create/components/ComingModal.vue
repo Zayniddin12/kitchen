@@ -574,7 +574,12 @@ watch(model, newValue => {
 
 const respondentChange = async (value: string, type: "from" | "to") => {
   const values = value.split("_");
-  await settingsStore.GET_TYPE_PRODUCT({in_warehouse_id: values[0], per_page: 200});
+  if (type === "from" && props.id === 11) {
+    await settingsStore.GET_TYPE_PRODUCT({in_warehouse_id: values[0], per_page: 200});
+  }
+  if (type === "to" && props.id === 7){
+    await settingsStore.GET_TYPE_PRODUCT({in_warehouse_id: values[0], per_page: 200});
+  }
   form[type] = value;
   form[`${type}_id`] = Number(values[0]);
   form[`${type}_type`] = values[1];
