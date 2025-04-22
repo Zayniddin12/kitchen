@@ -658,7 +658,7 @@ const activeProduct = ref(1);
 const activeActProduct = ref(1);
 const value = ref(null);
 
-const changeUser = (val, key) => {
+const changeUser = (val:any, key:any) => {
   console.log(val);
   actForm.doc_signer_obj[key] = val;
 };
@@ -908,7 +908,7 @@ const changeUser = (val, key) => {
                 <h2 class="text-[#4F5662] text-sm font-semibold">
                   <!--                  {{ t("document.commission.forwarder") }}:-->
                   {{
-                    actForm.doc_signer_obj.signer_id_3 ? getUser(actForm.doc_signer_obj.signer_id_3).position + ":" : ""
+                    actForm.doc_signer_obj.signer_id_3 ? getUser(actForm.doc_signer_obj.signer_id_3)?.position + ":" : ""
                   }}
                 </h2>
                 <span class="ml-2 text-[#A8AAAE] text-sm font-medium block">
@@ -1463,7 +1463,7 @@ const changeUser = (val, key) => {
               <h2 class="text-[#4F5662] text-sm font-semibold">
                 <!--                {{ t("document.commission.commodityExpert") }}:-->
                 {{
-                  actForm.doc_signer_obj.signer_id_1 ? getUser(actForm.doc_signer_obj.signer_id_1).position + ":" : ""
+                  actForm.doc_signer_obj.signer_id_1 ? getUser(actForm.doc_signer_obj.signer_id_1)?.position + ":" : ""
                 }}
               </h2>
               <span class="ml-2 text-[#A8AAAE] text-sm font-medium block">
@@ -1478,7 +1478,7 @@ const changeUser = (val, key) => {
               <h2 class="text-[#4F5662] text-sm font-semibold">
                 <!--                {{ t("document.commission.warehouseManager") }}:-->
                 {{
-                  actForm.doc_signer_obj.signer_id_2 ? getUser(actForm.doc_signer_obj.signer_id_2).position + ":" : ""
+                  actForm.doc_signer_obj.signer_id_2 ? getUser(actForm.doc_signer_obj.signer_id_2)?.position + ":" : ""
                 }}
               </h2>
               <span class="ml-2 text-[#A8AAAE] text-sm font-medium block">
@@ -1492,7 +1492,7 @@ const changeUser = (val, key) => {
               <h2 class="text-[#4F5662] text-sm font-semibold">
                 <!--                {{ t("document.commission.baseChief") }}:-->
                 {{
-                  actForm.doc_signer_obj.signer_id_3 ? getUser(actForm.doc_signer_obj.signer_id_3).position + ":" : ""
+                  actForm.doc_signer_obj.signer_id_3 ? getUser(actForm?.doc_signer_obj?.signer_id_3)?.position + ":" : ""
                 }}
               </h2>
               <span class="ml-2 text-[#A8AAAE] text-sm font-medium block">
