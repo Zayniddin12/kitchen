@@ -303,7 +303,6 @@ const fetchVidProductsList = async (product: DocumentProductType) => {
   vidProducts.value.set(product.category_id, settingsStore.vidProduct.product_types);
   product.product_type_id = "";
   product.unit_id = "";
-  product.price = "";
 };
 
 const inputQuantity = (index: number, e: string | null) => {
@@ -328,7 +327,6 @@ const changeProduct = async (product: DocumentProductType, index: number) => {
 
   product.unit_id = activeVidProduct.unit_id;
   product.unit = activeVidProduct.unit;
-  product.price = activeVidProduct.price;
 };
 
 const getProductTypeTitle = (category_id: number, product_type_id: number) => {
@@ -1259,7 +1257,6 @@ const changeUser = (val, key) => {
                       :placeholder="t('common.enter_price')"
                       :label="t('common.price')"
                       label-class="text-[#A8AAAE] text-xs font-medium"
-                      disabled
                   />
                 </div>
               </el-collapse-item>
