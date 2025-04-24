@@ -576,7 +576,7 @@ const respondentChange = async (value: string, type: "from" | "to") => {
     await settingsStore.GET_TYPE_PRODUCT({in_warehouse_id: values[0], per_page: 200});
   }
   if (type === "to" && props.id === 7){
-    await settingsStore.GET_TYPE_PRODUCT({in_warehouse_id: values[0], per_page: 200});
+    await settingsStore.GET_TYPE_PRODUCT({per_page: 200});
   }
   form[type] = value;
   form[`${type}_id`] = Number(values[0]);
