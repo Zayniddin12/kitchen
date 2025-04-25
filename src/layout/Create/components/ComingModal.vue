@@ -294,11 +294,16 @@ const fetchVidProductsList = async (product: DocumentProductType) => {
 
   if (typeof product.category_id !== "number") return;
 
-  await settingsStore.GET_VID_PRODUCT({
+  let params = props.id === 7 ? {
+    parent_id: product.category_id,
+    per_page: 200,
+  } : {
     parent_id: product.category_id,
     in_warehouse_id: form.from_id,
     per_page: 200,
-  });
+  }
+
+  await settingsStore.GET_VID_PRODUCT(params);
 
   vidProducts.value.set(product.category_id, settingsStore.vidProduct.product_types);
   product.product_type_id = "";
