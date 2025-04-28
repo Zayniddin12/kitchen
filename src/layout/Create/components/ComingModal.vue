@@ -499,7 +499,7 @@ const openModal = async () => {
           await settingsStore.fetchRespondents({type: ["baseWarehouse", "workshopWarehouse", "organization", "pantryWarehouse", "workshopWarehouse"], per_page: 100});
           toList.value = settingsStore.respondents;
         }
-        await settingsStore.fetchRespondents({type: activeComingModal.value ? ["provider"] : ["baseWarehouse"], per_page: 100});
+        await settingsStore.fetchRespondents({type: activeComingModal.value ? ["provider", "organization"] : ["baseWarehouse"], per_page: 100});
         fromList.value = settingsStore.respondents;
 
 
@@ -624,7 +624,7 @@ const sendProviderForm = async () => {
   providerCreateModal.value = false;
   clearProviderV$();
   commonStore.successToast();
-  await settingsStore.fetchRespondents({type: activeComingModal.value ? ["provider"] : ["baseWarehouse"], per_page: 100});
+  await settingsStore.fetchRespondents({type: activeComingModal.value ? ["provider", "organization"] : ["baseWarehouse"], per_page: 100});
   fromList.value = settingsStore.respondents;
 };
 
