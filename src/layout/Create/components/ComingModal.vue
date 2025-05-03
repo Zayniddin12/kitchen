@@ -33,6 +33,7 @@ import {useUsersStore} from "@/modules/Users/users.store";
 import {UserType} from "@/modules/Users/users.types";
 import {useAuthStore} from "@/modules/Auth/auth.store";
 import {useI18n} from "vue-i18n";
+import useComp from "@/mixins";
 
 interface ProviderFormType {
   // name: string;
@@ -58,6 +59,7 @@ const usersStore = useUsersStore();
 const authStore = useAuthStore();
 
 const {t} = useI18n();
+const {formatPrice, priceParser, num_format} = useComp();
 
 const date = ref(formatDate2(new Date()));
 
@@ -1222,6 +1224,7 @@ const changeUser = (val:any, key:any) => {
                       label-class="text-[#A8AAAE] text-xs font-medium"
                       @change="fetchVidProductsList(product)"
                       trigger="blur"
+                      required
                   />
                   <!--                  {{ vidProducts.get(product.category_id as number)[0] }}-->
                   <AppSelect
@@ -1237,16 +1240,19 @@ const changeUser = (val:any, key:any) => {
                       label-class="text-[#A8AAAE] text-xs font-medium"
                       :disabled="!product.category_id"
                       @change="changeProduct(product, index)"
+                      required
                   />
                   <div class="grid grid-cols-2 gap-x-4">
                     <AppInput
                         v-model="product.quantity"
                         @input="inputQuantity(index, String(product?.quantity))"
-                        custom-type="number"
                         :prop="`products[${index}].quantity`"
                         :placeholder="t('common.enter_quantity')"
                         :label="t('common.quantity')"
                         label-class="text-[#A8AAAE] text-xs font-medium"
+                        :formatter="formatPrice"
+                        :parser="priceParser"
+                        required
                     />
                     <AppInput
                         v-model="product.unit"
@@ -1262,6 +1268,9 @@ const changeUser = (val:any, key:any) => {
                       :placeholder="t('common.enter_price')"
                       :label="t('common.price')"
                       label-class="text-[#A8AAAE] text-xs font-medium"
+                      :formatter="formatPrice"
+                      :parser="priceParser"
+                      required
                   />
                 </div>
               </el-collapse-item>
