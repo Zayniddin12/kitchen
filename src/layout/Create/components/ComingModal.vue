@@ -493,7 +493,7 @@ const openModal = async () => {
           // // await fetchRespondents({ type: [activeWorkplace.workplace_type] });
           // form[type] = `${activeWorkplace.base_id}_base`;
           await settingsStore.fetchRespondents({
-            type: activeComingModal.value ? ["baseWarehouse"] : ["kitchenWarehouse", "organization", "base", "pantryWarehouse", "workshopWarehouse"],
+            type: activeComingModal.value ? ["baseWarehouse"] : ["kitchenWarehouse", "organization", "baseWarehouse", "pantryWarehouse", "workshopWarehouse"],
             per_page: 100,
           });
           toList.value = settingsStore.respondents;
