@@ -33,7 +33,6 @@ const docTypeName = ref<string>("");
 const docTypeTitle = ref<string>("");
 
 const openModal = (item: DocTypeListType) => {
-
   switch (item.id) {
     case 1:
       editModal.value = true;
