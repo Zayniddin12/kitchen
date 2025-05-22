@@ -148,7 +148,7 @@ const createFactoryMeals = async () => {
       let factory_id = route.params.factory_id;
       if (factory_id) {
         store.createWorkshopUnpacking({
-          out_products: out_products.value,
+          out_products: meal_products.value,
         }, factory_id as string).then(() => {
           router.go(-1);
           ElNotification({ title: "Success", type: "success" });
@@ -199,6 +199,11 @@ const setBreadCrumbFn = async () => {
     },
   ]);
 };
+let unit = ref('')
+const getUnit = async (id: number) => {
+  unit.value = settingsStore.meals.meals.find((el:any) => el.id == id).unit;
+  await settingsStore.GET_MEALS_DETAIL(id, {per_page: 100})
+}
 
 watchEffect(() => {
   setBreadCrumbFn();
@@ -242,11 +247,11 @@ watchEffect(() => {
           :items="settingsStore.meals.meals"
           item-value="id"
           item-label="name"
-          :label="t('product.type')"
-          :placeholder="t('product.type')"
+          :label="t('monitoring.dishes')"
+          :placeholder="t('monitoring.dishes')"
           label-class="text-[#A8AAAE] text-xs font-medium"
           filterable
-          @change="settingsStore.GET_MEALS_DETAIL(item2.item2.meal_id, {per_page: 100})"
+          @change="getUnit(item2.meal_id)"
           trigger="blur"
         />
 
@@ -259,7 +264,7 @@ watchEffect(() => {
 
         <app-input
           disabled
-          v-model="settingsStore.meals.meals"
+          v-model="unit"
           :label="t('common.measurement')"
           label-class="text-[#A8AAAE] text-[12px]"
         />
@@ -286,10 +291,10 @@ watchEffect(() => {
         </div>
       </div>
 
-      <button class="primary__btn" @click="addResult">
-        <img src="@/assets/images/icons/plus2.svg" alt="plus" class="mr-[4px]" />
-        Добавить еще
-      </button>
+<!--      <button class="primary__btn" @click="addResult">-->
+<!--        <img src="@/assets/images/icons/plus2.svg" alt="plus" class="mr-[4px]" />-->
+<!--        Добавить еще-->
+<!--      </button>-->
     </div>
 
     <div class="border border-[#F1F1F1] w-full my-[24px]" />
@@ -297,15 +302,17 @@ watchEffect(() => {
     <h5 class="text-[18px] font-medium text-[#000D24]">Исходные продукты</h5>
 
     <div class="mt-[12px] bg-[#F8F9FC] rounded-[16px] py-[16px] px-[12px]">
-      <div class="grid grid-cols-6 gap-4" v-for="(item, index) in settingsStore?.mealDetail?.compositions" :key="index">
+      <div class="grid grid-cols-5 gap-4" v-for="(item, index) in settingsStore?.mealDetail?.compositions??[{product_type_name:'', quantity:'', unit:'', price:''}]" :key="index">
         <app-input
+          disabled
           v-model="item.product_type_name"
-          :label="t('common.price')"
+          :label="t('product.type')"
           label-class="text-[#A8AAAE] text-[12px]"
         />
 
 
         <app-input
+          disabled
           v-model="item.quantity"
           :label="t('common.quantity')"
           label-class="text-[#A8AAAE] text-[12px]"
@@ -344,10 +351,10 @@ watchEffect(() => {
         </div>
       </div>
 
-      <button class="primary__btn" @click="addConsumption">
-        <img src="@/assets/images/icons/plus2.svg" alt="plus" class="mr-[4px]" />
-        Добавить еще
-      </button>
+<!--      <button class="primary__btn" @click="addConsumption">-->
+<!--        <img src="@/assets/images/icons/plus2.svg" alt="plus" class="mr-[4px]" />-->
+<!--        Добавить еще-->
+<!--      </button>-->
     </div>
 
 
@@ -358,7 +365,7 @@ watchEffect(() => {
 
     <div class="flex items-center gap-4 justify-end">
       <button class="custom-light-btn" @click="router.go(-1)">Отменить</button>
-      <button class="custom-apply-btn" @click="createFactory">Произвести</button>
+      <button class="custom-apply-btn" @click="createFactoryMeals">Произвести</button>
     </div>
   </div>
   <div v-else>
