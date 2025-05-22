@@ -9,6 +9,7 @@ import { useWorkshopsStore } from "@/modules/WorkShops/workshops.store";
 import { ElNotification } from "element-plus";
 import useConfirm from "@/components/ui/app-confirm/useConfirm";
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
+import { useKitchenStore } from "@/modules/Kitchen/kitchen.store";
 
 const { t } = useI18n();
 const router = useRouter();
@@ -16,6 +17,7 @@ const route = useRoute();
 const settingsStore = useSettingsStore();
 const store = useWorkshopsStore();
 const { confirm } = useConfirm();
+const workshopsStore = useWorkshopsStore();
 
 const in_products = ref<any[]>([{
   category_id: null,
@@ -24,6 +26,12 @@ const in_products = ref<any[]>([{
   measurement: null,
   price: null,
   totalSum: null,
+}]);
+
+const meal_products = ref<any[]>([{
+  meal_id: null,
+  quantity: "",
+  price: null,
 }]);
 
 const out_products = ref<any[]>([{
@@ -39,6 +47,7 @@ const vidProductsResult = ref<any[]>([]);
 
 onMounted(async () => {
   await settingsStore.GET_TYPE_PRODUCT();
+  await settingsStore.GET_MEALS({per_page: 100,});
 });
 
 
@@ -131,9 +140,41 @@ const createFactory = async () => {
   }
 };
 
+const createFactoryMeals = async () => {
+  try {
+    confirm.factory({
+      description: "Вы уверены, что хотите произвести переработку выбранных продуктов? Это действие необратимо.",
+    }).then(() => {
+      let factory_id = route.params.factory_id;
+      if (factory_id) {
+        store.createWorkshopUnpacking({
+          out_products: out_products.value,
+        }, factory_id as string).then(() => {
+          router.go(-1);
+          ElNotification({ title: "Success", type: "success" });
+        });
+
+      }
+    });
+
+
+  } catch (e) {
+    ElNotification({ title: "Error", type: "error", message: "Failed to create factory." });
+  }
+};
+
 const districtId = computed(() => +route.params.district_id);
 
 const productId = computed(() => +route.params.factory_id);
+
+const selectedWorkshopType = computed(() => {
+  for (const base of workshopsStore.managementBases) {
+    const workshop = base.workshops.find(w => w.id === productId.value)
+    if (workshop) return workshop.type
+  }
+  return null
+})
+
 const { setBreadCrumb } = useBreadcrumb();
 
 const setBreadCrumbFn = async () => {
@@ -166,7 +207,7 @@ watchEffect(() => {
 </script>
 
 <template>
-  <div>
+  <div v-if="selectedWorkshopType==='confectionery'">
     <!--    <div-->
     <!--      v-if="!!settingsStore.baseWarehouses?.base_warehouses.find((e) => e.id == route.query.id)?.workshop_name"-->
     <!--      class="flex items-center justify-between mb-[24px]"-->
@@ -188,7 +229,160 @@ watchEffect(() => {
         {{ route.meta.title }}
       </h1>
     </div>
+<!--      {{workshopsStore.managementBases}}-->
+<!--    {{settingsStore.meals}}-->
 
+    <!--------------------Результат-------------------->
+    <h5 class="text-[18px] font-medium text-[#000D24]">Готовая продукция</h5>
+
+    <div class="mt-[12px] bg-[#F8F9FC] rounded-[16px] py-[16px] px-[12px]">
+      <div class="grid grid-cols-5 gap-4" v-for="(item2, index2) in meal_products" :key="index2">
+        <AppSelect
+          v-model="item2.meal_id"
+          :items="settingsStore.meals.meals"
+          item-value="id"
+          item-label="name"
+          :label="t('product.type')"
+          :placeholder="t('product.type')"
+          label-class="text-[#A8AAAE] text-xs font-medium"
+          filterable
+          @change="settingsStore.GET_MEALS_DETAIL(item2.item2.meal_id, {per_page: 100})"
+          trigger="blur"
+        />
+
+
+        <app-input
+          v-model="item2.quantity"
+          :label="t('common.quantity')"
+          label-class="text-[#A8AAAE] text-[12px]"
+        />
+
+        <app-input
+          disabled
+          v-model="settingsStore.meals.meals"
+          :label="t('common.measurement')"
+          label-class="text-[#A8AAAE] text-[12px]"
+        />
+
+        <app-input
+          v-model="item2.price"
+          :label="t('common.price')"
+          label-class="text-[#A8AAAE] text-[12px]"
+        />
+
+        <div class="flex items-center gap-4">
+          <app-input
+            :placeholder="item2.quantity && (item2.quantity * item2.price).toLocaleString()"
+            class="w-full"
+            disabled
+            :label="t('common.totalSum')"
+            label-class="text-[#A8AAAE] text-[12px]"
+          />
+
+          <button class="bg-[#E2E6F3] p-[10px] rounded-[8px] mt-2" @click="deleteResult(index2)"
+                  v-if="out_products && out_products.length !== 1">
+            <img src="@/assets/images/icons/delete.svg" alt="delete" />
+          </button>
+        </div>
+      </div>
+
+      <button class="primary__btn" @click="addResult">
+        <img src="@/assets/images/icons/plus2.svg" alt="plus" class="mr-[4px]" />
+        Добавить еще
+      </button>
+    </div>
+
+    <div class="border border-[#F1F1F1] w-full my-[24px]" />
+    <!----------------------Расход-------------------->
+    <h5 class="text-[18px] font-medium text-[#000D24]">Исходные продукты</h5>
+
+    <div class="mt-[12px] bg-[#F8F9FC] rounded-[16px] py-[16px] px-[12px]">
+      <div class="grid grid-cols-6 gap-4" v-for="(item, index) in settingsStore?.mealDetail?.compositions" :key="index">
+        <app-input
+          v-model="item.product_type_name"
+          :label="t('common.price')"
+          label-class="text-[#A8AAAE] text-[12px]"
+        />
+
+
+        <app-input
+          v-model="item.quantity"
+          :label="t('common.quantity')"
+          label-class="text-[#A8AAAE] text-[12px]"
+        />
+
+        <app-input
+          disabled
+          v-model="item.unit"
+          :label="t('common.measurement')"
+          label-class="text-[#A8AAAE] text-[12px]"
+        />
+
+        <app-input
+          disabled
+          v-model="item.price"
+          :label="t('common.price')"
+          label-class="text-[#A8AAAE] text-[12px]"
+        />
+
+        <div class="flex items-center gap-4">
+          <app-input
+            :placeholder="item.quantity && (item.quantity * item.price).toLocaleString()"
+            class="w-full"
+            disabled
+            :label="t('common.totalSum')"
+            label-class="text-[#A8AAAE] text-[12px]"
+          />
+
+          <button
+            v-if="in_products && in_products.length !== 1"
+            class="bg-[#E2E6F3] p-[10px] rounded-[8px] mt-2"
+            @click="deleteConsumption(index)"
+          >
+            <img src="@/assets/images/icons/delete.svg" alt="delete" />
+          </button>
+        </div>
+      </div>
+
+      <button class="primary__btn" @click="addConsumption">
+        <img src="@/assets/images/icons/plus2.svg" alt="plus" class="mr-[4px]" />
+        Добавить еще
+      </button>
+    </div>
+
+
+
+
+
+    <div class="border border-[#F1F1F1] w-full my-[24px]" />
+
+    <div class="flex items-center gap-4 justify-end">
+      <button class="custom-light-btn" @click="router.go(-1)">Отменить</button>
+      <button class="custom-apply-btn" @click="createFactory">Произвести</button>
+    </div>
+  </div>
+  <div v-else>
+    <!--    <div-->
+    <!--      v-if="!!settingsStore.baseWarehouses?.base_warehouses.find((e) => e.id == route.query.id)?.workshop_name"-->
+    <!--      class="flex items-center justify-between mb-[24px]"-->
+    <!--    >-->
+    <!--      <h1 class="text-[#000D24] font-semibold text-[32px]">-->
+    <!--        {{ settingsStore.baseWarehouses?.base_warehouses.find((e) => e.id == route.query.id)?.workshop_name }}-->
+    <!--      </h1>-->
+
+    <!--      <button-->
+    <!--        class="custom-light-btn"-->
+    <!--        @click="router.go(-1)"-->
+    <!--      >-->
+    <!--        {{ settingsStore.baseWarehouses?.base_warehouses.find((e) => e.id == route.query.id)?.workshop_name }}-->
+    <!--      </button>-->
+    <!--    </div>-->
+
+    <div>
+      <h1 class="text-[#000D24] font-semibold text-[32px] mb-[24px]">
+        {{ route.meta.title }}
+      </h1>
+    </div>
     <!----------------------Расход-------------------->
     <h5 class="text-[18px] font-medium text-[#000D24]">Исходные продукты</h5>
 

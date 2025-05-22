@@ -62,7 +62,7 @@ export interface WarehouseBasesInvoiceType {
   total_price_formatted: string,
 }
 
-export interface WarehouseBasesInvoicesResponseType {
+export interface WarehouseBasesInvoicesResponseType {ManagementBases
   invoices: WarehouseBasesInvoiceType[],
   pagination: PaginationType
 }
@@ -70,6 +70,7 @@ export interface WarehouseBasesInvoicesResponseType {
 export interface ManagementBaseBaseType {
   id: number,
   name: string,
+  type: string,
 }
 
 export interface ManagementBaseType {
