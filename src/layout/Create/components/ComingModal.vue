@@ -2115,6 +2115,9 @@ const changeUser = (val:any, key:any) => {
 .product .el-collapse-item__arrow {
   margin: 0 0 15px;
 }
+.product .el-collapse-item__header {
+  padding-right: 24px;
+}
 
 .act-left .el-collapse-item__wrap {
   border: none;

@@ -44,6 +44,7 @@ const out_products = ref<any[]>([{
 }]);
 const vidProducts = ref<any[]>([]);
 const vidProductsResult = ref<any[]>([]);
+let quantity = ref(1)
 
 onMounted(async () => {
   await settingsStore.GET_TYPE_PRODUCT();
@@ -148,6 +149,9 @@ const createFactoryMeals = async () => {
       let factory_id = route.params.factory_id;
       if (factory_id) {
         store.createWorkshopUnpacking({
+          in_products: settingsStore?.mealDetail?.compositions.map((item:any)=>{
+            return {...item, quantity: item.quantity * quantity.value};
+          }),
           out_products: meal_products.value,
         }, factory_id as string).then(() => {
           router.go(-1);
@@ -205,6 +209,11 @@ const getUnit = async (id: number) => {
   await settingsStore.GET_MEALS_DETAIL(id, {per_page: 100})
 }
 
+
+const getQuantity = (quan: number) => {
+  quantity.value = Number(quan);
+}
+
 watchEffect(() => {
   setBreadCrumbFn();
 });
@@ -260,6 +269,7 @@ watchEffect(() => {
           v-model="item2.quantity"
           :label="t('common.quantity')"
           label-class="text-[#A8AAAE] text-[12px]"
+          @change="getQuantity(item2.quantity)"
         />
 
         <app-input
@@ -313,7 +323,7 @@ watchEffect(() => {
 
         <app-input
           disabled
-          v-model="item.quantity"
+          :placeholder="item.quantity && (item.quantity * quantity).toLocaleString()"
           :label="t('common.quantity')"
           label-class="text-[#A8AAAE] text-[12px]"
         />
