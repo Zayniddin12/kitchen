@@ -10,10 +10,12 @@ import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 import { useI18n } from "vue-i18n";
 import AppPagination from "@/components/ui/app-pagination/AppPagination.vue";
 import { useDistrictStore } from "@/modules/Monitoring/store/district.store";
+import useComp from "@/mixins";
 
 const store = useDistrictStore();
 const { setBreadCrumb } = useBreadcrumb();
 const { t } = useI18n();
+const {formatPrice, num_format} = useComp();
 
 const params = ref({
   start_data: null,
@@ -203,8 +205,12 @@ watch(() => params.value.end_data, async (newValue, oldValue) => {
             <template v-if="column.prop === 'id'">
               {{ scope.$index + 1 }}
             </template>
-
           </template>
+
+          <template #default="scope" v-if="!['id', 'product_name', 'unit'].includes(column.prop)">
+            {{ num_format(scope.row[column.prop], 2) }}
+        </template>
+
           <template #header>
             <RouterLink
               v-if="!!column?.link"

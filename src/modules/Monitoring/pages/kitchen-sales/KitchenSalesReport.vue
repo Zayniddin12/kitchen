@@ -13,6 +13,7 @@ import { useI18n } from "vue-i18n";
 import { useSettingsStore } from "@/modules/Settings/store";
 import { useKitchenStore } from "@/modules/Kitchen/kitchen.store";
 import { useSalesReportStore } from "@/modules/Monitoring/store/salesReport.store";
+import useComp from "@/mixins";
 
 const route = useRoute();
 
@@ -24,6 +25,7 @@ const kitchenStore = useKitchenStore();
 
 const kitchen_id = ref(null);
 const selectedDate = ref(null);
+const {num_format} = useComp();
 
 const { setBreadCrumb } = useBreadcrumb();
 
@@ -382,6 +384,7 @@ watchEffect(() => {
                   {{ $index + 1 }}
                 </template>
               </ElTableColumn>
+
               <ElTableColumn
                 v-for="column in dishesTableColumns"
                 :key="column.prop"
@@ -393,6 +396,9 @@ watchEffect(() => {
                   <strong class="font-medium">
                     {{ column.label }}
                   </strong>
+                </template>
+                <template #default="{row}" v-if="column.prop==='total_price'">
+                  {{ num_format(row.total_price, 2) }}
                 </template>
               </ElTableColumn>
             </ElTable>
