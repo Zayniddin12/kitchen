@@ -299,7 +299,7 @@ watch(scheduledDates, async newValue => {
                           end_time:
                             item.end_time &&
                             item.end_time.split(":").slice(0, 2).join(":"),
-                          amount: item.amount,
+                          amount: item.amount_left,
                           product_type: "ration",
                           product_id: item.product_id,
                           rationsList: {
@@ -353,7 +353,7 @@ watch(scheduledDates, async newValue => {
                           end_time:
                             item.end_time &&
                             item.end_time.split(":").slice(0, 2).join(":"),
-                          amount: item.amount,
+                          amount: item.amount_left,
                           product_type: "ration",
                           product_id: item.product_id,
                           rationsList: {
@@ -407,7 +407,7 @@ watch(scheduledDates, async newValue => {
                           end_time:
                             item.end_time &&
                             item.end_time.split(":").slice(0, 2).join(":"),
-                          amount: item.amount,
+                          amount: item.amount_left,
                           product_type: "ration",
                           product_id: item.product_id,
                           rationsList: {
@@ -461,7 +461,7 @@ watch(scheduledDates, async newValue => {
                           end_time:
                             item.end_time &&
                             item.end_time.split(":").slice(0, 2).join(":"),
-                          amount: item.amount,
+                          amount: item.amount_left,
                           product_type: "ration",
                           product_id: item.product_id,
                           rationsList: {
@@ -604,7 +604,7 @@ watch(scheduledDates, async newValue => {
                           product: item.parent_id ? item.parent_id : null,
                           vid_product: item.parent_id ? item.product_id : null,
                           meal: !item.parent_id ? item.product_id : null,
-                          amount: item.amount,
+                          amount: item.amount_left,
                           vid_list: [],
                           meals_list: {},
                         };
@@ -649,7 +649,7 @@ watch(scheduledDates, async newValue => {
                           product: item.parent_id ? item.parent_id : null,
                           vid_product: item.parent_id ? item.product_id : null,
                           meal: !item.parent_id ? item.product_id : null,
-                          amount: item.amount,
+                          amount: item.amount_left,
                           vid_list: [],
                           meals_list: {},
                         };
@@ -694,7 +694,7 @@ watch(scheduledDates, async newValue => {
                           product: item.parent_id ? item.parent_id : null,
                           vid_product: item.parent_id ? item.product_id : null,
                           meal: !item.parent_id ? item.product_id : null,
-                          amount: item.amount,
+                          amount: item.amount_left,
                           vid_list: [],
                           meals_list: {},
                         };
@@ -739,7 +739,7 @@ watch(scheduledDates, async newValue => {
                           product: item.parent_id ? item.parent_id : null,
                           vid_product: item.parent_id ? item.product_id : null,
                           meal: !item.parent_id ? item.product_id : null,
-                          amount: item.amount,
+                          amount: item.amount_left,
                           vid_list: [],
                           meals_list: {},
                         };
@@ -784,7 +784,7 @@ watch(scheduledDates, async newValue => {
                           product: item.parent_id ? item.parent_id : null,
                           vid_product: item.parent_id ? item.product_id : null,
                           meal: !item.parent_id ? item.product_id : null,
-                          amount: item.amount,
+                          amount: item.amount_left,
                           vid_list: [],
                           meals_list: {},
                         };
@@ -829,7 +829,7 @@ watch(scheduledDates, async newValue => {
                           product: item.parent_id ? item.parent_id : null,
                           vid_product: item.parent_id ? item.product_id : null,
                           meal: !item.parent_id ? item.product_id : null,
-                          amount: item.amount,
+                          amount: item.amount_left,
                           vid_list: [],
                           meals_list: {},
                         };
@@ -874,7 +874,7 @@ watch(scheduledDates, async newValue => {
                           product: item.parent_id ? item.parent_id : null,
                           vid_product: item.parent_id ? item.product_id : null,
                           meal: !item.parent_id ? item.product_id : null,
-                          amount: item.amount,
+                          amount: item.amount_left,
                           vid_list: [],
                           meals_list: {},
                         };
