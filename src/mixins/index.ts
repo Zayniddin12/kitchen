@@ -46,8 +46,9 @@ export default function useComp(){
     return parts.join('.');
   }
 
-  function priceParser(value:any) {
-    return value.replace(/[,\s]/g, '');
+  function priceParser(value?: string): string {
+    if (!value) return '';
+    return value.replace(/[^0-9.]/g, '');
   }
 
   return {
