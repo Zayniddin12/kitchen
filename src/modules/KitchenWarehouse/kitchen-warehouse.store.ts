@@ -6,7 +6,7 @@ import {
     ListInvoicesParamsType,
     ListInvoicesResponseType,
     ListProductsParamsType,
-    ListProductsResponseType, UpdatePriceDataType
+    ListProductsResponseType, ListProductsType, UpdatePriceDataType,
 } from "@/modules/KitchenWarehouse/kitchen-warehouse.types";
 import kitchenWarehouseApi from "@/modules/KitchenWarehouse/kitchen-warehouse.api";
 import axios from "@/plugins/axios/axios";
@@ -40,7 +40,7 @@ export const useKitchenWarehouseStore = defineStore("kitchenWarehouse", () => {
             dynamicState.value.find(el => el.id === id) ?? null;
     };
 
-    const listProducts = ref<ListProductsResponseType | null>(null);
+    const listProducts = ref<ListProductsType | null>(null);
     const listProductsLoading = ref(false);
 
     const fetchListProducts = async (

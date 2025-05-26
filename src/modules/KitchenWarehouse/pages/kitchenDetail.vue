@@ -24,6 +24,8 @@ import { ValidationType } from "@/components/ui/form/app-form/app-form.type";
 import AppPagination from "@/components/ui/app-pagination/AppPagination.vue";
 import AppEmpty from "@/components/ui/app-empty/AppEmpty.vue";
 import { useI18n } from "vue-i18n";
+import { ProductType } from "@/modules/WorkShops/workshops.types";
+import useComp from "@/mixins";
 
 interface Tabs {
   title: string;
@@ -34,6 +36,7 @@ const route = useRoute();
 const router = useRouter();
 
 const { t } = useI18n();
+const {num_format} = useComp();
 
 const commonStore = useCommonStore();
 const kitchenWarehouseStore = useKitchenWarehouseStore();
@@ -610,208 +613,99 @@ const packagingPage = () => {
         >
           <div
             v-if="activeTab === TABS.PRODUCTS"
-            class="flex flex-col gap-y-4"
+            class="inner"
           >
-            <template v-if="kitchenWarehouseStore.listProducts?.grouped_products.length">
-              <div
-                v-for="item in kitchenWarehouseStore.listProducts.grouped_products"
-                :key="item.parent_name"
+            <ElTable
+              v-loading="kitchenWarehouseStore.listProductsLoading"
+              :data="kitchenWarehouseStore.listProducts?.products ?? []"
+              stripe
+              class="custom-element-table"
+              :empty-text="$t('common.empty')"
+            >
+              <ElTableColumn
+                prop="idx"
+                label="№"
+                width="100"
               >
-                <h2 class="text-dark font-medium text-lg mb-3">
-                  {{ item.parent_name }}
-                </h2>
-                <ElTable
-                  :data="item.products && item.products.length ? item.products : []"
-                  stripe
-                  class="custom-element-table"
-                  :empty-text="t('common.empty')"
-                >
-                  <ElTableColumn
-                    prop="idx"
-                    label="№"
-                    width="100"
-                  >
-                    <template #default="{ $index }">{{ $index + 1 }}</template>
-                  </ElTableColumn>
-                  <ElTableColumn
-                    prop="product_name"
-                    :label="t('product.name')"
-                    width="200"
-                  >
-                    <template #default="{ row }: { row: ListProductType }">
-                      {{ row.product_name || "—" }}
-                    </template>
-                  </ElTableColumn>
-                  <ElTableColumn
-                    prop="quantity"
-                    :label="t('common.quantity')"
-                    width="200"
-                  >
-                    <template #default="{ row }: { row: ListProductType }">
-                      {{ row.quantity.toFixed(2) || "—" }}
-                    </template>
-                  </ElTableColumn>
-                  <ElTableColumn
-                    prop="unit_name"
-                    :label="t('common.measurement')"
-                    width="200"
-                  >
-                    <template #default="{ row }: { row: ListProductType }">
-                      {{ row.unit_name || "—" }}
-                    </template>
-                  </ElTableColumn>
-                  <ElTableColumn
-                    prop="net_price"
-                    :label="t('Цена закупки')"
-                    width="200"
-                  >
-                    <template #default="{ row }: { row: ListProductType }">
-                      {{ row.net_price || "—" }}
-                    </template>
-                  </ElTableColumn>
-                  <ElTableColumn
-                    prop="transportation_costs_percent"
-                    :label="t('common.tzr')"
-                    width="200"
-                  >
-                    <template #default="{ row }: { row: ListProductType }">
-                      <AppInput
-                        v-if="row?.isEdit"
-                        v-model="activeProductForm.transportation_costs_percent"
-                        prop="transportation_costs_percent"
-                        class="w-[50px] mb-0 py-0.5"
-                        required
-                      />
-                      <template v-else>
-                        {{ row.transportation_costs_percent }}%
-                      </template>
-                    </template>
-                  </ElTableColumn>
-                  <ElTableColumn
-                    prop="markup_percent"
-                    :label="t('kitchenWarehouse.markup')"
-                    width="200"
-                  >
-                    <template #default="{ row }: { row: ListProductType }">
-                      <AppInput
-                        v-if="row.isEdit"
-                        v-model="activeProductForm.markup_percent"
-                        prop="markup_percent"
-                        class="w-[50px] mb-0 py-0.5"
-                        required
-                      />
-                      <template v-else>
-                        {{ row.markup_percent }}%
-                      </template>
-                    </template>
-                  </ElTableColumn>
-                  <ElTableColumn
-                    prop="profitability_percent"
-                    :label="t('kitchenWarehouse.rentab')"
-                    width="200"
-                  >
-                    <template #default="{ row }: { row: ListProductType }">
-                      <AppInput
-                        v-if="row.isEdit"
-                        v-model="activeProductForm.profitability_percent"
-                        prop="profitability_percent"
-                        class="w-[50px] mb-0 py-0.5"
-                        required
-                      />
-                      <template v-else>
-                        {{ row.profitability_percent }}%
-                      </template>
-                    </template>
-                  </ElTableColumn>
-                  <ElTableColumn
-                    prop="vat_percent"
-                    :label="t('common.ndc')"
-                    width="200"
-                  >
-                    <template #default="{ row }: { row: ListProductType }">
-                      <AppInput
-                        v-if="row.isEdit"
-                        v-model="activeProductForm.vat_percent"
-                        prop="vat_percent"
-                        class="w-[50px] mb-0 py-0.5"
-                        required
-                      />
-                      <template v-else>
-                        {{ row.vat_percent }}%
-                      </template>
-                    </template>
-                  </ElTableColumn>
-                  <ElTableColumn
-                    prop="price"
-                    :label="t('Цена с наценкой')"
-                    width="200"
-                  >
-                    <template #default="{ row }: { row: ListProductType }">
-                      {{ row.price ? `${row.price} ${t("currency.sum")}` : "—" }}
-                    </template>
-                  </ElTableColumn>
-                  <ElTableColumn
-                    prop="total_price"
-                    :label="t('common.sum')"
-                    width="200"
-                  >
-                    <template #default="{ row }: { row: ListProductType }">
-                      {{ row.total_price ? `${row.total_price} ${t("currency.sum")}` : "—" }}
-                    </template>
-                  </ElTableColumn>
-                  <ElTableColumn :label="t('common.action')" width="150">
-                    <template #default="{ row }: { row: ListProductType }">
-                      <template v-if="row.isEdit">
-                        <button
-                          class="action-btn"
-                          @click="updateProductPrice(row)"
-                        >
-                          <img
-                            src="@/assets/images/icons/check.svg"
-                            alt="check"
-                          />
-                        </button>
-                        <button
-                          class="action-btn ml-[8px]"
-                          @click="row.isEdit = false"
-                        >
-                          <img
-                            src="@/assets/images/icons/x.svg"
-                            alt="close icon"
-                          />
-                        </button>
-                      </template>
-                      <button
-                        v-else
-                        class="action-btn"
-                        @click="permissionProductEdit(row, item)"
-                      >
-                        <img
-                          src="@/assets/images/icons/edit.svg"
-                          alt="edit"
-                        />
-                      </button>
-                    </template>
-                  </ElTableColumn>
-                </ElTable>
-              </div>
+                <template #default="{$index}">
+                  {{
+                    setTableColumnIndex($index, productsForm.page ?? 0, kitchenWarehouseStore.listProducts?.pagination?.per_page ?? 0)
+                  }}
+                </template>
+              </ElTableColumn>
+              <ElTableColumn
+                prop="product_name"
+                label="Название продукта"
+                width="200"
+              >
+                <template #default="{row}">
+                  {{ row.product_name || "—" }}
+                </template>
+              </ElTableColumn>
+              <ElTableColumn
+                prop="quantity"
+                label="Количество"
+                width="200"
+              >
+                <template #default="{row}:{row:ProductType}">
+                  {{ num_format(row.quantity) || "—" }}
+                </template>
+              </ElTableColumn>
+              <ElTableColumn
+                prop="measure"
+                label="Ед. измерения"
+                width="200"
+              >
+                <template #default="{row}:{row:ProductType}">
+                  {{ row.unit_name || "—" }}
+                </template>
+              </ElTableColumn>
+              <ElTableColumn
+                prop="price"
+                label="Цена"
+                width="200"
+              >
+                <template #default="{row}:{row:ProductType}">
+                  {{ row.price ? row.price + " UZS" : "—" }}
+                </template>
+              </ElTableColumn>
+              <ElTableColumn
+                prop="total_price"
+                label="Сумма"
+                width="200"
+              >
+                <template #default="{row}:{row:ProductType}">
+                  {{ row.total_price ? row.total_price + " UZS" : "—" }}
+                </template>
+              </ElTableColumn>
+              <!--            <ElTableColumn-->
+              <!--              prop="action"-->
+              <!--              align="right"-->
+              <!--              label="Действие"-->
+              <!--            >-->
+              <!--              <template #default="{row}">-->
+              <!--                <button class="action-btn">-->
+              <!--                  <img-->
+              <!--                    src="@/assets/images/download.svg"-->
+              <!--                    alt="download"-->
+              <!--                  />-->
+              <!--                </button>-->
+              <!--              </template>-->
+              <!--            </ElTableColumn>-->
+            </ElTable>
 
-              <div class="my-4 flex items-center justify-between">
-                <span class="text-2xl font-bold">{{ $t("common.totalSum") }}</span>
-                <span
-                  class="text-xl font-medium">{{ kitchenWarehouseStore.listProducts?.total_price_formatted && kitchenWarehouseStore.listProducts.total_price_formatted
-                  }}</span>
-              </div>
-              <AppPagination
-                v-model="productsForm.page"
-                :pagination="kitchenWarehouseStore.listProducts.pagination"
-                class="mt-6"
-                @current-change="changePage"
-              />
-            </template>
-            <AppEmpty
-              class="min-h-0"
-              v-else
+            <div class="my-4 flex items-center justify-between">
+              <span class="text-2xl font-bold">{{ $t("common.totalSum") }}</span>
+              <span
+                class="text-xl font-medium">{{ kitchenWarehouseStore.listProducts?.total_price_formatted && kitchenWarehouseStore.listProducts?.total_price_formatted
+                }}</span>
+            </div>
+            <AppPagination
+              v-if="kitchenWarehouseStore.listProducts"
+              v-model="productsForm.page"
+              :pagination="kitchenWarehouseStore.listProducts?.pagination"
+              class="mt-6"
+              @current-change="changePage"
             />
           </div>
           <div v-else-if="activeTab === TABS.INVOICES">

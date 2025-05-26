@@ -1,4 +1,5 @@
 import { PaginationParamsType, PaginationType } from "@/types/pagination.type";
+import { ProductType } from "@/modules/WorkShops/workshops.types";
 
 export interface ProductCommonType {
     transportation_costs_percent: number,
@@ -43,6 +44,12 @@ export interface ListProductType extends ListProductCommonType {
 export interface ListProductsResponseType {
     grouped_products: GroupProductType[];
     pagination: PaginationType;
+}
+
+export interface ListProductsType {
+    products: ProductType[],
+    pagination: PaginationType
+    total_price_formatted:string
 }
 
 export interface ListInvoicesParamsType extends PaginationParamsType, ListProductCommonParamsType {
