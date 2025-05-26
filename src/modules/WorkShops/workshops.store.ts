@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
 import { computed, ref } from "vue";
 import workshopsApi from "@/modules/WorkShops/workshops.api";
-import { ActiveManagementBaseType } from "@/modules/WorkShops/workshops.types";
+import { ActiveManagementBaseType, WarehouseBasesProductsType } from "@/modules/WorkShops/workshops.types";
 import { FillingPercentageResponseType } from "@/modules/KitchenWarehouse/kitchen-warehouse.types";
 import {
   ManagementBasesType,
@@ -154,7 +154,7 @@ export const useWorkshopsStore = defineStore("workshopsStore", () => {
     }
   };
 
-  const productsPantry = ref<WarehouseBasesProductsResponseType | null>(null);
+  const productsPantry = ref<WarehouseBasesProductsType | null>(null);
   const productsPantryLoading = ref(false);
 
   const fetchProductsPantry = async (id: number, params: WarehouseBasesProductsParamsType = {}) => {

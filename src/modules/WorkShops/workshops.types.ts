@@ -22,9 +22,24 @@ export interface WarehouseBasesProductType {
   price_formatted: string
 }
 
+export interface ProductType {
+  id: number;
+  product_type_id: number;
+  product_name: string;
+  quantity: number;
+  unit_name: string;
+  price: number;
+  total_price: number;
+}
+
 export interface WarehouseBasesProductsResponseType {
   grouped_products: WarehouseBasesProductType[],
   pagination: PaginationType
+}
+export interface WarehouseBasesProductsType {
+  products: ProductType[],
+  pagination: PaginationType
+  total_price_formatted:string
 }
 
 export interface WarehouseBasesInvoicesParamsType extends WarehouseBasesProductsParamsType {

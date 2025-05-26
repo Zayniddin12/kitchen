@@ -25,10 +25,13 @@ import AppForm from "@/components/ui/form/app-form/AppForm.vue";
 import { useDocumentStore } from "@/modules/Document/document.store";
 import { ValidationType } from "@/components/ui/form/app-form/app-form.type";
 import AppEmpty from "@/components/ui/app-empty/AppEmpty.vue";
+import { ProductType } from "@/modules/WorkShops/workshops.types";
+import useComp from "@/mixins";
 
 const workshopsStore = useWorkshopsStore();
 const settingsStore = useSettingsStore();
 const documentStore = useDocumentStore();
+const {num_format} = useComp();
 
 
 const route = useRoute();
@@ -402,111 +405,97 @@ onMounted(() => {
         <div
           class="inner"
         >
-          <template v-if="workshopsStore.productsPantry?.grouped_products.length">
-            <div
-              v-for="item in workshopsStore.productsPantry?.grouped_products"
-              :key="item.parent_name"
+          <ElTable
+            v-loading="workshopsStore.productsPantryLoading"
+            :data="workshopsStore.productsPantry?.products ?? []"
+            stripe
+            class="custom-element-table"
+            :empty-text="$t('common.empty')"
+          >
+            <ElTableColumn
+              prop="idx"
+              label="№"
+              width="100"
             >
-              <h2 class="text-dark font-medium text-lg mb-3">
-                {{ item.parent_name }}
-              </h2>
-              <ElTable
-                :data="item.products && item.products.length ? item.products : []"
-                stripe
-                class="custom-element-table my-4"
-                :empty-text="$t('common.empty')"
-              >
-                <ElTableColumn
-                  prop="idx"
-                  label="№"
-                  width="100"
-                >
-                  <template #default="{$index}">
-                    {{
-                      setTableColumnIndex($index, productsForm.page ?? 0, workshopsStore.products?.pagination.per_page ?? 0)
-                    }}
-                  </template>
-                </ElTableColumn>
-                <ElTableColumn
-                  prop="product_name"
-                  label="Название продукта"
-                  width="200"
-                >
-                  <template #default="{row}:{row:WarehouseBasesProductType}">
-                    {{ row.product_name || "—" }}
-                  </template>
-                </ElTableColumn>
-                <ElTableColumn
-                  prop="quantity"
-                  label="Количество"
-                  width="200"
-                >
-                  <template #default="{row}:{row:WarehouseBasesProductType}">
-                    {{ row.quantity || "—" }}
-                  </template>
-                </ElTableColumn>
-                <ElTableColumn
-                  prop="unit_name"
-                  label="Ед. измерения"
-                  width="200"
-                >
-                  <template #default="{row}:{row:WarehouseBasesProductType}">
-                    {{ row.unit_name || "—" }}
-                  </template>
-                </ElTableColumn>
-                <ElTableColumn
-                  prop="price"
-                  label="Цена"
-                  width="200"
-                >
-                  <template #default="{row}:{row:WarehouseBasesProductType}">
-                    {{ row.price || "—" }}
-                  </template>
-                </ElTableColumn>
-                <ElTableColumn
-                  prop="total_price"
-                  label="Сумма"
-                  width="200"
-                >
-                  <template #default="{row}:{row:WarehouseBasesProductType}">
-                    {{ row.total_price || "—" }}
-                  </template>
-                </ElTableColumn>
-                <!--            <ElTableColumn-->
-                <!--              prop="action"-->
-                <!--              align="right"-->
-                <!--              label="Действие"-->
-                <!--            >-->
-                <!--              <template #default="{row}">-->
-                <!--                <button class="action-btn">-->
-                <!--                  <img-->
-                <!--                    src="@/assets/images/download.svg"-->
-                <!--                    alt="download"-->
-                <!--                  />-->
-                <!--                </button>-->
-                <!--              </template>-->
-                <!--            </ElTableColumn>-->
-              </ElTable>
+              <template #default="{$index}">
+                {{
+                  setTableColumnIndex($index, productsForm.page ?? 0, workshopsStore.productsPantry?.pagination?.per_page ?? 0)
+                }}
+              </template>
+            </ElTableColumn>
+            <ElTableColumn
+              prop="product_name"
+              label="Название продукта"
+              width="200"
+            >
+              <template #default="{row}">
+                {{ row.product_name || "—" }}
+              </template>
+            </ElTableColumn>
+            <ElTableColumn
+              prop="quantity"
+              label="Количество"
+              width="200"
+            >
+              <template #default="{row}:{row:ProductType}">
+                {{ num_format(row.quantity) || "—" }}
+              </template>
+            </ElTableColumn>
+            <ElTableColumn
+              prop="measure"
+              label="Ед. измерения"
+              width="200"
+            >
+              <template #default="{row}:{row:ProductType}">
+                {{ row.unit_name || "—" }}
+              </template>
+            </ElTableColumn>
+            <ElTableColumn
+              prop="price"
+              label="Цена"
+              width="200"
+            >
+              <template #default="{row}:{row:ProductType}">
+                {{ row.price ? num_format(row.price, 2) + " UZS" : "—" }}
+              </template>
+            </ElTableColumn>
+            <ElTableColumn
+              prop="total_price"
+              label="Сумма"
+              width="200"
+            >
+              <template #default="{row}:{row:ProductType}">
+                {{ row.total_price ? num_format(row.total_price, 2) + " UZS" : "—" }}
+              </template>
+            </ElTableColumn>
+            <!--            <ElTableColumn-->
+            <!--              prop="action"-->
+            <!--              align="right"-->
+            <!--              label="Действие"-->
+            <!--            >-->
+            <!--              <template #default="{row}">-->
+            <!--                <button class="action-btn">-->
+            <!--                  <img-->
+            <!--                    src="@/assets/images/download.svg"-->
+            <!--                    alt="download"-->
+            <!--                  />-->
+            <!--                </button>-->
+            <!--              </template>-->
+            <!--            </ElTableColumn>-->
+          </ElTable>
 
-            </div>
-            <!--            Jami summa-->
-            <div class="my-4 flex items-center justify-between">
-              <span class="text-2xl font-bold">{{ $t("common.totalSum") }}</span>
-              <span
-                class="text-xl font-medium">{{ workshopsStore.productsPantry?.total_price_formatted && workshopsStore.productsPantry.total_price_formatted
-                }}</span>
-            </div>
-            <AppPagination
-              v-if="workshopsStore.productsPantry"
-              v-model="productsForm.page"
-              :pagination="workshopsStore.productsPantry.pagination"
-              class="mt-6"
-              @current-change="changePage"
-            />
-          </template>
-          <AppEmpty
-            class="min-h-0"
-            v-else
+          <div class="my-4 flex items-center justify-between">
+            <span class="text-2xl font-bold">{{ $t("common.totalSum") }}</span>
+            <span
+              class="text-xl font-medium">{{ workshopsStore?.productsPantry?.total_price_formatted && workshopsStore?.productsPantry?.total_price_formatted
+              }}</span>
+          </div>
+          <AppPagination
+            v-if="workshopsStore.productsPantry"
+            v-model="productsForm.page"
+            :pagination="workshopsStore.productsPantry.pagination"
+            class="mt-6"
+            @current-change="changePage"
           />
         </div>
 
