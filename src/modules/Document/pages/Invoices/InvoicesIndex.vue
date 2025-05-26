@@ -38,6 +38,7 @@ interface FormType extends DraftsParamsType {
   date?: string,
   shipping_method?: string,
   generated_number?: string,
+  status?: string,
 }
 
 const form = reactive<FormType>({
@@ -50,6 +51,7 @@ const form = reactive<FormType>({
   date: "",
   shipping_method: "",
   generated_number: "",
+  status: "",
 });
 
 const v$ = ref<ValidationType | null>(null);
@@ -192,6 +194,36 @@ const deleteModalHandler = async (item: any) => {
     await fetchInvoices();
   });
 };
+const statusList = ref([
+  {
+    id:'draft',
+    name:{ru:'Черновики', uz:'Qoralamalar'},
+  },
+  {
+    id:'sent',
+    name:{ru:'Новый', uz:'Yangi'},
+  },
+  {
+    id:'pending',
+    name:{ru:'В ожидании', uz:'Kutilmoqda'},
+  },
+  {
+    id:'approved',
+    name:{ru:'Одобрено', uz:'Tasdiqlangan'},
+  },
+  {
+    id:'rejected',
+    name:{ru:'Отклонено', uz:'Rad etildi'},
+  },
+  {
+    id:'signed',
+    name:{ru:'Подписано', uz:'Imzolangan'},
+  },
+  {
+    id:'cancelled',
+    name:{ru:'Отменено', uz:'Bekor qilindi'},
+  }
+])
 </script>
 
 <template>
@@ -287,6 +319,17 @@ const deleteModalHandler = async (item: any) => {
               :placeholder="t('document.shippingMethod')"
               :label="t('document.shippingMethod')"
               label-class="text-[#7F7D83]"
+            />
+            <AppSelect
+              v-model="form.status"
+              prop="status"
+              :items="statusList"
+              item-label="name"
+              item-value="id"
+              :placeholder="t('document.status')"
+              :label="t('document.status')"
+              label-class="text-[#7F7D83]"
+              filterable
             />
           </AppForm>
 

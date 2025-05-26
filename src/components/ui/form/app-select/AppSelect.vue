@@ -119,7 +119,7 @@ watch(computedModel, (val) => {
     :class="appSelectClasses"
     :size
     :prop
-    :error="computedError"
+    :error
     :rules="setRules(getRules(props))"
   >
     <template
@@ -137,10 +137,10 @@ watch(computedModel, (val) => {
       </span>
     </template>
     <ElSelect
-      v-model="computedModel"
-      :value-key="itemValue"
+      v-model="model"
+      :value-key="itemValue ? itemValue : 'id'"
       :size
-      :placeholder="computedPlaceholder"
+      :placeholder
       :readonly
       :disabled
       :clearable
@@ -155,7 +155,7 @@ watch(computedModel, (val) => {
       :loading-text
       :filterable
       :no-match-text
-      :no-data-text="computedNoDataText"
+      :no-data-text
       :popper-class
       :default-first-option
       :teleported
@@ -164,24 +164,25 @@ watch(computedModel, (val) => {
       :placement
       class="app-select__select"
       @change="change"
-      @input="input"
       @clear="clear"
       :remote-method
       :remote-show-suffix
       :remote
+      :class="disabled ? 'disabled-class' : ''"
     >
-      <template v-if="!slots.default">
+      <template v-if="(items && items.length && itemLabel) && !slots.default">
         <ElOption
-          v-for="item in items"
-          :key="item[itemValue]"
-          :label="item[itemLabel]"
-          :value="item[itemValue]"
+          v-for="(item, index) in items"
+          :key="itemValue ? item[itemValue] : index"
+          :label="typeof item[itemLabel] === 'object' ? item[itemLabel][$i18n.locale] : item[itemLabel]"
+          :value="itemValue ? item[itemValue] : item"
         >
           <slot
             v-if="slots.option"
             name="option"
             v-bind="item"
           />
+
         </ElOption>
       </template>
       <slot />
