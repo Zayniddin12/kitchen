@@ -648,7 +648,7 @@ const packagingPage = () => {
                 width="200"
               >
                 <template #default="{row}:{row:ProductType}">
-                  {{ num_format(row.quantity) || "—" }}
+                  {{ row.quantity || "—" }}
                 </template>
               </ElTableColumn>
               <ElTableColumn
@@ -658,6 +658,51 @@ const packagingPage = () => {
               >
                 <template #default="{row}:{row:ProductType}">
                   {{ row.unit_name || "—" }}
+                </template>
+              </ElTableColumn>
+              <ElTableColumn
+                prop="net_price"
+                :label="t('Цена закупки')"
+                width="200"
+              >
+                <template #default="{row}:{row: ListInvoiceType}">
+                  {{ row.net_price || "—" }}
+                </template>
+              </ElTableColumn>
+              <ElTableColumn
+                prop="transportation_costs_percent"
+                :label="t('common.tzr')"
+                width="130"
+              >
+                <template #default="{row}:{row: ListInvoiceType}">
+                  {{ row.transportation_costs_percent }}%
+                </template>
+              </ElTableColumn>
+              <ElTableColumn
+                prop="markup_percent"
+                :label="t('kitchenWarehouse.markup')"
+                width="130"
+              >
+                <template #default="{ row }: { row: ListInvoiceType }">
+                  {{ row.markup_percent }}%
+                </template>
+              </ElTableColumn>
+              <ElTableColumn
+                prop="profitability_percent"
+                :label="t('kitchenWarehouse.rentab')"
+                width="120"
+              >
+                <template #default="{ row }: { row: ListInvoiceType }">
+                  {{ row.profitability_percent }}%
+                </template>
+              </ElTableColumn>
+              <ElTableColumn
+                prop="vat_percent"
+                :label="t('common.ndc')"
+                width="200"
+              >
+                <template #default="{ row }: { row: ListInvoiceType }">
+                  {{ row.vat_percent }}%
                 </template>
               </ElTableColumn>
               <ElTableColumn
