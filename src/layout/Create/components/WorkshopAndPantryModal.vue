@@ -507,7 +507,7 @@ const openModal = async () => {
         toList.value = settingsStore.respondents;
       } else {
         await settingsStore.fetchRespondents({
-          type: activeComingModal.value == 15 || activeComingModal.value == 18 ? ["pantryWarehouse"] : activeComingModal.value == 17 ? ["kitchenWarehouse"] : ["kitchenWarehouse", "organization", "workshopWarehouse", "pantryWarehouse"],
+          type: activeComingModal.value == 15 || activeComingModal.value == 18 ? ["pantryWarehouse"] : activeComingModal.value == 17 ? ["kitchenWarehouse", "organization"] : ["kitchenWarehouse", "organization", "workshopWarehouse", "pantryWarehouse"],
           per_page: 100,
         });
         toList.value = settingsStore.respondents;
@@ -608,7 +608,7 @@ const sendProviderForm = async () => {
     }
 
     await settingsStore.fetchRespondents({
-      type: activeComingModal.value == 15 || activeComingModal.value == 18 ? ["pantryWarehouse"] : activeComingModal.value == 17 ? ["kitchenWarehouse"] : ["kitchenWarehouse", "organization", "base", "workshopWarehouse", "pantryWarehouse", "provider"],
+      type: activeComingModal.value == 15 || activeComingModal.value == 18 ? ["pantryWarehouse"] : activeComingModal.value == 17 ? ["kitchenWarehouse", "organization"] : ["kitchenWarehouse", "organization", "base", "workshopWarehouse", "pantryWarehouse", "provider"],
       per_page: 100,
     });
     toList.value = settingsStore.respondents;
