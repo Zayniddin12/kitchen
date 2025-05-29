@@ -212,7 +212,6 @@ watch(() => route.name, () => {
                   :label="t('common.oked')"
                   label-class="text-[#A8AAAE] font-medium text-[12px]"
                   class="w-full"
-                  required
                   prop="oked"
                   :disabled="isDisabled"
                 />
@@ -268,7 +267,6 @@ watch(() => route.name, () => {
                   :label="t('common.contact')"
                   label-class="text-[#A8AAAE] font-medium text-[12px]"
                   class="w-full"
-                  required
                   prop="phone"
                   :disabled="isDisabled"
                 />
