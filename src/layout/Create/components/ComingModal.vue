@@ -253,7 +253,7 @@ const sendForm = async () => {
   });
 
   if (newForm.Act && newForm.Act.doc_signer_obj) {
-    const signerKeys = ["signer_id_1", "signer_id_2", "signer_id_3", "signer_id_4", "signer_id_5", "signer_id_5", "signer_id_6", "signer_id_7"] as const;
+    const signerKeys = ["signer_id_1", "signer_id_2", "signer_id_3", "signer_id_4", "signer_id_5", "signer_id_6", "signer_id_7"] as const;
 
     newForm.Act.doc_signers = signerKeys
         .filter((key) => newForm.Act!.doc_signer_obj![key]) // Faqat qiymati borlarini olish
