@@ -264,13 +264,13 @@ const enterToFactory = () => {
           {{ warehouseBasesStore.product?.title ?? "" }}
         </h1>
 
-        <button
-          v-if="!!settingsStore.baseWarehouses?.base_warehouses.find((e) => e.id == id)?.workshop_name"
-          class="custom-light-btn"
-          @click="enterToFactory"
-        >
-          {{ settingsStore.baseWarehouses?.base_warehouses.find((e) => e.id == id)?.workshop_name }}
-        </button>
+<!--        <button-->
+<!--          v-if="!!settingsStore.baseWarehouses?.base_warehouses.find((e) => e.id == id)?.workshop_name"-->
+<!--          class="custom-light-btn"-->
+<!--          @click="enterToFactory"-->
+<!--        >-->
+<!--          {{ settingsStore.baseWarehouses?.base_warehouses.find((e) => e.id == id)?.workshop_name }}-->
+<!--        </button>-->
       </div>
       <div class="rounded-2xl py-3 px-4 border mt-6">
         <h3 class="text-dark font-medium text-lg">

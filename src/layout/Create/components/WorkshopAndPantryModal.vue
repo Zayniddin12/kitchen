@@ -1297,24 +1297,24 @@ const changeUser = (val, key) => {
                   </template>
                 </AppSelect>
 
-                <AppSelect
-                  v-model="form.doc_signer_obj.signer_id_2"
-                  prop="doc_signer_obj.signer_id_1"
-                  :placeholder="t('document.commission.chef')"
-                  :label="t('document.commission.chef')"
-                  label-class="text-[#A8AAAE] text-xs font-medium"
-                  required
-                  @change="changeUser($event, 'signer_id_2')"
-                >
-                  <template v-if="signersList.head_chef.users">
-                    <ElOption
-                      v-for="item in signersList.head_chef.users"
-                      :key="item.id"
-                      :label="usersStore.getUserFullName(item)"
-                      :value="item.id"
-                    />
-                  </template>
-                </AppSelect>
+<!--                <AppSelect-->
+<!--                  v-model="form.doc_signer_obj.signer_id_2"-->
+<!--                  prop="doc_signer_obj.signer_id_1"-->
+<!--                  :placeholder="t('document.commission.chef')"-->
+<!--                  :label="t('document.commission.chef')"-->
+<!--                  label-class="text-[#A8AAAE] text-xs font-medium"-->
+<!--                  required-->
+<!--                  @change="changeUser($event, 'signer_id_2')"-->
+<!--                >-->
+<!--                  <template v-if="signersList.head_chef.users">-->
+<!--                    <ElOption-->
+<!--                      v-for="item in signersList.head_chef.users"-->
+<!--                      :key="item.id"-->
+<!--                      :label="usersStore.getUserFullName(item)"-->
+<!--                      :value="item.id"-->
+<!--                    />-->
+<!--                  </template>-->
+<!--                </AppSelect>-->
 
               </template>
 

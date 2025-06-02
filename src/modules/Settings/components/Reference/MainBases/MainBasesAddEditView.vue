@@ -36,9 +36,6 @@ const form = reactive<BaseWarehouseDataType>({
   measure_id: null,
   product_ids: [],
 });
-const factory = ref<boolean>(false);
-const workshop_name_uz = ref(null);
-const workshop_name_ru = ref(null);
 
 const oldForm = ref<null | BaseWarehouseDataType>(null);
 
@@ -111,19 +108,11 @@ const sendForm = async () => {
   try {
     if (route.name === "reference-main-bases-add") {
       await settingsStore.createBaseWarehouse({
-        ...form,
-        workshop_name: {
-          uz: workshop_name_uz.value,
-          ru: workshop_name_ru.value,
-        },
+        ...form
       });
     } else if (route.name === "reference-main-bases-edit" && routeID.value) {
       const newForm = {
-        ...form,
-        workshop_name: {
-          uz: workshop_name_uz.value,
-          ru: workshop_name_ru.value,
-        },
+        ...form
       };
       newForm.status = setStatus(form.status);
       await settingsStore.updateBaseWarehouse(routeID.value as number, newForm);
@@ -162,12 +151,6 @@ const setForm = async () => {
   form.measure_id = settingsStore.baseWarehouse.measure_id;
   form.status = getStatus(settingsStore.baseWarehouse.status);
   form.product_ids = settingsStore.baseWarehouse.warehouseProductTypes.map(item => item.id);
-
-  if (settingsStore.baseWarehouse?.workshop_name.uz || settingsStore.baseWarehouse?.workshop_name.ru) {
-    factory.value = true;
-    workshop_name_uz.value = settingsStore.baseWarehouse?.workshop_name.uz;
-    workshop_name_ru.value = settingsStore.baseWarehouse?.workshop_name.ru;
-  }
 };
 
 onMounted(async () => {
@@ -297,14 +280,6 @@ const disabledFormItems = computed<boolean>(() => {
 
           <div class="">
             <ElSwitch
-              v-model="factory"
-              active-text="цех"
-              class="app-switch mt-5"
-            />
-
-            <br />
-
-            <ElSwitch
               v-if="route.name === 'reference-main-bases-edit' && form.status !== undefined"
               v-model="form.status"
               :active-text="getStatusText(form.status)"
@@ -312,24 +287,6 @@ const disabledFormItems = computed<boolean>(() => {
             />
           </div>
 
-
-          <div class="grid grid-cols-2 gap-4 mt-2" v-if="factory">
-            <app-input
-              v-model="workshop_name_ru"
-              :label="$t('Наименование (Рус)')"
-              :placeholder="$t('form.select')"
-              label-class="text-[#A8AAAE] font-medium text-xs"
-              :disabled="disabledFormItems"
-            />
-
-            <app-input
-              v-model="workshop_name_uz"
-              :label="$t('Наименование (Ўзб)')"
-              :placeholder="$t('form.select')"
-              label-class="text-[#A8AAAE] font-medium text-xs"
-              :disabled="disabledFormItems"
-            />
-          </div>
         </AppOverlay>
 
         <div

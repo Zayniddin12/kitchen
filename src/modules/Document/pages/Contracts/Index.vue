@@ -21,6 +21,7 @@ import AppPagination from "@/components/ui/app-pagination/AppPagination.vue";
 import { useCommonStore } from "@/stores/common.store";
 import { useI18n } from "vue-i18n";
 import useConfirm from "@/components/ui/app-confirm/useConfirm";
+import useComp from "@/mixins";
 
 const route = useRoute();
 const router = useRouter();
@@ -34,6 +35,7 @@ const isTranslate = computed(() => !!route.meta.isTranslate);
 const documentStore = useDocumentStore();
 const settingsStore = useSettingsStore();
 const commonStore = useCommonStore();
+const {num_format} = useComp();
 
 const form = reactive<ContractsParamsType>({
   page: null,
@@ -417,7 +419,7 @@ const deleteModalHandler = async (item: any) => {
         width="150"
       >
         <template #default="{row}:{row:ContractType}">
-          {{ row.quantity || "-" }}
+          {{ num_format(row.quantity, 2) || "-" }}
         </template>
       </el-table-column>
       <el-table-column
@@ -435,7 +437,7 @@ const deleteModalHandler = async (item: any) => {
         width="150"
       >
         <template #default="{row}:{row:ContractType}">
-          {{ row.total_price ? `${formatNumber(row.total_price)} ${t("currency.sum")}` : "-" }}
+          {{ row.total_price ? `${num_format(row.total_price, 2)} ${t("currency.sum")}` : "-" }}
         </template>
       </el-table-column>
       <el-table-column label="Действие" width="200">

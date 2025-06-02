@@ -206,7 +206,7 @@ const setBreadCrumbFn = async () => {
 let unit = ref('')
 const getUnit = async (id: number) => {
   unit.value = settingsStore.meals.meals.find((el:any) => el.id == id).unit;
-  await settingsStore.GET_MEALS_DETAIL(id, {per_page: 100})
+  await settingsStore.GET_MEALS_DETAIL(id, {per_page: 100, kitchen_id:productId.value})
 }
 
 
@@ -323,7 +323,7 @@ watchEffect(() => {
 
         <app-input
           disabled
-          :placeholder="item.quantity && (item.quantity * quantity).toLocaleString()"
+          :placeholder="item.quantity && (Number(item.quantity) * quantity).toLocaleString()"
           :label="t('common.quantity')"
           label-class="text-[#A8AAAE] text-[12px]"
         />
@@ -344,7 +344,7 @@ watchEffect(() => {
 
         <div class="flex items-center gap-4">
           <app-input
-            :placeholder="item.quantity && (item.quantity * item.price).toLocaleString()"
+            :placeholder="item.quantity && (Number(item.quantity) * Number(item.price)).toLocaleString()"
             class="w-full"
             disabled
             :label="t('common.totalSum')"
