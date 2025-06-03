@@ -241,7 +241,7 @@ watch(id, (newId) => {
 });
 
 onMounted(() => {
-  settingsStore.GET_VID_PRODUCT({ per_page: 100 });
+  settingsStore.GET_VID_PRODUCT({ per_page: 200 });
   settingsStore.GET_UNITS();
   documentStore.fetchDrafts("received", { doc_type: "invoice", per_page: 100 });
 });

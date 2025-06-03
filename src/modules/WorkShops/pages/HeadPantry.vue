@@ -93,41 +93,7 @@ const invoicesForm = reactive<WarehouseBasesInvoicesParamsType>({
   document_id: "",
 });
 
-const invoicesFormV$ = ref<ValidationType | null>(null);
 
-const invoicesFormErrors = ref<Record<string, string> | null>(null);
-
-const fetchInvoices = async () => {
-  const query = getRouteQuery(route.query, {
-    page: "number",
-    product_id: "number",
-    measurement_unit_id: "number",
-    quantity: "number",
-    price: "number",
-    net_price: "number",
-    to: "string",
-    from: "string",
-    document_id: "number",
-  });
-
-  invoicesForm.net_price = query.net_price ?? null;
-  invoicesForm.to = query.to ?? "";
-  invoicesForm.price = query.price ?? null;
-  invoicesForm.from = query.from ?? "";
-  invoicesForm.page = query.page ?? null;
-  invoicesForm.product_id = query.product_id ?? "";
-  invoicesForm.measurement_unit_id = query.measurement_unit_id ?? "";
-  invoicesForm.quantity = query.quantity ?? null;
-  invoicesForm.document_id = query.document_id ?? "";
-
-  try {
-    if (id.value) workshopsStore.fetchInvoices(id.value, filterObjectValues(invoicesForm));
-  } catch (error: any) {
-    if (error?.error?.code === 422) {
-      invoicesFormErrors.value = error.meta.validation_errors;
-    }
-  }
-};
 
 const filterForm = () => {
   const query = { ...route.query, ...filterObjectValues(productsForm) };
@@ -137,9 +103,8 @@ const filterForm = () => {
 };
 
 const clearForm = async () => {
-  filterFormOpened.value = false;
-  await productsFormV$.value.resetForm();
-
+  await productsFormV$.value.resetForm()
+  router.push({ query: { } })
 };
 
 const changePage = (value: number) => {
@@ -195,7 +160,7 @@ watch(() => route.params.workshop_id, async (newId) => {
 
 
 onMounted(() => {
-  settingsStore.GET_VID_PRODUCT({ per_page: 100 });
+  settingsStore.GET_VID_PRODUCT({ per_page: 200 });
   settingsStore.GET_UNITS();
   documentStore.fetchDrafts("received", { doc_type: "invoice", per_page: 100 });
 });
