@@ -27,6 +27,7 @@ import { ValidationType } from "@/components/ui/form/app-form/app-form.type";
 import AppEmpty from "@/components/ui/app-empty/AppEmpty.vue";
 import { ProductType } from "@/modules/WorkShops/workshops.types";
 import useComp from "@/mixins";
+import { ElNotification } from "element-plus";
 
 const workshopsStore = useWorkshopsStore();
 const settingsStore = useSettingsStore();
@@ -165,6 +166,23 @@ onMounted(() => {
   documentStore.fetchDrafts("received", { doc_type: "invoice", per_page: 100 });
 });
 
+const uploadFile = async (event:any) => {
+  const file = event.target.files[0]
+  if (!file) return
+  try {
+    const formData = new FormData()
+    formData.append("warehouse_id", String(route.params.workshop_id))
+    formData.append("file", file)
+    formData.append("type", "pantryWarehouse")
+
+    await settingsStore.UPLOAD_EXCEL(formData)
+
+    ElNotification({ title: "Success", type: "success" });
+  } catch (error:any) {
+    ElNotification({ title: "Error", type: "error", message: error?.meta?.validation_errors });
+  }
+}
+
 </script>
 
 <template>
@@ -200,7 +218,7 @@ onMounted(() => {
       <div class="mt-6">
         <div class="flex items-center gap-4 justify-end">
 
-          <div class="grid grid-cols-2 gap-4 w-[386px]">
+          <div class="grid grid-cols-3 gap-4">
             <!--            <AppSelect-->
             <!--              v-model="id"-->
             <!--              size="large"-->
@@ -209,6 +227,27 @@ onMounted(() => {
             <!--              item-value="id"-->
             <!--              item-label="name"-->
             <!--            />-->
+            <ElButton
+              size="large"
+              class="h-12 !bg-white-blue w-full !border-white-blue"
+              @click="$refs.fileInput.click()"
+            >
+              <div class="flex items-center gap-x-2">
+                <img
+                  src="@/assets/images/arrowUpFromBracket.svg"
+                  class="size-5"
+                  alt="Upload img"
+                />
+                <span class="font-medium text-dark-gray">Загрузить Excel</span>
+              </div>
+            </ElButton>
+            <input
+              ref="fileInput"
+              type="file"
+              accept=".xlsx,.xls"
+              class="hidden"
+              @change="uploadFile"
+            />
             <ElDropdown
               placement="bottom"
               class="block w-full"

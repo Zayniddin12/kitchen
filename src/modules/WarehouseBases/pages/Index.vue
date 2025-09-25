@@ -22,6 +22,7 @@ import AppPagination from "@/components/ui/app-pagination/AppPagination.vue";
 import AppForm from "@/components/ui/form/app-form/AppForm.vue";
 import { useDocumentStore } from "@/modules/Document/document.store";
 import { ValidationType } from "@/components/ui/form/app-form/app-form.type";
+import { ElNotification } from "element-plus";
 
 const warehouseBasesStore = useWarehouseBasesStore();
 const settingsStore = useSettingsStore();
@@ -254,6 +255,23 @@ const enterToFactory = () => {
   });
 };
 
+const uploadFile = async (event:any) => {
+  const file = event.target.files[0]
+  if (!file) return
+  try {
+    const formData = new FormData()
+    formData.append("warehouse_id", String(id.value))
+    formData.append("file", file)
+    formData.append("type", "baseWarehouse")
+
+   await settingsStore.UPLOAD_EXCEL(formData)
+
+    ElNotification({ title: "Success", type: "success" });
+  } catch (error:any) {
+    ElNotification({ title: "Error", type: "error", message: error?.meta?.validation_errors });
+  }
+}
+
 </script>
 
 <template>
@@ -304,7 +322,7 @@ const enterToFactory = () => {
               {{ item.name }}
             </RouterLink>
           </div>
-          <div class="grid grid-cols-3 gap-4 w-[486px]">
+          <div class="grid grid-cols-4 gap-4">
             <AppSelect
               v-model="id"
               size="large"
@@ -312,6 +330,27 @@ const enterToFactory = () => {
               :items="settingsStore.baseWarehouses?.base_warehouses ?? []"
               item-value="id"
               item-label="name"
+            />
+            <ElButton
+              size="large"
+              class="h-12 !bg-white-blue w-full !border-white-blue"
+              @click="$refs.fileInput.click()"
+            >
+              <div class="flex items-center gap-x-2">
+                <img
+                  src="@/assets/images/arrowUpFromBracket.svg"
+                  class="size-5"
+                  alt="Upload img"
+                />
+                <span class="font-medium text-dark-gray">Загрузить Excel</span>
+              </div>
+            </ElButton>
+            <input
+              ref="fileInput"
+              type="file"
+              accept=".xlsx,.xls"
+              class="hidden"
+              @change="uploadFile"
             />
             <ElDropdown
               placement="bottom"

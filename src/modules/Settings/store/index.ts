@@ -470,6 +470,14 @@ export const useSettingsStore = defineStore("settingsStore", () => {
     });
   };
 
+  const UPLOAD_EXCEL = async (data: any) => {
+    await $axios.post("/warehouse-products/import", data, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+  };
+
   const UPDATE_VID_PRODUCT = ({ id, data }: { id: string | number; data: any }) => {
     return $axios.post(`/product-types/${id}/`, data, {
       headers: {
@@ -992,5 +1000,6 @@ export const useSettingsStore = defineStore("settingsStore", () => {
     pantriesItem,
 
     CREATE_PROVIDERS_BY_INN,
+    UPLOAD_EXCEL
   };
 });
