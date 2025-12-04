@@ -46,11 +46,12 @@ watch(() => route, () => {
 }, { immediate: true, deep: true });
 
 const activeChildMenu = (item: SidebarItem) => {
+  console.log('bl;a');
   currentItem.value = item.route;
   if (item.route) {
     router.push(item.route);
   }
-  emit("closeSidebar");
+  emit("closeSidebar", "close");
 };
 </script>
 

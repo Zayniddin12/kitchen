@@ -7,6 +7,7 @@ import { onMounted, ref, watchEffect } from "vue";
 import { useRouter } from "vue-router";
 import { useSettingsStore } from "@/modules/Settings/store";
 import { ElNotification } from "element-plus";
+//done
 import useBreadcrumb from "@/components/ui/app-breadcrumb/useBreadcrumb";
 
 const store = useSettingsStore();
@@ -48,6 +49,7 @@ const refresh = async () => {
     await store.GET_TYPE_PRODUCT({ search: search.value });
   } catch (e: any) {
     ElNotification({ title: e, type: "error" });
+    //done
     loading.value = false;
   } finally {
     loading.value = false;

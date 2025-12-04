@@ -1170,20 +1170,6 @@ const changeUser = (val, key) => {
                   </div>
                 </template>
                 <div class="h-[400px]">
-                  <AppSelect
-                    v-model="product.category_id"
-                    :prop="`products[${index}].category_id`"
-                    :items="settingsStore.typeProduct.product_categories"
-                    item-value="id"
-                    item-label="name"
-                    clearable
-                    filterable
-                    :label="t('product.type')"
-                    :placeholder="t('product.select_type')"
-                    label-class="text-[#A8AAAE] text-xs font-medium"
-                    @change="fetchVidProductsList(product)"
-                    trigger="blur"
-                  />
                   <!--                  {{ vidProducts.get(product.category_id as number)[0] }}-->
                   <AppSelect
                     v-model="product.product_type_id"

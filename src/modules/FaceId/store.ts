@@ -3,7 +3,7 @@ import { ref } from "vue";
 import $axios from "@/plugins/axios/axios";
 import tokenManager from "@/utils/token.manager";
 import { ElNotification } from "element-plus";
-
+// done
 export const useFaceStore = defineStore("faceStore", () => {
   const faceId = ref({
     user_id: "",
@@ -25,6 +25,7 @@ export const useFaceStore = defineStore("faceStore", () => {
         message: "Siz ovqat olgansiz!",
         type: "warning",
       });
+    //   done
     }
     return data.data;
   };

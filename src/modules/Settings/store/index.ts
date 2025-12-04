@@ -471,11 +471,12 @@ export const useSettingsStore = defineStore("settingsStore", () => {
   };
 
   const UPLOAD_EXCEL = async (data: any) => {
-    await $axios.post("/warehouse-products/import", data, {
+    const res = await $axios.post("/warehouse-products/import", data, {
       headers: {
         "Content-Type": "multipart/form-data",
       },
     });
+    return res?.data;
   };
 
   const UPDATE_VID_PRODUCT = ({ id, data }: { id: string | number; data: any }) => {

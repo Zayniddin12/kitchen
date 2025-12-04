@@ -101,7 +101,7 @@ const activeMenu = (index: number, item: MenuItem) => {
   }
 };
 
-const closeChildSidebar = (value: string) => {
+const closeChildSidebar = (value?: string) => {
   if (value == "any") {
     if (!childIsOpenPin.value) {
       currentIndex.value = 0;

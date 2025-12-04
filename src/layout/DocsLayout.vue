@@ -4,6 +4,7 @@ import { useI18n } from "vue-i18n";
 import { computed, onMounted, ref } from "vue";
 import { useRoute } from "vue-router";
 import { ElNotification } from "element-plus";
+// done
 
 const { t } = useI18n();
 
@@ -26,9 +27,10 @@ onMounted(async () => {
     } catch (e) {
       ElNotification({
         title: "Error",
-        message: e.message,
+        message: e.message || "An error occurred while fetching document data.",
         type: "error",
       });
+    // done
     }
   }
 

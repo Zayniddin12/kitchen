@@ -170,8 +170,11 @@ const from = computed<string>(() => {
       el => el.model_type === form.from_type && el.id === form.from_id,
   );
 
-  if (!activeEl) return "";
+  if (!activeEl) {
+    return ""
+  };
 
+  respondentChange("", 'to')
   return activeEl.name;
 });
 
@@ -274,7 +277,6 @@ const sendForm = async () => {
     delete newForm.Act?.subject;
   }
 
-  console.log(newForm);
   await documentStore.create(filterObjectValues(newForm)).then(() => {
     commonStore.successToast();
     model.value = false;
@@ -1113,6 +1115,7 @@ const changeUser = (val:any, key:any) => {
               prop="to"
               :placeholder="t('document.whom.select_to')"
               :label="t('document.whom.to')"
+              :disabled="!!from"
               :loading="authStore.userLoading"
               label-class="text-[#A8AAAE] text-xs font-medium"
               @change="(value) => respondentChange(value as string, 'to')"
@@ -1211,21 +1214,6 @@ const changeUser = (val:any, key:any) => {
                   </div>
                 </template>
                 <div class="h-[400px] px-1">
-                  <AppSelect
-                      v-model="product.category_id"
-                      :prop="`products[${index}].category_id`"
-                      :items="settingsStore.typeProduct.product_categories"
-                      item-value="id"
-                      item-label="name"
-                      clearable
-                      filterable
-                      :label="t('product.type')"
-                      :placeholder="t('product.select_type')"
-                      label-class="text-[#A8AAAE] text-xs font-medium"
-                      @change="fetchVidProductsList(product)"
-                      trigger="blur"
-                      required
-                  />
                   <!--                  {{ vidProducts.get(product.category_id as number)[0] }}-->
                   <AppSelect
                       v-model="product.product_type_id"

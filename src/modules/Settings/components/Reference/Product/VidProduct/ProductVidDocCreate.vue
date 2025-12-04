@@ -25,6 +25,7 @@ interface DataValue {
   name: Name;
   image: File | null;
   parent_id: string | number;
+  unique_id:string | number;
   measurement_unit_id: string | number;
   place_occupied: string;
   is_active: boolean | number;
@@ -49,10 +50,12 @@ const dataValue = ref<DataValue>({
   },
   image: "",
   parent_id: "",
+  unique_id:"",
   measurement_unit_id: "",
   place_occupied: "",
   is_active: true,
   ready_to_eat: true,
+
 });
 const existingImage = ref<string>("");
 const loading = ref<boolean>(false);
@@ -126,6 +129,7 @@ const handleSubmit = async () => {
       formData.append("name[uz]", dataValue.value.name.uz);
       formData.append("name[ru]", dataValue.value.name.ru);
       formData.append("parent_id", dataValue.value.parent_id);
+      formData.append("unique_id", dataValue.value.unique_id);
       formData.append("ready_to_eat", dataValue.value.ready_to_eat ? 1 : 0);
       formData.append("place_occupied", dataValue.value.place_occupied);
       formData.append("measurement_unit_id", Number(dataValue.value.measurement_unit_id));
@@ -244,6 +248,15 @@ watchEffect(() => {
                 <span>кг</span>
               </template>
             </AppInput>
+            <AppInput
+              v-model="dataValue.unique_id"
+              prop="place_occupied"
+              custom-type="number"
+              :label="$t('nomenclature_number')"
+              label-class="text-[#A8AAAE] text-xs"
+              class="mb-0"
+              required
+            />
 
             <el-switch
               class="mt-7"

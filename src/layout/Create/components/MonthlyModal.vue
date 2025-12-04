@@ -561,19 +561,6 @@ watch(model, (newModel) => {
                 </button>
               </div>
               <AppSelect
-                v-model="product.category_id"
-                :prop="`products[${index}].category_id`"
-                :items="settingsStore.typeProduct.product_categories"
-                item-value="id"
-                item-label="name"
-                filterable
-                :label="t('product.type')"
-                :placeholder="t('product.type')"
-                label-class="text-[#A8AAAE] text-xs font-medium"
-                @change="fetchVidProductsList(product)"
-                :required
-              />
-              <AppSelect
                 v-model="product.product_type_id"
                 :prop="`products[${index}].product_type_id`"
                 :items="vidProducts.get(product.category_id as number)"

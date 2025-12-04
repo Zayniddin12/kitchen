@@ -173,6 +173,32 @@ const setBreadCrumbFn = async () => {
   ]);
 };
 
+
+const handleDownload = (value: string) => {
+  if (value === "pdf") {
+    downloadFile("/api/export/pdf", "file.pdf")
+  }
+
+  if (value === "excel") {
+    downloadFile("/api/export/excel", "file.xlsx")
+  }
+
+  if (value === "1c") {
+    downloadFile("/api/export/1c", "file.xml")
+  }
+}
+
+const downloadFile = async (url: string, filename: string) => {
+  const res = await fetch(url)
+  const blob = await res.blob()
+  const link = document.createElement("a")
+  link.href = URL.createObjectURL(blob)
+  link.download = filename
+  link.click()
+  URL.revokeObjectURL(link.href)
+}
+
+
 watchEffect(() => {
   setBreadCrumbFn();
 });
@@ -215,27 +241,37 @@ const packagingPage = () => {
     },
   });
 };
+const uploadResponseDialogVisible = ref(false);
+const uploadResponseList = ref<string[]>([]);
+const uploadFile = async (event: any) => {
+  const file = event.target.files[0];
+  if (!file) return;
 
-const uploadFile = async (event:any) => {
-  const file = event.target.files[0]
-  if (!file) return
   try {
-    const formData = new FormData()
-    formData.append("warehouse_id", String(route.params.workshop_id))
-    formData.append("file", file)
-    formData.append("type", "workshopWarehouse")
-    console.log(formData);
+    const formData = new FormData();
+    formData.append("warehouse_id", String(route.params.workshop_id));
+    formData.append("file", file);
+    formData.append("type", "workshopWarehouse");
 
-    await settingsStore.UPLOAD_EXCEL(formData)
+    const response = await settingsStore.UPLOAD_EXCEL(formData);
 
-    ElNotification({ title: "Success", type: "success" });
-  } catch (error:any) {
+    // API response: not_existing_product_names
+    if (response?.data?.not_existing_product_names?.length) {
+      ElNotification({ title: "Success", type: "success" })
+      uploadResponseList.value = response?.data?.not_existing_product_names;
+      uploadResponseDialogVisible.value = true;
+    }
+
+   ;
+  } catch (error: any) {
     ElNotification({ title: "Error", type: "error", message: error?.meta?.validation_errors });
   }
-}
+};
+
 </script>
 
 <template>
+<div>
   <section class="warehouse">
     <div v-if="workshopsStore.activeManagementBase?.workshops">
       <div class="flex items-center justify-between">
@@ -303,6 +339,7 @@ const uploadFile = async (event:any) => {
             <ElDropdown
               placement="bottom"
               class="block w-full"
+              @command="handleDownload"
             >
               <ElButton
                 size="large"
@@ -317,47 +354,41 @@ const uploadFile = async (event:any) => {
                   <span class="font-medium text-dark-gray">Скачать</span>
                 </div>
               </ElButton>
+
               <template #dropdown>
                 <ElDropdownMenu class="p-3 rounded-lg">
+
+                  <!-- PDF -->
                   <ElDropdownItem
+                    command="pdf"
                     class="flex items-center gap-x-4 rounded-lg px-3 py-2.5"
                   >
-                    <img
-                      src="@/assets/images/icons/pdf.svg"
-                      alt="pdf"
-                      class="w-[13px] h-[17px]"
-                    />
-                    <span class="text-sm text-dark-gray font-medium">
-                    PDF файл
-                  </span>
+                    <img src="@/assets/images/icons/pdf.svg" class="w-[13px] h-[17px]" />
+                    <span class="text-sm text-dark-gray font-medium">PDF файл</span>
                   </ElDropdownItem>
+
+                  <!-- Excel -->
                   <ElDropdownItem
+                    command="excel"
                     class="flex items-center gap-x-4 rounded-lg px-3 py-2.5"
                   >
-                    <img
-                      src="@/assets/images/icons/excel.svg"
-                      alt="pdf"
-                      class="w-[13px] h-[17px]"
-                    />
-                    <span class="text-sm text-dark-gray font-medium">
-                    Excel файл
-                  </span>
+                    <img src="@/assets/images/icons/excel.svg" class="w-[13px] h-[17px]" />
+                    <span class="text-sm text-dark-gray font-medium">Excel файл</span>
                   </ElDropdownItem>
+
+                  <!-- 1C -->
                   <ElDropdownItem
+                    command="1c"
                     class="flex items-center gap-x-4 rounded-lg px-3 py-2.5"
                   >
-                    <img
-                      src="@/assets/images/icons/1c.svg"
-                      alt="pdf"
-                      class="w-[13px] h-[17px]"
-                    />
-                    <span class="text-sm text-dark-gray font-medium">
-                    1C файл
-                  </span>
+                    <img src="@/assets/images/icons/1c.svg" class="w-[13px] h-[17px]" />
+                    <span class="text-sm text-dark-gray font-medium">1C файл</span>
                   </ElDropdownItem>
+
                 </ElDropdownMenu>
               </template>
             </ElDropdown>
+
             <ElButton
               @click="filterFormOpened = !filterFormOpened"
               size="large"
@@ -570,7 +601,29 @@ const uploadFile = async (event:any) => {
 
       </TransitionGroup>
     </div>
+
   </section>
+  <el-dialog
+    v-model="uploadResponseDialogVisible"
+    title="Не найденные продукты"
+    width="600px"
+  >
+    <div v-if="uploadResponseList.length">
+      <ul class="list-disc pl-5 max-h-96 overflow-auto">
+        <li v-for="(item, index) in uploadResponseList" :key="index">
+          {{ item }}
+        </li>
+      </ul>
+    </div>
+    <div v-else>
+      Все продукты успешно загружены.
+    </div>
+
+    <template #footer>
+      <el-button type="primary" @click="uploadResponseDialogVisible = false">Закрыть</el-button>
+    </template>
+  </el-dialog>
+</div>
 </template>
 
 <style lang="scss">
