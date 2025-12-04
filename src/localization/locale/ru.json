@@ -400,7 +400,7 @@
   },
   "error": {
     "title": "Error",
-    "validation": "Validation Error"
+    "validation": "Ошибка заполнения формы"
   },
   "product": {
     "name": "Название продукта",
