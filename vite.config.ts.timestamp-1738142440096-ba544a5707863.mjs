@@ -3,6 +3,7 @@ import { fileURLToPath, URL } from "node:url";
 import { defineConfig } from "file:///C:/AnySoft/kitchen/node_modules/vite/dist/node/index.js";
 import vue from "file:///C:/AnySoft/kitchen/node_modules/@vitejs/plugin-vue/dist/index.mjs";
 import vueDevTools from "file:///C:/AnySoft/kitchen/node_modules/vite-plugin-vue-devtools/dist/vite.mjs";
+import path from 'path'
 var __vite_injected_original_import_meta_url = "file:///C:/AnySoft/kitchen/vite.config.ts";
 var vite_config_default = defineConfig({
   plugins: [
@@ -11,8 +12,8 @@ var vite_config_default = defineConfig({
   ],
   resolve: {
     alias: {
-      "@": fileURLToPath(new URL("./src", __vite_injected_original_import_meta_url))
-    }
+      '@': path.resolve(__dirname, './src'),
+    },
   },
   build: {
     target: "esnext",
