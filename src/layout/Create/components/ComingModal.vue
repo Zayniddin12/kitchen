@@ -292,28 +292,23 @@ const sendForm = async () => {
   });
 };
 
-const vidProducts = ref<Map<number, Record<string, any>[]>>(new Map);
+const vidProducts = ref<Record<string, any>[]>();
 
-const fetchVidProductsList = async (product: DocumentProductType) => {
+const fetchVidProductsList = async () => {
 
-  if (typeof product.category_id !== "number") return;
 
   let params = props.id === 7 ? {
-    parent_id: product.category_id,
     per_page: 200,
   } : {
-    parent_id: product.category_id,
     in_warehouse_id: form.from_id,
     per_page: 200,
   }
 
   await settingsStore.GET_VID_PRODUCT(params);
 
-  vidProducts.value.set(product.category_id, settingsStore.vidProduct.product_types);
-  product.product_type_id = "";
-  product.unit_id = "";
+  vidProducts.value=settingsStore.vidProduct.product_types;
 };
-
+fetchVidProductsList()
 const inputQuantity = (index: number, e: string | null) => {
 
   actForm.products[index].quantity = e;
@@ -323,7 +318,7 @@ const changeProduct = async (product: DocumentProductType, index: number) => {
   // console.log(product);
   if (!(product.product_type_id && product.category_id)) return;
 
-  const activeVidProducts = vidProducts.value.get(product.category_id);
+  const activeVidProducts = vidProducts.value
 
   if (!activeVidProducts) return;
 
@@ -339,7 +334,7 @@ const changeProduct = async (product: DocumentProductType, index: number) => {
 };
 
 const getProductTypeTitle = (category_id: number, product_type_id: number) => {
-  const vidProduct = vidProducts.value.get(category_id);
+  const vidProduct = vidProducts.value;
 
   if (!vidProduct) return "";
 
@@ -415,7 +410,7 @@ const selectedProductTypes = computed(() => {
 
   form.products?.forEach(el => {
         if (el.category_id && el.product_type_id) {
-          const vidProduct = vidProducts.value.get(el.category_id);
+          const vidProduct = vidProducts.value;
           if (vidProduct) {
             const childProduct = vidProduct.find(element => element.id === el.product_type_id);
             if (childProduct) appSelectedProductTypes.push(childProduct);
@@ -585,6 +580,7 @@ const respondentChange = async (value: string, type: "from" | "to") => {
     await settingsStore.GET_TYPE_PRODUCT({in_warehouse_id: values[0], per_page: 200});
   }
   if (type === "to" && props.id === 7){
+    if (value===form.from) return;
     await settingsStore.GET_TYPE_PRODUCT({per_page: 200});
   }
   form[type] = value;
@@ -1115,7 +1111,6 @@ const changeUser = (val:any, key:any) => {
               prop="to"
               :placeholder="t('document.whom.select_to')"
               :label="t('document.whom.to')"
-              :disabled="!!from"
               :loading="authStore.userLoading"
               label-class="text-[#A8AAAE] text-xs font-medium"
               @change="(value) => respondentChange(value as string, 'to')"
@@ -1218,7 +1213,7 @@ const changeUser = (val:any, key:any) => {
                   <AppSelect
                       v-model="product.product_type_id"
                       :prop="`products[${index}].product_type_id`"
-                      :items="vidProducts.get(product.category_id as number)"
+                      :items="vidProducts"
                       item-label="name"
                       item-value="id"
                       :label="t('product.view')"
@@ -1226,7 +1221,6 @@ const changeUser = (val:any, key:any) => {
                       filterable
                       :placeholder="t('product.select_view')"
                       label-class="text-[#A8AAAE] text-xs font-medium"
-                      :disabled="!product.category_id"
                       @change="changeProduct(product, index)"
                       required
                   />

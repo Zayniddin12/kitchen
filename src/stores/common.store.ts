@@ -39,7 +39,13 @@ export const useCommonStore = defineStore("commonStore", () => {
       type: "success",
     });
   };
-
+  const goodToast = async (message?: string) => {
+    ElNotification({
+      title: t("status.success"),
+      message: message || t("status.success"),
+      type: "success",
+    });
+  };
   const errorIds = ref<string[]>([]);
 
   const errorToast = async (message: string, route?: RouteLocationRaw, id?: string) => {
@@ -114,6 +120,7 @@ export const useCommonStore = defineStore("commonStore", () => {
     getTitle,
     getTitles,
     removeTitles,
+    goodToast,
     errorIds,
     activeLayout,
   };
